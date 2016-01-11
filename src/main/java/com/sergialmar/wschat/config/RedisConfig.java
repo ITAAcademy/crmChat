@@ -52,7 +52,7 @@ public class RedisConfig {
 			
 			redisServer = new RedisWithConfList(list, Protocol.DEFAULT_PORT);
 		//	redisServer.enableConfigFile("Z:\\Desktop\\redis-config-master\\sentinel3\\windows\\redis.conf");
-			redisServer.start();
+			//redisServer.start();
 		}
 
 		@Override
