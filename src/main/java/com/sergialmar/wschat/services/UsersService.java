@@ -27,8 +27,8 @@ public class UsersService {
 	@Transactional
 	public void createAdminUser() {
 		System.out.println("admin user created");
-		register("admin", "admin@mail.com", "qwerty",Permissions.PERMISSIONS_ADMIN);
-		register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
+		//register("admin", "admin@mail.com", "qwerty",Permissions.PERMISSIONS_ADMIN);
+		//register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
 	}
 	
 	@Transactional
