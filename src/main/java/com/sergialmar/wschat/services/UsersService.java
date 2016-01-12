@@ -45,6 +45,11 @@ public class UsersService {
 		return usersRepo.findOne(id);
 	}
 	
+	@Transactional
+	public User getUser(String login) {
+		return usersRepo.findByLogin(login);
+	}
+	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
 		String passHash = new BCryptPasswordEncoder().encode(pass);

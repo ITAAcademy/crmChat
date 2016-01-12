@@ -30,10 +30,15 @@ public class User implements UserDetails{
 	@GeneratedValue
 	private Long id;
 	
-	/*@NotBlank
-	@Size(min = 1, max = 512)
-	@Column(unique = true)
-	private String login;*/
+	@NotBlank
+	@Size(min = 1, max = 255)
+	@Column(unique = false,name="email")
+	private String login;
+	
+/*	@NotBlank
+	  @Size(min = 1, max = 512)
+	 // @Column(unique = true)
+	  private String email;*/
 	
 	/*private boolean isAdmin = false;
 	
@@ -41,10 +46,7 @@ public class User implements UserDetails{
 		return isAdmin;
 	}*/
 
-	@NotBlank
-	  @Size(min = 1, max = 512)
-	 // @Column(unique = true)
-	  private String email;
+	
 
 	@NotBlank
     @Size(min = 1, max = 100)
@@ -60,17 +62,17 @@ public class User implements UserDetails{
 		this.id = id;
 	}
 	public String getLogin() {
-		return email;
+		return login;
 	}
 	public void setLogin(String login) {
-		this.email = login;
+		this.login = login;
 	}
 	public String getEmail() {
-		return email;
+		return login;
 	}
 	
 	public void setEmail(String email) {
-		this.email = email;
+		this.login = email;
 	}
 
 		public Permissions getPermission() {
@@ -132,8 +134,8 @@ public class User implements UserDetails{
 	}
 
 		public User(String login, String email, String password) {
-			this.email = login;
-			this.email = email;
+			this.login = login;
+			//this.email = email;
 			this.password = password;
 		}
 		 public User(){
