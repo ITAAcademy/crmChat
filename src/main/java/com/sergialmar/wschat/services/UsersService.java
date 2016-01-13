@@ -53,7 +53,7 @@ public class UsersService {
 	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
-		String passHash = new ShaPasswordEncoder().encodePassword(pass, null)
+		String passHash = new ShaPasswordEncoder().encodePassword(pass, null);
 				//encode(pass);
 		//String passHash = pass;
 		
