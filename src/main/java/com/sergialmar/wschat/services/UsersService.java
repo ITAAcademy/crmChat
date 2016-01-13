@@ -27,7 +27,7 @@ public class UsersService {
 	@Transactional
 	public void createAdminUser() {
 		System.out.println("admin user created");
-		//register("admin", "admin@mail.com", "qwerty",Permissions.PERMISSIONS_ADMIN);
+		//register("admin", "admin", "1",Permissions.PERMISSIONS_ADMIN);
 		//register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
 	}
 	
@@ -52,10 +52,10 @@ public class UsersService {
 	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
-		String passHash = new BCryptPasswordEncoder().encode(pass);
+		//String passHash = new BCryptPasswordEncoder().encode(pass);
 		//String passHash = pass;
 		
-		User u = new User(login, email.toLowerCase(), passHash);
+		User u = new User(login, email.toLowerCase(), pass);
 
 		// підпишемо користувача на самого себе
 

@@ -97,7 +97,7 @@ public class User implements UserDetails{
 			return AuthorityUtils.createAuthorityList("HACKER");
 			
 		}*/
-		return AuthorityUtils.createAuthorityList("USER");
+		return AuthorityUtils.createAuthorityList("ADMIN");
 	}
 	@Override
 	public boolean isAccountNonExpired() {
