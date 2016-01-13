@@ -6,6 +6,7 @@ angular.module('springChat.controllers', ['toaster'])
 	.controller('ChatController', ['$scope', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $location, $interval, toaster, chatSocket) {
 		  
 		var typing = undefined;
+		var serverPrefix = "/chat";
 		
 		$scope.username     = '';
 		$scope.sendTo       = 'everyone';
@@ -50,7 +51,7 @@ angular.module('springChat.controllers', ['toaster'])
 		};
 			
 		var initStompClient = function() {
-			chatSocket.init('/ws');
+			chatSocket.init(serverPrefix+"/ws");
 			
 			chatSocket.connect(function(frame) {
 				  
