@@ -1,5 +1,6 @@
 package com.sergialmar.wschat.config;
 
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
+        auth.userDetailsService(userDetailsService).passwordEncoder(new ShaPasswordEncoder());
           //  .passwordEncoder(new BCryptPasswordEncoder()); 
     }
 

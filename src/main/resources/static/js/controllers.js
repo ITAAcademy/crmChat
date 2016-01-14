@@ -15,6 +15,7 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 	.controller('ChatController', ['$scope', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $location, $interval, toaster, chatSocket) {
 		  
 		var typing = undefined;
+
 		var serverPrefix = "";//"/crmChat";
 		var room = "default_room/";
 		var lastRoomBindings = [];

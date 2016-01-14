@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,10 +54,11 @@ public class UsersService {
 	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
-		//String passHash = new BCryptPasswordEncoder().encode(pass);
+		String passHash = new ShaPasswordEncoder().encodePassword(pass, null);
+				//encode(pass);
 		//String passHash = pass;
 		
-		User u = new User(login, email.toLowerCase(), pass);
+		User u = new User(login, email.toLowerCase(), passHash);
 
 		// підпишемо користувача на самого себе
 
