@@ -1,0 +1,31 @@
+
+			<h4>Dialog name: [{{dialogName}}]</h4>
+	        <div class="row">
+        		<div class="col-xs-4">
+        			<h4>Participants [{{participants.length}}]</h4>
+        			<div class="share">
+	        			<ul ng-repeat="participant in participants">
+	        				<li>
+	        					<span class="input-icon fui-new" ng-show="participant.typing"></span>
+	        					<span class="input-icon fui-user" ng-show="!participant.typing"></span>
+	        					<a href="" ng-click="privateSending(participant.username)">{{participant.username}}</a>
+	        					
+	        				</li>
+	        			</ul>
+        			</div>
+        		</div>
+        		<div class="col-xs-8 chat-box">
+        			<h4>Messages</h4>
+	        		<div ng-repeat="message in messages">
+	       	 			<small print-message></small>
+	      			</div>
+        		</div>
+        	</div>
+        	<div class="row">
+       			<div class="form-group">
+       			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
+       			  <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/>
+				  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
+				</div>
+        	</div>
+	 

@@ -1,0 +1,28 @@
+		<div class="row">
+			<div class="col-xs-12 chat-box">
+				<h4>Dialogs [{{participants.length}}]</h4>
+				<div class="share">
+					<ul ng-repeat="participant in participants">
+						<li><span class="input-icon fui-new"
+							ng-show="participant.typing"></span> <span
+							class="input-icon fui-user" ng-show="!participant.typing"></span>
+							<a href="" ng-click="goToDialog(participant.username)">{{participant.username}}</a>
+
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10">
+				<div class="form-group">
+					<input id="newMessageInput" type="text" class="form-control"
+						placeholder="Write name of new dialog and hit enter or click plus..."
+						ng-model="newMessage"
+						ng-keyup="$event.keyCode == 13 ? addDialoga()" />
+				</div>
+			</div>
+			<div class="col-xs-2">
+				<span type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
+			</div>
+		</div>
