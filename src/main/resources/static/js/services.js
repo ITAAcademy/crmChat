@@ -11,6 +11,9 @@ angular.module('springChat.services', [])
 					init: function(url) {
 						stompClient = Stomp.over(new SockJS(url));
 					},
+					disconnect: function (){
+						stompClient.disconnect();
+					},
 					connect: function(successCallback, errorCallback) {
 						
 						stompClient.connect({}, function(frame) {

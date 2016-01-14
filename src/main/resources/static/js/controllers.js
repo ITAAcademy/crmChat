@@ -43,7 +43,13 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 		
 		$scope.changeRoom=function(){
 			room=$scope.roomId+'/';
-			onConnect();
+			
+			chatSocket.disconnect();
+			chatSocket.init(serverPrefix+"/ws");
+			chatSocket.connect(onConnect, function(error) {
+				toaster.pop('error', 'Error', 'Connection error ' + error);
+				
+		    });
 		}
 		  
 		$scope.sendMessage = function() {
