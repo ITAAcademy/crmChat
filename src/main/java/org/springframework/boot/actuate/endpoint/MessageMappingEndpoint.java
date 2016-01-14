@@ -35,9 +35,10 @@ public class MessageMappingEndpoint extends AbstractEndpoint<Map<String, Object>
 	public Map<String, Object> invoke() {
 		SimpAnnotationMethodMessageHandler handler = applicationContext
 				.getBean(SimpAnnotationMethodMessageHandler.class);
-
+		//using against @MessageMapping
 		Map<SimpMessageMappingInfo, HandlerMethod> messageHandlerMethods = 
 				this.filterByAnnotation(handler.getHandlerMethods(), MessageMapping.class);
+		//using against @SubscribeMapping
 		Map<SimpMessageMappingInfo, HandlerMethod> subscribeHandlerMethods = 
 				this.filterByAnnotation(handler.getHandlerMethods(), SubscribeMapping.class);
 

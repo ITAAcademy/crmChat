@@ -10,7 +10,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 //bootRepackage.enabled = false
 
 war {
-    baseName = 'chat'
+    baseName = 'crmChat'
 }
 configurations {
     providedRuntime

@@ -37,13 +37,13 @@ public class ChatController {
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	
 	
-	@SubscribeMapping("/chat.participants")
-	public Collection<LoginEvent> retrieveParticipants() {
+	@SubscribeMapping("/{room}/chat.participants")
+	public Collection<LoginEvent> retrieveParticipants(@DestinationVariable String room) {
 		return participantRepository.getActiveSessions().values();
 	}
 	
-	@MessageMapping("/chat.message")
-	public ChatMessage filterMessage(@Payload ChatMessage message, Principal principal) {
+	@MessageMapping("/{room}/chat.message")
+	public ChatMessage filterMessage(@DestinationVariable String room,@Payload ChatMessage message, Principal principal) {
 		checkProfanityAndSanitize(message);
 		
 		message.setUsername(principal.getName());
@@ -51,13 +51,13 @@ public class ChatController {
 		return message;
 	}
 	
-	@MessageMapping("/chat.private.{username}")
-	public void filterPrivateMessage(@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
+	@MessageMapping("/{room}/chat.private.{username}")
+	public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
 		checkProfanityAndSanitize(message);
 		
 		message.setUsername(principal.getName());
 
-		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/chat.message", message);
+		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/"+room+"/chat.message", message);
 	}
 	
 	private void checkProfanityAndSanitize(ChatMessage message) {

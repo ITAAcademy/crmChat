@@ -24,11 +24,12 @@ angular.module('springChat.services', [])
 				        });
 					},
 					subscribe : function(destination, callback) {
-						stompClient.subscribe(destination, function(message) {
+						var res= stompClient.subscribe(destination, function(message) {
 							  $rootScope.$apply(function(){
 								  callback(message);
 							  });
 				          });	
+						return res;
 					},
 					send: function(destination, headers, object) {
 						stompClient.send(destination, headers, object);
