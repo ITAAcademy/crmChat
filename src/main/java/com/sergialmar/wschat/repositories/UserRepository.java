@@ -11,7 +11,8 @@ import com.sergialmar.wschat.models.User;
 
 
 public interface UserRepository extends CrudRepository<User, Long> {
-  User findByLogin(String login);
+   User findByLogin(String login);
+  //User findByEmail(String email);
   Page<User> findById(Long id, Pageable pageable);
   Page<User> findAll(Pageable pageable);
   List<User> findFirst10ByIdNotIn(List<Long> users);

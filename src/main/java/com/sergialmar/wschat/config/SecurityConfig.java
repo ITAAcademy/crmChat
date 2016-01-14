@@ -1,5 +1,6 @@
 package com.sergialmar.wschat.config;
 
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,6 +17,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    
+  /*  @Autowired
+	DataSource dataSource;
+    
+    @Autowired
+	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+		
+	  auth.jdbcAuthentication().dataSource(dataSource)
+		.usersByUsernameQuery(
+			"select email,password, enabled from user where email=?")
+		.authoritiesByUsernameQuery(
+			"select email, role from user_roles where username=?");
+	}	*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -23,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.csrf().disable()
 		.formLogin()
 			.loginPage("/index.html")
+			 .passwordParameter("password")
 			.defaultSuccessUrl("/chat.html")
 			.permitAll()
 			.and()
@@ -40,8 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-            .passwordEncoder(new BCryptPasswordEncoder()); 
+        auth.userDetailsService(userDetailsService);
+          //  .passwordEncoder(new BCryptPasswordEncoder()); 
     }
 
 }

@@ -27,10 +27,9 @@ public class UsersService {
 	@Transactional
 	public void createAdminUser() {
 		System.out.println("admin user created");
-		register("admin", "admin@mail.com", "qwerty",Permissions.PERMISSIONS_ADMIN);
-		register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
-		register("user1", "user1@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
-		register("user2", "user2@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
+		//register("admin", "admin", "1",Permissions.PERMISSIONS_ADMIN);
+		//register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
+
 	}
 	
 	@Transactional
@@ -47,12 +46,17 @@ public class UsersService {
 		return usersRepo.findOne(id);
 	}
 	
+	@Transactional
+	public User getUser(String login) {
+		return usersRepo.findByLogin(login);
+	}
+	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
-		String passHash = new BCryptPasswordEncoder().encode(pass);
+		//String passHash = new BCryptPasswordEncoder().encode(pass);
 		//String passHash = pass;
 		
-		User u = new User(login, email.toLowerCase(), passHash);
+		User u = new User(login, email.toLowerCase(), pass);
 
 		// підпишемо користувача на самого себе
 

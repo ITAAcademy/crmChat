@@ -18,10 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
-@Table(indexes = {
-  @Index(columnList="login", unique = true), 
+/*@Table(indexes = {
+  //@Index(columnList="login", unique = true), 
   @Index(columnList="email", unique = true)
-})
+})*/
 public class User implements UserDetails{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
@@ -31,26 +31,28 @@ public class User implements UserDetails{
 	private Long id;
 	
 	@NotBlank
-	@Size(min = 1, max = 512)
-	@Column(unique = true)
+	@Size(min = 1, max = 255)
+	@Column(unique = false,name="email")
 	private String login;
 	
-	private boolean isAdmin = false;
+/*	@NotBlank
+	  @Size(min = 1, max = 512)
+	 // @Column(unique = true)
+	  private String email;*/
+	
+	/*private boolean isAdmin = false;
 	
 	public boolean isAdmin() {
 		return isAdmin;
-	}
+	}*/
 
-	@NotBlank
-	  @Size(min = 1, max = 512)
-	  @Column(unique = true)
-	  private String email;
+	
 
 	@NotBlank
     @Size(min = 1, max = 100)
 	private String password;
 	  
-	  private Permissions permission=Permissions.PERMISSIONS_USER;
+	  //private Permissions permission=Permissions.PERMISSIONS_USER;
 	  
 	public Long getId() {
 		return id;
@@ -66,27 +68,27 @@ public class User implements UserDetails{
 		this.login = login;
 	}
 	public String getEmail() {
-		return email;
+		return login;
 	}
 	
 	public void setEmail(String email) {
-		this.email = email;
+		this.login = email;
 	}
 
 		public Permissions getPermission() {
-		return permission;
+		return Permissions.PERMISSIONS_USER;
 	}
 
 
 	public void setPermission(Permissions permission) {
-		this.permission = permission;
-		if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
-		else isAdmin=false;
+		//this.permission = permission;
+		/*if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
+		else isAdmin=false;*/
 	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		//return AuthorityUtils.createAuthorityList("USER");
-		switch(permission){
+		/*switch(permission){
 		case PERMISSIONS_ADMIN:
 			return AuthorityUtils.createAuthorityList("ADMIN");
 		case PERMISSIONS_USER:
@@ -94,8 +96,8 @@ public class User implements UserDetails{
 		default:
 			return AuthorityUtils.createAuthorityList("HACKER");
 			
-		}
-		
+		}*/
+		return AuthorityUtils.createAuthorityList("ADMIN");
 	}
 	@Override
 	public boolean isAccountNonExpired() {
@@ -133,18 +135,18 @@ public class User implements UserDetails{
 
 		public User(String login, String email, String password) {
 			this.login = login;
-			this.email = email;
+			//this.email = email;
 			this.password = password;
 		}
 		 public User(){
 			  super();
 		  }
 		 public void togglePermission(){
-			 if (permission==Permissions.PERMISSIONS_ADMIN)
+			/* if (permission==Permissions.PERMISSIONS_ADMIN)
 			 permission=Permissions.PERMISSIONS_USER;
 			 else permission=Permissions.PERMISSIONS_ADMIN;
-			 if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
-			 else isAdmin=false;
+			if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
+			 else isAdmin=false;*/
 		 }
 
 		@Override
