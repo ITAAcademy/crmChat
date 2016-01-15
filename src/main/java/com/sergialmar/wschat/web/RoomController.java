@@ -47,12 +47,21 @@ public class RoomController {
 
 	private ArrayList<Room> roomsArray; 
 
-	@MessageMapping("/chat/{username}/rooms")
+	
+	@SubscribeMapping("/chat/rooms")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public Map<Long, String> getRoomsByAuthor( @DestinationVariable("username") String username, Principal principal) {
+	public Map<Long, String> getRoomsByAuthorSubscribe(Principal principal) {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
-		return convertToNameList(roomService.getRoomByAuthor(principal.getName()));
+		User currentUser = userService.getUser(principal.getName());
+		ArrayList<Room> list = new ArrayList<>(currentUser.getRootRooms());
+		list.addAll(currentUser.getRoomsFromUsers());
+		
+		return convertToNameList(list);
+	}
+	@MessageMapping("/chat/rooms/user.{username}")
+	public Map<Long, String> getRoomsByAuthorMessage(Principal principal) {
+		return getRoomsByAuthorSubscribe(principal);
 	}
 	
 	@MessageMapping("/chat/rooms/add.{name}")
@@ -63,23 +72,24 @@ public class RoomController {
 		System.out.println(principal.getName());//@LOG@
 		User user = userService.getUser(principal.getName());
 		roomService.register(name, user);
+	//	simpMessagingTemplate.convertAndSend("/chat/{username}/rooms", getRoomsByAuthorMessage(principal));
 		return true;
 	}
 	
 	@MessageMapping("/chat/rooms.{room}/user.add.{login}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public boolean addUserToRoom( @DestinationVariable("login") String login, @DestinationVariable("room") Long room, Principal principal) {
+	public boolean addUserToRoom( @DestinationVariable("login") String login, @DestinationVariable("room") String room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
 		System.out.println(login);//@LOG@
 		System.out.println(room);//@LOG@
 		
-		Room room_o = roomService.getRoom(room);
+		Room room_o = roomService.getRoom(Long.parseLong(room));
 		User user_o = userService.getUser(login);
 		
 		User user = userService.getUser(principal.getName());
 		
-		if(!user.getRootRooms().contains(room_o))
+		if(user.getId() != room_o.getAuthor().getId())
 			return false;
 		
 		System.out.println(Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
@@ -98,7 +108,7 @@ public class RoomController {
 		
 		User user = userService.getUser(principal.getName());
 		
-		if(!user.getRootRooms().contains(room_o))
+		if(user.getId() != room_o.getAuthor().getId())
 			return false;
 		
 		System.out.println(Boolean.toString(roomService.removeUserFromRoom(user_o, room_o)));

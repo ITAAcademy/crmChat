@@ -1,12 +1,11 @@
 		<div class="row">
 			<div class="col-xs-12 chat-box">
-				<h4>Dialogs [{{participants.length}}]</h4>
+				<h4>Dialogs [{{roomsCount}}]</h4>
 				<div class="share">
-					<ul ng-repeat="participant in participants">
-						<li><span class="input-icon fui-new"
-							ng-show="participant.typing"></span> <span
-							class="input-icon fui-user" ng-show="!participant.typing"></span>
-							<a href="" ng-click="goToDialog(participant.username)">{{participant.username}}</a>
+					<ul ng-repeat="room in rooms">
+						<li>
+						 <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
+							<a href="" ng-click="goToDialog(room)">{{room}}</a>
 
 						</li>
 					</ul>
@@ -18,9 +17,9 @@
 				<div class="form-group">
 					<input id="newMessageInput" type="text" class="form-control"
 						placeholder="Write name of new dialog and hit enter or click plus..."
-						ng-model="$parent.newMessage"
+						ng-model="$parent.dialogName" ng-keyup="$event.keyCode == 13 ? addDialog():0"
 						 />
-						 <!-- ng-keyup="$event.keyCode == 13 ? addDialoga()" -->
+						 
 				</div>
 			</div>
 			<div class="col-xs-2">

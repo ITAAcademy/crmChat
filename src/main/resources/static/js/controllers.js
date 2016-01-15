@@ -1,6 +1,14 @@
 'use strict';
 
 /* Controllers */
+Object.prototype.getKeyByValue = function( value ) {
+    for( var prop in this ) {
+        if( this.hasOwnProperty( prop ) ) {
+             if( this[ prop ] === value )
+                 return prop;
+        }
+    }
+}
 
 angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 /*.config(['$routeProvider', function ($routeProvider) {
@@ -39,29 +47,74 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 	$scope.participants = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
+	$scope.rooms     = [];
+	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
+	$scope.newUser = '';
 	$scope.roomId		= '';
-	$scope.dialogName = '@tipa imya dialoga@'
+	$scope.dialogName = '';
+	
 
-	$scope.addDialog = function(dialogName) {
-
+	$scope.addDialog = function() {
+			console.log($scope.dialogName)
+			chatSocket.send("/app//chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
+			
+			setTimeout(function(){ //@BAG@
+				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
+			    }, 1000);  
+			
+			$scope.dialogName = '';
 	};
 
 	$scope.templateName = 'dialogsTemplate.html';
 	
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
+		$scope.dialogName = '';
 	//	onConnect();
 	}
 
-	$scope.goToDialog = function(dialogName) {
+	$scope.goToDialog = function(roomName) {
 		$scope.templateName = 'chatTemplate.html';
+		$scope.dialogName = roomName;
+		$scope.roomId = $scope.rooms.getKeyByValue(roomName);
+		$scope.changeRoom();
 			//onConnect();
 	};
 
 	$scope.changeRoom=function(){
 		room=$scope.roomId+'/';
-		onConnect();//NEED FIX
+		//onConnect();//NEED FIX
+		lastRoomBindings.push(
+				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
+					$scope.messages.unshift(JSON.parse(message.body));
+				}));
+		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
+			var o = JSON.parse(message.body);
+			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
+			console.log(o);
+			$scope.participants = o;
+		});
+		var test = chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
+			var o = JSON.parse(message.body);
+			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
+			console.log(o);
+			$scope.participants = o;
+		});
+		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
+	}
+	
+	$scope.addRoom=function(name){
+		chatSocket.send("/app//chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
+	}
+	$scope.addUserToRoom=function(){
+		room=$scope.roomId+'/';
+		chatSocket.send("/app//chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.newUser), {}, JSON.stringify({}));
+		$scope.newUser = '';
+		
+		setTimeout(function(){ 
+			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
+		    }, 1000);  
 	}
 
 	$scope.sendMessage = function() {
@@ -119,7 +172,10 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 		}
 
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
-			$scope.participants = JSON.parse(message.body);
+			var o = JSON.parse(message.body);
+			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
+			console.log(o);
+			$scope.participants = o;
 		});
 		lastRoomBindings.push(test);
 
@@ -164,21 +220,26 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 		 *
 		 */
 		
-		chatSocket.subscribe("/topic/chat/kaka/rooms", function(message) {// event update 
-			console.log(JSON.parse(message.body).length);
+		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+			$scope.rooms = JSON.parse(message.body);
+			$scope.roomsCount = Object.keys($scope.rooms).length;
+			console.log($scope.rooms);
+			
         });
-		
-		chatSocket.send("/app//chat/rooms/add.cool", {}, JSON.stringify({}));
-		
-		
-		
+		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+			$scope.rooms = JSON.parse(message.body);
+			$scope.roomsCount = Object.keys($scope.rooms).length;
+			console.log($scope.rooms);
+			
+        });
+		/*
 		 setTimeout(function(){ 
 
-			 chatSocket.send("/app/chat/kaka/rooms", {}, JSON.stringify({}));
+			 chatSocket.send("/app/chat/rooms", {}, JSON.stringify({}));
 			 chatSocket.send("/app//chat/rooms.1/user.add.user", {}, JSON.stringify({}));
 		    }, 3000);  
 		 
-		
+		*/
 		lastRoomBindings.push(
 				chatSocket.subscribe("/user/exchange/amq.direct/{0}chat.message".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
@@ -209,3 +270,4 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 
 
 }]);
+

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `chat_room` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `active` bit(1) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `author_id` int(11) DEFAULT NULL,
+  `author_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_fy1be4k30rsfiyj277sx585ev` (`author_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;

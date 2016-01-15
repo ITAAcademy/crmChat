@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -41,10 +42,10 @@ public class User implements UserDetails{
 	@Column(unique = false,name="email")
 	private String login;
 	
-	@OneToMany(mappedBy = "author")
-	private List<Room> rooms = new ArrayList<>();
+	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+	private Set<Room> rooms = new HashSet<>();
 	
-	@ManyToMany(mappedBy = "users")
+	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	
 /*	@NotBlank
@@ -59,8 +60,12 @@ public class User implements UserDetails{
 	}*/
 
 
-	public List<Room> getRootRooms() {
+	public Set<Room> getRootRooms() {
 		return rooms;
+	}
+
+	public Set<Room> getRoomsFromUsers() {
+		return roomsFromUsers;
 	}
 
 	@NotBlank

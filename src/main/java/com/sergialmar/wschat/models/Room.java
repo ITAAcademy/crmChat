@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -13,7 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 
+import org.hibernate.metamodel.binding.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity(name="ChatRoom")
@@ -42,7 +45,8 @@ public class Room {
 	
 //	@OneToMany
 	//@ManyToMany(mappedBy = "roomsFromUsers")
-	@ManyToMany
+	
+	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<User> users = new HashSet<>();
 	
 	
