@@ -2,6 +2,7 @@ package com.sergialmar.wschat.models;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -39,6 +40,9 @@ public class Room {
 
 	@ManyToOne
 	private User author;
+	
+	@OneToMany(mappedBy = "room")
+	private List<UserMessage> messages = new ArrayList<>();
 	
 //	@OneToMany
 	//@ManyToMany(mappedBy = "roomsFromUsers")
