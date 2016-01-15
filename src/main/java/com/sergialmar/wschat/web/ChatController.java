@@ -33,7 +33,9 @@ import com.sergialmar.wschat.event.ParticipantRepository;
 import com.sergialmar.wschat.exception.TooMuchProfanityException;
 import com.sergialmar.wschat.models.Room;
 import com.sergialmar.wschat.models.User;
+import com.sergialmar.wschat.models.UserMessage;
 import com.sergialmar.wschat.services.RoomsService;
+import com.sergialmar.wschat.services.UserMessageService;
 import com.sergialmar.wschat.services.UsersService;
 import com.sergialmar.wschat.util.ProfanityChecker;
 import java.util.List;
@@ -56,6 +58,8 @@ public class ChatController {
 
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
+	@Autowired private UserMessageService userMessageService;
+	
 	
 	@SubscribeMapping("/{room}/chat.participants")
 	public Collection<LoginEvent> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
@@ -81,14 +85,20 @@ public class ChatController {
 		}*/
 		
 		return userList;
+
 	}
 
 	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessage(@DestinationVariable String room,@Payload ChatMessage message, Principal principal) {
+	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
+		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
 
 		message.setUsername(principal.getName());
-
+		User author = userService.getUser(principal.getName());
+		Room room = roomService.getRoom(Long.parseLong(roomStr));
+		UserMessage messageToSave = new UserMessage(author,room,message.getMessage());
+		userMessageService.addMessage(messageToSave);
+		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		return message;
 	}
 

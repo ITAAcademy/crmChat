@@ -137,22 +137,33 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.changeRoom=function(){
 		room=$scope.roomId+'/';
 		//onConnect();//NEED FIX
+		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
+		if ( !isLastRoomBindingsEmpty ) {
+
+			while (lastRoomBindings.length>0)
+			{
+				var subscription = lastRoomBindings.pop();
+				//if (subscription!=undefined)
+				subscription.unsubscribe();
+			}
+		}
+		
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
 				}));
-		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
+		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
 			$scope.participants = o;
-		});
-		var test = chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
+		}));
+		lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
 			$scope.participants = o;
-		});
+		}));
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 	
@@ -210,19 +221,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var onConnect = function(frame) {
 		console.log("onconnect");
 		$scope.username = frame.headers['user-name'];
-		{
-			var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
-			if ( !isLastRoomBindingsEmpty ) {
-
-				while (lastRoomBindings.length>0)
-				{
-					var subscription = lastRoomBindings.pop();
-					//if (subscription!=undefined)
-					subscription.unsubscribe();
-				}
-			}
-		}
-
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );

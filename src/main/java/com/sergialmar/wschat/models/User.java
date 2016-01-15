@@ -45,6 +45,9 @@ public class User implements UserDetails{
 	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
 	private Set<Room> rooms = new HashSet<>();
 	
+	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+	private List<UserMessage> messages = new ArrayList<>();
+
 	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	
