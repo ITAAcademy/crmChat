@@ -42,6 +42,8 @@ public class ChatController {
 		return participantRepository.getActiveSessions().values();
 	}
 	
+
+	
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable String room,@Payload ChatMessage message, Principal principal) {
 		checkProfanityAndSanitize(message);

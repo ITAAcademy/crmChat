@@ -24,8 +24,8 @@
         	<div class="row">
        			<div class="form-group">
        			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
-       			  <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/>
-				  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
+       			  <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/>
+				  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
 				</div>
         	</div>
 	 

@@ -1,5 +1,6 @@
 package org.springframework.boot.actuate.trace;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
@@ -25,7 +27,26 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	public WebSocketTraceChannelInterceptor(TraceRepository traceRepository) {
 		this.traceRepository = traceRepository;
 	}
-
+	@Override
+	public Message<?> preSend(Message<?> message, MessageChannel channel) {
+	    StompHeaderAccessor headerAccessor= StompHeaderAccessor.wrap(message);
+	    if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
+	        Principal userPrincipal = headerAccessor.getUser();
+	        if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
+	        {
+	            throw new IllegalArgumentException("No permission for this topic");
+	        }
+	    }
+	    return message;
+	}
+	private boolean validateSubscription(Principal principal, String topicDestination)
+	{
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	   System.out.println(principal.getName());
+	   System.out.println(topicDestination);
+	    //Validation logic coming here
+	    return true;
+	}
 	@Override
 	public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
 		Map<String, Object> trace = new LinkedHashMap<String, Object>();

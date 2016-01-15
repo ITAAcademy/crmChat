@@ -28,7 +28,7 @@ public class UsersService {
 	@Transactional
 	public void createAdminUser() {
 		System.out.println("admin user created");
-		register("user", "user", "user");
+		//register("user", "user", "user");
 
 	}
 	

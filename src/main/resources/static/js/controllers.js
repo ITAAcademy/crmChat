@@ -51,15 +51,17 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 	
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
+	//	onConnect();
 	}
 
 	$scope.goToDialog = function(dialogName) {
-		$scope.templateName = 'chatTemplate.html'
+		$scope.templateName = 'chatTemplate.html';
+			//onConnect();
 	};
 
 	$scope.changeRoom=function(){
 		room=$scope.roomId+'/';
-		onConnect();
+		onConnect();//NEED FIX
 	}
 
 	$scope.sendMessage = function() {
