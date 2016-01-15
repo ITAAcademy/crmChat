@@ -141,6 +141,26 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 			chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 				$scope.messages.unshift(JSON.parse(message.body));
 	        }));
+			chatSocket.subscribe("/topic/chat.message".format(room), function(message) {
+						$scope.messages.unshift(JSON.parse(message.body));
+			        });
+			
+			chatSocket.subscribe("/topic/chat/kaka/rooms", function(message) {// event update 
+				console.log(JSON.parse(message.body).length);
+	        });
+			
+			chatSocket.send("/app//chat/rooms/add.cool", {}, JSON.stringify({}));
+			
+			
+			
+			 setTimeout(function(){ 
+
+				 chatSocket.send("/app/chat/kaka/rooms", {}, JSON.stringify({}));
+				 chatSocket.send("/app//chat/rooms.1/user.add.user", {}, JSON.stringify({}));
+			    }, 3000);  
+			 
+
+			
 			  
 			lastRoomBindings.push(
 			chatSocket.subscribe("/user/exchange/amq.direct/{0}chat.message".format(room), function(message) {

@@ -23,6 +23,6 @@ public class ChatMessage {
 	}
 	@Override
 	public String toString() {
-		return "ChatMessage [user=" + username + ", message=" + message + "]";
+		return "ChatMessage ";
 	}
 }
