@@ -16,4 +16,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
   Page<User> findById(Long id, Pageable pageable);
   Page<User> findAll(Pageable pageable);
   List<User> findFirst10ByIdNotIn(List<Long> users);
+  List<User> findFirst5ByLoginLike(String login);
 }

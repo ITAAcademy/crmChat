@@ -16,6 +16,10 @@
 
 	<div id="mainContainer" class="container"	ng-controller="ChatController">
 		<toaster-container></toaster-container>
+		
+		
+	
+		
 		<div class="row">
 			<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
 				<div class="collapse navbar-collapse" id="navbar-collapse-01">
@@ -29,9 +33,11 @@
 			</nav>
 			<!-- /navbar -->
 		</div>
+		<div ng-include="templateName"></div>
 
-		<div ng-include src="templateName"></div>
 	</div>
+	
+	
 	<!-- /.container -->
 
 	<!-- 3rd party -->
@@ -49,5 +55,6 @@
 	<script src="js/controllers.js"></script>
 	<script src="js/services.js"></script>
 	<script src="js/directives.js"></script>
+		<script src="js/functions.js"></script>
 </body>
 </html>

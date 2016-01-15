@@ -10,7 +10,8 @@ Object.prototype.getKeyByValue = function( value ) {
     }
 }
 
-angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
+
+var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource']);
 /*.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
             .when('/', {
@@ -20,7 +21,11 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
                 reloadOnSearch: false
             });
 }])*/
-.controller('ChatController', ['$scope', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $location, $interval, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval, toaster, chatSocket) {
+
+	
+
+	$scope.emails = [];
 
 	var typing = undefined;
 
@@ -41,7 +46,53 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 		};
 	}
 
+	$scope.show_search_list = true;
 
+	var getEmailsTimer;
+	
+	$scope.searchInputValue = {email: ""};
+
+	$scope.hideSearchList = function () {
+		setTimeout(function ()  {$scope.show_search_list = false; }, 20);
+	}
+
+	$scope.showSearchList = function () {
+
+		$scope.show_search_list = true;
+		$scope.emails = [];
+		clearTimeout(getEmailsTimer);
+
+		getEmailsTimer = setTimeout(function () {
+			$scope.show_search_list = true;
+			/*var data = {"login=" + message,
+			var config = "";
+			var buka = $http.post('/get_users_emails_like', data, config)
+			.then(function (data, status, headers, config) {		 			
+				$scope.emails = (data['data']);
+			});*/
+//			alert($scope.emails);	
+			var request = $http({
+			    method: "get",
+			    url: "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
+			    data: null ,
+			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			});
+			
+			request.success(function (data) {
+			$scope.emails = data;
+			});
+			}, 500);
+	};
+
+	$scope.appendToSearchInput = function(value) {
+		$scope.searchInputValue.email = value;
+		$scope.show_search_list = false;
+		console.log($scope.searchInputValue.email);
+	}
+
+
+
+	$scope.searchUserName = "";
 	$scope.username     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
@@ -52,8 +103,9 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 	$scope.newMessage   = '';
 	$scope.newUser = '';
 	$scope.roomId		= '';
+
 	$scope.dialogName = '';
-	
+
 
 	$scope.addDialog = function() {
 			console.log($scope.dialogName)
@@ -67,7 +119,7 @@ angular.module('springChat.controllers', ['toaster','ngRoute','ngResource'])
 	};
 
 	$scope.templateName = 'dialogsTemplate.html';
-	
+
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
