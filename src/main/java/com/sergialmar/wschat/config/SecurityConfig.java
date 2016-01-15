@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.formLogin()
 			.loginPage("/index.html")
 			 .passwordParameter("password")
-			.defaultSuccessUrl("/chat.html")
+			.defaultSuccessUrl("/chatFrame.html")
 			.permitAll()
 			.and()
 		.logout()

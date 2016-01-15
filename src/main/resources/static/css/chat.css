@@ -13,3 +13,22 @@
 	height:400px;
 	overflow: auto;
 }
+
+.menu-ng-click:hover {
+	cursor: pointer;
+}
+
+.buttonPlus {
+  margin: 0 0 0 0;
+  cursor: pointer;
+  width: 43px;
+  height: 43px;
+  float: left;
+  text-align: center;
+  background-color: transparent;
+  background-image: url(../images/Alarm-Plus-icon.png);
+  background-repeat: no-repeat;
+background-position: left;
+background-size: cover;
+}
+
