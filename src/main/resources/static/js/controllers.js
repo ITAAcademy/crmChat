@@ -29,8 +29,11 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	var typing = undefined;
 
+	//var serverPrefix = "";//"/crmChat";
 	var serverPrefix = "/crmChat";
 	var room = "default_room/";
+
+	var room = "1/";
 	var lastRoomBindings = [];
 
 //	Format string
@@ -73,7 +76,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 //			alert($scope.emails);	
 			var request = $http({
 			    method: "get",
-			    url: "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
+			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
 			    data: null ,
 			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
@@ -108,7 +111,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.addDialog = function() {
 			console.log($scope.dialogName)
-			chatSocket.send("/app//chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
+			chatSocket.send("/app/chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
 			
 			setTimeout(function(){ //@BAG@
 				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
@@ -150,33 +153,39 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
+					
 				}));
 		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			//$scope.messages = [];
+			$scope.participants = o["participants"];
+			for (var i=0; i< o["messages"].length;i++){
+				$scope.messages.unshift(o["messages"][i]);
+				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+			}
 		}));
 		lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			$scope.participants = o["participants"];
 		}));
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 	
 	$scope.addRoom=function(name){
-		chatSocket.send("/app//chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
+		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
 	}
 	$scope.addUserToRoom=function(){
 		room=$scope.roomId+'/';
-		chatSocket.send("/app//chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 		$scope.searchInputValue.email = '';
-		
+		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
-		    }, 3000);  
+		    }, 3000);  */
 	}
 
 	$scope.sendMessage = function() {

@@ -9,7 +9,10 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-@Entity(name="user_message")
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+@Entity
 public class UserMessage {
 	
 	public UserMessage(){
@@ -27,6 +30,7 @@ public class UserMessage {
 	
 	//@NotBlank
 	@ManyToOne
+	@JsonManagedReference
 	private User author;
 	
 	//@NotBlank

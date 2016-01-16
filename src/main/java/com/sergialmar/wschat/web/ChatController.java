@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import com.sergialmar.wschat.services.UserMessageService;
 import com.sergialmar.wschat.services.UsersService;
 import com.sergialmar.wschat.util.ProfanityChecker;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller that handles WebSocket chat messages
@@ -60,33 +63,6 @@ public class ChatController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	
-	
-	@SubscribeMapping("/{room}/chat.participants")
-	public Collection<LoginEvent> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
-		
-	//	return participantRepository.getActiveSessions().values();
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");//@LOG@
-		System.out.println(Long.parseLong(room));//@LOG@
-		Room room_o = roomService.getRoom(Long.parseLong(room));
-		Set<LoginEvent> userList = new HashSet<>();
-		userList.add(new LoginEvent(room_o.getAuthor().getUsername()));
-		for(User user : room_o.getUsers())
-		{
-			userList.add(new LoginEvent(user.getUsername()));
-		}
-		/*if(userList != null)
-		{
-			System.out.println(userList.size());//@LOG@
-			if(room_o != null)
-			{
-				userList.add(room_o.getAuthor());
-			}
-			System.out.println(userList.size());
-		}*/
-		
-		return userList;
-
-	}
 
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
