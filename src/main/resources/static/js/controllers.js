@@ -160,7 +160,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			//$scope.messages = [];
 			$scope.participants = o["participants"];
 			for (var i=0; i< o["messages"].length;i++){
-				$scope.messages.unshift(o["messages"][i].message);
+				$scope.messages.unshift(o["messages"][i]);
 				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
 			}
 		}));
