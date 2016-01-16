@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import com.sergialmar.wschat.services.UserMessageService;
 import com.sergialmar.wschat.services.UsersService;
 import com.sergialmar.wschat.util.ProfanityChecker;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller that handles WebSocket chat messages
@@ -60,8 +63,7 @@ public class ChatController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	
-	
-	
+
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
 		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");

@@ -29,6 +29,7 @@ import com.sergialmar.wschat.exception.TooMuchProfanityException;
 import com.sergialmar.wschat.models.Room;
 import com.sergialmar.wschat.models.User;
 import com.sergialmar.wschat.services.RoomsService;
+import com.sergialmar.wschat.services.UserMessageService;
 import com.sergialmar.wschat.services.UsersService;
 import com.sergialmar.wschat.util.ProfanityChecker;
 
@@ -46,41 +47,47 @@ public class RoomController {
 
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
+	@Autowired private UserMessageService userMessageService;
 
 	private ArrayList<Room> roomsArray; 
 
 	@SubscribeMapping("/{room}/chat.participants")
-	public Collection<LoginEvent> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
+	public Map<String, Object> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
 		
-	//	return participantRepository.getActiveSessions().values();
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");//@LOG@
-		System.out.println(Long.parseLong(room));//@LOG@
-		Room room_o = roomService.getRoom(Long.parseLong(room));
-		Set<LoginEvent> userList = new HashSet<>();
-		userList.add(new LoginEvent(room_o.getAuthor().getUsername()));
-		for(User user : room_o.getUsers())
-		{
-			userList.add(new LoginEvent(user.getUsername()));
-		}
-		/*if(userList != null)
-		{
-			System.out.println(userList.size());//@LOG@
-			if(room_o != null)
+		//	return participantRepository.getActiveSessions().values();
+			
+			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");//@LOG@
+			System.out.println(Long.parseLong(room));//@LOG@
+			Room room_o = roomService.getRoom(Long.parseLong(room));
+			Set<LoginEvent> userList = new HashSet<>();
+			userList.add(new LoginEvent(room_o.getAuthor().getUsername()));
+			for(User user : room_o.getUsers())
 			{
-				userList.add(room_o.getAuthor());
+				userList.add(new LoginEvent(user.getUsername()));
 			}
-			System.out.println(userList.size());
-		}*/
-		System.out.println(userList.size());//@LOG@
-		return userList;
+			ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessageService.getUserMessagesByRoom(room_o));
+			HashMap<String, Object> map = new HashMap();
+			map.put("participants", userList);
+			map.put("messages", messagesHistory);
+			/*if(userList != null)
+			{
+				System.out.println(userList.size());//@LOG@
+				if(room_o != null)
+				{
+					userList.add(room_o.getAuthor());
+				}
+				System.out.println(userList.size());
+			}*/
+			
+			return map;
 
-	}
+		}
 	@MessageMapping("/{room}/chat.participants")
-	public Collection<LoginEvent> retrieveParticipantsMessage(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
+	public Map<String, Object> retrieveParticipantsMessage(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
 		return retrieveParticipantsSubscribe(room);
 	}
 	
-	@SubscribeMapping("/chat/rooms")
+	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public Map<Long, String> getRoomsByAuthorSubscribe(Principal principal) {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@

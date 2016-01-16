@@ -32,6 +32,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	//var serverPrefix = "";//"/crmChat";
 	var serverPrefix = "/crmChat";
 	var room = "default_room/";
+
+	var room = "1/";
 	var lastRoomBindings = [];
 
 //	Format string
@@ -151,18 +153,24 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
+					
 				}));
 		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			//$scope.messages = [];
+			$scope.participants = o["participants"];
+			for (var i=0; i< o["messages"].length;i++){
+				$scope.messages.unshift(o["messages"][i]);
+				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+			}
 		}));
 		lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			$scope.participants = o["participants"];
 		}));
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
