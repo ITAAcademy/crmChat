@@ -31,7 +31,7 @@
         		</div>
         		<div class="col-xs-8 chat-box">
         			<h4>Messages</h4>
-	        		<div ng-repeat="message in messages">
+	        		<div ng-repeat="message in messages track by $index">
 	       	 			<small print-message></small>
 	      			</div>
         		</div>
