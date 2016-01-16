@@ -4,7 +4,7 @@
         			<h4>Participants [{{participants.length}}]</h4>
 							<div  class="dropdown dropdown-scroll" ng-app="app">
 		<div >
-            <div class="input-group input-group-sm search-control" ng-click="addUserToRoom()"> <span class="input-group-addon">
+            <div class="input-group input-group-sm search-control"> <span  ng-click="addUserToRoom()" class="input-group-addon">
                     <span class="glyphicon glyphicon-search"></span>
 </span>
                 <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 

@@ -29,6 +29,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	var typing = undefined;
 
+	//var serverPrefix = "";//"/crmChat";
 	var serverPrefix = "/crmChat";
 	var room = "default_room/";
 	var lastRoomBindings = [];
@@ -73,7 +74,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 //			alert($scope.emails);	
 			var request = $http({
 			    method: "get",
-			    url: "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
+			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
 			    data: null ,
 			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
@@ -108,7 +109,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.addDialog = function() {
 			console.log($scope.dialogName)
-			chatSocket.send("/app//chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
+			chatSocket.send("/app/chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
 			
 			setTimeout(function(){ //@BAG@
 				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
@@ -167,16 +168,16 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 	
 	$scope.addRoom=function(name){
-		chatSocket.send("/app//chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
+		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
 	}
 	$scope.addUserToRoom=function(){
 		room=$scope.roomId+'/';
-		chatSocket.send("/app//chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 		$scope.searchInputValue.email = '';
-		
+		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
-		    }, 3000);  
+		    }, 3000);  */
 	}
 
 	$scope.sendMessage = function() {

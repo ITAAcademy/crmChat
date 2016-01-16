@@ -61,33 +61,7 @@ public class ChatController {
 	@Autowired private UserMessageService userMessageService;
 	
 	
-	@SubscribeMapping("/{room}/chat.participants")
-	public Collection<LoginEvent> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
-		
-	//	return participantRepository.getActiveSessions().values();
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");//@LOG@
-		System.out.println(Long.parseLong(room));//@LOG@
-		Room room_o = roomService.getRoom(Long.parseLong(room));
-		Set<LoginEvent> userList = new HashSet<>();
-		userList.add(new LoginEvent(room_o.getAuthor().getUsername()));
-		for(User user : room_o.getUsers())
-		{
-			userList.add(new LoginEvent(user.getUsername()));
-		}
-		/*if(userList != null)
-		{
-			System.out.println(userList.size());//@LOG@
-			if(room_o != null)
-			{
-				userList.add(room_o.getAuthor());
-			}
-			System.out.println(userList.size());
-		}*/
-		
-		return userList;
-
-	}
-
+	
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
 		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
