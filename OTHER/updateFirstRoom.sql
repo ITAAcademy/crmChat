@@ -57,15 +57,15 @@ CREATE TABLE IF NOT EXISTS `chat_room_users` (
 --
 -- Ограничения внешнего ключа таблицы `chat_room`
 --
-ALTER TABLE `chat_room`
-  ADD CONSTRAINT `FK_fy1be4k30rsfiyj277sx585ev` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`);
+-- ALTER TABLE `chat_room`
+  -- ADD CONSTRAINT `FK_fy1be4k30rsfiyj277sx585ev` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`);
 
 --
 -- Ограничения внешнего ключа таблицы `chat_room_users`
 --
-ALTER TABLE `chat_room_users`
-  ADD CONSTRAINT `FK_8uci3ndco1sna4jf1t5u33lia` FOREIGN KEY (`rooms_from_users_id`) REFERENCES `chat_room` (`id`),
-  ADD CONSTRAINT `FK_9ryl67smn61vqw2j0wrl3lxtw` FOREIGN KEY (`users_id`) REFERENCES `user` (`id`);
+-- ALTER TABLE `chat_room_users`
+  -- ADD CONSTRAINT `FK_8uci3ndco1sna4jf1t5u33lia` FOREIGN KEY (`rooms_from_users_id`) REFERENCES `chat_room` (`id`),
+  -- ADD CONSTRAINT `FK_9ryl67smn61vqw2j0wrl3lxtw` FOREIGN KEY (`users_id`) REFERENCES `user` (`id`);
   
   CREATE TABLE IF NOT EXISTS `user_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
