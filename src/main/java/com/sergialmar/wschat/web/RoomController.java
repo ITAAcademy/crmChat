@@ -85,7 +85,11 @@ public class RoomController {
 		System.out.println(room);//@LOG@
 		
 		Room room_o = roomService.getRoom(Long.parseLong(room));
+		if(room_o == null)
+			return false;
 		User user_o = userService.getUser(login);
+		if(user_o == null)
+			return false;
 		
 		User user = userService.getUser(principal.getName());
 		

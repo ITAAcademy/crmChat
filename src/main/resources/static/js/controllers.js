@@ -29,7 +29,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	var typing = undefined;
 
-	var serverPrefix = "";//"/crmChat";
+	var serverPrefix = "/crmChat";
 	var room = "default_room/";
 	var lastRoomBindings = [];
 
@@ -101,7 +101,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
-	$scope.newUser = '';
 	$scope.roomId		= '';
 
 	$scope.dialogName = '';
@@ -172,12 +171,12 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 	$scope.addUserToRoom=function(){
 		room=$scope.roomId+'/';
-		chatSocket.send("/app//chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.newUser), {}, JSON.stringify({}));
-		$scope.newUser = '';
+		chatSocket.send("/app//chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+		$scope.searchInputValue.email = '';
 		
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
-		    }, 1000);  
+		    }, 3000);  
 	}
 
 	$scope.sendMessage = function() {
