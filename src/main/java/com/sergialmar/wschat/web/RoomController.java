@@ -48,7 +48,7 @@ public class RoomController {
 	private ArrayList<Room> roomsArray; 
 
 	
-	@SubscribeMapping("/chat/rooms")
+	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public Map<Long, String> getRoomsByAuthorSubscribe(Principal principal) {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
