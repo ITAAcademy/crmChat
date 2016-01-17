@@ -62,7 +62,7 @@ public class ChatController {
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
-	
+
 
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
@@ -104,11 +104,24 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody
-	public String getEmailsLike(@RequestParam String login) throws JsonProcessingException {
-		List emails = userService.getUsersEmailsFist5(login);
+	public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
+
+		Set<User>  users_set = roomService.getRoom(room).getUsers();
+		List<User> users = new  ArrayList<User>();
+		users.addAll(users_set);
+
+		users.add(roomService.getRoom(room).getAuthor());
+		List<String> room_emails = new  ArrayList<String>();
+		for(int i = 0; i <  users.size(); i++)
+		{
+			room_emails.add(users.get(i).getEmail());
+		}
+
+		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);
+
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonInString = mapper.writeValueAsString(emails);
-		return jsonInString;
+					String jsonInString = mapper.writeValueAsString(emails);
+					return jsonInString;
 	}
 
 
