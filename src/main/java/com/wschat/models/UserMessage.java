@@ -1,5 +1,7 @@
 package com.wschat.models;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-public class UserMessage {
+public class UserMessage implements Serializable  {
 	
 	public UserMessage(){
 		

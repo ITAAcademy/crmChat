@@ -1,5 +1,6 @@
 package com.wschat.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity(name="ChatRoom")
-public class Room {
+public class Room implements Serializable {
 	@Id
 	@GeneratedValue
 	private Long id;

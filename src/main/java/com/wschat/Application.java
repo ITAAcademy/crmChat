@@ -6,7 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Import;
+
+import com.wschat.config.RedisDBConfig;
 
 @SpringBootApplication
 @Import(WebSocketTraceChannelInterceptorAutoConfiguration.class)
@@ -19,5 +22,6 @@ public class Application extends SpringBootServletInitializer  {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+		
 	}
 }

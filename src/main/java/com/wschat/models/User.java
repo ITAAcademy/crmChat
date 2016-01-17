@@ -1,6 +1,7 @@
 package com.wschat.models;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
   //@Index(columnList="login", unique = true), 
   @Index(columnList="email", unique = true)
 })*/
-public class User implements UserDetails{
+public class User implements UserDetails, Serializable{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
 	
