@@ -1,5 +1,8 @@
 package com.intita.wschat.services;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -8,11 +11,14 @@ import com.intita.wschat.config.RedisDBConfig;
 
 @Service
 public class RedisService {
-	public RedisService() {
-		/*   AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-	       ctx.register(RedisDBConfig.class);
-	       ctx.refresh();
-	       StringRedisTemplate stringRedisTemplate  = ctx.getBean(StringRedisTemplate.class);
+	@Autowired RedisDBConfig configureRedis;
+	
+	private StringRedisTemplate stringRedisTemplate;
+	
+	@PostConstruct
+	public void AutoUpdate() {
+		stringRedisTemplate = configureRedis.stringRedisTemplate();
+		
 	       // Using set to set value
 	       stringRedisTemplate.opsForValue().set("R", "Ram");
 	       stringRedisTemplate.opsForValue().set("S", "Shyam");
@@ -22,6 +28,7 @@ public class RedisService {
 	       //Using Hash Operation
 	       String mohan = "Mohan";
 	       stringRedisTemplate.opsForHash().put("M", String.valueOf(mohan.hashCode()),mohan);
-	       System.out.println(stringRedisTemplate.opsForHash().get("M", String.valueOf(mohan.hashCode())));*/
+	       System.out.println(stringRedisTemplate.opsForHash().get("M", String.valueOf(mohan.hashCode())));
 	}
+	
 }

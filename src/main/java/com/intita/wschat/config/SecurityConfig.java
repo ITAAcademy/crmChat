@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,21 +23,27 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-    
-  /*  @Autowired
+	@Autowired
+	private UserDetailsService userDetailsService;
+	@Autowired
+	private CustomAuthenticationProvider authenticationProvider;
+
+	private CustomFilter authenticationTokenFilter = new CustomFilter("");
+
+	/*  @Autowired
 	DataSource dataSource;
-    
+
     @Autowired
 	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-		
+
 	  auth.jdbcAuthentication().dataSource(dataSource)
 		.usersByUsernameQuery(
 			"select email,password, enabled from user where email=?")
@@ -44,56 +51,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			"select email, role from user_roles where username=?");
 	}	*/
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-    	http
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
 		.csrf().disable()
+		.addFilterBefore(authenticationTokenFilter, BasicAuthenticationFilter.class)
 		.formLogin()
-			.loginPage("/index.html")
-			 .passwordParameter("password")
-			//.defaultSuccessUrl("/chatFrame.html")
-			.permitAll()
-			.and()
+		.loginPage("/index.html")
+		.passwordParameter("password")
+		//.defaultSuccessUrl("/chatFrame.html")
+		.permitAll()
+		.and()
 		.logout()
-			.logoutSuccessUrl("/index.html")
-			.permitAll()
-			.and()
+		.logoutSuccessUrl("/index.html")
+		.permitAll()
+		.and()
 		.authorizeRequests()
-			.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails").permitAll()
-			.antMatchers("/websocket").hasRole("ADMIN")
-			.anyRequest().authenticated();
+		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails").permitAll()
+		.antMatchers("/websocket").hasRole("ADMIN")
+		.anyRequest().authenticated();
 
-        
-    }
-	private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
-    @Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		
-		auth.authenticationProvider(new AuthenticationProvider() {
-			
-			@Override
-			public boolean supports(Class<?> authentication) {
-				return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
-			}
-			
-			@Override
-			public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-				UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-				
-				List<GrantedAuthority> authorities = SECURE_ADMIN_PASSWORD.equals(token.getCredentials()) ? 
-														AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
-				System.out.println("OK");				
-				return new UsernamePasswordAuthenticationToken(token.getName()+ new Random(2000).nextInt(), token.getCredentials(), authorities);
-			}
-		});
+
 	}
-/*
+	private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
+		auth.authenticationProvider(authenticationProvider);
+	}
+	/*
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(new ShaPasswordEncoder());
           //  .passwordEncoder(new BCryptPasswordEncoder()); 
     }
-*/
+	 */
 }
 
 

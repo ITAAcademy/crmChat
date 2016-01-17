@@ -339,8 +339,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var formData = new FormData();
 
 	  // добавить к пересылке ещё пару ключ - значение
-	  formData.append("username", "initIntita");
-	  formData.append("password", "initIntita");
+	  formData.append("username", "student1@gmail.com");
+	  formData.append("password", "password");
 
 	  // отослать
 	  

@@ -9,8 +9,6 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Import;
 
-import com.intita.wschat.config.RedisDBConfig;
-
 @SpringBootApplication
 @Import(WebSocketTraceChannelInterceptorAutoConfiguration.class)
 public class Application extends SpringBootServletInitializer  {
