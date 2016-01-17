@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.sergialmar.wschat.models.User;
 
 
-
+//http://docs.spring.io/spring-data/jpa/docs/1.4.3.RELEASE/reference/html/jpa.repositories.html
 public interface UserRepository extends CrudRepository<User, Long> {
    User findByLogin(String login);
   //User findByEmail(String email);
