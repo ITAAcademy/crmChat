@@ -77,6 +77,11 @@ dependencies {
     compile("org.springframework.security:spring-security-messaging")
     compile("org.springframework.session:spring-session:$springSessionVersion")
     compile("org.apache.commons:commons-pool2:$commonsPoolVersion")
+    //compile  'org.springframework.boot:spring-boot-starter-redis:1.2.0.RELEASE'
+    
+    ////////////////
+    //			OLD
+    ////////////////
     /*compile("com.github.kstyrc:embedded-redis:$redisVersion")
     compile("io.projectreactor:reactor-core:${reactorVersion}")
 	compile("io.projectreactor:reactor-net:${reactorVersion}") {
