@@ -137,6 +137,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 
 	$scope.changeRoom=function(){
+		$scope.messages=[];
 		room=$scope.roomId+'/';
 		//onConnect();//NEED FIX
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;

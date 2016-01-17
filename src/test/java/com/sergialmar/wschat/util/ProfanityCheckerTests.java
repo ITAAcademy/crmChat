@@ -8,7 +8,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.wschat.util.ProfanityChecker;
+import com.intita.wschat.util.ProfanityChecker;
 
 public class ProfanityCheckerTests {
 
