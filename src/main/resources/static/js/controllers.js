@@ -23,7 +23,6 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 }])*/
 phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval, toaster, chatSocket) {
 
-	
 
 	$scope.emails = [];
 
@@ -313,6 +312,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	};
 	var initStompClient = function() {
+		
 		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
@@ -320,8 +320,52 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		});
 	};
+	function getXmlHttp(){
+		  var xmlhttp;
+		  try {
+		    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		  } catch (e) {
+		    try {
+		      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		    } catch (E) {
+		      xmlhttp = false;
+		    }
+		  }
+		  if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		    xmlhttp = new XMLHttpRequest();
+		  }
+		  return xmlhttp;
+		}
+	var formData = new FormData();
 
-	initStompClient();
+	  // добавить к пересылке ещё пару ключ - значение
+	  formData.append("username", "initIntita");
+	  formData.append("password", "initIntita");
+
+	  // отослать
+	  
+	  var xhr = getXmlHttp();
+	  xhr.open("POST", serverPrefix + "/index.html",false);
+	  xhr.onreadystatechange= function(){
+	        if (xhr.readyState==4 || xhr.readyState=="complete")
+	        {
+	    		initStompClient();
+	        }
+	    }
+	  xhr.send(formData);
+	 
+
+	  /*
+	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
+     .success(function (data, status, headers, config) {
+    	 console.log("YRAAAAAAAAAAAAAAAAAAA");
+    		initStompClient();
+     }
+     )
+     .error(function (data, status, header, config) {
+     });*/
+
+	
 	/*$scope.$on('$routeUpdate', function(scope, next, current) {
 			   console.log('address changed');
 			});*/

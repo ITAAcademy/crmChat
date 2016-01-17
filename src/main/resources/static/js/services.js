@@ -5,7 +5,7 @@
 angular.module('springChat.services', [])
 	.factory('ChatSocket', ['$rootScope', function($rootScope) {
 			var stompClient;
-			
+
 			var wrappedSocket = {
 					
 					init: function(url) {

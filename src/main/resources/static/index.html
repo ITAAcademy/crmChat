@@ -1,47 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="springChat">
-	<head>
-	  <meta charset="utf-8" />
-	  <title>Spring WebSocket Chat</title>
-	  
-	  <!-- Loading Bootstrap -->
-	  <link href="lib/flat-ui/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
-	
-	  <!-- Loading Flat UI -->
-	  <link href="lib/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
-	  
-	  <link href="css/chat.css" rel="stylesheet">	  
-	</head>
-	<body>
-		<div class="container">
-	        <div class="login">
-		        <div class="login-screen">
-		          <div class="login-icon">
-		            <h4>Welcome to <small>Spring WebSocket Chat</small></h4>
-		          </div>
-		
-		          <div class="login-form">
-		          	<p><small style="color:#666">Enter a nickname to join. If you want to become admin use the password 'rockandroll'</small></p>
-		          	<form method="post">
-			            <div class="form-group">
-			              <input type="text" class="form-control login-field" placeholder="Enter your name" name="username" />
-			              <label class="login-field-icon fui-user" for="login-name"> Username</label>
-			            </div>
-			
-			            <div class="form-group">
-			              <input type="password" class="form-control login-field" name="password" />
-			              <label class="login-field-icon fui-lock" for="login-pass"> Admin password </label>
-			            </div>
-			
-						<input class="btn btn-primary btn-lg btn-block"  type="submit" value="Log In"/>
-		            </form>
-		          </div>
-		        </div>
-		      </div>
-	    </div>
-	    <!-- /.container -->
-	
+<head>
+<meta charset="utf-8" />
+<title>Spring WebSocket Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="lib/flat-ui/dist/css/vendor/bootstrap.min.css"
+	rel="stylesheet">
+<link href="lib/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
+<link href="lib/angularjs-toaster/toaster.css" rel="stylesheet">
+
+<link href="css/chat.css" rel="stylesheet">
+</head>
+<body>
+
+	<div id="mainContainer" class="container"	ng-controller="ChatController">
+		<toaster-container></toaster-container>
 		
-	</body>
+		
+	
+		
+		<div class="row">
+			<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
+				<div class="collapse navbar-collapse" id="navbar-collapse-01">
+					<h1>Spring WebSocket Chat</h1>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a class="menu-ng-click" ng-click="goToDialogList()" target="_blank">Dialogs</a></li>
+						<li><a href="logout">Logout ({{username}})</a></li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</nav>
+			<!-- /navbar -->
+		</div>
+		<div ng-include="templateName"></div>
+
+	</div>
+	
+	
+	<!-- /.container -->
+
+	<!-- 3rd party -->
+	<script src="lib/angular/angular.js"></script>
+	<script src="lib/angular-animate/angular-animate.js"></script>
+	<script src="lib/angularjs-toaster/toaster.js"></script>
+	<script src="lib/angular-route/angular-route.js"></script>
+	<script src="lib/angular-resource/angular-resource.js"></script>
+	<script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
+	<script src="lib/sockjs/sockjs.js"></script>
+	<script src="lib/stomp/lib/stomp.js"></script>
+
+	<!-- App -->
+	<script src="js/app.js"></script>
+	<script src="js/controllers.js"></script>
+	<script src="js/services.js"></script>
+	<script src="js/directives.js"></script>
+</body>
 </html>
