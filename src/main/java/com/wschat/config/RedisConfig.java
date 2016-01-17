@@ -6,8 +6,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import redis.clients.jedis.JedisPoolConfig;
-//@Configuration
-//@EnableAutoConfiguration 
+@Configuration
+@EnableAutoConfiguration 
 public class RedisConfig {
 	@Bean
 	public RedisConnectionFactory jedisConnectionFactory() {
@@ -17,7 +17,7 @@ public class RedisConfig {
 		poolConfig.setTestOnReturn(true);
 		JedisConnectionFactory ob = new JedisConnectionFactory(poolConfig);
 		ob.setUsePool(true);
-		ob.setHostName("localhost");
+		ob.setHostName("127.0.0.1");
 		ob.setPort(6379);
 		return ob;
 	}

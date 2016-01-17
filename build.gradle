@@ -63,7 +63,7 @@ dependencies {
 	compile("org.apache.commons:commons-collections4:4.1")
 
 	compile("org.springframework.boot:spring-boot-starter")
-    //compile("org.springframework.boot:spring-boot-starter-redis")
+    compile("org.springframework.boot:spring-boot-starter-redis")
     compile("org.springframework.boot:spring-boot-starter-websocket")
     compile("org.springframework:spring-messaging")
     
