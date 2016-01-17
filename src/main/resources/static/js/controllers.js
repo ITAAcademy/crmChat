@@ -76,7 +76,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 //			alert($scope.emails);	
 			var request = $http({
 			    method: "get",
-			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email,//'/get_users_emails_like',
+			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
 			    data: null ,
 			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
