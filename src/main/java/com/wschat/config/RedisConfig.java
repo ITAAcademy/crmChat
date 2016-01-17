@@ -21,8 +21,10 @@ public class RedisConfig {
 		ob.setPort(6379);
 		return ob;
 	}
-	@Bean
+
+	@Bean(name = "RedisConf") 
 	public StringRedisTemplate  stringRedisTemplate(){
 		return new StringRedisTemplate(jedisConnectionFactory());
 	}
+	
 } 
