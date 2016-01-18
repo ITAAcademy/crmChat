@@ -11,7 +11,7 @@ Object.prototype.getKeyByValue = function( value ) {
 }
 
 
-var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource']);
+var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 /*.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
             .when('/', {
@@ -21,7 +21,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
                 reloadOnSearch: false
             });
 }])*/
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
 
 
 	$scope.emails = [];
@@ -339,7 +339,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var formData = new FormData();
 
 	  // добавить к пересылке ещё пару ключ - значение
-	  formData.append("username", "student1@gmail.com");
+	  var sessionValue =  $cookies['JSESSIONID'];
+		
+	  formData.append("username", sessionValue);
 	  formData.append("password", "password");
 
 	  // отослать

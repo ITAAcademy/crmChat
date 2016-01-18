@@ -40,7 +40,7 @@ public class CustomFilter implements Filter{
 		// principal is set in here as a header or parameter. you need to find out 
 		// what it's named to extract it
 		HttpServletRequest req = (HttpServletRequest) request;
-		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+		System.out.println(req.getSession().getId());
 		/*if (SecurityContextHolder.getContext().getAuthentication() == null) {
 			// in here, get your principal, and populate the auth object with 
 			// the right authorities

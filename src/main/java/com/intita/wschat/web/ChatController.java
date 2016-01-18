@@ -126,6 +126,7 @@ public class ChatController {
 		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);
 
 		ObjectMapper mapper = new ObjectMapper();
+
 					String jsonInString = mapper.writeValueAsString(emails);
 					return jsonInString;
 	}
