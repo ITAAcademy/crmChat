@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -70,6 +71,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
 		.anyRequest().authenticated();
+		
+		/*
+		 * ATENTION 
+		 * 
+		 */
+		 http.headers()
+		.frameOptions().sameOrigin()
+		.httpStrictTransportSecurity().disable();
+		 http.headers()
+		 .defaultsDisabled()
+		 .cacheControl();
+		
+
+		 //http.headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
+		
 
 
 	}
