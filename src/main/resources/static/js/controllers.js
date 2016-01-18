@@ -229,6 +229,10 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var onConnect = function(frame) {
 		console.log("onconnect");
 		$scope.username = frame.headers['user-name'];
+		
+		for (var ss in frame.body)			
+			console.log("======== ss   " + ss); 
+		
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );

@@ -1,5 +1,6 @@
 package com.intita.wschat.config;
 import java.io.IOException;
+import java.net.InterfaceAddress;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RedisService;
-
+import java.security.Principal;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider{
@@ -46,10 +47,21 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					e.printStackTrace();
 				} 
 //				System.out.println("Got " + o);
-				String IntitaId = (String) o.get("5189ad00951768aff20edc3fef6e92dd__id");
-				String ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId)).getId().toString();
+				String IntitaId = (String) o.get("f4821bafd2f64df86a3faaf7425e33bf__id");
+				String ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId)).getNickName().toString();
 
-				return new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
+				String[] s_list = new String[2];
+				s_list[0] = "kaka";
+				s_list[1] = "buka";
+				Principal principal = new Principal() {
+					
+					@Override
+					public String getName() {
+						// TODO Auto-generated method stub
+						return "kaka";
+					}
+				};
+				return new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
 	}
 
 	@Override
