@@ -43,8 +43,8 @@ public class ChatUsersService {
 	}
 
 	@Transactional
-	public List<String> getUsersNickNameFist5(String nickName, List<String> logins){
-		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( logins, nickName + "%");
+	public List<String> getUsersNickNameFist5(String nickName, List<String> excludedNicks){
+		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		List<String> nickNames = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)
 			nickNames.add(users.get(i).getNickName());

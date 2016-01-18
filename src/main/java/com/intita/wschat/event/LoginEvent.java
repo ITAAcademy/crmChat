@@ -9,9 +9,12 @@ import java.util.Date;
 public class LoginEvent {
 
 	private String username;
+	private Long chatUserId;
 	private Date time;
+	
 
-	public LoginEvent(String username) {
+	public LoginEvent(Long chatUserId,String username) {
+		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 	}
@@ -30,5 +33,13 @@ public class LoginEvent {
 
 	public void setTime(Date time) {
 		this.time = time;
+	}
+
+	public Long getChatUserId() {
+		return chatUserId;
+	}
+
+	public void setChatUserId(Long chatUserId) {
+		this.chatUserId = chatUserId;
 	}
 }

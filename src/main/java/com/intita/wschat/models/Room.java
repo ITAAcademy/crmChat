@@ -58,6 +58,14 @@ public class Room implements Serializable {
 	public Set<User> getUsers() {
 		return users;
 	}
+	public Set<ChatUser> getChatUsers(){
+		Set<ChatUser> chatUsers = new HashSet<ChatUser>();
+		for (User u : users){
+			chatUsers.add(u.getChatUser());
+		}
+		return chatUsers;
+	}
+	
 	public boolean addUser(User user) {
 		return users.add(user);
 	}

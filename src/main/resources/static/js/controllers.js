@@ -24,7 +24,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
 
 
-	$scope.emails = [];
+	$scope.nickNames = [];
 
 	var typing = undefined;
 
@@ -50,9 +50,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.show_search_list = true;
 
-	var getEmailsTimer;
+	var getNickNamesTimer;
 	
-	$scope.searchInputValue = {email: ""};
+	$scope.searchInputValue = {nickName: ""};
 
 	$scope.hideSearchList = function () {
 		setTimeout(function ()  {$scope.show_search_list = false; }, 20);
@@ -61,10 +61,10 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.showSearchList = function () {
 
 		$scope.show_search_list = true;
-		$scope.emails = [];
-		clearTimeout(getEmailsTimer);
+		$scope.nickNames = [];
+		clearTimeout(getNickNamesTimer);
 
-		getEmailsTimer = setTimeout(function () {
+		getNickNamesTimer = setTimeout(function () {
 			$scope.show_search_list = true;
 			/*var data = {"login=" + message,
 			var config = "";
@@ -72,30 +72,34 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			.then(function (data, status, headers, config) {		 			
 				$scope.emails = (data['data']);
 			});*/
-//			alert($scope.emails);	
+//			alert($scope.emails);
+			
+			var requestUrl = serverPrefix + "/get_users_nicknames_like?nickName=" + $scope.searchInputValue.nickName + "&room=" + $scope.roomId;
+			console.log("requestUrl:"+requestUrl);
 			var request = $http({
 			    method: "get",
-			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
+			    url: requestUrl,
 			    data: null ,
 			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
 			
 			request.success(function (data) {
-			$scope.emails = data;
+			$scope.nickNames = data;
+			console.log("nickNames:"+$scope.nickNames);
 			});
 			}, 500);
 	};
 
 	$scope.appendToSearchInput = function(value) {
-		$scope.searchInputValue.email = value;
+		$scope.searchInputValue.nickName = value;
 		$scope.show_search_list = false;
-		console.log($scope.searchInputValue.email);
+		console.log($scope.searchInputValue.nickName);
 	}
 
 
 
 	$scope.searchUserName = "";
-	$scope.username     = '';
+	$scope.chatUserId     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
 	$scope.dialogs = [];
@@ -105,12 +109,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
 
+
 	$scope.dialogName = '';
 
 
 	$scope.addDialog = function() {
 			console.log($scope.dialogName)
-			chatSocket.send("/app/chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
+			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 			
 			setTimeout(function(){ //@BAG@
 				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
@@ -180,8 +185,11 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 	$scope.addUserToRoom=function(){
 		room=$scope.roomId+'/';
-		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
-		$scope.searchInputValue.email = '';
+		var nickName = $scope.searchInputValue.nickName;
+		var chatUserIdToAdd = $scope.participants.getKeyByValue(nickName);
+		console.log("chatUserIdToAdd:"+chatUserIdToAdd);
+		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,chatUserIdToAdd), {}, JSON.stringify({}));
+		$scope.searchInputValue.nickName = '';
 		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
@@ -228,12 +236,12 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 	var onConnect = function(frame) {
 		console.log("onconnect");
-		$scope.username = frame.headers['user-name'];
+		$scope.chatUserId = frame.headers['user-name'];
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			$scope.participants = o["participants"];
 		});
 		lastRoomBindings.push(test);
 
@@ -256,7 +264,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
-					if(parsed.username == $scope.username) return;
+					if(parsed.username == $scope.chatUserId) return;
 
 					for(var index in $scope.participants) {
 						var participant = $scope.participants[index];
@@ -278,13 +286,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		 *
 		 */
 		
-		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
 			
         });
-		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
