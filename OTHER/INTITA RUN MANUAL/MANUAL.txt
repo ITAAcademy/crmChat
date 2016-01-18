@@ -37,6 +37,7 @@ return array(
 збережи.
 
 9. Скопіпасть файл crmChat\OTHER\configuration\php.ini в папку wamp\bin\php\php5.5.12 (заміни).
-10. Wamp -> Restart all services.
-11. запускай сайт localhost/IntITA/ ( в вампі в localhost є інтіта як проект, но там не відкриється - то наїбалово)
+10. Розпакуй IntITA в корень.
+11. Wamp -> Restart all services.
+12. запускай сайт localhost/IntITA/ ( в вампі в localhost є інтіта як проект, но там не відкриється - то наїбалово)
 От і все.
