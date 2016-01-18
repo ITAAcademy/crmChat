@@ -17,7 +17,9 @@ output = stunnel.log
 
 4. Збережи. вибери пункт меню Configuration -> Reload. Gui закрий, але в треї хай висить.
 5. Wamp -> Apach -> Apach modules -> rewrite_module (тикнеш по ньому, галочка поставиться і сервіс перезапуститься).
-6. Забери з гіта з мастера Інтіту. Скопіюй в wampa\www\ . Створи папку wamp\www\IntITA\protected\runtime
+6. Забери з гіта з мастера Інтіту. Скопіюй в wampa\www\ . 
+Створи папку wamp\www\IntITA\protected\runtime і wamp\www\IntITA\assets
+
 7. Імпортни базу qa_intita.
 8. В wamp\www\IntITA\protected\config\local.php відредагуй
 
