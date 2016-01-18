@@ -80,7 +80,9 @@ public class ChatController {
 		Room room = roomService.getRoom(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		userMessageService.addMessage(messageToSave);
-		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
+		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
+		
+		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		return message;
 	}
 

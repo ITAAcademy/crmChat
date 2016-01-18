@@ -124,14 +124,21 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
+		$scope.roomId = -44;
 	//	onConnect();
 	}
+	
+	
 
 	$scope.goToDialog = function(roomName) {
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
 		$scope.roomId = $scope.rooms.getKeyByValue(roomName);
+		
 		$scope.changeRoom();
+		setTimeout(function(){ 
+			$scope.rooms[$scope.roomId].nums = 0;
+		}, 1000);
 			//onConnect();
 	};
 
@@ -230,9 +237,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		console.log("onconnect");
 		$scope.username = frame.headers['user-name'];
 		
-		for (var ss in frame.body)			
-			console.log("======== ss   " + ss); 
-		
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
@@ -285,15 +289,32 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
-			console.log($scope.rooms);
-			
+			console.log($scope.rooms);	
         });
 		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
-			
         });
+		
+		
+		
+		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
+		
+			var num = JSON.parse(message.body);
+			//console.log("9999999999999999999 "+ num);
+			Object.keys($scope.rooms).forEach(function(value) {
+			//  console.log("PPPPPPPPPPPPPP " + value );
+			    if (value === num && $scope.roomId !== value)
+		    	{
+			    	$scope.rooms[value].nums++;
+			    	//console.log("SSSSSSSSSSSS  " + $scope.rooms[value].bool );
+		    	}
+		 });
+		});
+		
+		
+		
 		/*
 		 setTimeout(function(){ 
 

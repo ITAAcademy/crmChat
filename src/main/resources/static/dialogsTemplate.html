@@ -1,29 +1,28 @@
-		<div class="row">
-			<div class="col-xs-12 chat-box">
-				<h4>Dialogs [{{roomsCount}}]</h4>
-				<div class="share">
-					<ul ng-repeat="room in rooms">
-						<li>
-						 <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
-							<a href="" ng-click="goToDialog(room)">{{room}}</a>
-
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-10">
-				<div class="form-group">
-					<input id="newMessageInput" type="text" class="form-control"
+		
+<div class="row">
+    <div class="col-xs-12 chat-box">
+        <h4>Dialogs [{{roomsCount}}]</h4>
+        <div class="share">
+            <ul ng-repeat="room in rooms">
+                <li>                    
+                    <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
+                    <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
+                    <a href="" ng-click="goToDialog(room)">{{room.string}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-10">
+        <div class="form-group">
+            <input id="newMessageInput" type="text" class="form-control"
 						placeholder="Write name of new dialog and hit enter or click plus..."
 						ng-model="$parent.dialogName" ng-keyup="$event.keyCode == 13 ? addDialog():0"
 						 />
-						 
-				</div>
-			</div>
-			<div class="col-xs-2">
-				<span type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
-			</div>
-		</div>
-		
+        </div>
+    </div>
+    <div class="col-xs-2">
+        <span type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
+    </div>
+</div>

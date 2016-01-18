@@ -50,6 +50,21 @@ public class RoomController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUserServise;
+	
+	public class StringInt {
+		public String string;
+		public Integer nums;
+		
+		public StringInt() {
+			string = "";
+			nums = 0;
+		}
+		
+		public StringInt(String string, Integer nums) {
+			this.string = string;
+			this.nums = nums;
+		}
+	}
 
 	private ArrayList<Room> roomsArray; 
 
@@ -91,12 +106,24 @@ public class RoomController {
 	
 	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public Map<Long, String> getRoomsByAuthorSubscribe(Principal principal) {
+	public Map<Long, StringInt> getRoomsByAuthorSubscribe(Principal principal) { //000
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
 		
-		return getRoomsByAuthor(principal.getName());
+		Map<Long, String> rooms = getRoomsByAuthor(principal.getName());
+		
+		Map<Long, StringInt> result = new HashMap<Long, StringInt>();
+		
+		for (Map.Entry<Long, String> entry : rooms.entrySet())
+		{
+			Long key = entry.getKey();
+			StringInt sb = new StringInt(entry.getValue(), 0);
+			result.put(key, sb);
+		}
+		
+		return result;
 	}
+	
 	private Map<Long, String> getRoomsByAuthor(String name) {
 		
 		User currentUser = chatUserServise.getUsersFromChatUserId(Long.parseLong(name));
@@ -109,7 +136,7 @@ public class RoomController {
 		return convertToNameList(list);
 	}
 	@MessageMapping("/chat/rooms/user.{username}")
-	public Map<Long, String> getRoomsByAuthorMessage(Principal principal) {
+	public Map<Long, StringInt> getRoomsByAuthorMessage(Principal principal) {
 		return getRoomsByAuthorSubscribe(principal);
 	}
 	

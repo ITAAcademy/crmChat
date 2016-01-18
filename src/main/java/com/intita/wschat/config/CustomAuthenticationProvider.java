@@ -48,20 +48,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} 
 //				System.out.println("Got " + o);
 				String IntitaId = (String) o.get("f4821bafd2f64df86a3faaf7425e33bf__id");
-				String ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId)).getNickName().toString();
-
-				String[] s_list = new String[2];
-				s_list[0] = "kaka";
-				s_list[1] = "buka";
-				Principal principal = new Principal() {
-					
-					@Override
-					public String getName() {
-						// TODO Auto-generated method stub
-						return "kaka";
-					}
-				};
-				return new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
+				String ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId)).getId().toString();
+				return new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
 	}
 
 	@Override
