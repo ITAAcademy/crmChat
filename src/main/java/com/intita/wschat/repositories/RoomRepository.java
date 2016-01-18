@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 

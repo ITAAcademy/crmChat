@@ -12,11 +12,12 @@ public class ChatMessage {
 
 	private String username;
 	private String message;
+	private Long chatUserId;
 	public ChatMessage(){
 		
 	}
 	public ChatMessage(UserMessage usrMsg){
-		this.username = usrMsg.getAuthor().getLogin();
+		this.username = usrMsg.getAuthor().getNickName();
 		this.message = usrMsg.getBody();
 	}
 	
@@ -44,4 +45,11 @@ public class ChatMessage {
 	public String toString() {
 		return "ChatMessage ";
 	}
+	public Long getChatUserId() {
+		return chatUserId;
+	}
+	public void setChatUserId(Long chatUserId) {
+		this.chatUserId = chatUserId;
+	}
+	
 }

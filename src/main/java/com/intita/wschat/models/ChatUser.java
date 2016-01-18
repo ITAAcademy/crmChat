@@ -1,9 +1,17 @@
 package com.intita.wschat.models;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
@@ -12,13 +20,12 @@ import javax.validation.constraints.Size;
  * @author Zinchuk Roman
  */
 @Entity(name="chat_user")
-public class ChatUser {
+public class ChatUser implements Serializable {
 
 	public ChatUser(){
 		
 	}
-	public ChatUser(Long id, String nickName, User intitaUser){
-		this.id=id;
+	public ChatUser(String nickName, User intitaUser){
 		this.nickName=nickName;
 		this.intitaUser=intitaUser;
 	}
@@ -40,6 +47,8 @@ public String getNickName() {
 public void setNickName(String nickName) {
 	this.nickName = nickName;
 }
+
+
 @Id
 @GeneratedValue
 private Long id;
@@ -49,4 +58,7 @@ private User intitaUser;
 
 @Size(min = 0, max = 50)
 private String nickName;
+
+
+
 }
