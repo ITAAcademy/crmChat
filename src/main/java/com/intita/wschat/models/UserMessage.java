@@ -20,7 +20,7 @@ public class UserMessage implements Serializable  {
 	public UserMessage(){
 		
 	}
-	public UserMessage(User author, Room room, String body){
+	public UserMessage(ChatUser author, Room room, String body){
 	this.author = author;
 	this.room = room;
 	this.body = body;
@@ -33,7 +33,7 @@ public class UserMessage implements Serializable  {
 	//@NotBlank
 	@ManyToOne
 	@JsonManagedReference
-	private User author;
+	private ChatUser author;
 	
 	//@NotBlank
 	@ManyToOne
@@ -43,10 +43,10 @@ public class UserMessage implements Serializable  {
 	@Column
 	private String body;
 
-	public User getAuthor() {
+	public ChatUser getAuthor() {
 		return author;
 	}
-	public void setAuthor(User author) {
+	public void setAuthor(ChatUser author) {
 		this.author = author;
 	}
 	public Room getRoom() {

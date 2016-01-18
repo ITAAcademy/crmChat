@@ -33,9 +33,11 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -69,11 +71,14 @@ public class ChatController {
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
 		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
-
+	
 		message.setUsername(principal.getName());
-		User author = userService.getUser(principal.getName());
+		Long chatUserId = 0L;
+		chatUserId = Long.parseLong(principal.getName());
+		User author = userService.getUser(chatUserId);
+		ChatUser chatUser = author.getChatUser();
 		Room room = roomService.getRoom(Long.parseLong(roomStr));
-		UserMessage messageToSave = new UserMessage(author,room,message.getMessage());
+		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		userMessageService.addMessage(messageToSave);
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		return message;

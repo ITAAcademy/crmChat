@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Index;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -44,6 +46,10 @@ public class User implements UserDetails, Serializable{
 	@Size(min = 1, max = 255)
 	@Column(unique = false,name="email")
 	private String login;
+	
+	//@NotNull
+	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.EAGER)
+	private ChatUser chatUser;
 	
 	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
 	private Set<Room> rooms = new HashSet<>();
@@ -191,6 +197,14 @@ public class User implements UserDetails, Serializable{
 		@Override
 		public String getUsername() {
 			return getLogin();
+		}
+
+		public ChatUser getChatUser() {
+			return chatUser;
+		}
+
+		public void setChatUser(ChatUser chatUser) {
+			this.chatUser = chatUser;
 		}
 	  
 }
