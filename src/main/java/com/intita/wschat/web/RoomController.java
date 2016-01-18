@@ -28,6 +28,7 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -48,6 +49,7 @@ public class RoomController {
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
+	@Autowired private ChatUsersService chatUserServise;
 
 	private ArrayList<Room> roomsArray; 
 
@@ -92,12 +94,18 @@ public class RoomController {
 	public Map<Long, String> getRoomsByAuthorSubscribe(Principal principal) {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
+		
 		return getRoomsByAuthor(principal.getName());
 	}
 	private Map<Long, String> getRoomsByAuthor(String name) {
-		User currentUser = userService.getUser(name);
-		ArrayList<Room> list = new ArrayList<>(currentUser.getRootRooms());
-		list.addAll(currentUser.getRoomsFromUsers());
+		
+		User currentUser = chatUserServise.getUsersFromChatUserId(Long.parseLong(name));
+		ArrayList<Room> list = new ArrayList<>();
+		if(currentUser != null)
+		{
+			list.addAll(currentUser.getRootRooms());
+			list.addAll(currentUser.getRoomsFromUsers());
+		}
 		return convertToNameList(list);
 	}
 	@MessageMapping("/chat/rooms/user.{username}")

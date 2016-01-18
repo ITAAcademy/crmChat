@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-@Entity
+@Entity(name = "chat_user_message")
 public class UserMessage implements Serializable  {
 	
 	public UserMessage(){
