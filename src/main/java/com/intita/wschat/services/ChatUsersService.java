@@ -75,13 +75,11 @@ public class ChatUsersService {
 			{
 				tempChatUser = register(currentUser.getLogin(), currentUser);
 			}
-			
+
 		}
-		
-		
 		return tempChatUser;
 	}
-	
+
 	@Transactional
 	public User getUsersFromChatUserId(Long id) {
 		ChatUser cUser = getChatUser(id);
@@ -111,5 +109,5 @@ public class ChatUsersService {
 		return usersRepo.findOne(id);
 	}*/
 
-	
+
 }

@@ -12,18 +12,10 @@ Object.prototype.getKeyByValue = function( value ) {
 
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
-/*.config(['$routeProvider', function ($routeProvider) {
-    $routeProvider
-            .when('/', {
-                templateUrl: 'chat.html',
-                controller: 'ChatController',
-                controllerAs: 'chatController',
-                reloadOnSearch: false
-            });
-}])*/
+
 phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
 
-
+	$scope.templateName = null;
 	$scope.emails = [];
 
 	var typing = undefined;
@@ -104,6 +96,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
+	$scope.dialogShow = false;
 
 	$scope.dialogName = '';
 
@@ -118,8 +111,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			
 			$scope.dialogName = '';
 	};
-
-	$scope.templateName = 'dialogsTemplate.html';
 
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
@@ -228,10 +219,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 	var onConnect = function(frame) {
 		console.log("onconnect");
+		$scope.goToDialogList();
 		$scope.username = frame.headers['user-name'];
-		
-		for (var ss in frame.body)			
-			console.log("======== ss   " + ss); 
+	
 		
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
@@ -315,6 +305,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				}));
 
 	};
+	
 	var initStompClient = function() {
 		
 		chatSocket.init(serverPrefix+"/ws");
