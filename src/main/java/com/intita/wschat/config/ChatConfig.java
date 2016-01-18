@@ -84,4 +84,6 @@ public class ChatConfig {
 	public MessageMappingEndpoint messageMappingEndpoint() {
 		return new MessageMappingEndpoint();
 	}
+	
+	
 }
