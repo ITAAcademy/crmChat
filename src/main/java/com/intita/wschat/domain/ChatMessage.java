@@ -1,6 +1,7 @@
 package com.intita.wschat.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.intita.wschat.models.UserMessage;
 
@@ -13,12 +14,14 @@ public class ChatMessage {
 	private String username;
 	private String message;
 	private Long chatUserId;
+	private Date date;
 	public ChatMessage(){
-		
+		date = new Date();
 	}
 	public ChatMessage(UserMessage usrMsg){
 		this.username = usrMsg.getAuthor().getNickName();
 		this.message = usrMsg.getBody();
+		date = new Date();
 	}
 	
 	static public ArrayList<ChatMessage> getAllfromUserMessages (ArrayList<UserMessage> userMessages){
@@ -50,6 +53,12 @@ public class ChatMessage {
 	}
 	public void setChatUserId(Long chatUserId) {
 		this.chatUserId = chatUserId;
+	}
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
 	}
 	
 }

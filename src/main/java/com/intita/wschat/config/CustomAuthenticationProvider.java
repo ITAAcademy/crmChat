@@ -48,7 +48,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} 
 //				System.out.println("Got " + o);
 				String ChatId = "-1";
-				String IntitaId = (String) o.get("f4821bafd2f64df86a3faaf7425e33bf__id");
+				String IntitaId = (String) o.get("6262464d88d4bf21903276aad6c0655a__id");
 				
 				if(IntitaId != null)
 					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId)).getId().toString();
