@@ -1,6 +1,7 @@
 package com.intita.wschat.models;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +41,8 @@ public class Room implements Serializable {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-
+	
+	
 
 	@ManyToOne
 	private User author;
