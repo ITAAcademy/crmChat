@@ -169,7 +169,7 @@ public class RoomController {
 		if(room_o == null)
 			return false;
 	
-		ChatUser user_o = chatUserServise.getChatUser(nickName);
+		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
 		if(user_o == null)
 			return false;
 		

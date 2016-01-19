@@ -60,8 +60,22 @@ public class ChatUsersService {
 		return chatUsersRepo.findOne(id);
 	}
 	@Transactional
-	public ChatUser getChatUserFromIntitaId(Long id){
+	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){
 		User currentUser = userService.getById(id);
+		if(currentUser == null)
+		{
+			return register("ANONIM", null);
+		}
+		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
+		if(tempChatUser == null)
+		{
+			tempChatUser = register(currentUser.getLogin(), currentUser);
+		}
+		return tempChatUser;
+	}
+	@Transactional
+	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){
+		User currentUser = userService.getUser(email);
 		if(currentUser == null)
 		{
 			return register("ANONIM", null);
