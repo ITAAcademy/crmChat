@@ -24,7 +24,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
 
 
-	$scope.nickNames = [];
+	$scope.emails = [];
 
 	var typing = undefined;
 
@@ -50,9 +50,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.show_search_list = true;
 
-	var getNickNamesTimer;
+	var getEmailsTimer;
 	
-	$scope.searchInputValue = {nickName: ""};
+	$scope.searchInputValue = {email: ""};
 
 	$scope.hideSearchList = function () {
 		setTimeout(function ()  {$scope.show_search_list = false; }, 20);
@@ -61,10 +61,10 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.showSearchList = function () {
 
 		$scope.show_search_list = true;
-		$scope.nickNames = [];
-		clearTimeout(getNickNamesTimer);
+		$scope.emails = [];
+		clearTimeout(getEmailsTimer);
 
-		getNickNamesTimer = setTimeout(function () {
+		getEmailsTimer = setTimeout(function () {
 			$scope.show_search_list = true;
 			/*var data = {"login=" + message,
 			var config = "";
@@ -72,28 +72,24 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			.then(function (data, status, headers, config) {		 			
 				$scope.emails = (data['data']);
 			});*/
-//			alert($scope.emails);
-			
-			var requestUrl = serverPrefix + "/get_users_nicknames_like?nickName=" + $scope.searchInputValue.nickName + "&room=" + $scope.roomId;
-			console.log("requestUrl:"+requestUrl);
+//			alert($scope.emails);	
 			var request = $http({
 			    method: "get",
-			    url: requestUrl,
+			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
 			    data: null ,
 			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
 			
 			request.success(function (data) {
-			$scope.nickNames = data;
-			console.log("nickNames:"+$scope.nickNames);
+			$scope.emails = data;
 			});
 			}, 500);
 	};
 
 	$scope.appendToSearchInput = function(value) {
-		$scope.searchInputValue.nickName = value;
+		$scope.searchInputValue.email = value;
 		$scope.show_search_list = false;
-		console.log($scope.searchInputValue.nickName);
+		console.log($scope.searchInputValue.email);
 	}
 
 
@@ -118,7 +114,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 			
 			setTimeout(function(){ //@BAG@
-				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
+				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.chatUserId), {}, JSON.stringify({}));
 			    }, 1000);  
 			
 			$scope.dialogName = '';
@@ -185,11 +181,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 	$scope.addUserToRoom=function(){
 		room=$scope.roomId+'/';
-		var nickName = $scope.searchInputValue.nickName;
-		var chatUserIdToAdd = $scope.participants.getKeyByValue(nickName);
-		console.log("chatUserIdToAdd:"+chatUserIdToAdd);
-		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,chatUserIdToAdd), {}, JSON.stringify({}));
-		$scope.searchInputValue.nickName = '';
+		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+		$scope.searchInputValue.email = '';
 		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
@@ -218,7 +211,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			$scope.stopTyping();
 		}, 500);
 
-		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.username, typing: true}));
+		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: true}));
 	};
 
 	$scope.stopTyping = function() {
@@ -226,7 +219,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			$interval.cancel(typing);
 			typing = undefined;
 
-			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.username, typing: false}));
+			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: false}));
 
 		}
 	};

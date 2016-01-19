@@ -89,8 +89,8 @@ public class ChatUsersService {
 	}
 
 	@Transactional
-	public List<ChatUser> getChatUsers(String login) {
-		return chatUsersRepo.findByNickName(login);
+	public ChatUser getChatUser(String nickName) {
+		return chatUsersRepo.findOneByNickName(nickName);
 	}
 
 	@Transactional(readOnly = false)

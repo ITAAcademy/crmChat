@@ -76,8 +76,7 @@ public class ChatController {
 		
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
-		User author = userService.getUser(chatUserId);
-		ChatUser chatUser = author.getChatUser();
+		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
 		Room room = roomService.getRoom(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		message.setUsername(chatUser.getNickName());

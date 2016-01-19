@@ -7,12 +7,12 @@
             <div class="input-group input-group-sm search-control"> <span  ng-click="addUserToRoom()" class="input-group-addon">
                     <span class="glyphicon glyphicon-search"></span>
 </span>
-                <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.nickName" 
+                <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
                 ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
             </div>
             <div class="search-list" ng-show="$parent.show_search_list" >
 		    <ul aria-labelledby="dropdownMenu1"">
-		        <li role="presentation" ng-repeat='item in $parent.nickNames' ng-click="appendToSearchInput(item)"> <a> {{item}} </a>  
+		        <li role="presentation" ng-repeat='item in $parent.emails' ng-click="appendToSearchInput(item)"> <a> {{item}} </a>  
 		        </li>
 		    </ul>
 		    </div>

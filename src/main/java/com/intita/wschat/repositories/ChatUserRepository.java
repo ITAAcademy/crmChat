@@ -10,7 +10,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 
 public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
-	List<ChatUser> findByNickName(String nickName);
+	ChatUser findOneByNickName(String nickName);
 	   //User findByEmail(String email);
 	   Page<ChatUser> findById(Long id, Pageable pageable);
 	   ChatUser findById(Long id);

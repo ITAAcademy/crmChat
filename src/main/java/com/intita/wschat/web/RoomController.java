@@ -68,8 +68,7 @@ public class RoomController {
 					getChatUser().
 					getId(),
 					room_o.getAuthor().
-					getChatUser().
-					getNickName());
+					getEmail());
 			userList.add(currentChatUserLoginEvent);
 			for(User user : room_o.getUsers())
 			{
@@ -103,11 +102,11 @@ public class RoomController {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
 		
-		return getRoomsByAuthor(principal.getName());
+		return getRoomsByChatUserId(Long.parseLong(principal.getName()));
 	}
-	private Map<Long, String> getRoomsByAuthor(String name) {
+	private Map<Long, String> getRoomsByChatUserId(Long chatUserId) {
 		
-		User currentUser = chatUserServise.getUsersFromChatUserId(Long.parseLong(name));
+		User currentUser = chatUserServise.getUsersFromChatUserId(chatUserId);
 		ArrayList<Room> list = new ArrayList<>();
 		if(currentUser != null)
 		{
@@ -134,9 +133,9 @@ public class RoomController {
 		return true;
 	}
 	
-	@MessageMapping("/chat/rooms.{room}/user.add.{chatUserId}")
+	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public boolean addUserToRoom( @DestinationVariable("chatUserId") Long chatUserId, @DestinationVariable("room") String room, Principal principal) {
+	public boolean addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
 		//System.out.println(login);//@LOG@
@@ -146,21 +145,21 @@ public class RoomController {
 		if(room_o == null)
 			return false;
 	
-		User user_o = chatUserServise.getUsersFromChatUserId(chatUserId);
+		ChatUser user_o = chatUserServise.getChatUser(nickName);
 		if(user_o == null)
 			return false;
 		
-		Long chasUserAuthorId = Long.parseLong(principal.getName());
-		User authorUser = chatUserServise.getUsersFromChatUserId(chasUserAuthorId);
+		Long chatUserAuthorId = Long.parseLong(principal.getName());
+		User authorUser = chatUserServise.getUsersFromChatUserId(chatUserAuthorId);
 		
 		if(authorUser.getId() != room_o.getAuthor().getId())
 			return false;
-		
-		System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
+		roomService.addUserToRoom(user_o.getIntitaUser(), room_o);
+		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
-		String test = "/topic/chat/rooms/user." + user_o.getLogin();
-		System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
-		simpMessagingTemplate.convertAndSend(test, getRoomsByAuthor(user_o.getLogin()));
+		String test = "/topic/chat/rooms/user." + user_o.getId();
+		//System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
+		simpMessagingTemplate.convertAndSend(test, getRoomsByChatUserId(user_o.getId()));
 		
 		return true;
 	}
