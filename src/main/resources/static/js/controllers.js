@@ -309,6 +309,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				if (value === num && $scope.roomId !== value)
 				{
 					$scope.rooms[value].nums++;
+					new Audio('new_mess.mp3').play();
+					toaster.pop('note', "NewMessage in " + $scope.rooms[value].string, "",1000);
 					//console.log("SSSSSSSSSSSS  " + $scope.rooms[value].bool );
 				}
 			});
