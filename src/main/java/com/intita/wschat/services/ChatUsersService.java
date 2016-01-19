@@ -63,19 +63,13 @@ public class ChatUsersService {
 	public ChatUser getChatUserFromIntitaId(Long id){
 		User currentUser = userService.getById(id);
 		if(currentUser == null)
-			return null;
+		{
+			return register("ANONIM", null);
+		}
 		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
 		if(tempChatUser == null)
 		{
-			if(currentUser == null)
-			{
-				tempChatUser = register("ANONIM", null);
-			}
-			else
-			{
-				tempChatUser = register(currentUser.getLogin(), currentUser);
-			}
-
+			tempChatUser = register(currentUser.getLogin(), currentUser);
 		}
 		return tempChatUser;
 	}
