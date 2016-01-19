@@ -70,5 +70,9 @@ public class RedisService {
 	public String getKeyValue(String key) {
 		return  jedis.get(key);
 	}
+	
+	public void getValueByKey(String key, String value) {
+		jedis.set(key, value);
+	}
 
 }
