@@ -30,7 +30,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	ChatUsersService chatUserServise;
 	
 	 @Value("${redis.id}")
-	private String IntitaId;
+	private String redisId;
 
 
 	@Override
@@ -54,7 +54,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} 
 //				System.out.println("Got " + o);
 				String ChatId = "-1";
-				//String IntitaId = (String) o.get(env.getProperty("redis.id"));
+				String IntitaId = (String) o.get(redisId);
 				
 				
 				if(IntitaId != null)
