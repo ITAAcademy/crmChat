@@ -231,14 +231,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		$scope.goToDialogList();
 		$scope.chatUserId = frame.headers['user-name'];
 
-		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
-			var o = JSON.parse(message.body);
-			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
-			console.log(o);
-			$scope.participants = o["participants"];
-		});
-		lastRoomBindings.push(test);
-
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.login".format(room), function(message) {
 					$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
