@@ -1,6 +1,7 @@
 package com.intita.wschat.models;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,12 +19,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class UserMessage implements Serializable  {
 	
 	public UserMessage(){
-		
+		this.date= new Date();
 	}
-	public UserMessage(ChatUser author, Room room, String body){
+	public UserMessage(ChatUser author, Room room, String body){	
 	this.author = author;
 	this.room = room;
 	this.body = body;
+	this.date= new Date();
 	}
 	
 	@Id
@@ -42,6 +44,9 @@ public class UserMessage implements Serializable  {
 	@Size(max=64000)
 	@Column
 	private String body;
+	
+	@Column
+	private Date date;
 
 	public ChatUser getAuthor() {
 		return author;
@@ -66,6 +71,12 @@ public class UserMessage implements Serializable  {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
 	}
 	
 	
