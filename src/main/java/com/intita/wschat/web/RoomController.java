@@ -119,7 +119,7 @@ public class RoomController {
 
 		return getRoomsByChatUserId(Long.parseLong(principal.getName()));
 	}
-	private Map<Long, String> getRoomsByChatUserId(Long chatUserId) {
+	private Map<Long, StringInt> getRoomsByChatUserId(Long chatUserId) {
 		
 		User currentUser = chatUserServise.getUsersFromChatUserId(chatUserId);
 		ArrayList<Room> list = new ArrayList<>();
@@ -128,7 +128,16 @@ public class RoomController {
 			list.addAll(currentUser.getRootRooms());
 			list.addAll(currentUser.getRoomsFromUsers());
 		}
-		return convertToNameList(list);
+		Map<Long, String>  lista = convertToNameList(list);
+		Map<Long, StringInt> result = new HashMap <Long, StringInt> ();
+		
+		for (Map.Entry<Long, String> entry : lista.entrySet())
+		{
+			Long key = entry.getKey();
+			StringInt sb = new StringInt(entry.getValue(), 0);
+			result.put(key,sb);
+		}
+		return result;				
 	}
 	@MessageMapping("/chat/rooms/user.{username}")
 	public Map<Long, StringInt> getRoomsByAuthorMessage(Principal principal) {
