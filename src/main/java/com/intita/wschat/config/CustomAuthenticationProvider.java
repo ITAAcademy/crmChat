@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	RedisService redisService; 
 	@Autowired
 	ChatUsersService chatUserServise;
+	
+	 @Value("${redis.id}")
+	private String redisId;
+
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -50,7 +56,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} 
 //				System.out.println("Got " + o);
 				String ChatId = "-1";
-				String IntitaId = (String) o.get("5189ad00951768aff20edc3fef6e92dd__id");
+				String IntitaId = (String) o.get(redisId);
+				
 				
 				if(IntitaId != null)
 					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();

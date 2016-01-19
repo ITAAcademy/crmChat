@@ -1,5 +1,6 @@
 package com.intita.wschat.models;
 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +22,16 @@ import javax.validation.constraints.Size;
  */
 @Entity(name="chat_user")
 public class ChatUser implements Serializable {
+	 @OneToOne(mappedBy = "chatUser")
+	 ChatUserLastRoomDate chatUserLastRoomDate;
+	 
+	 public ChatUserLastRoomDate getChatUserLastRoomDate() {
+		 return chatUserLastRoomDate;
+	 }
+	 
+	 public void setChatUserLastRoomDate(ChatUserLastRoomDate value) {
+		 chatUserLastRoomDate = value;
+	 }
 
 	public ChatUser(){
 		
