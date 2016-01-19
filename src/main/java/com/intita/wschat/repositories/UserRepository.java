@@ -20,4 +20,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
   List<User> findFirst10ByIdNotIn(List<Long> users);
 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
   List<User> findFirst5ByLoginNotInAndLoginLike( List<String> users, String login);
+  
 }

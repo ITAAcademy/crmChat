@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
+import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.UserRepository;
 
 import org.apache.commons.collections4.IteratorUtils;
@@ -39,6 +40,9 @@ public class UsersService {
 
 	@Autowired
 	private UserRepository usersRepo;
+	
+	@Autowired
+	private ChatUsersService chatUsersService;
 
 	@PostConstruct
 	@Transactional
@@ -63,6 +67,8 @@ public class UsersService {
 		return emails;
 
 	}
+	
+	
 	@Transactional
 	public ArrayList<User> getUsers(){
 		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); // spring рахує сторінки з нуля

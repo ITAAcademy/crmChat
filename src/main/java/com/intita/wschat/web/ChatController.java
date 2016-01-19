@@ -65,6 +65,7 @@ public class ChatController {
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
+	@Autowired private ChatUsersService chatUsersService;
 
 
 	@MessageMapping("/{room}/chat.message")
@@ -72,13 +73,13 @@ public class ChatController {
 		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
 	
-		message.setUsername(principal.getName());
+		
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
-		User author = userService.getUser(chatUserId);
-		ChatUser chatUser = author.getChatUser();
+		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
 		Room room = roomService.getRoom(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		
@@ -131,6 +132,38 @@ public class ChatController {
 
 					String jsonInString = mapper.writeValueAsString(emails);
 					return jsonInString;
+	}
+	
+	@RequestMapping(value="/get_users_nicknames_like", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent>  getNickNamesLike(@RequestParam String nickName, @RequestParam Long room) throws JsonProcessingException {
+
+		Set<ChatUser>  users_set = roomService.getRoom(room).getChatUsers();
+		List<ChatUser> users = new  ArrayList<ChatUser>();
+		users.addAll(users_set);
+
+		users.add(roomService.getRoom(room).getAuthor().getChatUser());
+		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
+		
+		List<String> room_nicks = new  ArrayList<String>();
+		for(int i = 0; i <  users.size(); i++)
+		{
+			room_nicks.add(users.get(i).getNickName());
+		}
+
+		List<String> nicks = chatUsersService.getUsersNickNameFist5(nickName, room_nicks);
+		
+		for (ChatUser singleChatUser: users){
+			String nn = singleChatUser.getNickName();
+			if (!nicks.contains(nn))continue;
+			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn);
+			usersData.add(userData);	
+		}
+return usersData;
+		/*ObjectMapper mapper = new ObjectMapper();
+
+					String jsonInString = mapper.writeValueAsString(nicks);
+					return jsonInString;*/
 	}
 
 

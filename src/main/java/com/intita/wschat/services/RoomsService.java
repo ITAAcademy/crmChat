@@ -88,7 +88,11 @@ public class RoomsService {
 		addUserToRoom(user, room);		
 		return true;
 	}
-	
+	@Transactional(readOnly = false)
+	public boolean update(Room room){
+		roomRepo.save(room);
+		return true;
+	}
 
 	@Transactional(readOnly = false)
 	public boolean addUserByNameToRoom(Long id, String name) {

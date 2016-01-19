@@ -26,6 +26,7 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.services.ChatUsersService;
@@ -77,10 +78,16 @@ public class RoomController {
 			System.out.println(Long.parseLong(room));//@LOG@
 			Room room_o = roomService.getRoom(Long.parseLong(room));
 			Set<LoginEvent> userList = new HashSet<>();
-			userList.add(new LoginEvent(room_o.getAuthor().getUsername()));
+			//Set<Long> chatUsersIds = new HashSet<>();
+			LoginEvent currentChatUserLoginEvent = new LoginEvent(room_o.getAuthor().
+					getChatUser().
+					getId(),
+					room_o.getAuthor().
+					getEmail());
+			userList.add(currentChatUserLoginEvent);
 			for(User user : room_o.getUsers())
 			{
-				userList.add(new LoginEvent(user.getUsername()));
+				userList.add(new LoginEvent(user.getChatUser().getId(),user.getChatUser().getNickName()));
 			}
 			ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessageService.getUserMessagesByRoom(room_o));
 			HashMap<String, Object> map = new HashMap();
@@ -109,24 +116,12 @@ public class RoomController {
 	public Map<Long, StringInt> getRoomsByAuthorSubscribe(Principal principal) { //000
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
-		
-		Map<Long, String> rooms = getRoomsByAuthor(principal.getName());
-		
-		Map<Long, StringInt> result = new HashMap<Long, StringInt>();
-		
-		for (Map.Entry<Long, String> entry : rooms.entrySet())
-		{
-			Long key = entry.getKey();
-			StringInt sb = new StringInt(entry.getValue(), 0);
-			result.put(key, sb);
-		}
-		
-		return result;
+
+		return getRoomsByChatUserId(Long.parseLong(principal.getName()));
 	}
-	
-	private Map<Long, String> getRoomsByAuthor(String name) {
+	private Map<Long, String> getRoomsByChatUserId(Long chatUserId) {
 		
-		User currentUser = chatUserServise.getUsersFromChatUserId(Long.parseLong(name));
+		User currentUser = chatUserServise.getUsersFromChatUserId(chatUserId);
 		ArrayList<Room> list = new ArrayList<>();
 		if(currentUser != null)
 		{
@@ -146,38 +141,40 @@ public class RoomController {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
 
 		System.out.println(principal.getName());//@LOG@
-		User user = userService.getUser(principal.getName());
+		Long chatUserId = Long.parseLong(principal.getName());
+		User user = chatUserServise.getUsersFromChatUserId(chatUserId);
 		roomService.register(name, user);
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + principal.getName(), getRoomsByAuthorMessage(principal));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorMessage(principal));
 		return true;
 	}
 	
-	@MessageMapping("/chat/rooms.{room}/user.add.{login}")
+	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public boolean addUserToRoom( @DestinationVariable("login") String login, @DestinationVariable("room") String room, Principal principal) {
+	public boolean addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
-		System.out.println(login);//@LOG@
+		//System.out.println(login);//@LOG@
 		System.out.println(room);//@LOG@
 		
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		if(room_o == null)
 			return false;
-		
-		User user_o = userService.getUser(login);
+	
+		ChatUser user_o = chatUserServise.getChatUser(nickName);
 		if(user_o == null)
 			return false;
 		
-		User user = userService.getUser(principal.getName());
+		Long chatUserAuthorId = Long.parseLong(principal.getName());
+		User authorUser = chatUserServise.getUsersFromChatUserId(chatUserAuthorId);
 		
-		if(user.getId() != room_o.getAuthor().getId())
+		if(authorUser.getId() != room_o.getAuthor().getId())
 			return false;
-		
-		System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
+		roomService.addUserToRoom(user_o.getIntitaUser(), room_o);
+		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
-		String test = "/topic/chat/rooms/user." + user_o.getLogin();
-		System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
-		simpMessagingTemplate.convertAndSend(test, getRoomsByAuthor(user_o.getLogin()));
+		String test = "/topic/chat/rooms/user." + user_o.getId();
+		//System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
+		simpMessagingTemplate.convertAndSend(test, getRoomsByChatUserId(user_o.getId()));
 		
 		return true;
 	}

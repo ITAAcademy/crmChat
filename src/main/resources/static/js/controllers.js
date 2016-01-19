@@ -87,7 +87,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 
 	$scope.searchUserName = "";
-	$scope.username     = '';
+	$scope.chatUserId     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
 	$scope.dialogs = [];
@@ -98,15 +98,16 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.roomId		= '';
 	$scope.dialogShow = false;
 
+
 	$scope.dialogName = '';
 
 
 	$scope.addDialog = function() {
 			console.log($scope.dialogName)
-			chatSocket.send("/app/chat/rooms/add.{0}".format($scope.dialogName), {}, JSON.stringify({}));
+			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 			
 			setTimeout(function(){ //@BAG@
-				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.username), {}, JSON.stringify({}));
+				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.chatUserId), {}, JSON.stringify({}));
 			    }, 1000);  
 			
 			$scope.dialogName = '';
@@ -208,7 +209,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			$scope.stopTyping();
 		}, 500);
 
-		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.username, typing: true}));
+		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: true}));
 	};
 
 	$scope.stopTyping = function() {
@@ -216,7 +217,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			$interval.cancel(typing);
 			typing = undefined;
 
-			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.username, typing: false}));
+			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: false}));
 
 		}
 	};
@@ -226,15 +227,15 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 	var onConnect = function(frame) {
 		console.log("onconnect");
-		$scope.goToDialogList();
-		$scope.username = frame.headers['user-name'];
 
-		
+		$scope.goToDialogList();
+		$scope.chatUserId = frame.headers['user-name'];
+
 		var test = chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
 			console.log(o);
-			$scope.participants = o;
+			$scope.participants = o["participants"];
 		});
 		lastRoomBindings.push(test);
 
@@ -257,7 +258,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
-					if(parsed.username == $scope.username) return;
+					if(parsed.username == $scope.chatUserId) return;
 
 					for(var index in $scope.participants) {
 						var participant = $scope.participants[index];
@@ -279,12 +280,12 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		 *
 		 */
 		
-		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);	
         });
-		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.username), function(message) {// event update
+		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
