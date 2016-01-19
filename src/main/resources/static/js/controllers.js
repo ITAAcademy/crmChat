@@ -2,12 +2,12 @@
 
 /* Controllers */
 Object.prototype.getKeyByValue = function( value ) {
-    for( var prop in this ) {
-        if( this.hasOwnProperty( prop ) ) {
-             if( this[ prop ] === value )
-                 return prop;
-        }
-    }
+	for( var prop in this ) {
+		if( this.hasOwnProperty( prop ) ) {
+			if( this[ prop ] === value )
+				return prop;
+		}
+	}
 }
 
 
@@ -43,7 +43,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.show_search_list = true;
 
 	var getEmailsTimer;
-	
+
 	$scope.searchInputValue = {email: ""};
 
 	$scope.hideSearchList = function () {
@@ -66,16 +66,16 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			});*/
 //			alert($scope.emails);	
 			var request = $http({
-			    method: "get",
-			    url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
-			    data: null ,
-			    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+				method: "get",
+				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
+				data: null ,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
-			
+
 			request.success(function (data) {
-			$scope.emails = data;
+				$scope.emails = data;
 			});
-			}, 500);
+		}, 500);
 	};
 
 	$scope.appendToSearchInput = function(value) {
@@ -103,41 +103,39 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 
 	$scope.addDialog = function() {
-			console.log($scope.dialogName)
-			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
-			
-			setTimeout(function(){ //@BAG@
-				chatSocket.send("/app/chat/rooms/user.{0}".format($scope.chatUserId), {}, JSON.stringify({}));
-			    }, 1000);  
-			
-			$scope.dialogName = '';
+		console.log($scope.dialogName)
+		chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
+
+		setTimeout(function(){ //@BAG@
+			chatSocket.send("/app/chat/rooms/user.{0}".format($scope.chatUserId), {}, JSON.stringify({}));
+		}, 1000);  
+
+		$scope.dialogName = '';
 	};
 
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
 		$scope.roomId = -44;
-	//	onConnect();
 	}
-	
-	
+
+
 
 	$scope.goToDialog = function(roomName) {
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
 		$scope.roomId = $scope.rooms.getKeyByValue(roomName);
-		
+
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
 		}, 1000);
-			//onConnect();
 	};
+	
 
 	$scope.changeRoom=function(){
 		$scope.messages=[];
 		room=$scope.roomId+'/';
-		//onConnect();//NEED FIX
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 
@@ -148,11 +146,11 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				subscription.unsubscribe();
 			}
 		}
-		
+
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
-					
+
 				}));
 		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
@@ -173,7 +171,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		}));
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
-	
+
 	$scope.addRoom=function(name){
 		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
 	}
@@ -228,23 +226,40 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var onConnect = function(frame) {
 		console.log("onconnect");
 
-		$scope.goToDialogList();
+
 		$scope.chatUserId = frame.headers['user-name'];
 
+
+
 		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.login".format(room), function(message) {
-					$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
+				chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
+					//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
+					//console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOn");
+					var mess_obj = JSON.parse(message.body);
+					if(mess_obj.nextWindow == 0)
+					{
+						$scope.goToDialogList();
+					}
+					else
+					{
+						$scope.roomId = mess_obj.nextWindow;
+						$scope.templateName = 'chatTemplate.html';
+						$scope.changeRoom();
+						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
+					}
+					
+					
 				}));
 
 		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.logout".format(room), function(message) {
-					var username = JSON.parse(message.body).username;
+				chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
+					/*	var username = JSON.parse(message.body).username;
 					for(var index in $scope.participants) {
 						if($scope.participants[index].username == username) {
 							$scope.participants.splice(index, 1);
 						}
 					}
-
+					 */
 				}));
 
 		lastRoomBindings.push(
@@ -271,44 +286,44 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		 *Room
 		 *
 		 */
-		
+
 		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);	
-        });
+		});
 		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
-        });
-		
-		
-		
+		});
+
+
+
 		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
-		
+
 			var num = JSON.parse(message.body);
 			//console.log("9999999999999999999 "+ num);
 			Object.keys($scope.rooms).forEach(function(value) {
-			//  console.log("PPPPPPPPPPPPPP " + value );
-			    if (value === num && $scope.roomId !== value)
-		    	{
-			    	$scope.rooms[value].nums++;
-			    	//console.log("SSSSSSSSSSSS  " + $scope.rooms[value].bool );
-		    	}
-		 });
+				//  console.log("PPPPPPPPPPPPPP " + value );
+				if (value === num && $scope.roomId !== value)
+				{
+					$scope.rooms[value].nums++;
+					//console.log("SSSSSSSSSSSS  " + $scope.rooms[value].bool );
+				}
+			});
 		});
-		
-		
-		
+
+
+
 		/*
 		 setTimeout(function(){ 
 
 			 chatSocket.send("/app/chat/rooms", {}, JSON.stringify({}));
 			 chatSocket.send("/app//chat/rooms.1/user.add.user", {}, JSON.stringify({}));
 		    }, 3000);  
-		 
-		*/
+
+		 */
 		lastRoomBindings.push(
 				chatSocket.subscribe("/user/exchange/amq.direct/{0}chat.message".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
@@ -322,9 +337,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				}));
 
 	};
-	
+
 	var initStompClient = function() {
-		
+
 		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
@@ -333,43 +348,43 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		});
 	};
 	function getXmlHttp(){
-		  var xmlhttp;
-		  try {
-		    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		  } catch (e) {
-		    try {
-		      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		    } catch (E) {
-		      xmlhttp = false;
-		    }
-		  }
-		  if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-		    xmlhttp = new XMLHttpRequest();
-		  }
-		  return xmlhttp;
+		var xmlhttp;
+		try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (E) {
+				xmlhttp = false;
+			}
 		}
+		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+			xmlhttp = new XMLHttpRequest();
+		}
+		return xmlhttp;
+	}
 	var formData = new FormData();
 
-	  // добавить к пересылке ещё пару ключ - значение
-	  var sessionValue =  $cookies['JSESSIONID'];
-		
-	  formData.append("username", sessionValue);
-	  formData.append("password", "password");
+	// добавить к пересылке ещё пару ключ - значение
+	var sessionValue =  $cookies['JSESSIONID'];
 
-	  // отослать
-	  
-	  var xhr = getXmlHttp();
-	  xhr.open("POST", serverPrefix + "/index.html",false);
-	  xhr.onreadystatechange= function(){
-	        if (xhr.readyState==4 || xhr.readyState=="complete")
-	        {
-	    		initStompClient();
-	        }
-	    }
-	  xhr.send(formData);
-	 
+	formData.append("username", sessionValue);
+	formData.append("password", "password");
 
-	  /*
+	// отослать
+
+	var xhr = getXmlHttp();
+	xhr.open("POST", serverPrefix + "/index.html",false);
+	xhr.onreadystatechange= function(){
+		if (xhr.readyState==4 || xhr.readyState=="complete")
+		{
+			initStompClient();
+		}
+	}
+	xhr.send(formData);
+
+
+	/*
 	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
      .success(function (data, status, headers, config) {
     	 console.log("YRAAAAAAAAAAAAAAAAAAA");
@@ -379,7 +394,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
      .error(function (data, status, header, config) {
      });*/
 
-	
+
 	/*$scope.$on('$routeUpdate', function(scope, next, current) {
 			   console.log('address changed');
 			});*/

@@ -14,8 +14,10 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RedisService;
 import java.security.Principal;
@@ -30,7 +32,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-
+	//	System.out.println("!!Authentication!! name= " + authentication.getName());
 		List<GrantedAuthority> authorities = "ADMIN".equals(token.getCredentials()) ? 
 				AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
 				//System.out.println(		RequestContextHolder.currentRequestAttributes().getSessionId());
@@ -38,7 +40,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				JsonFactory factory = new JsonFactory(); 
 				ObjectMapper mapper = new ObjectMapper(factory); 
 				TypeReference<HashMap<String,Object>>typeRef  = new TypeReference<HashMap<String,Object>>() {};
-
+				
 				HashMap<String, Object> o = null;
 				try {
 					o = mapper.readValue(json, typeRef);
@@ -53,7 +55,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				if(IntitaId != null)
 					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();
 				else
-					ChatId = chatUserServise.getChatUserFromIntitaId((long) -1, true).getId().toString();
+				{
+					Object obj = o.get("chat_id");
+					if(obj == null)
+					{
+						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
+						ChatId = c_u_temp.getId().toString();
+						o.put("chat_id", c_u_temp.getId().toString());	
+						try {
+							redisService.setValueByKey(authentication.getName(), mapper.writeValueAsString(o));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						}
+					}
+					else
+					{
+						ChatId = (String) obj;
+					}
+				}
 				return new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
 	}
 

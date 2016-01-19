@@ -34,14 +34,15 @@ public class ChatTenant implements Serializable {
 	@GeneratedValue
 	private Long id;
 
-	private Long userId; 
+	@OneToOne(fetch = FetchType.EAGER)
+	private ChatUser chatUser; 
 
 	public ChatTenant(){
 
 	}
-	public ChatTenant(Long id, Long user_id){
+	public ChatTenant(Long id, ChatUser user_id){
 		this.id=id;
-		this.userId=user_id;
+		this.chatUser=user_id;
 	}
 	public Long getId() {
 		return id;
@@ -49,12 +50,12 @@ public class ChatTenant implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	public ChatUser getChatUser() {
+		return chatUser;
+	}
+	public void setChatUser(ChatUser chatUser) {
+		this.chatUser = chatUser;
+	}
 
-	public Long getUserId() {
-		return userId;
-	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
 }
 

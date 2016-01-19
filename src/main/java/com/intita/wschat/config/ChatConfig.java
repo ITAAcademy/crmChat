@@ -26,8 +26,8 @@ public class ChatConfig {
 		private Destinations() {
 		}
 
-		private static final String LOGIN = "/topic/chat.login";
-		private static final String LOGOUT = "/topic/chat.logout";
+		public static final String LOGIN = "/topic/chat.login";
+		public static final String LOGOUT = "/topic/chat.logout";
 	}
 
 	private static final int MAX_PROFANITY_LEVEL = 5;

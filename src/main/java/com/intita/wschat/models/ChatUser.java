@@ -59,6 +59,25 @@ private User intitaUser;
 @Size(min = 0, max = 50)
 private String nickName;
 
+@OneToOne(mappedBy = "chatUser",fetch = FetchType.EAGER)
+private ChatTenant chatUser;
+
+
+@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+private Set<Room> rooms = new HashSet<>();
+
+@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+private List<UserMessage> messages = new ArrayList<>();
+
+@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+private Set<Room> roomsFromUsers = new HashSet<>();
+public Set<Room> getRootRooms() {
+	return rooms;
+}
+
+public Set<Room> getRoomsFromUsers() {
+	return roomsFromUsers;
+}
 
 
 }

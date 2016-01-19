@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
@@ -27,6 +28,7 @@ public class RoomsService {
 	@Autowired
 	private RoomRepository roomRepo;
 	@Autowired private UsersService userService;
+	@Autowired private ChatUsersService chatUserService;
 	
 	@PostConstruct
 	@Transactional
@@ -66,14 +68,15 @@ public class RoomsService {
 	}
 	
 	@Transactional(readOnly = false)
-	public void register(String name, User author) {
+	public Room register(String name, ChatUser author) {
 		Room r = new Room();
 		r.setAuthor(author);
 		r.setName(name);
 		roomRepo.save(r);
+		return r;
 	}
 	@Transactional(readOnly = false)
-	public boolean unRegister(String name, User author) {
+	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);
 		if(!author.getRootRooms().contains(room))
 			return false;
@@ -85,7 +88,7 @@ public class RoomsService {
 	@Transactional(readOnly = false)
 	public boolean addUserToRoom(Long id, User user) {
 		Room room = roomRepo.findOne(id);
-		addUserToRoom(user, room);		
+		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
 	@Transactional(readOnly = false)
@@ -97,12 +100,11 @@ public class RoomsService {
 	@Transactional(readOnly = false)
 	public boolean addUserByNameToRoom(Long id, String name) {
 		Room room = roomRepo.findOne(id);
-		User user = userService.getUser(name);
-		return addUserToRoom(user, room);
+		return addUserToRoom(chatUserService.getChatUser(name), room);
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean addUserToRoom(User user, Room room) {
+	public boolean addUserToRoom(ChatUser user, Room room) {
 		if(room == null)
 			return false;
 		if(user == null)

@@ -79,15 +79,12 @@ public class RoomController {
 			Room room_o = roomService.getRoom(Long.parseLong(room));
 			Set<LoginEvent> userList = new HashSet<>();
 			//Set<Long> chatUsersIds = new HashSet<>();
-			LoginEvent currentChatUserLoginEvent = new LoginEvent(room_o.getAuthor().
-					getChatUser().
-					getId(),
-					room_o.getAuthor().
-					getEmail());
+			LoginEvent currentChatUserLoginEvent = new LoginEvent(room_o.getAuthor().getId(),
+					room_o.getAuthor().getNickName());
 			userList.add(currentChatUserLoginEvent);
-			for(User user : room_o.getUsers())
+			for(ChatUser user : room_o.getUsers())
 			{
-				userList.add(new LoginEvent(user.getChatUser().getId(),user.getChatUser().getNickName()));
+				userList.add(new LoginEvent(user.getId(),user.getNickName()));
 			}
 			ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessageService.getUserMessagesByRoom(room_o));
 			HashMap<String, Object> map = new HashMap();
@@ -121,7 +118,7 @@ public class RoomController {
 	}
 	private Map<Long, StringInt> getRoomsByChatUserId(Long chatUserId) {
 		
-		User currentUser = chatUserServise.getUsersFromChatUserId(chatUserId);
+		ChatUser currentUser = chatUserServise.getChatUser(chatUserId);
 		ArrayList<Room> list = new ArrayList<>();
 		if(currentUser != null)
 		{
@@ -151,7 +148,7 @@ public class RoomController {
 
 		System.out.println(principal.getName());//@LOG@
 		Long chatUserId = Long.parseLong(principal.getName());
-		User user = chatUserServise.getUsersFromChatUserId(chatUserId);
+		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		roomService.register(name, user);
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorMessage(principal));
 		return true;
@@ -174,11 +171,11 @@ public class RoomController {
 			return false;
 		
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
-		User authorUser = chatUserServise.getUsersFromChatUserId(chatUserAuthorId);
+		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 		
 		if(authorUser.getId() != room_o.getAuthor().getId())
 			return false;
-		roomService.addUserToRoom(user_o.getIntitaUser(), room_o);
+		roomService.addUserToRoom(user_o, room_o);
 		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
 		String test = "/topic/chat/rooms/user." + user_o.getId();

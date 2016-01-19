@@ -50,15 +50,7 @@ public class User implements UserDetails, Serializable{
 	//@NotNull
 	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.EAGER)
 	private ChatUser chatUser;
-	
-	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
-	private Set<Room> rooms = new HashSet<>();
-	
-	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
-	private List<UserMessage> messages = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-	private Set<Room> roomsFromUsers = new HashSet<>();
 	
 /*	@NotBlank
 	  @Size(min = 1, max = 512)
@@ -71,14 +63,7 @@ public class User implements UserDetails, Serializable{
 		return isAdmin;
 	}*/
 
-
-	public Set<Room> getRootRooms() {
-		return rooms;
-	}
-
-	public Set<Room> getRoomsFromUsers() {
-		return roomsFromUsers;
-	}
+	
 
 	@NotBlank
     @Size(min = 1, max = 100)

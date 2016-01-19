@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -28,15 +29,18 @@ import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.config.ChatConfig.Destinations;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -66,14 +70,34 @@ public class ChatController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUsersService;
+	@Autowired private ChatTenantService ChatTenantService;
 
-
+	@SubscribeMapping("/chat.login/{username}")
+	public Map<String, Long> login(Principal principal)//Control user page after auth 
+	{
+		Map<String, Long> result = new HashMap<>();
+		ChatUser user = chatUsersService.getChatUser(Long.parseLong(principal.getName()));
+		if(user.getIntitaUser() == null)
+		{
+			ChatTenant t_user = ChatTenantService.getChatTenant((long) 1);//choose method
+			Room room;
+			
+			if(user.getRoomsFromUsers().iterator().hasNext())
+				room = user.getRoomsFromUsers().iterator().next();
+			else
+				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
+			roomService.addUserToRoom(user, room);
+			result.put("nextWindow", room.getId());
+		}
+		else
+		{
+			result.put("nextWindow", (long) 0);
+		}
+		return result;
+	}
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
-		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
-	
-		
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
 		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
@@ -81,8 +105,6 @@ public class ChatController {
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
-		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
-		
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		return message;
 	}
@@ -115,25 +137,25 @@ public class ChatController {
 	@ResponseBody
 	public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
 
-		Set<User>  users_set = roomService.getRoom(room).getUsers();
-		List<User> users = new  ArrayList<User>();
+		Set<ChatUser>  users_set = roomService.getRoom(room).getUsers();
+		List<ChatUser> users = new  ArrayList<ChatUser>();
 		users.addAll(users_set);
 
 		users.add(roomService.getRoom(room).getAuthor());
 		List<String> room_emails = new  ArrayList<String>();
 		for(int i = 0; i <  users.size(); i++)
 		{
-			room_emails.add(users.get(i).getEmail());
+			room_emails.add(users.get(i).getNickName());
 		}
 
 		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);
 
 		ObjectMapper mapper = new ObjectMapper();
 
-					String jsonInString = mapper.writeValueAsString(emails);
-					return jsonInString;
+		String jsonInString = mapper.writeValueAsString(emails);
+		return jsonInString;
 	}
-	
+
 	@RequestMapping(value="/get_users_nicknames_like", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent>  getNickNamesLike(@RequestParam String nickName, @RequestParam Long room) throws JsonProcessingException {
@@ -142,9 +164,9 @@ public class ChatController {
 		List<ChatUser> users = new  ArrayList<ChatUser>();
 		users.addAll(users_set);
 
-		users.add(roomService.getRoom(room).getAuthor().getChatUser());
+		users.add(roomService.getRoom(room).getAuthor());
 		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
-		
+
 		List<String> room_nicks = new  ArrayList<String>();
 		for(int i = 0; i <  users.size(); i++)
 		{
@@ -152,14 +174,14 @@ public class ChatController {
 		}
 
 		List<String> nicks = chatUsersService.getUsersNickNameFist5(nickName, room_nicks);
-		
+
 		for (ChatUser singleChatUser: users){
 			String nn = singleChatUser.getNickName();
 			if (!nicks.contains(nn))continue;
 			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn);
 			usersData.add(userData);	
 		}
-return usersData;
+		return usersData;
 		/*ObjectMapper mapper = new ObjectMapper();
 
 					String jsonInString = mapper.writeValueAsString(nicks);

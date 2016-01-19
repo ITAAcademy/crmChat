@@ -1,7 +1,9 @@
 package com.intita.wschat.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -62,23 +64,18 @@ public class ChatUsersService {
 	@Transactional
 	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){
 		User currentUser = userService.getById(id);
-		if(currentUser == null)
-		{
-			return register("ANONIM", null);
-		}
-		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
-		if(tempChatUser == null)
-		{
-			tempChatUser = register(currentUser.getLogin(), currentUser);
-		}
-		return tempChatUser;
+		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
 	@Transactional
 	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){
 		User currentUser = userService.getUser(email);
+		return getChatUserFromIntitaUser(currentUser, createGuest);
+	}
+	@Transactional
+	public ChatUser getChatUserFromIntitaUser(User currentUser, boolean createGuest){
 		if(currentUser == null)
 		{
-			return register("ANONIM", null);
+			return register("Guest_" + new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), new BCryptPasswordEncoder()), null);
 		}
 		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
 		if(tempChatUser == null)
@@ -87,7 +84,6 @@ public class ChatUsersService {
 		}
 		return tempChatUser;
 	}
-
 	@Transactional
 	public User getUsersFromChatUserId(Long id) {
 		ChatUser cUser = getChatUser(id);

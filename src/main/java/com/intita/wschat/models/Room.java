@@ -43,7 +43,7 @@ public class Room implements Serializable {
 
 
 	@ManyToOne
-	private User author;
+	private ChatUser author;
 	
 	@OneToMany(mappedBy = "room")
 	private List<UserMessage> messages = new ArrayList<>();
@@ -52,21 +52,21 @@ public class Room implements Serializable {
 	//@ManyToMany(mappedBy = "roomsFromUsers")
 	
 	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<User> users = new HashSet<>();
+	private Set<ChatUser> users = new HashSet<>();
 	
 	
-	public Set<User> getUsers() {
+	public Set<ChatUser> getUsers() {
 		return users;
 	}
 	public Set<ChatUser> getChatUsers(){
 		Set<ChatUser> chatUsers = new HashSet<ChatUser>();
-		for (User u : users){
-			chatUsers.add(u.getChatUser());
+		for (ChatUser u : users){
+			chatUsers.add(u);
 		}
 		return chatUsers;
 	}
 	
-	public boolean addUser(User user) {
+	public boolean addUser(ChatUser user) {
 		return users.add(user);
 	}
 	public boolean removeUser(User user) {
@@ -76,12 +76,12 @@ public class Room implements Serializable {
 	{
 		
 	}
-	public User getAuthor() {
+	public ChatUser getAuthor() {
 		return author;
 	}
 
 
-	public void setAuthor(User autor) {
+	public void setAuthor(ChatUser autor) {
 		this.author = autor;
 	}
 
