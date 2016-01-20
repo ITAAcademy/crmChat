@@ -15,13 +15,15 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$timeout','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$timeout,$cookies, toaster, chatSocket) {
 
 	$scope.templateName = null;
 	$scope.emails = [];
 	
 
 	var typing = undefined;
+	var addingUserToRoom = undefined;
+	var sendingMessage = undefined;
 
 	var serverPrefix = "";//"/crmChat";
 	//var serverPrefix = "/crmChat";
@@ -187,10 +189,15 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					switch (operationStatus.type){
 					case Operations.send_message_to_all:
 					case Operations.send_message_to_user:
-						if (operationStatus.success)$scope.messageSended = true;
+					$scope.messageSended = true;
+						if (!operationStatus.success)
+							toaster.pop("error", "Error", message.body);
 						break;
 					case Operations.add_user_to_room:
 					if (operationStatus.success)$scope.userAddedToRoom = true;
+					else {
+						toaster.pop("error", "Error","user wasn't added to room");
+					}
 					}
 					//ZIGZAG OPS
 							
@@ -225,6 +232,18 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		room=$scope.roomId+'/';
 		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 		$scope.searchInputValue.email = '';
+		var myFunc = function(){
+	if (angular.isDefined(addingUserToRoom))
+	{
+		$timeout.cancel(addingUserToRoom);
+		addingUserToRoom=undefined;
+	}
+	if ($scope.userAddedToRoom) return;
+				toaster.pop('error', "Error","server request timeout",1000);
+				$scope.userAddedToRoom = true;
+			
+		};
+		 addingUserToRoom = $timeout(myFunc,6000);
 		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
@@ -241,6 +260,18 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
 		$scope.newMessage = '';
+			var myFunc = function(){
+	if (angular.isDefined(sendingMessage))
+	{
+		$timeout.cancel(sendingMessage);
+		sendingMessage=undefined;
+	}
+	if ($scope.messageSended) return;
+				toaster.pop('error', "Error","server request timeout",1000);
+				$scope.messageSended = true;
+			
+		};
+		 sendingMessage = $timeout(myFunc,2000);
 	};
 
 
