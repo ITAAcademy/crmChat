@@ -9,7 +9,8 @@ Object.prototype.getKeyByValue = function( value ) {
         }
     }
 }
-
+var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
+								"send_message_to_user":"SEND_MESSAGE_TO_USER"});
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
@@ -17,6 +18,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.templateName = null;
 	$scope.emails = [];
+	
 
 	var typing = undefined;
 
@@ -97,6 +99,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
 	$scope.dialogShow = false;
+	$scope.messageSended = true;
 
 
 	$scope.dialogName = '';
@@ -154,6 +157,20 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					$scope.messages.unshift(JSON.parse(message.body));
 					
 				}));
+		lastRoomBindings.push(
+				chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
+					var operationStatus = JSON.parse(message.body);
+					switch (operationStatus.type){
+					case Operations.send_message_to_all:
+					case Operations.send_message_to_user:
+						if (operationStatus.success)$scope.messageSended = true;
+						break;
+					}
+					//ZIGZAG OPS
+							
+					console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
+				}));
+		
 		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
@@ -189,7 +206,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.sendMessage = function() {
 		var destination = "/app/{0}chat.message".format(room);
-
+	$scope.messageSended = false;
 		if($scope.sendTo != "everyone") {
 			destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
 			$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
@@ -265,6 +282,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
 				}));
+		
+		
 
 		/*
 		 * 
