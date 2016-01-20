@@ -40,7 +40,7 @@ public class ChatUserLastRoomDateService {
 
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(){
-		List<ChatUserLastRoomDate> res =  Lists.newArrayList(chatUserLastRoomDateRepo.findAll());
+		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findAll();
 		return res;
 	}
 	@Transactional
