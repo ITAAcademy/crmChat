@@ -167,6 +167,21 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 				}));
 		lastRoomBindings.push(
+				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
+					var parsed = JSON.parse(message.body);
+					if(parsed.username == $scope.chatUserId) return;
+					//debugger;
+					//$scope.participants[parsed.username].typing = parsed.typing;
+					for(var index in $scope.participants) {
+						var participant = $scope.participants[index];
+
+						if(participant.chatUserId == parsed.username) {
+							$scope.participants[index].typing = parsed.typing;
+							//break;
+						}
+					} 
+				}));
+		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
 					var operationStatus = JSON.parse(message.body);
 					switch (operationStatus.type){
@@ -292,26 +307,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					 */
 				}));
 
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
-					var parsed = JSON.parse(message.body);
-					if(parsed.username == $scope.chatUserId) return;
-
-					for(var index in $scope.participants) {
-						var participant = $scope.participants[index];
-
-						if(participant.username == parsed.username) {
-							$scope.participants[index].typing = parsed.typing;
-						}
-					} 
-				}));
-
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
-					$scope.messages.unshift(JSON.parse(message.body));
-				}));
-		
-		
 
 		/*
 		 * 
