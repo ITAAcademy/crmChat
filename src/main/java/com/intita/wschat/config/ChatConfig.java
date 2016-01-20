@@ -72,18 +72,18 @@ public class ChatConfig {
 		checker.setProfanities(profanities);
 		return checker;
 	}
-	
+
 	@Bean
 	@Description("Spring Actuator endpoint to expose WebSocket stats")
 	public WebSocketEndpoint websocketEndpoint(WebSocketMessageBrokerStats stats) {
 		return new WebSocketEndpoint(stats);
 	}
-	
+
 	@Bean
 	@Description("Spring Actuator endpoint to expose WebSocket message mappings")
 	public MessageMappingEndpoint messageMappingEndpoint() {
 		return new MessageMappingEndpoint();
 	}
-	
-	
+
+
 }

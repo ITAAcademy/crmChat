@@ -1,4 +1,5 @@
 package com.intita.wschat.config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,13 @@ import redis.clients.jedis.JedisPoolConfig;
 @Configuration
 @EnableAutoConfiguration 
 public class RedisDBConfig {
+	@Value("${redis.host}")
+	private String redisHost;
+	@Value("${redis.port ?:6379}")
+	private Integer redisPort;
+	@Value("${redis.password ?:}")
+	private String redisPassword;
+	
 	@Bean
 	public RedisConnectionFactory jedisConnectionFactory() {
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -18,8 +26,10 @@ public class RedisDBConfig {
 		poolConfig.setTestOnReturn(true);
 		JedisConnectionFactory ob = new JedisConnectionFactory(poolConfig);
 		ob.setUsePool(true);
-		ob.setHostName("127.0.0.1");
-		ob.setPort(6379);
+		ob.setHostName(redisHost);//"127.0.0.1"
+		ob.setPort(redisPort);//6379
+		if(!redisPassword.isEmpty())
+			ob.setPassword(redisPassword);
 		return ob;
 	}
 

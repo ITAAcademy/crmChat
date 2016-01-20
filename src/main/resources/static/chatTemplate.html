@@ -39,10 +39,9 @@
         	<div class="row">
        			<div class="form-group">
        			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
-       			  <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/>
-       						  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
+      						  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
        						  	<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> --> 
-
+								<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
        						  	<button ng-click="sendMessage()"><img ng-hide="$parent.messageSended" src="images/ajax_loader_blue_32.gif"/>Comment</button>
 				</div>
         	</div>
