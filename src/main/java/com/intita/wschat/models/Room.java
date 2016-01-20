@@ -28,6 +28,18 @@ public class Room implements Serializable {
 	@GeneratedValue
 	private Long id;
 	
+	 @OneToMany(mappedBy = "room")
+	List< ChatUserLastRoomDate> chatUserLastRoomDate;
+	
+	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
+		return chatUserLastRoomDate;
+	}
+	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
+		this.chatUserLastRoomDate = chatUserLastRoomDate;
+	}
+
+
+
 	private boolean active = true;
 	
 	@NotBlank

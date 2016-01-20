@@ -1,6 +1,7 @@
 package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,5 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  ArrayList<UserMessage> findAll(Pageable pageable);
 	  ArrayList<UserMessage> findByAuthor(ChatUser author);
 	  ArrayList<UserMessage> findByRoom(Room room);
+	  ArrayList<UserMessage> findAllByDateAfter(Date date);
 }

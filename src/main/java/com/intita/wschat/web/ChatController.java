@@ -37,10 +37,12 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
+import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -71,6 +73,7 @@ public class ChatController {
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private ChatTenantService ChatTenantService;
+	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
 	@SubscribeMapping("/chat.login/{username}")
 	public Map<String, Long> login(Principal principal)//Control user page after auth 
@@ -95,8 +98,10 @@ public class ChatController {
 		}
 		return result;
 	}
+	
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
+		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
@@ -116,6 +121,49 @@ public class ChatController {
 		message.setUsername(principal.getName());
 
 		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/"+room+"/chat.message", message);
+	}
+	
+	
+	@MessageMapping("/chat.go.to.dialog/{roomId}")
+	public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	//	checkProfanityAndSanitize(message);
+
+		Long user_id = Long.parseLong(principal.getName(), 10);
+		Long room_id = Long.parseLong(roomid, 10);
+		ChatUser user = chatUsersService.getChatUser(user_id);
+		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
+		
+		// getUserLastRoomDate(Room room, ChatUser chatUser) 
+		 
+		 Room room = roomService.getRoom(room_id);
+		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
+		last.setLastLogout(new Date());
+		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
+	}
+	
+
+	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
+	public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	//	checkProfanityAndSanitize(message);
+
+		Long user_id = Long.parseLong(principal.getName(), 10);
+		Long room_id = Long.parseLong(roomid, 10);
+		ChatUser user = chatUsersService.getChatUser(user_id);
+		Room room = roomService.getRoom(room_id);
+		if (room == null)
+			return;
+		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
+		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate( room, user);
+		if (last == null)
+		{
+			last = new ChatUserLastRoomDate(user_id, new Date(),room );
+			last.setChatUser(user);
+		}
+		else
+		{
+			last.setLastLogout(new Date());
+		}		
+		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 	}
 
 	private void checkProfanityAndSanitize(ChatMessage message) {

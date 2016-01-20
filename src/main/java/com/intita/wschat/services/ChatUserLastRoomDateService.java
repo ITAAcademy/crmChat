@@ -1,6 +1,13 @@
 package com.intita.wschat.services;
 
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -14,10 +21,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.intita.wschat.models.ChatTenant;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
-import com.intita.wschat.repositories.ChatTenantRepository;
 import com.intita.wschat.repositories.ChatUserLastRoomDateRepository;
 
 @Service
@@ -30,15 +37,25 @@ public class ChatUserLastRoomDateService {
 	public Page<ChatUserLastRoomDate> getUserLastRoomDatPages(int page, int pageSize){
 		return chatUserLastRoomDateRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля	}
 	}
-	
+
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(){
 		List<ChatUserLastRoomDate> res =  Lists.newArrayList(chatUserLastRoomDateRepo.findAll());
 		return res;
 	}
 	@Transactional
-	public ChatUserLastRoomDate getUserLastRoomDate(Long id){
-		return chatUserLastRoomDateRepo.findById(id);
+	public ChatUserLastRoomDate getUserLastRoomDate(Room room, ChatUser chatUser) {
+		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findByRoomAndChatUser(room, chatUser);
+		if (obj == null)
+		{
+			LocalDate firstDay_2000 = LocalDate.of(2000, Month.JANUARY, 1);
+			
+			//Date date = DateTime.parse("2007-03-12T00:00:00.000+01:00");
+			obj = new  ChatUserLastRoomDate(Date.from(firstDay_2000.atStartOfDay(ZoneId.systemDefault()).toInstant()) ,room );
+			obj.setChatUser(chatUser);
+			chatUserLastRoomDateRepo.save(obj);
+		}
+		return obj;
 	}
 
 	@Transactional

@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
@@ -30,8 +31,16 @@ public class ChatUserLastRoomDate implements Serializable {
 	 */
 	private static final long serialVersionUID = 89403535554426711L;
 	
-	@OneToOne
+	@Id	
+	@GeneratedValue
+	private Long id;
+	
+	@ManyToOne
+	private Room room;
+	private Date last_logout;
+	@ManyToOne
 	private ChatUser chatUser;
+	
 	
 	public void setChatUser(ChatUser chatUser) {
 		this.chatUser = chatUser;
@@ -41,30 +50,30 @@ public class ChatUserLastRoomDate implements Serializable {
 		return chatUser;
 	}
 
+	public ChatUserLastRoomDate()
+	{
+		
+	}
 	  
-	@Id	
-	@NotBlank
-	@GeneratedValue
-	private Long id;
-
-	
-
-	public ChatUserLastRoomDate(){
-		last_room = (long) 0;
-		last_logout = new Date();
-	}
-	public ChatUserLastRoomDate(Long id, Long user_id){
+	public ChatUserLastRoomDate(Long id, Date last_logout, Room last_room){
 		this.id=id;
+		this.last_logout = last_logout;
+		this.room = last_room;
 	}
+	
+	public ChatUserLastRoomDate(Date last_logout, Room last_room){
+		this.last_logout = last_logout;
+		this.room = last_room;
+	}
+	
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	@NotBlank
-	private Date last_logout;
-	
+	//@NotBlank
+		
 	public Date getLastLogout() {
 		return last_logout;
 	}
@@ -73,15 +82,13 @@ public class ChatUserLastRoomDate implements Serializable {
 		last_logout = date;
 	}	
 	
-	@NotBlank
-	private Long last_room;
 	
-	public Long getLastRoom() {
-		return last_room;
+	public Room getLastRoom() {
+		return room;
 	}
 	
-	public void setLastRoom(Long num) {
-		last_room = num;
+	public void setLastRoom(Room room) {
+		this.room = room;
 	}
 
 }

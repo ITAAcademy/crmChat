@@ -22,17 +22,16 @@ import javax.validation.constraints.Size;
  */
 @Entity(name="chat_user")
 public class ChatUser implements Serializable {
-	 @OneToOne(mappedBy = "chatUser")
-	 ChatUserLastRoomDate chatUserLastRoomDate;
+	 @OneToMany(mappedBy = "chatUser")
+	 List<ChatUserLastRoomDate> chatUserLastRoomDate;
 	 
-	 public ChatUserLastRoomDate getChatUserLastRoomDate() {
-		 return chatUserLastRoomDate;
-	 }
-	 
-	 public void setChatUserLastRoomDate(ChatUserLastRoomDate value) {
-		 chatUserLastRoomDate = value;
-	 }
-
+	
+	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
+		return chatUserLastRoomDate;
+	}
+	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
+		this.chatUserLastRoomDate = chatUserLastRoomDate;
+	}
 	public ChatUser(){
 		
 	}

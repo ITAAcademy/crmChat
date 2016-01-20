@@ -116,6 +116,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.goToDialogList = function() {
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
+		
+		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
 	}
 
@@ -130,6 +132,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
 		}, 1000);
+
+		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
+
 	};
 	
 
