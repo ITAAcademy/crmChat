@@ -131,16 +131,20 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.goToDialog = function(roomName) {
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
-		$scope.roomId = $scope.rooms.getKeyByValue(roomName);
-
+		goToDialogEvn($scope.rooms.getKeyByValue(roomName));
+		
+	};
+	
+	function goToDialogEvn(id)
+	{
+		$scope.roomId = id;
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
 		}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
-
-	};
+	}
 	
 
 	$scope.changeRoom=function(){
@@ -269,9 +273,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					}
 					else
 					{
-						$scope.roomId = mess_obj.nextWindow;
+						goToDialogEvn(mess_obj.nextWindow);
 						$scope.templateName = 'chatTemplate.html';
-						$scope.changeRoom();
 						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 					}
 					
@@ -334,8 +337,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			var num = JSON.parse(message.body);
 			//console.log("9999999999999999999 "+ num);
 			Object.keys($scope.rooms).forEach(function(value) {
-				//  console.log("PPPPPPPPPPPPPP " + value );
-				if (value === num && $scope.roomId !== value)
+				  console.log("PPPPPPPPPPPPPP " + value + " " + $scope.roomId);
+				if (value == num && $scope.roomId != value)
 				{
 					$scope.rooms[value].nums++;
 					new Audio('new_mess.mp3').play();
