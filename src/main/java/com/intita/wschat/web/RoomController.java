@@ -168,7 +168,7 @@ public class RoomController {
 			ChatUser chatUser = chatUserServise.getChatUser(chatUserId);
 			ChatUserLastRoomDate userLastRoomDate = chatUserLastRoomDateService.getUserLastRoomDate(entry, chatUser);
 			Date date = userLastRoomDate.getLastLogout();
-			int messages_cnt =  userMessageService.getMessagesByRoomDate(entry, date).size();
+			int messages_cnt =  userMessageService.getMessagesByRoomDateNotUser(entry, date, chatUser).size();
 
 			chatUserLastRoomDateService.updateUserLastRoomDateInfo(userLastRoomDate);						
 
