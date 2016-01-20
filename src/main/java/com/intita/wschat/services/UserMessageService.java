@@ -69,5 +69,16 @@ public class UserMessageService {
 		return userMessageRepository.findAllByDateAfter(date);
 	}
 	
+	@Transactional
+	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date) {
+		return userMessageRepository.findAllByRoomAndDateAfter(room, date);
+	}
+	
+
+	@Transactional
+	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user) {
+		return userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
+	}
+	
 	
 }

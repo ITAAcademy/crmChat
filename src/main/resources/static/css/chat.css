@@ -13,7 +13,10 @@
 	height: 400px;
 	overflow: auto;
 }
-
+.a_user_nickname
+{
+	 word-wrap: break-word;
+}
 .menu-ng-click:hover {
 	cursor: pointer;
 }

@@ -15,7 +15,7 @@ public class RedisDBConfig {
 	private String redisHost;
 	@Value("${redis.port ?:6379}")
 	private Integer redisPort;
-	@Value("${redis.password ?:}")
+	@Value("${redis.password}")
 	private String redisPassword;
 	
 	@Bean
@@ -28,7 +28,7 @@ public class RedisDBConfig {
 		ob.setUsePool(true);
 		ob.setHostName(redisHost);//"127.0.0.1"
 		ob.setPort(redisPort);//6379
-		if(!redisPassword.isEmpty())
+	//	if(!redisPassword.isEmpty())
 			ob.setPassword(redisPassword);
 		return ob;
 	}

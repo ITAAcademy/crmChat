@@ -11,16 +11,25 @@ public class LoginEvent {
 	private String username;
 	private Long chatUserId;
 	private Date time;
-	
+	private boolean typing;
 
 	public LoginEvent(Long chatUserId,String username) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
+		typing = false;
 	}
 
 	public String getUsername() {
 		return username;
+	}
+
+	public boolean isTyping() {
+		return typing;
+	}
+
+	public void setTyping(boolean typing) {
+		this.typing = typing;
 	}
 
 	public void setUsername(String username) {

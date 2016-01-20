@@ -27,8 +27,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
 
-	var serverPrefix = "";//"/crmChat";
-	//var serverPrefix = "/crmChat";
+	//var serverPrefix = "";//"/crmChat";
+	var serverPrefix = "/crmChat";
 	var room = "default_room/";
 
 	var room = "1/";
@@ -150,16 +150,20 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.goToDialog = function(roomName) {
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
-		$scope.roomId = $scope.rooms.getKeyByValue(roomName);
-
+		goToDialogEvn($scope.rooms.getKeyByValue(roomName));
+		
+	};
+	
+	function goToDialogEvn(id)
+	{
+		$scope.roomId = id;
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
 		}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
-
-	};
+	}
 	
 
 	$scope.changeRoom=function(){
@@ -180,6 +184,21 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
 					$scope.messages.unshift(JSON.parse(message.body));
 
+				}));
+		lastRoomBindings.push(
+				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
+					var parsed = JSON.parse(message.body);
+					if(parsed.username == $scope.chatUserId) return;
+					//debugger;
+					//$scope.participants[parsed.username].typing = parsed.typing;
+					for(var index in $scope.participants) {
+						var participant = $scope.participants[index];
+
+						if(participant.chatUserId == parsed.username) {
+							$scope.participants[index].typing = parsed.typing;
+							//break;
+						}
+					} 
 				}));
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
@@ -324,9 +343,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					}
 					else
 					{
-						$scope.roomId = mess_obj.nextWindow;
+						goToDialogEvn(mess_obj.nextWindow);
 						$scope.templateName = 'chatTemplate.html';
-						$scope.changeRoom();
 						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 					}
 					
@@ -344,26 +362,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					 */
 				}));
 
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
-					var parsed = JSON.parse(message.body);
-					if(parsed.username == $scope.chatUserId) return;
-
-					for(var index in $scope.participants) {
-						var participant = $scope.participants[index];
-
-						if(participant.username == parsed.username) {
-							$scope.participants[index].typing = parsed.typing;
-						}
-					} 
-				}));
-
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
-					$scope.messages.unshift(JSON.parse(message.body));
-				}));
-		
-		
 
 		/*
 		 * 
@@ -389,8 +387,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			var num = JSON.parse(message.body);
 			//console.log("9999999999999999999 "+ num);
 			Object.keys($scope.rooms).forEach(function(value) {
-				//  console.log("PPPPPPPPPPPPPP " + value );
-				if (value === num && $scope.roomId !== value)
+				  console.log("PPPPPPPPPPPPPP " + value + " " + $scope.roomId);
+				if (value == num && $scope.roomId != value)
 				{
 					$scope.rooms[value].nums++;
 					new Audio('new_mess.mp3').play();
