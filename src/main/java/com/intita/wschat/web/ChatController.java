@@ -38,6 +38,8 @@ import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.OperationStatus;
+import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
@@ -110,15 +112,27 @@ public class ChatController {
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
+
+		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
+		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
+		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
+		
+		
 		return message;
 	}
 
 	@MessageMapping("/{room}/chat.private.{username}")
 	public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
 		checkProfanityAndSanitize(message);
-
+		Long chatUserId = 0L;
+		chatUserId = Long.parseLong(principal.getName());
 		message.setUsername(principal.getName());
+		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_USER,true,"SENDING MESSAGE TO USER");
+		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 
 		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/"+room+"/chat.message", message);
 	}
