@@ -77,29 +77,6 @@ public class ChatController {
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
-	@SubscribeMapping("/chat.login/{username}")
-	public Map<String, Long> login(Principal principal)//Control user page after auth 
-	{
-		Map<String, Long> result = new HashMap<>();
-		ChatUser user = chatUsersService.getChatUser(Long.parseLong(principal.getName()));
-		if(user.getIntitaUser() == null)
-		{
-			ChatTenant t_user = ChatTenantService.getChatTenant((long) 1);//choose method
-			Room room;
-			
-			if(user.getRoomsFromUsers().iterator().hasNext())
-				room = user.getRoomsFromUsers().iterator().next();
-			else
-				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
-			roomService.addUserToRoom(user, room);
-			result.put("nextWindow", room.getId());
-		}
-		else
-		{
-			result.put("nextWindow", (long) 0);
-		}
-		return result;
-	}
 	
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {

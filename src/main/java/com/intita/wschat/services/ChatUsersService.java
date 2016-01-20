@@ -73,12 +73,15 @@ public class ChatUsersService {
 	}
 	@Transactional
 	public ChatUser getChatUserFromIntitaUser(User currentUser, boolean createGuest){
-		if(currentUser == null)
+		if(currentUser == null  )
 		{
-			return register("Guest_" + new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), new BCryptPasswordEncoder()), null);
+			if(createGuest)
+				return register("Guest_" + new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), new BCryptPasswordEncoder()), null);
+			else
+				return null;
 		}
 		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
-		if(tempChatUser == null)
+		if(tempChatUser == null )
 		{
 			tempChatUser = register(currentUser.getLogin(), currentUser);
 		}

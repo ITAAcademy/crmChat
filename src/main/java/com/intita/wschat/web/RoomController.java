@@ -27,10 +27,12 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
@@ -54,6 +56,7 @@ public class RoomController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUserServise;
+	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	
 	public class StringInt {
@@ -73,6 +76,31 @@ public class RoomController {
 
 	private ArrayList<Room> roomsArray; 
 
+	@SubscribeMapping("/chat.login/{username}")
+	public Map<String, Long> login(Principal principal)//Control user page after auth 
+	{
+		Map<String, Long> result = new HashMap<>();
+		ChatUser user = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
+		if(user.getIntitaUser() == null)
+		{
+			ChatTenant t_user = ChatTenantService.getChatTenant((long) 1);//choose method
+			Room room;
+			
+			if(user.getRoomsFromUsers().iterator().hasNext())
+				room = user.getRoomsFromUsers().iterator().next();
+			else
+				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
+			roomService.addUserToRoom(user, room);
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), getRoomsByChatUserId(user.getId()));
+			result.put("nextWindow", room.getId());
+		}
+		else
+		{
+			result.put("nextWindow", (long) 0);
+		}
+		return result;
+	}
+	
 	@SubscribeMapping("/{room}/chat.participants")
 	public Map<String, Object> retrieveParticipantsSubscribe(@DestinationVariable String room) {//ONLY FOR TEST NEED FIX
 		
@@ -94,16 +122,6 @@ public class RoomController {
 			HashMap<String, Object> map = new HashMap();
 			map.put("participants", userList);
 			map.put("messages", messagesHistory);
-			/*if(userList != null)
-			{
-				System.out.println(userList.size());//@LOG@
-				if(room_o != null)
-				{
-					userList.add(room_o.getAuthor());
-				}
-				System.out.println(userList.size());
-			}*/
-			
 			return map;
 
 		}
@@ -203,9 +221,7 @@ public class RoomController {
 		roomService.addUserToRoom(user_o, room_o);
 		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
-		String test = "/topic/chat/rooms/user." + user_o.getId();
-		//System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
-		simpMessagingTemplate.convertAndSend(test, getRoomsByChatUserId(user_o.getId()));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), getRoomsByChatUserId(user_o.getId()));
 		
 		return true;
 	}
