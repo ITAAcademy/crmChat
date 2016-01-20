@@ -4,13 +4,14 @@
         			<h4>Participants [{{participants.length}}]</h4>
 							<div  class="dropdown dropdown-scroll" ng-app="app">
 		<div >
-            <div class="input-group input-group-sm search-control"> <span  ng-click="addUserToRoom()" class="input-group-addon">
-                    <span ng-show="$parent.userAddedToRoom" class="glyphicon glyphicon-search"></span>
-                    <img ng-hide="$parent.userAddedToRoom" src="images/ajax_loader_blue_32.gif"/>
+            <div class="input-group input-group-sm search-control"> 
 
-</span>
                 <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
                 ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
+                            <span  ng-click="addUserToRoom()" class="input-group-addon">
+                    <span ng-show="$parent.userAddedToRoom" class="glyphicon glyphicon-search"></span>
+                    <img ng-hide="$parent.userAddedToRoom" src="images/ajax_loader_blue_32.gif"/>
+			</span>
             </div>
             <div class="search-list" ng-show="$parent.show_search_list" >
 		    <ul aria-labelledby="dropdownMenu1"">
@@ -39,12 +40,12 @@
         		</div>
         	</div>
         	<div class="row">
-       			<div class="form-group">
+       			<div class="form-group row">
        			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
-      						  <input id="newMessageInput" type="text" class="form-control" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
+      						  <input id="newMessageInput" type="text" class=" col-xs-11 " placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
        						  	<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> --> 
 								<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
-       						  	<button ng-click="sendMessage()"><img ng-hide="$parent.messageSended" src="images/ajax_loader_blue_32.gif"/>Comment</button>
+       						  	<button class= "col-xs-1" ng-click="sendMessage()"><img ng-hide="$parent.messageSended" src="images/ajax_loader_blue_32.gif"/>Send</button>
 				</div>
         	</div>
 	
