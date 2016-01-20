@@ -3,6 +3,7 @@ package com.intita.wschat.web;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +30,8 @@ import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -51,6 +54,7 @@ public class RoomController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUserServise;
+	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	
 	public class StringInt {
 		public String string;
@@ -130,11 +134,32 @@ public class RoomController {
 		}
 		Map<Long, String>  lista = convertToNameList(list);
 		Map<Long, StringInt> result = new HashMap <Long, StringInt> ();
-		
+		int i = 0;
 		for (Map.Entry<Long, String> entry : lista.entrySet())
 		{
 			Long key = entry.getKey();
-			StringInt sb = new StringInt(entry.getValue(), 0);
+			
+			
+			//roo
+			ChatUser chatUser = chatUserServise.getChatUser(chatUserId);
+			ChatUserLastRoomDate userLastRoomDate = chatUserLastRoomDateService.getUserLastRoomDate(list.get(i++), chatUser);
+			Room room = userLastRoomDate.getLastRoom();
+			int messages_cnt = 0;
+			
+			/*if (userLastRoomDate == null)
+			{
+				userLastRoomDate = new ChatUserLastRoomDate(chatUser.getId(),new Date(), room );
+				messages_cnt =  userMessageService.getUserMesagges().size();
+			}
+			else
+			{*/
+				Date date = userLastRoomDate.getLastLogout();
+				messages_cnt =  userMessageService.getMessagesByDate(date).size();
+		//	}				
+			
+			chatUserLastRoomDateService.updateUserLastRoomDateInfo(userLastRoomDate);						
+			
+			StringInt sb = new StringInt(entry.getValue(), messages_cnt );
 			result.put(key,sb);
 		}
 		return result;				

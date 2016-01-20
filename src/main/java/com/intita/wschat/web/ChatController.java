@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -34,9 +35,11 @@ import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -66,11 +69,12 @@ public class ChatController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUsersService;
+	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
 
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
-		System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
+		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		checkProfanityAndSanitize(message);
 	
 		
@@ -81,7 +85,7 @@ public class ChatController {
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
-		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
+		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + messageToSave.getBody());		
 		
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		return message;
@@ -94,6 +98,49 @@ public class ChatController {
 		message.setUsername(principal.getName());
 
 		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/"+room+"/chat.message", message);
+	}
+	
+	
+	@MessageMapping("/chat.go.to.dialog/{roomId}")
+	public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	//	checkProfanityAndSanitize(message);
+
+		Long user_id = Long.parseLong(principal.getName(), 10);
+		Long room_id = Long.parseLong(roomid, 10);
+		ChatUser user = chatUsersService.getChatUser(user_id);
+		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
+		
+		// getUserLastRoomDate(Room room, ChatUser chatUser) 
+		 
+		 Room room = roomService.getRoom(room_id);
+		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
+		last.setLastLogout(new Date());
+		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
+	}
+	
+
+	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
+	public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	//	checkProfanityAndSanitize(message);
+
+		Long user_id = Long.parseLong(principal.getName(), 10);
+		Long room_id = Long.parseLong(roomid, 10);
+		ChatUser user = chatUsersService.getChatUser(user_id);
+		Room room = roomService.getRoom(room_id);
+		if (room == null)
+			return;
+		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
+		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate( room, user);
+		if (last == null)
+		{
+			last = new ChatUserLastRoomDate(user_id, new Date(),room );
+			last.setChatUser(user);
+		}
+		else
+		{
+			last.setLastLogout(new Date());
+		}		
+		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 	}
 
 	private void checkProfanityAndSanitize(ChatMessage message) {

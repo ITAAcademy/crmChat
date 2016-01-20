@@ -1,6 +1,7 @@
 package com.intita.wschat.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,11 @@ public class UserMessageService {
 		if (message==null) return false;
 		userMessageRepository.save(message);
 		return true;
+	}
+	
+	@Transactional
+	public ArrayList<UserMessage> getMessagesByDate(Date date) {
+		return userMessageRepository.findAllByDateAfter(date);
 	}
 	
 	
