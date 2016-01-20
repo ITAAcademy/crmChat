@@ -11,7 +11,8 @@ Object.prototype.getKeyByValue = function( value ) {
 }
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 								"send_message_to_user":"SEND_MESSAGE_TO_USER",
-								"add_user_to_room":"ADD_USER_TO_ROOM"});
+								"add_user_to_room":"ADD_USER_TO_ROOM",
+								"add_room":"ADD_ROOM"});
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
@@ -24,6 +25,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var typing = undefined;
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
+	var addingRoom = undefined;
 
 	var serverPrefix = "";//"/crmChat";
 	//var serverPrefix = "/crmChat";
@@ -104,12 +106,14 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
+	$scope.roomAdded = true;
 
 
 	$scope.dialogName = '';
 
 
 	$scope.addDialog = function() {
+		$scope.roomAdded = false;
 		console.log($scope.dialogName)
 		chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 
@@ -118,6 +122,19 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		}, 1000);  
 
 		$scope.dialogName = '';
+		var myFunc = function(){
+	if (angular.isDefined(addingRoom))
+	{
+		$timeout.cancel(addingRoom);
+		addingRoom=undefined;
+	}
+	if ($scope.roomAdded) return;
+				toaster.pop('error', "Error","server request timeout",1000);
+				$scope.roomAdded = true;
+				console.log("!!!!!!!!!!!!!!!!!!!!!Room added");
+			
+		};
+		 addingRoom = $timeout(myFunc,6000);
 	};
 
 	$scope.goToDialogList = function() {
@@ -175,10 +192,15 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 							toaster.pop("error", "Error", message.body);
 						break;
 					case Operations.add_user_to_room:
-					if (operationStatus.success)$scope.userAddedToRoom = true;
-					else {
+					$scope.userAddedToRoom = true;
+					if (!operationStatus.success)
 						toaster.pop("error", "Error","user wasn't added to room");
-					}
+					break;
+					case Operations.add_room:
+					$scope.roomAdded = true;
+					if (!operationStatus.success)
+						toaster.pop("error", "Error","room wasn't added");
+
 					}
 					//ZIGZAG OPS
 							
@@ -205,9 +227,11 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 
-	$scope.addRoom=function(name){
+	/*$scope.addRoom=function(name){
+
 		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
-	}
+		
+	}*/
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
