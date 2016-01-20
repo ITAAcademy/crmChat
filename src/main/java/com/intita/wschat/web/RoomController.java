@@ -30,7 +30,9 @@ import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
@@ -181,25 +183,41 @@ public class RoomController {
 	
 	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public boolean addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
+	public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
 		//System.out.println(login);//@LOG@
 		System.out.println(room);//@LOG@
-		
+		Long chatUserId = 0L;
+		chatUserId = Long.parseLong(principal.getName());
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		if(room_o == null)
-			return false;
+		{
+			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
+			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+			return;
+		}
 	
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
 		if(user_o == null)
-			return false;
+		{
+			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
+			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+			return;
+		}
 		
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 		
 		if(authorUser.getId() != room_o.getAuthor().getId())
-			return false;
+		{
+			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
+			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+			return;
+		}
 		roomService.addUserToRoom(user_o, room_o);
 		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
@@ -207,7 +225,9 @@ public class RoomController {
 		//System.out.println("update " + test + " new size " + getRoomsByAuthor(user_o.getLogin()).size());
 		simpMessagingTemplate.convertAndSend(test, getRoomsByChatUserId(user_o.getId()));
 		
-		return true;
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,true,"ADD USER TO ROOM");
+		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 	}
 	
 	@MessageMapping("/chat/rooms.{room}/user.remove.{login}")

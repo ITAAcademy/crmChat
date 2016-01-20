@@ -10,7 +10,8 @@ Object.prototype.getKeyByValue = function( value ) {
 	}
 }
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
-								"send_message_to_user":"SEND_MESSAGE_TO_USER"});
+								"send_message_to_user":"SEND_MESSAGE_TO_USER",
+								"add_user_to_room":"ADD_USER_TO_ROOM"});
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
@@ -100,6 +101,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.roomId		= '';
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
+	$scope.userAddedToRoom = true;
 
 
 	$scope.dialogName = '';
@@ -168,6 +170,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					case Operations.send_message_to_user:
 						if (operationStatus.success)$scope.messageSended = true;
 						break;
+					case Operations.add_user_to_room:
+					if (operationStatus.success)$scope.userAddedToRoom = true;
 					}
 					//ZIGZAG OPS
 							
@@ -198,6 +202,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
 	}
 	$scope.addUserToRoom=function(){
+		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
 		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 		$scope.searchInputValue.email = '';

@@ -5,7 +5,9 @@
 							<div  class="dropdown dropdown-scroll" ng-app="app">
 		<div >
             <div class="input-group input-group-sm search-control"> <span  ng-click="addUserToRoom()" class="input-group-addon">
-                    <span class="glyphicon glyphicon-search"></span>
+                    <span ng-show="$parent.userAddedToRoom" class="glyphicon glyphicon-search"></span>
+                    <img ng-hide="$parent.userAddedToRoom" src="images/ajax_loader_blue_32.gif"/>
+
 </span>
                 <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
                 ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
