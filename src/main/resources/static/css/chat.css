@@ -53,6 +53,10 @@
 .search-control {
 	padding: 5px 10px;
 }
+.search-control img{
+	width:10px;
+	height:10px;
+}
 
 .search-list {
 	position: absolute;
