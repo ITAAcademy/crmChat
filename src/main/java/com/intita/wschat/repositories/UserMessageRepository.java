@@ -19,5 +19,6 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  ArrayList<UserMessage> findAll(Pageable pageable);
 	  ArrayList<UserMessage> findByAuthor(ChatUser author);
 	  ArrayList<UserMessage> findByRoom(Room room);
+	  ArrayList<UserMessage> findAllByRoomAndDateAfter(Room room, Date date);
 	  ArrayList<UserMessage> findAllByDateAfter(Date date);
 }
