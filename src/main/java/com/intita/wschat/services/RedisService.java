@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
@@ -22,8 +23,6 @@ import java.util.Set;
 @Service
 public class RedisService {
 	@Autowired RedisDBConfig configureRedis;
-	Jedis jedis;
-
 
 	private StringRedisTemplate stringRedisTemplate;
 
@@ -48,7 +47,6 @@ public class RedisService {
 		stringRedisTemplate.opsForHash().put("M", String.valueOf(mohan.hashCode()),mohan);
 		System.out.println(stringRedisTemplate.opsForHash().get("M", String.valueOf(mohan.hashCode())));
 
-		jedis = new Jedis("localhost");
 
 		System.out.println("<<<<<<<<<<<< " + getKeyValue("R"));
 
@@ -59,20 +57,12 @@ public class RedisService {
 			System.out.println("List of stored keys:: "+list.get(i));
 		}*/
 	}
-
-	public List<String> getAllKeys() {
-		Set<String> list_set = jedis.keys("*");
-		List<String> list = new ArrayList<String>();
-		list.addAll(list_set);
-		return list;
-	}
-
 	public String getKeyValue(String key) {
-		return  jedis.get(key);
+		return stringRedisTemplate.opsForValue().get(key);
 	}
-	
+
 	public void setValueByKey(String key, String value) {
-		jedis.set(key, value);
+		stringRedisTemplate.opsForValue().set(key, value);
 	}
 
 }
