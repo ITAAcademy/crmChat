@@ -7,7 +7,8 @@ public class OperationStatus {
 	public void setType(OperationType type) {
 		this.type = type;
 	}
-	public enum OperationType {NONE,SEND_MESSAGE_TO_ALL,SEND_MESSAGE_TO_USER,ADD_USER_TO_ROOM}
+	public enum OperationType {NONE,SEND_MESSAGE_TO_ALL,SEND_MESSAGE_TO_USER,ADD_USER_TO_ROOM,
+		ADD_ROOM}
 	public OperationStatus(){
 		
 	}

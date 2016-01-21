@@ -204,7 +204,7 @@ public class RoomController {
 
 	@MessageMapping("/chat/rooms/add.{name}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public boolean addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
+	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
 
 		System.out.println(principal.getName());//@LOG@
@@ -212,7 +212,10 @@ public class RoomController {
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		roomService.register(name, user);
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorMessage(principal));
-		return true;
+		
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,true,"ADD ROOM");
+		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 	}
 
 	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
