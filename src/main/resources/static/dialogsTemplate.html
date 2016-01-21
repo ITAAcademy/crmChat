@@ -3,11 +3,11 @@
     <div class="col-xs-12 chat-box">
         <h4>Dialogs [{{roomsCount}}]</h4>
         <div class="share">
-            <ul ng-repeat="room in rooms">
-                <li>                    
-                    <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
+            <ul ng-repeat="room in roomsArray | orderBy: '-date' ">
+                <li>               
+                    <span ng-show="room .nums > 0" class="badge">{{value.nums}}</span>
                     <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
-                    <a href="" ng-click="goToDialog(room)">{{room.string}}</a>
+                    <a href="" ng-click="goToDialog(room)">{{room .string}}</a>
                 </li>
             </ul>
         </div>

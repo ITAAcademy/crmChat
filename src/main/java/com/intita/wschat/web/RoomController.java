@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -61,18 +62,29 @@ public class RoomController {
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
-	public class StringInt {
+	public class StringIntDate {
 		public String string;
 		public Integer nums;
+		public String date;
 
-		public StringInt() {
-			string = "";
-			nums = 0;
+		public String getDate() {
+			return date;
 		}
 
-		public StringInt(String string, Integer nums) {
+		public void setDate(String date) {
+			this.date = date;
+		}
+
+		public StringIntDate() {
+			string = "";
+			nums = 0;
+			date = new Date().toString();
+		}
+
+		public StringIntDate(String string, Integer nums, String date) {
 			this.string = string;
 			this.nums = nums;
+			this.date = date;
 		}
 	}
 
@@ -133,14 +145,14 @@ public class RoomController {
 
 	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public Map<Long, StringInt> getRoomsByAuthorSubscribe(Principal principal) { //000
+	public Map<Long, StringIntDate> getRoomsByAuthorSubscribe(Principal principal) { //000
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
 
 		return getRoomsByChatUserId(Long.parseLong(principal.getName()));
 	}
 	
-	private Map<Long, StringInt> getRoomsByChatUserId(Long chatUserId) {
+	private Map<Long, StringIntDate> getRoomsByChatUserId(Long chatUserId) {
 
 		/*ChatUser currentUser = chatUserServise.getChatUser(chatUserId);
 		ArrayList<Room> room_array = new ArrayList<>();
@@ -178,10 +190,12 @@ public class RoomController {
 		}
 		Map<Long, String>  rooms_map = convertToNameList(room_array);
 		
-		Map<Long, StringInt> result = new HashMap <Long, StringInt> ();
-		int i = 0;
-		for (Room entry : room_array)
+		Map<Long, StringIntDate> result = new HashMap <Long, StringIntDate> ();
+
+		for (int i = 0; i < room_array.size() ; i++)
+			//for (int i = room_array.size() - 1; i >=0; i--)
 		{
+			Room entry = room_array.get(i);
 			//Long key = entry.getKey();
 			//roo
 			ChatUser chatUser = chatUserServise.getChatUser(chatUserId);
@@ -191,14 +205,14 @@ public class RoomController {
 
 			chatUserLastRoomDateService.updateUserLastRoomDateInfo(userLastRoomDate);						
 
-			StringInt sb = new StringInt(entry.getName(), messages_cnt );
+			StringIntDate sb = new StringIntDate(entry.getName(), messages_cnt , date.toString() );
 			result.put(entry.getId() ,sb);
 		}
 		return result;				
 	}
 	
 	@MessageMapping("/chat/rooms/user.{username}")
-	public Map<Long, StringInt> getRoomsByAuthorMessage(Principal principal) {
+	public Map<Long, StringIntDate> getRoomsByAuthorMessage(Principal principal) {
 		return getRoomsByAuthorSubscribe(principal);
 	}
 

@@ -16,7 +16,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$timeout','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$timeout,$cookies, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
 
 	$scope.templateName = null;
 	$scope.emails = [];
@@ -97,6 +97,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.chatUserId     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
+	$scope.roomsArray = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
 	$scope.rooms     = [];
@@ -371,6 +372,26 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
+			
+			$scope.roomsArray = Object.keys($scope.rooms)
+			  .map(function(key) {
+			    return $scope.rooms[key];
+			  });
+			for (var vava in $scope.rooms )
+		    console.log("========== " + vava);
+			var currentdate = new Date(); 
+			var day = currentdate.getDate();
+			if (day < "10")
+				day = "0" + day;
+			
+			var mouth = (currentdate.getMonth()+1);
+			if (mouth < "10")
+				mouth = "0" + mouth;
+			
+			var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
+				day +" " + currentdate.getHours() + ":"  
+				+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
+			console.log("------------------ " + datetime)
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);	
 		});
@@ -486,4 +507,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 
 }]);
+
+
 
