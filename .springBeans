@@ -9,7 +9,6 @@
 	<configs>
 		<config>java:com.intita.wschat.Application</config>
 		<config>java:com.intita.wschat.config.IntitaDBConfig</config>
-		<config>java:com.intita.wschat.config.RedisDBConfig</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
