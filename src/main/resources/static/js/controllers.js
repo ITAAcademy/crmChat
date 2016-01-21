@@ -16,7 +16,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies', 'toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket) {
 
 	$scope.templateName = null;
 	$scope.emails = [];
