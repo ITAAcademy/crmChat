@@ -27,7 +27,7 @@ public class RedisDBConfig {
 		ob.setUsePool(true);
 		ob.setHostName(redisHost);//"127.0.0.1"
 		ob.setPort(redisPort);//6379
-		ob.setPassword("1234567");
+		ob.setPassword(redisPassword);
 		return ob;
 	}
 
