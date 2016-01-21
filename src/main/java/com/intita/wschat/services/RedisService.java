@@ -22,9 +22,6 @@ import java.util.Set;
 @Service
 public class RedisService {
 	@Autowired RedisDBConfig configureRedis;
-	Jedis jedis;
-
-
 	private StringRedisTemplate stringRedisTemplate;
 
 	/*@Bean
@@ -47,9 +44,6 @@ public class RedisService {
 		String mohan = "Mohan";
 		stringRedisTemplate.opsForHash().put("M", String.valueOf(mohan.hashCode()),mohan);
 		System.out.println(stringRedisTemplate.opsForHash().get("M", String.valueOf(mohan.hashCode())));
-
-		jedis = new Jedis("localhost");
-
 		System.out.println("<<<<<<<<<<<< " + getKeyValue("R"));
 
 		/*Set<String> list_set = jedis.keys("*");
@@ -60,19 +54,13 @@ public class RedisService {
 		}*/
 	}
 
-	public List<String> getAllKeys() {
-		Set<String> list_set = jedis.keys("*");
-		List<String> list = new ArrayList<String>();
-		list.addAll(list_set);
-		return list;
-	}
 
 	public String getKeyValue(String key) {
-		return  jedis.get(key);
+		return  stringRedisTemplate.opsForValue().get(key);
 	}
 	
 	public void setValueByKey(String key, String value) {
-		jedis.set(key, value);
+		stringRedisTemplate.opsForValue().set(key, value);
 	}
 
 }

@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
-@EnableAutoConfiguration 
 public class RedisDBConfig {
 	@Value("${redis.host}")
 	private String redisHost;
@@ -28,8 +27,7 @@ public class RedisDBConfig {
 		ob.setUsePool(true);
 		ob.setHostName(redisHost);//"127.0.0.1"
 		ob.setPort(redisPort);//6379
-	//	if(!redisPassword.isEmpty())
-			ob.setPassword(redisPassword);
+		ob.setPassword("1234567");
 		return ob;
 	}
 
