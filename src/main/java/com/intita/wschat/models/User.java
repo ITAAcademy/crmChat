@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
   //@Index(columnList="login", unique = true), 
   @Index(columnList="email", unique = true)
 })*/
-public class User implements UserDetails, Serializable{
+public class User implements UserDetails, Serializable,Comparable<User>{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
 	
@@ -190,6 +190,12 @@ public class User implements UserDetails, Serializable{
 
 		public void setChatUser(ChatUser chatUser) {
 			this.chatUser = chatUser;
+		}
+
+		@Override
+		public int compareTo(User o) {
+			if (o==null)return -1;
+			return this.getId().compareTo(o.getId());
 		}
 	  
 }

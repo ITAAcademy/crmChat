@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -14,6 +17,11 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 
+import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.Room;
+import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.RoomsService;
+
 /**
  * {@link ChannelInterceptor} that logs messages to a {@link TraceRepository}.
  *
@@ -21,8 +29,41 @@ import org.springframework.messaging.support.NativeMessageHeaderAccessor;
  */
 public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter {
 
+	@Autowired ChatUsersService chatUsersService;
+	@Autowired RoomsService roomsService;
+	private class RegexResult {
+		public RegexResult(){
+			
+		}
+		public RegexResult(boolean finded,boolean correct){
+			this.finded=finded;
+			this.correct=correct;
+		}
+		public boolean isFinded() {
+			return finded;
+		}
+		public void setFinded(boolean finded) {
+			this.finded = finded;
+		}
+		public boolean isCorrect() {
+			return (correct && finded) || !finded;
+		}
+		public void setCorrect(boolean correct) {
+			this.correct = correct;
+		}
+		private boolean finded;
+		private boolean correct;
+	}
+	
 	private final TraceRepository traceRepository;
-
+	final String[] mappingStrings = new String[]
+			{//chat mappings
+					"/(*)/chat.message", // 0 - room
+					"/(*)/chat.private.{username}", //0 - room, 1 - username
+					"/chat.go.to.dialog/(*)", // 0 - room
+					"/chat.go.to.dialog.list/(*)" // 0 - room
+					// 0 - room				
+			};
 	
 	public WebSocketTraceChannelInterceptor(TraceRepository traceRepository) {
 		this.traceRepository = traceRepository;
@@ -39,13 +80,35 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	    }
 	    return message;
 	}
+	
+	private RegexResult isChatParticipantsMappingCorrect(Principal principal,String topicDestination){
+		RegexResult result = new RegexResult();
+		String patternStr = ".*/(.*)/chat.participants";
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher m = pattern.matcher(topicDestination);
+	   if (m.find()){
+		   result.finded=true;
+		   String roomStr = m.group(1);
+		   if (roomStr==null) return result;
+		   Long userId  = Long.parseLong(principal.getName());
+		   ChatUser chatUser = chatUsersService.getChatUserFromIntitaId(userId,false);
+		   if (chatUser==null) return result;
+		   Room room = roomsService.getRoom(Long.parseLong(roomStr));
+		   if (room==null) return result;
+		   if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId()==userId) result.correct=true;   
+	   }
+	   return result;
+	}
+	
 	private boolean validateSubscription(Principal principal, String topicDestination)
 	{
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	
 	   System.out.println(principal.getName());
 	   System.out.println(topicDestination);
-	    //Validation logic coming here
-	    return true;
+	if (!isChatParticipantsMappingCorrect(principal,topicDestination).isCorrect())
+	    return false;
+	
+	return true;
 	}
 	@Override
 	public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {

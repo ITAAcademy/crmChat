@@ -1,6 +1,7 @@
 package org.springframework.boot.actuate.endpoint;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.WebSocketMessageBrokerStats;
 
 /**
@@ -16,6 +17,7 @@ public class WebSocketEndpoint extends AbstractEndpoint<WebSocketMessageBrokerSt
 	public WebSocketEndpoint(WebSocketMessageBrokerStats webSocketMessageBrokerStats) {
 		super("websocketstats");
 		this.webSocketMessageBrokerStats = webSocketMessageBrokerStats;
+	
 	}
 
 	@Override
