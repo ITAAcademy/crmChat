@@ -1,28 +1,18 @@
 package com.intita.wschat.services;
 
 
-import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ConfigurationClassPostProcessor;
-import org.springframework.context.annotation.Description;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import com.intita.wschat.config.RedisDBConfig;
 import redis.clients.jedis.Jedis;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 @Service
 public class RedisService {
-	@Autowired RedisDBConfig configureRedis;
-	private StringRedisTemplate stringRedisTemplate;
 
 	/*@Bean
 	@Description("Jedis need it")
@@ -30,37 +20,34 @@ public class RedisService {
 		return new ConfigurationClassPostProcessor();
 	}*/
 
+	private Jedis jedis;
+	private JedisPool pool;
+
 	@PostConstruct
 	public void AutoUpdate() {
-		stringRedisTemplate = configureRedis.stringRedisTemplate();
-
-		// Using set to set value
-		stringRedisTemplate.opsForValue().set("R", "Ram");
-		stringRedisTemplate.opsForValue().set("S", "Shyam");
-		//Fetch values from set
-		System.out.println(stringRedisTemplate.opsForValue().get("R"));
-		System.out.println(stringRedisTemplate.opsForValue().get("S"));
-		//Using Hash Operation
-		String mohan = "Mohan";
-		stringRedisTemplate.opsForHash().put("M", String.valueOf(mohan.hashCode()),mohan);
-		System.out.println(stringRedisTemplate.opsForHash().get("M", String.valueOf(mohan.hashCode())));
-		System.out.println("<<<<<<<<<<<< " + getKeyValue("R"));
-
-		/*Set<String> list_set = jedis.keys("*");
-		List<String> list = new ArrayList<String>();
-		list.addAll(list_set);
-		for(int i=0; i<list.size(); i++) {
-			System.out.println("List of stored keys:: "+list.get(i));
-		}*/
+		
+		
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		poolConfig.setMaxTotal(5);
+		poolConfig.setTestOnBorrow(true);
+		poolConfig.setTestOnReturn(true);
+		// this(poolConfig, host, port, timeout, password, Protocol.DEFAULT_DATABASE, null);
+		pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
+		try {
+			jedis = pool.getResource();
+		} catch (Exception e) {
+			System.out.println("@@@_REDIS_ERR@@@");
+			System.out.println(e.getMessage());
+		}
 	}
 
 
 	public String getKeyValue(String key) {
-		return  stringRedisTemplate.opsForValue().get(key);
+		return  jedis.get(key);
 	}
 	
 	public void setValueByKey(String key, String value) {
-		stringRedisTemplate.opsForValue().set(key, value);
+		jedis.set(key, value);
 	}
 
 }
