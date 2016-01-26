@@ -91,10 +91,13 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 		   String roomStr = m.group(1);
 		   if (roomStr==null) return result;
 		   Long userId  = Long.parseLong(principal.getName());
-		   ChatUser chatUser = chatUsersService.getChatUserFromIntitaId(userId,false);
+		   ChatUser chatUser = chatUsersService.getChatUser(userId);
 		   if (chatUser==null) return result;
 		   Room room = roomsService.getRoom(Long.parseLong(roomStr));
 		   if (room==null) return result;
+		   for (ChatUser u : room.getChatUsers()){
+			   System.out.println("ZIGZAG U:"+u.getId());
+		   }
 		   if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId()==userId) result.correct=true;   
 	   }
 	   return result;
