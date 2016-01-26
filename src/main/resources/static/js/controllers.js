@@ -90,6 +90,23 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		$scope.show_search_list = false;
 		console.log($scope.searchInputValue.email);
 	}
+	
+	var curentDateInJavaFromat = function() {
+		var currentdate = new Date(); 
+		var day = currentdate.getDate();
+		if (day < "10")
+			day = "0" + day;
+
+		var mouth = (currentdate.getMonth()+1);
+		if (mouth < "10")
+			mouth = "0" + mouth;
+
+		var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
+		day +" " + currentdate.getHours() + ":"  
+		+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
+		//console.log("------------------ " + datetime)
+		return  datetime;
+	};
 
 
 
@@ -139,6 +156,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 
 	$scope.goToDialogList = function() {
+		if ($scope.rooms[$scope.roomId] !== undefined )
+			 $scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+		
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
 		
@@ -149,6 +169,9 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 
 	$scope.goToDialog = function(roomName) {
+		if ($scope.rooms[$scope.roomId] !== undefined )
+			 $scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+		
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
 		goToDialogEvn($scope.rooms.getKeyByValue(roomName));
@@ -161,6 +184,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
+			$scope.roomsArray[$scope.roomId].nums = 0;
 		}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
@@ -377,26 +401,19 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			  .map(function(key) {
 			    return $scope.rooms[key];
 			  });
-			for (var vava in $scope.rooms )
-		    console.log("========== " + vava);
-			var currentdate = new Date(); 
-			var day = currentdate.getDate();
-			if (day < "10")
-				day = "0" + day;
 			
-			var mouth = (currentdate.getMonth()+1);
-			if (mouth < "10")
-				mouth = "0" + mouth;
 			
-			var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
-				day +" " + currentdate.getHours() + ":"  
-				+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
-			console.log("------------------ " + datetime)
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);	
 		});
 		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			$scope.rooms = JSON.parse(message.body);
+			
+			$scope.roomsArray = Object.keys($scope.rooms)
+			  .map(function(key) {
+			    return $scope.rooms[key];
+			  });
+			
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
 		});
@@ -406,15 +423,14 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
 
 			var num = JSON.parse(message.body);
-			//console.log("9999999999999999999 "+ num);
 			Object.keys($scope.rooms).forEach(function(value) {
-				  console.log("PPPPPPPPPPPPPP " + value + " " + $scope.roomId);
 				if (value == num && $scope.roomId != value)
 				{
 					$scope.rooms[value].nums++;
+					$scope.roomsArray[value].nums++;
 					new Audio('new_mess.mp3').play();
 					toaster.pop('note', "NewMessage in " + $scope.rooms[value].string, "",1000);
-					//console.log("SSSSSSSSSSSS  " + $scope.rooms[value].bool );
+					
 				}
 			});
 		});
