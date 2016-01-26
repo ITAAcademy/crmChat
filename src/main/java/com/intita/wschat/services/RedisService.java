@@ -43,11 +43,15 @@ public class RedisService {
 
 
 	public String getKeyValue(String key) {
-		return  jedis.get(key);
+		if(jedis != null)
+			return  jedis.get(key);
+		else
+			return new String();
 	}
 	
 	public void setValueByKey(String key, String value) {
-		jedis.set(key, value);
+		if(jedis != null)
+			jedis.set(key, value);
 	}
 
 }

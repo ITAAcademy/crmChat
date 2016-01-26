@@ -49,6 +49,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 				HashMap<String, Object> o = null;
 				try {
+					System.out.println(json);
 					o = mapper.readValue(json, typeRef);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
