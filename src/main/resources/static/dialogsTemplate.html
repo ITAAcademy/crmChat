@@ -3,7 +3,7 @@
     <div class="col-xs-12 chat-box">
         <h4>Dialogs [{{roomsCount}}]</h4>
         <div class="share">
-            <ul ng-repeat="room in rooms | orderBy: '-date' ">
+            <ul ng-repeat="room in roomsArray | orderBy: '-date' ">
                 <li>               
                     <span ng-show="room .nums > 0" class="badge">{{room.nums}}</span>
                     <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
