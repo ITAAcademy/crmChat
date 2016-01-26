@@ -16,7 +16,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket) {
+phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
 	$scope.emails = [];
@@ -471,8 +471,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var formData = new FormData();
 
 	// добавить к пересылке ещё пару ключ - значение
-	var sessionValue =  $cookies['JSESSIONID'];
-
+	var sessionValue =  $cookieStore.get('JSESSIONID');
+	console.log("QQQQQQQQQQQQQQQQQQQQQQQQQ	" + sessionValue);
 	formData.append("username", sessionValue);
 	formData.append("password", "password");
 

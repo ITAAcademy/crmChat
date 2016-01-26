@@ -46,7 +46,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				JsonFactory factory = new JsonFactory(); 
 				ObjectMapper mapper = new ObjectMapper(factory); 
 				TypeReference<HashMap<String,Object>>typeRef  = new TypeReference<HashMap<String,Object>>() {};
-
 				HashMap<String, Object> o = null;
 				try {
 					System.out.println(json);

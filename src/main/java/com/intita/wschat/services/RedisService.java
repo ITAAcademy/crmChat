@@ -35,6 +35,7 @@ public class RedisService {
 		pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
 		try {
 			jedis = pool.getResource();
+			System.out.println("@@@_REDIS_OK@@@");
 		} catch (Exception e) {
 			System.out.println("@@@_REDIS_ERR@@@");
 			System.out.println(e.getMessage());
