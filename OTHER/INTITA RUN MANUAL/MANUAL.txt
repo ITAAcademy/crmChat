@@ -36,6 +36,8 @@ return array(
 
 збережи.
 
+Розпакуй crmChat\OTHER\redis.zip в папку якусь( хай там і лежить). Запусти install i start.
+
 9. Скопіпасть файл crmChat\OTHER\configuration\php.ini в папку wamp\bin\php\php5.5.12 (заміни).
 10. Розпакуй IntITA в корень.
 11. Wamp -> Restart all services.

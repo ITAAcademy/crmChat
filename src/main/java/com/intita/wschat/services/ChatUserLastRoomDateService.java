@@ -47,10 +47,11 @@ public class ChatUserLastRoomDateService {
 		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findByRoomAndChatUser(room, chatUser);
 		if (obj == null)
 		{
-			LocalDate firstDay_2000 = LocalDate.of(2000, Month.JANUARY, 1);
+			//LocalDate firstDay_2000 = LocalDate.of(2000, Month.JANUARY, 1);
 			
 			//Date date = DateTime.parse("2007-03-12T00:00:00.000+01:00");
-			obj = new  ChatUserLastRoomDate(Date.from(firstDay_2000.atStartOfDay(ZoneId.systemDefault()).toInstant()) ,room );
+			//obj = new  ChatUserLastRoomDate(Date.from(firstDay_2000.atStartOfDay(ZoneId.systemDefault()).toInstant()) ,room );
+			obj = new  ChatUserLastRoomDate( new Date(), room);
 			obj.setChatUser(chatUser);
 			chatUserLastRoomDateRepo.save(obj);
 		}

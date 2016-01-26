@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Samoenko Yuriy
  */
 @Entity(name="chat_user_last_room_date")
-public class ChatUserLastRoomDate implements Serializable {
+public class ChatUserLastRoomDate implements Serializable,Comparable<ChatUserLastRoomDate> {
 
 	/**
 	 * 
@@ -89,6 +89,12 @@ public class ChatUserLastRoomDate implements Serializable {
 	
 	public void setLastRoom(Room room) {
 		this.room = room;
+	}
+
+	@Override
+	public int compareTo(ChatUserLastRoomDate o) {
+		if (o==null)return -1;
+		return this.getId().compareTo(o.getId());
 	}
 
 }

@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity(name="ChatRoom")
-public class Room implements Serializable {
+public class Room implements Serializable,Comparable<Room> {
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -118,5 +118,10 @@ public class Room implements Serializable {
 	@Override
 	public String toString() {
 		return "ChatMessage ";
+	}
+	@Override
+	public int compareTo(Room o) {
+		if (o==null)return -1;
+		return this.getId().compareTo(o.getId());
 	}
 }

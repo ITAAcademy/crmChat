@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "chat_user_message")
-public class UserMessage implements Serializable  {
+public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	
 	public UserMessage(){
 		this.date= new Date();
@@ -77,6 +77,11 @@ public class UserMessage implements Serializable  {
 	}
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	@Override
+	public int compareTo(UserMessage o) {
+		if (o==null)return -1;
+		return this.getId().compareTo(o.getId());
 	}
 	
 	

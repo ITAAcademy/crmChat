@@ -16,13 +16,14 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 
  * @author Samoenko Yuriy
  */
 @Entity(name="chat_tenant")
-public class ChatTenant implements Serializable {
+public class ChatTenant implements Serializable,Comparable<ChatTenant> {
 
 	/**
 	 * 
@@ -56,6 +57,12 @@ public class ChatTenant implements Serializable {
 	public void setChatUser(ChatUser chatUser) {
 		this.chatUser = chatUser;
 	}
+	@Override
+	public int compareTo(ChatTenant o) {
+		if (o==null)return -1;
+		return this.getId().compareTo(o.getId());
+	}
+
 
 }
 

@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
  * @author Zinchuk Roman
  */
 @Entity(name="chat_user")
-public class ChatUser implements Serializable {
+public class ChatUser implements Serializable,Comparable<ChatUser> {
 	 @OneToMany(mappedBy = "chatUser")
 	 List<ChatUserLastRoomDate> chatUserLastRoomDate;
 	 
@@ -87,6 +87,11 @@ public Set<Room> getRootRooms() {
 
 public Set<Room> getRoomsFromUsers() {
 	return roomsFromUsers;
+}
+@Override
+public int compareTo(ChatUser o) {
+	if (o==null)return -1;
+	return this.getId().compareTo(o.getId());
 }
 
 
