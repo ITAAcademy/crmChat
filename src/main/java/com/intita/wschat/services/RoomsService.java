@@ -49,10 +49,16 @@ public class RoomsService {
 			return roomRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 			
 	   }
-	@Transactional
+	/*@Transactional
 	public ArrayList<Room> getRooms(){
 		return (ArrayList<Room>) IteratorUtils.toList(roomRepo.findAll().iterator()); // spring рахує сторінки з нуля
+	}*/
+	
+	@Transactional
+	public List<Room> getRooms(){
+		return (List<Room>) roomRepo.findAll(); // spring рахує сторінки з нуля
 	}
+	
 	@Transactional
 	public Room getRoom(Long id){
 		return roomRepo.findOne(id);

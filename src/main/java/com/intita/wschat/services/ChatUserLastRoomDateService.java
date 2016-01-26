@@ -38,10 +38,17 @@ public class ChatUserLastRoomDateService {
 	}
 
 	@Transactional
-	public List<ChatUserLastRoomDate> getUserLastRoomDates(){
+	public List<ChatUserLastRoomDate> getLastRoomDates(){
 		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findAll();
 		return res;
 	}
+	
+	@Transactional
+	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user){
+		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findByChatUser(user);
+		return res;
+	}
+	
 	@Transactional
 	public ChatUserLastRoomDate getUserLastRoomDate(Room room, ChatUser chatUser) {
 		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findByRoomAndChatUser(room, chatUser);

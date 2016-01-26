@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,16 @@ public class UserMessageService {
 	@Transactional
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user) {
 		return userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
+	}
+	
+	@Transactional
+	public List<UserMessage> getMessagesByDateNotUser(Date date, ChatUser user) {
+		return userMessageRepository.findAllByDateAfterAndAuthorNot( date, user);
+	}
+	
+	@Transactional
+	public List<UserMessage> getMessagesByNotUser( ChatUser user) {
+		return userMessageRepository.findAllByAuthorNot( user);
 	}
 	
 	
