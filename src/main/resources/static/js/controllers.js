@@ -487,9 +487,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var formData = new FormData();
 
 	// добавить к пересылке ещё пару ключ - значение
-	var sessionValue =  $cookies['JSESSIONID'];
-	console.log("QQQQQQQQQQQQQQQQQQQQQQQQQ	" + sessionValue);
-	formData.append("username", sessionValue);
+
+	formData.append("username", "username");
 	formData.append("password", "password");
 
 	// отослать
