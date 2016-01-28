@@ -16,7 +16,11 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -29,6 +33,7 @@ import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.config.ChatConfig.Destinations;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
@@ -69,6 +74,8 @@ public class ChatController {
 	@Autowired private ParticipantRepository participantRepository;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	
+	@Autowired private CustomAuthenticationProvider authenticationProvider;
 
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
@@ -226,6 +233,14 @@ public class ChatController {
 					String jsonInString = mapper.writeValueAsString(nicks);
 					return jsonInString;*/
 	}
+	
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public String  getIndex(HttpRequest request) {
+		System.out.println("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		authenticationProvider.autorization(authenticationProvider);
+		return "index.html";
+	}
+
 
 
 

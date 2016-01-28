@@ -5,17 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -42,13 +45,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+		Authentication token = (Authentication) authentication;
 		List<GrantedAuthority> authorities = "ADMIN".equals(token.getCredentials()) ? 
 				AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		
 		Cookie[] array = attr.getRequest().getCookies();
 		HttpSession session = attr.getRequest().getSession();
+		session.setMaxInactiveInterval(3600*12);
 
 		String value = null;
 		String IntitaId = null;
@@ -94,7 +98,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
 				ChatId = c_u_temp.getId().toString();
 				session.setAttribute("chatId", ChatId);
-				session.setMaxInactiveInterval(3600*12);
+				
 			}
 			else
 			{
@@ -111,6 +115,25 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+	}
+	
+	public boolean autorization()
+	{
+		return autorization(this);
+	}
+	
+	public static boolean autorization(AuthenticationProvider authenticationProvider)
+	{
+		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
+		{
+			System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+			//if(!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
+				SecurityContextHolder.getContext().setAuthentication(authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication()));
+				return true;
+		}
+		else
+			return false;
+		
 	}
 
 }

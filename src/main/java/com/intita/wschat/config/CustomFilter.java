@@ -19,28 +19,40 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 
-
+@Component
 public class CustomFilter implements Filter{
 
     @Autowired
     private CustomAuthenticationProvider authenticationProvider;
     
-    @Bean
 	public void destroy() {
 		// Do nothing
 	}
-
+/*
     public CustomFilter(String req) {
+		authenticationProvider = new CustomAuthenticationProvider();
+	}
+  */  
+    public CustomFilter() {
 		
 	}
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-
+/*
 		// principal is set in here as a header or parameter. you need to find out 
 		// what it's named to extract it
 		HttpServletRequest req = (HttpServletRequest) request;
 		System.out.println(req.getSession().getId());
+		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
+		{
+			System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+			//if(!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
+				SecurityContextHolder.getContext().setAuthentication(authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication()));
+		}
+			*/
+			
+		
 		/*if (SecurityContextHolder.getContext().getAuthentication() == null) {
 			// in here, get your principal, and populate the auth object with 
 			// the right authorities
@@ -49,7 +61,7 @@ public class CustomFilter implements Filter{
 			
 			SecurityContextHolder.getContext().setAuthentication(auth);*
 		}*/
-
+		
 		chain.doFilter(request, response);
 	}
 

@@ -484,7 +484,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		}
 		return xmlhttp;
 	}
-	var formData = new FormData();
+	/*var formData = new FormData();
 
 	// добавить к пересылке ещё пару ключ - значение
 
@@ -498,12 +498,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	xhr.onreadystatechange= function(){
 		if (xhr.readyState==4 || xhr.readyState=="complete")
 		{
-			initStompClient();
+			
 		}
 	}
 	xhr.send(formData);
 
-
+*/
+	initStompClient();
 	/*
 	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
      .success(function (data, status, headers, config) {
