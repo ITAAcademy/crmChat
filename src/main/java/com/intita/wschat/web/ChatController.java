@@ -238,7 +238,7 @@ public class ChatController {
 	public String  getIndex(HttpRequest request) {
 		System.out.println("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		authenticationProvider.autorization(authenticationProvider);
-		return "index.html";
+		return "/index.html";
 	}
 
 

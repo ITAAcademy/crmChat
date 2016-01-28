@@ -1,6 +1,8 @@
 package com.intita.wschat.config;
 
 import javax.servlet.Filter;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Configuration
 @EnableWebSecurity
@@ -53,9 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.permitAll()
 		.and()
 		.authorizeRequests()
-		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails").permitAll()
+		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
-		.anyRequest().authenticated();
+		.anyRequest().permitAll();
 		
 		/*
 		 * ATENTION 
@@ -68,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		 .defaultsDisabled()
 		 .cacheControl();
 		
+		 
 
 		 //http.headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
 		

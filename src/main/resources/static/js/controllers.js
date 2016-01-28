@@ -27,8 +27,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
 
-	var serverPrefix = "";//"/crmChat";
-	//var serverPrefix = "/crmChat";
+	//var serverPrefix = "";//"/crmChat";
+	var serverPrefix = "/crmChat";
 	var room = "default_room/";
 
 	var room = "1/";
