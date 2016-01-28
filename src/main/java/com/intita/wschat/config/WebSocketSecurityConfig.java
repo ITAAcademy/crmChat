@@ -12,7 +12,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 		messages
 				// users cannot send to these broker destinations, only the application can
 		 		.simpMessageDestMatchers("/topic/chat.login", "/topic/chat.logout", "/topic/chat.message").denyAll()
-				.anyMessage().authenticated();
+				.anyMessage().permitAll();
 	}
 
 	@Override

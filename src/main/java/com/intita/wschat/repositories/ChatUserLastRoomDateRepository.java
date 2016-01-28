@@ -19,6 +19,7 @@ public interface ChatUserLastRoomDateRepository extends CrudRepository<ChatUserL
 	   ChatUserLastRoomDate findByRoomAndChatUser(Room room, ChatUser chatUser);
 	   Page<ChatUserLastRoomDate> findAll(Pageable pageable);
 	   List<ChatUserLastRoomDate> findAll();
+	   List<ChatUserLastRoomDate> findByChatUser(ChatUser user);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);
 	 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
