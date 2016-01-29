@@ -113,6 +113,13 @@ public class Room implements Serializable,Comparable<Room> {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public static List<String> getRoomsNames(List<Room> rooms){
+		List<String> result = new ArrayList<String>();
+		for (Room room : rooms){
+			result.add(room.getName());
+		}
+		return result;
+	}
 
 
 	@Override

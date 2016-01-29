@@ -72,6 +72,10 @@ public class RoomsService {
 		
 		return roomRepo.findByAuthor(userService.getUser(author));
 	}
+public ArrayList<Room> getRoomByAuthor(User user) {
+		
+		return roomRepo.findByAuthor(user);
+	}
 	
 	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author) {

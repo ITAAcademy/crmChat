@@ -521,7 +521,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			});*/
 
 
-
 }]);
 
 
