@@ -5,7 +5,7 @@
         <div class="share">
             <ul ng-repeat="room in roomsArray | orderBy: '-date' ">
                 <li>               
-                    <span ng-show="room .nums > 0" class="badge">{{room.nums}}</span>
+                    <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
                     <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
                     <a href="" ng-click="goToDialog(room)">{{room .string}}</a>
                 </li>
@@ -23,6 +23,7 @@
         </div>
     </div>
     <div class="col-xs-2">
-        <span type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
+    	<img ng-hide="$parent.roomAdded" src="images/ajax_loader_blue_32.gif"/>
+      	<span ng-show="$parent.roomAdded" type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
     </div>
 </div>

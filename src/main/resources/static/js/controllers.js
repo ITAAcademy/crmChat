@@ -10,9 +10,9 @@ Object.prototype.getKeyByValue = function( value ) {
 	}
 }
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
-								"send_message_to_user":"SEND_MESSAGE_TO_USER",
-								"add_user_to_room":"ADD_USER_TO_ROOM",
-								"add_room":"ADD_ROOM"});
+	"send_message_to_user":"SEND_MESSAGE_TO_USER",
+	"add_user_to_room":"ADD_USER_TO_ROOM",
+	"add_room":"ADD_ROOM"});
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
@@ -20,14 +20,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.templateName = null;
 	$scope.emails = [];
-	
+
 
 	var typing = undefined;
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
 
-	//var serverPrefix = "";//"/crmChat";
 	var serverPrefix = "/crmChat";
 	var room = "default_room/";
 
@@ -90,7 +89,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		$scope.show_search_list = false;
 		console.log($scope.searchInputValue.email);
 	}
-	
+
 	var curentDateInJavaFromat = function() {
 		var currentdate = new Date(); 
 		var day = currentdate.getDate();
@@ -114,7 +113,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.chatUserId     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
-	$scope.roomsArray = [];
+	//$scope.roomsArray = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
 	$scope.rooms     = [];
@@ -135,33 +134,29 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		console.log($scope.dialogName)
 		chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 
-		setTimeout(function(){ //@BAG@
-			chatSocket.send("/app/chat/rooms/user.{0}".format($scope.chatUserId), {}, JSON.stringify({}));
-		}, 1000);  
-
 		$scope.dialogName = '';
 		var myFunc = function(){
-	if (angular.isDefined(addingRoom))
-	{
-		$timeout.cancel(addingRoom);
-		addingRoom=undefined;
-	}
-	if ($scope.roomAdded) return;
-				toaster.pop('error', "Error","server request timeout",1000);
-				$scope.roomAdded = true;
-				console.log("!!!!!!!!!!!!!!!!!!!!!Room added");
-			
+			if (angular.isDefined(addingRoom))
+			{
+				$timeout.cancel(addingRoom);
+				addingRoom=undefined;
+			}
+			if ($scope.roomAdded) return;
+			toaster.pop('error', "Error","server request timeout",1000);
+			$scope.roomAdded = true;
+			console.log("!!!!!!!!!!!!!!!!!!!!!Room added");
+
 		};
-		 addingRoom = $timeout(myFunc,6000);
+		addingRoom = $timeout(myFunc,6000);
 	};
 
 	$scope.goToDialogList = function() {
 		if ($scope.rooms[$scope.roomId] !== undefined )
-			 $scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
-		
+			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+
 		$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
-		
+
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
 	}
@@ -170,14 +165,14 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.goToDialog = function(roomName) {
 		if ($scope.rooms[$scope.roomId] !== undefined )
-			 $scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
-		
+			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
 		goToDialogEvn($scope.rooms.getKeyByValue(roomName));
-		
+
 	};
-	
+
 	function goToDialogEvn(id)
 	{
 		$scope.roomId = id;
@@ -189,7 +184,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
 	}
-	
+
 
 	$scope.changeRoom=function(){
 		$scope.messages=[];
@@ -225,32 +220,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 						}
 					} 
 				}));
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
-					var operationStatus = JSON.parse(message.body);
-					switch (operationStatus.type){
-					case Operations.send_message_to_all:
-					case Operations.send_message_to_user:
-					$scope.messageSended = true;
-						if (!operationStatus.success)
-							toaster.pop("error", "Error", message.body);
-						break;
-					case Operations.add_user_to_room:
-					$scope.userAddedToRoom = true;
-					if (!operationStatus.success)
-						toaster.pop("error", "Error","user wasn't added to room");
-					break;
-					case Operations.add_room:
-					$scope.roomAdded = true;
-					if (!operationStatus.success)
-						toaster.pop("error", "Error","room wasn't added");
 
-					}
-					//ZIGZAG OPS
-							
-					console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
-				}));
-		
 		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
 			var o = JSON.parse(message.body);
 			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
@@ -274,7 +244,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	/*$scope.addRoom=function(name){
 
 		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
-		
+
 	}*/
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
@@ -282,17 +252,17 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 		$scope.searchInputValue.email = '';
 		var myFunc = function(){
-	if (angular.isDefined(addingUserToRoom))
-	{
-		$timeout.cancel(addingUserToRoom);
-		addingUserToRoom=undefined;
-	}
-	if ($scope.userAddedToRoom) return;
-				toaster.pop('error', "Error","server request timeout",1000);
-				$scope.userAddedToRoom = true;
-			
+			if (angular.isDefined(addingUserToRoom))
+			{
+				$timeout.cancel(addingUserToRoom);
+				addingUserToRoom=undefined;
+			}
+			if ($scope.userAddedToRoom) return;
+			toaster.pop('error', "Error","server request timeout",1000);
+			$scope.userAddedToRoom = true;
+
 		};
-		 addingUserToRoom = $timeout(myFunc,6000);
+		addingUserToRoom = $timeout(myFunc,6000);
 		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
@@ -301,7 +271,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 	$scope.sendMessage = function() {
 		var destination = "/app/{0}chat.message".format(room);
-	$scope.messageSended = false;
+		$scope.messageSended = false;
 		if($scope.sendTo != "everyone") {
 			destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
 			$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
@@ -309,18 +279,18 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
 		$scope.newMessage = '';
-			var myFunc = function(){
-	if (angular.isDefined(sendingMessage))
-	{
-		$timeout.cancel(sendingMessage);
-		sendingMessage=undefined;
-	}
-	if ($scope.messageSended) return;
-				toaster.pop('error', "Error","server request timeout",1000);
-				$scope.messageSended = true;
-			
+		var myFunc = function(){
+			if (angular.isDefined(sendingMessage))
+			{
+				$timeout.cancel(sendingMessage);
+				sendingMessage=undefined;
+			}
+			if ($scope.messageSended) return;
+			toaster.pop('error', "Error","server request timeout",1000);
+			$scope.messageSended = true;
+
 		};
-		 sendingMessage = $timeout(myFunc,2000);
+		sendingMessage = $timeout(myFunc,2000);
 	};
 
 
@@ -372,8 +342,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 						$scope.templateName = 'chatTemplate.html';
 						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 					}
-					
-					
+
+
 				}));
 
 		lastRoomBindings.push(
@@ -394,31 +364,24 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		 *
 		 */
 
-		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
+		function updateRooms(message)
+		{
 			$scope.rooms = JSON.parse(message.body);
-			
+
 			$scope.roomsArray = Object.keys($scope.rooms)
-			  .map(function(key) {
-			    return $scope.rooms[key];
-			  });
-			
-			
-			$scope.roomsCount = Object.keys($scope.rooms).length;
-			console.log($scope.rooms);	
-		});
-		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
-			$scope.rooms = JSON.parse(message.body);
-			
-			$scope.roomsArray = Object.keys($scope.rooms)
-			  .map(function(key) {
-			    return $scope.rooms[key];
-			  });
-			
+			.map(function(key) {
+				return $scope.rooms[key];
+			});
+
 			$scope.roomsCount = Object.keys($scope.rooms).length;
 			console.log($scope.rooms);
+		}
+		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
+			updateRooms(message);
 		});
-
-
+		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
+			updateRooms(message);
+		});
 
 		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
 
@@ -427,12 +390,37 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				if (value == num && $scope.roomId != value)
 				{
 					$scope.rooms[value].nums++;
-					$scope.roomsArray[value].nums++;
+					$scope.rooms[value].date = new Date();//@TEST@
+					//$scope.roomsArray[value].nums++;
 					new Audio('new_mess.mp3').play();
 					toaster.pop('note', "NewMessage in " + $scope.rooms[value].string, "",1000);
-					
+
 				}
 			});
+		});
+		chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
+			var operationStatus = JSON.parse(message.body);
+			switch (operationStatus.type){
+			case Operations.send_message_to_all:
+			case Operations.send_message_to_user:
+				$scope.messageSended = true;
+				if (!operationStatus.success)
+					toaster.pop("error", "Error", message.body);
+				break;
+			case Operations.add_user_to_room:
+				$scope.userAddedToRoom = true;
+				if (!operationStatus.success)
+					toaster.pop("error", "Error","user wasn't added to room");
+				break;
+			case Operations.add_room:
+				$scope.roomAdded = true;
+				if (!operationStatus.success)
+					toaster.pop("error", "Error","room wasn't added");
+
+			}
+			//ZIGZAG OPS
+
+			console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
 		});
 
 
@@ -445,12 +433,12 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		    }, 3000);  
 
 		 */
-		lastRoomBindings.push(
+		/*lastRoomBindings.push(
 				chatSocket.subscribe("/user/exchange/amq.direct/{0}chat.message".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
 					parsed.priv = true;
 					$scope.messages.unshift(parsed);
-				}));
+				}));*/
 
 		lastRoomBindings.push(
 				chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
@@ -468,60 +456,8 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		});
 	};
-	function getXmlHttp(){
-		var xmlhttp;
-		try {
-			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (E) {
-				xmlhttp = false;
-			}
-		}
-		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-			xmlhttp = new XMLHttpRequest();
-		}
-		return xmlhttp;
-	}
-	/*var formData = new FormData();
 
-	// добавить к пересылке ещё пару ключ - значение
-
-	formData.append("username", "username");
-	formData.append("password", "password");
-
-	// отослать
-
-	var xhr = getXmlHttp();
-	xhr.open("POST", serverPrefix + "/index.html",false);
-	xhr.onreadystatechange= function(){
-		if (xhr.readyState==4 || xhr.readyState=="complete")
-		{
-			
-		}
-	}
-	xhr.send(formData);
-
-*/
 	initStompClient();
-	/*
-	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
-     .success(function (data, status, headers, config) {
-    	 console.log("YRAAAAAAAAAAAAAAAAAAA");
-    		initStompClient();
-     }
-     )
-     .error(function (data, status, header, config) {
-     });*/
-
-
-	/*$scope.$on('$routeUpdate', function(scope, next, current) {
-			   console.log('address changed');
-			});*/
-
-
-
 }]);
 
 
