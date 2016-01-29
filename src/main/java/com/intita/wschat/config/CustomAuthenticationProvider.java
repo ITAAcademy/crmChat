@@ -48,93 +48,94 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		Authentication token = (Authentication) authentication;
 		List<GrantedAuthority> authorities = "ADMIN".equals(token.getCredentials()) ? 
 				AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		
-		Cookie[] array = attr.getRequest().getCookies();
-		HttpSession session = attr.getRequest().getSession();
-		//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
-		session.setMaxInactiveInterval(3600*12);
+				ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 
-		String value = null;
-		String IntitaId = null;
-		String ChatId = null;
-		for(Cookie cook : array)
-		{
-			if(cook.getName().equals("JSESSIONID"))
-			{
-				System.out.println("URAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-				System.out.println(cook.getValue());
-				value = cook.getValue();
-				
-				String json = redisService.getKeyValue(value);
-				
-				if(json != null)
+				Cookie[] array = attr.getRequest().getCookies();
+				HttpSession session = attr.getRequest().getSession();
+				//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
+				session.setMaxInactiveInterval(3600*12);
+
+				String value = null;
+				String IntitaId = null;
+				String ChatId = null;
+				for(Cookie cook : array)
 				{
-					JsonFactory factory = new JsonFactory(); 
-					ObjectMapper mapper = new ObjectMapper(factory); 
-					TypeReference<HashMap<String,Object>>typeRef  = new TypeReference<HashMap<String,Object>>() {};
-					HashMap<String, Object> o = null;
-					try {
-						System.out.println(json);
-						o = mapper.readValue(json, typeRef);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(cook.getName().equals("JSESSIONID"))
+					{
+						System.out.println("URAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+						System.out.println(cook.getValue());
+						value = cook.getValue();
+
+						String json = "fgdfgfdgfdg!!!!!";//redisService.getKeyValue(value);
+
+						if(json != null)
+						{
+							JsonFactory factory = new JsonFactory(); 
+							ObjectMapper mapper = new ObjectMapper(factory); 
+							TypeReference<HashMap<String,Object>>typeRef  = new TypeReference<HashMap<String,Object>>() {};
+							HashMap<String, Object> o = null;
+							try {
+								System.out.println(json);
+								o = mapper.readValue(json, typeRef);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							if(o != null )
+								IntitaId = (String) o.get(redisId);
+							//				System.out.println("Got " + o);
+						}
+						break;
 					}
-					IntitaId = (String) o.get(redisId);
-					//				System.out.println("Got " + o);
 				}
-				break;
-			}
-		}
 
-		if(IntitaId != null)
-			ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();
-		else
-		{
-			Object obj_s = session.getAttribute("chatId");
-			if(obj_s == null)
-			{
-				System.out.println("CREATE NEW SESSION");
-				ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
-				ChatId = c_u_temp.getId().toString();
-				session.setAttribute("chatId", ChatId);
-				
-			}
-			else
-			{
-				System.out.println("SESSION OK " + (String)obj_s);
-				ChatId = (String) obj_s;
-			}
+				if(IntitaId != null)
+					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();
+				else
+				{
+					Object obj_s = session.getAttribute("chatId");
+					if(obj_s == null)
+					{
+						System.out.println("CREATE NEW SESSION");
+						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
+						ChatId = c_u_temp.getId().toString();
+						session.setAttribute("chatId", ChatId);
 
-		}
-		Authentication auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
-		//	auth.setAuthenticated(true);
-		return auth;
+					}
+					else
+					{
+						System.out.println("SESSION OK " + (String)obj_s);
+						ChatId = (String) obj_s;
+					}
+
+				}
+				Authentication auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
+				//	auth.setAuthenticated(true);
+				return auth;
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
 	}
-	
+
 	public boolean autorization()
 	{
 		return autorization(this);
 	}
-	
+
 	public static boolean autorization(AuthenticationProvider authenticationProvider)
 	{
 		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
 		{
 			System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
 			//if(!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-				SecurityContextHolder.getContext().setAuthentication(authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication()));
-				return true;
+			SecurityContextHolder.getContext().setAuthentication(authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication()));
+			return true;
 		}
 		else
 			return false;
-		
+
 	}
 
 }
