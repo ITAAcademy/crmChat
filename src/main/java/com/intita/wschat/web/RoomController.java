@@ -156,12 +156,7 @@ public class RoomController {
 
 	private Map<Long, StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
-		ArrayList<Room> room_array = new ArrayList<>();
-		if(currentUser != null)
-		{
-			room_array.addAll(currentUser.getRootRooms());
-			room_array.addAll(currentUser.getRoomsFromUsers());
-		}
+
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		Map<Long, StringIntDate> result = new HashMap <Long, StringIntDate> ();
 
@@ -206,7 +201,7 @@ public class RoomController {
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		roomService.register(name, user);
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorMessage(principal));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorSubscribe(principal));
 
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,true,"ADD ROOM");
 		String subscriptionStr = "/topic/users/"+chatUserId+"/status";

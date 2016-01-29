@@ -30,6 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RedisService;
+import com.intita.wschat.util.SerializedPhpParser;
+import com.intita.wschat.util.SerializedPhpParser.PhpObject;
+
 import java.security.Principal;
 
 @Component
@@ -38,6 +41,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	RedisService redisService; 
 	@Autowired
 	ChatUsersService chatUserServise;
+	
+    private	SerializedPhpParser serializedPhpParser;
 
 	@Value("${redis.id}")
 	private String redisId;
@@ -66,24 +71,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 						System.out.println(cook.getValue());
 						value = cook.getValue();
 
-						String json = "fgdfgfdgfdg!!!!!";//redisService.getKeyValue(value);
-
-						if(json != null)
+						String phpSession = redisService.getKeyValue(value);
+						
+						
+						
+						if(phpSession != null)
 						{
-							JsonFactory factory = new JsonFactory(); 
-							ObjectMapper mapper = new ObjectMapper(factory); 
-							TypeReference<HashMap<String,Object>>typeRef  = new TypeReference<HashMap<String,Object>>() {};
-							HashMap<String, Object> o = null;
 							try {
-								System.out.println(json);
-								o = mapper.readValue(json, typeRef);
-							} catch (IOException e) {
+								System.out.println(phpSession);
+								serializedPhpParser = new SerializedPhpParser(phpSession);
+								IntitaId = (String)serializedPhpParser.find(redisId);
+							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							if(o != null )
-								IntitaId = (String) o.get(redisId);
-							//				System.out.println("Got " + o);
 						}
 						break;
 					}
