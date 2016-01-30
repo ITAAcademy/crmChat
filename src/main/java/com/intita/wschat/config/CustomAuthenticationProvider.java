@@ -41,8 +41,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	RedisService redisService; 
 	@Autowired
 	ChatUsersService chatUserServise;
-	
-    private	SerializedPhpParser serializedPhpParser;
+
+	private	SerializedPhpParser serializedPhpParser;
 
 	@Value("${redis.id}")
 	private String redisId;
@@ -57,38 +57,40 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 				Cookie[] array = attr.getRequest().getCookies();
 				HttpSession session = attr.getRequest().getSession();
-				//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
+				RequestContextHolder.currentRequestAttributes().getSessionId();				//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
 				session.setMaxInactiveInterval(3600*12);
-
+				attr.setAttribute("id", "12321312312", 0);
+				
 				String value = null;
 				String IntitaId = null;
 				String ChatId = null;
-				for(Cookie cook : array)
-				{
-					if(cook.getName().equals("JSESSIONID"))
+				if(array != null)
+					for(Cookie cook : array)
 					{
-						System.out.println("URAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-						System.out.println(cook.getValue());
-						value = cook.getValue();
-
-						String phpSession = redisService.getKeyValue(value);
-						
-						
-						
-						if(phpSession != null)
+						if(cook.getName().equals("JSESSIONID"))
 						{
-							try {
-								System.out.println(phpSession);
-								serializedPhpParser = new SerializedPhpParser(phpSession);
-								IntitaId = (String)serializedPhpParser.find(redisId);
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							System.out.println("URAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+							System.out.println(cook.getValue());
+							value = cook.getValue();
+							session.setAttribute("id", value);
+							String phpSession = redisService.getKeyValue(value);
+
+
+
+							if(phpSession != null)
+							{
+								try {
+									System.out.println(phpSession);
+									serializedPhpParser = new SerializedPhpParser(phpSession);
+									IntitaId = (String)serializedPhpParser.find(redisId);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
+							break;
 						}
-						break;
 					}
-				}
 
 				if(IntitaId != null)
 					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();
