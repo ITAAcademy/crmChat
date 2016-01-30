@@ -59,7 +59,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				HttpSession session = attr.getRequest().getSession();
 				RequestContextHolder.currentRequestAttributes().getSessionId();				//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
 				session.setMaxInactiveInterval(3600*12);
-				attr.setAttribute("id", "12321312312", 0);
 				
 				String value = null;
 				String IntitaId = null;
