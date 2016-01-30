@@ -69,6 +69,15 @@ public class ChatUserLastRoomDateService {
 	public void updateUserLastRoomDateInfo(ChatUserLastRoomDate u){
 		chatUserLastRoomDateRepo.save(u);
 	}
+	
+	@Transactional
+	public ChatUserLastRoomDate addUserLastRoomDateInfo(ChatUser user, Room room){
+		ChatUserLastRoomDate date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
+		date.setChatUser(user);
+		updateUserLastRoomDateInfo(date);
+		chatUserLastRoomDateRepo.save(date);
+		return date;
+	}
 
 	@Transactional
 	public void removeUserLastRoomDate(Long id){

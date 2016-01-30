@@ -66,6 +66,22 @@ public class ChatUserLastRoomDate implements Serializable,Comparable<ChatUserLas
 		this.room = last_room;
 	}
 	
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public Date getLast_logout() {
+		return last_logout;
+	}
+
+	public void setLast_logout(Date last_logout) {
+		this.last_logout = last_logout;
+	}
+
 	public Long getId() {
 		return id;
 	}

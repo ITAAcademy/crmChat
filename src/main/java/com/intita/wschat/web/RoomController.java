@@ -41,6 +41,7 @@ import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
+import com.intita.wschat.services.RoomsService.StringIntDate;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
@@ -64,32 +65,6 @@ public class RoomController {
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
-	public class StringIntDate {
-		public String string;
-		public Integer nums;
-		public String date;
-
-		public String getDate() {
-			return date;
-		}
-
-		public void setDate(String date) {
-			this.date = date;
-		}
-
-		public StringIntDate() {
-			string = "";
-			nums = 0;
-			date = new Date().toString();
-		}
-
-		public StringIntDate(String string, Integer nums, String date) {
-			this.string = string;
-			this.nums = nums;
-			this.date = date;
-		}
-	}
-
 	private ArrayList<Room> roomsArray; 
 
 	@SubscribeMapping("/chat.login/{username}")
@@ -107,7 +82,7 @@ public class RoomController {
 			else
 				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
 			roomService.addUserToRoom(user, room);
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), getRoomsByChatUser(user));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
 			result.put("nextWindow", room.getId());
 		}
 		else
@@ -151,45 +126,7 @@ public class RoomController {
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
 
-		return getRoomsByChatUser(chatUserServise.getChatUser(Long.parseLong(principal.getName())));
-	}
-
-	private Map<Long, StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
-		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
-		ArrayList<Room> room_array = new ArrayList<>();
-		if(currentUser != null)
-		{
-			room_array.addAll(currentUser.getRootRooms());
-			room_array.addAll(currentUser.getRoomsFromUsers());
-		}
-		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
-		Map<Long, StringIntDate> result = new HashMap <Long, StringIntDate> ();
-
-		List<ChatUserLastRoomDate> rooms_lastd = chatUserLastRoomDateService.getUserLastRoomDates(currentUser);	
-		
-		List<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
-
-		for (int i = 0; i < rooms_lastd.size() ; i++)
-			//for (int i = room_array.size() - 1; i >=0; i--)
-		{
-			ChatUserLastRoomDate entry = rooms_lastd.get(i);
-			Date date = entry.getLastLogout();
-			int messages_cnt = 0;// =  userMessageService.getMessagesByRoomDateNotUser(entry, date, currentUser).size();
-			for (UserMessage msg : messages)
-			{
-				Date m_data = msg.getDate();
-				if (m_data != null)
-					if (m_data.after(date) == true)
-					{
-						messages_cnt += 1;
-					}
-			}
-
-			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString() );
-			result.put(entry.getLastRoom().getId() ,sb);
-		}
-		System.out.println(">>>>>>>>>>>>>  " + new Date());
-		return result;				
+		return roomService.getRoomsByChatUser(chatUserServise.getChatUser(Long.parseLong(principal.getName())));
 	}
 
 	@MessageMapping("/chat/rooms/user.{username}")
@@ -206,10 +143,10 @@ public class RoomController {
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		roomService.register(name, user);
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorMessage(principal));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorSubscribe(principal));
 
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,true,"ADD ROOM");
-		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 	}
 
@@ -254,7 +191,7 @@ public class RoomController {
 		roomService.addUserToRoom(user_o, room_o);
 		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), getRoomsByChatUser(user_o));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
 
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,true,"ADD USER TO ROOM");
 		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
@@ -295,4 +232,5 @@ public class RoomController {
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
+
 }
