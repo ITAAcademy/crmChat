@@ -390,7 +390,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				if (value == num && $scope.roomId != value)
 				{
 					$scope.rooms[value].nums++;
-					$scope.rooms[value].date = new Date();//@TEST@
+					$scope.rooms[value].date = curentDateInJavaFromat();//@TEST@
 					//$scope.roomsArray[value].nums++;
 					new Audio('new_mess.mp3').play();
 					toaster.pop('note', "NewMessage in " + $scope.rooms[value].string, "",1000);
