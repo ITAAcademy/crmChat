@@ -12,7 +12,7 @@
 
 <link href="css/chat.css" rel="stylesheet">
 </head>
-<body>
+<body ng-controller="chatroomsViewCtrl">
 
 	<!-- <div id="mainContainer" class="container"	ng-controller="ChatController"> -->
 	 <div id="mainContainer" class="container"	>
@@ -27,7 +27,7 @@
 					<h1>Spring WebSocket Chat</h1>
 					<ul class="nav navbar-nav navbar-right">
 						<!-- <li><a class="menu-ng-click" ng-click="goToDialogList()" target="_blank">Dialogs__ChatUser:{{chatUserId}}</a></li> -->
-						<li><a class="menu-ng-click" href="#chatrooms_view">Dialogs__ChatUser:{{chatUserId}}</a></li>
+						<li><a class="menu-ng-click" ng-click="goToDialogList()" href="#chatrooms_view">Dialogs__ChatUser:{{chatUserId}}</a></li>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -68,6 +68,8 @@
 
 <script src="js/dialog_view/dialog_view.js"></script>
 <script src="js/dialog_view/dialog_ctrl.js"></script>
+
+<script src="js/controllers/main_container_controller.js"></script>
 
 
 	

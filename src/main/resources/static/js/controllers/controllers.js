@@ -154,7 +154,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		if ($scope.rooms[$scope.roomId] !== undefined )
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
-		$scope.templateName = 'dialogsTemplate.html';
+		//$scope.templateName = 'dialogsTemplate.html';
 		$scope.dialogName = '';
 
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
