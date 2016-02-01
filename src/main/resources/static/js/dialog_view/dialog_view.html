@@ -1,0 +1,55 @@
+			<h1>DIALOG ROOMS VIEW</h1>
+      <h4>Dialog name: [{{dialogName.string}}]</h4>
+	        <div class="row">
+        		<div class="col-xs-4">
+        			<h4>Participants [{{participants.length}}]</h4>
+							<div  class="dropdown dropdown-scroll" ng-app="app">
+		<div >
+            <div class="input-group input-group-sm search-control"> 
+
+                <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
+                ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
+                            <span  ng-click="addUserToRoom()" class="input-group-addon">
+                    <span ng-show="$parent.userAddedToRoom" class="glyphicon glyphicon-search"></span>
+                    <img ng-hide="$parent.userAddedToRoom" src="images/ajax_loader_blue_32.gif"/>
+			</span>
+            </div>
+            <div class="search-list" ng-show="$parent.show_search_list" >
+		    <ul aria-labelledby="dropdownMenu1"">
+		        <li role="presentation" ng-repeat='item in $parent.emails' ng-click="appendToSearchInput(item)"> <a> {{item}} </a>  
+		        </li>
+		    </ul>
+		    </div>
+		    </div>
+</div>
+        			<div class="share">
+	        			<ul ng-repeat="participant in participants">
+	        				<li>
+	        					<span class="input-icon fui-new" ng-show="participant.typing"></span>
+	        					<span class="input-icon fui-user" ng-show="!participant.typing"></span>
+	        					<a class="a_user_nickname" href="" ng-click="privateSending(participant.username)">{{participant.username}}</a>
+	        					
+	        				</li>
+	        			</ul>
+        			</div>
+        		</div>
+        		<div class="col-xs-8 chat-box">
+        			<h4>Messages</h4>
+	        		<div ng-repeat="message in messages track by $index">
+	       	 			<small print-message></small>
+	      			</div>
+        		</div>
+        	</div>
+        	<div class="row">
+       			<div class="form-group row">
+       			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
+      						  <input id="newMessageInput" type="text" class=" col-xs-11 " placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
+       						  	<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> --> 
+								<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
+       						  	<button class= "col-xs-1" ng-click="sendMessage()">
+       						  	<img ng-hide="$parent.messageSended" src="images/ajax_loader_blue_32.gif"/>
+       						  	<span ng-show="$parent.messageSended">Send</span>
+       						  	</button>
+				</div>
+        	</div>
+	

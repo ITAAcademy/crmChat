@@ -14,7 +14,8 @@
 </head>
 <body>
 
-	<div id="mainContainer" class="container"	ng-controller="ChatController">
+	<!-- <div id="mainContainer" class="container"	ng-controller="ChatController"> -->
+	 <div id="mainContainer" class="container"	>
 		<toaster-container></toaster-container>
 		
 		
@@ -25,14 +26,17 @@
 				<div class="collapse navbar-collapse" id="navbar-collapse-01">
 					<h1>Spring WebSocket Chat</h1>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a class="menu-ng-click" ng-click="goToDialogList()" target="_blank">Dialogs__ChatUser:{{chatUserId}}</a></li>
+						<!-- <li><a class="menu-ng-click" ng-click="goToDialogList()" target="_blank">Dialogs__ChatUser:{{chatUserId}}</a></li> -->
+						<li><a class="menu-ng-click" href="#chatrooms_view">Dialogs__ChatUser:{{chatUserId}}</a></li>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
 			</nav>
 			<!-- /navbar -->
 		</div>
-		<div  ng-include="templateName"></div>
+		
+		<!-- /views insertion point -->
+  <div ng-view></div> 
 
 	</div>
 	
@@ -51,8 +55,25 @@
 	<script src="lib/stomp/lib/stomp.js"></script>
 
 	<!-- App -->
+
+
 	<script src="js/app.js"></script>
-	<script src="js/controllers.js"></script>
+
+	
+	
+<script src="js/chatrooms_view/chatrooms_view.js"></script>
+<script src="js/chatrooms_view/chatrooms_ctrl.js"></script>
+
+
+
+<script src="js/dialog_view/dialog_view.js"></script>
+<script src="js/dialog_view/dialog_ctrl.js"></script>
+
+
+	
+
+
+	<!-- <script src="js/controllers/controllers.js"></script> -->
 	<script src="js/services.js"></script>
 	<script src="js/directives.js"></script>
 </body>

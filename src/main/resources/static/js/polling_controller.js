@@ -14,7 +14,7 @@ longPollApp.controller('PollingController', ['$scope', '$http', '$interval','$ti
     }).then(function(){
 poll();
     });
-		},3000);
+		},2000);
     }
 console.log("test");
 //$scope.topics=[112,'2313','3131'];

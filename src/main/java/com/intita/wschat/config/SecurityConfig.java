@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.permitAll()
 		.and()
 		.authorizeRequests()
-		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**").permitAll()
+		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**","/chatrooms_view/**","/dialog_view/**").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
 		.anyRequest().permitAll();
 		
