@@ -7,7 +7,7 @@
                 <li>               
                     <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
                     <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
-                    <a ng-click="goToDialog(room)" href="#dialog_view">{{room .string}}</a>
+                    <a ng-click="goToDialog(room)" ng-href="#dialog_view/{{room.string}}">{{room .string}}</a>
                 </li>
             </ul>
         </div>

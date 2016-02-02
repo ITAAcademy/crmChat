@@ -10,5 +10,5 @@
 var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'longPollChat.services',
                                                    'longPollChat.directives']);
 springChatApp.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.otherwise({redirectTo: '/dialog_view'});
+  $routeProvider.otherwise({redirectTo: '/dialog_view/0'});
 }]);

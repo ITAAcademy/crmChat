@@ -1,8 +1,7 @@
 springChatApp.controller('chatroomsViewCtrl', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 
 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 	
-	$scope.templateName = null;
-	$scope.emails = [];
+	$rootScope.emails = [];
 
 
 	var typing = undefined;
@@ -11,7 +10,6 @@ springChatApp.controller('chatroomsViewCtrl', ['$scope', '$http', '$location', '
 	var addingRoom = undefined;
 
 	var serverPrefix = "/crmChat";
-	var room = "default_room/";
 
 	var room = "1/";
 	var lastRoomBindings = [];
@@ -19,7 +17,17 @@ springChatApp.controller('chatroomsViewCtrl', ['$scope', '$http', '$location', '
 	var onConnect = function(frame) {
 		console.log("onconnect");
 
-
+if (!String.prototype.format) {
+		String.prototype.format = function() {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function(match, number) { 
+				return typeof args[number] != 'undefined'
+					? args[number]
+				: match
+				;
+			});
+		};
+	}
 		$scope.chatUserId = frame.headers['user-name'];
 
 function goToDialogEvn(id)

@@ -15,7 +15,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"add_room":"ADD_ROOM"});
 
 
-chatroomsView.controller('chatroomsViewCtrl', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+chatroomsView.controller('chatroomsViewCtrl', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','$routeParams',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,$routeParams) {
 
 	$scope.templateName = null;
 	$scope.emails = [];

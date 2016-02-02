@@ -15,7 +15,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"add_room":"ADD_ROOM"});
 
 
-dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','$routeParams',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,$routeParams) {
 
 	$scope.emails = [];
 
@@ -26,7 +26,6 @@ dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$inter
 	var addingRoom = undefined;
 
 	var serverPrefix = "/crmChat";
-	var room = "default_room/";
 
 	var room = "1/";
 	var lastRoomBindings = [];
@@ -111,13 +110,13 @@ dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$inter
 	$scope.chatUserId     = '';
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
-	//$scope.roomsArray = [];
+	$scope.roomsArray = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
-	$scope.roomId		= '';
+	$scope.roomId		= $routeParams.chatroomId;
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
@@ -162,6 +161,7 @@ dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$inter
 
 
 	$scope.goToDialog = function(roomName) {
+		console.log("goToDialog...");
 		if ($scope.rooms[$scope.roomId] !== undefined )
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
@@ -176,8 +176,8 @@ dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$inter
 		$scope.roomId = id;
 		$scope.changeRoom();
 		setTimeout(function(){ 
-			$scope.rooms[$scope.roomId].nums = 0;
-			$scope.roomsArray[$scope.roomId].nums = 0;
+			//$scope.rooms[$scope.roomId].nums = 0;
+			//$scope.roomsArray[$scope.roomId].nums = 0;
 		}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
@@ -331,6 +331,9 @@ dialogView.controller('dialogViewCtrl', ['$scope', '$http', '$location', '$inter
 	/*$scope.$on('$routeUpdate', function(scope, next, current) {
 			   console.log('address changed');
 			});*/
+$scope.goToDialog(room);
+//$scope.changeRoom();
+
 }]);
 
 
