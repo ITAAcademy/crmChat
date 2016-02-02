@@ -23,6 +23,9 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
@@ -62,7 +65,7 @@ public class RoomController {
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ChatUsersService chatUserServise;
-	@Autowired private ChatTenantService ChatTenantService;
+	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
 	private ArrayList<Room> roomsArray; 
@@ -74,14 +77,24 @@ public class RoomController {
 		ChatUser user = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 		if(user.getIntitaUser() == null)
 		{
-			ChatTenant t_user = ChatTenantService.getChatTenant((long) 1);//choose method
 			Room room;
-
 			if(user.getRoomsFromUsers().iterator().hasNext())
 				room = user.getRoomsFromUsers().iterator().next();
 			else
+			{
+				ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
+				if(countTenant.isEmpty())
+				{
+					result.put("nextWindow", (long) -1);
+					return result;
+				}
+				int k = new Random().nextInt(countTenant.size());
+				ChatTenant t_user = countTenant.get(k);//choose method
+				
 				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
-			roomService.addUserToRoom(user, room);
+				roomService.addUserToRoom(user, room);
+			}
+			
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
 			result.put("nextWindow", room.getId());
 		}
@@ -128,7 +141,9 @@ public class RoomController {
 
 		return roomService.getRoomsByChatUser(chatUserServise.getChatUser(Long.parseLong(principal.getName())));
 	}
-
+	
+	@RequestMapping(value="/chat/rooms/user.{username}", method = RequestMethod.GET)
+	@ResponseBody
 	@MessageMapping("/chat/rooms/user.{username}")
 	public Map<Long, StringIntDate> getRoomsByAuthorMessage(Principal principal) {
 		return getRoomsByAuthorSubscribe(principal);

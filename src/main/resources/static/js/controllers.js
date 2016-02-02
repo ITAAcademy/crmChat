@@ -124,6 +124,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
 	$scope.roomAdded = true;
+	$scope.showDialogListButton = false;
 
 
 	$scope.dialogName = '';
@@ -332,8 +333,16 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
 					//console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOn");
 					var mess_obj = JSON.parse(message.body);
+					
+					if(mess_obj.nextWindow == -1)
+					{
+						toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+						return;
+					}
+						
 					if(mess_obj.nextWindow == 0)
 					{
+						$scope.showDialogListButton = true;
 						$scope.goToDialogList();
 					}
 					else

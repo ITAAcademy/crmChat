@@ -93,6 +93,10 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 		this.nickName=nickName;
 		this.intitaUser=intitaUser;
 	}
+	public ChatUser(User intitaUser){
+		this.nickName=intitaUser.getLogin();
+		this.intitaUser=intitaUser;
+	}
 	public Long getId() {
 		return id;
 	}

@@ -53,6 +53,8 @@ public class ChatTenantService {
 	public void removeTenant(Long id){
 		chatTenantRepo.delete(id);
 	}
-
-
+	@Transactional
+	public long getCount(){
+		return chatTenantRepo.count();
+	}
 }
