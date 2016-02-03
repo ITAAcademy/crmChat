@@ -41,6 +41,7 @@ public class ChatUsersService {
 	
 	@Transactional
 	public ChatUser getChatUser(Principal principal){
+		if (principal==null)return null;
 		String chatUserIdStr = principal.getName();
 		Long chatUserId = 0L;
 				try{
