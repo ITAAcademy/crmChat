@@ -10,6 +10,12 @@
                     <a href="" ng-click="goToDialog(room)">{{room .string}}</a>
                 </li>
             </ul>
+            <div ng-controller='PollingController'>
+
+<p>Test longpolling</p>
+<ul>
+	<li  ng-repeat='topic in topics' >{{topic}}</li>
+</ul> 		</div>
         </div>
     </div>
 </div>

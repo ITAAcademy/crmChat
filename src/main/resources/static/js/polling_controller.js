@@ -1,5 +1,5 @@
-var longPollApp = angular.module('longPollChat.controllers', ['toaster','ngRoute','ngResource']);
-longPollApp.controller('PollingController', ['$scope', '$http', '$interval','$timeout',
+//var longPollApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource']);
+phonecatApp.controller('PollingController', ['$scope', '$http', '$interval','$timeout',
 	function ($scope, $http, $interval, $timeout) {
 		function poll(){
             $timeout(function (){
