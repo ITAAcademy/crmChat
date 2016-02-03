@@ -12,6 +12,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,20 @@ public class UsersService {
 	public Page<User> getUsers(int page, int pageSize){
 		return usersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 
+	}
+	@Transactional
+	public User getUser(Principal principal){
+		String chatUserIdStr = principal.getName();
+		Long chatUserId = 0L;
+				try{
+					chatUserId = Long.parseLong(chatUserIdStr);
+				}
+		catch(NumberFormatException e){
+		System.out.println(e);
+		return null;
+		}
+		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
+		return user;
 	}
 
 	@Transactional

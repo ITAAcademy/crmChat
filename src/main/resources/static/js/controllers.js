@@ -467,6 +467,20 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	};
 
 	initStompClient();
+	/*
+	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
+     .success(function (data, status, headers, config) {
+    	 console.log("YRAAAAAAAAAAAAAAAAAAA");
+    		initStompClient();
+     }
+     )
+     .error(function (data, status, header, config) {
+     });*/
+
+
+	/*$scope.$on('$routeUpdate', function(scope, next, current) {
+			   console.log('address changed');
+			});*/
 }]);
 
 
