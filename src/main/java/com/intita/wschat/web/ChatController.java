@@ -1,25 +1,21 @@
 package com.intita.wschat.web;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -27,26 +23,31 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.context.request.async.WebAsyncManager;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
-import com.intita.wschat.config.ChatConfig.Destinations;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
-import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
@@ -56,14 +57,12 @@ import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Controller that handles WebSocket chat messages
  * 
- * @author Sergi Almar
+ * @author Nicolas
  */
+
 @Controller
 public class ChatController {
 
@@ -74,7 +73,7 @@ public class ChatController {
 	@Autowired private ParticipantRepository participantRepository;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
-	
+
 	@Autowired private CustomAuthenticationProvider authenticationProvider;
 
 	@Autowired private RoomsService roomService;
@@ -84,11 +83,18 @@ public class ChatController {
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
+	private volatile static Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
+	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+
+	//[TIMEOUTS]
+	/*@Value("${timeouts.message}")
+	private final Long timeOutMessage;
+*/
 	
 	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessage(@DestinationVariable("room") String roomStr,@Payload ChatMessage message, Principal principal) {
+	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
-		checkProfanityAndSanitize(message);
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
 		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
@@ -103,10 +109,101 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
-		
-		
 		return message;
 	}
+
+	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
+	@ResponseBody
+	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
+		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		Long chatUserId = 0L;
+		chatUserId = Long.parseLong(principal.getName());
+		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
+		Room room = roomService.getRoom(Long.parseLong(roomStr));
+		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		message.setUsername(chatUser.getNickName());
+		//DeferredResult<ArrayList<UserMessage>> result = new DeferredResult<>();
+		//userMessageService.addMessage(messageToSave);
+		Queue<UserMessage> list = messagesBuffer.get(roomStr);
+		if(list == null)
+		{
+			list = new ConcurrentLinkedQueue<>();
+			messagesBuffer.put(roomStr, list);
+		}
+		list.add(messageToSave);
+	}
+	/*
+	@Async
+	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
+	public 	@ResponseBody Callable<ArrayList<UserMessage>> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
+		 return new Callable<ArrayList<UserMessage>>() {
+
+			@Override
+			public ArrayList<UserMessage> call() throws Exception {
+				// TODO Auto-generated method stub
+				Long timeOut = (long) 1000000;
+				final DeferredResult<ArrayList<UserMessage>> result = new DeferredResult<ArrayList<UserMessage>>(null, Collections.emptyList());
+				ArrayList<UserMessage> list = messagesBuffer.get(Long.parseLong(roomStr));
+				if(list == null)
+				{
+					list = new ArrayList<>();
+				}
+				result.setResult(list);
+				long l = 10000;
+				Thread.sleep(l);
+				return list;
+			}
+		 };
+	}
+	 */
+
+	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
+	public 	@ResponseBody DeferredResult<String> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
+		Long timeOut = 1000000L;
+		Queue<UserMessage> list = messagesBuffer.get(roomStr);
+		if(list == null)
+		{
+			list = new ConcurrentLinkedQueue<>();
+			//	messagesBuffer.put(Long.parseLong(roomStr), list);
+		}
+		DeferredResult<String> result = new DeferredResult<String>(timeOut);
+		Queue<DeferredResult<String>> queue = responseBodyQueue.get(roomStr);
+		if(queue == null)
+		{
+			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
+		}
+		while(responseBodyQueue.putIfAbsent(roomStr, queue) == null);		
+		queue.add(result);
+		//Thread.sleep(l);
+		return result;
+	}
+	
+	@Scheduled(fixedRate=1000L)
+	public void processQueues() throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		for(String roomId : messagesBuffer.keySet())
+		{
+			Queue<UserMessage> array = messagesBuffer.get(roomId);
+			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(roomId);
+			for(DeferredResult<String> response : responseList)
+			{
+				if(responseList != null)
+				{
+					String str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
+					response.setResult(str);
+				}
+			}
+			responseList.clear();
+			userMessageService.addMessages(array);
+		}
+		messagesBuffer.clear();;
+		//this.responseBodyQueue.clear();
+
+
+	}
+
 
 	@MessageMapping("/{room}/chat.private.{username}")
 	public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
@@ -120,29 +217,29 @@ public class ChatController {
 
 		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/"+room+"/chat.message", message);
 	}
-	
-	
+
+
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
 	public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
-	//	checkProfanityAndSanitize(message);
+		//	checkProfanityAndSanitize(message);
 
 		Long user_id = Long.parseLong(principal.getName(), 10);
 		Long room_id = Long.parseLong(roomid, 10);
 		ChatUser user = chatUsersService.getChatUser(user_id);
 		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
-		
+
 		// getUserLastRoomDate(Room room, ChatUser chatUser) 
-		 
-		 Room room = roomService.getRoom(room_id);
+
+		Room room = roomService.getRoom(room_id);
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 	}
-	
+
 
 	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
 	public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
-	//	checkProfanityAndSanitize(message);
+		//	checkProfanityAndSanitize(message);
 
 		Long user_id = Long.parseLong(principal.getName(), 10);
 		Long room_id = Long.parseLong(roomid, 10);
@@ -233,7 +330,7 @@ public class ChatController {
 					String jsonInString = mapper.writeValueAsString(nicks);
 					return jsonInString;*/
 	}
-	
+
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpRequest request) {
 		System.out.println("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

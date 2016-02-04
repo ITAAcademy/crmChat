@@ -1,7 +1,9 @@
 package com.intita.wschat.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Queue;
 
 import com.intita.wschat.models.UserMessage;
 
@@ -24,6 +26,13 @@ public class ChatMessage {
 		date = new Date();
 	}
 	
+	static public ArrayList<ChatMessage> getAllfromUserMessages (Queue<UserMessage> userMessages){
+		ArrayList<ChatMessage> result = new ArrayList<ChatMessage>();
+		for(UserMessage singleUserMessage : userMessages){
+			result.add(new ChatMessage(singleUserMessage));
+		}
+		return result;
+	}
 	static public ArrayList<ChatMessage> getAllfromUserMessages (ArrayList<UserMessage> userMessages){
 		ArrayList<ChatMessage> result = new ArrayList<ChatMessage>();
 		for(UserMessage singleUserMessage : userMessages){

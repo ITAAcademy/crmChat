@@ -180,7 +180,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			$scope.rooms[$scope.roomId].nums = 0;
-			$scope.roomsArray[$scope.roomId].nums = 0;
+			//$scope.roomsArray[$scope.roomId].nums = 0;
 		}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
@@ -190,6 +190,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.changeRoom=function(){
 		$scope.messages=[];
 		room=$scope.roomId+'/';
+		spam();//@LP@
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 
@@ -271,15 +272,18 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 
 	$scope.sendMessage = function() {
+		function messageError(){
+			toaster.pop('error', "Error","server request timeout",1000);
+		}
 		var destination = "/app/{0}chat.message".format(room);
 		$scope.messageSended = false;
-		if($scope.sendTo != "everyone") {
+		$scope.newMessage = '';
+		/*if($scope.sendTo != "everyone") {
 			destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
 			$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
 		}
 
 		chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
-		$scope.newMessage = '';
 		var myFunc = function(){
 			if (angular.isDefined(sendingMessage))
 			{
@@ -287,11 +291,42 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 				sendingMessage=undefined;
 			}
 			if ($scope.messageSended) return;
-			toaster.pop('error', "Error","server request timeout",1000);
+			messageError();
 			$scope.messageSended = true;
 
 		};
 		sendingMessage = $timeout(myFunc,2000);
+		*/
+		$http.post(serverPrefix + "/{0}chat/message".format(room), {message: $scope.newMessage}).
+	    success(function(data, status, headers, config) {
+	        // this callback will be called asynchronously
+	        // when the response is available
+	        console.log("MESSAGE SEND OK " + data);
+	        $scope.messageSended = true;
+	      }).
+	      error(function(data, status, headers, config) {
+	    	  messageError();
+	    	  $scope.messageSended = true;
+	      });
+	};
+	
+	function spam(){
+		$http.post(serverPrefix + "/{0}chat/message/update".format(room)).
+    success(function(data, status, headers, config) {
+        console.log("MESSAGES GET OK ");
+        //debugger;
+        spam();
+        for(var index in data) { 
+        	if(data[index].hasOwnProperty("message"))
+            $scope.messages.unshift(data[index])
+        }
+        	
+        
+      }).
+      error(function(data, status, headers, config) {
+    	  console.log("MESSAGES GET FALSE ");
+    	  spam();
+      });
 	};
 
 
@@ -351,7 +386,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 						$scope.templateName = 'chatTemplate.html';
 						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 					}
-
 
 				}));
 
@@ -465,8 +499,66 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		});
 	};
+	function getXmlHttp(){
+		var xmlhttp;
+		try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (E) {
+				xmlhttp = false;
+			}
+		}
+		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+			xmlhttp = new XMLHttpRequest();
+		}
+		return xmlhttp;
+	}
+	function send(destination, data, ok_funk, err_funk)
+	{
+		/*var formData = new FormData();
+
+		// добавить к пересылке ещё пару ключ - значение
+
+		formData.append("username", "username");
+		formData.append("password", "password");
+*/
+		// отослать
+
+		var xhr = getXmlHttp();
+		xhr.open("POST", serverPrefix + destination, true);
+		xhr.onreadystatechange= function(){
+			if (xhr.readyState==4 || xhr.readyState=="complete")
+			{
+				ok_funk();
+			}
+			else
+				err_funk();
+				
+		}
+		xhr.send(data);
+	}
+
 
 	initStompClient();
+	/*
+	 $http.post(serverPrefix + "/index.html", {"username":"initIntita", "password":"initIntita"}, { headers: { 'Content-Type': 'application/x-www-form-urlencoded'}})
+     .success(function (data, status, headers, config) {
+    	 console.log("YRAAAAAAAAAAAAAAAAAAA");
+    		initStompClient();
+     }
+     )
+     .error(function (data, status, header, config) {
+     });*/
+
+
+	/*$scope.$on('$routeUpdate', function(scope, next, current) {
+			   console.log('address changed');
+			});*/
+
+
+
 }]);
 
 

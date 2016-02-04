@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Checks for profanities and filters them
  * 
- * @author Sergi Almar
+ * @author Nicolas
  */
 public class ProfanityChecker {
 

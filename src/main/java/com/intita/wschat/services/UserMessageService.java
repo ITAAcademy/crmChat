@@ -64,6 +64,12 @@ public class UserMessageService {
 		userMessageRepository.save(message);
 		return true;
 	}
+	@Transactional
+	public boolean addMessages(Iterable<UserMessage> messages) {
+		if (messages==null) return false;
+		userMessageRepository.save(messages);
+		return true;
+	}
 	
 	@Transactional
 	public ArrayList<UserMessage> getMessagesByDate(Date date) {
