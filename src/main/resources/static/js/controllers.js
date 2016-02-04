@@ -556,9 +556,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	/*$scope.$on('$routeUpdate', function(scope, next, current) {
 			   console.log('address changed');
 			});*/
-
-
-
 }]);
 
 

@@ -1,5 +1,6 @@
 package com.intita.wschat.services;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,22 @@ public class ChatUsersService {
 		System.out.println("admin user created");
 		//register("user", "user", "user");
 
+	}
+	
+	@Transactional
+	public ChatUser getChatUser(Principal principal){
+		if (principal==null)return null;
+		String chatUserIdStr = principal.getName();
+		Long chatUserId = 0L;
+				try{
+					chatUserId = Long.parseLong(chatUserIdStr);
+				}
+		catch(NumberFormatException e){
+		System.out.println(e);
+		return null;
+		}
+		ChatUser user = getChatUser(chatUserId);
+		return user;
 	}
 
 	@Transactional
