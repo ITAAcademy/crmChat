@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="longPollChat">
+<html lang="en" ng-app="springChat">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body ng-controller='PollingController'>
 
+<form action="longpoll_topics" method="post">
+ Room name:<br>
+  <input type="text" name="roomName"></input>
+  <input type="submit">Submit</input>
+</form>
 <p>Test longpolling</p>
 <ul>
 	<li  ng-repeat='topic in topics' >{{topic}}</li>

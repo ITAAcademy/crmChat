@@ -61,6 +61,13 @@ public class RoomsService {
 	}
 	
 	@Transactional
+	public boolean addRooms(Iterable<Room> rooms) {
+		if (rooms==null) return false;
+		roomRepo.save(rooms);
+		return true;
+	}
+	
+	@Transactional
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}

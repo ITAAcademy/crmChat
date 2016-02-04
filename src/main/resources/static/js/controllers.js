@@ -318,7 +318,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
         spam();
         for(var index in data) { 
         	if(data[index].hasOwnProperty("message"))
-            $scope.messages.unshift(data[index])
+        		$scope.messages.unshift(data[index])
         }
         	
         
