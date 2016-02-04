@@ -19,6 +19,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
+	$scope.socketSupport = false;
 	$scope.emails = [];
 
 
@@ -125,8 +126,6 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	$scope.userAddedToRoom = true;
 	$scope.roomAdded = true;
 	$scope.showDialogListButton = false;
-
-
 	$scope.dialogName = '';
 
 
@@ -187,10 +186,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 	}
 
 
+	/*************************************
+	 * CHANGE ROOM
+	 *************************************/
 	$scope.changeRoom=function(){
 		$scope.messages=[];
 		room=$scope.roomId+'/';
-		spam();//@LP@
+
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 
@@ -202,11 +204,35 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			}
 		}
 
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
+		if($scope.socketSupport === true)
+		{
+			lastRoomBindings.push(
+				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
+				{
 					$scope.messages.unshift(JSON.parse(message.body));
-
+	
 				}));
+
+			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
+			{
+				var o = JSON.parse(message.body);
+				loadSubscribeAndMessage(o);
+			}));
+
+			lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) 
+			{
+				var o = JSON.parse(message.body);
+				console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
+				console.log(o);
+				$scope.participants = o["participants"];
+			}));
+		}
+		else
+		{
+			subscribeMessageLP();//@LP@
+			loadMessageLP();
+		}	
+
 		lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
@@ -223,23 +249,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					} 
 				}));
 
-		lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
-			var o = JSON.parse(message.body);
-			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
-			console.log(o);
-			//$scope.messages = [];
-			$scope.participants = o["participants"];
-			for (var i=0; i< o["messages"].length;i++){
-				$scope.messages.unshift(o["messages"][i]);
-				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
-			}
-		}));
-		lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
-			var o = JSON.parse(message.body);
-			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
-			console.log(o);
-			$scope.participants = o["participants"];
-		}));
+
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 
@@ -271,62 +281,96 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		    }, 3000);  */
 	}
 
+	/*************************************
+	 * SEND MESSAGE
+	 *************************************/
 	$scope.sendMessage = function() {
 		function messageError(){
 			toaster.pop('error', "Error","server request timeout",1000);
 		}
 		var destination = "/app/{0}chat.message".format(room);
 		$scope.messageSended = false;
-		$scope.newMessage = '';
-		/*if($scope.sendTo != "everyone") {
-			destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
-			$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
-		}
-
-		chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
-		var myFunc = function(){
-			if (angular.isDefined(sendingMessage))
-			{
-				$timeout.cancel(sendingMessage);
-				sendingMessage=undefined;
+		if($scope.socketSupport == true)
+		{
+			if($scope.sendTo != "everyone") {
+				destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
+				$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
 			}
-			if ($scope.messageSended) return;
-			messageError();
-			$scope.messageSended = true;
 
+			chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
+			var myFunc = function(){
+				if (angular.isDefined(sendingMessage))
+				{
+					$timeout.cancel(sendingMessage);
+					sendingMessage=undefined;
+				}
+				if ($scope.messageSended) return;
+				messageError();
+				$scope.messageSended = true;
+
+			};
+			sendingMessage = $timeout(myFunc,2000);
+		}
+		else
+		{
+			$http.post(serverPrefix + "/{0}chat/message".format(room), {message: $scope.newMessage}).
+			success(function(data, status, headers, config) {
+				console.log("MESSAGE SEND OK " + data);
+				$scope.messageSended = true;
+			}).
+			error(function(data, status, headers, config) {
+				messageError();
+				$scope.messageSended = true;
+			});
 		};
-		sendingMessage = $timeout(myFunc,2000);
-		*/
-		$http.post(serverPrefix + "/{0}chat/message".format(room), {message: $scope.newMessage}).
-	    success(function(data, status, headers, config) {
-	        // this callback will be called asynchronously
-	        // when the response is available
-	        console.log("MESSAGE SEND OK " + data);
-	        $scope.messageSended = true;
-	      }).
-	      error(function(data, status, headers, config) {
-	    	  messageError();
-	    	  $scope.messageSended = true;
-	      });
-	};
+		$scope.newMessage = '';
+
+	}
+	/*************************************
+	 * LOAD MESSAGE LP
+	 *************************************/
+
+	function loadSubscribeAndMessage(message)
+	{
+		$scope.participants = message["participants"];
+		for (var i=0; i< message["messages"].length;i++){
+			$scope.messages.unshift(message["messages"][i]);
+			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+		}
+	}
 	
-	function spam(){
+	function loadMessageLP(){
+		$http.post(serverPrefix + "/{0}chat/participants".format(room), {}).
+		success(function(data, status, headers, config) {
+			console.log("MESSAGE SEND OK " + data);
+			loadSubscribeAndMessage(data);
+		}).
+		error(function(data, status, headers, config) {
+			debugger;
+		});
+	}
+
+
+	/*************************************
+	 * UPDATE MESSAGE LP
+	 *************************************/
+	function subscribeMessageLP(){
 		$http.post(serverPrefix + "/{0}chat/message/update".format(room)).
-    success(function(data, status, headers, config) {
-        console.log("MESSAGES GET OK ");
-        //debugger;
-        spam();
-        for(var index in data) { 
-        	if(data[index].hasOwnProperty("message"))
-            $scope.messages.unshift(data[index])
-        }
-        	
-        
-      }).
-      error(function(data, status, headers, config) {
-    	  console.log("MESSAGES GET FALSE ");
-    	  spam();
-      });
+		success(function(data, status, headers, config) {
+			console.log("MESSAGES GET OK ");
+			//debugger;
+			subscribeMessageLP();
+			for(var index in data) { 
+				if(data[index].hasOwnProperty("message"))
+					$scope.messages.unshift(data[index])
+			}
+
+
+		}).
+		error(function(data, status, headers, config) {
+			console.log("MESSAGES GET FALSE ");
+			subscribeMessageLP();
+		});
 	};
 
 
@@ -368,13 +412,13 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 					//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
 					//console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOn");
 					var mess_obj = JSON.parse(message.body);
-					
+
 					if(mess_obj.nextWindow == -1)
 					{
 						toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
 						return;
 					}
-						
+
 					if(mess_obj.nextWindow == 0)
 					{
 						$scope.showDialogListButton = true;
@@ -495,9 +539,16 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
-			toaster.pop('error', 'Error', 'Connection error ' + error);
 
+			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
+			$scope.socketSupport = false;
 		});
+		/*
+		if(!$scope.socketSupport)
+		{
+			//@LP INIT@
+		}
+		 */
 	};
 	function getXmlHttp(){
 		var xmlhttp;
@@ -523,7 +574,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 
 		formData.append("username", "username");
 		formData.append("password", "password");
-*/
+		 */
 		// отослать
 
 		var xhr = getXmlHttp();
@@ -535,7 +586,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			}
 			else
 				err_funk();
-				
+
 		}
 		xhr.send(data);
 	}
