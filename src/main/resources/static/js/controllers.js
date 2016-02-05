@@ -468,6 +468,19 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}
 	}
+	function updateRooms(message)
+	{
+		$scope.rooms = JSON.parse(message.body);
+
+		$scope.roomsArray = Object.keys($scope.rooms)
+		.map(function(key) {
+			return $scope.rooms[key];
+		});
+
+		$scope.roomsCount = Object.keys($scope.rooms).length;
+		console.log($scope.rooms);
+	}
+
 	
 	var onConnect = function(frame) {
 		console.log("onconnect");
@@ -512,24 +525,13 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		 *
 		 */
 
-		function updateRooms(message)
-		{
-			$scope.rooms = JSON.parse(message.body);
-
-			$scope.roomsArray = Object.keys($scope.rooms)
-			.map(function(key) {
-				return $scope.rooms[key];
-			});
-
-			$scope.roomsCount = Object.keys($scope.rooms).length;
-			console.log($scope.rooms);
-		}
 		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			updateRooms(message);
 		});
 		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
 			updateRooms(message);
 		});
+		
 
 		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
 
@@ -611,11 +613,41 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
 				login(data);
+				
+				/*
+				 * 
+				 * 
+				 */
+				$http.post(serverPrefix + "/chat/rooms/user.login", {}).
+				success(function(data, status, headers, config) {
+					console.log("ROOMS OK " + data);
+					
+					$scope.rooms = data;
+					$scope.roomsArray = Object.keys($scope.rooms)
+					.map(function(key) {
+						return $scope.rooms[key];
+					});
+
+					$scope.roomsCount = Object.keys($scope.rooms).length;
+					console.log($scope.rooms);
+				}).
+				error(function(data, status, headers, config) {
+					//messageError();
+					toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+				});
+				/*
+				 * 
+				 * 
+				 */
+				
 			}).
 			error(function(data, status, headers, config) {
 				messageError();
 				toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
 			});
+			
+			
+			
 		});
 		/*
 		if(!$rootScope.socketSupport)

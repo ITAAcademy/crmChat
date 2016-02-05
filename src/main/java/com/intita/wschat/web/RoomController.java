@@ -220,6 +220,11 @@ public class RoomController {
 		return roomService.getRoomsByChatUser(chatUserServise.getChatUser(Long.parseLong(principal.getName())));
 	}
 	
+	@RequestMapping(value = "/chat/rooms/user.{username}", method = RequestMethod.POST)
+	public 	@ResponseBody String getRooms(Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(getRoomsByAuthorSubscribe(principal));
+	}
+	
 	@RequestMapping(value="/chat/rooms/user.{username}", method = RequestMethod.GET)
 	@ResponseBody
 	@MessageMapping("/chat/rooms/user.{username}")
