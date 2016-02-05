@@ -18,7 +18,7 @@ springChat.controller('PollingController', ['$scope', '$http', '$interval','$tim
     }
 console.log("test");
 //$scope.topics=[112,'2313','3131'];
-poll();
+//poll();
 
 
 	}]);

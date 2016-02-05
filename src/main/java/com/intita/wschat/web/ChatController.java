@@ -133,40 +133,16 @@ public class ChatController {
 		}
 		list.add(messageToSave);
 	}
-	/*
-	@Async
-	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
-	public 	@ResponseBody Callable<ArrayList<UserMessage>> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
-		 return new Callable<ArrayList<UserMessage>>() {
-
-			@Override
-			public ArrayList<UserMessage> call() throws Exception {
-				// TODO Auto-generated method stub
-				Long timeOut = (long) 1000000;
-				final DeferredResult<ArrayList<UserMessage>> result = new DeferredResult<ArrayList<UserMessage>>(null, Collections.emptyList());
-				ArrayList<UserMessage> list = messagesBuffer.get(Long.parseLong(roomStr));
-				if(list == null)
-				{
-					list = new ArrayList<>();
-				}
-				result.setResult(list);
-				long l = 10000;
-				Thread.sleep(l);
-				return list;
-			}
-		 };
-	}
-	 */
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	public 	@ResponseBody DeferredResult<String> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
 		Long timeOut = 1000000L;
-		Queue<UserMessage> list = messagesBuffer.get(roomStr);
+		/*Queue<UserMessage> list = messagesBuffer.get(roomStr);
 		if(list == null)
 		{
 			list = new ConcurrentLinkedQueue<>();
 			//	messagesBuffer.put(Long.parseLong(roomStr), list);
-		}
+		}*/
 		DeferredResult<String> result = new DeferredResult<String>(timeOut);
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(roomStr);
 		if(queue == null)
@@ -179,8 +155,8 @@ public class ChatController {
 		return result;
 	}
 	
-	@Scheduled(fixedRate=1000L)
-	public void processQueues() throws JsonProcessingException {
+	@Scheduled(fixedRate=600L)
+	public void processMessage() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		for(String roomId : messagesBuffer.keySet())
@@ -200,8 +176,6 @@ public class ChatController {
 		}
 		messagesBuffer.clear();;
 		//this.responseBodyQueue.clear();
-
-
 	}
 
 

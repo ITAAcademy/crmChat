@@ -60,22 +60,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
 		.anyRequest().permitAll();
-		
+
 		/*
 		 * ATENTION 
 		 * 
 		 */
-		 http.headers()
+		http.headers()
 		.frameOptions().sameOrigin()
 		.httpStrictTransportSecurity().disable();
-		 http.headers()
-		 .defaultsDisabled()
-		 .cacheControl();
-		
-		 
+		http.headers()
+		.defaultsDisabled()
+		.cacheControl();
 
-		 //http.headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
-		
+
+
+		//http.headers().addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
+
 
 
 	}
@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-		 auth.authenticationProvider(authenticationProvider);
+		auth.authenticationProvider(authenticationProvider);
 	}
 	/*
     @Override
