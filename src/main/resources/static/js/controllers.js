@@ -16,10 +16,10 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 
 var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
-	$scope.socketSupport = false;
+	$rootScope.socketSupport = false;
 	$scope.emails = [];
 
 
@@ -204,7 +204,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 			}
 		}
 
-		if($scope.socketSupport === true)
+		if($rootScope.socketSupport === true)
 		{
 			lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
@@ -290,7 +290,7 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		}
 		var destination = "/app/{0}chat.message".format(room);
 		$scope.messageSended = false;
-		if($scope.socketSupport == true)
+		if($rootScope.socketSupport == true)
 		{
 			if($scope.sendTo != "everyone") {
 				destination = "/app/{0}chat.private.".format(room) + $scope.sendTo;
@@ -542,10 +542,10 @@ phonecatApp.controller('ChatController', ['$scope', '$http', '$location', '$inte
 		chatSocket.connect(onConnect, function(error) {
 
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
-			$scope.socketSupport = false;
+			$rootScope.socketSupport = false;
 		});
 		/*
-		if(!$scope.socketSupport)
+		if(!$rootScope.socketSupport)
 		{
 			//@LP INIT@
 		}

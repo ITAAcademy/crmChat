@@ -36,7 +36,10 @@ public class ChatRoomsPollingController {
 	private  RoomsService roomsService;
 	@Autowired
 	private  ChatUsersService chatUsersService;
-	@Autowired UsersService usersService;
+	@Autowired 
+	private UsersService usersService;
+	
+	
 
 	private volatile static Map<Long,Queue<Room>> roomsBuffer = new ConcurrentHashMap<Long, Queue<Room>>();// key => roomId
 	private volatile static Map<Long,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
@@ -77,15 +80,20 @@ public class ChatRoomsPollingController {
 	public void processQueues() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 
-		for(Long userId : roomsBuffer.keySet())
+		for(Long chatUserId : roomsBuffer.keySet())
 		{
-			Queue<Room> array = roomsBuffer.get(userId);
-			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(userId);
+			Queue<Room> array = roomsBuffer.get(chatUserId);
+			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(chatUserId);
 			for(DeferredResult<String> response : responseList)
 			{
 				if(responseList != null)
 				{
-					String str = mapper.writeValueAsString(Room.getRoomsNames(chatUsersService.getChatUser(userId).getRootRooms()));
+					ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
+					if (chatUser==null){
+						System.out.println("WARNING: NULL USER");
+						continue;
+					}
+					String str = mapper.writeValueAsString(roomsService.getRoomsByChatUser(chatUser));
 					response.setResult(str);
 				}
 			}
