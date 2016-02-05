@@ -4,17 +4,14 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<body ng-controller='PollingController'>
+<body >
 
 <form action="longpoll_topics" method="post">
  Room name:<br>
   <input type="text" name="roomName"></input>
   <input type="submit">Submit</input>
 </form>
-<p>Test longpolling</p>
-<ul>
-	<li  ng-repeat='topic in topics' >{{topic}}</li>
-</ul>
+
 
 
 	<script src="lib/angular/angular.js"></script>
@@ -32,6 +29,5 @@
 	<script src="js/controllers.js"></script>
 	<script src="js/services.js"></script>
 	<script src="js/directives.js"></script>
-	<script src="js/polling_controller.js"></script>
 </body>
 </html>
