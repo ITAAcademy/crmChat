@@ -117,6 +117,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	//$scope.roomsArray = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
+	$scope.httpPromise     = [];
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
@@ -203,6 +204,13 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 				subscription.unsubscribe();
 			}
 		}
+		
+		while ($scope.httpPromise.length>0)
+		{
+			var subscription = $scope.httpPromise.pop();
+			subscription.success(null).error(null);
+			
+		}
 
 		if($rootScope.socketSupport === true)
 		{
@@ -230,6 +238,8 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		else
 		{
 			subscribeMessageLP();//@LP@
+			subscribeParticipantsLP();
+			
 			loadMessageLP();
 		}	
 
@@ -261,20 +271,37 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
-		chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+		
+		if($rootScope.socketSupport === true)
+		{
+			chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+			var myFunc = function(){
+				if (angular.isDefined(addingUserToRoom))
+				{
+					$timeout.cancel(addingUserToRoom);
+					addingUserToRoom=undefined;
+				}
+				if ($scope.userAddedToRoom) return;
+				toaster.pop('error', "Error","server request timeout",1000);
+				$scope.userAddedToRoom = true;
+	
+			};
+			addingUserToRoom = $timeout(myFunc,6000);
+		}
+		else
+		{
+			$http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}).
+			success(function(data, status, headers, config) {
+				console.log("ADD USER OK " + data);
+				$scope.userAddedToRoom = true;
+			}).
+			error(function(data, status, headers, config) {
+				debugger;
+				$scope.userAddedToRoom = true;
+			});
+		}
 		$scope.searchInputValue.email = '';
-		var myFunc = function(){
-			if (angular.isDefined(addingUserToRoom))
-			{
-				$timeout.cancel(addingUserToRoom);
-				addingUserToRoom=undefined;
-			}
-			if ($scope.userAddedToRoom) return;
-			toaster.pop('error', "Error","server request timeout",1000);
-			$scope.userAddedToRoom = true;
-
-		};
-		addingUserToRoom = $timeout(myFunc,6000);
+	
 		/*
 		setTimeout(function(){ 
 			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
@@ -355,7 +382,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	 * UPDATE MESSAGE LP
 	 *************************************/
 	function subscribeMessageLP(){
-		$http.post(serverPrefix + "/{0}chat/message/update".format(room)).
+		$scope.httpPromise.push($http.post(serverPrefix + "/{0}chat/message/update".format(room)).
 
 		success(function(data, status, headers, config) {
 			console.log("MESSAGES GET OK ");
@@ -370,10 +397,30 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		}).
 		error(function(data, status, headers, config) {
 			console.log("MESSAGES GET FALSE ");
-			subscribeMessageLP();
-		});
+				subscribeMessageLP();
+		}));
 	};
+	
+	function subscribeParticipantsLP(){
+		$scope.httpPromise.push($http.post(serverPrefix + "/{0}/chat/participants/update".format(room)).
 
+		success(function(data, status, headers, config) {
+			console.log("SUBSCRIBE GET OK ");
+			//debugger;
+			//if($scope.httpPromise.indexOf(this) > 0)
+			subscribeParticipantsLP();
+				if(data.hasOwnProperty("participants"))
+					$scope.participants = data["participants"];
+
+
+		}).
+		error(function(data, status, headers, config) {
+			console.log("SUBSCRIBE GET FALSE ");
+			//if($scope.httpPromise.indexOf(this) > 0)
+			subscribeParticipantsLP();
+		}));
+	};
+	
 
 
 	$scope.startTyping = function() {

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.PostConstruct;
@@ -78,6 +79,8 @@ public class RoomController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
 	private ArrayList<Room> roomsArray; 
+	
+	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	@SubscribeMapping("/chat.login/{username}")
 	public Map<String, Long> login(Principal principal)//Control user page after auth 
@@ -164,10 +167,38 @@ public class RoomController {
 	
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
 	@ResponseBody
-	public String retrieveParticipantsUpdateLP(@PathVariable("room") String room) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(retrieveParticipantsMessage(room));
+	public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") String room) throws JsonProcessingException {
+		
+		Long timeOut = 1000000L;
+		/*Queue<UserMessage> list = messagesBuffer.get(roomStr);
+		if(list == null)
+		{
+			list = new ConcurrentLinkedQueue<>();
+			//	messagesBuffer.put(Long.parseLong(roomStr), list);
+		}*/
+		DeferredResult<String> result = new DeferredResult<String>(timeOut);
+		Queue<DeferredResult<String>> queue = responseBodyQueueForParticipents.get(room);
+		if(queue == null)
+		{
+			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
+		}
+		while(responseBodyQueueForParticipents.putIfAbsent(room, queue) == null);		
+		queue.add(result);
+		return result;
+		//return new ObjectMapper().writeValueAsString(retrieveParticipantsMessage(room));
 	}
+	
+	@Scheduled(fixedRate=15000L)
+	public void updateParticipants() throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
 
+		for(String key : responseBodyQueueForParticipents.keySet())
+			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
+			{
+					response.setResult(mapper.writeValueAsString(retrieveParticipantsMessage(key)));
+			}
+			responseBodyQueueForParticipents.clear();
+		}
 
 	/***************************
 	 * GET/ADD ROOMS
@@ -209,16 +240,9 @@ public class RoomController {
 	/***************************
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
-	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
-	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
-		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
-
-		//System.out.println(login);//@LOG@
-		System.out.println(room);//@LOG@
-
-		Long chatUserId = 0L;
-		chatUserId = Long.parseLong(principal.getName());
+	
+	boolean addUserToRoomFn( String nickName, String room, Principal principal)
+	{
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
@@ -226,13 +250,30 @@ public class RoomController {
 		
 		if(room_o == null || user_o == null || authorUser.getId() != room_o.getAuthor().getId())
 		{
+			return false;
+		}
+		roomService.addUserToRoom(user_o, room_o);
+		return true;
+	}
+	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
+	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
+	public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
+		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
+
+		//System.out.println(login);//@LOG@
+		System.out.println(room);//@LOG@
+		Long chatUserId = 0L;
+		chatUserId = Long.parseLong(principal.getName());
+		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);// @BAG@
+		
+		if(!addUserToRoomFn(nickName, room, principal))
+		{
 			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
 			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 			return;
 		}
 
-		roomService.addUserToRoom(user_o, room_o);
 		//System.out.println(getRoomsByAuthor(user_o.getLogin()).size() + "  " + Boolean.toString(roomService.addUserToRoom(user_o, room_o)));
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
@@ -244,25 +285,8 @@ public class RoomController {
 	}
 	
 	@RequestMapping(value = "/chat/rooms.{room}/user.add.{nickName}", method = RequestMethod.POST)
-	public 	@ResponseBody DeferredResult<String> updateMessageLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException {
-		/*Long timeOut = 1000000L;
-		Queue<UserMessage> list = messagesBuffer.get(roomStr);
-		if(list == null)
-		{
-			list = new ConcurrentLinkedQueue<>();
-			//	messagesBuffer.put(Long.parseLong(roomStr), list);
-		}
-		DeferredResult<String> result = new DeferredResult<String>(timeOut);
-		Queue<DeferredResult<String>> queue = responseBodyQueue.get(roomStr);
-		if(queue == null)
-		{
-			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
-		}
-		while(responseBodyQueue.putIfAbsent(roomStr, queue) == null);		
-		queue.add(result);
-		//Thread.sleep(l);
-		return result;*/
-		return null;
+	public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(addUserToRoomFn(nickName, roomStr, principal));
 	}
 
 	@MessageMapping("/chat/rooms.{room}/user.remove.{login}")
@@ -293,29 +317,6 @@ public class RoomController {
 		}
 		return res;
 	}
-	
-	/*@Scheduled(fixedRate=600L)
-	public void processQueues() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-
-		for(String roomId : messagesBuffer.keySet())
-		{
-			Queue<UserMessage> array = messagesBuffer.get(roomId);
-			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(roomId);
-			for(DeferredResult<String> response : responseList)
-			{
-				if(responseList != null)
-				{
-					String str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
-					response.setResult(str);
-				}
-			}
-			responseList.clear();
-			userMessageService.addMessages(array);
-		}
-		messagesBuffer.clear();;
-		//this.responseBodyQueue.clear();
-	}*/
 	
 	@MessageExceptionHandler
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
