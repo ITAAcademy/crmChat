@@ -60,7 +60,7 @@ public class ChatRoomsPollingController {
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(chatUser.getId());
 		if(queue == null)
 		{
-			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
+			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
 		}
 		
 		//List<Room> rooms = new ArrayList<Room>(chatUser.getRootRooms());
@@ -93,15 +93,16 @@ public class ChatRoomsPollingController {
 						System.out.println("WARNING: NULL USER");
 						continue;
 					}
-					String str = mapper.writeValueAsString(roomsService.getRoomsByChatUser(chatUser));
+					String str = mapper.writeValueAsString(array);
 					response.setResult(str);
 				}
 			}
 			responseList.clear();
 		//userMessageService.addMessages(array);
-			roomsService.addRooms(array);
+			for (Room item : array)
+			roomsService.register(item.getName(), item.getAuthor());
 		}
-		roomsBuffer.clear();;
+		//roomsBuffer.clear();;
 		//this.responseBodyQueue.clear();
 
 
