@@ -19,7 +19,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
-	$rootScope.socketSupport = false;
+	$rootScope.socketSupport = true;
 	$scope.emails = [];
 
 
@@ -447,50 +447,63 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};
+	function login(mess_obj)
+	{
+		$scope.chatUserId = mess_obj.chat_id;
+		if(mess_obj.nextWindow == -1)
+		{
+			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+			return;
+		}
+
+		if(mess_obj.nextWindow == 0)
+		{
+			$scope.showDialogListButton = true;
+			$scope.goToDialogList();
+		}
+		else
+		{
+			goToDialogEvn(mess_obj.nextWindow);
+			$scope.templateName = 'chatTemplate.html';
+			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
+		}
+	}
+	
 	var onConnect = function(frame) {
 		console.log("onconnect");
 
 
 		$scope.chatUserId = frame.headers['user-name'];
+		
+		
 
+		if($rootScope.socketSupport == true)
+		{
+			lastRoomBindings.push(
+					chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
+						//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
+						//console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOn");
+						var mess_obj = JSON.parse(message.body);
 
+						login(mess_obj);
 
-		lastRoomBindings.push(
-				chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
-					//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
-					//console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOn");
-					var mess_obj = JSON.parse(message.body);
+					}));
 
-					if(mess_obj.nextWindow == -1)
-					{
-						toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
-						return;
-					}
-
-					if(mess_obj.nextWindow == 0)
-					{
-						$scope.showDialogListButton = true;
-						$scope.goToDialogList();
-					}
-					else
-					{
-						goToDialogEvn(mess_obj.nextWindow);
-						$scope.templateName = 'chatTemplate.html';
-						toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
-					}
-
-				}));
-
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-					/*	var username = JSON.parse(message.body).username;
-					for(var index in $scope.participants) {
-						if($scope.participants[index].username == username) {
-							$scope.participants.splice(index, 1);
+			lastRoomBindings.push(
+					chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
+						/*	var username = JSON.parse(message.body).username;
+						for(var index in $scope.participants) {
+							if($scope.participants[index].username == username) {
+								$scope.participants.splice(index, 1);
+							}
 						}
-					}
-					 */
-				}));
+						 */
+					}));
+		}
+		else
+		{
+			
+		};
 
 
 		/*
@@ -584,12 +597,25 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 	var initStompClient = function() {
 
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wss");
 
 		chatSocket.connect(onConnect, function(error) {
 
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
 			$rootScope.socketSupport = false;
+			/***************************************
+			 * TRY LONG POLING LOGIN
+			 **************************************/
+			//$scope.chatUserId = frame.headers['user-name'];
+			$http.post(serverPrefix + "/chat/login/login", {message: $scope.newMessage}).
+			success(function(data, status, headers, config) {
+				console.log("LOGIN OK " + data);
+				login(data);
+			}).
+			error(function(data, status, headers, config) {
+				messageError();
+				toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+			});
 		});
 		/*
 		if(!$rootScope.socketSupport)

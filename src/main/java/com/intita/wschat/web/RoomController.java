@@ -114,7 +114,14 @@ public class RoomController {
 		{
 			result.put("nextWindow", (long) 0);
 		}
+		result.put("chat_id", Long.parseLong(principal.getName()));
 		return result;
+	}
+	
+	@RequestMapping(value = "/chat/login/{username}", method = RequestMethod.POST)
+	@ResponseBody
+	public String retrieveParticipantsLP(Principal principal) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(login(principal));
 	}
 	
 	/***************************
