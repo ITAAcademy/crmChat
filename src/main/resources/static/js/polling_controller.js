@@ -1,6 +1,6 @@
 //var longPollApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource']);
 var serverPrefix = "/crmChat";
-springChat.controller('PollingController', ['$scope', '$http', '$interval','$timeout',
+springChatController.controller('PollingController', ['$scope', '$http', '$interval','$timeout',
 	function ($scope, $http, $interval, $timeout) {
         function updateRooms(data)
         {

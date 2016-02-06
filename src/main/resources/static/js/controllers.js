@@ -1,22 +1,31 @@
 'use strict';
 
 /* Controllers */
-Object.prototype.getKeyByValue = function( value ) {
-	for( var prop in this ) {
-		if( this.hasOwnProperty( prop ) ) {
-			if( this[ prop ] === value )
+function getPropertyByValue(obj, value ) {
+	for( var prop in obj ) {
+		if( obj.hasOwnProperty( prop ) ) {
+			if( obj[ prop ] === value )
 				return prop;
 		}
 	}
 }
+function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
+
+for (var item in roomNameMap)
+	if(roomNameMap[item][propertyName]==valueToFind) return item;
+		debugger;
+return undefined;
+}
+
+
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"send_message_to_user":"SEND_MESSAGE_TO_USER",
 	"add_user_to_room":"ADD_USER_TO_ROOM",
 	"add_room":"ADD_ROOM"});
 
-var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
+var springChatController = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+springChatController.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
 	$rootScope.socketSupport = false;
@@ -131,7 +140,6 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 
 	$scope.addDialog = function() {
-
 		if ($rootScope.socketSupport){
 		$scope.roomAdded = false;
 		console.log($scope.dialogName)
@@ -179,19 +187,24 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	}
 
 
-
 	$scope.goToDialog = function(roomName) {
+		console.log("roomName:"+roomName);
 		if ($scope.rooms[$scope.roomId] !== undefined )
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = roomName;
-		goToDialogEvn($scope.rooms.getKeyByValue(roomName));
+		var key = getIdInArrayFromObjectsMap($scope.rooms,"string",roomName);
+		console.log("scope rooms:"+$scope.rooms);
+		console.log("gotoDialog key:"+key);
+
+		goToDialogEvn(key);
 
 	};
 
 	function goToDialogEvn(id)
 	{
+		console.log("goToDialogEvn("+id+")");
 		$scope.roomId = id;
 		$scope.changeRoom();
 		setTimeout(function(){ 
@@ -208,6 +221,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	 *************************************/
 	$scope.changeRoom=function(){
 		$scope.messages=[];
+		console.log("roomId:"+$scope.roomId);
 		room=$scope.roomId+'/';
 
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
@@ -503,7 +517,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		
 		
 
-		if(true)//if websocket enabled
+		if(true)//if websocket enabled $rootScope.socketSupport
 		{
 			lastRoomBindings.push(
 					chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
@@ -558,6 +572,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 				}
 			});
 		});
+
 		chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
 			var operationStatus = JSON.parse(message.body);
 			switch (operationStatus.type){
