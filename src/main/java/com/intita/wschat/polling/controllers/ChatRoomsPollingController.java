@@ -1,14 +1,12 @@
 package com.intita.wschat.polling.controllers;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,11 +19,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UsersService;
@@ -40,10 +35,16 @@ public class ChatRoomsPollingController {
 	private UsersService usersService;
 	
 	
+	
+	private volatile static Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
+	private volatile static Map<Long,Queue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
 
-	private volatile static Map<Long,Queue<Room>> roomsBuffer = new ConcurrentHashMap<Long, Queue<Room>>();// key => roomId
-	private volatile static Map<Long,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
-
+	@PostConstruct
+	public void initController() throws Exception {
+		subscribedtoRoomsUsersBuffer.add(chatUsersService.getChatUser(40L));
+		subscribedtoRoomsUsersBuffer.add(chatUsersService.getChatUser(41L));
+	}
+	
 	@Autowired
 	public ChatRoomsPollingController(RoomsService roomsService) {
 		this.roomsService = roomsService;
@@ -57,7 +58,7 @@ public class ChatRoomsPollingController {
 		ChatUser chatUser = chatUsersService.getChatUser(principal);
 		if (chatUser==null ) return deferredResult;
 
-		Queue<DeferredResult<String>> queue = responseBodyQueue.get(chatUser.getId());
+		Queue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUser.getId());
 		if(queue == null)
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
@@ -70,37 +71,38 @@ public class ChatRoomsPollingController {
 			deferredResult.setResult(roomsNames);
 		}*/
 		
-		while(responseBodyQueue.putIfAbsent(chatUser.getId(), queue) == null);		
+		while(responseRoomBodyQueue.putIfAbsent(chatUser.getId(), queue) == null);		
 		queue.add(deferredResult);
 		
 		return deferredResult;
 	}
 	
 	@Scheduled(fixedRate=1000L)
-	public void processQueues() throws JsonProcessingException {
+	public void processRoomsQueues() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 
-		for(Long chatUserId : roomsBuffer.keySet())
+		for(ChatUser chatUser : subscribedtoRoomsUsersBuffer)
 		{
-			Queue<Room> array = roomsBuffer.get(chatUserId);
-			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(chatUserId);
+			if (chatUser==null){
+				System.out.println("WARNING: NULL USER");
+				continue;
+			}
+			Queue<DeferredResult<String>> responseList = responseRoomBodyQueue.get(chatUser.getId());
+			if (responseList==null){
+				//System.out.println("WARNING: RESPONSE LIST IS CLEAR");
+				continue;
+			}
 			for(DeferredResult<String> response : responseList)
 			{
 				if(responseList != null)
 				{
-					ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
-					if (chatUser==null){
-						System.out.println("WARNING: NULL USER");
-						continue;
-					}
-					String str = mapper.writeValueAsString(array);
+					
+					String str = mapper.writeValueAsString(roomsService.getRoomsByChatUser(chatUser));
 					response.setResult(str);
 				}
 			}
 			responseList.clear();
 		//userMessageService.addMessages(array);
-			for (Room item : array)
-			roomsService.register(item.getName(), item.getAuthor());
 		}
 		//roomsBuffer.clear();;
 		//this.responseBodyQueue.clear();
@@ -115,16 +117,8 @@ public class ChatRoomsPollingController {
 ChatUser author = chatUsersService.getChatUser(principal);
 if (author==null) return;
 		//this.roomsService.register(roomName,author);
-Room roomToSave = new Room();
-roomToSave.setAuthor(author);
-roomToSave.setName(roomName);
-Queue<Room> list = roomsBuffer.get(author.getId());
-if(list == null)
-{
-	list = new ConcurrentLinkedQueue<>();
-	roomsBuffer.put(author.getId(), list);
-}
-list.add(roomToSave);
+Room roomToSave = roomsService.register(roomName,author);
+
 
 		// Update all chat requests as part of the POST request
 		// See Redis branch for a more sophisticated, non-blocking approach

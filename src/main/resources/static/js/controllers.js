@@ -131,6 +131,8 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 
 	$scope.addDialog = function() {
+
+		if ($rootScope.socketSupport){
 		$scope.roomAdded = false;
 		console.log($scope.dialogName)
 		chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
@@ -149,6 +151,20 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 		};
 		addingRoom = $timeout(myFunc,6000);
+	}
+	//SOcket don't support case
+	else {
+		$http.post(serverPrefix + "/chat/rooms/add", $scope.dialogName).
+			success(function(data, status, headers, config) {
+				console.log("ADD USER OK " + data);
+				$scope.userAddedToRoom = true;
+			}).
+			error(function(data, status, headers, config) {
+				$scope.userAddedToRoom = true;
+			});
+	}
+
+
 	};
 
 	$scope.goToDialogList = function() {
@@ -618,7 +634,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 				 * 
 				 * 
 				 */
-				$http.post(serverPrefix + "/chat/rooms/user.login", {}).
+				/*$http.post(serverPrefix + "/chat/rooms/user.login", {}).
 				success(function(data, status, headers, config) {
 					console.log("ROOMS OK " + data);
 					
@@ -634,7 +650,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 				error(function(data, status, headers, config) {
 					//messageError();
 					toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
-				});
+				});*/
 				/*
 				 * 
 				 * 
