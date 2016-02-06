@@ -19,7 +19,7 @@ var phonecatApp = angular.module('springChat.controllers', ['toaster','ngRoute',
 phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
-	$rootScope.socketSupport = true;
+	$rootScope.socketSupport = false;
 	$scope.emails = [];
 
 
@@ -228,7 +228,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 			
 		}
 
-		if($rootScope.socketSupport === true)
+		if($rootScope.socketSupport == true)
 		{
 			lastRoomBindings.push(
 				chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
@@ -263,7 +263,6 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
 					var parsed = JSON.parse(message.body);
 					if(parsed.username == $scope.chatUserId) return;
-					//debugger;
 					//$scope.participants[parsed.username].typing = parsed.typing;
 					for(var index in $scope.participants) {
 						var participant = $scope.participants[index];
@@ -287,7 +286,6 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
-		
 		if($rootScope.socketSupport === true)
 		{
 			chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
@@ -306,13 +304,13 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		}
 		else
 		{
+			console.log("$scope.searchInputValue:"+$scope.searchInputValue);
 			$http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}).
 			success(function(data, status, headers, config) {
 				console.log("ADD USER OK " + data);
 				$scope.userAddedToRoom = true;
 			}).
 			error(function(data, status, headers, config) {
-				debugger;
 				$scope.userAddedToRoom = true;
 			});
 		}
@@ -389,7 +387,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 			loadSubscribeAndMessage(data);
 		}).
 		error(function(data, status, headers, config) {
-			debugger;
+
 		});
 	}
 
@@ -402,7 +400,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 		success(function(data, status, headers, config) {
 			console.log("MESSAGES GET OK ");
-			//debugger;
+
 			subscribeMessageLP();
 			for(var index in data) { 
 				if(data[index].hasOwnProperty("message"))
@@ -422,7 +420,6 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 		success(function(data, status, headers, config) {
 			console.log("SUBSCRIBE GET OK ");
-			//debugger;
 			//if($scope.httpPromise.indexOf(this) > 0)
 			subscribeParticipantsLP();
 				if(data.hasOwnProperty("participants"))
@@ -506,7 +503,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 		
 		
 
-		if($rootScope.socketSupport == true)
+		if(true)//if websocket enabled
 		{
 			lastRoomBindings.push(
 					chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
@@ -529,10 +526,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 						 */
 					}));
 		}
-		else
-		{
-			
-		};
+		
 
 
 		/*

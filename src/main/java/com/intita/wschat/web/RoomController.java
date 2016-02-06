@@ -272,6 +272,8 @@ public class RoomController {
 		roomService.addUserToRoom(user_o, room_o);
 		return true;
 	}
+
+	
 	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
@@ -303,6 +305,8 @@ public class RoomController {
 	
 	@RequestMapping(value = "/chat/rooms.{room}/user.add.{nickName}", method = RequestMethod.POST)
 	public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);
+		subscribedtoRoomsUsersBuffer.add(user_o);
 		return new ObjectMapper().writeValueAsString(addUserToRoomFn(nickName, roomStr, principal));
 	}
 
