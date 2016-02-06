@@ -22,7 +22,7 @@
 		    </div>
 </div>
         			<div class="share">
-	        			<ul ng-repeat="participant in participants">
+	        			<ul ng-repeat="participant in participants | orderBy:'-username'">
 	        				<li>
 	        					<span class="input-icon fui-new" ng-show="participant.typing"></span>
 	        					<span class="input-icon fui-user" ng-show="!participant.typing"></span>
