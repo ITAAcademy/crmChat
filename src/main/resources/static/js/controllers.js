@@ -599,7 +599,7 @@ phonecatApp.controller('ChatController', ['$rootScope','$scope', '$http', '$loca
 
 	var initStompClient = function() {
 
-		chatSocket.init(serverPrefix+"/wss");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 
