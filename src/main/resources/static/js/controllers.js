@@ -138,6 +138,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	$scope.showDialogListButton = false;
 	$scope.dialogName = '';
 
+	
 
 	$scope.addDialog = function() {
 		if ($rootScope.socketSupport){
@@ -193,6 +194,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
 		$scope.templateName = 'chatTemplate.html';
+		console.log("room name:"+roomName);
 		$scope.dialogName = roomName;
 		var key = getIdInArrayFromObjectsMap($scope.rooms,"string",roomName);
 		console.log("scope rooms:"+$scope.rooms);
@@ -267,6 +269,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		}
 		else
 		{
+			
 			subscribeMessageLP();//@LP@
 			subscribeParticipantsLP();
 			
@@ -405,6 +408,27 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		});
 	}
 
+	/*************************************
+	* UPDATE ROOM LP
+	**************************************/
+	function subscribeRoomsUpdateLP(){
+			console.log("roomsUpdateLP()");
+			 $http.post(serverPrefix+"/chat/rooms/user.login")
+    .success(function(data, status, headers, config) {
+    	console.log("roomsUpdateLP data:"+data);
+        updateRooms(data);
+        //console.log("resposnse data received:"+response.data);
+        subscribeRoomsUpdateLP();
+    }).error(function errorHandler(data, status, headers, config) {
+    	//console.log("error during http request");
+    	//$scope.topics = ["error"];
+         //console.log("resposnse data error:"+response.data);
+         subscribeRoomsUpdateLP();
+    });
+		
+    }
+
+
 
 	/*************************************
 	 * UPDATE MESSAGE LP
@@ -497,7 +521,14 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	}
 	function updateRooms(message)
 	{
+		if ($rootScope.socketSupport)
+		{
 		$scope.rooms = JSON.parse(message.body);
+		}
+		else
+		{
+		$scope.rooms = message;
+		}
 
 		$scope.roomsArray = Object.keys($scope.rooms)
 		.map(function(key) {
@@ -506,13 +537,15 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 
 		$scope.roomsCount = Object.keys($scope.rooms).length;
 		console.log($scope.rooms);
+	
+
 	}
 
 	
 	var onConnect = function(frame) {
 		console.log("onconnect");
 
-
+	subscribeRoomsUpdateLP();
 		$scope.chatUserId = frame.headers['user-name'];
 		
 		
