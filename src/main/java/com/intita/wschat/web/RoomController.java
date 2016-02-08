@@ -120,6 +120,7 @@ public class RoomController {
 		}
 		else
 		{
+			subscribedtoRoomsUsersBuffer.add(user);
 			result.put("nextWindow", (long) 0);
 		}
 		result.put("chat_id", Long.parseLong(principal.getName()));

@@ -197,7 +197,6 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		console.log("room name:"+roomName);
 		$scope.dialogName = roomName;
 		var key = getIdInArrayFromObjectsMap($scope.rooms,"string",roomName);
-		console.log("scope rooms:"+$scope.rooms);
 		console.log("gotoDialog key:"+key);
 
 		goToDialogEvn(key);
@@ -656,7 +655,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 
 	var initStompClient = function() {
 
-		chatSocket.init(serverPrefix+"/wsTEMP");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 
