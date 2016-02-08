@@ -110,6 +110,9 @@ public class RoomController {
 				
 				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
 				roomService.addUserToRoom(user, room);
+				
+				subscribedtoRoomsUsersBuffer.add(user);
+				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
 			}
 			
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));

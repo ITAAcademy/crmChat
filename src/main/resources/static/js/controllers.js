@@ -529,7 +529,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		{
 		$scope.rooms = message;
 		}
-
+		console.log("roomsArray:"+$scope.roomsArray);
 		$scope.roomsArray = Object.keys($scope.rooms)
 		.map(function(key) {
 			return $scope.rooms[key];
@@ -544,13 +544,12 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	
 	var onConnect = function(frame) {
 		console.log("onconnect");
-
-	subscribeRoomsUpdateLP();
+	
 		$scope.chatUserId = frame.headers['user-name'];
 		
 		
 
-		if(true)//if websocket enabled $rootScope.socketSupport
+		if($rootScope.socketSupport)//if websocket enabled $rootScope.socketSupport
 		{
 			lastRoomBindings.push(
 					chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
@@ -657,12 +656,13 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 
 	var initStompClient = function() {
 
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wsTEMP");
 
 		chatSocket.connect(onConnect, function(error) {
 
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
 			$rootScope.socketSupport = false;
+			subscribeRoomsUpdateLP();
 			/***************************************
 			 * TRY LONG POLING LOGIN
 			 **************************************/
