@@ -122,10 +122,11 @@ public class ChatUsersService {
 		return u;
 	}
 
+	@Transactional
 	public void updateChatUserInfo(ChatUser u){
 		chatUsersRepo.save(u);
 	}
-
+	@Transactional
 	public void removeUser(Long id){
 		chatUsersRepo.delete(id);
 	}

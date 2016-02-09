@@ -72,10 +72,12 @@ public class RoomsService {
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}
+	@Transactional
 	public ArrayList<Room> getRoomByAuthor(String author) {
 		
 		return roomRepo.findByAuthor(userService.getUser(author));
 	}
+	@Transactional
 public ArrayList<Room> getRoomByAuthor(User user) {
 		
 		return roomRepo.findByAuthor(user);
@@ -146,6 +148,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		return true;
 	}
 	
+	@Transactional
 	public Map<Long, StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 

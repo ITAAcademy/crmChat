@@ -10,10 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource; 
  
 @Configuration
-@EnableAutoConfiguration 
+//@EnableAutoConfiguration 
 public class IntitaDBConfig  { 
  
-    @Bean(name = "IntitaDataSourse") 
+   /* @Bean(name = "IntitaDataSourse") 
     @ConfigurationProperties(prefix="datasource.intita")
     public DataSource DataSource() {
         return DataSourceBuilder.create().build();
@@ -23,5 +23,5 @@ public class IntitaDBConfig  {
     public JdbcTemplate jdbcTemplate(DataSource dsUsers) { 
         return new JdbcTemplate(DataSource()); 
     } 
- 
+ */
 } 

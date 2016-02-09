@@ -126,13 +126,16 @@ public class UsersService {
 		u.togglePermission();
 		usersRepo.save(u);
 	}
+	@Transactional
 	public void updateUserInfo(User u){
 		usersRepo.save(u);
 	}
 
+	@Transactional
 	public void removeUser(Long id){
 		usersRepo.delete(id);
 	}
+	@Transactional
 	public User getById(Long id){
 		return usersRepo.findOne(id);
 	}
