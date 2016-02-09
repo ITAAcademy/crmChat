@@ -168,7 +168,7 @@ INSERT INTO `carousel` (`order`, `pictureURL`, `slider_text`, `id`) VALUES
 CREATE TABLE IF NOT EXISTS `chat_room` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `active` bit(1) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
   `author_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_fy1be4k30rsfiyj277sx585ev` (`author_id`)
@@ -316,7 +316,7 @@ INSERT INTO `chat_user_last_room_date` (`id`, `last_logout`, `chat_user_id`, `ro
 
 CREATE TABLE IF NOT EXISTS `chat_user_message` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `body` varchar(64000) DEFAULT NULL,
+  `body` mediumtext CHARACTER SET utf8,
   `author_id` bigint(20) DEFAULT NULL,
   `room_id` bigint(20) DEFAULT NULL,
   `date` timestamp NULL DEFAULT NULL,
