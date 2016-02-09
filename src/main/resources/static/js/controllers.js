@@ -28,7 +28,7 @@ var springChatController = angular.module('springChat.controllers', ['toaster','
 springChatController.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
 
 	$scope.templateName = null;
-	$rootScope.socketSupport = false;
+	$rootScope.socketSupport = true;
 	$scope.emails = [];
 
 
@@ -520,9 +520,11 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	}
 	function updateRooms(message)
 	{
+
 		if ($rootScope.socketSupport)
 		{
 		$scope.rooms = JSON.parse(message.body);
+		debugger;
 		}
 		else
 		{
@@ -533,6 +535,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		.map(function(key) {
 			return $scope.rooms[key];
 		});
+console.log("roomsArray:"+$scope.roomsArray);
 
 		$scope.roomsCount = Object.keys($scope.rooms).length;
 		console.log($scope.rooms);
