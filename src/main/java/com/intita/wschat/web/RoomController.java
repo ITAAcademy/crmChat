@@ -2,11 +2,9 @@ package com.intita.wschat.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -14,27 +12,21 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,13 +38,11 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.OperationStatus;
+import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.models.OperationStatus.OperationType;
-import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.services.ChatTenantService;
-import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
@@ -64,7 +54,7 @@ import com.intita.wschat.util.ProfanityChecker;
 
 @Controller
 public class RoomController {
-
+	final String DIALOG_NAME_PREFIX = "DIALOG_";
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -203,6 +193,7 @@ public class RoomController {
 		return result;
 		//return new ObjectMapper().writeValueAsString(retrieveParticipantsMessage(room));
 	}
+	
 	
 	@Scheduled(fixedRate=15000L)
 	public void updateParticipants() throws JsonProcessingException {
@@ -357,6 +348,20 @@ public class RoomController {
 		subscribedtoRoomsUsersBuffer.add(chatUserServise.getChatUser(41L));
 	}*/
 
+	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
+	@ResponseBody
+	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
+		ChatUser auth = chatUserServise.getChatUser(principal);
+		if (auth==null)return -1L;
+		User authorOfDialog = auth.getIntitaUser();
+		if (authorOfDialog==null) return -1L;
+		User interlocutor = userService.getUserFromChat(chatUserId);
+		if (interlocutor==null) return -1L;
+		String roomName = DIALOG_NAME_PREFIX+authorOfDialog.getLogin()+"_"+interlocutor.getLogin();
+		Room room = roomService.register(roomName, auth);
+		return room.getId();
+	}
+	
 	@RequestMapping(value="/chat/rooms/user.{username}",method=RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> getRooms(Principal principal) {

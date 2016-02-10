@@ -1,40 +1,25 @@
 package com.intita.wschat.services;
 
-import org.hibernate.HibernateException; 
-import org.hibernate.Session; 
-import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.SessionFactory;
-import org.hibernate.SQLQuery;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
-import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.UserRepository;
-
-import org.apache.commons.collections4.IteratorUtils;
-
-import java.util.List;
 
 @Service
 public class UsersService {
@@ -91,6 +76,13 @@ public class UsersService {
 	@Transactional
 	public User getUser(Long id){
 		return usersRepo.findOne(id);
+	}
+	@Transactional
+	public User getUserFromChat(Long chatUserId){
+		ChatUser chatUser= chatUsersService.getChatUser(chatUserId);
+		if (chatUser==null) return null;
+		return chatUser.getIntitaUser();
+		
 	}
 
 	@Transactional

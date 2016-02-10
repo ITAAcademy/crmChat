@@ -23,14 +23,14 @@
 				<div class="collapse navbar-collapse" id="navbar-collapse-01">
 					<h1>Spring WebSocket Chat</h1>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a ng-show="showDialogListButton" class="menu-ng-click" ng-click="goToDialogList()" target="_blank">Dialogs__ChatUser:{{chatUserId}}</a></li>
+						<li><a ng-show="showDialogListButton" class="menu-ng-click" ng-click="goToDialogList()">Dialogs__ChatUser:{{chatUserId}}</a></li>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
 			</nav>
 			<!-- /navbar -->
 		</div>
-		<div  ng-include="templateName"></div>
+	 <div ng-view> </div>
 
 	</div>
 	

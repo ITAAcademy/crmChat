@@ -169,7 +169,9 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 				Date m_data = msg.getDate();
 			//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
 				if (m_data != null)
-					if (m_data.after(date) == true && msg.getRoom().getId() == entry.getRoom().getId())
+					if (m_data.after(date) == true &&
+					msg.getRoom().getId() == 
+					entry.getRoom().getId())
 					{
 						messages_cnt += 1;
 					}

@@ -23,11 +23,35 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"add_user_to_room":"ADD_USER_TO_ROOM",
 	"add_room":"ADD_ROOM"});
 
-var springChatController = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
 
-springChatController.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+var springChatControllers = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
+springChatControllers.config(function($routeProvider){
+  $routeProvider.when("/chatrooms",
+    {
+      templateUrl: "dialogsTemplate.html",
+    });
+    $routeProvider.when("/dialog_view",
+    {
+      templateUrl: "chatTemplate.html",
+    });
+    $routeProvider.otherwise({redirectTo: '/chatrooms'});
+    console.log("scope test");
 
-	$scope.templateName = null;
+});
+/*springChatControllers.controller('RouteController',['ngRoute']){
+
+}*/
+
+
+var chatController = springChatControllers.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore) {
+var serverPrefix = "/crmChat";
+function changeLocation(url ) {
+    $location.path(url);
+    console.log("Change location:"+url);
+   // $scope.$apply();
+
+};
+	//$scope.templateName = null;
 	$rootScope.socketSupport = true;
 	$scope.emails = [];
 
@@ -37,7 +61,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
 
-	var serverPrefix = "/crmChat";
+	
 	var room = "default_room/";
 
 	var room = "1/";
@@ -99,6 +123,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		$scope.show_search_list = false;
 		console.log($scope.searchInputValue.email);
 	}
+
 
 	var curentDateInJavaFromat = function() {
 		var currentdate = new Date(); 
@@ -180,7 +205,8 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		if ($scope.rooms[$scope.roomId] !== undefined )
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
-		$scope.templateName = 'dialogsTemplate.html';
+		//$scope.templateName = 'dialogsTemplate.html';
+		changeLocation("/chatrooms")
 		$scope.dialogName = '';
 
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
@@ -193,7 +219,8 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		if ($scope.rooms[$scope.roomId] !== undefined )
 			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
 
-		$scope.templateName = 'chatTemplate.html';
+		//$scope.templateName = 'chatTemplate.html';
+		changeLocation("/dialog_view")
 		console.log("room name:"+roomName);
 		$scope.dialogName = roomName;
 		var key = getIdInArrayFromObjectsMap($scope.rooms,"string",roomName);
@@ -514,7 +541,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		else
 		{
 			goToDialogEvn(mess_obj.nextWindow);
-			$scope.templateName = 'chatTemplate.html';
+			//$scope.templateName = 'chatTemplate.html';
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}
 	}
@@ -524,21 +551,17 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		if ($rootScope.socketSupport)
 		{
 		$scope.rooms = JSON.parse(message.body);
-		debugger;
 		}
 		else
 		{
 		$scope.rooms = message;
 		}
-		console.log("roomsArray:"+$scope.roomsArray);
 		$scope.roomsArray = Object.keys($scope.rooms)
 		.map(function(key) {
 			return $scope.rooms[key];
 		});
-console.log("roomsArray:"+$scope.roomsArray);
 
 		$scope.roomsCount = Object.keys($scope.rooms).length;
-		console.log($scope.rooms);
 	
 
 	}
@@ -657,7 +680,7 @@ console.log("roomsArray:"+$scope.roomsArray);
 	};
 
 	var initStompClient = function() {
-
+console.log("initStompClient");
 		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
