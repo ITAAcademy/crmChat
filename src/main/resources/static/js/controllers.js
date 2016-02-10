@@ -131,6 +131,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
+	$scope.roomType		= 0;
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
@@ -186,20 +187,72 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
 	}
+	
+	$scope.goToTeachersList = function() {
+		$scope.templateName = 'teachersTemplate.html';
+		 
+		$scope.httpPromise.push($http.post(serverPrefix + "/chat/users").
 
+				success(function(data, status, headers, config) {
+					console.log("USERS GET OK ");
+					$scope.seachersTeachers = data;
+				}).
+				error(function(data, status, headers, config) {
+					$scope.seachersTeachers = [];
+				}));
+	}
+	$scope.goToPrivateDialog = function(intitaUserId) {
+		//debugger;
+		$scope.httpPromise.push($http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
+				success(function(data, status, headers, config) {
+					console.log("PRIVATE ROOM CREATE OK ");
+					$scope.goToDialogById(data);
+				}).
+				error(function(data, status, headers, config) {
+					console.log("PRIVATE ROOM CREATE FAILD ");
+				}));
+	}
 
+	/*
+	 * 
+	 * @@@NEED TWO FUNCTION
+	 */
 	$scope.goToDialog = function(roomName) {
 		console.log("roomName:"+roomName);
-		if ($scope.rooms[$scope.roomId] !== undefined )
-			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
-
-		$scope.templateName = 'chatTemplate.html';
-		console.log("room name:"+roomName);
-		$scope.dialogName = roomName;
+		
 		var key = getIdInArrayFromObjectsMap($scope.rooms,"string",roomName);
 		console.log("gotoDialog key:"+key);
 
 		goToDialogEvn(key);
+		
+		if ($scope.rooms[$scope.roomId] !== undefined )
+			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+		
+		$scope.messages     = [];
+		$scope.participants = [];
+		
+		$scope.templateName = 'chatTemplate.html';
+		console.log("room name:"+roomName);
+		$scope.dialogName = roomName;
+
+
+
+	};
+	$scope.goToDialogById = function(roomId) {
+		console.log("roomId:" + roomId);
+		goToDialogEvn(roomId);
+		
+		if ($scope.rooms[$scope.roomId] !== undefined )
+			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+
+		$scope.messages     = [];
+		$scope.participants = [];
+		
+		$scope.templateName = 'chatTemplate.html';
+		$scope.dialogName = "private";
+		
+
+		
 
 	};
 
@@ -294,11 +347,6 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 
-	/*$scope.addRoom=function(name){
-
-		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
-
-	}*/
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
@@ -331,11 +379,6 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 			});
 		}
 		$scope.searchInputValue.email = '';
-	
-		/*
-		setTimeout(function(){ 
-			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
-		    }, 3000);  */
 	}
 
 	/*************************************
@@ -390,6 +433,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.participants = message["participants"];
+		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.unshift(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
@@ -524,7 +568,6 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		if ($rootScope.socketSupport)
 		{
 		$scope.rooms = JSON.parse(message.body);
-		debugger;
 		}
 		else
 		{

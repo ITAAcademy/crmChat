@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.metamodel.binding.CascadeType;
@@ -24,6 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity(name="ChatRoom")
 public class Room implements Serializable,Comparable<Room> {
+	public short getType() {
+		return type;
+	}
+	public void setType(short type) {
+		this.type = type;
+	}
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -31,15 +38,6 @@ public class Room implements Serializable,Comparable<Room> {
 	 @OneToMany(mappedBy = "room")
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
 	
-	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
-		return chatUserLastRoomDate;
-	}
-	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
-		this.chatUserLastRoomDate = chatUserLastRoomDate;
-	}
-
-
-
 	private boolean active = true;
 	
 	@NotBlank
@@ -47,14 +45,8 @@ public class Room implements Serializable,Comparable<Room> {
 	@Column(unique = false)
 	private String name;
 	
-	public boolean isActive() {
-		return active;
-	}
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	
+	@NotNull
+	private short type;
 
 	@ManyToOne
 	private ChatUser author;
@@ -121,7 +113,18 @@ public class Room implements Serializable,Comparable<Room> {
 		return result;
 	}
 
-
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
+		return chatUserLastRoomDate;
+	}
+	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
+		this.chatUserLastRoomDate = chatUserLastRoomDate;
+	}	
 	@Override
 	public String toString() {
 		return "ChatMessage ";

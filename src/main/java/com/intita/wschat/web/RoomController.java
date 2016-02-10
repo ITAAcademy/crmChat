@@ -111,7 +111,7 @@ public class RoomController {
 				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
 				roomService.addUserToRoom(user, room);
 				
-				subscribedtoRoomsUsersBuffer.add(user);
+				subscribedtoRoomsUsersBuffer.add(user);//Is need?
 				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
 			}
 			
@@ -162,7 +162,7 @@ public class RoomController {
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
-
+		map.put("type", room_o.getType());
 		return map;
 
 	}
@@ -218,7 +218,27 @@ public class RoomController {
 
 	/***************************
 	 * GET/ADD ROOMS
+	 * @throws JsonProcessingException 
 	 ***************************/
+	
+	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
+	@ResponseBody
+	public String getPrivateRoom( @PathVariable("userID") String userId, Principal principal) throws JsonProcessingException {
+
+		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(Long.parseLong(userId), false);
+		if(privateCharUser == null)
+			return "-1";
+		ChatUser chatUser = chatUserServise.getChatUser(principal);
+		
+		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
+		if(room == null)
+		{
+			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
+			roomService.addUserToRoom(privateCharUser, room);
+		}
+		return new ObjectMapper().writeValueAsString(room.getId());//@BAG@
+
+	}
 	
 	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)

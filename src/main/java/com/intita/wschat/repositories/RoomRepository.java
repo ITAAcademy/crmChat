@@ -20,5 +20,6 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
   Page<Room> findById(Long id, Pageable pageable);
   Page<Room> findAll(Pageable pageable);
   List<Room> findFirst10ByIdNotIn(List<Long> users);
-  ArrayList<Room> findByAuthor(User author);
+  Room findByAuthorAndTypeAndUsersContaining(ChatUser author, short type, ChatUser privateUser);
+  ArrayList<Room> findByAuthor(ChatUser author);
 }

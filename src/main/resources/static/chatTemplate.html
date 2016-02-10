@@ -4,7 +4,7 @@
         			<h4>Participants [{{participants.length}}]</h4>
 							<div  class="dropdown dropdown-scroll" ng-app="app">
 		<div >
-            <div class="input-group input-group-sm search-control"> 
+            <div ng-show = "roomType == 0" class="input-group input-group-sm search-control"> 
 
                 <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
                 ng-blur="hideSearchList()" ng-change="showSearchList()"></input>

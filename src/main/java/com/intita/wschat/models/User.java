@@ -51,30 +51,35 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.EAGER)
 	private ChatUser chatUser;
 
-	
-/*	@NotBlank
-	  @Size(min = 1, max = 512)
-	 // @Column(unique = true)
-	  private String email;*/
-	
-	/*private boolean isAdmin = false;
-	
-	public boolean isAdmin() {
-		return isAdmin;
-	}*/
-
-	
-
 	@NotBlank
     @Size(min = 1, max = 100)
 	private String password;
-	  
+	
+	@Column(name="avatar")
+	private String avatar;
+	
+	@Column(name="role")
+	private int role;
 	  //private Permissions permission=Permissions.PERMISSIONS_USER;
 	  
 	public Long getId() {
 		return id;
 	}
+	public String getAvatar() {
+		return avatar;
+	}
 
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public int getRole() {
+		return role;
+	}
+
+	public void setRole(int role) {
+		this.role = role;
+	}
 	public void setId(Long id) {
 		this.id = id;
 	}
