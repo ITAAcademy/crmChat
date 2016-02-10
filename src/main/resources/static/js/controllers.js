@@ -131,7 +131,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
-	$scope.roomType		= 0;
+	$scope.roomType		= -1;
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
@@ -215,7 +215,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 
 	/*
 	 * 
-	 * @@@NEED TWO FUNCTION
+	 * @@@NEED TWO FUNCTION DUBLICATION CODE :(
 	 */
 	$scope.goToDialog = function(roomName) {
 		console.log("roomName:"+roomName);
@@ -230,6 +230,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 		
 		$scope.messages     = [];
 		$scope.participants = [];
+		$scope.roomType = -1;
 		
 		$scope.templateName = 'chatTemplate.html';
 		console.log("room name:"+roomName);
@@ -247,6 +248,7 @@ springChatController.controller('ChatController', ['$rootScope','$scope', '$http
 
 		$scope.messages     = [];
 		$scope.participants = [];
+		$scope.roomType = -1;
 		
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = "private";
