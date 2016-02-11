@@ -79,6 +79,7 @@ public class RoomController {
 	@Autowired private ChatUsersService chatUserServise;
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	static final private ObjectMapper mapper = new ObjectMapper();
 	
 	private volatile static Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
 	private volatile static Map<Long,Queue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
@@ -88,9 +89,9 @@ public class RoomController {
 	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	@SubscribeMapping("/chat.login/{username}")
-	public Map<String, Long> login(Principal principal)//Control user page after auth 
+	public Map<String, String> login(Principal principal)//Control user page after auth 
 	{
-		Map<String, Long> result = new HashMap<>();
+		Map<String, String> result = new HashMap<>();
 		ChatUser user = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 		if(user.getIntitaUser() == null)
 		{
@@ -102,7 +103,7 @@ public class RoomController {
 				ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
 				if(countTenant.isEmpty())
 				{
-					result.put("nextWindow", (long) -1);
+					result.put("nextWindow", "-1");
 					return result;
 				}
 				int k = new Random().nextInt(countTenant.size());
@@ -116,21 +117,22 @@ public class RoomController {
 			}
 			
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
-			result.put("nextWindow", room.getId());
+			result.put("nextWindow", room.getId().toString());
 		}
 		else
 		{
 			subscribedtoRoomsUsersBuffer.add(user);
-			result.put("nextWindow", (long) 0);
+			result.put("nextWindow", "0");
 		}
-		result.put("chat_id", Long.parseLong(principal.getName()));
+		result.put("chat_id", principal.getName());
+		result.put("chat_user_nickname", user.getNickName());
 		return result;
 	}
 	
 	@RequestMapping(value = "/chat/login/{username}", method = RequestMethod.POST)
 	@ResponseBody
 	public String retrieveParticipantsLP(Principal principal) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(login(principal));
+		return mapper.writeValueAsString(login(principal));
 	}
 	
 	/***************************
@@ -178,7 +180,7 @@ public class RoomController {
 	@RequestMapping(value = "/{room}/chat/participants", method = RequestMethod.POST)
 	@ResponseBody
 	public String retrieveParticipantsLP(@PathVariable("room") String room) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(retrieveParticipantsSubscribe(room));
+		return mapper.writeValueAsString(retrieveParticipantsSubscribe(room));
 	}
 	
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
@@ -206,8 +208,6 @@ public class RoomController {
 	
 	@Scheduled(fixedRate=15000L)
 	public void updateParticipants() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-
 		for(String key : responseBodyQueueForParticipents.keySet())
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
@@ -236,7 +236,7 @@ public class RoomController {
 			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
 			roomService.addUserToRoom(privateCharUser, room);
 		}
-		return new ObjectMapper().writeValueAsString(room.getId());//@BAG@
+		return mapper.writeValueAsString(room.getId());//@BAG@
 
 	}
 	
@@ -331,7 +331,7 @@ public class RoomController {
 	public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);
 		subscribedtoRoomsUsersBuffer.add(user_o);
-		return new ObjectMapper().writeValueAsString(addUserToRoomFn(nickName, roomStr, principal));
+		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomStr, principal));
 	}
 
 	@MessageMapping("/chat/rooms.{room}/user.remove.{login}")
@@ -406,8 +406,6 @@ public class RoomController {
 	
 	@Scheduled(fixedRate=1000L)
 	public void processRoomsQueues() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-
 		for(ChatUser chatUser : subscribedtoRoomsUsersBuffer)
 		{
 			if (chatUser==null){
