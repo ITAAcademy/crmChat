@@ -122,15 +122,13 @@ function changeLocation(url ) {
 			});
 		};
 	}
-	/*$scope.getRoomId=function (room){
-		console.log("getting id of room with name:"+room.string);
-	return getIdInArrayFromObjectsMap($scope.rooms,"string",room.string);
-	}*/
+
 	function getRoomById(rooms,id){
-		for (var room in rooms){
-			if (room.roomId===id) return room;
+
+		for(var i =0; i < rooms.length; i++){
+			if (rooms[i].roomId==id) return rooms[i];
 		}
-		debugger;
+		//debugger;
 		return undefined;
 	}
 
@@ -264,7 +262,7 @@ function changeLocation(url ) {
 
 		//$scope.templateName = 'dialogsTemplate.html';
 		//changeLocation("/chatrooms")
-		$scope.dialogName = '';
+		//$scope.dialogName = '';
 
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
@@ -303,9 +301,9 @@ function changeLocation(url ) {
 
 		//$scope.templateName = 'chatTemplate.html';
 		//changeLocation("/dialog_view")
-		var room = getRoomById($scope.rooms,roomId);
+		/*var room = getRoomById($scope.rooms,roomId);
 		if(room!=undefined)
-		$scope.dialogName = room.string;
+		$scope.dialogName = room.string;*/
 		//else debugger;
 		//var key = $scope.getRoomId(roomName);
 		//console.log("gotoDialog key:"+key);
@@ -321,8 +319,8 @@ function changeLocation(url ) {
 		console.log("roomId:" + roomId);
 		goToDialogEvn(roomId);
 		
-		if ($scope.rooms[$scope.roomId] !== undefined )
-			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+		if (getRoomById($scope.rooms,$scope.roomId) !== undefined )
+			getRoomById($scope.rooms,$scope.roomId).date = curentDateInJavaFromat();
 
 		$scope.messages     = [];
 		$scope.participants = [];
@@ -341,8 +339,12 @@ function changeLocation(url ) {
 		$scope.changeRoom();
 		setTimeout(function(){ 
 			var room = getRoomById($scope.rooms,$scope.roomId);
+		
 			if (room!=undefined)
+			{
 			room.nums = 0;
+			$scope.dialogName = room.string;
+		}
 			//$scope.roomsArray[$scope.roomId].nums = 0;
 		}, 1000);
 
