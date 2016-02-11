@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -213,7 +214,7 @@ public class RoomController {
 	
 	@SubscribeMapping("/chat/rooms/user.{username}")
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public Map<Long, StringIntDate> getRoomsByAuthorSubscribe(Principal principal) { //000
+	public List<StringIntDate> getRoomsByAuthorSubscribe(Principal principal) { //000
 		System.out.println("Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");//@LOG@
 		System.out.println(principal.getName());//@LOG@
 

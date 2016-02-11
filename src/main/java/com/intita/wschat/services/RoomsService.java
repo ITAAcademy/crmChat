@@ -2,18 +2,14 @@ package com.intita.wschat.services;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +18,7 @@ import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.RoomRepository;
-import com.intita.wschat.repositories.UserRepository;
-import com.intita.wschat.web.RoomController;
-
-import org.apache.commons.collections4.IteratorUtils;
 
 @Service
 public class RoomsService {
@@ -149,11 +140,11 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 	}
 	
 	@Transactional
-	public Map<Long, StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
+	public List<StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
-		Map<Long, StringIntDate> result = new HashMap <Long, StringIntDate> ();
+		List<StringIntDate> result = new ArrayList <StringIntDate> ();
 
 		List<ChatUserLastRoomDate> rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);	
 		
@@ -177,8 +168,8 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 					}
 			}
 
-			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString());
-			result.put(entry.getLastRoom().getId() ,sb);
+			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom().getId());
+			result.add(sb);
 		}
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
@@ -186,9 +177,18 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 	
 
 	static public class StringIntDate {
+		public Long getRoomId() {
+			return roomId;
+		}
+
+		public void setRoomId(Long roomId) {
+			this.roomId = roomId;
+		}
+
 		public String string;
 		public Integer nums;
 		public String date;
+		public Long roomId;
 
 		public String getDate() {
 			return date;
@@ -204,10 +204,11 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 			date = new Date().toString();
 		}
 
-		public StringIntDate(String string, Integer nums, String date) {
+		public StringIntDate(String string, Integer nums, String date,Long roomId) {
 			this.string = string;
 			this.nums = nums;
 			this.date = date;
+			this.roomId=roomId;
 		}
 	}
 }
