@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -48,6 +49,7 @@ import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
@@ -90,6 +92,18 @@ public class ChatController {
 	/*@Value("${timeouts.message}")
 	private final Long timeOutMessage;
 */
+	@RequestMapping(value = "/chat/users", method = RequestMethod.POST)
+	@ResponseBody
+	public String getUsers(Principal principal) throws JsonProcessingException {
+		
+		Page<User> pageUsers = userService.getUsers(1, 15);
+		Set<LoginEvent> userList = new HashSet<>();
+		for(User user : pageUsers)
+		{
+			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar()));
+		}
+		return  new ObjectMapper().writeValueAsString(userList);
+	}
 	
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {

@@ -211,6 +211,7 @@ function changeLocation(url ) {
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
 	$scope.roomId		= '';
+	$scope.roomType		= -1;
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
 	$scope.userAddedToRoom = true;
@@ -268,6 +269,31 @@ function changeLocation(url ) {
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
 	}
+	
+	$scope.goToTeachersList = function() {
+		$scope.templateName = 'teachersTemplate.html';
+		 
+		$scope.httpPromise.push($http.post(serverPrefix + "/chat/users").
+
+				success(function(data, status, headers, config) {
+					console.log("USERS GET OK ");
+					$scope.seachersTeachers = data;
+				}).
+				error(function(data, status, headers, config) {
+					$scope.seachersTeachers = [];
+				}));
+	}
+	$scope.goToPrivateDialog = function(intitaUserId) {
+		//debugger;
+		$scope.httpPromise.push($http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
+				success(function(data, status, headers, config) {
+					console.log("PRIVATE ROOM CREATE OK ");
+					$scope.goToDialogById(data);
+				}).
+				error(function(data, status, headers, config) {
+					console.log("PRIVATE ROOM CREATE FAILD ");
+				}));
+	}
 
 
 	$scope.goToDialog = function(roomId) {
@@ -285,6 +311,26 @@ function changeLocation(url ) {
 		//console.log("gotoDialog key:"+key);
 
 		goToDialogEvn(roomId);
+
+			$scope.messages     = [];
+		$scope.participants = [];
+		$scope.roomType = -1;	
+
+	};
+	$scope.goToDialogById = function(roomId) {
+		console.log("roomId:" + roomId);
+		goToDialogEvn(roomId);
+		
+		if ($scope.rooms[$scope.roomId] !== undefined )
+			$scope.rooms[$scope.roomId].date = curentDateInJavaFromat();
+
+		$scope.messages     = [];
+		$scope.participants = [];
+		$scope.roomType = -1;
+		
+		$scope.templateName = 'chatTemplate.html';
+		$scope.dialogName = "private";
+		
 
 	};
 
@@ -381,11 +427,6 @@ function changeLocation(url ) {
 		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
 	}
 
-	/*$scope.addRoom=function(name){
-
-		chatSocket.send("/app/chat/rooms/add.{0}".format(name), {}, JSON.stringify({}));
-
-	}*/
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
 		room=$scope.roomId+'/';
@@ -418,11 +459,6 @@ function changeLocation(url ) {
 			});
 		}
 		$scope.searchInputValue.email = '';
-	
-		/*
-		setTimeout(function(){ 
-			chatSocket.send("/app/{0}chat.participants".format(room), {}, JSON.stringify({}));
-		    }, 3000);  */
 	}
 
 	/*************************************
@@ -477,6 +513,7 @@ function changeLocation(url ) {
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.participants = message["participants"];
+		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.unshift(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));

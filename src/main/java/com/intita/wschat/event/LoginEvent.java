@@ -12,10 +12,36 @@ public class LoginEvent {
 	private Long chatUserId;
 	private Date time;
 	private boolean typing;
+	private String avatar;
+	private int role;
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public int getRole() {
+		return role;
+	}
+
+	public void setRole(int role) {
+		this.role = role;
+	}
 
 	public LoginEvent(Long chatUserId,String username) {
 		this.chatUserId=chatUserId;
 		this.username = username;
+		time = new Date();
+		typing = false;
+	}
+	
+	public LoginEvent(Long chatUserId,String username, String avatar) {
+		this.chatUserId=chatUserId;
+		this.username = username;
+		this.avatar = avatar;
 		time = new Date();
 		typing = false;
 	}

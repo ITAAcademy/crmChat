@@ -22,63 +22,79 @@ import com.intita.wschat.repositories.RoomRepository;
 
 @Service
 public class RoomsService {
-	
+
 	@Autowired
 	private RoomRepository roomRepo;
 	@Autowired private UsersService userService;
 	@Autowired private ChatUsersService chatUserService;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private UserMessageService userMessageService;
-	
+
 	@PostConstruct
 	@Transactional
 	public void createDefRoom() {
-		
+
 	}
-	
+
 	@Transactional
-	   public Page<Room> getRooms(int page, int pageSize){
-			return roomRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
-			
-	   }
-	
+	public Page<Room> getRooms(int page, int pageSize){
+		return roomRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
+
+	}
+
 	@Transactional
 	public List<Room> getRooms(){
 		return (List<Room>) roomRepo.findAll(); // spring рахує сторінки з нуля
 	}
-	
+
 	@Transactional
 	public Room getRoom(Long id){
 		return roomRepo.findOne(id);
 	}
-	
+
 	@Transactional
 	public boolean addRooms(Iterable<Room> rooms) {
 		if (rooms==null) return false;
 		roomRepo.save(rooms);
 		return true;
 	}
-	
+
 	@Transactional
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}
 	@Transactional
-	public ArrayList<Room> getRoomByAuthor(String author) {
-		
-		return roomRepo.findByAuthor(userService.getUser(author));
+	public Room getPrivateRoom(ChatUser author, ChatUser privateUser) {
+		return roomRepo.findByAuthorAndTypeAndUsersContaining(author, (short) 1, privateUser);
 	}
 	@Transactional
-public ArrayList<Room> getRoomByAuthor(User user) {
-		
+	public ArrayList<Room> getRoomByAuthor(String author) {
+
+		return roomRepo.findByAuthor(chatUserService.getChatUser(author));
+	}
+	@Transactional
+	public ArrayList<Room> getRoomByAuthor(ChatUser user) {
+
 		return roomRepo.findByAuthor(user);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author) {
 		Room r = new Room();
 		r.setAuthor(author);
 		r.setName(name);
+		r.setType((short) 0);
+		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
+		//r.addUser(author);//@BAG@
+		roomRepo.save(r);
+		return r;
+	}
+	@Transactional(readOnly = false)
+	public Room register(String name, ChatUser author, short type) {
+		Room r = new Room();
+		r.setAuthor(author);
+		r.setName(name);
+		r.setType(type);
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		//r.addUser(author);//@BAG@
 		roomRepo.save(r);
@@ -93,7 +109,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		roomRepo.save(room);//@NEED_ASK@
 		return true;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean addUserToRoom(Long id, User user) {
 		Room room = roomRepo.findOne(id);
@@ -111,7 +127,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		Room room = roomRepo.findOne(id);
 		return addUserToRoom(chatUserService.getChatUser(name), room);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean addUserToRoom(ChatUser user, Room room) {
 		if(room == null)
@@ -119,13 +135,13 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		if(user == null)
 			return false;
 		//have premition?
-	
+
 		room.addUser(user);
 		roomRepo.save(room);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);
 		return true;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean removeUserFromRoom(User user, Room room) {
 		if(room == null)
@@ -133,12 +149,12 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		if(user == null)
 			return false;
 		//have premition?
-	
+
 		room.removeUser(user);
 		roomRepo.save(room);
 		return true;
 	}
-	
+
 	@Transactional
 	public List<StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
@@ -147,7 +163,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		List<StringIntDate> result = new ArrayList <StringIntDate> ();
 
 		List<ChatUserLastRoomDate> rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);	
-		
+
 		List<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
 
 		for (int i = 0; i < rooms_lastd.size() ; i++)
@@ -158,7 +174,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 			for (UserMessage msg : messages)
 			{
 				Date m_data = msg.getDate();
-			//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
+				//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
 				if (m_data != null)
 					if (m_data.after(date) == true &&
 					msg.getRoom().getId() == 
@@ -174,7 +190,7 @@ public ArrayList<Room> getRoomByAuthor(User user) {
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
 	}
-	
+
 
 	static public class StringIntDate {
 		public Long getRoomId() {
