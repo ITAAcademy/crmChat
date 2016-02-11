@@ -201,6 +201,7 @@ function changeLocation(url ) {
 
 	$scope.searchUserName = "";
 	$scope.chatUserId     = '';
+	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
 	//$scope.roomsArray = [];
@@ -477,7 +478,7 @@ function changeLocation(url ) {
 				$scope.messages.unshift({message: $scope.newMessage, username: 'you', priv: true, to: $scope.sendTo});
 			}
 
-			chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage}));
+			chatSocket.send(destination, {}, JSON.stringify({message: $scope.newMessage, username:$scope.chatUserNickname}));
 			var myFunc = function(){
 				if (angular.isDefined(sendingMessage))
 				{
@@ -624,6 +625,7 @@ function changeLocation(url ) {
 	function login(mess_obj)
 	{
 		$scope.chatUserId = mess_obj.chat_id;
+		$scope.chatUserNickname = mess_obj.chat_user_nickname;
 		if(mess_obj.nextWindow == -1)
 		{
 			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});

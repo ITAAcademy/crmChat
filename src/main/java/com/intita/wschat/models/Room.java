@@ -82,6 +82,10 @@ public class Room implements Serializable,Comparable<Room> {
 	{
 		
 	}
+	public Room(long id)
+	{
+		setId(id);
+	}
 	public ChatUser getAuthor() {
 		return author;
 	}

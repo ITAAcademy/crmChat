@@ -84,6 +84,7 @@ public class ChatController {
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	private final static ObjectMapper mapper = new ObjectMapper();
 
 	private volatile static Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
 	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
@@ -109,20 +110,18 @@ public class ChatController {
 	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		Long chatUserId = 0L;
-		chatUserId = Long.parseLong(principal.getName());
-		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
-		Room room = roomService.getRoom(Long.parseLong(roomStr));
+		ChatUser chatUser = new ChatUser(Long.parseLong(principal.getName()));
+		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
-		message.setUsername(chatUser.getNickName());
+		//message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
-
+		
+		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
+		
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
-		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
+		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-
-		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		return message;
 	}
 
@@ -171,7 +170,6 @@ public class ChatController {
 	
 	@Scheduled(fixedRate=600L)
 	public void processMessage() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
 
 		for(String roomId : messagesBuffer.keySet())
 		{
@@ -325,22 +323,6 @@ public class ChatController {
 		authenticationProvider.autorization(authenticationProvider);
 		return "/index.html";
 	}
-
-
-
-
-	/*@RequestMapping(value = "/getusersemails", method = RequestMethod.POST)
-	 //@ResponseStatus("200")
-	@ResponseBody
-	@JsonView(View.Summary.class)
-	public  String getUserEmailsFromDB(@RequestBody String emailsa){
-		ArrayList<User> users = userService.getUsers();
-		ArrayList<String> emails = new ArrayList<String>();
-		for(int i = 0; i < users.size(); i++)
-			emails.add(users.get(i).getEmail());
-		emailsa =  emails.toString();
-		return emailsa;
-	}*/
 
 	@MessageExceptionHandler
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
