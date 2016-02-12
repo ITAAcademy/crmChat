@@ -51,7 +51,7 @@ var chatControllerScope = Scopes.get('ChatController');
 
 var timeout = 0;
 if (!isInited)timeout=1000;
-setTimeout(function() {
+$timeout(function() {
 //typeof chatControllerScope.socketSupport!=='undefined'
 chatControllerScope.goToDialogList();
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -67,7 +67,7 @@ var chatControllerScope = Scopes.get('ChatController');
 //while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 var timeout = 0;
 if (!isInited)timeout=1000;
-setTimeout(function() {
+$timeout(function() {
 //typeof chatControllerScope.socketSupport!=='undefined'
  chatControllerScope.goToDialog($routeParams.roomId);
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -140,16 +140,16 @@ function changeLocation(url ) {
 	$scope.searchInputValue = {email: ""};
 
 	$scope.hideSearchList = function () {
-		setTimeout(function ()  {$scope.show_search_list = false; }, 20);
+		$timeout(function ()  {$scope.show_search_list = false; }, 20);
 	}
 
 	$scope.showSearchList = function () {
 
 		$scope.show_search_list = true;
 		$scope.emails = [];
-		clearTimeout(getEmailsTimer);
+		$timeout.cancel(getEmailsTimer);
 
-		getEmailsTimer = setTimeout(function () {
+		getEmailsTimer = $timeout(function () {
 			$scope.show_search_list = true;
 			/*var data = {"login=" + message,
 			var config = "";
@@ -160,7 +160,7 @@ function changeLocation(url ) {
 //			alert($scope.emails);	
 			var request = $http({
 				method: "get",
-				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.roomId,//'/get_users_emails_like',
+				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId,//'/get_users_emails_like',
 				data: null ,
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 			});
@@ -209,7 +209,7 @@ function changeLocation(url ) {
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
-	$scope.roomId		= '';
+	$scope.currentRoom		= {roomId:''};
 	$scope.roomType		= -1;
 	$scope.dialogShow = false;
 	$scope.messageSended = true;
@@ -217,6 +217,11 @@ function changeLocation(url ) {
 	$scope.roomAdded = true;
 	$scope.showDialogListButton = false;
 	$scope.dialogName = '';
+
+	$scope.checkUserAdditionPermission = function(){
+		var resultOfChecking = (roomType == 0) && ($scope.currentRoom.roomId===$scope.currentRoom.roomAuthorId);
+		return resultOfChecking;
+	}
 
 	
 
@@ -258,15 +263,15 @@ function changeLocation(url ) {
 
 	$scope.goToDialogList = function() {
 
-		if (getRoomById($scope.rooms,$scope.roomId) !== undefined )
-			getRoomById($scope.rooms,$scope.roomId).date = curentDateInJavaFromat();
+		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		//$scope.templateName = 'dialogsTemplate.html';
 		//changeLocation("/chatrooms")
-		//$scope.dialogName = '';
+		$scope.dialogName = '';
 
-		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
-		$scope.roomId = -44;
+		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.currentRoom.roomId), {}, JSON.stringify({}));
+		$scope.currentRoom = {roomId:-44} ;
 	}
 	
 	$scope.goToTeachersList = function() {
@@ -297,8 +302,8 @@ function changeLocation(url ) {
 
 	$scope.goToDialog = function(roomId) {
 		//console.log("roomName:"+roomName);
-		if (getRoomById($scope.rooms,$scope.roomId) !== undefined )
-			getRoomById($scope.rooms,$scope.roomId).date = curentDateInJavaFromat();
+		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		//$scope.templateName = 'chatTemplate.html';
 		//changeLocation("/dialog_view")
@@ -320,8 +325,8 @@ function changeLocation(url ) {
 		console.log("roomId:" + roomId);
 		goToDialogEvn(roomId);
 		
-		if (getRoomById($scope.rooms,$scope.roomId) !== undefined )
-			getRoomById($scope.rooms,$scope.roomId).date = curentDateInJavaFromat();
+		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		$scope.messages     = [];
 		$scope.participants = [];
@@ -336,11 +341,11 @@ function changeLocation(url ) {
 	function goToDialogEvn(id)
 	{
 		console.log("goToDialogEvn("+id+")");
-		$scope.roomId = id;
+		$scope.currentRoom = {"roomId":id};
 		$scope.changeRoom();
-		setTimeout(function(){ 
-			var room = getRoomById($scope.rooms,$scope.roomId);
-		
+		$timeout(function(){ 
+			var room = getRoomById($scope.rooms,$scope.currentRoom.roomId);
+			$scope.currentRoom = room;
 			if (room!=undefined)
 			{
 			room.nums = 0;
@@ -349,7 +354,7 @@ function changeLocation(url ) {
 			//$scope.roomsArray[$scope.roomId].nums = 0;
 		}, 1000);
 
-		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.roomId), {}, JSON.stringify({}));
+		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.currentRoom.roomId), {}, JSON.stringify({}));
 	}
 
 
@@ -358,8 +363,8 @@ function changeLocation(url ) {
 	 *************************************/
 	$scope.changeRoom=function(){
 		$scope.messages=[];
-		console.log("roomId:"+$scope.roomId);
-		room=$scope.roomId+'/';
+		console.log("roomId:"+$scope.currentRoom.roomId);
+		room=$scope.currentRoom.roomId+'/';
 
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
@@ -432,10 +437,10 @@ function changeLocation(url ) {
 
 	$scope.addUserToRoom=function(){
 		$scope.userAddedToRoom = false;
-		room=$scope.roomId+'/';
+		room=$scope.currentRoom.roomId+'/';
 		if($rootScope.socketSupport === true)
 		{
-			chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
+			chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
 			var myFunc = function(){
 				if (angular.isDefined(addingUserToRoom))
 				{
@@ -452,7 +457,7 @@ function changeLocation(url ) {
 		else
 		{
 			console.log("$scope.searchInputValue:"+$scope.searchInputValue);
-			$http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.roomId,$scope.searchInputValue.email), {}).
+			$http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId,$scope.searchInputValue.email), {}).
 			success(function(data, status, headers, config) {
 				console.log("ADD USER OK " + data);
 				$scope.userAddedToRoom = true;
@@ -719,7 +724,7 @@ function changeLocation(url ) {
 
 			var num = JSON.parse(message.body);
 			for (room in rooms){
-				if (room.roomId == num && $scope.roomId != room.roomId){
+				if (room.roomId == num && $scope.currentRoom.roomId != room.roomId){
 					room.nums++;
 					room.date=curentDateInJavaFromat();
 					new Audio('new_mess.mp3').play();

@@ -4,14 +4,14 @@
         			<h4>Participants [{{participants.length}}]</h4>
 							<div  class="dropdown dropdown-scroll" ng-app="app">
 		<div >
-            <div ng-show = "roomType == 0" class="input-group input-group-sm search-control"> 
+            <div ng-show = "checkUserAdditionPermission()" class="input-group input-group-sm search-control"> 
 
                 <input type="text" class="form-control" placeholder="Query" ng-model="$parent.searchInputValue.email" 
                 ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
                             <span  ng-click="addUserToRoom()" class="input-group-addon">
                     <span ng-show="$parent.userAddedToRoom" class="glyphicon glyphicon-search"></span>
                     <img ng-hide="$parent.userAddedToRoom" src="images/ajax_loader_blue_32.gif"/>
-			</span>
+			 </span>
             </div>
             <div class="search-list" ng-show="$parent.show_search_list" >
 		    <ul aria-labelledby="dropdownMenu1"">
