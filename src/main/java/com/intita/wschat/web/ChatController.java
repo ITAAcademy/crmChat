@@ -106,21 +106,26 @@ public class ChatController {
 		return  new ObjectMapper().writeValueAsString(userList);
 	}
 	
-	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
-		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
-		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+	public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {
 		ChatUser chatUser = new ChatUser(Long.parseLong(principal.getName()));
 		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		//message.setUsername(chatUser.getNickName());
 		userMessageService.addMessage(messageToSave);
+		return messageToSave;
 		
+	}
+	@MessageMapping("/{room}/chat.message")
+	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
+		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		
+		filterMessage(roomStr, message, principal);
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
-		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
+		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 		return message;
 	}
@@ -130,12 +135,8 @@ public class ChatController {
 	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		Long chatUserId = 0L;
-		chatUserId = Long.parseLong(principal.getName());
-		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
-		Room room = roomService.getRoom(Long.parseLong(roomStr));
-		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
-		message.setUsername(chatUser.getNickName());
+
+		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		//DeferredResult<ArrayList<UserMessage>> result = new DeferredResult<>();
 		//userMessageService.addMessage(messageToSave);
 		Queue<UserMessage> list = messagesBuffer.get(roomStr);
@@ -150,12 +151,7 @@ public class ChatController {
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	public 	@ResponseBody DeferredResult<String> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
 		Long timeOut = 1000000L;
-		/*Queue<UserMessage> list = messagesBuffer.get(roomStr);
-		if(list == null)
-		{
-			list = new ConcurrentLinkedQueue<>();
-			//	messagesBuffer.put(Long.parseLong(roomStr), list);
-		}*/
+
 		DeferredResult<String> result = new DeferredResult<String>(timeOut);
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(roomStr);
 		if(queue == null)
