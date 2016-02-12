@@ -346,7 +346,7 @@ function changeLocation(url ) {
 		$scope.currentRoom = {roomId:id};
 		$scope.changeRoom();
 		$timeout(function(){ 
-			var room = getRoomById($scope.rooms,$scope.currentRoom.roomId);
+			var room = getRoomById($scope.rooms,id);
 			$scope.currentRoom = room;
 			if (room!=undefined)
 			{
