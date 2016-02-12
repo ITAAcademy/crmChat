@@ -158,7 +158,7 @@ public class RoomsService {
 	@Transactional
 	public List<StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
-
+		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		List<StringIntDate> result = new ArrayList <StringIntDate> ();
 
@@ -183,7 +183,7 @@ public class RoomsService {
 						messages_cnt += 1;
 					}
 			}
-
+			if (entry.getLastRoom()==null) continue;
 			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom());
 			result.add(sb);
 		}

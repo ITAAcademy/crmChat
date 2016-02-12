@@ -713,11 +713,13 @@ function changeLocation(url ) {
 		 *Room
 		 *
 		 */
-
+console.log("chatUserId:"+$scope.chatUserId);
 		chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
+			console.log("chatUserId:"+$scope.chatUserId);
 			updateRooms(message);
 		});
 		chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) {// event update
+			console.log("chatUserId:"+$scope.chatUserId);
 			updateRooms(message);
 		});
 		
