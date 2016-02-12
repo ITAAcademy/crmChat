@@ -33,7 +33,7 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	@Autowired RoomsService roomsService;
 	private class RegexResult {
 		public RegexResult(){
-			
+
 		}
 		public RegexResult(boolean finded,boolean correct){
 			this.finded=finded;
@@ -54,7 +54,7 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 		private boolean finded;
 		private boolean correct;
 	}
-	
+
 	private final TraceRepository traceRepository;
 	final String[] mappingStrings = new String[]
 			{//chat mappings
@@ -64,102 +64,108 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 					"/chat.go.to.dialog.list/(*)" // 0 - room
 					// 0 - room				
 			};
-	
+
 	public WebSocketTraceChannelInterceptor(TraceRepository traceRepository) {
 		this.traceRepository = traceRepository;
 	}
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
-	    StompHeaderAccessor headerAccessor= StompHeaderAccessor.wrap(message);
-	    if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
-	        Principal userPrincipal = headerAccessor.getUser();
-	        if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
-	        {
-	            throw new IllegalArgumentException("No permission for this topic");
-	        }
-	    }
-	    return message;
+		StompHeaderAccessor headerAccessor= StompHeaderAccessor.wrap(message);
+		if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
+			Principal userPrincipal = headerAccessor.getUser();
+			if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
+			{
+				throw new IllegalArgumentException("No permission for this topic");
+			}
+		}
+		return message;
 	}
-	
+
 	private RegexResult isChatParticipantsMappingCorrect(Principal principal,String topicDestination){
 		RegexResult result = new RegexResult();
 		String patternStr = ".*/(.*)/chat.participants";
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher m = pattern.matcher(topicDestination);
-	   if (m.find()){
-		   result.finded=true;
-		   String roomStr = m.group(1);
-		   if (roomStr==null) return result;
-		   Long userId  = Long.parseLong(principal.getName());
-		   ChatUser chatUser = chatUsersService.getChatUser(userId);
-		   if (chatUser==null) return result;
-		   Room room = roomsService.getRoom(Long.parseLong(roomStr));
-		   if (room==null) return result;
-		   for (ChatUser u : room.getChatUsers()){
-			   System.out.println("ZIGZAG U:"+u.getId());
-		   }
-		   if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId()==userId) result.correct=true;   
-	   }
-	   return result;
+		if (m.find()){
+			result.finded=true;
+			String roomStr = m.group(1);
+			
+			if (roomStr==null) 
+				return result;
+			
+			Long userId  = Long.parseLong(principal.getName());
+			ChatUser chatUser = chatUsersService.getChatUser(userId);
+			
+			if (chatUser==null) 
+				return result;
+			
+			Room room = roomsService.getRoom(Long.parseLong(roomStr));
+			
+			if (room==null) 
+				return result;
+			
+			if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId()==userId) result.correct=true;   
+		}
+		return result;
 	}
-	
+
 	private boolean validateSubscription(Principal principal, String topicDestination)
 	{
-	
-	   System.out.println(principal.getName());
-	   System.out.println(topicDestination);
-	if (!isChatParticipantsMappingCorrect(principal,topicDestination).isCorrect())
-	    return false;
-	
-	return true;
+
+		System.out.println(principal.getName());
+		System.out.println(topicDestination);
+		if (!isChatParticipantsMappingCorrect(principal,topicDestination).isCorrect())
+			return false;
+
+		return true;
 	}
 	@Override
 	public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
 		Map<String, Object> trace = new LinkedHashMap<String, Object>();
-		
+
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-		
+
 		// Don't trace non-STOMP messages (like heartbeats)
 		if(headerAccessor.getCommand() == null) {
 			return;
 		}
-		
+
 		String payload = new String((byte[]) message.getPayload());
-		
+
 		trace.put("stompCommand", headerAccessor.getCommand().name());
 		trace.put("nativeHeaders", getNativeHeaders(headerAccessor));
 
 		if(!payload.isEmpty()) {
 			trace.put("payload", payload);
 		}
-		
+
 		traceRepository.add(trace);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getNativeHeaders(StompHeaderAccessor headerAccessor) {
 		Map<String, List<String>> nativeHeaders = 
 				(Map<String, List<String>>) headerAccessor.getHeader(NativeMessageHeaderAccessor.NATIVE_HEADERS);
-		
+
 		if(nativeHeaders == null) {
 			return Collections.EMPTY_MAP;
 		}
-		
+
 		Map<String, Object> traceHeaders = new LinkedHashMap<String, Object>();
-		
+
 		for(String header : nativeHeaders.keySet()) {
 			List<String> headerValue = (List<String>) nativeHeaders.get(header);
 			Object value = headerValue;
-				
+
 			if(headerValue.size() == 1) {
 				value = headerValue.get(0);
 			} else if(headerValue.isEmpty()) {
 				value = "";
 			}
-			
+
 			traceHeaders.put(header, value);
 		}
-		
+
 		return traceHeaders;
 	}
 }
