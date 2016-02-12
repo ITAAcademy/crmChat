@@ -184,7 +184,7 @@ public class RoomsService {
 					}
 			}
 
-			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom().getId());
+			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom());
 			result.add(sb);
 		}
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
@@ -193,6 +193,14 @@ public class RoomsService {
 
 
 	static public class StringIntDate {
+		public Long getRoomAuthorId() {
+			return roomAuthorId;
+		}
+
+		public void setRoomAuthorId(Long roomAuthorId) {
+			this.roomAuthorId = roomAuthorId;
+		}
+
 		public Long getRoomId() {
 			return roomId;
 		}
@@ -205,6 +213,7 @@ public class RoomsService {
 		public Integer nums;
 		public String date;
 		public Long roomId;
+		public Long roomAuthorId;
 
 		public String getDate() {
 			return date;
@@ -220,11 +229,12 @@ public class RoomsService {
 			date = new Date().toString();
 		}
 
-		public StringIntDate(String string, Integer nums, String date,Long roomId) {
+		public StringIntDate(String string, Integer nums, String date,Room room) {
 			this.string = string;
 			this.nums = nums;
 			this.date = date;
-			this.roomId=roomId;
+			this.roomId=room.getId();
+			this.roomAuthorId=room.getAuthor().getId();
 		}
 	}
 }
