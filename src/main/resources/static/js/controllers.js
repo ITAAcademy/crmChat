@@ -219,7 +219,9 @@ function changeLocation(url ) {
 	$scope.dialogName = '';
 
 	$scope.checkUserAdditionPermission = function(){
-		var resultOfChecking = (roomType == 0) && ($scope.currentRoom.roomId===$scope.currentRoom.roomAuthorId);
+		debugger;
+		if (typeof $scope.currentRoom === "undefined")return false;
+		var resultOfChecking = ($scope.roomType == 0) && ($scope.currentRoom.roomAuthorId==$scope.currentRoom.roomAuthorId);
 		return resultOfChecking;
 	}
 
@@ -341,7 +343,7 @@ function changeLocation(url ) {
 	function goToDialogEvn(id)
 	{
 		console.log("goToDialogEvn("+id+")");
-		$scope.currentRoom = {"roomId":id};
+		$scope.currentRoom = {roomId:id};
 		$scope.changeRoom();
 		$timeout(function(){ 
 			var room = getRoomById($scope.rooms,$scope.currentRoom.roomId);
