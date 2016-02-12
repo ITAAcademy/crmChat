@@ -51,7 +51,7 @@ var chatControllerScope = Scopes.get('ChatController');
 
 var timeout = 0;
 if (!isInited)timeout=1000;
-setTimeout(function() {
+$timeout(function() {
 //typeof chatControllerScope.socketSupport!=='undefined'
 chatControllerScope.goToDialogList();
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -67,7 +67,7 @@ var chatControllerScope = Scopes.get('ChatController');
 //while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 var timeout = 0;
 if (!isInited)timeout=1000;
-setTimeout(function() {
+$timeout(function() {
 //typeof chatControllerScope.socketSupport!=='undefined'
  chatControllerScope.goToDialog($routeParams.roomId);
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -140,16 +140,16 @@ function changeLocation(url ) {
 	$scope.searchInputValue = {email: ""};
 
 	$scope.hideSearchList = function () {
-		setTimeout(function ()  {$scope.show_search_list = false; }, 20);
+		$timeout(function ()  {$scope.show_search_list = false; }, 20);
 	}
 
 	$scope.showSearchList = function () {
 
 		$scope.show_search_list = true;
 		$scope.emails = [];
-		clearTimeout(getEmailsTimer);
+		$timeout.cancel(getEmailsTimer);
 
-		getEmailsTimer = setTimeout(function () {
+		getEmailsTimer = $timeout(function () {
 			$scope.show_search_list = true;
 			/*var data = {"login=" + message,
 			var config = "";
@@ -263,7 +263,7 @@ function changeLocation(url ) {
 
 		//$scope.templateName = 'dialogsTemplate.html';
 		//changeLocation("/chatrooms")
-		//$scope.dialogName = '';
+		$scope.dialogName = '';
 
 		chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.roomId), {}, JSON.stringify({}));
 		$scope.roomId = -44;
@@ -338,9 +338,8 @@ function changeLocation(url ) {
 		console.log("goToDialogEvn("+id+")");
 		$scope.roomId = id;
 		$scope.changeRoom();
-		setTimeout(function(){ 
+		$timeout(function(){ 
 			var room = getRoomById($scope.rooms,$scope.roomId);
-		
 			if (room!=undefined)
 			{
 			room.nums = 0;
