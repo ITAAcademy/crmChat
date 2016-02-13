@@ -751,11 +751,14 @@ console.log("chatUserId:"+$scope.chatUserId);
 		
 
 		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
-
+			console.log("new message in room:"+message.body);
 			var num = JSON.parse(message.body);
-			for (room in rooms){
+			for (var roomIndex = 0; roomIndex < $scope.rooms.length; roomIndex++)
+			{
+				var room = $scope.rooms[roomIndex];
 				if (room.roomId == num && $scope.currentRoom.roomId != room.roomId){
 					room.nums++;
+					console.log("room "+room.roomId + "=="+num+" currentRoom="+$scope.currentRoom.roomId);
 					room.date=curentDateInJavaFromat();
 					new Audio('new_mess.mp3').play();
 					toaster.pop('note', "NewMessage in " + room.string, "",1000);
