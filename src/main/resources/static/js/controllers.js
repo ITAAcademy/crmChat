@@ -292,7 +292,7 @@ function changeLocation(url ) {
 
 	$scope.goToDialogList = function() {
 
-		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom.date) !== undefined )
 			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		//$scope.templateName = 'dialogsTemplate.html';
@@ -330,7 +330,7 @@ function changeLocation(url ) {
 
 	$scope.goToDialog = function(roomId) {
 		//console.log("roomName:"+roomName);
-		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
 			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		//$scope.templateName = 'chatTemplate.html';
@@ -353,7 +353,7 @@ function changeLocation(url ) {
 		console.log("roomId:" + roomId);
 		goToDialogEvn(roomId);
 		
-		if (getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
+		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
 			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
 
 		$scope.messages     = [];
