@@ -6,7 +6,7 @@
         <ul ng-repeat="teacher in seachersTeachers | orderBy: '-username' ">
                 <li>               
                     <img href="http://qa.intita.com/images/teachers/{{teacher.avatar}}"	/>
-                    <a href="" ng-click="goToPrivateDialog(teacher.chatUserId)">{{teacher.username}}</a>
+                    <a ng-href="#/private_dialog_view/{{teacher.chatUserId}}">{{teacher.username}}</a>
                 </li>
             </ul>
         </div>

@@ -38,13 +38,21 @@ springChatControllers.config(function($routeProvider){
       templateUrl: "chatTemplate.html",
       controller: "ChatRouteController"
     });
+    $routeProvider.when("/teachers_list",{
+	templateUrl: "teachersTemplate.html",
+	controller: "TeachersListRouteController"
+    });
+     $routeProvider.when("/private_dialog_view/:chatUserId",{
+	templateUrl: "chatTemplate.html",
+	controller: "StrictedDialogRouteController"
+    });
     $routeProvider.otherwise({redirectTo: '/chatrooms'});
     console.log("scope test");
 
 });
 console.log("chatController:"+chatController);
 
-
+var isInited = false;
 springChatControllers.controller('DialogsRouteController',['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 Scopes.store('DialogsRouteController', $scope);
 var chatControllerScope = Scopes.get('ChatController');
@@ -59,7 +67,7 @@ chatControllerScope.goToDialogList();
 }, timeout);
 
 }]);
-var isInited = false;
+
 
 springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 Scopes.store('ChatRouteController', $scope);
@@ -73,14 +81,33 @@ $timeout(function() {
 	console.log("initing:"+chatControllerScope.socketSupport);
 	isInited=true;
 }, timeout);
+}]);
 
+springChatControllers.controller('TeachersListRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+Scopes.store('TeachersListRouteController', $scope);
+var chatControllerScope = Scopes.get('ChatController');
+//while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
+var timeout = 0;
+if (!isInited)timeout=1000;
+$timeout(function() {
+//typeof chatControllerScope.socketSupport!=='undefined'
+chatControllerScope.goToTeachersList();
+	isInited=true;
+}, timeout);
 
-  
+}]);
 
-
-
-
-console.log("chatControllerScope.goToDialog("+$routeParams.roomId+")");
+springChatControllers.controller('StrictedDialogRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+Scopes.store('StrictedDialogRouteController', $scope);
+var chatControllerScope = Scopes.get('ChatController');
+//while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
+var timeout = 0;
+if (!isInited)timeout=1000;
+$timeout(function() {
+//typeof chatControllerScope.socketSupport!=='undefined'
+chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
+	isInited=true;
+}, timeout);
 
 }]);
 
@@ -277,7 +304,6 @@ function changeLocation(url ) {
 	}
 	
 	$scope.goToTeachersList = function() {
-		$scope.templateName = 'teachersTemplate.html';
 		 
 		$scope.httpPromise.push($http.post(serverPrefix + "/chat/users").
 
