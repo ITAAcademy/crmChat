@@ -172,9 +172,10 @@ function changeLocation(url ) {
 	};
 
 	$scope.appendToSearchInput = function(value) {
+		console.log("searchInputValue:"+$scope.searchInputValue.email);
 		$scope.searchInputValue.email = value;
 		$scope.show_search_list = false;
-		console.log($scope.searchInputValue.email);
+		
 	}
 
 
@@ -219,9 +220,8 @@ function changeLocation(url ) {
 	$scope.dialogName = '';
 
 	$scope.checkUserAdditionPermission = function(){
-		debugger;
 		if (typeof $scope.currentRoom === "undefined")return false;
-		var resultOfChecking = ($scope.roomType == 0) && ($scope.currentRoom.roomAuthorId==$scope.currentRoom.roomAuthorId);
+		var resultOfChecking = ($scope.roomType == 0) && ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
 		return resultOfChecking;
 	}
 
