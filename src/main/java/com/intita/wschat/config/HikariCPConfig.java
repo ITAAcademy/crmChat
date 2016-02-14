@@ -33,6 +33,9 @@ public class HikariCPConfig {
 	        ds.setDriverClassName(driverClassName);
 	        ds.setJdbcUrl(jdbcUrl);
 	        ds.setUsername(userName);
+	        ds.setConnectionTestQuery("SELECT 1");
+	        ds.setMaxLifetime(1000);
+	        ds.setIdleTimeout(30);
 	        ds.setPassword(password);
 	        return ds;
 	    }

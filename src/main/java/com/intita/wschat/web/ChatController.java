@@ -93,6 +93,9 @@ public class ChatController {
 	/*@Value("${timeouts.message}")
 	private final Long timeOutMessage;
 */
+	/********************
+	 * GET CHAT USERS LIST FOR TEST
+	 *******************/
 	@RequestMapping(value = "/chat/users", method = RequestMethod.POST)
 	@ResponseBody
 	public String getUsers(Principal principal) throws JsonProcessingException {
@@ -108,10 +111,10 @@ public class ChatController {
 	
 	public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {
 		ChatUser chatUser = new ChatUser(Long.parseLong(principal.getName()));
+		chatUser.setNickName(message.getUsername());
 		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		//message.setUsername(chatUser.getNickName());
-		userMessageService.addMessage(messageToSave);
 		return messageToSave;
 		
 	}
@@ -120,7 +123,9 @@ public class ChatController {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		
-		filterMessage(roomStr, message, principal);
+		UserMessage messageToSave = filterMessage(roomStr, message, principal);
+		userMessageService.addMessage(messageToSave);//DO FROM MESS BUFFER
+		
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 		
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
@@ -146,6 +151,10 @@ public class ChatController {
 			messagesBuffer.put(roomStr, list);
 		}
 		list.add(messageToSave);
+		
+		//send message to WS users
+		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), message);
+		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)

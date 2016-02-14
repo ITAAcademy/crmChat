@@ -63,7 +63,7 @@
 
 .search-list {
 	position: absolute;
-	z-index: 5;
+	z-index: 500;
 	background-color: white;
 	width: 100%;
 }

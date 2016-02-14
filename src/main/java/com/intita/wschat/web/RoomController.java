@@ -185,18 +185,29 @@ public class RoomController {
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		while(responseBodyQueueForParticipents.putIfAbsent(room, queue) == null);		
+		responseBodyQueueForParticipents.putIfAbsent(room, queue);		
 		queue.add(result);
 		return result;
 	}
 
 	@Scheduled(fixedRate=15000L)
-	public void updateParticipants() throws JsonProcessingException {
+	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
+		{
+			Map<String, Object> result = retrieveParticipantsMessage(key);
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
-				response.setResult(mapper.writeValueAsString(retrieveParticipantsMessage(key)));
+				try {
+					response.setResult(mapper.writeValueAsString(result));
+				}
+				catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+				catch (Exception e) {
+					responseBodyQueueForParticipents.clear();
+				}
 			}
+		}
 		responseBodyQueueForParticipents.clear();
 	}
 
