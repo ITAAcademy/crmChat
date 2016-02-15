@@ -34,8 +34,9 @@ public class HikariCPConfig {
 	        ds.setJdbcUrl(jdbcUrl);
 	        ds.setUsername(userName);
 	        ds.setConnectionTestQuery("SELECT 1");
-	        ds.setMaxLifetime(1000);
-	        ds.setIdleTimeout(30);
+	        ds.setMaxLifetime(45000);
+	        ds.setIdleTimeout(15000);
+	        ds.setConnectionTimeout(30000);
 	        ds.setPassword(password);
 	        return ds;
 	    }
