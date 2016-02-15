@@ -164,7 +164,8 @@ public class RoomController {
 	public Map<String, Object> retrieveParticipantsMessage(@DestinationVariable String room) {
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		HashMap<String, Object> map = new HashMap();
-		map.put("participants", GetParticipants(room_o));
+		if(room_o != null)
+			map.put("participants", GetParticipants(room_o));
 		return map;
 	}
 
