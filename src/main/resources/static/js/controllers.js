@@ -316,14 +316,14 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	}
 	$scope.goToPrivateDialog = function(intitaUserId) {
 		//debugger;
-		$scope.httpPromise.push($http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
+		$http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
 				success(function(data, status, headers, config) {
 					console.log("PRIVATE ROOM CREATE OK ");
 					$scope.goToDialogById(data);
 				}).
 				error(function(data, status, headers, config) {
 					console.log("PRIVATE ROOM CREATE FAILD ");
-				}));
+				});
 	}
 
 

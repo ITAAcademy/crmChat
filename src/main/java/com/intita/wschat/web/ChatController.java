@@ -167,7 +167,7 @@ public class ChatController {
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		while(responseBodyQueue.putIfAbsent(roomStr, queue) == null);		
+		responseBodyQueue.put(roomStr, queue);		
 		queue.add(result);
 		//Thread.sleep(l);
 		return result;

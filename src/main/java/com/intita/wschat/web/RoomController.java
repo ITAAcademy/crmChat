@@ -186,7 +186,7 @@ public class RoomController {
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		responseBodyQueueForParticipents.putIfAbsent(room, queue);		
+		responseBodyQueueForParticipents.put(room, queue);		
 		queue.add(result);
 		return result;
 	}
@@ -200,12 +200,9 @@ public class RoomController {
 			{
 				try {
 					response.setResult(mapper.writeValueAsString(result));
-				}
-				catch (JsonProcessingException e) {
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (Exception e) {
-					responseBodyQueueForParticipents.clear();
 				}
 			}
 		}
@@ -372,7 +369,7 @@ public class RoomController {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
 		}
 
-		while(responseRoomBodyQueue.putIfAbsent(chatUser.getId(), queue) == null);		
+		responseRoomBodyQueue.put(chatUser.getId(), queue);		
 		queue.add(deferredResult);
 
 		return deferredResult;
