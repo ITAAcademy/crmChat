@@ -407,7 +407,8 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		while ($scope.httpPromise.length>0)
 		{
 			var subscription = $scope.httpPromise.pop();
-			subscription.success(null).error(null);
+			
+			subscription.$$state.pending = []
 		}
 
 		if($rootScope.socketSupport == true)
@@ -617,6 +618,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 				success(function(data, status, headers, config) {
 					console.log("SUBSCRIBE GET OK ");
 					//if($scope.httpPromise.indexOf(this) > 0)
+					
 					subscribeParticipantsLP();
 					if(data.hasOwnProperty("participants"))
 						$scope.participants = data["participants"];
@@ -628,6 +630,8 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 					//if($scope.httpPromise.indexOf(this) > 0)
 					subscribeParticipantsLP();
 				}));
+		//var k = $scope.httpPromise[0].$$state.pending = [];
+		//debugger;
 	};
 
 
