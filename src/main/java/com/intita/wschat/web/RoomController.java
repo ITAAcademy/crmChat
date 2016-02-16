@@ -402,6 +402,7 @@ public class RoomController {
 			}
 			responseList.clear();
 		}
+		subscribedtoRoomsUsersBuffer.clear();
 	}
 
 	@RequestMapping(value="/chat/rooms/add",method=RequestMethod.POST)

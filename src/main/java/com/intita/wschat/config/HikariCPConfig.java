@@ -29,6 +29,9 @@ public class HikariCPConfig {
 	    @Bean(destroyMethod = "close")
 	    public DataSource dataSource() {
 	        final HikariDataSource ds = new HikariDataSource();
+	        ds.addDataSourceProperty("cachePrepStmts", "true");
+	        ds.addDataSourceProperty("prepStmtCacheSize", "250");
+	        ds.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 	        ds.setMaximumPoolSize(poolSize);
 	        ds.setDriverClassName(driverClassName);
 	        ds.setJdbcUrl(jdbcUrl);

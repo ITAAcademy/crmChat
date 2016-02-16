@@ -407,7 +407,6 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		while ($scope.httpPromise.length>0)
 		{
 			var subscription = $scope.httpPromise.pop();
-			
 			subscription.$$state.pending = []
 		}
 
