@@ -304,7 +304,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 
 	$scope.goToTeachersList = function() {
 
-		$scope.httpPromise.push($http.post(serverPrefix + "/chat/users").
+		$http.post(serverPrefix + "/chat/users").
 
 				success(function(data, status, headers, config) {
 					console.log("USERS GET OK ");
@@ -312,7 +312,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 				}).
 				error(function(data, status, headers, config) {
 					$scope.seachersTeachers = [];
-				}));
+				});
 	}
 	$scope.goToPrivateDialog = function(intitaUserId) {
 		//debugger;
@@ -341,23 +341,25 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		//var key = $scope.getRoomId(roomName);
 		//console.log("gotoDialog key:"+key);
 
-		goToDialogEvn(roomId);
-
 		$scope.messages     = [];
 		$scope.participants = [];
 		$scope.roomType = -1;	
+		
+		goToDialogEvn(roomId);
+
+
 
 	};
 	$scope.goToDialogById = function(roomId) {
 		console.log("roomId:" + roomId);
+		$scope.messages     = [];
+		$scope.participants = [];
+		$scope.roomType = -1;
+		
 		goToDialogEvn(roomId);
 
 		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
 			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
-
-		$scope.messages     = [];
-		$scope.participants = [];
-		$scope.roomType = -1;
 
 		$scope.templateName = 'chatTemplate.html';
 		$scope.dialogName = "private";
@@ -407,6 +409,9 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		while ($scope.httpPromise.length>0)
 		{
 			var subscription = $scope.httpPromise.pop();
+			if(subscription.$$state.pending != undefined)
+			for(var i = 0; i < subscription.$$state.pending.length; i++)
+				subscription.$$state.pending[i][0].resolve();
 			subscription.$$state.pending = []
 		}
 
@@ -826,7 +831,6 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
 			$rootScope.socketSupport = false;
-			subscribeRoomsUpdateLP();
 			/***************************************
 			 * TRY LONG POLING LOGIN
 			 **************************************/
@@ -835,6 +839,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
 				login(data);
+				subscribeRoomsUpdateLP();
 
 				/*
 				 * 
