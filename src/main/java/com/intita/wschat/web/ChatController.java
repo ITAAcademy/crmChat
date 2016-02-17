@@ -86,20 +86,20 @@ public class ChatController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	private final static ObjectMapper mapper = new ObjectMapper();
 
-	private volatile static Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
-	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+	private final static Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
+	private final static Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
 	private final Long timeOutMessage;
-*/
+	 */
 	/********************
 	 * GET CHAT USERS LIST FOR TEST
 	 *******************/
 	@RequestMapping(value = "/chat/users", method = RequestMethod.POST)
 	@ResponseBody
 	public String getUsers(Principal principal) throws JsonProcessingException {
-		
+
 		Page<User> pageUsers = userService.getUsers(1, 15);
 		Set<LoginEvent> userList = new HashSet<>();
 		for(User user : pageUsers)
@@ -108,7 +108,7 @@ public class ChatController {
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
 	}
-	
+
 	public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {
 		ChatUser chatUser = new ChatUser(Long.parseLong(principal.getName()));
 		chatUser.setNickName(message.getUsername());
@@ -116,18 +116,18 @@ public class ChatController {
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
 		//message.setUsername(chatUser.getNickName());
 		return messageToSave;
-		
+
 	}
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		
+
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		userMessageService.addMessage(messageToSave);//DO FROM MESS BUFFER
-		
+
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
-		
+
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
@@ -151,48 +151,54 @@ public class ChatController {
 			messagesBuffer.put(roomStr, list);
 		}
 		list.add(messageToSave);
-		
+
 		//send message to WS users
 		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), message);
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
-	public 	@ResponseBody DeferredResult<String> updateMessageLP(@PathVariable("room") String roomStr, Principal principal, HttpRequest req) throws InterruptedException {
-		Long timeOut = 1000000L;
+	@ResponseBody
+	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 
+		Long timeOut = 100000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut);
-		Queue<DeferredResult<String>> queue = responseBodyQueue.get(roomStr);
+		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
 		if(queue == null)
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		responseBodyQueue.put(roomStr, queue);		
+		responseBodyQueue.put(room, queue);		
 		queue.add(result);
-		//Thread.sleep(l);
 		return result;
 	}
-	
-	@Scheduled(fixedRate=600L)
-	public void processMessage() throws JsonProcessingException {
+
+	@Scheduled(fixedRate=1600L)
+	public void processMessage(){
 
 		for(String roomId : messagesBuffer.keySet())
 		{
 			Queue<UserMessage> array = messagesBuffer.get(roomId);
 			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(roomId);
-			for(DeferredResult<String> response : responseList)
+			if(responseList != null)
 			{
-				if(responseList != null)
+				for(DeferredResult<String> response : responseList)
 				{
-					String str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
-					response.setResult(str);
+					if(responseList != null)
+					{
+						String str = null;
+						try {
+							str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						}
+						response.setResult(str);
+					}
 				}
 			}
-			responseList.clear();
 			userMessageService.addMessages(array);
+			messagesBuffer.remove(roomId);
 		}
-		messagesBuffer.clear();;
-		//this.responseBodyQueue.clear();
 	}
 
 

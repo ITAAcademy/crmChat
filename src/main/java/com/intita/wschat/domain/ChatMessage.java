@@ -26,14 +26,7 @@ public class ChatMessage {
 		date = new Date();
 	}
 	
-	static public ArrayList<ChatMessage> getAllfromUserMessages (Queue<UserMessage> userMessages){
-		ArrayList<ChatMessage> result = new ArrayList<ChatMessage>();
-		for(UserMessage singleUserMessage : userMessages){
-			result.add(new ChatMessage(singleUserMessage));
-		}
-		return result;
-	}
-	static public ArrayList<ChatMessage> getAllfromUserMessages (ArrayList<UserMessage> userMessages){
+	static public ArrayList<ChatMessage> getAllfromUserMessages (Iterable<UserMessage> userMessages){
 		ArrayList<ChatMessage> result = new ArrayList<ChatMessage>();
 		for(UserMessage singleUserMessage : userMessages){
 			result.add(new ChatMessage(singleUserMessage));

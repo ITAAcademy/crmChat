@@ -441,10 +441,11 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		else
 		{
 			//debugger;
-			subscribeMessageLP();//@LP@
+			//subscribeMessageLP();//@LP@
+			loadMessageLP();
 			subscribeParticipantsLP();
 
-			loadMessageLP();
+			
 		}	
 
 		lastRoomBindings.push(

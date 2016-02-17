@@ -72,8 +72,8 @@ public class RoomController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	static final private ObjectMapper mapper = new ObjectMapper();
 
-	private volatile static Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
-	private volatile static Map<Long,Queue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
+	private final Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
+	private final Map<Long,Queue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
 
 	private ArrayList<Room> roomsArray; 
 
@@ -191,11 +191,15 @@ public class RoomController {
 		return result;
 	}
 
-	@Scheduled(fixedRate=15000L)
+	@Scheduled(fixedRate=3000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
-			Map<String, Object> result = retrieveParticipantsMessage(key);
+			Room room_o = roomService.getRoom(Long.parseLong(key));
+			HashMap<String, Object> result = new HashMap();
+			if(room_o != null)
+				result.put("participants", GetParticipants(room_o));
+			
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
 				try {
@@ -204,9 +208,11 @@ public class RoomController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
+			responseBodyQueueForParticipents.remove(key);
 		}
-		responseBodyQueueForParticipents.clear();
+
 	}
 
 	/***************************
