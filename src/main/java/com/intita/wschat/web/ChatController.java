@@ -173,7 +173,7 @@ public class ChatController {
 		return result;
 	}
 
-	@Scheduled(fixedRate=1600L)
+	@Scheduled(fixedRate=600L)
 	public void processMessage(){
 
 		for(String roomId : messagesBuffer.keySet())
