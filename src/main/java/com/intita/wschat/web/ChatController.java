@@ -168,12 +168,13 @@ public class ChatController {
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		responseBodyQueue.put(room, queue);		
+		responseBodyQueue.put(room, queue);
+		System.out.println("updateMessageLP responseBodyQueue:"+queue.size());
 		queue.add(result);
 		return result;
 	}
 
-	@Scheduled(fixedRate=600L)
+	@Scheduled(fixedDelay=600L)
 	public void processMessage(){
 
 		for(String roomId : messagesBuffer.keySet())
@@ -184,20 +185,21 @@ public class ChatController {
 			{
 				for(DeferredResult<String> response : responseList)
 				{
+					String str = "";
 					if(responseList != null)
 					{
-						String str = null;
+					
 						try {
 							str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
 						} catch (JsonProcessingException e) {
 							e.printStackTrace();
-						}
-						
-						response.setResult(str);
+						}												
 					}
+					response.setResult(str);
 				}
 				responseList.clear();
 			}
+			System.out.println("processMessage responseBodyQueue:"+responseList.size());
 			userMessageService.addMessages(array);
 			messagesBuffer.remove(roomId);
 		}

@@ -191,7 +191,7 @@ public class RoomController {
 		return result;
 	}
 
-	@Scheduled(fixedRate=3000L)
+	@Scheduled(fixedDelay=3000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
@@ -206,6 +206,7 @@ public class RoomController {
 					response.setResult(mapper.writeValueAsString(result));
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
+					response.setResult("");
 					e.printStackTrace();
 				}
 				
@@ -366,22 +367,22 @@ public class RoomController {
 	public DeferredResult<String> getRooms(Principal principal) {
 		Long timeOut = 1000000L;
 		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut);
-		ChatUser chatUser = chatUserServise.getChatUser(principal);
-		if (chatUser==null ) return deferredResult;
+		Long chatUserId = Long.parseLong(principal.getName());
 
-		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUser.getId());
+		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);
 		if(queue == null)
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
 		}
 
-		responseRoomBodyQueue.put(chatUser.getId(), queue);		
+		responseRoomBodyQueue.put(chatUserId, queue);		
 		queue.add(deferredResult);
+		System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
 
 		return deferredResult;
 	}
 
-	@Scheduled(fixedRate=1000L)
+	@Scheduled(fixedDelay=1000L)
 	public void processRoomsQueues() throws JsonProcessingException {
 		for(ChatUser chatUser : subscribedtoRoomsUsersBuffer)
 		{
@@ -401,6 +402,7 @@ public class RoomController {
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
+		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		subscribedtoRoomsUsersBuffer.clear();
 		
 	}

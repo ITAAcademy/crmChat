@@ -839,7 +839,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
-			//subscribeRoomsUpdateLP();
+			subscribeRoomsUpdateLP();
 			$http.post(serverPrefix + "/chat/login/login", {message: $scope.newMessage}).
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
