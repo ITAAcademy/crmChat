@@ -102,7 +102,8 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 	var timeout = 0;
-	if (!isInited)timeout=1000;
+	debugger;
+	if (!isInited)timeout=3000;
 	$timeout(function() {
 //		typeof chatControllerScope.socketSupport!=='undefined'
 		chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
@@ -319,7 +320,9 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		$http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
 				success(function(data, status, headers, config) {
 					console.log("PRIVATE ROOM CREATE OK ");
+					
 					$scope.goToDialogById(data);
+					$scope.currentRoom.roomId = data;
 				}).
 				error(function(data, status, headers, config) {
 					console.log("PRIVATE ROOM CREATE FAILD ");
@@ -374,9 +377,9 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		$scope.changeRoom();
 		$timeout(function(){ 
 			var room = getRoomById($scope.rooms,id);
-			$scope.currentRoom = room;
 			if (room!=undefined)
 			{
+				$scope.currentRoom = room;
 				room.nums = 0;
 				$scope.dialogName = room.string;
 			}
@@ -441,9 +444,9 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		else
 		{
 			//debugger;
-			//subscribeMessageLP();//@LP@
-			loadMessageLP();
+			subscribeMessageLP();//@LP@
 			subscribeParticipantsLP();
+			loadMessageLP();
 
 			
 		}	
@@ -576,7 +579,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	 **************************************/
 	function subscribeRoomsUpdateLP(){
 		console.log("roomsUpdateLP()");
-		$http.post(serverPrefix+"/chat/rooms/user.login")
+		$http.post(serverPrefix+"/chat/rooms/user/login")
 		.success(function(data, status, headers, config) {
 			console.log("roomsUpdateLP data:"+data);
 			updateRooms(data);
@@ -836,12 +839,11 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
+			//subscribeRoomsUpdateLP();
 			$http.post(serverPrefix + "/chat/login/login", {message: $scope.newMessage}).
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
 				login(data);
-				subscribeRoomsUpdateLP();
-
 				/*
 				 * 
 				 * 

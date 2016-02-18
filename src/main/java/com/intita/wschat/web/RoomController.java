@@ -73,11 +73,11 @@ public class RoomController {
 	static final private ObjectMapper mapper = new ObjectMapper();
 
 	private final Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
-	private final Map<Long,Queue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,Queue<DeferredResult<String>>>();// key => roomId
+	private final Map<Long,ConcurrentLinkedQueue<DeferredResult<String>>> responseRoomBodyQueue =  new ConcurrentHashMap<Long,ConcurrentLinkedQueue<DeferredResult<String>>>();// key => roomId
 
 	private ArrayList<Room> roomsArray; 
 
-	private volatile static Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	/**********************
 	 * what doing with new auth user 
@@ -361,7 +361,7 @@ public class RoomController {
 		return room.getId();
 	}
 
-	@RequestMapping(value="/chat/rooms/user.{username}",method=RequestMethod.POST)
+	@RequestMapping(value="/chat/rooms/user/{username}",method=RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> getRooms(Principal principal) {
 		Long timeOut = 1000000L;
@@ -369,7 +369,7 @@ public class RoomController {
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		if (chatUser==null ) return deferredResult;
 
-		Queue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUser.getId());
+		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUser.getId());
 		if(queue == null)
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
@@ -396,16 +396,13 @@ public class RoomController {
 			}
 			for(DeferredResult<String> response : responseList)
 			{
-				if(responseList != null)
-				{
-
 					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
 					response.setResult(str);
-				}
 			}
-			responseList.clear();
+			responseRoomBodyQueue.remove(chatUser.getId());
 		}
 		subscribedtoRoomsUsersBuffer.clear();
+		
 	}
 
 	@RequestMapping(value="/chat/rooms/add",method=RequestMethod.POST)

@@ -86,8 +86,8 @@ public class ChatController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	private final static ObjectMapper mapper = new ObjectMapper();
 
-	private final static Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
-	private final static Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+	private final Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
+	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
@@ -161,7 +161,7 @@ public class ChatController {
 	@ResponseBody
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 
-		Long timeOut = 100000L;
+		Long timeOut = 1000000000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut);
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
 		if(queue == null)
@@ -192,9 +192,11 @@ public class ChatController {
 						} catch (JsonProcessingException e) {
 							e.printStackTrace();
 						}
+						
 						response.setResult(str);
 					}
 				}
+				responseList.clear();
 			}
 			userMessageService.addMessages(array);
 			messagesBuffer.remove(roomId);
