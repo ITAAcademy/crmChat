@@ -148,7 +148,7 @@ public class RoomController {
 	}
 
 	@SubscribeMapping("/{room}/chat.participants")
-	public Map<String, Object> retrieveParticipantsSubscribe(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
 
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessageService.getUserMessagesByRoom(room_o));
@@ -169,10 +169,10 @@ public class RoomController {
 		return map;
 	}
 
-	@RequestMapping(value = "/{room}/chat/participants", method = RequestMethod.POST)
+	@RequestMapping(value = "/{room}/chat/participants_and_messages", method = RequestMethod.POST)
 	@ResponseBody
-	public String retrieveParticipantsLP(@PathVariable("room") String room) throws JsonProcessingException {
-		return mapper.writeValueAsString(retrieveParticipantsSubscribe(room));
+	public String retrieveParticipantsAndMessagesLP(@PathVariable("room") String room) throws JsonProcessingException {
+		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessages(room));
 	}
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
@@ -377,7 +377,7 @@ public class RoomController {
 
 		responseRoomBodyQueue.put(chatUserId, queue);		
 		queue.add(deferredResult);
-		//System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
+		System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
 
 		return deferredResult;
 	}
@@ -402,7 +402,7 @@ public class RoomController {
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
-		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
+		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		subscribedtoRoomsUsersBuffer.clear();
 		
 	}

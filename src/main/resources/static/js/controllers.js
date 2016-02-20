@@ -115,7 +115,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
-	var routeController
+	
 	var serverPrefix = "/crmChat";
 	function changeLocation(url ) {
 		$location.path(url);
@@ -124,7 +124,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	};
 	//$scope.templateName = null;
-	$rootScope.socketSupport = undefined;
+	$rootScope.socketSupport = true;
 	$scope.emails = [];
 
 	var typing = undefined;
@@ -450,7 +450,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			console.log('subscribeMessageAndParticipants');
 			subscribeMessageLP();//@LP@
 			subscribeParticipantsLP();
-			loadMessageLP();
+			loadSubscribeAndMessageLP();
 
 			
 		}	
@@ -567,8 +567,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 	}
 
-	function loadMessageLP(){
-		$http.post(serverPrefix + "/{0}/chat/participants".format($scope.currentRoom.roomId), {}).
+	function loadSubscribesOnly(message)
+	{
+		$scope.participants = message["participants"];
+		$scope.roomType = message["type"];
+	}
+		function loadMessagesOnly(message)
+	{
+		$scope.roomType = message["type"];
+		for (var i=0; i< message["messages"].length;i++){
+			$scope.messages.unshift(message["messages"][i]);
+			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+		}
+	}
+
+	function loadSubscribeAndMessageLP(){
+		$http.post(serverPrefix + "/{0}/chat/participants_and_messages".format($scope.currentRoom.roomId), {}).
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE SEND OK " + data);
 			loadSubscribeAndMessage(data);
@@ -611,23 +625,21 @@ $.ajax({
     type: "POST",
     url: currentUrl,
     success: function(data){
-    	var parsedData = JSON.parse(data)
-       subscribeMessageLP();
-					for(var index=0; index < parsedData.length; index++) { 
+    	var parsedData = JSON.parse(data);
+    	for(var index=0; index < parsedData.length; index++) { 
 						if(parsedData[index].hasOwnProperty("message")){
 							$scope.messages.unshift(parsedData[index])
 							console.log("subscribeMessageLP success:"+parsedData[index]);
 						}
 					}
+       subscribeMessageLP();			
     },
     error: function(xhr, text_status, error_thrown){
     	 //if (text_status == "abort")return;
     	  if (xhr.status === 0 || xhr.readyState === 0) {
     	  	return;}
-    	subscribeMessageLP();
-	    	
+    	subscribeMessageLP();    	
     }
-
 }));
 	}
 				
@@ -644,6 +656,7 @@ $.ajax({
 						var parsedData = JSON.parse(data);
 					if(parsedData.hasOwnProperty("participants"))
 						$scope.participants = parsedData["participants"];
+					
     },
       error: function(xhr, text_status, error_thrown){
     	  if (xhr.status === 0 || xhr.readyState === 0) return;
@@ -727,8 +740,6 @@ $.ajax({
 
 	var onConnect = function(frame) {
 		console.log("onconnect");
-
-
 		$scope.chatUserId = frame.headers['user-name'];
 
 
@@ -836,13 +847,12 @@ $.ajax({
 				chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
 					toaster.pop('error', "Error", message.body);
 				}));
-		$rootScope.socketSupport=true;	
 	};
 
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wss");
 
 		chatSocket.connect(onConnect, function(error) {
 
