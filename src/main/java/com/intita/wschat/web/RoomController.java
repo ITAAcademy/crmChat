@@ -377,7 +377,7 @@ public class RoomController {
 
 		responseRoomBodyQueue.put(chatUserId, queue);		
 		queue.add(deferredResult);
-		System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
+		//System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
 
 		return deferredResult;
 	}
@@ -402,7 +402,7 @@ public class RoomController {
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
-		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
+		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		subscribedtoRoomsUsersBuffer.clear();
 		
 	}

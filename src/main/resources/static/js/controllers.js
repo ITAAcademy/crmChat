@@ -53,7 +53,7 @@ springChatControllers.config(function($routeProvider){
 console.log("chatController:"+chatController);
 
 var isInited = false;
-springChatControllers.controller('DialogsRouteController',['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('DialogsRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 
@@ -113,7 +113,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 }]);
 
 
-var chatController = springChatControllers.controller('ChatController', ['$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 	var routeController
 	var serverPrefix = "/crmChat";
@@ -131,7 +131,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
-
+	var changeLastRoomCanceler = $q.defer();
 
 	var room = "default_room/";
 
@@ -233,7 +233,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	$scope.participants = [];
 	$scope.dialogs = [];
 	$scope.messages     = [];
-	$scope.httpPromise     = [];
+	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.newMessage   = '';
@@ -409,13 +409,17 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 			}
 		}
 
-		while ($scope.httpPromise.length>0)
+
+		while ($scope.ajaxRequestsForRoomLP.length>0)
 		{
-			var subscription = $scope.httpPromise.pop();
-			if(subscription.$$state.pending != undefined)
-			for(var i = 0; i < subscription.$$state.pending.length; i++)
-				subscription.$$state.pending[i][0].resolve();
-			subscription.$$state.pending = []
+
+			var subscription = $scope.ajaxRequestsForRoomLP.pop();
+			console.log("cancel ajaxRequestsForRoomLP:"+subscription);
+			//if(subscription.$$state.pending != undefined)
+			//for(var i = 0; i < subscription.$$state.pending.length; i++)
+			subscription.abort();
+			//changeLastRoomCanceler.abort();
+			//subscription.$$state.pending = []
 		}
 
 		if($rootScope.socketSupport == true)
@@ -443,7 +447,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 		}
 		else
 		{
-			//debugger;
+			console.log('subscribeMessageAndParticipants');
 			subscribeMessageLP();//@LP@
 			subscribeParticipantsLP();
 			loadMessageLP();
@@ -600,46 +604,55 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	 * UPDATE MESSAGE LP
 	 *************************************/
 	function subscribeMessageLP(){
-		$scope.httpPromise.push($http.post(serverPrefix + "/{0}/chat/message/update".format($scope.currentRoom.roomId)).
-
-				success(function(data, status, headers, config) {
-					console.log("MESSAGES GET OK ");
-
-					subscribeMessageLP();
-					for(var index in data) { 
-						if(data[index].hasOwnProperty("message"))
-							$scope.messages.unshift(data[index])
+		var currentUrl = serverPrefix + "/{0}/chat/message/update".format($scope.currentRoom.roomId);
+		console.log("subscribeMessageLP()");
+		$scope.ajaxRequestsForRoomLP.push(
+$.ajax({
+    type: "POST",
+    url: currentUrl,
+    success: function(data){
+    	var parsedData = JSON.parse(data)
+       subscribeMessageLP();
+					for(var index=0; index < parsedData.length; index++) { 
+						if(parsedData[index].hasOwnProperty("message")){
+							$scope.messages.unshift(parsedData[index])
+							console.log("subscribeMessageLP success:"+parsedData[index]);
+						}
 					}
+    },
+    error: function(xhr, text_status, error_thrown){
+    	 //if (text_status == "abort")return;
+    	  if (xhr.status === 0 || xhr.readyState === 0) {
+    	  	return;}
+    	subscribeMessageLP();
+	    	
+    }
 
-
-				}).
-				error(function(data, status, headers, config) {
-					console.log("MESSAGES GET FALSE ");
-					subscribeMessageLP();
-				}));
-	};
-
+}));
+	}
+				
 	function subscribeParticipantsLP(){
 		//debugger;
-		$scope.httpPromise.push($http.post(serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)).
-
-				success(function(data, status, headers, config) {
-					console.log("SUBSCRIBE GET OK ");
-					//if($scope.httpPromise.indexOf(this) > 0)
-					
+		var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
+				$scope.ajaxRequestsForRoomLP.push(
+$.ajax({
+    type: "POST",
+    url: currentUrl,
+    success: function(data){
+    	console.log("subscribeParticipantsLP:"+data)
 					subscribeParticipantsLP();
-					if(data.hasOwnProperty("participants"))
-						$scope.participants = data["participants"];
+						var parsedData = JSON.parse(data);
+					if(parsedData.hasOwnProperty("participants"))
+						$scope.participants = parsedData["participants"];
+    },
+      error: function(xhr, text_status, error_thrown){
+    	  if (xhr.status === 0 || xhr.readyState === 0) return;
+    	 	subscribeParticipantsLP();
+	    	
+    }
 
 
-				}).
-				error(function(data, status, headers, config) {
-					console.log("SUBSCRIBE GET FALSE ");
-					//if($scope.httpPromise.indexOf(this) > 0)
-					subscribeParticipantsLP();
-				}));
-		//var k = $scope.httpPromise[0].$$state.pending = [];
-		//debugger;
+}));
 	};
 
 
@@ -829,7 +842,7 @@ var chatController = springChatControllers.controller('ChatController', ['$rootS
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wss");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 
