@@ -26,7 +26,7 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"add_room":"ADD_ROOM"});
 
 
-var springChatControllers = angular.module('springChat.controllers', ['toaster','ngRoute','ngResource','ngCookies']);
+var springChatControllers = angular.module('springChat.controllers', ['toaster','ngRoute', 'ngAnimate','ngResource','ngCookies']);
 springChatControllers.config(function($routeProvider){
 	$routeProvider.when("/chatrooms",
 			{
@@ -65,6 +65,7 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 		console.log("initing:"+chatControllerScope.socketSupport);
 		isInited=true;
 	}, timeout);
+	$scope.pageClass = 'page-home';
 
 }]);
 
@@ -80,7 +81,10 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		chatControllerScope.goToDialog($routeParams.roomId);
 		console.log("initing:"+chatControllerScope.socketSupport);
 		isInited=true;
+		
 	}, timeout);
+	$scope.pageClass = 'page-about';
+	
 }]);
 
 springChatControllers.controller('TeachersListRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
@@ -93,8 +97,9 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 //		typeof chatControllerScope.socketSupport!=='undefined'
 		chatControllerScope.goToTeachersList();
 		isInited=true;
+		
 	}, timeout);
-
+	$scope.pageClass = 'page-contact';
 }]);
 
 springChatControllers.controller('StrictedDialogRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
@@ -115,7 +120,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
-	
+
 	var serverPrefix = "/crmChat";
 	function changeLocation(url ) {
 		$location.path(url);
@@ -260,7 +265,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			console.log($scope.dialogName)
 			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
 
-			$scope.dialogName = '';
 			var myFunc = function(){
 				if (angular.isDefined(addingRoom))
 				{
@@ -286,6 +290,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				$scope.userAddedToRoom = true;
 			});
 		}
+		$scope.dialogName = '';
 
 
 	};
@@ -307,26 +312,26 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		$http.post(serverPrefix + "/chat/users").
 
-				success(function(data, status, headers, config) {
-					console.log("USERS GET OK ");
-					$scope.seachersTeachers = data;
-				}).
-				error(function(data, status, headers, config) {
-					$scope.seachersTeachers = [];
-				});
+		success(function(data, status, headers, config) {
+			console.log("USERS GET OK ");
+			$scope.seachersTeachers = data;
+		}).
+		error(function(data, status, headers, config) {
+			$scope.seachersTeachers = [];
+		});
 	}
 	$scope.goToPrivateDialog = function(intitaUserId) {
 		//debugger;
 		$http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
-				success(function(data, status, headers, config) {
-					console.log("PRIVATE ROOM CREATE OK ");
-					
-					$scope.goToDialogById(data);
-					$scope.currentRoom.roomId = data;
-				}).
-				error(function(data, status, headers, config) {
-					console.log("PRIVATE ROOM CREATE FAILD ");
-				});
+		success(function(data, status, headers, config) {
+			console.log("PRIVATE ROOM CREATE OK ");
+
+			$scope.goToDialogById(data);
+			$scope.currentRoom.roomId = data;
+		}).
+		error(function(data, status, headers, config) {
+			console.log("PRIVATE ROOM CREATE FAILD ");
+		});
 	}
 
 
@@ -347,7 +352,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.messages     = [];
 		$scope.participants = [];
 		$scope.roomType = -1;	
-		
+
 		goToDialogEvn(roomId);
 
 
@@ -358,7 +363,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.messages     = [];
 		$scope.participants = [];
 		$scope.roomType = -1;
-		
+
 		goToDialogEvn(roomId);
 
 		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
@@ -375,7 +380,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		console.log("goToDialogEvn("+id+")");
 		$scope.currentRoom = {roomId:id};
 		$scope.changeRoom();
-		$timeout(function(){ 
+	//	$timeout(function(){ 
 			var room = getRoomById($scope.rooms,id);
 			if (room!=undefined)
 			{
@@ -384,7 +389,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				$scope.dialogName = room.string;
 			}
 			//$scope.roomsArray[$scope.roomId].nums = 0;
-		}, 1000);
+		//}, 1000);
 
 		chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.currentRoom.roomId), {}, JSON.stringify({}));
 	}
@@ -415,11 +420,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 			var subscription = $scope.ajaxRequestsForRoomLP.pop();
 			console.log("cancel ajaxRequestsForRoomLP:"+subscription);
-			//if(subscription.$$state.pending != undefined)
-			//for(var i = 0; i < subscription.$$state.pending.length; i++)
 			subscription.abort();
-			//changeLastRoomCanceler.abort();
-			//subscription.$$state.pending = []
 		}
 
 		if($rootScope.socketSupport == true)
@@ -451,8 +452,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			subscribeMessageLP();//@LP@
 			subscribeParticipantsLP();
 			loadSubscribeAndMessageLP();
-
-			
 		}	
 
 		lastRoomBindings.push(
@@ -572,7 +571,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.participants = message["participants"];
 		$scope.roomType = message["type"];
 	}
-		function loadMessagesOnly(message)
+	function loadMessagesOnly(message)
 	{
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
@@ -621,51 +620,52 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		var currentUrl = serverPrefix + "/{0}/chat/message/update".format($scope.currentRoom.roomId);
 		console.log("subscribeMessageLP()");
 		$scope.ajaxRequestsForRoomLP.push(
-$.ajax({
-    type: "POST",
-    url: currentUrl,
-    success: function(data){
-    	var parsedData = JSON.parse(data);
-    	for(var index=0; index < parsedData.length; index++) { 
-						if(parsedData[index].hasOwnProperty("message")){
-							$scope.messages.unshift(parsedData[index])
-							console.log("subscribeMessageLP success:"+parsedData[index]);
+				$.ajax({
+					type: "POST",
+					url: currentUrl,
+					success: function(data){
+						var parsedData = JSON.parse(data);
+						for(var index=0; index < parsedData.length; index++) { 
+							if(parsedData[index].hasOwnProperty("message")){
+								$scope.messages.unshift(parsedData[index])
+								console.log("subscribeMessageLP success:"+parsedData[index]);
+							}
 						}
+						$scope.$apply();
+						subscribeMessageLP();			
+					},
+					error: function(xhr, text_status, error_thrown){
+						//if (text_status == "abort")return;
+						if (xhr.status === 0 || xhr.readyState === 0) {
+							return;}
+						subscribeMessageLP();    	
 					}
-       subscribeMessageLP();			
-    },
-    error: function(xhr, text_status, error_thrown){
-    	 //if (text_status == "abort")return;
-    	  if (xhr.status === 0 || xhr.readyState === 0) {
-    	  	return;}
-    	subscribeMessageLP();    	
-    }
-}));
+				}));
 	}
-				
+
 	function subscribeParticipantsLP(){
 		//debugger;
 		var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
-				$scope.ajaxRequestsForRoomLP.push(
-$.ajax({
-    type: "POST",
-    url: currentUrl,
-    success: function(data){
-    	console.log("subscribeParticipantsLP:"+data)
-					subscribeParticipantsLP();
+		$scope.ajaxRequestsForRoomLP.push(
+				$.ajax({
+					type: "POST",
+					url: currentUrl,
+					success: function(data){
+						console.log("subscribeParticipantsLP:"+data)
+						subscribeParticipantsLP();
 						var parsedData = JSON.parse(data);
-					if(parsedData.hasOwnProperty("participants"))
-						$scope.participants = parsedData["participants"];
-					
-    },
-      error: function(xhr, text_status, error_thrown){
-    	  if (xhr.status === 0 || xhr.readyState === 0) return;
-    	 	subscribeParticipantsLP();
-	    	
-    }
+						if(parsedData.hasOwnProperty("participants"))
+							$scope.participants = parsedData["participants"];
+
+					},
+					error: function(xhr, text_status, error_thrown){
+						if (xhr.status === 0 || xhr.readyState === 0) return;
+						subscribeParticipantsLP();
+
+					}
 
 
-}));
+				}));
 	};
 
 
@@ -826,23 +826,6 @@ $.ajax({
 			console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
 		});
 
-
-
-		/*
-		 setTimeout(function(){ 
-
-			 chatSocket.send("/app/chat/rooms", {}, JSON.stringify({}));
-			 chatSocket.send("/app//chat/rooms.1/user.add.user", {}, JSON.stringify({}));
-		    }, 3000);  
-
-		 */
-		/*lastRoomBindings.push(
-				chatSocket.subscribe("/user/exchange/amq.direct/{0}chat.message".format(room), function(message) {
-					var parsed = JSON.parse(message.body);
-					parsed.priv = true;
-					$scope.messages.unshift(parsed);
-				}));*/
-
 		lastRoomBindings.push(
 				chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
 					toaster.pop('error', "Error", message.body);
@@ -862,37 +845,11 @@ $.ajax({
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
-			subscribeRoomsUpdateLP();
 			$http.post(serverPrefix + "/chat/login/login", {message: $scope.newMessage}).
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
 				login(data);
-				/*
-				 * 
-				 * 
-				 */
-				/*$http.post(serverPrefix + "/chat/rooms/user.login", {}).
-				success(function(data, status, headers, config) {
-					console.log("ROOMS OK " + data);
-
-					$scope.rooms = data;
-					$scope.roomsArray = Object.keys($scope.rooms)
-					.map(function(key) {
-						return $scope.rooms[key];
-					});
-
-					$scope.roomsCount = Object.keys($scope.rooms).length;
-					console.log($scope.rooms);
-				}).
-				error(function(data, status, headers, config) {
-					//messageError();
-					toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
-				});*/
-				/*
-				 * 
-				 * 
-				 */
-
+				subscribeRoomsUpdateLP();
 			}).
 			error(function(data, status, headers, config) {
 				messageError();

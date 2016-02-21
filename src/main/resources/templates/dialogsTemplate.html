@@ -1,7 +1,7 @@
 		
 <div class="row">
     <div class="col-xs-12 chat-box">
-        <h4>Dialogs [{{roomsCount}}]</h4>
+        <h4 th:text="${lnPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs </h4>
         <div class="share">
         <ul ng-repeat="room in rooms | orderBy: '-date' " ng-show="socketSupport">
                 <li>               

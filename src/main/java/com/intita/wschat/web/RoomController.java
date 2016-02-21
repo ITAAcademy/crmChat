@@ -43,6 +43,7 @@ import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -146,12 +147,17 @@ public class RoomController {
 		}
 		return  userList;
 	}
-
+	
 	@SubscribeMapping("/{room}/chat.participants")
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
 
 		Room room_o = roomService.getRoom(Long.parseLong(room));
-		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessageService.getUserMessagesByRoom(room_o));
+		Queue<UserMessage> buff = ChatController.messagesBuffer.get(room);
+		ArrayList<UserMessage> userMessages = userMessageService.getUserMessagesByRoom(room_o);
+		if(buff != null)
+			userMessages.addAll(buff);
+		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
+		
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
@@ -191,7 +197,7 @@ public class RoomController {
 		return result;
 	}
 
-	@Scheduled(fixedDelay=3000L)
+	//@Scheduled(fixedDelay=3000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
@@ -229,8 +235,13 @@ public class RoomController {
 		if(privateCharUser == null)
 			return "-1";
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
-
+		if(chatUser.getIntitaUser() == null)
+			return "-1";
+		
 		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
+		if(room == null)
+			room  = roomService.getPrivateRoom(privateCharUser, chatUser);
+		
 		if(room == null)
 		{
 			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
@@ -274,6 +285,10 @@ public class RoomController {
 			return false;
 		}
 		roomService.addUserToRoom(user_o, room_o);
+		
+		updateParticipants();
+		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
 		return true;
 	}
 
@@ -296,8 +311,7 @@ public class RoomController {
 			return;
 		}
 
-		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
+		
 
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,true,"ADD USER TO ROOM");
 		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
@@ -365,8 +379,10 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/user/{username}",method=RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> getRooms(Principal principal) {
+		if(principal == null)
+			return null;
 		Long timeOut = 1000000L;
-		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut);
+		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");
 		Long chatUserId = Long.parseLong(principal.getName());
 
 		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);

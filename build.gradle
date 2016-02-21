@@ -63,12 +63,10 @@ dependencies {
 	compile("org.apache.commons:commons-collections4:4.1")
 
 	compile("org.springframework.boot:spring-boot-starter")
-  	//compile("org.springframework.data:spring-data-redis")
   	compile("redis.clients:jedis:2.7.2")
  	
     compile("org.springframework.boot:spring-boot-starter-websocket")
-    compile("org.springframework:spring-messaging")
-    
+    compile("org.springframework:spring-messaging")    
     
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-web")
@@ -79,7 +77,9 @@ dependencies {
     compile("org.springframework.security:spring-security-messaging")
     compile("org.springframework.session:spring-session:$springSessionVersion")
     compile("org.apache.commons:commons-pool2:$commonsPoolVersion")
-    //compile  'org.springframework.boot:spring-boot-starter-redis:1.2.0.RELEASE'
+    compile("org.thymeleaf:thymeleaf-spring4")
+    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+
     
     ////////////////
     //			OLD

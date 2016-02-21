@@ -1,5 +1,7 @@
 package com.intita.wschat.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +16,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,16 +32,22 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncManager;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.ChatMessage;
@@ -46,11 +57,13 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -84,15 +97,44 @@ public class ChatController {
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
-	private final static ObjectMapper mapper = new ObjectMapper();
+	@Autowired private ChatLangRepository chatLangRepository;
 
-	private final Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
+
+	private final static ObjectMapper mapper = new ObjectMapper();
+	private Map<String,Map<String,Object>> langMap = new HashMap<>();
+
+	public static final Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
 	private final Long timeOutMessage;
 	 */
+
+	@SuppressWarnings("unchecked")
+	@PostConstruct
+	public void onCreate()
+	{
+		Iterable<Lang> it = chatLangRepository.findAll();
+		for(Lang lg:it)
+		{
+			HashMap<String, Object> result = null;
+			JsonFactory factory = new JsonFactory(); 
+			ObjectMapper mapper = new ObjectMapper(factory); 
+			mapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
+			
+			TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+
+			try {
+				result = mapper.readValue(lg.getMap(), typeRef);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.err.println("Lang " + lg.getLang() + " is wrong!!!");
+				e.printStackTrace();
+			}
+			langMap.put(lg.getLang(), result);
+		}
+	}
 	/********************
 	 * GET CHAT USERS LIST FOR TEST
 	 *******************/
@@ -124,9 +166,7 @@ public class ChatController {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
-		userMessageService.addMessage(messageToSave);//DO FROM MESS BUFFER
-
-		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
+		addMessageToBuffer(roomStr, messageToSave);
 
 		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
@@ -135,26 +175,27 @@ public class ChatController {
 		return message;
 	}
 
-	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
-	@ResponseBody
-	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
-		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
-		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-
-		UserMessage messageToSave = filterMessage(roomStr, message, principal);
-		//DeferredResult<ArrayList<UserMessage>> result = new DeferredResult<>();
-		//userMessageService.addMessage(messageToSave);
-		Queue<UserMessage> list = messagesBuffer.get(roomStr);
+	public void addMessageToBuffer(String room, UserMessage message)
+	{
+		Queue<UserMessage> list = messagesBuffer.get(room);
 		if(list == null)
 		{
 			list = new ConcurrentLinkedQueue<>();
-			messagesBuffer.put(roomStr, list);
+			messagesBuffer.put(room, list);
 		}
-		list.add(messageToSave);
+		list.add(message);
 
 		//send message to WS users
-		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), message);
-		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", roomStr);
+		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
+	}
+
+	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
+	@ResponseBody
+	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		UserMessage messageToSave = filterMessage(roomStr, message, principal);
+		addMessageToBuffer(roomStr, messageToSave);
+		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), messageToSave);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
@@ -162,7 +203,7 @@ public class ChatController {
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 
 		Long timeOut = 1000000000L;
-		DeferredResult<String> result = new DeferredResult<String>(timeOut);
+		DeferredResult<String> result = new DeferredResult<String>(timeOut, "NULL");
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
 		if(queue == null)
 		{
@@ -188,7 +229,6 @@ public class ChatController {
 					String str = "";
 					if(responseList != null)
 					{
-					
 						try {
 							str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
 						} catch (JsonProcessingException e) {
@@ -198,8 +238,9 @@ public class ChatController {
 					response.setResult(str);
 				}
 				responseList.clear();
+				System.out.println("processMessage responseBodyQueue:"+responseList.size());
 			}
-			System.out.println("processMessage responseBodyQueue:"+responseList.size());
+
 			userMessageService.addMessages(array);
 			messagesBuffer.remove(roomId);
 		}
@@ -332,11 +373,26 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
+	public void addLocolization(Model model)
+	{
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		HttpSession session = attr.getRequest().getSession(false);
+		String lg = (String) session.getAttribute("chatLg");
+
+		model.addAttribute("lnPack", langMap.get(lg));
+	}
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String  getIndex(HttpRequest request) {
+	public String  getIndex(HttpRequest request, Model model) {
 		System.out.println("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		authenticationProvider.autorization(authenticationProvider);
-		return "/index.html";
+		addLocolization(model);
+		return "index";
+	}
+	@RequestMapping(value="/{page}", method = RequestMethod.GET)
+	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
+		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
+		addLocolization(model);
+		return page;
 	}
 
 	@MessageExceptionHandler

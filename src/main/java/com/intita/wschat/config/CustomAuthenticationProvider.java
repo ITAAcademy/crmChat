@@ -62,6 +62,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				
 				String value = null;
 				String IntitaId = null;
+				String IntitaLg = "en";
 				String ChatId = null;
 				if(array != null)
 					for(Cookie cook : array)
@@ -82,6 +83,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 									System.out.println(phpSession);
 									serializedPhpParser = new SerializedPhpParser(phpSession);
 									IntitaId = (String)serializedPhpParser.find(redisId);
+									IntitaLg = (String)serializedPhpParser.find("lg");
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -102,7 +104,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
 						ChatId = c_u_temp.getId().toString();
 						session.setAttribute("chatId", ChatId);
-
 					}
 					else
 					{
@@ -111,6 +112,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					}
 
 				}
+				session.setAttribute("chatLg", IntitaLg);
 				Authentication auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
 				//	auth.setAuthenticated(true);
 				return auth;
