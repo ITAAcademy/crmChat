@@ -46,7 +46,7 @@ springChatControllers.config(function($routeProvider){
 		templateUrl: "chatTemplate.html",
 		controller: "StrictedDialogRouteController"
 	});
-	$routeProvider.otherwise({redirectTo: '/chatrooms'});
+	$routeProvider.otherwise({redirectTo: '/'});
 	console.log("scope test");
 
 });
@@ -57,14 +57,10 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	Scopes.store('DialogsRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 
-	var timeout = 0;
-	if (!isInited)timeout=1000;
-	$timeout(function() {
 //		typeof chatControllerScope.socketSupport!=='undefined'
 		chatControllerScope.goToDialogList();
 		console.log("initing:"+chatControllerScope.socketSupport);
 		isInited=true;
-	}, timeout);
 	$scope.pageClass = 'page-home';
 
 }]);
@@ -74,15 +70,10 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	Scopes.store('ChatRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
-	var timeout = 0;
-	if (!isInited)timeout=1000;
-	$timeout(function() {
 //		typeof chatControllerScope.socketSupport!=='undefined'
 		chatControllerScope.goToDialog($routeParams.roomId);
 		console.log("initing:"+chatControllerScope.socketSupport);
 		isInited=true;
-		
-	}, timeout);
 	$scope.pageClass = 'page-about';
 	
 }]);
@@ -91,14 +82,10 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 	Scopes.store('TeachersListRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
-	var timeout = 0;
-	if (!isInited)timeout=1000;
-	$timeout(function() {
 //		typeof chatControllerScope.socketSupport!=='undefined'
 		chatControllerScope.goToTeachersList();
 		isInited=true;
-		
-	}, timeout);
+
 	$scope.pageClass = 'page-contact';
 }]);
 
@@ -708,10 +695,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		{
 			$scope.showDialogListButton = true;
 			$scope.goToDialogList();
+			changeLocation("/chatrooms");
 		}
 		else
 		{
 			goToDialogEvn(mess_obj.nextWindow);
+			changeLocation("/dialog_view/" + mess_obj.nextWindow);
 			//$scope.templateName = 'chatTemplate.html';
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}
@@ -835,7 +824,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wss");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 
