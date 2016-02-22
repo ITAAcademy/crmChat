@@ -654,6 +654,18 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 				}));
 	};
+	
+	function subscribeInfoUpdateLP(){
+		console.log("roomsUpdateLP()");
+		$http.post(serverPrefix+"/chat/lp/info")
+		.success(function(data, status, headers, config) {
+			console.log("infoUpdateLP data:"+data);
+			subscribeInfoUpdateLP();
+		}).error(function errorHandler(data, status, headers, config) {
+			subscribeInfoUpdateLP();
+		});
+
+	}
 
 
 
@@ -784,7 +796,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					room.nums++;
 					console.log("room "+room.roomId + "=="+num+" currentRoom="+$scope.currentRoom.roomId);
 					room.date=curentDateInJavaFromat();
-					new Audio('new_mess.mp3').play();
+					new Audio('data/new_mess.mp3').play();
 					toaster.pop('note', "NewMessage in " + room.string, "",1000);
 				}
 			}
