@@ -99,12 +99,25 @@ public class ChatController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangRepository chatLangRepository;
 
+	private ConcurrentLinkedQueue<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
 
 	public static final Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+
+	public static ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
+	public static void addFieldToInfoMap(String key, Object value)
+	{
+		ArrayList<Object> listElm = infoMap.get(key);
+		if(listElm == null)
+		{
+			listElm = new ArrayList<>();
+			infoMap.put(key, listElm);
+		}
+		listElm.add(value);
+	}
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
@@ -122,7 +135,7 @@ public class ChatController {
 			JsonFactory factory = new JsonFactory(); 
 			ObjectMapper mapper = new ObjectMapper(factory); 
 			mapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
-			
+
 			TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
 
 			try {
@@ -187,6 +200,7 @@ public class ChatController {
 
 		//send message to WS users
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
+		ChatController.addFieldToInfoMap("newMessage", room);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
@@ -246,7 +260,35 @@ public class ChatController {
 		}
 	}
 
+	@RequestMapping(value = "/chat/global/lp/info", method = RequestMethod.POST)
+	@ResponseBody
+	public DeferredResult<String> updateGlobalInfoLP() throws JsonProcessingException {
 
+		Long timeOut = 100000L;
+		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
+		globalInfoResult.add(result);
+		return result;
+	}
+
+	@Scheduled(fixedDelay=5000L)
+	public void processGlobalInfo(){
+		String result;
+		try {
+			result = mapper.writeValueAsString(infoMap);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{}";
+		}
+		infoMap.clear();
+		for(DeferredResult<String> nextUser : globalInfoResult)
+		{
+			nextUser.setResult(result);
+			globalInfoResult.remove(nextUser);
+		}
+
+	}
+	//NOT TEST!!!
 	@MessageMapping("/{room}/chat.private.{username}")
 	public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
 		checkProfanityAndSanitize(message);
@@ -261,6 +303,9 @@ public class ChatController {
 	}
 
 
+	/*
+	 * Go into room
+	 */
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
 	public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
@@ -277,8 +322,15 @@ public class ChatController {
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 	}
+	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
+	@ResponseBody
+	public void userGoToDialogListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+		userGoToDialogListener(roomid, principal);
+	}
 
-
+	/*
+	 * Out from room
+	 */
 	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
 	public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
@@ -302,7 +354,15 @@ public class ChatController {
 		}		
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 	}
+	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
+	@ResponseBody
+	public void userGoToDialogListListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+		userGoToDialogListListener(roomid, principal);
+	}
 
+	/* 
+	 *Work only on WS
+	 */
 	private void checkProfanityAndSanitize(ChatMessage message) {
 		long profanityLevel = profanityFilter.getMessageProfanity(message.getMessage());
 		profanity.increment(profanityLevel);
@@ -379,7 +439,7 @@ public class ChatController {
 		HttpSession session = attr.getRequest().getSession(false);
 		String lg = (String) session.getAttribute("chatLg");
 
-		model.addAttribute("lnPack", langMap.get(lg));
+		model.addAttribute("lgPack", langMap.get(lg));
 	}
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpRequest request, Model model) {
@@ -388,7 +448,7 @@ public class ChatController {
 		addLocolization(model);
 		return "index";
 	}
-	@RequestMapping(value="/{page}", method = RequestMethod.GET)
+	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		addLocolization(model);

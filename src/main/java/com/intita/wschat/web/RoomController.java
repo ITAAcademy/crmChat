@@ -71,6 +71,7 @@ public class RoomController {
 	@Autowired private ChatUsersService chatUserServise;
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	
 	static final private ObjectMapper mapper = new ObjectMapper();
 
 	private final Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
@@ -79,6 +80,7 @@ public class RoomController {
 	private ArrayList<Room> roomsArray; 
 
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
+	
 
 	/**********************
 	 * what doing with new auth user 
@@ -107,7 +109,7 @@ public class RoomController {
 				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
 				roomService.addUserToRoom(user, room);
 
-				subscribedtoRoomsUsersBuffer.add(user);//Is need?
+				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
 				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
 			}
 
@@ -116,11 +118,21 @@ public class RoomController {
 		}
 		else
 		{
-			subscribedtoRoomsUsersBuffer.add(user);
+			//subscribedtoRoomsUsersBuffer.add(user);
 			result.put("nextWindow", "0");
 		}
+		
 		result.put("chat_id", principal.getName());
 		result.put("chat_user_nickname", user.getNickName());
+		String rooms = "{}";
+		try {
+			rooms = mapper.writeValueAsString(roomService.getRoomsByChatUser(user));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		result.put("chat_rooms", rooms);
+
 		return result;
 	}
 
@@ -197,6 +209,9 @@ public class RoomController {
 		return result;
 	}
 
+	/*
+	 * call only if is need
+	 */
 	//@Scheduled(fixedDelay=3000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
@@ -269,6 +284,81 @@ public class RoomController {
 	}
 
 
+	//LONG POLLING PART
+
+	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
+	@ResponseBody
+	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
+		ChatUser auth = chatUserServise.getChatUser(principal);
+		if (auth==null)return -1L;
+		User authorOfDialog = auth.getIntitaUser();
+		if (authorOfDialog==null) return -1L;
+		User interlocutor = userService.getUserFromChat(chatUserId);
+		if (interlocutor==null) return -1L;
+		String roomName = DIALOG_NAME_PREFIX+authorOfDialog.getLogin()+"_"+interlocutor.getLogin();
+		Room room = roomService.register(roomName, auth);
+		return room.getId();
+	}
+
+	@RequestMapping(value="/chat/rooms/user/{username}",method=RequestMethod.POST)
+	@ResponseBody
+	public DeferredResult<String> getRooms(Principal principal) {
+		if(principal == null)
+			return null;
+		Long timeOut = 1000000L;
+		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");
+		Long chatUserId = Long.parseLong(principal.getName());
+
+		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);
+		if(queue == null)
+		{
+			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
+		}
+
+		responseRoomBodyQueue.put(chatUserId, queue);		
+		queue.add(deferredResult);
+	//	System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
+
+		return deferredResult;
+	}
+
+	@Scheduled(fixedDelay=2500L)
+	public void processRoomsQueues() throws JsonProcessingException {
+		for(ChatUser chatUser : subscribedtoRoomsUsersBuffer)
+		{
+			if (chatUser==null){
+				System.out.println("WARNING: NULL USER");
+				continue;
+			}
+			Queue<DeferredResult<String>> responseList = responseRoomBodyQueue.get(chatUser.getId());
+			if (responseList==null){
+				//System.out.println("WARNING: RESPONSE LIST IS CLEAR");
+				continue;
+			}
+			for(DeferredResult<String> response : responseList)
+			{
+					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
+					response.setResult(str);
+			}
+			responseRoomBodyQueue.remove(chatUser.getId());
+		}
+		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
+		subscribedtoRoomsUsersBuffer.clear();//!!!
+		
+	}
+
+	@RequestMapping(value="/chat/rooms/add",method=RequestMethod.POST)
+	@ResponseBody
+	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
+	public void addRoomByAuthorLP( @RequestBody String roomName, Principal principal) {
+		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
+
+		System.out.println(principal.getName());//@LOG@
+		Long chatUserId = Long.parseLong(principal.getName());
+		ChatUser author = chatUserServise.getChatUser(chatUserId);
+		roomService.register(roomName, author);
+		boolean s = subscribedtoRoomsUsersBuffer.add(author);
+	}
 	/***************************
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
@@ -359,80 +449,5 @@ public class RoomController {
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
-	}
-	//LONG POLLING PART
-
-	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
-	@ResponseBody
-	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
-		ChatUser auth = chatUserServise.getChatUser(principal);
-		if (auth==null)return -1L;
-		User authorOfDialog = auth.getIntitaUser();
-		if (authorOfDialog==null) return -1L;
-		User interlocutor = userService.getUserFromChat(chatUserId);
-		if (interlocutor==null) return -1L;
-		String roomName = DIALOG_NAME_PREFIX+authorOfDialog.getLogin()+"_"+interlocutor.getLogin();
-		Room room = roomService.register(roomName, auth);
-		return room.getId();
-	}
-
-	@RequestMapping(value="/chat/rooms/user/{username}",method=RequestMethod.POST)
-	@ResponseBody
-	public DeferredResult<String> getRooms(Principal principal) {
-		if(principal == null)
-			return null;
-		Long timeOut = 1000000L;
-		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");
-		Long chatUserId = Long.parseLong(principal.getName());
-
-		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);
-		if(queue == null)
-		{
-			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();		
-		}
-
-		responseRoomBodyQueue.put(chatUserId, queue);		
-		queue.add(deferredResult);
-		System.out.println("responseRoomBodyQueue queue_count:"+queue.size());
-
-		return deferredResult;
-	}
-
-	@Scheduled(fixedDelay=1000L)
-	public void processRoomsQueues() throws JsonProcessingException {
-		for(ChatUser chatUser : subscribedtoRoomsUsersBuffer)
-		{
-			if (chatUser==null){
-				System.out.println("WARNING: NULL USER");
-				continue;
-			}
-			Queue<DeferredResult<String>> responseList = responseRoomBodyQueue.get(chatUser.getId());
-			if (responseList==null){
-				//System.out.println("WARNING: RESPONSE LIST IS CLEAR");
-				continue;
-			}
-			for(DeferredResult<String> response : responseList)
-			{
-					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
-					response.setResult(str);
-			}
-			responseRoomBodyQueue.remove(chatUser.getId());
-		}
-		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
-		subscribedtoRoomsUsersBuffer.clear();
-		
-	}
-
-	@RequestMapping(value="/chat/rooms/add",method=RequestMethod.POST)
-	@ResponseBody
-	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public void addRoomByAuthorLP( @RequestBody String roomName, Principal principal) {
-		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
-
-		System.out.println(principal.getName());//@LOG@
-		Long chatUserId = Long.parseLong(principal.getName());
-		ChatUser author = chatUserServise.getChatUser(chatUserId);
-		roomService.register(roomName, author);
-		boolean s = subscribedtoRoomsUsersBuffer.add(author);
 	}
 }
