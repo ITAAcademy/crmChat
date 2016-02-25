@@ -217,7 +217,7 @@ public class ChatController {
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 
 		Long timeOut = 1000000000L;
-		DeferredResult<String> result = new DeferredResult<String>(timeOut, "NULL");
+		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
 		if(queue == null)
 		{

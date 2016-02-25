@@ -198,7 +198,7 @@ public class RoomController {
 	public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") String room) throws JsonProcessingException {
 
 		Long timeOut = 100000L;
-		DeferredResult<String> result = new DeferredResult<String>(timeOut);
+		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueueForParticipents.get(room);
 		if(queue == null)
 		{
