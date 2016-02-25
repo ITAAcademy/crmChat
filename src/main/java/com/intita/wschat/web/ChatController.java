@@ -209,7 +209,7 @@ public class ChatController {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		addMessageToBuffer(roomStr, messageToSave);
-		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), messageToSave);
+		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
