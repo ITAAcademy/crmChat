@@ -180,8 +180,6 @@ public class ChatController {
 
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		addMessageToBuffer(roomStr, messageToSave);
-
-		System.out.println("/////////////////ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG " + roomStr);		
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
@@ -224,7 +222,7 @@ public class ChatController {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
 		responseBodyQueue.put(room, queue);
-		System.out.println("updateMessageLP responseBodyQueue:"+queue.size());
+		//System.out.println("updateMessageLP responseBodyQueue:"+queue.size());
 		queue.add(result);
 		return result;
 	}
@@ -252,7 +250,7 @@ public class ChatController {
 					response.setResult(str);
 				}
 				responseList.clear();
-				System.out.println("processMessage responseBodyQueue:"+responseList.size());
+				//System.out.println("processMessage responseBodyQueue:"+responseList.size());
 			}
 
 			userMessageService.addMessages(array);
@@ -443,7 +441,6 @@ public class ChatController {
 	}
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpRequest request, Model model) {
-		System.out.println("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		authenticationProvider.autorization(authenticationProvider);
 		addLocolization(model);
 		return "index";

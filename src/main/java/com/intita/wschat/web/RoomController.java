@@ -342,7 +342,7 @@ public class RoomController {
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
-		System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
+		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		subscribedtoRoomsUsersBuffer.clear();//!!!
 		
 	}
