@@ -25,7 +25,7 @@ import com.intita.wschat.services.RoomsService;
 /**
  * {@link ChannelInterceptor} that logs messages to a {@link TraceRepository}.
  *
- * @author Sergi Almar
+ * @author Roma
  */
 public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter {
 

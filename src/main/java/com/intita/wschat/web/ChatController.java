@@ -207,7 +207,7 @@ public class ChatController {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		addMessageToBuffer(roomStr, messageToSave);
-		simpMessagingTemplate.convertAndSend(("/" + roomStr + "/chat.message"), messageToSave);
+		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
 	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
@@ -215,7 +215,7 @@ public class ChatController {
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 
 		Long timeOut = 1000000000L;
-		DeferredResult<String> result = new DeferredResult<String>(timeOut, "NULL");
+		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
 		if(queue == null)
 		{

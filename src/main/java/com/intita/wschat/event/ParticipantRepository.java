@@ -2,32 +2,33 @@ package com.intita.wschat.event;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.springframework.stereotype.Component;
 
 /**
  * 
- * @author Sergi Almar
+ * @author Nicolas
  */
+
+@Component
 public class ParticipantRepository {
 
-	private Map<String, LoginEvent> activeSessions = new ConcurrentHashMap<>();
-
-	public void add(String sessionId, LoginEvent event) {
-		activeSessions.put(sessionId, event);
-	}
-
-	public LoginEvent getParticipant(String sessionId) {
-		return activeSessions.get(sessionId);
-	}
-
-	public void removeParticipant(String sessionId) {
-		activeSessions.remove(sessionId);
-	}
-
-	public Map<String, LoginEvent> getActiveSessions() {
+	public ConcurrentSkipListSet<String> getActiveSessions() {
 		return activeSessions;
 	}
 
-	public void setActiveSessions(Map<String, LoginEvent> activeSessions) {
-		this.activeSessions = activeSessions;
+	private ConcurrentSkipListSet<String> activeSessions = new ConcurrentSkipListSet<>();
+
+	public void add(String chatId) {
+		activeSessions.add(chatId);
+	}
+
+	public boolean isOnline(String chatId) {
+		return activeSessions.contains(chatId);
+	}
+
+	public void removeParticipant(String chatId) {
+		activeSessions.remove(chatId);
 	}
 }

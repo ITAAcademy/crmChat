@@ -25,8 +25,8 @@
 	        			<ul ng-repeat="participant in participants | orderBy:'-username'">
 	        				<li>
 	        					<span class="input-icon fui-new" ng-show="participant.typing"></span>
-	        					<span class="input-icon fui-user" ng-show="!participant.typing"></span>
-	        					<a class="a_user_nickname" href="" ng-click="privateSending(participant.username)">{{participant.username}}</a>
+	        					<span ng-style="!participant.online ? {color:'red' } : {color:'green'}" class="input-icon fui-user" ng-show="!participant.typing"></span>
+	        					<a  class="a_user_nickname" href="" ng-click="privateSending(participant.username)">{{participant.username}}</a>
 	        					
 	        				</li>
 	        			</ul>
