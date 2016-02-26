@@ -18,7 +18,7 @@ import org.springframework.messaging.simp.annotation.support.SimpAnnotationMetho
 /**
  * {@link Endpoint} to expose WebSocket message mappings
  *
- * @author Sergi Almar
+ * @author Nicolas
  */
 @ConfigurationProperties(prefix = "endpoints.websocket-mappings", ignoreUnknownFields = true)
 public class MessageMappingEndpoint extends AbstractEndpoint<Map<String, Object>> 

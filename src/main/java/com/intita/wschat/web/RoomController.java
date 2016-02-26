@@ -146,16 +146,17 @@ public class RoomController {
 	 * GET PARTICIPANTS AND LOAD MESSAGE
 	 ***************************/
 
+	
 	private Set<LoginEvent> GetParticipants(Room room_o)
 	{
 		Set<LoginEvent> userList = new HashSet<>();
 		//Set<Long> chatUsersIds = new HashSet<>();
 		LoginEvent currentChatUserLoginEvent = new LoginEvent(room_o.getAuthor().getId(),
-				room_o.getAuthor().getNickName());
+				room_o.getAuthor().getNickName(),  participantRepository.isOnline(room_o.getAuthor().getId().toString()));
 		userList.add(currentChatUserLoginEvent);
 		for(ChatUser user : room_o.getUsers())
 		{
-			userList.add(new LoginEvent(user.getId(),user.getNickName()));
+			userList.add(new LoginEvent(user.getId(),user.getNickName(), participantRepository.isOnline(user.getId().toString())));
 		}
 		return  userList;
 	}
@@ -370,7 +371,7 @@ public class RoomController {
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
-		if(room_o == null || user_o == null || authorUser.getId() != room_o.getAuthor().getId())
+		if(room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue())
 		{
 			return false;
 		}

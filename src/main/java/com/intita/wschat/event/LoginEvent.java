@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * 
- * @author Sergi Almar
+ * @author Nicolas
  */
 public class LoginEvent {
 
@@ -14,6 +14,7 @@ public class LoginEvent {
 	private boolean typing;
 	private String avatar;
 	private int role;
+	private boolean online;
 
 	public String getAvatar() {
 		return avatar;
@@ -31,11 +32,27 @@ public class LoginEvent {
 		this.role = role;
 	}
 
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+
 	public LoginEvent(Long chatUserId,String username) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
+		online = false;
+	}
+	public LoginEvent(Long chatUserId,String username, boolean isOnline) {
+		this.chatUserId=chatUserId;
+		this.username = username;
+		time = new Date();
+		typing = false;
+		online = isOnline;
 	}
 	
 	public LoginEvent(Long chatUserId,String username, String avatar) {

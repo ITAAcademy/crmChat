@@ -115,7 +115,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	//$scope.templateName = null;
 	$rootScope.socketSupport = true;
 	$scope.emails = [];
-
+	
 	var typing = undefined;
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
@@ -774,9 +774,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		console.log("onconnect");
 		$scope.chatUserId = frame.headers['user-name'];
 
-
-
-
 		lastRoomBindings.push(
 				chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
 					//$scope.participants.unshift({username: JSON.parse(message.body).username, typing : false});
@@ -784,19 +781,69 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					var mess_obj = JSON.parse(message.body);
 
 					login(mess_obj);
+					
+					$timeout(function ()  {
+						
+								chatSocket.subscribe("/topic/chat.login".format(room), function(message) {
+										var chatUserId = JSON.parse(message.body).chatUserId;
+										for(var index in $scope.participants) {
+											if($scope.participants[index].chatUserId == chatUserId) {
+												$scope.participants[index].online = true;
+												break;
+											}
+										}
+								});
+								chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
+										var chatUserId = JSON.parse(message.body).username;
+										for(var index in $scope.participants) {
+											if($scope.participants[index].chatUserId == chatUserId) {
+												$scope.participants[index].online = false;
+												break;
+											}
+										}
+									 
+								});
 
-				}));
+						chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
+							console.log("new message in room:"+message.body);
+							var num = JSON.parse(message.body);
+							newMessageEvent(num);
 
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-					/*	var username = JSON.parse(message.body).username;
-						for(var index in $scope.participants) {
-							if($scope.participants[index].username == username) {
-								$scope.participants.splice(index, 1);
+						});
+
+						chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
+							var operationStatus = JSON.parse(message.body);
+							switch (operationStatus.type){
+							case Operations.send_message_to_all:
+							case Operations.send_message_to_user:
+								$scope.messageSended = true;
+								if (!operationStatus.success)
+									toaster.pop("error", "Error", message.body);
+								break;
+							case Operations.add_user_to_room:
+								$scope.userAddedToRoom = true;
+								if (!operationStatus.success)
+									toaster.pop("error", "Error","user wasn't added to room");
+								break;
+							case Operations.add_room:
+								$scope.roomAdded = true;
+								if (!operationStatus.success)
+									toaster.pop("error", "Error","room wasn't added");
+
 							}
-						}
-					 */
+							//ZIGZAG OPS
+
+							console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
+						});
+
+						lastRoomBindings.push(
+								chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
+									toaster.pop('error', "Error", message.body);
+								}));
+					}, 1500);
+
 				}));
+
 		/*
 		 * 
 		 *Room
@@ -811,50 +858,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			console.log("chatUserId:"+$scope.chatUserId);
 			updateRooms(message);
 		});
-
-
-		chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
-			console.log("new message in room:"+message.body);
-			var num = JSON.parse(message.body);
-			newMessageEvent(num);
-
-		});
-
-		chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
-			var operationStatus = JSON.parse(message.body);
-			switch (operationStatus.type){
-			case Operations.send_message_to_all:
-			case Operations.send_message_to_user:
-				$scope.messageSended = true;
-				if (!operationStatus.success)
-					toaster.pop("error", "Error", message.body);
-				break;
-			case Operations.add_user_to_room:
-				$scope.userAddedToRoom = true;
-				if (!operationStatus.success)
-					toaster.pop("error", "Error","user wasn't added to room");
-				break;
-			case Operations.add_room:
-				$scope.roomAdded = true;
-				if (!operationStatus.success)
-					toaster.pop("error", "Error","room wasn't added");
-
-			}
-			//ZIGZAG OPS
-
-			console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
-		});
-
-		lastRoomBindings.push(
-				chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
-					toaster.pop('error', "Error", message.body);
-				}));
 	};
 
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wss");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 

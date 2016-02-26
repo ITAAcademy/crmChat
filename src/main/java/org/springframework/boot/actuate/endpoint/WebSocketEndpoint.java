@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.WebSocketMessageBrokerStats;
 /**
  * {@link Endpoint} to expose WebSocket stats
  *
- * @author Sergi Almar
+ * @author Nicolas
  */
 @ConfigurationProperties(prefix = "endpoints.websocket", ignoreUnknownFields = true)
 public class WebSocketEndpoint extends AbstractEndpoint<WebSocketMessageBrokerStats> {
