@@ -82,7 +82,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 								try {
 									System.out.println(phpSession);
 									serializedPhpParser = new SerializedPhpParser(phpSession);
-									IntitaId = (String)serializedPhpParser.find(redisId);
+									IntitaId = (String)serializedPhpParser.findPatern(redisId);
 									IntitaLg = (String)serializedPhpParser.find("lg");
 								} catch (Exception e) {
 									// TODO Auto-generated catch block

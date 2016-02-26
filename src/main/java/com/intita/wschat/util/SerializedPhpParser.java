@@ -26,6 +26,7 @@ package com.intita.wschat.util;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -60,6 +61,24 @@ public class SerializedPhpParser {
 		int temp = index;
 		index = in;
 		return parse();
+	}
+	public Object findPatern(String patternStr){
+		System.out.println("patternStr:"+patternStr);
+		Pattern p = Pattern.compile(patternStr);  
+        Matcher m = p.matcher(input); 
+        if (!m.find()) {
+        	System.out.println("Mathces not found for:"+input);
+        	return null;
+        }
+        System.out.println("Group0:"+m.group(0));
+        String findedValue = m.group(0);
+        int in = input.indexOf(findedValue);
+        if (in < 0) return null;
+        in += findedValue.length() + 1;
+        char k = input.charAt(in);
+        int temp = index;
+        index = in;
+        return parse();  
 	}
 
 	private Object parse() {
