@@ -71,7 +71,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	chatControllerScope.goToDialog($routeParams.roomId);
+	//chatControllerScope.goToDialog($routeParams.roomId);
 	console.log("initing:"+chatControllerScope.socketSupport);
 	isInited=true;
 	$scope.pageClass = 'page-about';
@@ -96,7 +96,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 	var timeout = 0;
 
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
+	//chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
 	isInited=true;
 
 }]);
@@ -713,7 +713,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
 			return;
 		}
-
+		
+		if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
+		{
+			mess_obj.nextWindow=$scope.currentRoom.roomId;
+		}
+		
 		if(mess_obj.nextWindow == 0)
 		{
 			if($rootScope.socketSupport == false)
