@@ -147,7 +147,7 @@ public class RoomController {
 	 ***************************/
 
 	
-	private Set<LoginEvent> GetParticipants(Room room_o)
+	private Set<LoginEvent> GetParticipants(Room room_o,boolean ws)
 	{
 		Set<LoginEvent> userList = new HashSet<>();
 		//Set<Long> chatUsersIds = new HashSet<>();
@@ -172,7 +172,7 @@ public class RoomController {
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
 		
 		HashMap<String, Object> map = new HashMap();
-		map.put("participants", GetParticipants(room_o));
+		map.put("participants", GetParticipants(room_o,true));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());
 		return map;
@@ -184,7 +184,7 @@ public class RoomController {
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		HashMap<String, Object> map = new HashMap();
 		if(room_o != null)
-			map.put("participants", GetParticipants(room_o));
+			map.put("participants", GetParticipants(room_o,true));
 		return map;
 	}
 
@@ -214,13 +214,13 @@ public class RoomController {
 	 * call only if is need
 	 */
 	//@Scheduled(fixedDelay=3000L)
-	public void updateParticipants() {
+	public void updateParticipants(boolean ws) {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
 			Room room_o = roomService.getRoom(Long.parseLong(key));
 			HashMap<String, Object> result = new HashMap();
 			if(room_o != null)
-				result.put("participants", GetParticipants(room_o));
+				result.put("participants", GetParticipants(room_o,ws));
 			
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
@@ -237,7 +237,7 @@ public class RoomController {
 		}
 
 	}
-
+	
 	/***************************
 	 * GET/ADD ROOMS
 	 * @throws JsonProcessingException 
@@ -364,7 +364,7 @@ public class RoomController {
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
 
-	boolean addUserToRoomFn( String nickName, String room, Principal principal)
+	boolean addUserToRoomFn( String nickName, String room, Principal principal,boolean ws)
 	{
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
@@ -377,7 +377,7 @@ public class RoomController {
 		}
 		roomService.addUserToRoom(user_o, room_o);
 		
-		updateParticipants();
+		updateParticipants(ws);
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
 		return true;
@@ -394,7 +394,7 @@ public class RoomController {
 		chatUserId = Long.parseLong(principal.getName());
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);// @BAG@
 
-		if(!addUserToRoomFn(nickName, room, principal))
+		if(!addUserToRoomFn(nickName, room, principal,true))
 		{
 			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
 			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
@@ -414,7 +414,7 @@ public class RoomController {
 	public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);
 		subscribedtoRoomsUsersBuffer.add(user_o);
-		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomStr, principal));
+		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomStr, principal,false));
 	}
 
 	/*****************

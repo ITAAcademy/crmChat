@@ -205,6 +205,7 @@ public class ChatController {
 	@ResponseBody
 	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		participantRepository.addLP(principal.getName());
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		addMessageToBuffer(roomStr, messageToSave);
 		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
@@ -323,6 +324,7 @@ public class ChatController {
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void userGoToDialogListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+		participantRepository.addLP(principal.getName());
 		userGoToDialogListener(roomid, principal);
 	}
 
@@ -355,6 +357,7 @@ public class ChatController {
 	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void userGoToDialogListListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+		participantRepository.addLP(principal.getName());
 		userGoToDialogListListener(roomid, principal);
 	}
 
