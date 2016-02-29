@@ -71,7 +71,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	//chatControllerScope.goToDialog($routeParams.roomId);
+	chatControllerScope.goToDialog($routeParams.roomId);
 	console.log("initing:"+chatControllerScope.socketSupport);
 	isInited=true;
 	$scope.pageClass = 'page-about';
@@ -96,7 +96,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 	var timeout = 0;
 
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	//chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
+	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
 	isInited=true;
 
 }]);
@@ -706,6 +706,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	};
 	function login(mess_obj)
 	{
+		debugger;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
 		if(mess_obj.nextWindow == -1)
@@ -714,20 +715,25 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			return;
 		}
 		
-		if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
-		{
-			mess_obj.nextWindow=$scope.currentRoom.roomId;
-		}
-		
 		if(mess_obj.nextWindow == 0)
 		{
+			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
+			{
+				//mess_obj.nextWindow=$scope.currentRoom.roomId;
+				goToDialogEvn($scope.currentRoom.roomId);
+				changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
+				$scope.showDialogListButton = true;
+				return;
+			}
+			
 			if($rootScope.socketSupport == false)
 			{
 				updateRooms(JSON.parse(mess_obj.chat_rooms));
 			}
 			$scope.showDialogListButton = true;
 			$scope.goToDialogList();
-			changeLocation("/chatrooms");
+			if($location.path() == "/")
+				changeLocation("/chatrooms");
 		}
 		else
 		{

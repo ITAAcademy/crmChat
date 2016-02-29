@@ -52,6 +52,7 @@ import com.intita.wschat.services.RoomsService.StringIntDate;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 
 
 @Controller
@@ -161,11 +162,9 @@ public class RoomController {
 		return  userList;
 	}
 	
-	@SubscribeMapping("/{room}/chat.participants")
-	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o) {
 
-		Room room_o = roomService.getRoom(Long.parseLong(room));
-		Queue<UserMessage> buff = ChatController.messagesBuffer.get(room);
+		Queue<UserMessage> buff = ChatController.messagesBuffer.get(room_o.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getUserMessagesByRoom(room_o);
 		if(buff != null)
 			userMessages.addAll(buff);
@@ -176,7 +175,13 @@ public class RoomController {
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());
 		return map;
+	}
+	
+	@SubscribeMapping("/{room}/chat.participants")
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
 
+		Room room_o = roomService.getRoom(Long.parseLong(room));
+		return retrieveParticipantsSubscribeAndMessagesObj(room_o);
 	}
 
 	@MessageMapping("/{room}/chat.participants")
@@ -190,8 +195,11 @@ public class RoomController {
 
 	@RequestMapping(value = "/{room}/chat/participants_and_messages", method = RequestMethod.POST)
 	@ResponseBody
-	public String retrieveParticipantsAndMessagesLP(@PathVariable("room") String room) throws JsonProcessingException {
-		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessages(room));
+	public String retrieveParticipantsAndMessagesLP(@PathVariable("room") String room, Principal principal) throws JsonProcessingException {
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
+		if( struct == null)
+			return "{}";
+		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));
 	}
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)

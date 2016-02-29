@@ -99,8 +99,6 @@ public class ChatController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangRepository chatLangRepository;
 
-	private ConcurrentLinkedQueue<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
-
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
 
@@ -108,6 +106,8 @@ public class ChatController {
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	public static ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
+	private ConcurrentLinkedQueue<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
+	
 	public static void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -118,6 +118,44 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
+	
+	public static class CurrentStatusUserRoomStruct{
+		private Room room;
+		private ChatUser user;
+		
+		public Room getRoom() {
+			return room;
+		}
+
+		public ChatUser getUser() {
+			return user;
+		}
+
+		public CurrentStatusUserRoomStruct(ChatUser user, Room room) {
+			this.room = room;
+			this.user = user;
+		}
+	}
+	
+	public static CurrentStatusUserRoomStruct isMyRoom(String roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
+	{
+		Room o_room = chat_room_service.getRoom(Long.parseLong(roomId));
+		if(o_room == null)
+			return null;
+		
+		ChatUser o_user = chat_user_service.getChatUser(principal);
+		if(o_user == null)
+			return null;
+			
+		Set<Room> all = o_user.getRoomsFromUsers();
+		all.addAll(o_user.getRootRooms());
+		
+		if(!all.contains(o_room))
+			return null;
+		
+		return new CurrentStatusUserRoomStruct(o_user, o_room);
+	}
+	
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
@@ -214,7 +252,6 @@ public class ChatController {
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
-
 		Long timeOut = 1000000000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
