@@ -148,7 +148,7 @@ public class RoomController {
 	 ***************************/
 
 	
-	private Set<LoginEvent> GetParticipants(Room room_o,boolean ws)
+	private Set<LoginEvent> GetParticipants(Room room_o)
 	{
 		Set<LoginEvent> userList = new HashSet<>();
 		//Set<Long> chatUsersIds = new HashSet<>();
@@ -171,7 +171,7 @@ public class RoomController {
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
 		
 		HashMap<String, Object> map = new HashMap();
-		map.put("participants", GetParticipants(room_o,true));
+		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());
 		return map;
@@ -189,7 +189,7 @@ public class RoomController {
 		Room room_o = roomService.getRoom(Long.parseLong(room));
 		HashMap<String, Object> map = new HashMap();
 		if(room_o != null)
-			map.put("participants", GetParticipants(room_o,true));
+			map.put("participants", GetParticipants(room_o));
 		return map;
 	}
 
@@ -222,13 +222,13 @@ public class RoomController {
 	 * call only if is need
 	 */
 	//@Scheduled(fixedDelay=3000L)
-	public void updateParticipants(boolean ws) {
+	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
 			Room room_o = roomService.getRoom(Long.parseLong(key));
 			HashMap<String, Object> result = new HashMap();
 			if(room_o != null)
-				result.put("participants", GetParticipants(room_o,ws));
+				result.put("participants", GetParticipants(room_o));
 			
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
@@ -385,7 +385,7 @@ public class RoomController {
 		}
 		roomService.addUserToRoom(user_o, room_o);
 		
-		updateParticipants(ws);
+		updateParticipants();
 		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
 		return true;

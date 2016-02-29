@@ -40,7 +40,7 @@ public class PresenceEventListener {
 		messagingTemplate.convertAndSend(loginDestination, loginEvent);
 		
 		// We store the session as we need to be idempotent in the disconnect event processing
-		participantRepository.addWS(chatId);
+		participantRepository.add(chatId);
 		
 	}
 	

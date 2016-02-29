@@ -106,8 +106,8 @@ public class ChatController {
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	public static ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
-	private ConcurrentLinkedQueue<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
-	
+	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
+	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
 	public static void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -243,7 +243,6 @@ public class ChatController {
 	@ResponseBody
 	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		participantRepository.addLP(principal.getName());
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		addMessageToBuffer(roomStr, messageToSave);
 		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
@@ -298,11 +297,13 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/global/lp/info", method = RequestMethod.POST)
 	@ResponseBody
-	public DeferredResult<String> updateGlobalInfoLP() throws JsonProcessingException {
+	public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
 
 		Long timeOut = 100000L;
+		participantRepository.add(principal.getName());
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
-		globalInfoResult.add(result);
+		globalInfoResult.put(result,principal.getName());
+		System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
 	}
 
@@ -317,11 +318,14 @@ public class ChatController {
 			result = "{}";
 		}
 		infoMap.clear();
-		for(DeferredResult<String> nextUser : globalInfoResult)
+		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
-			nextUser.setResult(result);
-			globalInfoResult.remove(nextUser);
+		
+			System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
+			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
+			nextUser.setResult(result);		
 		}
+		globalInfoResult.clear();
 
 	}
 	//NOT TEST!!!
@@ -361,7 +365,6 @@ public class ChatController {
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void userGoToDialogListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
-		participantRepository.addLP(principal.getName());
 		userGoToDialogListener(roomid, principal);
 	}
 
@@ -394,7 +397,7 @@ public class ChatController {
 	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void userGoToDialogListListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
-		participantRepository.addLP(principal.getName());
+
 		userGoToDialogListListener(roomid, principal);
 	}
 
