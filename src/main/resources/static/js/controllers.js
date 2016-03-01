@@ -720,7 +720,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
 			{
 				//mess_obj.nextWindow=$scope.currentRoom.roomId;
-				goToDialogEvn($scope.currentRoom.roomId);
+				//goToDialog($scope.currentRoom.roomId);
 				changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
 				$scope.showDialogListButton = true;
 				return;
@@ -737,7 +737,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 		else
 		{
-			goToDialogEvn(mess_obj.nextWindow);
+			//goToDialog(mess_obj.nextWindow);
 			changeLocation("/dialog_view/" + mess_obj.nextWindow);
 			//$scope.templateName = 'chatTemplate.html';
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
@@ -874,7 +874,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wsq");
 
 		chatSocket.connect(onConnect, function(error) {
 

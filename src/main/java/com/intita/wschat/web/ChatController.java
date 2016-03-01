@@ -299,7 +299,7 @@ public class ChatController {
 	@ResponseBody
 	public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
 
-		Long timeOut = 100000L;
+		Long timeOut = 10000L;
 		participantRepository.add(principal.getName());
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
