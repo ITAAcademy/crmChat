@@ -650,7 +650,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 						var parsedData = JSON.parse(data);
 						if(parsedData.hasOwnProperty("participants"))
 							$scope.participants = parsedData["participants"];
-
+						$scope.$apply();
 					},
 					error: function(xhr, text_status, error_thrown){
 						if (xhr.status === 0 || xhr.readyState === 0) return;
@@ -874,7 +874,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wsi");
+		chatSocket.init(serverPrefix+"/ws");
 
 		chatSocket.connect(onConnect, function(error) {
 

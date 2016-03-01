@@ -221,7 +221,7 @@ public class RoomController {
 	/*
 	 * call only if is need
 	 */
-	//@Scheduled(fixedDelay=3000L)
+	@Scheduled(fixedDelay=3000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
