@@ -60,7 +60,6 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	chatControllerScope.goToDialogList();
 	console.log("initing:"+chatControllerScope.socketSupport);
-	isInited=true;
 	$scope.pageClass = 'page-home';
 
 }]);
@@ -71,9 +70,10 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	chatControllerScope.goToDialog($routeParams.roomId);
+	if(isInited == true)
+		chatControllerScope.goToDialog($routeParams.roomId);
+	chatControllerScope.currentRoom = {roomId: $routeParams.roomId};
 	console.log("initing:"+chatControllerScope.socketSupport);
-	isInited=true;
 	$scope.pageClass = 'page-about';
 
 }]);
@@ -84,8 +84,6 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	chatControllerScope.goToTeachersList();
-	isInited=true;
-
 	$scope.pageClass = 'page-contact';
 }]);
 
@@ -97,7 +95,6 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
-	isInited=true;
 
 }]);
 
@@ -651,6 +648,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 						if(parsedData.hasOwnProperty("participants"))
 							$scope.participants = parsedData["participants"];
 						$scope.$apply();
+
 					},
 					error: function(xhr, text_status, error_thrown){
 						if (xhr.status === 0 || xhr.readyState === 0) return;
@@ -706,6 +704,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	};
 	function login(mess_obj)
 	{
+		isInited = true;
 		debugger;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
@@ -717,19 +716,21 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		
 		if(mess_obj.nextWindow == 0)
 		{
-			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
-			{
-				//mess_obj.nextWindow=$scope.currentRoom.roomId;
-				//goToDialog($scope.currentRoom.roomId);
-				changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
-				$scope.showDialogListButton = true;
-				return;
-			}
-			
 			if($rootScope.socketSupport == false)
 			{
 				updateRooms(JSON.parse(mess_obj.chat_rooms));
 			}
+			
+			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
+			{
+				//mess_obj.nextWindow=$scope.currentRoom.roomId;
+			//	goToDialogEvn($scope.currentRoom.roomId);
+				console.log("currentRoom");
+				changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
+				$scope.showDialogListButton = true;
+				return;
+			}
+		
 			$scope.showDialogListButton = true;
 			$scope.goToDialogList();
 			if($location.path() == "/")
@@ -737,7 +738,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 		else
 		{
-			//goToDialog(mess_obj.nextWindow);
+			goToDialogEvn(mess_obj.nextWindow);
 			changeLocation("/dialog_view/" + mess_obj.nextWindow);
 			//$scope.templateName = 'chatTemplate.html';
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
@@ -869,12 +870,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			console.log("chatUserId:"+$scope.chatUserId);
 			updateRooms(message);
 		});
+		
 	};
 
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wsq");
+		chatSocket.init(serverPrefix+"/wsi");
 
 		chatSocket.connect(onConnect, function(error) {
 
@@ -895,6 +897,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				messageError();
 				toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
 			});
+			
 
 
 
