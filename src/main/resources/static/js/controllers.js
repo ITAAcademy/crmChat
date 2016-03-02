@@ -234,7 +234,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof $scope.currentRoom === "undefined")return false;
-		var resultOfChecking = ($scope.roomType == 0) && ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
+		/*
+		 * 
+		 * WHAT?????
+		 */
+		var resultOfChecking = ($scope.roomType == 0) ;//&& ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
 		return resultOfChecking;
 	}
 
@@ -550,6 +554,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.participants = message["participants"];
+		debugger;
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.unshift(message["messages"][i]);

@@ -284,7 +284,8 @@ public class ChatController {
 							e.printStackTrace();
 						}												
 					}
-					response.setResult(str);
+					if(!response.isSetOrExpired())
+						response.setResult(str);
 				}
 				responseList.clear();
 				//System.out.println("processMessage responseBodyQueue:"+responseList.size());
@@ -323,7 +324,8 @@ public class ChatController {
 		
 			System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
-			nextUser.setResult(result);		
+			if(!nextUser.isSetOrExpired())
+				nextUser.setResult(result);		
 		}
 		globalInfoResult.clear();
 
@@ -352,12 +354,12 @@ public class ChatController {
 
 		Long user_id = Long.parseLong(principal.getName(), 10);
 		Long room_id = Long.parseLong(roomid, 10);
-		ChatUser user = chatUsersService.getChatUser(user_id);
-		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
-
-		// getUserLastRoomDate(Room room, ChatUser chatUser) 
-
-		Room room = roomService.getRoom(room_id);
+		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
+		if(struct == null)
+			return;
+		
+		ChatUser user = struct.getUser();
+		Room room = struct.getRoom();
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
@@ -377,8 +379,13 @@ public class ChatController {
 
 		Long user_id = Long.parseLong(principal.getName(), 10);
 		Long room_id = Long.parseLong(roomid, 10);
-		ChatUser user = chatUsersService.getChatUser(user_id);
-		Room room = roomService.getRoom(room_id);
+		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
+		if(struct == null)
+			return;
+		
+		ChatUser user = struct.getUser();
+		Room room = struct.getRoom();
+		
 		if (room == null)
 			return;
 		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){

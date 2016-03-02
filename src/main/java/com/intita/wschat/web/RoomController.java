@@ -233,7 +233,8 @@ public class RoomController {
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
 				try {
-					response.setResult(mapper.writeValueAsString(result));
+					if(!response.isSetOrExpired())
+						response.setResult(mapper.writeValueAsString(result));
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					response.setResult("");
@@ -347,7 +348,8 @@ public class RoomController {
 			for(DeferredResult<String> response : responseList)
 			{
 					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
-					response.setResult(str);
+					if(!response.isSetOrExpired())
+						response.setResult(str);
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
