@@ -285,10 +285,11 @@ public class RoomController {
 	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
-		roomService.register(name, user);
+		Room room = roomService.register(name, user);
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorSubscribe(principal));
-
-		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,true,"ADD ROOM");
+		boolean operationSuccess = true;
+		if (room==null)operationSuccess = false;
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,operationSuccess,"ADD ROOM");
 		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 	}
@@ -367,7 +368,7 @@ public class RoomController {
 		System.out.println(principal.getName());//@LOG@
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser author = chatUserServise.getChatUser(chatUserId);
-		roomService.register(roomName, author);
+		Room room = roomService.register(roomName, author);
 		boolean s = subscribedtoRoomsUsersBuffer.add(author);
 	}
 	/***************************

@@ -80,6 +80,7 @@ public class RoomsService {
 
 	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author) {
+		if (name==null || name.length()==0) return null;
 		Room r = new Room();
 		r.setAuthor(author);
 		r.setName(name);

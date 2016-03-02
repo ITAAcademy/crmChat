@@ -70,7 +70,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	//if(isInited == true)
+	if(isInited == true)
 		chatControllerScope.goToDialog($routeParams.roomId);
 	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 	console.log("initing:"+chatControllerScope.socketSupport);
