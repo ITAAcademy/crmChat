@@ -808,7 +808,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 										}
 								});
 								chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-										var chatUserId = JSON.parse(message.body).username;
+										var chatUserId = JSON.parse(message.body).chatUserId;
 										for(var index in $scope.participants) {
 											if($scope.participants[index].chatUserId == chatUserId) {
 												$scope.participants[index].online = false;
@@ -878,7 +878,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wsq");
 
 		chatSocket.connect(onConnect, function(error) {
 
