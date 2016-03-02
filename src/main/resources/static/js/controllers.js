@@ -70,7 +70,6 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
-	//if(isInited == true)
 		chatControllerScope.goToDialog($routeParams.roomId);
 	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -372,7 +371,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		if (room!=undefined)
 		{
 			$scope.currentRoom = room;
-			$scope.$apply();
+			//$scope.$apply();
 			room.nums = 0;
 			$scope.dialogName = room.string;
 		}
@@ -808,7 +807,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 										}
 								});
 								chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-										var chatUserId = JSON.parse(message.body).chatUserId;
+										var chatUserId = JSON.parse(message.body).username;
 										for(var index in $scope.participants) {
 											if($scope.participants[index].chatUserId == chatUserId) {
 												$scope.participants[index].online = false;
