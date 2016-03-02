@@ -173,7 +173,7 @@ public class RoomController {
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
-		map.put("type", room_o.getType());
+		map.put("type", room_o.getType());//0-add; 1-private; 2-not my
 		return map;
 	}
 	

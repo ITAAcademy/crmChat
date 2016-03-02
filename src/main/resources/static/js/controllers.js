@@ -72,7 +72,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	if(isInited == true)
 		chatControllerScope.goToDialog($routeParams.roomId);
-	chatControllerScope.currentRoom = {roomId: $routeParams.roomId};
+	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 	console.log("initing:"+chatControllerScope.socketSupport);
 	$scope.pageClass = 'page-about';
 
@@ -234,11 +234,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof $scope.currentRoom === "undefined")return false;
-		/*
-		 * 
-		 * WHAT?????
-		 */
-		var resultOfChecking = ($scope.roomType == 0) ;//&& ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
+		var resultOfChecking = ($scope.roomType == 0) && ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
 		return resultOfChecking;
 	}
 
@@ -376,6 +372,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		if (room!=undefined)
 		{
 			$scope.currentRoom = room;
+			$scope.$apply();
 			room.nums = 0;
 			$scope.dialogName = room.string;
 		}
