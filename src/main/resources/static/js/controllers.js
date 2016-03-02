@@ -269,6 +269,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			}).
 			error(function(data, status, headers, config) {
 				$scope.userAddedToRoom = true;
+				toaster.pop('error', "Error","server request timeout",1000);
 			});
 		}
 		$scope.dialogName = '';
@@ -878,7 +879,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wsq");
+		chatSocket.init(serverPrefix+"/wsi");
 
 		chatSocket.connect(onConnect, function(error) {
 
