@@ -304,6 +304,10 @@ public class ChatController {
 		participantRepository.add(principal.getName());
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
+		
+		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test");
+		simpMessagingTemplate.convertAndSend("/topic/chat.login", loginEvent);
+		
 		System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
 	}
@@ -322,8 +326,12 @@ public class ChatController {
 		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
 		
-			System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
+		//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
+			
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), "test");
+			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
+			
 			if(!nextUser.isSetOrExpired())
 				nextUser.setResult(result);		
 		}
