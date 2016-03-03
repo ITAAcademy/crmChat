@@ -329,7 +329,7 @@ public class ChatController {
 		//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
 			
-			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), "test");
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), globalInfoResult.get(nextUser));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 			
 			if(!nextUser.isSetOrExpired())

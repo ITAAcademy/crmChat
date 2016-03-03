@@ -373,7 +373,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		if (room!=undefined)
 		{
 			$scope.currentRoom = room;
-			$scope.$apply();
+			//$scope.$apply();
 			room.nums = 0;
 			$scope.dialogName = room.string;
 		}
@@ -809,7 +809,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 										}
 								});
 								chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-										var chatUserId = JSON.parse(message.body).chatUserId;
+										var chatUserId = JSON.parse(message.body).username;
 										for(var index in $scope.participants) {
 											if($scope.participants[index].chatUserId == chatUserId) {
 												$scope.participants[index].online = false;
@@ -879,7 +879,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
-		chatSocket.init(serverPrefix+"/wsi");
+
+		chatSocket.init(serverPrefix+"/ws");
+
 
 		chatSocket.connect(onConnect, function(error) {
 
