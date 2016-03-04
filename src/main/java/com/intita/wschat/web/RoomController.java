@@ -96,7 +96,6 @@ public class RoomController {
 			Room room;
 			if(user.getRoomsFromUsers().iterator().hasNext()){
 				room = user.getRoomsFromUsers().iterator().next();
-				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
 			}
 			else
 			{
@@ -116,6 +115,7 @@ public class RoomController {
 				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), roomService.getRoomsByChatUser(t_user.getChatUser()));
 			}
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
 
 			
 			result.put("nextWindow", room.getId().toString());
