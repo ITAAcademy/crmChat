@@ -16,6 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import jsonview.Views;
+
+
 /**
  * 
  * @author Zinchuk Roman
@@ -39,6 +44,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@OneToOne(fetch = FetchType.EAGER)
 	private User intitaUser;
 
+	@JsonView(Views.Public.class)
 	@Size(min = 0, max = 50)
 	private String nickName;
 

@@ -1,7 +1,6 @@
 package com.intita.wschat.models;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +17,11 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.metamodel.binding.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity(name="ChatRoom")
@@ -123,9 +124,11 @@ public class Room implements Serializable,Comparable<Room> {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	@JsonIgnore
 	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
 		return chatUserLastRoomDate;
 	}
+	@JsonIgnore
 	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
 		this.chatUserLastRoomDate = chatUserLastRoomDate;
 	}	

@@ -10,10 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotBlank;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import jsonview.Views;
 
 @Entity(name = "chat_user_message")
 public class UserMessage implements Serializable,Comparable<UserMessage>  {
@@ -30,11 +30,13 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 	
 	//@NotBlank
 	@ManyToOne
 	@JsonManagedReference
+	@JsonView(Views.Public.class)
 	private ChatUser author;
 	
 	//@NotBlank
@@ -43,9 +45,11 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	
 	@Size(max=64000)
 	@Column
+	@JsonView(Views.Public.class)
 	private String body;
 	
 	@Column
+	@JsonView(Views.Public.class)
 	private Date date;
 
 	public ChatUser getAuthor() {

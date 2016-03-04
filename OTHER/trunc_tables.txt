@@ -1,6 +1,6 @@
-TRUNCATE TABLE `chat_room_users`
-TRUNCATE TABLE `chat_user_message`
-TRUNCATE TABLE `chat_user_last_room_date`
-TRUNCATE TABLE `chat_room`
+TRUNCATE TABLE `chat_room_users`;
+TRUNCATE TABLE `chat_user_message`;
+TRUNCATE TABLE `chat_user_last_room_date`;
+TRUNCATE TABLE `chat_room`;
 
 

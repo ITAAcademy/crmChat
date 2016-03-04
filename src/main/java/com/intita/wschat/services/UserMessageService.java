@@ -50,6 +50,11 @@ public class UserMessageService {
 		
 		return userMessageRepository.findByRoom(room);
 	}
+	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
+		
+		return userMessageRepository.findByRoom(new Room(roomId));
+	}
+
 	@Transactional
 	public boolean addMessage(ChatUser user, Room room,String body) {
 		if(user == null || room == null || body == null) return false;

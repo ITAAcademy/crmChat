@@ -1,10 +1,8 @@
 package com.intita.wschat.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -20,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -29,7 +25,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,12 +37,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.context.request.async.WebAsyncManager;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.ChatMessage;
@@ -71,6 +66,8 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+
+import jsonview.Views;
 
 /**
  * Controller that handles WebSocket chat messages
@@ -515,4 +512,14 @@ public class ChatController {
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
+	
+	@RequestMapping(value="/get_room_messages", method = RequestMethod.GET)
+	@ResponseBody
+	public String  getRoomMessages(@RequestParam Long roomId) throws JsonProcessingException {
+		 ObjectMapper mapper = new ObjectMapper();
+		    mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+	return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
+	}
+	
+	
 }
