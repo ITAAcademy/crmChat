@@ -51,7 +51,7 @@ public class ChatUserLastRoomDateService {
 	
 	@Transactional
 	public ChatUserLastRoomDate getUserLastRoomDate(Room room, ChatUser chatUser) {
-		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findByRoomAndChatUser(room, chatUser);
+		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, chatUser);
 		if (obj == null)
 		{
 			//LocalDate firstDay_2000 = LocalDate.of(2000, Month.JANUARY, 1);

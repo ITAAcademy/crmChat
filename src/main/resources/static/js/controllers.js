@@ -70,6 +70,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 //	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
+	if(isInited == true)
 		chatControllerScope.goToDialog($routeParams.roomId);
 	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 	console.log("initing:"+chatControllerScope.socketSupport);
@@ -268,6 +269,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			}).
 			error(function(data, status, headers, config) {
 				$scope.userAddedToRoom = true;
+				toaster.pop('error', "Error","server request timeout",1000);
 			});
 		}
 		$scope.dialogName = '';
@@ -877,7 +879,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var initStompClient = function() {
 
 		console.log("initStompClient");
+
 		chatSocket.init(serverPrefix+"/ws");
+
 
 		chatSocket.connect(onConnect, function(error) {
 
