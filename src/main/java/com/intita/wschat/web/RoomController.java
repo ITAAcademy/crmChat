@@ -274,6 +274,7 @@ public class RoomController {
 		{
 			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
 			roomService.addUserToRoom(privateCharUser, room);
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), roomService.getRoomsByChatUser(privateCharUser));
 		}
 		return mapper.writeValueAsString(room.getId());//@BAG@
 
