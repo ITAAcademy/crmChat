@@ -47,6 +47,7 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.RoomsService.StringIntDate;
 import com.intita.wschat.services.UserMessageService;
@@ -58,6 +59,8 @@ import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 @Controller
 public class RoomController {
 	final String DIALOG_NAME_PREFIX = "DIALOG_";
+	
+	
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
