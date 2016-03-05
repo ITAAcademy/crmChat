@@ -248,6 +248,7 @@ public class ChatController {
 	public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
+		if (messageToSave!=null)
 		addMessageToBuffer(roomStr, messageToSave);
 		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
 	}
