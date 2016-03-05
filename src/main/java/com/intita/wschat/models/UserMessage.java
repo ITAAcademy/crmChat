@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -35,11 +38,11 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	
 	//@NotBlank
 	@ManyToOne
+	@NotNull
 	@JsonManagedReference
 	@JsonView(Views.Public.class)
 	private ChatUser author;
 	
-	//@NotBlank
 	@ManyToOne
 	private Room room;
 	

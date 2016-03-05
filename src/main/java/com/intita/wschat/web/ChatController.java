@@ -209,6 +209,7 @@ public class ChatController {
 		chatUser.setNickName(message.getUsername());
 		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		if (messageToSave.getRoom().getName()==null || messageToSave.getBody() == null) return null;
 		//message.setUsername(chatUser.getNickName());
 		return messageToSave;
 
@@ -219,6 +220,7 @@ public class ChatController {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
+		if (messageToSave!=null)
 		addMessageToBuffer(roomStr, messageToSave);
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";

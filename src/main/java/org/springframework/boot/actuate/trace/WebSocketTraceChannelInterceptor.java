@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -105,7 +106,8 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 			//System.out.println("!!!!!!DDDDDDDDDDDDd");
 			if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
 			{
-				throw new IllegalArgumentException("No permission for this topic");
+				//throw new IllegalArgumentException("No permission for this topic");
+				return null;
 			}
 		}
 		return message;
