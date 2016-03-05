@@ -52,6 +52,7 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -63,6 +64,7 @@ import com.intita.wschat.repositories.UserRepository;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -78,7 +80,9 @@ import jsonview.Views;
 
 @Controller
 public class ChatController {
-
+	@Autowired
+	ConfigParamService configParamService;
+	
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -508,7 +512,10 @@ public class ChatController {
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
+		List<ConfigParam> config =  configParamService.getParams();
+
 		addLocolization(model);
+		model.addAttribute("config",ConfigParam.listAsMap(config));
 		return page;
 	}
 
