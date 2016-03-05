@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.zaxxer.hikari.HikariDataSource;
 @Configuration
-@EnableAutoConfiguration
 public class HikariCPConfig {
 	 @Value("${hikari.driverclassname}")
 	    private String driverClassName;

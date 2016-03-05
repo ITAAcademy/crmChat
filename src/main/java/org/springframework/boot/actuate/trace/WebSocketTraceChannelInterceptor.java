@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -16,6 +18,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
@@ -27,6 +31,10 @@ import com.intita.wschat.services.RoomsService;
  *
  * @author Roma
  */
+
+@Configuration
+@Component
+@AutoConfigurationPackage
 public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter {
 
 	@Autowired ChatUsersService chatUsersService;
@@ -55,7 +63,11 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 		private boolean correct;
 	}
 
-	private final TraceRepository traceRepository;
+	private TraceRepository traceRepository;
+	public void setTraceRepository(TraceRepository traceRepository) {
+		this.traceRepository = traceRepository;
+	}
+
 	final String[] mappingStrings = new String[]
 			{//chat mappings
 					"/(*)/chat.message", // 0 - room
@@ -68,11 +80,29 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	public WebSocketTraceChannelInterceptor(TraceRepository traceRepository) {
 		this.traceRepository = traceRepository;
 	}
+	public WebSocketTraceChannelInterceptor() {
+		this.traceRepository = new TraceRepository() {
+			
+			@Override
+			public List<Trace> findAll() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void add(Map<String, Object> traceInfo) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+	}
+	
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor headerAccessor= StompHeaderAccessor.wrap(message);
 		if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
 			Principal userPrincipal = headerAccessor.getUser();
+			//System.out.println("!!!!!!DDDDDDDDDDDDd");
 			if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
 			{
 				throw new IllegalArgumentException("No permission for this topic");

@@ -59,6 +59,7 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
+import com.intita.wschat.repositories.UserRepository;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -490,7 +491,11 @@ public class ChatController {
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpSession session = attr.getRequest().getSession(false);
-		String lg = (String) session.getAttribute("chatLg");
+		String lg;
+		if(session != null)
+			lg = (String) session.getAttribute("chatLg");
+		else
+			lg = "en";
 
 		model.addAttribute("lgPack", langMap.get(lg));
 	}
@@ -515,9 +520,11 @@ public class ChatController {
 	
 	@RequestMapping(value="/get_room_messages", method = RequestMethod.GET)
 	@ResponseBody
-	public String  getRoomMessages(@RequestParam Long roomId) throws JsonProcessingException {
-		 ObjectMapper mapper = new ObjectMapper();
+	public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
 		    mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+		    boolean isAdmin = userService.isAdmin(principal.getName());
+		    if(!isAdmin)
+		    	return null;
 	return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
 	}
 	

@@ -1,4 +1,4 @@
-package org.springframework.boot.actuate.autoconfigure;
+package com.intita.ws;
 
 
 import javax.annotation.PostConstruct;
@@ -10,11 +10,11 @@ import org.springframework.boot.actuate.trace.InMemoryTraceRepository;
 import org.springframework.boot.actuate.trace.TraceRepository;
 import org.springframework.boot.actuate.trace.WebSocketTraceChannelInterceptor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
 import org.springframework.messaging.support.ExecutorSubscribableChannel;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component("cool")
 public class WebSocketTraceChannelInterceptorAutoConfiguration {
 
 	@Value("${management.websocket.trace-inbound:true}")
@@ -29,6 +29,9 @@ public class WebSocketTraceChannelInterceptorAutoConfiguration {
 	@Autowired
 	private ExecutorSubscribableChannel clientOutboundChannel;	
 	
+	@Autowired
+	WebSocketTraceChannelInterceptor interseptor;
+	
 	private TraceRepository traceRepository = new InMemoryTraceRepository();
 	
 	
@@ -40,7 +43,12 @@ public class WebSocketTraceChannelInterceptorAutoConfiguration {
 	
 	@Bean
 	public WebSocketTraceChannelInterceptor webSocketTraceChannelInterceptor() {
-		return  new WebSocketTraceChannelInterceptor(traceRepository);
+		interseptor.setTraceRepository(traceRepository);
+		return  interseptor;
+	}
+	public WebSocketTraceChannelInterceptorAutoConfiguration()
+	{
+		addTraceInterceptor();
 	}
 	
 	@PostConstruct

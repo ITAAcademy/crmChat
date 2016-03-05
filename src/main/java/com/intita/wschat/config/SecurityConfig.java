@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.csrf().disable()
 		//.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
 		.formLogin()
-		.loginPage("/index.html")
+		.loginPage("/")
 		.passwordParameter("password")
 		//.defaultSuccessUrl("/chatFrame.html")
 		.permitAll()
@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 		.antMatchers("/js/**", "/lib/**", "/images/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
-		.anyRequest().permitAll();
+		.anyRequest().authenticated();
 
 		/*
 		 * ATENTION 

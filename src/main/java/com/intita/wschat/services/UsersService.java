@@ -131,6 +131,12 @@ public class UsersService {
 	public User getById(Long id){
 		return usersRepo.findOne(id);
 	}
+	@Transactional
+	public boolean isAdmin(String id){
+		if(usersRepo.findInAdminTable(id) != null)
+			return true;
+		return false;
+	}
 
 }
 
