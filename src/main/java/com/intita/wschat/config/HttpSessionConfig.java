@@ -7,9 +7,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.util.SessionIdGeneratorBase;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 public class HttpSessionConfig extends SessionIdGeneratorBase 
 {
@@ -35,5 +37,6 @@ public class HttpSessionConfig extends SessionIdGeneratorBase
 	
 		return new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), 0);
 	}
+	
 	
 }

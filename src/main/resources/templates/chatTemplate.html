@@ -41,7 +41,7 @@
         		</div>
         	</div>
         	<div class="row">
-       			<div class="form-group row">
+       			<div class="form-group row" id="controlFormGroup">
        			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
       						  <input id="newMessageInput" type="text" class=" col-xs-10 " 	th:placeholder = "${lgPack.lable_message_placeholder}" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>
        						  	<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> --> 
@@ -50,6 +50,10 @@
        						  	<img ng-hide="$parent.messageSended" src="images/ajax_loader_blue_32.gif"/>
        						  	<span th:text="${lgPack.lable_send}" ng-show="$parent.messageSended">Send</span>
        						  	</button>
+                      <form name="uploadfile" id="upload_file_form">
+  <input type="file" name="myfile"/>
+  <input type="submit" value="Загрузить"/>
+</form>
 				</div>
         	</div>
         	</div>

@@ -15,7 +15,6 @@ function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
 
 	for (var item in roomNameMap)
 		if(roomNameMap[item][propertyName]==valueToFind) return item;
-	//debugger;
 	return undefined;
 }
 
@@ -75,6 +74,18 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 	console.log("initing:"+chatControllerScope.socketSupport);
 	$scope.pageClass = 'page-about';
+	// file upload button click reaction
+	debugger
+ angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
+    var input = this.elements.myfile;
+    var file = input.files[0];
+    if (file) {
+      upload($http,file,"upload_file");
+    }
+    return false;
+  }
+  //
+
 
 }]);
 
@@ -309,7 +320,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 	}
 	$scope.goToPrivateDialog = function(intitaUserId) {
-		//debugger;
 		$http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
 		success(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE OK ");
@@ -552,7 +562,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.participants = message["participants"];
-		debugger;
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.unshift(message["messages"][i]);
@@ -638,7 +647,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	}
 
 	function subscribeParticipantsLP(){
-		//debugger;
 		var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
 		$scope.ajaxRequestsForRoomLP.push(
 				$.ajax({
@@ -708,7 +716,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	function login(mess_obj)
 	{
 		isInited = true;
-		debugger;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
 		if(mess_obj.nextWindow == -1)
@@ -966,3 +973,44 @@ springChatControllers.factory('Scopes', function ($rootScope) {
 		}
 	};
 });
+
+
+function upload($http,file,urlpath){
+	var formData=new FormData();
+    formData.append("file",file);
+    $http.post(urlpath, formData, {
+        transformRequest: function(data, headersGetterFunction) {
+            return data;
+        },
+        headers: { 'Content-Type': undefined }
+        }).success(function(data, status) {                       
+
+        }).error(function(data, status) {
+            alert("Error ... " + status);
+        });
+}
+
+/*function upload(file,urlpath) {
+
+  var xhr = new XMLHttpRequest();
+	
+  // обработчик для закачки
+  xhr.upload.onprogress = function(event) {
+    log(event.loaded + ' / ' + event.total);
+  }
+
+  // обработчики успеха и ошибки
+  // если status == 200, то это успех, иначе ошибка
+  xhr.onload = xhr.onerror = function() {
+    if (this.status == 200) {
+      log("success");
+    } else {
+      log("error " + this.status);
+    }
+  };
+
+  xhr.open("POST", urlpath, true);
+  xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+  xhr.send(file);
+
+}*/
