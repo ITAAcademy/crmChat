@@ -22,5 +22,6 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	   List<ChatUser> findFirst10ByIdNotIn(List<Long> users);
 	 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
 	   List<ChatUser> findFirst5ByNickNameNotInAndNickNameLike( List<String> users, String login);
+	   List<ChatUser> findFirst5ByNickNameLike(String nickName);
 	  
 	 }

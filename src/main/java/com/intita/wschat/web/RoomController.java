@@ -89,11 +89,20 @@ public class RoomController {
 	/**********************
 	 * what doing with new auth user 
 	 **********************/
-	@SubscribeMapping("/chat.login/{username}")
-	public Map<String, String> login(Principal principal)//Control user page after auth 
+	@SubscribeMapping("/chat.login/{userId}")
+	public Map<String, String> login(Principal principal, @DestinationVariable("userId") Long userId)//Control user page after auth 
 	{
+		
 		Map<String, String> result = new HashMap<>();
-		ChatUser user = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
+		ChatUser user = chatUserServise.getChatUser(userId);
+		
+		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
+		{
+			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
+			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId().toString()))
+				return null;
+		}
+		
 		if(user.getIntitaUser() == null)
 		{
 			Room room;
@@ -111,7 +120,7 @@ public class RoomController {
 				int k = new Random().nextInt(countTenant.size());
 				ChatTenant t_user = countTenant.get(k);//choose method
 
-				room = roomService.register(t_user.getId() + "_" + principal.getName() + "_" + new Date().toString(), t_user.getChatUser());
+				room = roomService.register(t_user.getId() + "_" + userId + "_" + new Date().toString(), t_user.getChatUser());
 				roomService.addUserToRoom(user, room);
 
 				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
@@ -129,7 +138,7 @@ public class RoomController {
 			result.put("nextWindow", "0");
 		}
 		
-		result.put("chat_id", principal.getName());
+		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
 		String rooms = "{}";
 		try {
@@ -143,10 +152,10 @@ public class RoomController {
 		return result;
 	}
 
-	@RequestMapping(value = "/chat/login/{username}", method = RequestMethod.POST)
+	@RequestMapping(value = "/chat/login/{userId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String retrieveParticipantsLP(Principal principal) throws JsonProcessingException {
-		return mapper.writeValueAsString(login(principal));
+	public String retrieveParticipantsLP(Principal principal, @DestinationVariable("userId") Long userId) throws JsonProcessingException {
+		return mapper.writeValueAsString(login(principal, userId));
 	}
 
 	/***************************
@@ -286,9 +295,19 @@ public class RoomController {
 
 	}
 
-	@SubscribeMapping("/chat/rooms/user.{username}")
-	public List<StringIntDate> getRoomsByAuthorSubscribe(Principal principal) { //000
-		return roomService.getRoomsByChatUser(chatUserServise.getChatUser(Long.parseLong(principal.getName())));
+	@SubscribeMapping("/chat/rooms/user.{userId}")
+	public List<StringIntDate> getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { //000
+		ChatUser user = chatUserServise.getChatUser(userId);
+		 
+		
+		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
+		{
+			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
+			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId().toString()))
+				return null;
+		}
+		
+		return roomService.getRoomsByChatUser(user);
 	}
 
 	@MessageMapping("/chat/rooms/add.{name}")
@@ -296,7 +315,7 @@ public class RoomController {
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		Room room = roomService.register(name, user);
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorSubscribe(principal));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId, getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName())));
 		boolean operationSuccess = true;
 		if (room==null)operationSuccess = false;
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,operationSuccess,"ADD ROOM");

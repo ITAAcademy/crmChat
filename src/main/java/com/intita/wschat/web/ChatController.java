@@ -440,11 +440,12 @@ public class ChatController {
 	@ResponseBody
 	public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
 
-		Set<ChatUser>  users_set = roomService.getRoom(room).getUsers();
 		List<ChatUser> users = new  ArrayList<ChatUser>();
+		Set<ChatUser>  users_set = null;
+		users_set = roomService.getRoom(room).getUsers();
 		users.addAll(users_set);
-
 		users.add(roomService.getRoom(room).getAuthor());
+
 		List<String> room_emails = new  ArrayList<String>();
 		for(int i = 0; i <  users.size(); i++)
 		{
@@ -483,6 +484,24 @@ public class ChatController {
 			if (!nicks.contains(nn))continue;
 			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn);
 			usersData.add(userData);	
+		}
+		return usersData;
+		/*ObjectMapper mapper = new ObjectMapper();
+
+					String jsonInString = mapper.writeValueAsString(nicks);
+					return jsonInString;*/
+	}
+	
+	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
+
+
+		List<ChatUser> nicks = chatUsersService.getChatUsersLike(nickName);
+		
+		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
+		for (ChatUser nick: nicks){
+			usersData.add(new LoginEvent(nick.getId(), nick.getNickName()));
 		}
 		return usersData;
 		/*ObjectMapper mapper = new ObjectMapper();

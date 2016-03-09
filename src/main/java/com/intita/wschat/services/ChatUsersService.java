@@ -71,6 +71,12 @@ public class ChatUsersService {
 
 	}
 	@Transactional
+	public List<ChatUser> getUsersFist5(String nickName, List<String> excludedNicks){
+		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
+		return users;
+
+	}
+	@Transactional
 	public ArrayList<ChatUser> getUsers(){
 		return (ArrayList<ChatUser>) IteratorUtils.toList(chatUsersRepo.findAll().iterator()); // spring рахує сторінки з нуля
 	}
@@ -129,6 +135,10 @@ public class ChatUsersService {
 	@Transactional
 	public void removeUser(Long id){
 		chatUsersRepo.delete(id);
+	}
+	@Transactional
+	public List<ChatUser> getChatUsersLike(String nickName){
+		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
 	}
 	/*public ChatUser getById(Long id){
 		return usersRepo.findOne(id);
