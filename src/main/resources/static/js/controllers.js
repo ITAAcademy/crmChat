@@ -198,12 +198,18 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.chatUserId = chatUserId;
 		$scope.chatUserNickname = chatUserNickName;
 		$scope.searchResultAdmin = "";
-
+		var temp_role = $scope.chatUserRole
+		
 		if($rootScope.socketSupport)
 			initForWS(true);
 		else
 			reInitForLP();
 			
+		$timeout(function () {
+			$scope.chatUserRole = temp_role;
+		}, 2000);
+		
+		
 		$scope.isMyRoom = false;
 	}
 
@@ -756,6 +762,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};
+	
 	$scope.checkRole = function()
 	{
 		debugger;
@@ -763,6 +770,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			return true;
 		return false;
 	}
+	
 	function login(mess_obj)
 	{
 		debugger;
