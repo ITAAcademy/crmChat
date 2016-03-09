@@ -65,7 +65,8 @@ public class FileController {
 	        e.printStackTrace();
 	  
 	    }
-	     String downloadLink = String.format("download_file?owner_id=%1$s&room_id=%2$s&file_name=%3$s",principal.getName(),roomId,orgName);
+	     String hostPart = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
+	     String downloadLink =  hostPart+"/"+ String.format("download_file?owner_id=%1$s&room_id=%2$s&file_name=%3$s",principal.getName(),roomId,orgName);
 	     response.setStatus(HttpServletResponse.SC_OK);
 	     response.setContentLength(downloadLink.length());
 	     response.setContentType("text/plain");
