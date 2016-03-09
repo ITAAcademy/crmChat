@@ -80,7 +80,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
     var input = this.elements.myfile;
     var file = input.files[0];
     if (file) {
-      upload($http,file,"upload_file").success(function(data, status) {                       
+      upload($http,file,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
 		$scope.sendMessage(data);
         });
     }
