@@ -209,7 +209,7 @@ public class ChatController {
 		chatUser.setNickName(message.getUsername());
 		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
-		if (messageToSave.getRoom().getName()==null || messageToSave.getBody() == null) return null;
+		//if (messageToSave.getRoom().getName()==null || messageToSave.getBody() == null) return null;
 		//message.setUsername(chatUser.getNickName());
 		return messageToSave;
 
