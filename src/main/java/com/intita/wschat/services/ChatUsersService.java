@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.ChatUserRepository;
@@ -139,6 +140,13 @@ public class ChatUsersService {
 	@Transactional
 	public List<ChatUser> getChatUsersLike(String nickName){
 		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
+	}
+	
+	@Transactional
+	public ChatUser isMyRoom(String roomId, String userId){
+		ArrayList<Room> roomList = new ArrayList<>();
+		roomList.add(new Room(Long.parseLong(roomId)));
+		return chatUsersRepo.findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(roomList, roomList, Long.parseLong(userId));
 	}
 	/*public ChatUser getById(Long id){
 		return usersRepo.findOne(id);

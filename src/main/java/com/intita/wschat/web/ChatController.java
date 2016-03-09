@@ -141,6 +141,7 @@ public class ChatController {
 
 	public static CurrentStatusUserRoomStruct isMyRoom(String roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
+		
 		Room o_room = chat_room_service.getRoom(Long.parseLong(roomId));
 		if(o_room == null)
 			return null;
@@ -209,25 +210,13 @@ public class ChatController {
 		chatUser.setNickName(message.getUsername());
 		Room room = new Room(Long.parseLong(roomStr));
 		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
-		//if (messageToSave.getRoom().getName()==null || messageToSave.getBody() == null) return null;
-		//message.setUsername(chatUser.getNickName());
 		return messageToSave;
-
 	}
-	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
-		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
-		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-
-		UserMessage messageToSave = filterMessage(roomStr, message, principal);
-		if (messageToSave!=null)
-			addMessageToBuffer(roomStr, messageToSave);
-		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
-		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-		return message;
+	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
+		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		return messageToSave;
 	}
-
+	
 	public void addMessageToBuffer(String room, UserMessage message)
 	{
 		Queue<UserMessage> list = messagesBuffer.get(room);
@@ -241,6 +230,25 @@ public class ChatController {
 		//send message to WS users
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
 		ChatController.addFieldToInfoMap("newMessage", room);
+	}
+
+	
+	@MessageMapping("/{room}/chat.message")
+	public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
+		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		ChatUser r = new ChatUser(Long.parseLong(principal.getName()));//chatUsersService.isMyRoom(roomStr, principal.getName());
+		if(r == null)
+			return null;
+		
+		Room o_room = new Room(Long.parseLong(roomStr));
+		UserMessage messageToSave = filterMessageWithoutFakeObj(r, message, o_room);//filterMessage(roomStr, message, principal);
+		if (messageToSave!=null)
+			addMessageToBuffer(roomStr, messageToSave);
+		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
+		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		return message;
 	}
 
 	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)

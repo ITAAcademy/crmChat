@@ -1,5 +1,6 @@
 package com.intita.wschat.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,5 +24,6 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
 	   List<ChatUser> findFirst5ByNickNameNotInAndNickNameLike( List<String> users, String login);
 	   List<ChatUser> findFirst5ByNickNameLike(String nickName);
+	   ChatUser findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(ArrayList<Room> room, ArrayList<Room> room2, Long user_id);
 	  
 	 }

@@ -210,8 +210,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}, 2000);
 		
 		
-		$scope.isMyRoom = false;
+		//$scope.isMyRoom = false;
 	}
+	
+	$scope.returnToRealUser = function () {
+		$scope.changeUser($scope.realChatUserId, $scope.realChatUserId);
+		$scope.isMyRoom = true;
+	}
+
 
 
 	$scope.showSearchList = function () {
@@ -264,6 +270,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	$scope.searchUserName = "";
 	$scope.chatUserId     = -1;
+	$scope.realChatUserId = -1;
 	$scope.chatUserRole = 0;
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
@@ -955,6 +962,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		console.log("onconnect");
 		$scope.chatUserId = frame.headers['user-name'];
 		initForWS(false);
+		$scope.realChatUserId = $scope.chatUserId; 
 
 
 	};
@@ -980,6 +988,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				login(data);
 				subscribeRoomsUpdateLP();
 				subscribeInfoUpdateLP();
+				$scope.realChatUserId = $scope.chatUserId;
 			}).
 			error(function(data, status, headers, config) {
 				messageError();
