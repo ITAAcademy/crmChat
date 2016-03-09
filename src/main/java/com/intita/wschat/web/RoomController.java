@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -94,6 +95,9 @@ public class RoomController {
 	{
 		
 		Map<String, String> result = new HashMap<>();
+		if(userId == -1)
+			userId = Long.parseLong(principal.getName());
+			
 		ChatUser user = chatUserServise.getChatUser(userId);
 		
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
@@ -154,7 +158,7 @@ public class RoomController {
 
 	@RequestMapping(value = "/chat/login/{userId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String retrieveParticipantsLP(Principal principal, @DestinationVariable("userId") Long userId) throws JsonProcessingException {
+	public String retrieveParticipantsLP(Principal principal, @PathVariable("userId") Long userId) throws JsonProcessingException {
 		return mapper.writeValueAsString(login(principal, userId));
 	}
 

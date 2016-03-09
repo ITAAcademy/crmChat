@@ -26,6 +26,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
+import com.intita.wschat.services.UsersService;
 
 /**
  * {@link ChannelInterceptor} that logs messages to a {@link TraceRepository}.
@@ -38,8 +39,10 @@ import com.intita.wschat.services.RoomsService;
 @AutoConfigurationPackage
 public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter {
 
-	@Autowired ChatUsersService chatUsersService;
-	@Autowired RoomsService roomsService;
+	@Autowired private ChatUsersService chatUsersService;
+	@Autowired private RoomsService roomsService;
+	@Autowired private UsersService userService;
+	
 	private class RegexResult {
 		public RegexResult(){
 
@@ -136,7 +139,16 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 			if (room==null) 
 				return result;
 			
-			if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId()==userId) result.correct=true;   
+			if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId().longValue() == userId.longValue())
+				result.correct=true;
+			else
+			{
+				if(chatUser.getIntitaUser() != null && userService.isAdmin(chatUser.getIntitaUser().getId().toString()))
+				{
+					result.correct=true;
+				}
+			}
+			
 		}
 		return result;
 	}

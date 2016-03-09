@@ -197,7 +197,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.chatUserNickname = chatUserNickName;
 		$scope.searchResultAdmin = "";
 
-		initForWS(true);
+		if($rootScope.socketSupport)
+			initForWS(true);
+		else
+			reInitForLP();
+			
 		
 		$scope.chatUserId = chatUserId;
 		$scope.chatUserNickname = chatUserNickName;
@@ -253,7 +257,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 
 	$scope.searchUserName = "";
-	$scope.chatUserId     = '';
+	$scope.chatUserId     = -1;
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
@@ -334,7 +338,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			$http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format($scope.currentRoom.roomId));
 		}
 
-		$scope.currentRoom = {roomId:-44} ;
+		$scope.currentRoom = {roomId: ''} ;
 	}
 
 	$scope.goToTeachersList = function() {
@@ -745,6 +749,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	};
 	function login(mess_obj)
 	{
+		debugger;
 		isInited = true;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
@@ -821,6 +826,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 	}
 
+	
 	function initForWS(reInit)
 	{
 		lastRoomBindings.push(
@@ -906,6 +912,18 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			updateRooms(message);
 		});
 	}
+	function reInitForLP()
+	{
+		$http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, {message: $scope.newMessage}).
+		success(function(data, status, headers, config) {
+			console.log("LOGIN OK " + data);
+			login(data);
+		}).
+		error(function(data, status, headers, config) {
+			messageError();
+			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+		});
+	}
 
 	var onConnect = function(frame) {
 		console.log("onconnect");
@@ -919,7 +937,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		console.log("initStompClient");
 
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wsq");
 
 
 		chatSocket.connect(onConnect, function(error) {
@@ -930,7 +948,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
-			$http.post(serverPrefix + "/chat/login/login", {message: $scope.newMessage}).
+			$http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, {message: $scope.newMessage}).
 			success(function(data, status, headers, config) {
 				console.log("LOGIN OK " + data);
 				login(data);
