@@ -40,7 +40,7 @@
 	      			</div>
         		</div>
         	</div>
-        	<div class="row">
+        	<div ng-show="isMyRoom" class="row">
        			<div class="form-group row" id="controlFormGroup">
        			  <span><small>You will send this message to <strong>{{sendTo}}</strong> (click a participant name to send a private message)</small></span>
       						  <input id="newMessageInput" type="text" class=" col-xs-10 " 	th:placeholder = "${lgPack.lable_message_placeholder}" placeholder="Write your message and hit enter..." ng-model="$parent.newMessage" ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()"/>

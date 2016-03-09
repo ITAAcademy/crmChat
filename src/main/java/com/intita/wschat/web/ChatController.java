@@ -82,7 +82,7 @@ import jsonview.Views;
 public class ChatController {
 	@Autowired
 	ConfigParamService configParamService;
-	
+
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -120,11 +120,11 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-	
+
 	public static class CurrentStatusUserRoomStruct{
 		private Room room;
 		private ChatUser user;
-		
+
 		public Room getRoom() {
 			return room;
 		}
@@ -138,26 +138,26 @@ public class ChatController {
 			this.user = user;
 		}
 	}
-	
+
 	public static CurrentStatusUserRoomStruct isMyRoom(String roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 		Room o_room = chat_room_service.getRoom(Long.parseLong(roomId));
 		if(o_room == null)
 			return null;
-		
+
 		ChatUser o_user = chat_user_service.getChatUser(principal);
 		if(o_user == null)
 			return null;
-			
+
 		Set<Room> all = o_user.getRoomsFromUsers();
 		all.addAll(o_user.getRootRooms());
-		
+
 		if(!all.contains(o_room))
 			return null;
-		
+
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
 	}
-	
+
 
 	//[TIMEOUTS]
 	/*@Value("${timeouts.message}")
@@ -221,7 +221,7 @@ public class ChatController {
 
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
-		addMessageToBuffer(roomStr, messageToSave);
+			addMessageToBuffer(roomStr, messageToSave);
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
@@ -249,7 +249,7 @@ public class ChatController {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
-		addMessageToBuffer(roomStr, messageToSave);
+			addMessageToBuffer(roomStr, messageToSave);
 		simpMessagingTemplate.convertAndSend(("/topic/" + roomStr + "/chat.message"), message);
 	}
 
@@ -309,10 +309,10 @@ public class ChatController {
 		participantRepository.add(principal.getName());
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
-		
+
 		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test");
 		simpMessagingTemplate.convertAndSend("/topic/chat.login", loginEvent);
-		
+
 		System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
 	}
@@ -330,13 +330,13 @@ public class ChatController {
 		infoMap.clear();
 		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
-		
-		//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
+
+			//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
-			
+
 			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), globalInfoResult.get(nextUser));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
-			
+
 			if(!nextUser.isSetOrExpired())
 				nextUser.setResult(result);		
 		}
@@ -370,7 +370,7 @@ public class ChatController {
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
 		if(struct == null)
 			return;
-		
+
 		ChatUser user = struct.getUser();
 		Room room = struct.getRoom();
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
@@ -395,10 +395,10 @@ public class ChatController {
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
 		if(struct == null)
 			return;
-		
+
 		ChatUser user = struct.getUser();
 		Room room = struct.getRoom();
-		
+
 		if (room == null)
 			return;
 		//public ChatUserLastRoomDate(Long id, Date last_logout, Long last_room){
@@ -494,14 +494,14 @@ public class ChatController {
 					String jsonInString = mapper.writeValueAsString(nicks);
 					return jsonInString;*/
 	}
-	
+
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
 
 
 		List<ChatUser> nicks = chatUsersService.getChatUsersLike(nickName);
-		
+
 		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
 		for (ChatUser nick: nicks){
 			usersData.add(new LoginEvent(nick.getId(), nick.getNickName()));
@@ -525,6 +525,7 @@ public class ChatController {
 
 		model.addAttribute("lgPack", langMap.get(lg));
 	}
+	
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpRequest request, Model model) {
 		authenticationProvider.autorization(authenticationProvider);
@@ -546,16 +547,16 @@ public class ChatController {
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
-	
+
 	@RequestMapping(value="/get_room_messages", method = RequestMethod.GET)
 	@ResponseBody
 	public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
-		    mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-		    boolean isAdmin = userService.isAdmin(principal.getName());
-		    if(!isAdmin)
-		    	return null;
-	return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
+		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+		boolean isAdmin = userService.isAdmin(principal.getName());
+		if(!isAdmin)
+			return null;
+		return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
 	}
-	
-	
+
+
 }

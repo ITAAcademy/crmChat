@@ -77,6 +77,11 @@ public class RoomController {
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	
+	public static class ROLE
+	{
+		public static final int ADMIN = 256;
+	}
+	
 	static final private ObjectMapper mapper = new ObjectMapper();
 
 	private final Queue<ChatUser> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<ChatUser>();// key => roomId
@@ -144,6 +149,14 @@ public class RoomController {
 		
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
+		
+		Integer role = 0;
+		if(user.getIntitaUser() != null && userService.isAdmin(user.getIntitaUser().getId().toString()))
+		{
+			role |= ROLE.ADMIN;
+		}
+		result.put("chat_user_role", role.toString());
+		
 		String rooms = "{}";
 		try {
 			rooms = mapper.writeValueAsString(roomService.getRoomsByChatUser(user));

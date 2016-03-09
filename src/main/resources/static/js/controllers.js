@@ -204,9 +204,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		else
 			reInitForLP();
 			
-		
-		$scope.chatUserId = chatUserId;
-		$scope.chatUserNickname = chatUserNickName;
+		$scope.isMyRoom = false;
 	}
 
 
@@ -260,6 +258,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	$scope.searchUserName = "";
 	$scope.chatUserId     = -1;
+	$scope.chatUserRole = 0;
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
 	$scope.participants = [];
@@ -278,6 +277,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.showDialogListButton = false;
 	$scope.dialogName = '';
 	$scope.searchResultAdmin;
+	$scope.isMyRoom = true;
 
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof $scope.currentRoom === "undefined")return false;
@@ -756,12 +756,21 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};
+	$scope.checkRole = function()
+	{
+		debugger;
+		if($scope.chatUserRole & 256)
+			return true;
+		return false;
+	}
 	function login(mess_obj)
 	{
 		debugger;
 		isInited = true;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
+		$scope.chatUserRole = mess_obj.chat_user_role;
+		
 		if(mess_obj.nextWindow == -1)
 		{
 			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
@@ -946,7 +955,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		console.log("initStompClient");
 
-		chatSocket.init(serverPrefix+"/wsq");
+		chatSocket.init(serverPrefix+"/ws");
 
 
 		chatSocket.connect(onConnect, function(error) {
