@@ -75,13 +75,14 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	console.log("initing:"+chatControllerScope.socketSupport);
 	$scope.pageClass = 'page-about';
 	// file upload button click reaction
-	debugger
  angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
     var input = this.elements.myfile;
-    var file = input.files[0];
-    if (file) {
-      upload($http,file,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
-		$scope.sendMessage("я отправил вам файл", [data]);
+    var files =[];
+    for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
+    	debugger;
+    if (files) {
+      upload($http,files,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
+		$scope.sendMessage("я отправил вам файл", data);
         });
     }
     return false;
@@ -155,7 +156,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		for(var i =0; i < rooms.length; i++){
 			if (rooms[i].roomId==id) return rooms[i];
 		}
-		//debugger;
 		return undefined;
 	}
 
@@ -385,7 +385,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		/*var room = getRoomById($scope.rooms,roomId);
 		if(room!=undefined)
 		$scope.dialogName = room.string;*/
-		//else debugger;
 		//var key = $scope.getRoomId(roomName);
 		//console.log("gotoDialog key:"+key);
 
@@ -480,7 +479,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
 					{
 				var o = JSON.parse(message.body);
-				debugger;
 				loadSubscribeAndMessage(o);
 					}));
 
@@ -766,7 +764,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	
 	$scope.checkRole = function()
 	{
-		debugger;
 		if($scope.chatUserRole & 256)
 			return true;
 		return false;
@@ -774,7 +771,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	
 	function login(mess_obj)
 	{
-		debugger;
 		isInited = true;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
@@ -1052,9 +1048,13 @@ springChatControllers.factory('Scopes', function ($rootScope) {
 });
 
 
-function upload($http,file,urlpath){
+function upload($http,files,urlpath){
+	debugger
 	var formData=new FormData();
-    formData.append("file",file);
+	for (var i = 0; i < files.length; i++){
+		formData.append("file"+i,files[i]);
+	}
+    
      return $http.post(urlpath, formData, {
         transformRequest: function(data, headersGetterFunction) {
             return data;

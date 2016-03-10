@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import utils.RandomString;
 
 @Controller
@@ -30,7 +33,7 @@ public class FileController {
 
 	private final static Logger log = LoggerFactory.getLogger(FileController.class);
 	private final int DEFAULT_FILE_PREFIX_LENGTH = 15;
-	
+	static final private ObjectMapper mapper = new ObjectMapper();
 	 @Value("${crmchat.upload_dir}")
 	 private String uploadDir;
 	@RequestMapping(method = RequestMethod.POST, value = "/upload_file/{roomId}")
@@ -42,7 +45,9 @@ public class FileController {
 		 
 	     //1. get the files from the request object
 	     Iterator<String> itr =  request.getFileNames();
-	 
+	     ArrayList<String> downloadLinks = new ArrayList<String>();
+	     while (itr.hasNext())
+	     {
 	     MultipartFile mpf = request.getFile(itr.next());
 	     System.out.println(mpf.getOriginalFilename() +" uploaded!");
          
@@ -67,18 +72,22 @@ public class FileController {
 	    }
 	     String hostPart = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
 	     String downloadLink =  hostPart+"/"+ String.format("download_file?owner_id=%1$s&room_id=%2$s&file_name=%3$s",principal.getName(),roomId,orgName);
+	     downloadLinks.add(downloadLink);
+	     log.info("downloadLink:"+downloadLink);
+	     }
+	   //
+	     try {
+	     String responseStr = mapper.writeValueAsString(downloadLinks);
 	     response.setStatus(HttpServletResponse.SC_OK);
-	     response.setContentLength(downloadLink.length());
+	     response.setContentLength(responseStr.length());
 	     response.setContentType("text/plain");
 	     response.setCharacterEncoding("UTF-8");
-	     try {
-			response.getWriter().write(downloadLink);
-		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	     log.info("downloadLink:"+downloadLink);
+		 response.getWriter().write(responseStr);
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	     // return downloadLink;
 	    //////
 	}

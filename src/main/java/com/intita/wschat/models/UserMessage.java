@@ -58,7 +58,7 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	@JsonView(Views.Public.class)
 	private String body;
 	
-	@Column
+	
 	@JsonView(Views.Public.class)
 	private ArrayList<String> attachedFiles = new ArrayList<String>();
 	
