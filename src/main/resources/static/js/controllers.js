@@ -81,7 +81,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
     var file = input.files[0];
     if (file) {
       upload($http,file,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
-		$scope.sendMessage(data);
+		$scope.sendMessage("я отправил вам файл", [data]);
         });
     }
     return false;
@@ -480,6 +480,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
 					{
 				var o = JSON.parse(message.body);
+				debugger;
 				loadSubscribeAndMessage(o);
 					}));
 
@@ -555,7 +556,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	/*************************************
 	 * SEND MESSAGE
 	 *************************************/
-	$scope.sendMessage = function(message) {
+	$scope.sendMessage = function(message,attaches) {
 		var textOfMessage;
 			if (message===undefined)textOfMessage = $scope.newMessage;
 			else textOfMessage = message;
@@ -571,7 +572,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				destination = "/app/{0}chat.private.".format($scope.currentRoom.roomId) + $scope.sendTo;
 				$scope.messages.unshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
 			}
-			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:$scope.chatUserNickname}));
+			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:$scope.chatUserNickname,attachedFiles:attaches}));
 
 
 			var myFunc = function(){

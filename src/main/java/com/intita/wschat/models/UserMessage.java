@@ -1,6 +1,7 @@
 package com.intita.wschat.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,10 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.intita.wschat.domain.ChatMessage;
 
 import jsonview.Views;
 
@@ -24,12 +24,19 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	public UserMessage(){
 		this.date= new Date();
 	}
-	public UserMessage(ChatUser author, Room room, String body){	
+	public UserMessage(ChatUser author, Room room, ChatMessage chatMessage){	
 	this.author = author;
 	this.room = room;
-	this.body = body;
+	this.body = chatMessage.getMessage();
 	this.date= new Date();
+	this.attachedFiles = chatMessage.getAttachedFiles();
 	}
+	public UserMessage(ChatUser author, Room room, String body){	
+		this.author = author;
+		this.room = room;
+		this.body = body;
+		this.date= new Date();
+		}
 	
 	@Id
 	@GeneratedValue
@@ -50,6 +57,10 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	@Column
 	@JsonView(Views.Public.class)
 	private String body;
+	
+	@Column
+	@JsonView(Views.Public.class)
+	private ArrayList<String> attachedFiles = new ArrayList<String>();
 	
 	@Column
 	@JsonView(Views.Public.class)
@@ -89,6 +100,12 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	public int compareTo(UserMessage o) {
 		if (o==null)return -1;
 		return this.getId().compareTo(o.getId());
+	}
+	public ArrayList<String> getAttachedFiles() {
+		return attachedFiles;
+	}
+	public void setAttachedFiles(ArrayList<String> attachedFiles) {
+		this.attachedFiles = attachedFiles;
 	}
 	
 	
