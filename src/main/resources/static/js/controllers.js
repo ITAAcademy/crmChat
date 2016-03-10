@@ -1,5 +1,5 @@
 'use strict';
-
+var DEFAULT_FILE_PREFIX_LENGTH = 15;
 /* Controllers */
 function getPropertyByValue(obj, value ) {
 	for( var prop in obj ) {
@@ -17,6 +17,7 @@ function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
 		if(roomNameMap[item][propertyName]==valueToFind) return item;
 	return undefined;
 }
+
 
 
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
@@ -115,6 +116,13 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
+
+$scope.getNameFromUrl=function getNameFromUrl(url){
+	var fileNameSignaturePrefix = "file_name=";
+	var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
+	var endPos= url.length - DEFAULT_FILE_PREFIX_LENGTH;
+	return url.substring(startPos,endPos);
+}
 
 	var serverPrefix = "/crmChat";
 	function changeLocation(url ) {

@@ -38,7 +38,7 @@
 	        		<div ng-repeat="message in messages track by $index">
 	       	 			<small print-message = ""></small>
                  <div ng-repeat="file in message.attachedFiles track by $index">
-                 <a ng-href="{{file}}">link to file</a>>
+                 <a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>>
                  </div>
 	      			</div>
         		</div>
