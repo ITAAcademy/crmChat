@@ -22,7 +22,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
   List<User> findFirst5ByLoginNotInAndLoginLike( List<String> users, String login);
   List<User> findFirst5ByLoginLike(String login);
-  @Query(value = "SELECT * FROM user_admin WHERE id_user = ?1", nativeQuery = true)
+  //
+  @Query(value = "SELECT * FROM user_admin WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
   Object findInAdminTable(String userId);
  
 }
