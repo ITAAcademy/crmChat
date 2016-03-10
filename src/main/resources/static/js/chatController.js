@@ -8,6 +8,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	$scope.messages     = [];
 	$scope.participants = [];
 	$scope.roomType = -1;
+	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.newMessage   = '';
 
 
@@ -61,29 +62,11 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	 * CHANGE ROOM
 	 *************************************/
 	$scope.changeRoom=function(){
+		debugger;
 		$scope.messages=[];
 		console.log("roomId:"+chatControllerScope.currentRoom.roomId);
 		room=chatControllerScope.currentRoom.roomId+'/';
 
-		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
-		if ( !isLastRoomBindingsEmpty ) {
-
-			while (lastRoomBindings.length>0)
-			{
-				var subscription = lastRoomBindings.pop();
-				//if (subscription!=undefined)
-				subscription.unsubscribe();
-			}
-		}
-
-
-		while ($scope.ajaxRequestsForRoomLP.length>0)
-		{
-
-			var subscription = $scope.ajaxRequestsForRoomLP.pop();
-			console.log("cancel ajaxRequestsForRoomLP:"+subscription);
-			subscription.abort();
-		}
 		//debugger;
 		if($rootScope.socketSupport == true)
 		{
@@ -314,15 +297,6 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		});
 	}
 
-
-
-	if(isInited == true)
-		$scope.goToDialog($routeParams.roomId);
-
-	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-
-	$scope.pageClass = 'page-about';
-
 	// file upload button click reaction
 	angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
 		var input = this.elements.myfile;
@@ -348,11 +322,40 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		var resultOfChecking = ($scope.roomType == 0) && (chatControllerScope.chatUserId==chatControllerScope.currentRoom.roomAuthorId);
 		return resultOfChecking;
 	}
+	/*
+	 * 
+	 */
+	
+	if(isInited == true)
+		$scope.goToDialog($routeParams.roomId);
+
+	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
+
+	$scope.pageClass = 'page-about';
 
 	/*
 	 * close event
 	 */
 	$scope.$on('$locationChangeStart', function( event ) {
+		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
+		if ( !isLastRoomBindingsEmpty ) {
+
+			while (lastRoomBindings.length>0)
+			{
+				var subscription = lastRoomBindings.pop();
+				//if (subscription!=undefined)
+				subscription.unsubscribe();
+			}
+		}
+
+
+		while ($scope.ajaxRequestsForRoomLP.length>0)
+		{
+
+			var subscription = $scope.ajaxRequestsForRoomLP.pop();
+			console.log("cancel ajaxRequestsForRoomLP:"+subscription);
+			subscription.abort();
+		}
 		/* var answer = confirm("Are you sure you want to leave this page?")
 	    if (!answer) {
 	        event.preventDefault();

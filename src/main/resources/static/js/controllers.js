@@ -188,7 +188,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
 	$scope.dialogs = [];
-	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
 	$scope.currentRoom		= {roomId:''};
