@@ -361,12 +361,11 @@ public class ChatController {
 	/*
 	 * Go into room
 	 */
+
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
 	public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
-		Long user_id = Long.parseLong(principal.getName(), 10);
-		Long room_id = Long.parseLong(roomid, 10);
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
 		if(struct == null)
 			return;
@@ -390,8 +389,6 @@ public class ChatController {
 	public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
-		Long user_id = Long.parseLong(principal.getName(), 10);
-		Long room_id = Long.parseLong(roomid, 10);
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
 		if(struct == null)
 			return;
@@ -405,7 +402,7 @@ public class ChatController {
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate( room, user);
 		if (last == null)
 		{
-			last = new ChatUserLastRoomDate(user_id, new Date(),room );
+			last = new ChatUserLastRoomDate(user.getId(), new Date(),room );
 			last.setChatUser(user);
 		}
 		else

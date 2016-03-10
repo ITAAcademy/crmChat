@@ -1,30 +1,6 @@
 'use strict';
 
 /* Controllers */
-function getPropertyByValue(obj, value ) {
-	for( var prop in obj ) {
-		if( obj.hasOwnProperty( prop ) ) {
-			if( obj[ prop ] === value )
-				return prop;
-		}
-	}
-}
-
-
-function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
-
-	for (var item in roomNameMap)
-		if(roomNameMap[item][propertyName]==valueToFind) return item;
-	return undefined;
-}
-
-
-var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
-	"send_message_to_user":"SEND_MESSAGE_TO_USER",
-	"add_user_to_room":"ADD_USER_TO_ROOM",
-	"add_room":"ADD_ROOM"});
-
-
 var springChatControllers = angular.module('springChat.controllers', ['toaster','ngRoute', 'ngAnimate','ngResource','ngCookies']);
 springChatControllers.config(function($routeProvider){
 	$routeProvider.when("/chatrooms",
@@ -42,55 +18,16 @@ springChatControllers.config(function($routeProvider){
 		controller: "TeachersListRouteController"
 	});
 	$routeProvider.when("/private_dialog_view/:chatUserId",{
-		templateUrl: "chatTemplate.html",
+		templateUrl: "redirectPage.html",
 		controller: "StrictedDialogRouteController"
 	});
 	$routeProvider.otherwise({redirectTo: '/'});
 	console.log("scope test");
 
 });
-console.log("chatController:"+chatController);
 
 var isInited = false;
-springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
-	Scopes.store('DialogsRouteController', $scope);
-	var chatControllerScope = Scopes.get('ChatController');
-
-//	typeof chatControllerScope.socketSupport!=='undefined'
-	chatControllerScope.goToDialogList();
-	console.log("initing:"+chatControllerScope.socketSupport);
-	$scope.pageClass = 'page-home';
-
-}]);
-
-
-springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
-	Scopes.store('ChatRouteController', $scope);
-	var chatControllerScope = Scopes.get('ChatController');
-//	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
-//	typeof chatControllerScope.socketSupport!=='undefined'
-	if(isInited == true)
-		chatControllerScope.goToDialog($routeParams.roomId);
-	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-	console.log("initing:"+chatControllerScope.socketSupport);
-	$scope.pageClass = 'page-about';
-	// file upload button click reaction
- angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
-    var input = this.elements.myfile;
-    var files =[];
-    for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
-    	debugger;
-    if (files) {
-      upload($http,files,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
-		$scope.sendMessage("я отправил вам файл", data);
-        });
-    }
-    return false;
-  }
-  //
-
-
-}]);
+var serverPrefix = "/crmChat";
 
 springChatControllers.controller('TeachersListRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('TeachersListRouteController', $scope);
@@ -104,11 +41,8 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 springChatControllers.controller('StrictedDialogRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('StrictedDialogRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
-//	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
-	var timeout = 0;
-
-//	typeof chatControllerScope.socketSupport!=='undefined'
-	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
+	//if(isInited == true)
+		chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
 
 }]);
 
@@ -116,7 +50,6 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 
-	var serverPrefix = "/crmChat";
 	function changeLocation(url ) {
 		$location.path(url);
 		console.log("Change location:"+url);
@@ -125,7 +58,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	};
 	//$scope.templateName = null;
 	$rootScope.socketSupport = true;
-	$scope.emails = [];
 
 	var typing = undefined;
 	var addingUserToRoom = undefined;
@@ -136,7 +68,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	var room = "default_room/";
 
 	var room = "1/";
-	var lastRoomBindings = [];
 
 //	Format string
 	if (!String.prototype.format) {
@@ -151,16 +82,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		};
 	}
 
-	function getRoomById(rooms,id){
-
-		for(var i =0; i < rooms.length; i++){
-			if (rooms[i].roomId==id) return rooms[i];
-		}
-		return undefined;
-	}
-
-
-	$scope.show_search_list = false;
+	$scope.emails = [];
 	$scope.show_search_list_admin = false;
 
 	var getEmailsTimer;
@@ -170,49 +92,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.hideSearchList = function () {
 		$timeout(function ()  {$scope.show_search_list = false; $scope.show_search_list_admin = false; }, 200);
 	}
-
-	$scope.showSearchListAdmin = function () {
-
-		$scope.emails = [];
-		$timeout.cancel(getEmailsTimer);
-
-		getEmailsTimer = $timeout(function () {
-			var request = $http({
-				method: "get",
-				url: serverPrefix + "/get_users_nicknames_like_without_room?nickName=" + $scope.searchResultAdmin, 
-				data: null ,
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-			});
-
-			request.success(function (data) {
-				$scope.show_search_list_admin = true;
-				$scope.emails = data;
-			});
-		}, 500);//for click event
-	};
-
-	$scope.changeUser = function (chatUserId, chatUserNickName) {
-
-		$scope.emails = [];
-
-		$scope.chatUserId = chatUserId;
-		$scope.chatUserNickname = chatUserNickName;
-		$scope.searchResultAdmin = "";
-		var temp_role = $scope.chatUserRole
-		
-		if($rootScope.socketSupport)
-			initForWS(true);
-		else
-			reInitForLP();
-			
-		$timeout(function () {
-			$scope.chatUserRole = temp_role;
-		}, 2000);
-		
-		
-		$scope.isMyRoom = false;
-	}
-
 
 	$scope.showSearchList = function () {
 
@@ -241,6 +120,48 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.show_search_list = false;
 
 	}
+	
+	$scope.showSearchListAdmin = function () {
+
+		$scope.emails = [];
+		$timeout.cancel(getEmailsTimer);
+
+		getEmailsTimer = $timeout(function () {
+			var request = $http({
+				method: "get",
+				url: serverPrefix + "/get_users_nicknames_like_without_room?nickName=" + $scope.searchResultAdmin, 
+				data: null ,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			});
+
+			request.success(function (data) {
+				$scope.show_search_list_admin = true;
+				$scope.emails = data;
+			});
+		}, 500);//for click event
+	};
+
+	$scope.changeUser = function (chatUserId, chatUserNickName) {
+
+		$scope.emails = [];
+
+		$scope.chatUserId = chatUserId;
+		$scope.chatUserNickname = chatUserNickName;
+		$scope.searchResultAdmin = "";
+		var temp_role = $scope.chatUserRole
+
+		if($rootScope.socketSupport)
+			initForWS(true);
+		else
+			reInitForLP();
+
+		$timeout(function () {
+			$scope.chatUserRole = temp_role;
+		}, 2000);
+
+
+		$scope.isMyRoom = false;
+	}
 
 
 	var curentDateInJavaFromat = function() {
@@ -267,87 +188,19 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.chatUserRole = 0;
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
-	$scope.participants = [];
 	$scope.dialogs = [];
-	$scope.messages     = [];
 	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.rooms     = [];
 	$scope.roomsCount     = 0;
-	$scope.newMessage   = '';
 	$scope.currentRoom		= {roomId:''};
-	$scope.roomType		= -1;
 	$scope.dialogShow = false;
-	$scope.messageSended = true;
-	$scope.userAddedToRoom = true;
 	$scope.roomAdded = true;
 	$scope.showDialogListButton = false;
-	$scope.dialogName = '';
 	$scope.searchResultAdmin;
 	$scope.isMyRoom = true;
+	$scope.messageSended = true;
+	$scope.userAddedToRoom = true;
 
-	$scope.checkUserAdditionPermission = function(){
-		if (typeof $scope.currentRoom === "undefined")return false;
-		var resultOfChecking = ($scope.roomType == 0) && ($scope.chatUserId==$scope.currentRoom.roomAuthorId);
-		return resultOfChecking;
-	}
-
-
-
-	$scope.addDialog = function() {
-		if ($rootScope.socketSupport){
-			$scope.roomAdded = false;
-			console.log($scope.dialogName)
-			chatSocket.send("/app/chat/rooms/add."+"{0}".format($scope.dialogName), {}, JSON.stringify({}));
-
-			var myFunc = function(){
-				if (angular.isDefined(addingRoom))
-				{
-					$timeout.cancel(addingRoom);
-					addingRoom=undefined;
-				}
-				if ($scope.roomAdded) return;
-				toaster.pop('error', "Error","server request timeout",1000);
-				$scope.roomAdded = true;
-				console.log("!!!!!!!!!!!!!!!!!!!!!Room added");
-
-			};
-			addingRoom = $timeout(myFunc,6000);
-		}
-		//SOcket don't support case
-		else {
-			$http.post(serverPrefix + "/chat/rooms/add", $scope.dialogName).
-			success(function(data, status, headers, config) {
-				console.log("ADD USER OK " + data);
-				$scope.userAddedToRoom = true;
-			}).
-			error(function(data, status, headers, config) {
-				$scope.userAddedToRoom = true;
-				toaster.pop('error', "Error","server request timeout",1000);
-			});
-		}
-		$scope.dialogName = '';
-
-
-	};
-
-	$scope.goToDialogList = function() {
-
-		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom.date) !== undefined )
-			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
-
-		//$scope.templateName = 'dialogsTemplate.html';
-		//changeLocation("/chatrooms")
-		$scope.dialogName = '';
-		if ($rootScope.socketSupport){
-			chatSocket.send("/app/chat.go.to.dialog.list/{0}".format($scope.currentRoom.roomId), {}, JSON.stringify({}));	
-		}
-		else
-		{
-			$http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format($scope.currentRoom.roomId));
-		}
-
-		$scope.currentRoom = {roomId: ''} ;
-	}
 
 	$scope.goToTeachersList = function() {
 
@@ -366,280 +219,31 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		success(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE OK ");
 
-			$scope.goToDialogById(data);
+			//$scope.goToDialogById(data);
+			debugger;
 			$scope.currentRoom.roomId = data;
+			changeLocation("/dialog_view/" + data);
+			
 		}).
 		error(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE FAILD ");
 		});
 	}
 
-
-	$scope.goToDialog = function(roomId) {
-		//console.log("roomName:"+roomName);
-		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
-			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
-
-		//$scope.templateName = 'chatTemplate.html';
-		//changeLocation("/dialog_view")
-		/*var room = getRoomById($scope.rooms,roomId);
-		if(room!=undefined)
-		$scope.dialogName = room.string;*/
-		//var key = $scope.getRoomId(roomName);
-		//console.log("gotoDialog key:"+key);
-
-		$scope.messages     = [];
-		$scope.participants = [];
-		$scope.roomType = -1;	
-
-		goToDialogEvn(roomId);
-
-
-
-	};
-	$scope.goToDialogById = function(roomId) {
-		console.log("roomId:" + roomId);
-		$scope.messages     = [];
-		$scope.participants = [];
-		$scope.roomType = -1;
-
-		goToDialogEvn(roomId);
-
-		if ($scope.currentRoom!==undefined && getRoomById($scope.rooms,$scope.currentRoom) !== undefined )
-			getRoomById($scope.rooms,$scope.currentRoom.roomId).date = curentDateInJavaFromat();
-
-		$scope.templateName = 'chatTemplate.html';
-		$scope.dialogName = "private";
-
-
-	};
-
-	function goToDialogEvn(id)
-	{
-		console.log("goToDialogEvn("+id+")");
-		$scope.currentRoom = {roomId:id};
-		$scope.changeRoom();
-
-		var room = getRoomById($scope.rooms,id);
-		if (room!=undefined)
-		{
-			$scope.currentRoom = room;
-			//$scope.$apply();
-			room.nums = 0;
-			$scope.dialogName = room.string;
-		}
-
-		if ($rootScope.socketSupport){
-			chatSocket.send("/app/chat.go.to.dialog/{0}".format($scope.currentRoom.roomId), {}, JSON.stringify({}));	
-		}
-		else
-		{
-			$http.post(serverPrefix + "/chat.go.to.dialog/{0}".format($scope.currentRoom.roomId));
-		}
-	}
-
-
-	/*************************************
-	 * CHANGE ROOM
-	 *************************************/
-	$scope.changeRoom=function(){
-		$scope.messages=[];
-		console.log("roomId:"+$scope.currentRoom.roomId);
-		room=$scope.currentRoom.roomId+'/';
-
-		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
-		if ( !isLastRoomBindingsEmpty ) {
-
-			while (lastRoomBindings.length>0)
+	function subscribeInfoUpdateLP(){
+		$http.post(serverPrefix+"/chat/global/lp/info")
+		.success(function(data, status, headers, config) {
+			//console.log("infoUpdateLP data:"+data);
+			if(data["newMessage"] != null)//new message in room
 			{
-				var subscription = lastRoomBindings.pop();
-				//if (subscription!=undefined)
-				subscription.unsubscribe();
+				for(var i in data["newMessage"])
+					newMessageEvent(data["newMessage"][i]);
 			}
-		}
-
-
-		while ($scope.ajaxRequestsForRoomLP.length>0)
-		{
-
-			var subscription = $scope.ajaxRequestsForRoomLP.pop();
-			console.log("cancel ajaxRequestsForRoomLP:"+subscription);
-			subscription.abort();
-		}
-
-		if($rootScope.socketSupport == true)
-		{
-			lastRoomBindings.push(
-					chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
-							{
-						$scope.messages.unshift(JSON.parse(message.body));
-
-							}));
-
-			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
-					{
-				var o = JSON.parse(message.body);
-				loadSubscribeAndMessage(o);
-					}));
-
-			lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) 
-					{
-				var o = JSON.parse(message.body);
-				console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			" );
-				console.log(o);
-				$scope.participants = o["participants"];
-					}));
-		}
-		else
-		{
-			console.log('subscribeMessageAndParticipants');
-			subscribeMessageLP();//@LP@
-			subscribeParticipantsLP();
-			loadSubscribeAndMessageLP();
-		}	
-
-		lastRoomBindings.push(
-				chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
-					var parsed = JSON.parse(message.body);
-					if(parsed.username == $scope.chatUserId) return;
-					//$scope.participants[parsed.username].typing = parsed.typing;
-					for(var index in $scope.participants) {
-						var participant = $scope.participants[index];
-
-						if(participant.chatUserId == parsed.username) {
-							$scope.participants[index].typing = parsed.typing;
-							//break;
-						}
-					} 
-				}));
-
-
-		//chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
-	}
-
-	$scope.addUserToRoom=function(){
-		$scope.userAddedToRoom = false;
-		room=$scope.currentRoom.roomId+'/';
-		if($rootScope.socketSupport === true)
-		{
-			chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId,$scope.searchInputValue.email), {}, JSON.stringify({}));
-			var myFunc = function(){
-				if (angular.isDefined(addingUserToRoom))
-				{
-					$timeout.cancel(addingUserToRoom);
-					addingUserToRoom=undefined;
-				}
-				if ($scope.userAddedToRoom) return;
-				toaster.pop('error', "Error","server request timeout",1000);
-				$scope.userAddedToRoom = true;
-
-			};
-			addingUserToRoom = $timeout(myFunc,6000);
-		}
-		else
-		{
-			console.log("$scope.searchInputValue:"+$scope.searchInputValue);
-			$http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId,$scope.searchInputValue.email), {}).
-			success(function(data, status, headers, config) {
-				console.log("ADD USER OK " + data);
-				$scope.userAddedToRoom = true;
-			}).
-			error(function(data, status, headers, config) {
-				$scope.userAddedToRoom = true;
-			});
-		}
-		$scope.searchInputValue.email = '';
-	}
-
-	/*************************************
-	 * SEND MESSAGE
-	 *************************************/
-	$scope.sendMessage = function(message,attaches) {
-		var textOfMessage;
-			if (message===undefined)textOfMessage = $scope.newMessage;
-			else textOfMessage = message;
-
-		function messageError(){
-			toaster.pop('error', "Error","server request timeout",1000);
-		}
-		var destination = "/app/{0}/chat.message".format($scope.currentRoom.roomId);
-		$scope.messageSended = false;
-		if($rootScope.socketSupport == true)
-		{
-			if($scope.sendTo != "everyone") {
-				destination = "/app/{0}chat.private.".format($scope.currentRoom.roomId) + $scope.sendTo;
-				$scope.messages.unshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
-			}
-			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:$scope.chatUserNickname,attachedFiles:attaches}));
-
-
-			var myFunc = function(){
-				if (angular.isDefined(sendingMessage))
-				{
-					$timeout.cancel(sendingMessage);
-					sendingMessage=undefined;
-				}
-				if ($scope.messageSended) return;
-				messageError();
-				$scope.messageSended = true;
-
-			};
-			sendingMessage = $timeout(myFunc,2000);
-		}
-		else
-		{
-
-			$http.post(serverPrefix + "/{0}/chat/message".format($scope.currentRoom.roomId), {message: textOfMessage, username:$scope.chatUserNickname}).
-			success(function(data, status, headers, config) {
-				console.log("MESSAGE SEND OK " + data);
-				$scope.messageSended = true;
-			}).
-			error(function(data, status, headers, config) {
-				messageError();
-				$scope.messageSended = true;
-			});
-		};
-		if (message===undefined)
-		$scope.newMessage = '';
-
-	}
-	/*************************************
-	 * LOAD MESSAGE LP
-	 *************************************/
-
-	function loadSubscribeAndMessage(message)
-	{
-		$scope.participants = message["participants"];
-		$scope.roomType = message["type"];
-		for (var i=0; i< message["messages"].length;i++){
-			$scope.messages.unshift(message["messages"][i]);
-			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
-		}
-	}
-
-	function loadSubscribesOnly(message)
-	{
-		$scope.participants = message["participants"];
-		$scope.roomType = message["type"];
-	}
-	function loadMessagesOnly(message)
-	{
-		$scope.roomType = message["type"];
-		for (var i=0; i< message["messages"].length;i++){
-			$scope.messages.unshift(message["messages"][i]);
-			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
-		}
-	}
-
-	function loadSubscribeAndMessageLP(){
-		$http.post(serverPrefix + "/{0}/chat/participants_and_messages".format($scope.currentRoom.roomId), {}).
-		success(function(data, status, headers, config) {
-			console.log("MESSAGE SEND OK " + data);
-			loadSubscribeAndMessage(data);
-		}).
-		error(function(data, status, headers, config) {
-
+			subscribeInfoUpdateLP();
+		}).error(function errorHandler(data, status, headers, config) {
+			subscribeInfoUpdateLP();
 		});
+
 	}
 
 	/*************************************
@@ -661,81 +265,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 
 	}
-
-
-
-	/*************************************
-	 * UPDATE MESSAGE LP
-	 *************************************/
-	function subscribeMessageLP(){
-		var currentUrl = serverPrefix + "/{0}/chat/message/update".format($scope.currentRoom.roomId);
-		console.log("subscribeMessageLP()");
-		$scope.ajaxRequestsForRoomLP.push(
-				$.ajax({
-					type: "POST",
-					url: currentUrl,
-					success: function(data){
-						var parsedData = JSON.parse(data);
-						for(var index=0; index < parsedData.length; index++) { 
-							if(parsedData[index].hasOwnProperty("message")){
-								$scope.messages.unshift(parsedData[index])
-								console.log("subscribeMessageLP success:"+parsedData[index]);
-							}
-						}
-						$scope.$apply();
-						subscribeMessageLP();			
-					},
-					error: function(xhr, text_status, error_thrown){
-						//if (text_status == "abort")return;
-						if (xhr.status === 0 || xhr.readyState === 0) {
-							return;}
-						subscribeMessageLP();    	
-					}
-				}));
-	}
-
-	function subscribeParticipantsLP(){
-		var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
-		$scope.ajaxRequestsForRoomLP.push(
-				$.ajax({
-					type: "POST",
-					url: currentUrl,
-					success: function(data){
-						console.log("subscribeParticipantsLP:"+data)
-						subscribeParticipantsLP();
-						var parsedData = JSON.parse(data);
-						if(parsedData.hasOwnProperty("participants"))
-							$scope.participants = parsedData["participants"];
-						$scope.$apply();
-
-					},
-					error: function(xhr, text_status, error_thrown){
-						if (xhr.status === 0 || xhr.readyState === 0) return;
-						subscribeParticipantsLP();
-
-					}
-
-
-				}));
-	};
-
-	function subscribeInfoUpdateLP(){
-		$http.post(serverPrefix+"/chat/global/lp/info")
-		.success(function(data, status, headers, config) {
-			//console.log("infoUpdateLP data:"+data);
-			if(data["newMessage"] != null)//new message in room
-			{
-				for(var i in data["newMessage"])
-					newMessageEvent(data["newMessage"][i]);
-			}
-			subscribeInfoUpdateLP();
-		}).error(function errorHandler(data, status, headers, config) {
-			subscribeInfoUpdateLP();
-		});
-
-	}
-
-
 
 	$scope.startTyping = function() {
 		// Don't send notification if we are still typing or we are typing a private message
@@ -761,21 +290,21 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};
-	
+
 	$scope.checkRole = function()
 	{
 		if($scope.chatUserRole & 256)
 			return true;
 		return false;
 	}
-	
+
 	function login(mess_obj)
 	{
 		isInited = true;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
 		$scope.chatUserRole = mess_obj.chat_user_role;
-		
+
 		if(mess_obj.nextWindow == -1)
 		{
 			toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
@@ -798,17 +327,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				$scope.showDialogListButton = true;
 				return;
 			}
-
 			$scope.showDialogListButton = true;
-			$scope.goToDialogList();
+
 			if($location.path() == "/")
 				changeLocation("/chatrooms");
 		}
 		else
 		{
-			goToDialogEvn(mess_obj.nextWindow);
 			changeLocation("/dialog_view/" + mess_obj.nextWindow);
-			//$scope.templateName = 'chatTemplate.html';
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}
 	}
@@ -823,14 +349,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		{
 			$scope.rooms = message;
 		}
-		/*$scope.roomsArray = Object.keys($scope.rooms)
-		.map(function(key) {
-			return $scope.rooms[key];
-		});*/
-
 		$scope.roomsCount = $scope.rooms.length;
-
-
 	}
 
 
@@ -849,76 +368,73 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 	}
 
-	
+
 	function initForWS(reInit)
 	{
-		lastRoomBindings.push(
-				chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
-					var mess_obj = JSON.parse(message.body);
+		chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId)  , function(message) {
+			var mess_obj = JSON.parse(message.body);
 
-					login(mess_obj);
+			login(mess_obj);
 
-					if(reInit == false)
-						$timeout(function ()  {
-							chatSocket.subscribe("/topic/chat.login".format(room), function(message) {
-								var chatUserId = JSON.parse(message.body).chatUserId;
-								for(var index in $scope.participants) {
-									if($scope.participants[index].chatUserId == chatUserId) {
-										$scope.participants[index].online = true;
-										break;
-									}
-								}
-							});
-							chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
-								var chatUserId = JSON.parse(message.body).username;
-								for(var index in $scope.participants) {
-									if($scope.participants[index].chatUserId == chatUserId) {
-										$scope.participants[index].online = false;
-										break;
-									}
-								}
+			if(reInit == false)
+				$timeout(function ()  {
+					chatSocket.subscribe("/topic/chat.login".format(room), function(message) {
+						var chatUserId = JSON.parse(message.body).chatUserId;
+						for(var index in $scope.participants) {
+							if($scope.participants[index].chatUserId == chatUserId) {
+								$scope.participants[index].online = true;
+								break;
+							}
+						}
+					});
+					chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
+						var chatUserId = JSON.parse(message.body).username;
+						for(var index in $scope.participants) {
+							if($scope.participants[index].chatUserId == chatUserId) {
+								$scope.participants[index].online = false;
+								break;
+							}
+						}
 
-							});
+					});
 
-							chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
-								console.log("new message in room:"+message.body);
-								var num = JSON.parse(message.body);
-								newMessageEvent(num);
+					chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) {// event update
+						console.log("new message in room:"+message.body);
+						var num = JSON.parse(message.body);
+						newMessageEvent(num);
+					});
 
-							});
+					chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
+						var operationStatus = JSON.parse(message.body);
+						switch (operationStatus.type){
+						case Operations.send_message_to_all:
+						case Operations.send_message_to_user:
+							$scope.messageSended = true;
+							if (!operationStatus.success)
+								toaster.pop("error", "Error", message.body);
+							break;
+						case Operations.add_user_to_room:
+							$scope.userAddedToRoom = true;
+							if (!operationStatus.success)
+								toaster.pop("error", "Error","user wasn't added to room");
+							break;
+						case Operations.add_room:
+							$scope.roomAdded = true;
+							if (!operationStatus.success)
+								toaster.pop("error", "Error","room wasn't added");
 
-							chatSocket.subscribe("/topic/users/{0}/status".format($scope.chatUserId), function(message) {
-								var operationStatus = JSON.parse(message.body);
-								switch (operationStatus.type){
-								case Operations.send_message_to_all:
-								case Operations.send_message_to_user:
-									$scope.messageSended = true;
-									if (!operationStatus.success)
-										toaster.pop("error", "Error", message.body);
-									break;
-								case Operations.add_user_to_room:
-									$scope.userAddedToRoom = true;
-									if (!operationStatus.success)
-										toaster.pop("error", "Error","user wasn't added to room");
-									break;
-								case Operations.add_room:
-									$scope.roomAdded = true;
-									if (!operationStatus.success)
-										toaster.pop("error", "Error","room wasn't added");
+						}
+//						ZIGZAG OPS
 
-								}
-//								ZIGZAG OPS
+						console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
+					});
 
-								console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
-							});
+					chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
+						toaster.pop('error', "Error", message.body);
+					});
+				}, 1500);
 
-							lastRoomBindings.push(
-									chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {
-										toaster.pop('error', "Error", message.body);
-									}));
-						}, 1500);
-
-				}));
+		});
 
 		/*
 		 * 
@@ -964,7 +480,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 
 		chatSocket.connect(onConnect, function(error) {
-
+			debugger;
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
 			$rootScope.socketSupport = false;
 			/***************************************
@@ -1006,15 +522,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	}
 	function send(destination, data, ok_funk, err_funk)
 	{
-		/*var formData = new FormData();
-
-		// добавить к пересылке ещё пару ключ - значение
-
-		formData.append("username", "username");
-		formData.append("password", "password");
-		 */
-		// отослать
-
 		var xhr = getXmlHttp();
 		xhr.open("POST", serverPrefix + destination, true);
 		xhr.onreadystatechange= function(){
@@ -1054,21 +561,21 @@ function upload($http,files,urlpath){
 	for (var i = 0; i < files.length; i++){
 		formData.append("file"+i,files[i]);
 	}
-    
-     return $http.post(urlpath, formData, {
-        transformRequest: function(data, headersGetterFunction) {
-            return data;
-        },
-        headers: { 'Content-Type': undefined }
-        }).error(function(data, status) {
-            console.log("Error ... " + status);
-        });
+
+	return $http.post(urlpath, formData, {
+		transformRequest: function(data, headersGetterFunction) {
+			return data;
+		},
+		headers: { 'Content-Type': undefined }
+	}).error(function(data, status) {
+		console.log("Error ... " + status);
+	});
 }
 
 /*function upload(file,urlpath) {
 
   var xhr = new XMLHttpRequest();
-	
+
   // обработчик для закачки
   xhr.upload.onprogress = function(event) {
     log(event.loaded + ' / ' + event.total);
