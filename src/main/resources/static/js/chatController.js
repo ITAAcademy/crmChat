@@ -336,6 +336,12 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		}
 		return false;
 	}
+	$scope.getNameFromUrl=function getNameFromUrl(url){
+		var fileNameSignaturePrefix = "file_name=";
+		var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
+		var endPos= url.length - DEFAULT_FILE_PREFIX_LENGTH;
+		return url.substring(startPos,endPos);
+	}
 	
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof chatControllerScope.currentRoom === "undefined")return false;

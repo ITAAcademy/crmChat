@@ -27,3 +27,6 @@ var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"send_message_to_user":"SEND_MESSAGE_TO_USER",
 	"add_user_to_room":"ADD_USER_TO_ROOM",
 	"add_room":"ADD_ROOM"});
+
+var serverPrefix = "/crmChat";
+var DEFAULT_FILE_PREFIX_LENGTH = 15;

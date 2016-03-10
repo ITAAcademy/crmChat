@@ -50,8 +50,9 @@ public class FileController {
 	     {
 	     MultipartFile mpf = request.getFile(itr.next());
 	     System.out.println(mpf.getOriginalFilename() +" uploaded!");
-         
-         String realPathtoUploads =  uploadDir+"\\"+principal.getName()+"\\"+roomId+"\\";
+         String mainDir = ""+roomId;
+         String subDir = principal.getName();
+         String realPathtoUploads =  uploadDir+"\\"+mainDir+"\\"+subDir+"\\";
          File dir = new File(realPathtoUploads);
          boolean exists = dir.exists();
          if(!exists)
@@ -112,7 +113,9 @@ public class FileController {
        // String appPath = context.getRealPath("");
  
         // construct the complete absolute path of the file
-        String fullPath = uploadDir +"\\"+owner_id+"\\"+room_id+"\\"+ file_name;      
+        String mainDir = ""+room_id;
+        String subDir = ""+owner_id;
+        String fullPath = uploadDir +"\\"+mainDir+"\\"+subDir+"\\"+ file_name;      
         File downloadFile = new File(fullPath);
         if (!downloadFile.exists()){
         	log.debug("No such file:"+fullPath);

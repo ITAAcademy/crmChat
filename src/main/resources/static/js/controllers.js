@@ -27,7 +27,6 @@ springChatControllers.config(function($routeProvider){
 });
 
 var isInited = false;
-var serverPrefix = "/crmChat";
 
 springChatControllers.controller('TeachersListRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('TeachersListRouteController', $scope);
