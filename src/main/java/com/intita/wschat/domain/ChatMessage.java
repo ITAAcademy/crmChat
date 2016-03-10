@@ -17,12 +17,14 @@ public class ChatMessage {
 	private String message;
 	private Long chatUserId;
 	private Date date;
+	private ArrayList<String> attachedFiles = new ArrayList<String>();
 	public ChatMessage(){
 		date = new Date();
 	}
 	public ChatMessage(UserMessage usrMsg){
 		this.username = usrMsg.getAuthor().getNickName();
 		this.message = usrMsg.getBody();
+		this.attachedFiles = usrMsg.getAttachedFiles();
 		date = new Date();
 	}
 	
@@ -61,6 +63,12 @@ public class ChatMessage {
 	}
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	public ArrayList<String> getAttachedFiles() {
+		return attachedFiles;
+	}
+	public void setAttachedFiles(ArrayList<String> attachedFiles) {
+		this.attachedFiles = attachedFiles;
 	}
 	
 }

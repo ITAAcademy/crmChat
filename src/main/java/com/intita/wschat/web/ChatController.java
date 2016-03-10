@@ -208,7 +208,7 @@ public class ChatController {
 		ChatUser chatUser = new ChatUser(Long.parseLong(principal.getName()));
 		chatUser.setNickName(message.getUsername());
 		Room room = new Room(Long.parseLong(roomStr));
-		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		UserMessage messageToSave = new UserMessage(chatUser,room,message);
 		//if (messageToSave.getRoom().getName()==null || messageToSave.getBody() == null) return null;
 		//message.setUsername(chatUser.getNickName());
 		return messageToSave;
