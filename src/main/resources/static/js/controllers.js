@@ -41,7 +41,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 	Scopes.store('StrictedDialogRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 	//if(isInited == true)
-		chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
+	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
 
 }]);
 
@@ -119,7 +119,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.show_search_list = false;
 
 	}
-	
+
 	$scope.showSearchListAdmin = function () {
 
 		$scope.emails = [];
@@ -221,7 +221,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			debugger;
 			$scope.currentRoom.roomId = data;
 			changeLocation("/dialog_view/" + data);
-			
+
 		}).
 		error(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE FAILD ");
@@ -377,22 +377,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			if(reInit == false)
 				$timeout(function ()  {
 					chatSocket.subscribe("/topic/chat.login".format(room), function(message) {
+
 						var chatUserId = JSON.parse(message.body).chatUserId;
-						for(var index in $scope.participants) {
-							if($scope.participants[index].chatUserId == chatUserId) {
-								$scope.participants[index].online = true;
-								break;
-							}
-						}
+						$rootScope.$broadcast("login", chatUserId);
 					});
 					chatSocket.subscribe("/topic/chat.logout".format(room), function(message) {
 						var chatUserId = JSON.parse(message.body).username;
-						for(var index in $scope.participants) {
-							if($scope.participants[index].chatUserId == chatUserId) {
-								$scope.participants[index].online = false;
-								break;
-							}
-						}
+						$rootScope.$broadcast("logout", chatUserId);
 
 					});
 

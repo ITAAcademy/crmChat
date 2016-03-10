@@ -4,12 +4,29 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	var chatControllerScope = Scopes.get('ChatController');
 	var lastRoomBindings = [];
 
-
 	$scope.messages     = [];
 	$scope.participants = [];
 	$scope.roomType = -1;
 	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.newMessage   = '';
+	
+	$rootScope.$on("login", function (event, chatUserId) {
+		for(var index in $scope.participants) {
+			if($scope.participants[index].chatUserId == chatUserId) {
+				$scope.participants[index].online = true;
+				break;
+			}
+		}
+	});
+	
+	$rootScope.$on("logout", function (event, chatUserId) {
+		for(var index in $scope.participants) {
+			if($scope.participants[index].chatUserId == chatUserId) {
+				$scope.participants[index].online = false;
+				break;
+			}
+		}
+	});
 
 
 	$scope.goToDialog = function(roomId) {
@@ -316,7 +333,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		var endPos= url.length - DEFAULT_FILE_PREFIX_LENGTH;
 		return url.substring(startPos,endPos);
 	}
-	
+
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof chatControllerScope.currentRoom === "undefined")return false;
 		var resultOfChecking = ($scope.roomType == 0) && (chatControllerScope.chatUserId==chatControllerScope.currentRoom.roomAuthorId);
@@ -325,7 +342,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	/*
 	 * 
 	 */
-	
+
 	if(isInited == true)
 		$scope.goToDialog($routeParams.roomId);
 
