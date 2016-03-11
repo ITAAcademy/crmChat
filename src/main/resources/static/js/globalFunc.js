@@ -7,6 +7,23 @@ function getPropertyByValue(obj, value ) {
 	}
 }
 
+var curentDateInJavaFromat = function() {
+	var currentdate = new Date(); 
+	var day = currentdate.getDate();
+	if (day < "10")
+		day = "0" + day;
+
+	var mouth = (currentdate.getMonth()+1);
+	if (mouth < "10")
+		mouth = "0" + mouth;
+
+	var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
+	day +" " + currentdate.getHours() + ":"  
+	+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
+	//console.log("------------------ " + datetime)
+	return  datetime;
+};
+
 function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
 
 	for (var item in roomNameMap)

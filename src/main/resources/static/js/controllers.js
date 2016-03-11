@@ -117,7 +117,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		console.log("searchInputValue:"+$scope.searchInputValue.email);
 		$scope.searchInputValue.email = value;
 		$scope.show_search_list = false;
-
 	}
 
 	$scope.showSearchListAdmin = function () {
@@ -140,6 +139,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}, 500);//for click event
 	};
 
+	$scope.returnToRealUser = function () {
+		$scope.changeUser($scope.realChatUserId, $scope.realChatUserId);
+		$scope.isMyRoom = true;
+	}
+	
 	$scope.changeUser = function (chatUserId, chatUserNickName) {
 
 		$scope.emails = [];
@@ -163,27 +167,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	}
 
 
-	var curentDateInJavaFromat = function() {
-		var currentdate = new Date(); 
-		var day = currentdate.getDate();
-		if (day < "10")
-			day = "0" + day;
-
-		var mouth = (currentdate.getMonth()+1);
-		if (mouth < "10")
-			mouth = "0" + mouth;
-
-		var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
-		day +" " + currentdate.getHours() + ":"  
-		+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
-		//console.log("------------------ " + datetime)
-		return  datetime;
-	};
-
-
-
 	$scope.searchUserName = "";
 	$scope.chatUserId     = -1;
+	$scope.realChatUserId = -1;
 	$scope.chatUserRole = 0;
 	$scope.chatUserNickname = "";
 	$scope.sendTo       = 'everyone';
@@ -457,6 +443,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		console.log("onconnect");
 		$scope.chatUserId = frame.headers['user-name'];
 		initForWS(false);
+		$scope.realChatUserId = $scope.chatUserId; 
 
 
 	};
@@ -482,6 +469,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				login(data);
 				subscribeRoomsUpdateLP();
 				subscribeInfoUpdateLP();
+				$scope.realChatUserId = $scope.chatUserId;
 			}).
 			error(function(data, status, headers, config) {
 				messageError();
