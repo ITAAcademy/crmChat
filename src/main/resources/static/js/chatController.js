@@ -9,7 +9,8 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	$scope.roomType = -1;
 	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.newMessage   = '';
-	
+	$scope.uploadProgress = 0;
+
 	$rootScope.$on("login", function (event, chatUserId) {
 		for(var index in $scope.participants) {
 			if($scope.participants[index].chatUserId == chatUserId) {
@@ -18,7 +19,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 			}
 		}
 	});
-	
+
 	$rootScope.$on("logout", function (event, chatUserId) {
 		for(var index in $scope.participants) {
 			if($scope.participants[index].chatUserId == chatUserId) {
@@ -321,9 +322,18 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
 		debugger;
 		if (files) {
-			upload($http,files,"upload_file/"+chatControllerScope.currentRoom.roomId).success(function(data, status) {                       
-				$scope.sendMessage("я отправил вам файл", data);
-			});
+			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,function successCallback(data){    
+				$scope.uploadProgress = 0;
+				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
+				 $scope.$apply();
+			},
+			function(event) {
+				console.log(event.loaded + ' / ' + event.total);
+				$scope.uploadProgress = Math.floor((event.loaded/event.total)*100);
+				input.files = [];
+				 $scope.$apply();
+				
+			}) ;
 		}
 		return false;
 	}

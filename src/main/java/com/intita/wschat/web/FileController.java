@@ -40,12 +40,13 @@ public class FileController {
 	@ResponseBody
 	public void saveFile(MultipartHttpServletRequest request,
 			HttpServletResponse response,Principal principal,@PathVariable("roomId") Long roomId) {
-	 
 		//0. notice, we have used MultipartHttpServletRequest
 		 
 	     //1. get the files from the request object
 	     Iterator<String> itr =  request.getFileNames();
 	     ArrayList<String> downloadLinks = new ArrayList<String>();
+	     log.info("hasNext:"+itr.hasNext());
+	   
 	     while (itr.hasNext())
 	     {
 	     MultipartFile mpf = request.getFile(itr.next());

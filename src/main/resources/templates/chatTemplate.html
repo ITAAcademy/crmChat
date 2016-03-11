@@ -64,14 +64,18 @@
 				<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> -->
 				<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
 				<button class="col-xs-2" ng-click="sendMessage()">
-					<img ng-hide="messageSended"
-						src="images/ajax_loader_blue_32.gif" /> <span
-						th:text="${lgPack.lable_send}" ng-show="messageSended">Send</span>
+					<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
+					<span th:text="${lgPack.lable_send}" ng-show="messageSended">Send</span>
 				</button>
 				<form name="uploadfile" enctype="multipart/form-data"
 					id="upload_file_form">
 					<input type="file" multiple="multiple" name="myfile" /> <input
 						type="submit" value="Загрузить" />
+					<div ng-hide="uploadProgress==0" class="progress">
+						<div class="progress-bar progress-bar-striped active"
+							role="progressbar" aria-valuenow="{{uploadProgress}}" aria-valuemin="0"
+							aria-valuemax="100" style="width: {{uploadProgress}}%">{{uploadProgress}}%</div>
+					</div>
 				</form>
 			</div>
 		</div>
