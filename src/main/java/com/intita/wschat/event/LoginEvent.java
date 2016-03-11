@@ -10,12 +10,20 @@ public class LoginEvent {
 
 	private String username;
 	private Long chatUserId;
+	private Long intitaUserId;
 	private Date time;
 	private boolean typing;
 	private String avatar;
 	private int role;
 	private boolean online;
 
+	public Long getIntitaUserId() {
+		return intitaUserId;
+	}
+
+	public void setIntitaUserId(Long intitaUserId) {
+		this.intitaUserId = intitaUserId;
+	}
 	public String getAvatar() {
 		return avatar;
 	}
@@ -47,14 +55,15 @@ public class LoginEvent {
 		typing = false;
 		online = false;
 	}
-	public LoginEvent(Long chatUserId,String username, boolean isOnline) {
+	public LoginEvent(Long intitaUserId, Long chatUserId,String username, boolean isOnline) {
+		this.intitaUserId = intitaUserId;
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
 		online = isOnline;
 	}
-	
+
 	public LoginEvent(Long chatUserId,String username, String avatar) {
 		this.chatUserId=chatUserId;
 		this.username = username;

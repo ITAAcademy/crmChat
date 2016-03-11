@@ -183,13 +183,20 @@ public class RoomController {
 	private Set<LoginEvent> GetParticipants(Room room_o)
 	{
 		Set<LoginEvent> userList = new HashSet<>();
-		//Set<Long> chatUsersIds = new HashSet<>();
-		LoginEvent currentChatUserLoginEvent = new LoginEvent(room_o.getAuthor().getId(),
+		Long intitaId = null;
+		if(room_o.getAuthor().getIntitaUser() != null)
+			intitaId =  room_o.getAuthor().getIntitaUser().getId();
+		
+		LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
 				room_o.getAuthor().getNickName(),  participantRepository.isOnline(room_o.getAuthor().getId().toString()));
 		userList.add(currentChatUserLoginEvent);
 		for(ChatUser user : room_o.getUsers())
 		{
-			userList.add(new LoginEvent(user.getId(),user.getNickName(), participantRepository.isOnline(user.getId().toString())));
+			
+			if(user.getIntitaUser() != null)
+				intitaId =  user.getIntitaUser().getId();
+			
+			userList.add(new LoginEvent(intitaId, user.getId(),user.getNickName(), participantRepository.isOnline(user.getId().toString())));
 		}
 		return  userList;
 	}
