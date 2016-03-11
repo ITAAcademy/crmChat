@@ -42,36 +42,37 @@ function getRoomById(rooms,id){
 /*
  * FILE UPLOAD
  */
-function uploadXhr(files, urlpath, successCallback, onProgress){
+function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress){
 
-	 var xhr = getXmlHttp();
-	
-// обработчик для закачки
-xhr.upload.onprogress = function(event) {
-  //console.log(event.loaded + ' / ' + event.total);
-  onProgress(event);
-}
+	var xhr = getXmlHttp();
 
-// обработчики успеха и ошибки
-// если status == 200, то это успех, иначе ошибка
-xhr.onload = xhr.onerror  = function() {
-  if (this.status == 200) {
-    console.log("SUCCESS:"+xhr.responseText);
-    successCallback(xhr.responseText);
-  } else {
-    console.log("error " + this.status);
-  }
-};
+//	обработчик для закачки
+	xhr.upload.onprogress = function(event) {
+		//console.log(event.loaded + ' / ' + event.total);
+		onProgress(event, xhr.upload.loaded);
+	}
 
-xhr.open("POST", urlpath);
-var boundary = String(Math.random()).slice(2);
-//xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
-var formData=new FormData();
+//	обработчики успеха и ошибки
+//	если status == 200, то это успех, иначе ошибка
+	xhr.onload = xhr.onerror  = function() {
+		if (this.status == 200) {
+			console.log("SUCCESS:"+xhr.responseText);
+			successCallback(xhr.responseText);
+		} else {
+			console.log("error " + this.status);
+			errorCallback(xhr);
+		}
+	};
+
+	xhr.open("POST", urlpath);
+	var boundary = String(Math.random()).slice(2);
+//	xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+	var formData=new FormData();
 
 	for (var i = 0; i < files.length; i++){
 		formData.append("file"+i,files[i]);
 	}
-xhr.send(formData);
+	xhr.send(formData);
 
 }
 
@@ -93,21 +94,21 @@ function upload($http,files,urlpath){
 
 
 function getXmlHttp(){
-		var xmlhttp;
+	var xmlhttp;
+	try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+	} catch (e) {
 		try {
-			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (E) {
-				xmlhttp = false;
-			}
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+			xmlhttp = false;
 		}
-		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-			xmlhttp = new XMLHttpRequest();
-		}
-		return xmlhttp;
 	}
+	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		xmlhttp = new XMLHttpRequest();
+	}
+	return xmlhttp;
+}
 /*function upload(file,urlpath) {
 
 var xhr = new XMLHttpRequest();

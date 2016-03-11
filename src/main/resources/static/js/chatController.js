@@ -322,17 +322,22 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
 		debugger;
 		if (files) {
-			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,function successCallback(data){    
+			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
+					function successCallback(data){    
 				$scope.uploadProgress = 0;
 				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
-				 $scope.$apply();
+				$scope.$apply();
 			},
-			function(event) {
-				console.log(event.loaded + ' / ' + event.total);
-				$scope.uploadProgress = Math.floor((event.loaded/event.total)*100);
-				input.files = [];
-				 $scope.$apply();
-				
+			function(xhr) {
+				$scope.uploadProgress = 0;
+				$scope.$apply();
+				alert("SEND FAILD");
+			},
+			function(event, loaded) {
+				console.log(event.loaded + ' / ' + event.totalSize);
+				$scope.uploadProgress = Math.floor((event.loaded/event.totalSize)*100);
+				$scope.$apply();
+
 			}) ;
 		}
 		return false;

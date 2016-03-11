@@ -215,7 +215,7 @@ public class ChatController {
 		return messageToSave;
 	}
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
-		UserMessage messageToSave = new UserMessage(chatUser,room,message.getMessage());
+		UserMessage messageToSave = new UserMessage(chatUser,room,message);
 		return messageToSave;
 	}
 	
