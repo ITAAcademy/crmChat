@@ -80,11 +80,11 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
     var input = this.elements.myfile;
     var files =[];
     for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
-    	debugger;
+ 
     if (files) {
-      upload($http,files,"upload_file/"+$scope.currentRoom.roomId).success(function(data, status) {                       
-		$scope.sendMessage("я отправил вам файл", data);
-        });
+      uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,function successCallback(data){                    
+		$scope.sendMessage("я отправил вам файл", JSON.parse(data));
+      }) ;
     }
     return false;
   }
@@ -996,22 +996,7 @@ $scope.getNameFromUrl=function getNameFromUrl(url){
 
 		});
 	};
-	function getXmlHttp(){
-		var xmlhttp;
-		try {
-			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (E) {
-				xmlhttp = false;
-			}
-		}
-		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-			xmlhttp = new XMLHttpRequest();
-		}
-		return xmlhttp;
-	}
+	
 	function send(destination, data, ok_funk, err_funk)
 	{
 		/*var formData = new FormData();
@@ -1055,9 +1040,39 @@ springChatControllers.factory('Scopes', function ($rootScope) {
 	};
 });
 
+function uploadXhr(files,urlpath,successCallback){
+
+	 var xhr = getXmlHttp();
+	
+  // обработчик для закачки
+  xhr.upload.onprogress = function(event) {
+    console.log(event.loaded + ' / ' + event.total);
+  }
+
+  // обработчики успеха и ошибки
+  // если status == 200, то это успех, иначе ошибка
+  xhr.onload = xhr.onerror  = function() {
+    if (this.status == 200) {
+      console.log("SUCCESS:"+xhr.responseText);
+      successCallback(xhr.responseText);
+    } else {
+      console.log("error " + this.status);
+    }
+  };
+
+  xhr.open("POST", urlpath);
+  var boundary = String(Math.random()).slice(2);
+  //xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+  var formData=new FormData();
+
+	for (var i = 0; i < files.length; i++){
+		formData.append("file"+i,files[i]);
+	}
+  xhr.send(formData);
+
+}
 
 function upload($http,files,urlpath){
-	debugger
 	var formData=new FormData();
 	for (var i = 0; i < files.length; i++){
 		formData.append("file"+i,files[i]);
@@ -1073,6 +1088,23 @@ function upload($http,files,urlpath){
         });
 }
 
+
+function getXmlHttp(){
+		var xmlhttp;
+		try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try {
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (E) {
+				xmlhttp = false;
+			}
+		}
+		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+			xmlhttp = new XMLHttpRequest();
+		}
+		return xmlhttp;
+	}
 /*function upload(file,urlpath) {
 
   var xhr = new XMLHttpRequest();
