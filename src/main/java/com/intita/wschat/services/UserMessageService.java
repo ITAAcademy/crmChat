@@ -50,7 +50,7 @@ public class UserMessageService {
 		return userMessageRepository.findByRoom(room);
 	}
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
-		return userMessageRepository.findFirst20ByRoomOrderByDateDesc(room);
+		return userMessageRepository.findFirst20ByRoomOrderByIdDesc(room);
 	}
 	
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {

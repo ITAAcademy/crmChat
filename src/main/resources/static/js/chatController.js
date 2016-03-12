@@ -290,7 +290,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		$scope.participants = message["participants"];
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
-			$scope.messages.unshift(message["messages"][i]);
+			$scope.messages.push(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
 		}
 		$scope.message_busy = false;
@@ -329,7 +329,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 			if(data == "")
 				return;
 			
-			for(var index=0; index < data.length; index++) { 
+			for(var index=data.length - 1; index >= 0 ; index--) { 
 				if(data[index].hasOwnProperty("message")){
 					$scope.messages.push(data[index]);
 				}
@@ -343,7 +343,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	}
 
 	// file upload button click reaction
-	angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
+	/*angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
 		var input = this.elements.myfile;
 		var files =[];
 		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
@@ -368,7 +368,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 			}) ;
 		}
 		return false;
-	}
+	}*/
 	$scope.getNameFromUrl=function getNameFromUrl(url){
 		var fileNameSignaturePrefix = "file_name=";
 		var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
