@@ -326,6 +326,9 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE onLOAD OK " + data);
+			if(data == "")
+				return;
+			
 			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
 					$scope.messages.push(data[index]);

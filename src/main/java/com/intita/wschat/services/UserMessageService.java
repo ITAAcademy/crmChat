@@ -50,7 +50,7 @@ public class UserMessageService {
 		return userMessageRepository.findByRoom(room);
 	}
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
-		return userMessageRepository.findFirst20ByRoom(room);
+		return userMessageRepository.findFirst20ByRoomOrderByDateDesc(room);
 	}
 	
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
@@ -89,10 +89,13 @@ public class UserMessageService {
 		return userMessageRepository.findAllByRoomAndDateAfter(room, date);
 	}
 	@Transactional
-	public ArrayList<UserMessage> get10MessagesByRoomDate(Room room, Date date) {
+	public ArrayList<UserMessage> get10MessagesByRoomDateAfter(Room room, Date date) {
 		return userMessageRepository.findFirst10ByRoomAndDateAfter(room, date);
 	}
-	
+	@Transactional
+	public ArrayList<UserMessage> get10MessagesByRoomDateBefore(Room room, Date date) {
+		return userMessageRepository.findFirst10ByRoomAndDateBefore(room, date);
+	}
 
 	@Transactional
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user) {

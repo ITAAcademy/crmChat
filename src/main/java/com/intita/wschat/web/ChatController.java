@@ -213,7 +213,7 @@ public class ChatController {
 		 CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
 			if( struct == null)
 				return null;
-		 ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDate(struct.getRoom(), message.getDate()));
+		 ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDateBefore(struct.getRoom(), message.getDate()));
 		
 		 if(messagesAfter.size() == 0)
 			 return null;
