@@ -45,7 +45,7 @@
 					</ul>
 				</div>
 			</div>
-			<div id="messagesScroll" name="messagesScroll" class="col-xs-8 chat-box">
+			<div id="messagesScroll" name="messagesScroll" class="col-xs-8 chat-box" imagedrop="true" on-image-drop="fileDropped()">
 				<h4 th:text="${lgPack.lable_messages}">Messages</h4>
 				<div class = "testq" infinite-scroll='loadOtherMessages()' infinite-scroll-disabled='message_busy' infinite-scroll-distance='0' infinite-scroll-parent="true" infinite-scroll-container='"#messagesScroll"'>
 					<div ng-repeat="message in messages track by $index">
@@ -72,8 +72,8 @@
 					<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
 					<span th:text="${lgPack.lable_send}" ng-show="messageSended">Send</span>
 				</button>
-				<form name="uploadfile" enctype="multipart/form-data"
-					id="upload_file_form">
+
+				<form name="uploadfile" enctype="multipart/form-data" id="upload_file_form">
 					<input type="file" multiple="multiple" name="myfile" /> <input
 						type="submit" value="Загрузить" />
 
