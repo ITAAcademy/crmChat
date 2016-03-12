@@ -299,7 +299,7 @@ $scope.fileDropped = function(){
 		else
 		{
 
-			$http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), {message: textOfMessage, username:$scope.chatUserNickname}).
+			$http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), {message: textOfMessage, username:$scope.chatUserNickname,attachedFiles:attaches}).
 			success(function(data, status, headers, config) {
 				console.log("MESSAGE SEND OK " + data);
 				chatControllerScope.messageSended = true;
