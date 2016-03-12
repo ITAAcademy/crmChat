@@ -69,6 +69,7 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 
 import jsonview.Views;
 
@@ -203,6 +204,25 @@ public class ChatController {
 			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar()));
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
+	}
+	
+	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") String room, @RequestBody ChatMessage message, Principal principal) throws JsonProcessingException {
+		 System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
+		 CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
+			if( struct == null)
+				return null;
+		 ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDate(struct.getRoom(), message.getDate()));
+		
+		 if(messagesAfter.size() == 0)
+			 return null;
+		 
+		return messagesAfter;
+	/*	CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
+		if( struct == null)
+			return "{}";
+		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));*/
 	}
 
 	public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {

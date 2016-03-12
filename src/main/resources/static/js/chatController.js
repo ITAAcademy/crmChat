@@ -1,5 +1,12 @@
 springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 
+	function messageError(){
+		toaster.pop('error', "Error","server request timeout",1000);
+	}
+	function messageError(mess){
+		toaster.pop('error', "Error", mess, 1000);
+	}
+	
 	Scopes.store('ChatRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 	var lastRoomBindings = [];
@@ -10,6 +17,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	$scope.ajaxRequestsForRoomLP     = [];
 	$scope.newMessage   = '';
 	$scope.uploadProgress = 0;
+	$scope.message_busy = true;
 
 	$rootScope.$on("login", function (event, chatUserId) {
 		for(var index in $scope.participants) {
@@ -232,9 +240,6 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		if (message===undefined)textOfMessage = $scope.newMessage;
 		else textOfMessage = message;
 
-		function messageError(){
-			toaster.pop('error', "Error","server request timeout",1000);
-		}
 		var destination = "/app/{0}/chat.message".format(chatControllerScope.currentRoom.roomId);
 		chatControllerScope.messageSended = false;
 		if($rootScope.socketSupport == true)
@@ -288,6 +293,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 			$scope.messages.unshift(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
 		}
+		$scope.message_busy = false;
 	}
 
 	function loadSubscribesOnly(message)
@@ -312,6 +318,24 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		}).
 		error(function(data, status, headers, config) {
 
+		});
+	}
+	$scope.loadOtherMessages = function () {
+		$scope.message_busy = true;
+		console.log("TRY " + $scope.messages.length);
+		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
+		success(function(data, status, headers, config) {
+			console.log("MESSAGE onLOAD OK " + data);
+			for(var index=0; index < data.length; index++) { 
+				if(data[index].hasOwnProperty("message")){
+					$scope.messages.push(data[index]);
+				}
+			}
+			$scope.message_busy = false;
+		}).
+		error(function(data, status, headers, config) {
+			
+			//messageError("no other message");
 		});
 	}
 
@@ -351,7 +375,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 
 	$scope.checkUserAdditionPermission = function(){
 		if (typeof chatControllerScope.currentRoom === "undefined")return false;
-		var resultOfChecking = ($scope.roomType == 0) && (chatControllerScope.chatUserId==chatControllerScope.currentRoom.roomAuthorId);
+		var resultOfChecking = ($scope.roomType == 0) && (chatControllerScope.chatUserId==chatControllerScope.currentRoom.roomAuthorId) && chatControllerScope.isMyRoom;
 		return resultOfChecking;
 	}
 	/*

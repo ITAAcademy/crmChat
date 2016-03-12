@@ -25,7 +25,7 @@ public class ChatMessage {
 		this.username = usrMsg.getAuthor().getNickName();
 		this.message = usrMsg.getBody();
 		this.attachedFiles = usrMsg.getAttachedFiles();
-		date = new Date();
+		date = usrMsg.getDate();
 	}
 	
 	static public ArrayList<ChatMessage> getAllfromUserMessages (Iterable<UserMessage> userMessages){

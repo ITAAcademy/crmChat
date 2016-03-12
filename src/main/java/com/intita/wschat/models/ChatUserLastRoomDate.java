@@ -28,6 +28,7 @@ public class ChatUserLastRoomDate implements Serializable,Comparable<ChatUserLas
 	
 	@ManyToOne
 	private Room room;
+	
 	private Date last_logout;
 	@ManyToOne
 	private ChatUser chatUser;

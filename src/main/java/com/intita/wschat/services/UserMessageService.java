@@ -47,9 +47,12 @@ public class UserMessageService {
 	}
 	@Transactional
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
-		
 		return userMessageRepository.findByRoom(room);
 	}
+	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
+		return userMessageRepository.findFirst20ByRoom(room);
+	}
+	
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
 		
 		return userMessageRepository.findByRoom(new Room(roomId));
@@ -85,6 +88,10 @@ public class UserMessageService {
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date) {
 		return userMessageRepository.findAllByRoomAndDateAfter(room, date);
 	}
+	@Transactional
+	public ArrayList<UserMessage> get10MessagesByRoomDate(Room room, Date date) {
+		return userMessageRepository.findFirst10ByRoomAndDateAfter(room, date);
+	}
 	
 
 	@Transactional
@@ -101,6 +108,6 @@ public class UserMessageService {
 	public List<UserMessage> getMessagesByNotUser( ChatUser user) {
 		return userMessageRepository.findAllByAuthorNot( user);
 	}
-	
+
 	
 }

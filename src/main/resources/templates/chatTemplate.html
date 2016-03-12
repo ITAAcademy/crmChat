@@ -35,20 +35,24 @@
 							ng-show="participant.typing"></span> <span
 							ng-style="!participant.online ? {color:'red' } : {color:'green'}"
 							class="input-icon fui-user" ng-show="!participant.typing"></span>
-							<a ng-if="participant.intitaUserId != null" class="a_user_nickname" target="_parent" th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}"	>{{participant.username}}</a>
-							<span ng-if="participant.intitaUserId == null" class="a_user_nickname">{{participant.username}}</span>
-							<!--ng-click="privateSending(participant.username)"-->
+							<a ng-if="participant.intitaUserId != null"
+							class="a_user_nickname" target="_parent"
+							th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">{{participant.username}}</a>
+							<span ng-if="participant.intitaUserId == null"
+							class="a_user_nickname">{{participant.username}}</span> <!--ng-click="privateSending(participant.username)"-->
 
 						</li>
 					</ul>
 				</div>
 			</div>
-			<div class="col-xs-8 chat-box">
+			<div id="messagesScroll" name="messagesScroll" class="col-xs-8 chat-box">
 				<h4 th:text="${lgPack.lable_messages}">Messages</h4>
-				<div ng-repeat="message in messages track by $index">
-					<small print-message=""></small>
-					<div ng-repeat="file in message.attachedFiles track by $index">
-						<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
+				<div class = "testq" infinite-scroll='loadOtherMessages()' infinite-scroll-disabled='message_busy' infinite-scroll-distance='0' infinite-scroll-parent="true" infinite-scroll-container='"#messagesScroll"'>
+					<div ng-repeat="message in messages track by $index">
+						<small print-message=""></small>
+						<div ng-repeat="file in message.attachedFiles track by $index">
+							<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -72,11 +76,12 @@
 					id="upload_file_form">
 					<input type="file" multiple="multiple" name="myfile" /> <input
 						type="submit" value="Загрузить" />
-						
+
 					<div ng-hide="uploadProgress==0" class="progress">
 						<div class="progress-bar progress-bar-striped active"
-							role="progressbar" aria-valuenow="{{uploadProgress}}" aria-valuemin="0"
-							aria-valuemax="100" style="width: {{uploadProgress}}%">{{uploadProgress}}%</div>
+							role="progressbar" aria-valuenow="{{uploadProgress}}"
+							aria-valuemin="0" aria-valuemax="100"
+							style="width: {{uploadProgress">{{uploadProgress}}%</div>
 					</div>
 				</form>
 			</div>

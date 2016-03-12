@@ -204,7 +204,7 @@ public class RoomController {
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o) {
 
 		Queue<UserMessage> buff = ChatController.messagesBuffer.get(room_o.getId());
-		ArrayList<UserMessage> userMessages = userMessageService.getUserMessagesByRoom(room_o);
+		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o);
 		if(buff != null)
 			userMessages.addAll(buff);
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
