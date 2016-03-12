@@ -43,7 +43,7 @@
 					</ul>
 				</div>
 			</div>
-			<div class="col-xs-8 chat-box">
+			<div class="col-xs-8 chat-box" imagedrop="true" on-image-drop="fileDropped()">
 				<h4 th:text="${lgPack.lable_messages}">Messages</h4>
 				<div ng-repeat="message in messages track by $index">
 					<small print-message=""></small>
@@ -68,8 +68,8 @@
 					<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
 					<span th:text="${lgPack.lable_send}" ng-show="messageSended">Send</span>
 				</button>
-				<form name="uploadfile" enctype="multipart/form-data"
-					id="upload_file_form">
+
+				<form name="uploadfile" enctype="multipart/form-data" id="upload_file_form">
 					<input type="file" multiple="multiple" name="myfile" /> <input
 						type="submit" value="Загрузить" />
 						

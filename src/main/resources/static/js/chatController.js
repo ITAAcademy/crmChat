@@ -1,5 +1,37 @@
 springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 
+$scope.fileDropped = function(){
+    //Get the file
+    debugger;
+    var files = $scope.uploadedFiles;
+
+    //Upload the image
+    //(Uploader is a service in my application, you will need to create your own)
+   if (files) {
+			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
+					function successCallback(data){    
+				$scope.uploadProgress = 0;
+				debugger;
+				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
+				$scope.$apply();
+			},
+			function(xhr) {
+				$scope.uploadProgress = 0;
+				$scope.$apply();
+				alert("SEND FAILD");
+			},
+			function(event, loaded) {
+				console.log(event.loaded + ' / ' + event.totalSize);
+				$scope.uploadProgress = Math.floor((event.loaded/event.total)*100);
+				$scope.$apply();
+
+			}) ;
+		}
+
+    //Clear the uploaded file
+    $scope.uploadedFile = null;
+};
+
 	Scopes.store('ChatRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 	var lastRoomBindings = [];
