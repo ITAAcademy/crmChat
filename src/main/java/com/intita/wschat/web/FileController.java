@@ -53,7 +53,7 @@ public class FileController {
 			System.out.println(mpf.getOriginalFilename() +" uploaded!");
 			String mainDir = ""+roomId;
 			String subDir = principal.getName();
-			String realPathtoUploads =  uploadDir+"\\"+mainDir+"\\"+subDir+"\\";
+			String realPathtoUploads =  uploadDir+File.separator+mainDir+File.separator+subDir+File.separator;
 			File dir = new File(realPathtoUploads);
 			boolean exists = dir.exists();
 			if(!exists)
@@ -116,7 +116,7 @@ public class FileController {
 		// construct the complete absolute path of the file
 		String mainDir = ""+room_id;
 		String subDir = ""+owner_id;
-		String fullPath = uploadDir +"\\"+mainDir+"\\"+subDir+"\\"+ file_name;      
+		String fullPath = uploadDir +File.separator+mainDir+File.separator+subDir+File.separator+ file_name;      
 		File downloadFile = new File(fullPath);
 		if (!downloadFile.exists()){
 			log.debug("No such file:"+fullPath);
