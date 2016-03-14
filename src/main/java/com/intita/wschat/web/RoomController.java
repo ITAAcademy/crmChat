@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -60,7 +62,7 @@ import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 @Controller
 public class RoomController {
 	final String DIALOG_NAME_PREFIX = "DIALOG_";
-	
+	private final static Logger log = LoggerFactory.getLogger(RoomController.class);
 	
 	@Autowired private ProfanityChecker profanityFilter;
 
@@ -264,7 +266,15 @@ public class RoomController {
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
-			Room room_o = roomService.getRoom(Long.parseLong(key));
+			Long longKey = 0L;
+			try{
+				longKey = Long.parseLong(key);
+			}
+			catch(NumberFormatException e){
+				log.info("Participants update error:"+e.getMessage());
+				return;
+			}
+			Room room_o = roomService.getRoom(longKey);
 			HashMap<String, Object> result = new HashMap();
 			if(room_o != null)
 				result.put("participants", GetParticipants(room_o));

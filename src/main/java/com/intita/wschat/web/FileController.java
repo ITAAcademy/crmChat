@@ -80,8 +80,9 @@ public class FileController {
 		//
 		try {
 			String responseStr = mapper.writeValueAsString(downloadLinks);
+			byte[] byteOfResponse = responseStr.getBytes("UTF-8");
 			response.setStatus(HttpServletResponse.SC_OK);
-			response.setContentLength(responseStr.length());
+			response.setContentLength(byteOfResponse.length);
 			response.setContentType("text/plain");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(responseStr);
@@ -112,7 +113,6 @@ public class FileController {
 		// get absolute path of the application
 		ServletContext context = request.getServletContext();
 		// String appPath = context.getRealPath("");
-
 		// construct the complete absolute path of the file
 		String mainDir = ""+room_id;
 		String subDir = ""+owner_id;
