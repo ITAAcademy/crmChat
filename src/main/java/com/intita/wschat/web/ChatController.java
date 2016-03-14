@@ -141,7 +141,7 @@ public class ChatController {
 		}
 	}
 
-	@Transactional public static CurrentStatusUserRoomStruct isMyRoom(String roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
+	 public static CurrentStatusUserRoomStruct isMyRoom(String roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 		
 		Room o_room = chat_room_service.getRoom(Long.parseLong(roomId));
@@ -196,7 +196,7 @@ public class ChatController {
 	 *******************/
 	@RequestMapping(value = "/chat/users", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public String getUsers(Principal principal) throws JsonProcessingException {
+	 public String getUsers(Principal principal) throws JsonProcessingException {
 
 		Page<User> pageUsers = userService.getUsers(1, 15);
 		Set<LoginEvent> userList = new HashSet<>();
@@ -209,7 +209,7 @@ public class ChatController {
 	
  @RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") String room, @RequestBody ChatMessage message, Principal principal) throws JsonProcessingException {
+	 public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") String room, @RequestBody ChatMessage message, Principal principal) throws JsonProcessingException {
 		 System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
 		 CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
 			if( struct == null)
@@ -226,7 +226,7 @@ public class ChatController {
 		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));*/
 	}
 
- @Transactional public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {
+  public UserMessage filterMessage( String roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, chatUsersService, roomService);//Control room from LP
 		if(struct == null)
 			return null;
@@ -259,7 +259,7 @@ public class ChatController {
 
 	
 	@MessageMapping("/{room}/chat.message")
-	@Transactional public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
+	 public ChatMessage filterMessageWS(@DestinationVariable("room") String roomStr, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, chatUsersService, roomService);//Control room from LP
@@ -282,7 +282,7 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
+	 public void filterMessageLP(@PathVariable("room") String roomStr,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
@@ -294,7 +294,7 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
+	 public DeferredResult<String> updateMessageLP(@PathVariable("room") String room) throws JsonProcessingException {
 		Long timeOut = 1000000000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
@@ -309,7 +309,7 @@ public class ChatController {
 	}
 
 	@Scheduled(fixedDelay=600L)
-	@Transactional public void processMessage(){
+	 public void processMessage(){
 
 		for(String roomId : messagesBuffer.keySet())
 		{
@@ -342,7 +342,7 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/global/lp/info", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
+	 public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
 
 		Long timeOut = 10000L;
 		participantRepository.add(principal.getName());
@@ -357,7 +357,7 @@ public class ChatController {
 	}
 
 	@Scheduled(fixedDelay=5000L)
-	@Transactional public void processGlobalInfo(){
+	 public void processGlobalInfo(){
 		String result;
 		try {
 			result = mapper.writeValueAsString(infoMap);
@@ -384,7 +384,7 @@ public class ChatController {
 	}
 	//NOT TEST!!!
 	@MessageMapping("/{room}/chat.private.{username}")
-	@Transactional public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
+	 public void filterPrivateMessage(@DestinationVariable String room,@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
 		checkProfanityAndSanitize(message);
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
@@ -402,7 +402,7 @@ public class ChatController {
 	 */
 
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
-	@Transactional public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	 public void userGoToDialogListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
@@ -417,7 +417,7 @@ public class ChatController {
 	}
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public void userGoToDialogListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+	 public void userGoToDialogListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
 		userGoToDialogListener(roomid, principal);
 	}
 
@@ -425,7 +425,7 @@ public class ChatController {
 	 * Out from room
 	 */
 	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
-	@Transactional public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
+	 public void userGoToDialogListListener(@DestinationVariable("roomId") String roomid, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomid, principal, chatUsersService, roomService);
@@ -452,7 +452,7 @@ public class ChatController {
 	}
 	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional public void userGoToDialogListListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
+	 public void userGoToDialogListListenerLP(@PathVariable("roomId") String roomid, Principal principal) {
 
 		userGoToDialogListListener(roomid, principal);
 	}
@@ -477,7 +477,7 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
+	 public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
 
 		List<ChatUser> users = new  ArrayList<ChatUser>();
 		Set<ChatUser>  users_set = null;
@@ -501,7 +501,7 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_nicknames_like", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional public Set<LoginEvent>  getNickNamesLike(@RequestParam String nickName, @RequestParam Long room) throws JsonProcessingException {
+	 public Set<LoginEvent>  getNickNamesLike(@RequestParam String nickName, @RequestParam Long room) throws JsonProcessingException {
 
 		Set<ChatUser>  users_set = roomService.getRoom(room).getChatUsers();
 		List<ChatUser> users = new  ArrayList<ChatUser>();
@@ -533,7 +533,7 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
+	 public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
 
 
 		List<ChatUser> nicks = chatUsersService.getChatUsersLike(nickName);
@@ -549,7 +549,7 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
-	@Transactional public void addLocolization(Model model)
+	 public void addLocolization(Model model)
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpSession session = attr.getRequest().getSession(false);
@@ -563,13 +563,13 @@ public class ChatController {
 	}
 	
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	@Transactional public String  getIndex(HttpRequest request, Model model) {
+	 public String  getIndex(HttpRequest request, Model model) {
 		authenticationProvider.autorization(authenticationProvider);
 		addLocolization(model);
 		return "index";
 	}
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
-	@Transactional public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
+	 public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		List<ConfigParam> config =  configParamService.getParams();
 
@@ -580,13 +580,13 @@ public class ChatController {
 
 	@MessageExceptionHandler
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	@Transactional public String handleProfanity(TooMuchProfanityException e) {
+	 public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
 
 	@RequestMapping(value="/get_room_messages", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
+	 public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
 		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 		boolean isAdmin = userService.isAdmin(principal.getName());
 		if(!isAdmin)
