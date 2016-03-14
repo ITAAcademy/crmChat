@@ -49,6 +49,8 @@ public class RoomsService {
 
 	@Transactional
 	public Room getRoom(Long id){
+		if(id < 0)
+			return null;
 		return roomRepo.findOne(id);
 	}
 

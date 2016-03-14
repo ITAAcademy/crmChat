@@ -39,19 +39,22 @@ public class ChatUsersService {
 		//register("user", "user", "user");
 
 	}
-	
+
 	@Transactional
 	public ChatUser getChatUser(Principal principal){
 		if (principal==null)return null;
 		String chatUserIdStr = principal.getName();
 		Long chatUserId = 0L;
-				try{
-					chatUserId = Long.parseLong(chatUserIdStr);
-				}
-		catch(NumberFormatException e){
-		System.out.println(e);
-		return null;
+		try{
+			chatUserId = Long.parseLong(chatUserIdStr);
 		}
+		catch(NumberFormatException e){
+			System.out.println(e);
+			return null;
+		}
+		if(chatUserId < 0)
+			return null;
+		
 		ChatUser user = getChatUser(chatUserId);
 		return user;
 	}
@@ -141,7 +144,7 @@ public class ChatUsersService {
 	public List<ChatUser> getChatUsersLike(String nickName){
 		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
 	}
-	
+
 	@Transactional
 	public ChatUser isMyRoom(String roomId, String userId){
 		ArrayList<Room> roomList = new ArrayList<>();

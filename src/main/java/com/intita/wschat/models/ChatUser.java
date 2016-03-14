@@ -52,13 +52,13 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	private ChatTenant chatUser;
 
 
-	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<Room> rooms = new HashSet<>();
 
-	@OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	public Set<Room> getRootRooms() {
 		return rooms;

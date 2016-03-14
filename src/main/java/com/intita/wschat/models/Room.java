@@ -52,7 +52,7 @@ public class Room implements Serializable,Comparable<Room> {
 	@ManyToOne
 	private ChatUser author;
 	
-	@OneToMany(mappedBy = "room")
+	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 	
 //	@OneToMany
