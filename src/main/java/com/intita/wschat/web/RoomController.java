@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -530,4 +531,19 @@ public class RoomController {
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
+	 @MessageExceptionHandler(MessageDeliveryException.class)
+		public String handleMessageDeliveryException(MessageDeliveryException e) {
+			log.error("MessageDeliveryException handler executed");
+			return e.getMessage();
+		}
+	 @MessageExceptionHandler(NumberFormatException.class)
+		public String handleMessageNumberFormatException(Exception ex) {
+			log.error("NumberFormatException handler executed");
+			return "NumberFormatException handler executed";
+		}
+	 @MessageExceptionHandler(Exception.class)
+		public String handleMessageException(Exception ex) {
+			log.error("NumberFormatException handler executed");
+			return "NumberFormatException handler executed";
+		}
 }

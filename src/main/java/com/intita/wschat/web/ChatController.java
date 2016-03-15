@@ -21,6 +21,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -601,6 +602,21 @@ public class ChatController {
 			return null;
 		return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
 	}
+	 @MessageExceptionHandler(MessageDeliveryException.class)
+		public String handleMessageDeliveryException(MessageDeliveryException e) {
+			//log.error("MessageDeliveryException handler executed");
+			return "MessageDeliveryException handler executed";
+		}
+	 @MessageExceptionHandler(NumberFormatException.class)
+		public String handleNumberFormatException(Exception ex) {
+			//logger.error("NumberFormatException handler executed");
+			return "NumberFormatException handler executed";
+		}
+	 @MessageExceptionHandler(Exception.class)
+		public String handleMessageException(Exception ex) {
+			//log.error("NumberFormatException handler executed");
+			return "NumberFormatException handler executed";
+		}
 
 
 }

@@ -134,7 +134,14 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 			if (chatUser==null) 
 				return result;
 			
-			Room room = roomsService.getRoom(Long.parseLong(roomStr));
+			Room room =  null;
+			try{
+				room = roomsService.getRoom(Long.parseLong(roomStr));
+				
+			}
+			catch(NumberFormatException e){
+				return result;
+			}
 			
 			if (room==null) 
 				return result;
