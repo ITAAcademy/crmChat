@@ -220,15 +220,15 @@ public class RoomController {
 	}
 	
 	@SubscribeMapping("/{room}/chat.participants")
-	 public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") String room) {//ONLY FOR TEST NEED FIX
+	 public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room) {//ONLY FOR TEST NEED FIX
 
-		Room room_o = roomService.getRoom(Long.parseLong(room));
+		Room room_o = roomService.getRoom(room);
 		return retrieveParticipantsSubscribeAndMessagesObj(room_o);
 	}
 
 	@MessageMapping("/{room}/chat.participants")
-	 public Map<String, Object> retrieveParticipantsMessage(@DestinationVariable String room) {
-		Room room_o = roomService.getRoom(Long.parseLong(room));
+	 public Map<String, Object> retrieveParticipantsMessage(@DestinationVariable Long room) {
+		Room room_o = roomService.getRoom(room);
 		HashMap<String, Object> map = new HashMap();
 		if(room_o != null)
 			map.put("participants", GetParticipants(room_o));
@@ -237,7 +237,7 @@ public class RoomController {
 
 	@RequestMapping(value = "/{room}/chat/participants_and_messages", method = RequestMethod.POST)
 	@ResponseBody
-	 public String retrieveParticipantsAndMessagesLP(@PathVariable("room") String room, Principal principal) throws JsonProcessingException {
+	 public String retrieveParticipantsAndMessagesLP(@PathVariable("room") Long room, Principal principal) throws JsonProcessingException {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
@@ -246,7 +246,7 @@ public class RoomController {
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
 	@ResponseBody
-	 public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") String room, Principal principal) throws JsonProcessingException {
+	 public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") Long room, Principal principal) throws JsonProcessingException {
 
 		Long timeOut = 100000000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
@@ -258,7 +258,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
 		if(struct != null)
 		{
-			responseBodyQueueForParticipents.put(room, queue);		
+			responseBodyQueueForParticipents.put(room.toString(), queue);		
 			queue.add(result);
 		}
 		return result;
@@ -308,9 +308,9 @@ public class RoomController {
 
 	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
 	@ResponseBody
-	 public String getPrivateRoom( @PathVariable("userID") String userId, Principal principal) throws JsonProcessingException {
+	 public String getPrivateRoom( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
 
-		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(Long.parseLong(userId), false);
+		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
 		if(privateCharUser == null)
 			return "-1";
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
@@ -443,9 +443,9 @@ public class RoomController {
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
 
-	 boolean addUserToRoomFn( String nickName, String room, Principal principal,boolean ws)
+	 boolean addUserToRoomFn( String nickName, Long room, Principal principal,boolean ws)
 	{
-		Room room_o = roomService.getRoom(Long.parseLong(room));
+		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
@@ -459,14 +459,14 @@ public class RoomController {
 		subscribedtoRoomsUsersBuffer.add(user_o);
 		updateParticipants();
 		
-		simpMessagingTemplate.convertAndSend("/topic/" + room + "/chat.participants", retrieveParticipantsMessage(room));
+		simpMessagingTemplate.convertAndSend("/topic/" + room.toString() + "/chat.participants", retrieveParticipantsMessage(room));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
 		return true;
 	}
 
 
 	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
-	 public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") String room, Principal principal) {
+	 public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") Long room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
 		//System.out.println(login);//@LOG@
@@ -492,8 +492,8 @@ public class RoomController {
 	}
 
 	@RequestMapping(value = "/chat/rooms.{room}/user.add.{nickName}", method = RequestMethod.POST)
-	 public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") String roomStr, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
-		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomStr, principal,false));
+	 public 	@ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId, @PathVariable("nickName") String nickName, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomId, principal,false));
 	}
 
 	/*****************

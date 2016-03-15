@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -27,6 +32,9 @@ import jsonview.Views;
  */
 @Entity(name="chat_user")
 public class ChatUser implements Serializable,Comparable<ChatUser> {
+	@Autowired
+    private SessionFactory factory;
+	
 	@OneToMany(mappedBy = "chatUser")
 	List<ChatUserLastRoomDate> chatUserLastRoomDate;
 
@@ -52,14 +60,15 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	private ChatTenant chatUser;
 
 
-	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Room> rooms = new HashSet<>();
 
-	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Room> roomsFromUsers = new HashSet<>();
+	
 	public Set<Room> getRootRooms() {
 		return rooms;
 	}
