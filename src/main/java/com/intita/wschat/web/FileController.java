@@ -52,6 +52,19 @@ public class FileController {
 		while (itr.hasNext())
 		{
 			MultipartFile mpf = request.getFile(itr.next());
+			boolean fileIsEmpty = mpf.getSize() == 0;
+			if (fileIsEmpty)
+			{
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			
+				try {
+					response.getWriter().write("Error, file is empty !");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return;
+			}
 			System.out.println(mpf.getOriginalFilename() +" uploaded!");
 			String mainDir = ""+roomId;
 			String subDir = principal.getName();

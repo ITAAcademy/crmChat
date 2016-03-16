@@ -25,7 +25,7 @@ $scope.fileDropped = function(){
 			function(xhr) {
 				$scope.uploadProgress = 0;
 				$scope.$apply();
-				alert("SEND FAILD");
+				alert("SEND FAILD:"+xhr.response);
 			},
 			function(event, loaded) {
 				console.log(event.loaded + ' / ' + event.totalSize);
@@ -390,7 +390,7 @@ $scope.fileDropped = function(){
 			function(xhr) {
 				$scope.uploadProgress = 0;
 				$scope.$apply();
-				alert("SEND FAILD");
+				alert("SEND FAILD:"+xhr);
 			},
 			function(event, loaded) {
 				console.log(event.loaded + ' / ' + event.totalSize);
