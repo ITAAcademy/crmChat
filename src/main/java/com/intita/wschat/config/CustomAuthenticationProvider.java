@@ -67,7 +67,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				String IntitaId = null;
 				String IntitaLg = "en";
 				String ChatId = null;
-				if(array != null)
+				/*if(array != null)
 					for(Cookie cook : array)
 					{
 						if(cook.getName().equals("JSESSIONID"))
@@ -94,14 +94,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 							}
 							break;
 						}
-					}
+					}*/
 				Long intitaIdLong = null;
-				try{
+				/*try{
 						intitaIdLong = Long.parseLong(IntitaId);
 				}
 				catch(NumberFormatException e){
 				log.info(e.getMessage());
-				}
+				}*/
 				if(intitaIdLong != null)
 					ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong , true).getId().toString();
 				else
