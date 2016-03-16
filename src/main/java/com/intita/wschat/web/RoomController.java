@@ -100,6 +100,7 @@ public class RoomController {
 	 * what doing with new auth user 
 	 **********************/
 	@SubscribeMapping("/chat.login/{userId}")
+	@Transactional
 	 public Map<String, String> login(Principal principal, @DestinationVariable("userId") Long userId)//Control user page after auth 
 	{
 		
