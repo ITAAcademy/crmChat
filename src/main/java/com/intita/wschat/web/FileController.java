@@ -25,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.util.Transliterator;
 
+import javassist.Translator;
 import utils.RandomString;
 
 @Controller
@@ -138,8 +140,9 @@ public class FileController {
 
 		// set headers for the response
 		String headerKey = "Content-Disposition";
-		String headerValue = String.format("attachment; filename=\"%s\"",
-				deRandomizeFileName(file_name));
+		
+		String headerValue = String.format("attachment; filename='%s\'",
+				deRandomizeFileName(Transliterator.transliterate(downloadFile.getName())));
 		response.setHeader(headerKey, headerValue);
 
 		// get output stream of the response
