@@ -8,6 +8,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -32,6 +34,7 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RedisService;
 import com.intita.wschat.util.SerializedPhpParser;
 import com.intita.wschat.util.SerializedPhpParser.PhpObject;
+import com.intita.wschat.web.FileController;
 
 import java.security.Principal;
 
@@ -46,7 +49,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 	@Value("${redis.id}")
 	private String redisId;
-
+	private final static Logger log = LoggerFactory.getLogger(CustomAuthenticationProvider.class);
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -92,9 +95,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 							break;
 						}
 					}
-
-				if(IntitaId != null)
-					ChatId = chatUserServise.getChatUserFromIntitaId(Long.parseLong(IntitaId), true).getId().toString();
+				Long intitaIdLong = null;
+				try{
+						intitaIdLong = Long.parseLong(IntitaId);
+				}
+				catch(NumberFormatException e){
+				log.info(e.getMessage());
+				}
+				if(intitaIdLong != null)
+					ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong , true).getId().toString();
 				else
 				{
 					Object obj_s = session.getAttribute("chatId");
