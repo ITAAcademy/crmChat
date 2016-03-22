@@ -204,7 +204,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			console.log("PRIVATE ROOM CREATE OK ");
 
 			//$scope.goToDialogById(data);
-			debugger;
 			$scope.currentRoom.roomId = data;
 			changeLocation("/dialog_view/" + data);
 
@@ -222,6 +221,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			{
 				for(var i in data["newMessage"])
 					newMessageEvent(data["newMessage"][i]);
+			}
+			if (data["newGuestRoom"] != null){
+				changeLocation("dialog_view/"+data["newGuestRoom"]);
 			}
 			subscribeInfoUpdateLP();
 		}).error(function errorHandler(data, status, headers, config) {
@@ -397,6 +399,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 							$scope.roomAdded = true;
 							if (!operationStatus.success)
 								toaster.pop("error", "Error","room wasn't added");
+							break;
+						case Operations.add_room_on_login:
+							debugger;
+							changeLocation("dialog_view/"+operationStatus.description);
+							break;
+						case Operations.add_room_from_tenant:
+							//changeLocation("dialog_view/"+operationStatus.description);
+							break;
 
 						}
 //						ZIGZAG OPS
@@ -448,6 +458,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	};
 
+
 	var initStompClient = function() {
 
 		console.log("initStompClient");
@@ -456,7 +467,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 
 		chatSocket.connect(onConnect, function(error) {
-			debugger;
 			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
 			$rootScope.socketSupport = false;
 			/***************************************

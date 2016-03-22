@@ -136,6 +136,10 @@ public class RoomController {
 
 				room = roomService.register(t_user.getId() + "_" + userId + "_" + new Date().toString(), t_user.getChatUser());
 				roomService.addUserToRoom(user, room);
+				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+				String subscriptionStr = "/topic/users/" + t_user.getChatUser().getId() + "/status";
+				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+				ChatController.addFieldToInfoMap("newGuestRoom", room.getId());
 
 				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
 				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
@@ -311,7 +315,7 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
 	@ResponseBody
 	 public String getPrivateRoom( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
-
+		log.info("getPrivateRoom");
 		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
 		if(privateCharUser == null)
 			return "-1";
@@ -330,8 +334,12 @@ public class RoomController {
 			roomService.addUserToRoom(privateCharUser, room);
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(), roomService.getRoomsByChatUser(chatUser));
 			if (chatUser.getId()!=privateCharUser.getId())
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), roomService.getRoomsByChatUser(privateCharUser));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), roomService.getRoomsByChatUser(privateCharUser));	
+			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_FROM_TENANT,true,""+room.getId());
+			String subscriptionStr = "/topic/users/" + userId + "/status";
+			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 		}
+		
 		return mapper.writeValueAsString(room.getId());//@BAG@
 
 	}
@@ -540,7 +548,7 @@ public class RoomController {
 	 @MessageExceptionHandler(NumberFormatException.class)
 		public String handleMessageNumberFormatException(Exception ex) {
 			log.error("NumberFormatException handler executed");
-			return "NumberFormatException handler executed";
+			return "NumberFormatException handler executed:"+ex.getMessage();
 		}
 	 @MessageExceptionHandler(Exception.class)
 		public String handleMessageException(Exception ex) {

@@ -8,7 +8,7 @@ public class OperationStatus {
 		this.type = type;
 	}
 	public enum OperationType {NONE,SEND_MESSAGE_TO_ALL,SEND_MESSAGE_TO_USER,ADD_USER_TO_ROOM,
-		ADD_ROOM}
+		ADD_ROOM,ADD_ROOM_FROM_TENANT,ADD_ROOM_ON_LOGIN}
 	public OperationStatus(){
 		
 	}

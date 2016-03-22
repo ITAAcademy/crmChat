@@ -140,7 +140,7 @@ xhr.send(file);
 var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
 	"send_message_to_user":"SEND_MESSAGE_TO_USER",
 	"add_user_to_room":"ADD_USER_TO_ROOM",
-	"add_room":"ADD_ROOM"});
+	"add_room":"ADD_ROOM","add_room_from_tenant":"ADD_ROOM_FROM_TENANT","add_room_on_login":"ADD_ROOM_ON_LOGIN"});
 
 var serverPrefix = "/crmChat";
 var DEFAULT_FILE_PREFIX_LENGTH = 15;
