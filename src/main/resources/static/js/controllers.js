@@ -456,26 +456,31 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 
 		chatSocket.connect(onConnect, function(error) {
-			debugger;
-			toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error);
-			$rootScope.socketSupport = false;
 			/***************************************
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
-			$http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, {message: $scope.newMessage}).
-			success(function(data, status, headers, config) {
-				console.log("LOGIN OK " + data);
-				login(data);
-				subscribeRoomsUpdateLP();
-				subscribeInfoUpdateLP();
-				$scope.realChatUserId = $scope.chatUserId;
-			}).
-			error(function(data, status, headers, config) {
-				messageError();
-				toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
-			});
-
+			if(isInited == false)
+			{
+				$rootScope.socketSupport = false;
+				
+				$http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, {message: $scope.newMessage}).
+				success(function(data, status, headers, config) {
+					console.log("LOGIN OK " + data);
+					login(data);
+					subscribeRoomsUpdateLP();
+					subscribeInfoUpdateLP();
+					$scope.realChatUserId = $scope.chatUserId;
+				}).
+				error(function(data, status, headers, config) {
+					messageError();
+					toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
+				});
+			}else
+				{
+					toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error, 99999);
+					changeLocation("/");
+				}
 
 
 

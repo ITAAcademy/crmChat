@@ -268,6 +268,8 @@ $scope.fileDropped = function(){
 	 * SEND MESSAGE
 	 *************************************/
 	$scope.sendMessage = function(message,attaches) {
+		if(!chatControllerScope.messageSended)
+			return;
 		var textOfMessage;
 		if (message===undefined)textOfMessage = $scope.newMessage;
 		else textOfMessage = message;
