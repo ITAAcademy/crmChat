@@ -51,7 +51,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	function changeLocation(url ) {
 		$location.path(url);
-		console.log("Change location:"+url);
+		console.log("Change location:"+$location.path());
 		// $scope.$apply();
 
 	};
@@ -223,7 +223,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					newMessageEvent(data["newMessage"][i]);
 			}
 			if (data["newGuestRoom"] != null){
-				changeLocation("dialog_view/"+data["newGuestRoom"]);
+				$scope.currentRoom.roomId = data["newGuestRoom"];
+				changeLocation("/dialog_view/"+data["newGuestRoom"]);
 			}
 			subscribeInfoUpdateLP();
 		}).error(function errorHandler(data, status, headers, config) {
@@ -401,8 +402,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 								toaster.pop("error", "Error","room wasn't added");
 							break;
 						case Operations.add_room_on_login:
-							debugger;
+							$timeout(function(){
 							changeLocation("dialog_view/"+operationStatus.description);
+							}, 1000);
+							
+							
 							break;
 						case Operations.add_room_from_tenant:
 							//changeLocation("dialog_view/"+operationStatus.description);
