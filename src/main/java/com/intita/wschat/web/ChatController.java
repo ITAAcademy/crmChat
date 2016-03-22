@@ -356,7 +356,7 @@ public class ChatController {
 		globalInfoResult.put(result,principal.getName());
 
 		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test");
-		simpMessagingTemplate.convertAndSend("/topic/chat.login", loginEvent);
+		simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
 
 		System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
