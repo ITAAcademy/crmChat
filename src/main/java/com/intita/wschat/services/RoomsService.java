@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -167,7 +168,7 @@ public class RoomsService {
 
 		List<ChatUserLastRoomDate> rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);	
 
-		List<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
+		Set<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
 
 		for (int i = 0; i < rooms_lastd.size() ; i++)
 		{
@@ -178,10 +179,8 @@ public class RoomsService {
 			{
 				Date m_data = msg.getDate();
 				//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
-				if (m_data != null)
-					if (m_data.after(date) == true &&
-					msg.getRoom().getId() == 
-					entry.getRoom().getId())
+				if (m_data != null && msg.getRoom() != null)
+					if (m_data.after(date) == true && msg.getRoom().getId() == 	entry.getRoom().getId())
 					{
 						messages_cnt += 1;
 					}

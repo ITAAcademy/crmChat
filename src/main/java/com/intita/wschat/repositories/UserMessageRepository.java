@@ -3,6 +3,7 @@ package com.intita.wschat.repositories;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,6 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  ArrayList<UserMessage> findAllByRoomAndDateAfter(Room room, Date date);
 	  ArrayList<UserMessage> findAllByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);
 	  List<UserMessage> findAllByDateAfterAndAuthorNot( Date date, ChatUser user);
-	  List<UserMessage> findAllByAuthorNot(  ChatUser user);
+	  Set<UserMessage> findAllByAuthorNot(ChatUser user);
 	  ArrayList<UserMessage> findAllByDateAfter(Date date);
 }

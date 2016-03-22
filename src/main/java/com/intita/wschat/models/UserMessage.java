@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.intita.wschat.domain.ChatMessage;
@@ -48,9 +51,11 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	@NotNull
 	@JsonManagedReference
 	@JsonView(Views.Public.class)
+	@NotFound(action=NotFoundAction.IGNORE)
 	private ChatUser author;
 	
 	@ManyToOne
+	@NotFound(action=NotFoundAction.IGNORE)
 	private Room room;
 	
 	@Size(max=64000)
