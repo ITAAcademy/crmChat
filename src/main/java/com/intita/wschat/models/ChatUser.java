@@ -38,13 +38,6 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@OneToMany(mappedBy = "chatUser")
 	List<ChatUserLastRoomDate> chatUserLastRoomDate;
 
-	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
-		return chatUserLastRoomDate;
-	}
-	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
-		this.chatUserLastRoomDate = chatUserLastRoomDate;
-	}
-
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -75,6 +68,13 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 
 	public Set<Room> getRoomsFromUsers() {
 		return roomsFromUsers;
+	}
+
+	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
+		return chatUserLastRoomDate;
+	}
+	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
+		this.chatUserLastRoomDate = chatUserLastRoomDate;
 	}
 
 	@Override

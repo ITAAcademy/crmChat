@@ -304,7 +304,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				updateRooms(JSON.parse(mess_obj.chat_rooms));
 			}
 
-			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '')
+			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1)
 			{
 				//mess_obj.nextWindow=$scope.currentRoom.roomId;
 				//	goToDialogEvn($scope.currentRoom.roomId);

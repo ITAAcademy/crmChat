@@ -110,7 +110,7 @@ public class ChatUsersService {
 		ChatUser tempChatUser = chatUsersRepo.findOneByIntitaUser(currentUser);
 		if(tempChatUser == null )
 		{
-			tempChatUser = register(currentUser.getLogin(), currentUser);
+			tempChatUser = register(currentUser.getNickName(), currentUser);
 		}
 		return tempChatUser;
 	}

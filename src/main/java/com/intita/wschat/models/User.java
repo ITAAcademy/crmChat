@@ -58,6 +58,9 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	@Column(name="avatar")
 	private String avatar;
 	
+	@Column(name="nickname")
+	private String nickname;
+	
 	@Column(name="role")
 	private int role;
 	  //private Permissions permission=Permissions.PERMISSIONS_USER;
@@ -187,6 +190,13 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 		@Override
 		public String getUsername() {
 			return getLogin();
+		}
+		
+		public String getNickName() {
+			if(nickname.isEmpty())
+				return getLogin();
+			
+			return nickname;
 		}
 
 		public ChatUser getChatUser() {
