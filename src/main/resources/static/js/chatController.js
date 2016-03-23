@@ -1,4 +1,4 @@
-springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
 
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
@@ -75,19 +75,17 @@ $scope.fileDropped = function(){
 		if (chatControllerScope.currentRoom!==undefined && getRoomById($scope.rooms,chatControllerScope.currentRoom) !== undefined )
 			getRoomById($scope.rooms,chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
 
-		goToDialogEvn(roomId);
+		return goToDialogEvn(roomId);
 	};
 
 	$scope.goToDialogById = function(roomId) {
 		console.log("roomId:" + roomId);
-		goToDialogEvn(roomId);
-
-		if (chatControllerScope.currentRoom!==undefined && getRoomById($scope.rooms,chatControllerScope.currentRoom) !== undefined )
+		return goToDialogEvn(roomId).then(function(){
+			if (chatControllerScope.currentRoom!==undefined && getRoomById($scope.rooms,chatControllerScope.currentRoom) !== undefined )
 			getRoomById($scope.rooms,chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
-
-		$scope.templateName = 'chatTemplate.html';
-		$scope.dialogName = "private";
-
+	});
+		//$scope.templateName = 'chatTemplate.html';
+		//$scope.dialogName = "private";
 
 	};
 
@@ -96,7 +94,7 @@ $scope.fileDropped = function(){
 		console.log("goToDialogEvn("+id+")");
 		chatControllerScope.currentRoom = {roomId:id};
 		$scope.changeRoom();
-
+		var deferred = $q.defer();
 		var room = getRoomById($scope.rooms,id);
 		if (room!=undefined)
 		{
@@ -107,12 +105,14 @@ $scope.fileDropped = function(){
 		}
 
 		if ($rootScope.socketSupport){
-			chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));	
+			chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
+			deferred.resolve(true);
 		}
 		else
 		{
-			$http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));
+			deferred = $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));
 		}
+		return deferred;
 	}
 
 
@@ -420,11 +420,12 @@ $scope.fileDropped = function(){
 	 */
 
 	if(isInited == true)
-		$scope.goToDialog($routeParams.roomId);
-
+		$scope.goToDialog($routeParams.roomId).promise.then(function() {
 	chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-
 	$scope.pageClass = 'page-about';
+		});
+
+
 
 	/*
 	 * close event
