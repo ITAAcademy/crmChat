@@ -23,7 +23,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Entity(name="ChatRoom")
 public class Room implements Serializable,Comparable<Room> {
 	public short getType() {
@@ -35,33 +38,33 @@ public class Room implements Serializable,Comparable<Room> {
 	@Id
 	@GeneratedValue
 	private Long id;
-	
-	 @OneToMany(mappedBy = "room")
+
+	@OneToMany(mappedBy = "room")
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
-	
+
 	private boolean active = true;
-	
+
 	@NotBlank
 	@Size(min = 1, max = 255)
 	@Column(unique = false)
 	private String name;
-	
+
 	@NotNull
 	private short type;
 
 	@ManyToOne
 	private ChatUser author;
-	
+
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
-	
-//	@OneToMany
+
+	//	@OneToMany
 	//@ManyToMany(mappedBy = "roomsFromUsers")
-	
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<ChatUser> users = new HashSet<>();
-	
-	
+
+
 	public Set<ChatUser> getUsers() {
 		return users;
 	}
@@ -72,7 +75,7 @@ public class Room implements Serializable,Comparable<Room> {
 		}
 		return chatUsers;
 	}
-	
+
 	public boolean addUser(ChatUser user) {
 		return users.add(user);
 	}
@@ -81,7 +84,7 @@ public class Room implements Serializable,Comparable<Room> {
 	}
 	public Room()
 	{
-		
+
 	}
 	public Room(long id)
 	{

@@ -18,7 +18,10 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.event.PresenceEventListener;
 import com.intita.wschat.util.ProfanityChecker;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Configuration
 public class ChatConfig {
 

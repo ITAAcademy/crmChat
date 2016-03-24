@@ -4,7 +4,10 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 public class CustomAuthentication implements Authentication{
 
 	private String name;

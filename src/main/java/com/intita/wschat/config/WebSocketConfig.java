@@ -11,7 +11,10 @@ import org.springframework.session.SessionRepository;
 import org.springframework.session.web.socket.config.annotation.AbstractSessionWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfigurer<ExpiringSession> {

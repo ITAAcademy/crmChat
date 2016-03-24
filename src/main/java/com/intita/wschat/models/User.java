@@ -29,42 +29,51 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Entity
-/*@Table(indexes = {
-  //@Index(columnList="login", unique = true), 
-  @Index(columnList="email", unique = true)
-})*/
 public class User implements UserDetails, Serializable,Comparable<User>{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
-	
+
 	@Id
 	@GeneratedValue
 	private Long id;
-	
+
 	@NotBlank
 	@Size(min = 1, max = 255)
 	@Column(unique = false,name="email")
 	private String login;
-	
+
 	//@NotNull
 	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.EAGER)
 	private ChatUser chatUser;
 
 	@NotBlank
-    @Size(min = 1, max = 100)
+	@Size(min = 1, max = 100)
 	private String password;
-	
+
 	@Column(name="avatar")
 	private String avatar;
-	
+
 	@Column(name="nickname")
 	private String nickname;
-	
+
 	@Column(name="role")
 	private int role;
-	  //private Permissions permission=Permissions.PERMISSIONS_USER;
-	  
+	
+	
+	
+	/*@OneToMany(mappedBy = "teacher_id", fetch = FetchType.LAZY)
+	private List<IntitaConsultation> consultantedConsultation = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user_id", fetch = FetchType.LAZY)
+	private List<IntitaConsultation> createdConsultation = new ArrayList<>();
+	*/
+	//private Permissions permission=Permissions.PERMISSIONS_USER;
+
 	public Long getId() {
 		return id;
 	}
@@ -95,12 +104,12 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	public String getEmail() {
 		return login;
 	}
-	
+
 	public void setEmail(String email) {
 		this.login = email;
 	}
 
-		public Permissions getPermission() {
+	public Permissions getPermission() {
 		return Permissions.PERMISSIONS_USER;
 	}
 
@@ -120,7 +129,7 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 			return AuthorityUtils.createAuthorityList("USER");
 		default:
 			return AuthorityUtils.createAuthorityList("HACKER");
-			
+
 		}*/
 		return AuthorityUtils.createAuthorityList("ADMIN");
 	}
@@ -154,63 +163,63 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	public static User getCurrentUser() {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
-	
+
 	public static Long getCurrentUserId() {
 		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return u.getId();
 	}
-	
+
 	public static boolean isAnonymous() {
 		// Метод SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
 		// нічого не дасть, оскільки анонімний користувач теж вважається авторизованим
 		return "anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
-		public User(String login, String email, String password) {
-			this.login = login;
-			//this.email = email;
-			this.password = password;
-		}
-		 public User(){
-			  super();
-		  }
-		 public void togglePermission(){
-			/* if (permission==Permissions.PERMISSIONS_ADMIN)
+	public User(String login, String email, String password) {
+		this.login = login;
+		//this.email = email;
+		this.password = password;
+	}
+	public User(){
+		super();
+	}
+	public void togglePermission(){
+		/* if (permission==Permissions.PERMISSIONS_ADMIN)
 			 permission=Permissions.PERMISSIONS_USER;
 			 else permission=Permissions.PERMISSIONS_ADMIN;
 			if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
 			 else isAdmin=false;*/
-		 }
+	}
 
-		@Override
-		public String getPassword() {
-			return password;
-		}
+	@Override
+	public String getPassword() {
+		return password;
+	}
 
-		@Override
-		public String getUsername() {
+	@Override
+	public String getUsername() {
+		return getLogin();
+	}
+
+	public String getNickName() {
+		if(nickname.isEmpty())
 			return getLogin();
-		}
-		
-		public String getNickName() {
-			if(nickname.isEmpty())
-				return getLogin();
-			
-			return nickname;
-		}
 
-		public ChatUser getChatUser() {
-			return chatUser;
-		}
+		return nickname;
+	}
 
-		public void setChatUser(ChatUser chatUser) {
-			this.chatUser = chatUser;
-		}
+	public ChatUser getChatUser() {
+		return chatUser;
+	}
 
-		@Override
-		public int compareTo(User o) {
-			if (o==null)return -1;
-			return this.getId().compareTo(o.getId());
-		}
-	  
+	public void setChatUser(ChatUser chatUser) {
+		this.chatUser = chatUser;
+	}
+
+	@Override
+	public int compareTo(User o) {
+		if (o==null)return -1;
+		return this.getId().compareTo(o.getId());
+	}
+
 }

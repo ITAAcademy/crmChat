@@ -4,15 +4,15 @@
 var springChatControllers = angular.module('springChat.controllers', ['infinite-scroll','toaster','ngRoute', 'ngAnimate','ngResource','ngCookies']);
 springChatControllers.config(function($routeProvider){
 	$routeProvider.when("/chatrooms",
-			{
+	{
 		templateUrl: "dialogsTemplate.html",
 		controller: "DialogsRouteController"
-			});
+	});
 	$routeProvider.when("/dialog_view/:roomId/",
-			{
+	{
 		templateUrl: "chatTemplate.html",
 		controller: "ChatRouteController"
-			});
+	});
 	$routeProvider.when("/teachers_list",{
 		templateUrl: "teachersTemplate.html",
 		controller: "TeachersListRouteController"
@@ -21,17 +21,22 @@ springChatControllers.config(function($routeProvider){
 		templateUrl: "redirectPage.html",
 		controller: "StrictedDialogRouteController"
 	});
+	$routeProvider.when("/consultation_view/:roomId",{
+		templateUrl: "consultationTemplate.html",
+		controller: "ConsultationController"
+	});
+
+
+
 	$routeProvider.otherwise({redirectTo: '/'});
 	console.log("scope test");
 
 });
 
-var isInited = false;
-
 springChatControllers.controller('TeachersListRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('TeachersListRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
-//	while (!chatControllerScope.isInited);//chatControllerScope.initStompClient();
+//	while (!chatControllerScope.$rootScope.isInited);//chatControllerScope.initStompClient();
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	chatControllerScope.goToTeachersList();
 	$scope.pageClass = 'page-contact';
@@ -40,7 +45,7 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 springChatControllers.controller('StrictedDialogRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('StrictedDialogRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
-	//if(isInited == true)
+	//if($rootScope.isInited == true)
 	chatControllerScope.goToPrivateDialog($routeParams.chatUserId);
 
 }]);
@@ -48,6 +53,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
+	$rootScope.isInited = false;
 
 	function changeLocation(url ) {
 		$location.path(url);
@@ -143,7 +149,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.changeUser($scope.realChatUserId, $scope.realChatUserId);
 		$scope.isMyRoom = true;
 	}
-	
+
 	$scope.changeUser = function (chatUserId, chatUserNickName) {
 
 		$scope.emails = [];
@@ -287,7 +293,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 	function login(mess_obj)
 	{
-		isInited = true;
+		$rootScope.isInited = true;
 		$scope.chatUserId = mess_obj.chat_id;
 		$scope.chatUserNickname = mess_obj.chat_user_nickname;
 		$scope.chatUserRole = mess_obj.chat_user_role;
@@ -403,10 +409,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 							break;
 						case Operations.add_room_on_login:
 							$timeout(function(){
-							changeLocation("dialog_view/"+operationStatus.description);
+								changeLocation("dialog_view/"+operationStatus.description);
 							}, 1000);
-							
-							
+
+
 							break;
 						case Operations.add_room_from_tenant:
 							//changeLocation("dialog_view/"+operationStatus.description);
@@ -475,10 +481,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			 * TRY LONG POLING LOGIN
 			 **************************************/
 			//$scope.chatUserId = frame.headers['user-name'];
-			if(isInited == false)
+			if($rootScope.isInited == false)
 			{
 				$rootScope.socketSupport = false;
-				
+
 				$http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, {message: $scope.newMessage}).
 				success(function(data, status, headers, config) {
 					console.log("LOGIN OK " + data);
@@ -492,10 +498,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					toaster.pop('error', "Authentication err", "...Try later",{'position-class':'toast-top-full-width'});
 				});
 			}else
-				{
-					toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error, 99999);
-					changeLocation("/");
-				}
+			{
+				toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error, 99999);
+				changeLocation("/");
+			}
 
 
 

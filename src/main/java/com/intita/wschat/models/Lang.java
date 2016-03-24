@@ -21,7 +21,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 
- * @author Zinchuk Roman
+ * @author Nicolas Haiduchok
  */
 @Entity(name="chat_lang")
 public class Lang implements Serializable,Comparable<ChatUser> {

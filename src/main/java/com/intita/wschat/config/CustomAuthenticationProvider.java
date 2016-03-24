@@ -37,7 +37,10 @@ import com.intita.wschat.util.SerializedPhpParser.PhpObject;
 import com.intita.wschat.web.FileController;
 
 import java.security.Principal;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider{
 	@Autowired

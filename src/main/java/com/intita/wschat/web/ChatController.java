@@ -55,9 +55,11 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
+import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -70,6 +72,7 @@ import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
+import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -106,6 +109,7 @@ public class ChatController {
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangRepository chatLangRepository;
+	@Autowired private ConsultationsService chatConsultationsService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
@@ -558,7 +562,7 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
-	public void addLocolization(Model model)
+	public Map<String, Object> getLocolization()
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpSession session = attr.getRequest().getSession(false);
@@ -567,8 +571,12 @@ public class ChatController {
 			lg = (String) session.getAttribute("chatLg");
 		else
 			lg = "en";
-
-		model.addAttribute("lgPack", langMap.get(lg));
+		return langMap.get(lg);
+	}
+	
+	public void addLocolization(Model model)
+	{
+		model.addAttribute("lgPack", getLocolization());
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
@@ -577,13 +585,26 @@ public class ChatController {
 		addLocolization(model);
 		return "index";
 	}
+
+	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
+	public String  getConsultationTemplate(HttpRequest request, Model model) {
+		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+		for (ConsultationRatings consultationRatings : retings) {
+			String translate_rating_name = (String)getLocolization().get("rating_" + consultationRatings.getName());
+			consultationRatings.setName(translate_rating_name);
+			retings.add(consultationRatings);
+		}
+		model.addAttribute("ratingsPack", retings);
+		return getTeachersTemplate(request, "consultationTemplate", model);
+	}
+
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		List<ConfigParam> config =  configParamService.getParams();
-
-		addLocolization(model);
 		model.addAttribute("config",ConfigParam.listAsMap(config));
+		addLocolization(model);
+		
 		return page;
 	}
 
@@ -602,21 +623,21 @@ public class ChatController {
 			return null;
 		return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
 	}
-	 @MessageExceptionHandler(MessageDeliveryException.class)
-		public String handleMessageDeliveryException(MessageDeliveryException e) {
-			//log.error("MessageDeliveryException handler executed");
-			return "MessageDeliveryException handler executed";
-		}
-	 @MessageExceptionHandler(NumberFormatException.class)
-		public String handleNumberFormatException(Exception ex) {
-			//logger.error("NumberFormatException handler executed");
-			return "NumberFormatException handler executed";
-		}
-	 @MessageExceptionHandler(Exception.class)
-		public String handleMessageException(Exception ex) {
-			//log.error("NumberFormatException handler executed");
-			return "NumberFormatException handler executed";
-		}
+	@MessageExceptionHandler(MessageDeliveryException.class)
+	public String handleMessageDeliveryException(MessageDeliveryException e) {
+		//log.error("MessageDeliveryException handler executed");
+		return "MessageDeliveryException handler executed";
+	}
+	@MessageExceptionHandler(NumberFormatException.class)
+	public String handleNumberFormatException(Exception ex) {
+		//logger.error("NumberFormatException handler executed");
+		return "NumberFormatException handler executed";
+	}
+	@MessageExceptionHandler(Exception.class)
+	public String handleMessageException(Exception ex) {
+		//log.error("NumberFormatException handler executed");
+		return "NumberFormatException handler executed";
+	}
 
 
 }

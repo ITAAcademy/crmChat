@@ -12,7 +12,10 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 public class HttpSessionConfig extends SessionIdGeneratorBase 
 {
 

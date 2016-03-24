@@ -6,7 +6,7 @@ import com.intita.wschat.exception.TooMuchProfanityException;
 
 /**
  * 
- * @author Nicolas
+ * @author Nicolas Haiduchok
  */
 public class SessionProfanity {
 

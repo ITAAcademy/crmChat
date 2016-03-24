@@ -9,7 +9,7 @@ import com.intita.wschat.models.UserMessage;
 
 /**
  * 
- * @author Sergi Almar
+ * @author Nicolas Haiduchok
  */
 public class ChatMessage {
 

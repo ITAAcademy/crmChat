@@ -63,7 +63,7 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	/*
 	 * 
 	 */
-	if(isInited == true)
+	if($rootScope.isInited == true)
 		$scope.goToDialogList();
 	console.log("initing:"+chatControllerScope.socketSupport);
 	$scope.pageClass = 'page-home';

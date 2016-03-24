@@ -18,7 +18,10 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Component
 public class CustomFilter implements Filter{
 

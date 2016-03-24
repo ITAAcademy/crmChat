@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
-
+/**
+ * 
+ * @author Nicolas Haiduchok
+ */
 @Entity(name="config")
 public class ConfigParam {
 	@Id
