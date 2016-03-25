@@ -48,6 +48,12 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 	public ChatConsultationResult() {
 
 	}
+	public ChatConsultationResult(Long id, Integer val, ChatConsultation cons) {
+		value = val;
+		rating = new ConsultationRatings();
+		rating.setId(id);
+		consultation = cons;
+	}
 
 	/*
 	 * GET/SET

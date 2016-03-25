@@ -21,7 +21,7 @@ springChatControllers.config(function($routeProvider){
 		templateUrl: "redirectPage.html",
 		controller: "StrictedDialogRouteController"
 	});
-	$routeProvider.when("/consultation_view/:roomId",{
+	$routeProvider.when("/consultation_view/:consultationId",{
 		templateUrl: "consultationTemplate.html",
 		controller: "ConsultationController"
 	});
@@ -51,7 +51,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 }]);
 
 
-var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$route', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $route,$location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 	$rootScope.isInited = false;
 

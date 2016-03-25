@@ -15,7 +15,9 @@
 <link href="css/chat.css" rel="stylesheet" />
 <link href="css/font-awesome.min.css" rel="stylesheet" />
 
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"/>
+<link
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"
+	rel="stylesheet" />
 </head>
 <body>
 
@@ -27,27 +29,28 @@
 			<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
 				<div class="collapse navbar-collapse" id="navbar-collapse-01">
 
-					<div ng-show = "checkRole()" class="col-xs-4">
+					<div ng-show="checkRole()" class="col-xs-4">
 						<div class="input-group input-group-sm search-control">
 
 							<input type="text" class="form-control" placeholder="Query"
-								ng-model="searchResultAdmin"
-								ng-blur="hideSearchList()" ng-change="showSearchListAdmin()"></input>
-							<span ng-click="returnToRealUser()" class="input-group-addon">
+								ng-model="searchResultAdmin" ng-blur="hideSearchList()"
+								ng-change="showSearchListAdmin()"></input> <span
+								ng-click="returnToRealUser()" class="input-group-addon">
 								<span ng-show="userAddedToRoom"
-								class="glyphicon glyphicon-repeat"></span> 
+								class="glyphicon glyphicon-repeat"></span>
 							</span>
 						</div>
 						<div class="search-list" ng-show="show_search_list_admin">
 							<ul aria-labelledby="dropdownMenu1">
 								<li role="presentation" ng-repeat='item in emails'
-									ng-click="changeUser(item.chatUserId, item.username)"><a> {{item.username}} </a></li>
+									ng-click="changeUser(item.chatUserId, item.username)"><a>
+										{{item.username}} </a></li>
 							</ul>
 						</div>
 					</div>
 
-					<a class="col-xs-4" href="" ng-href="#teachers_list"><h1>Spring WebSocket
-							Chat</h1></a>
+					<a class="col-xs-4" href="" ng-href="#teachers_list"><h1>Spring
+							WebSocket Chat</h1></a>
 					<ul class="nav navbar-nav navbar-right col-xs-4">
 						<li><a ng-show="showDialogListButton" class="menu-ng-click"
 							ng-href="#/chatrooms">Dialogs__ChatUser:{{chatUserId}}</a></li>
@@ -65,7 +68,7 @@
 	<!-- /.container -->
 
 	<!-- 3rd party -->
-	<script	src="lib/jquery.min.js"></script>
+	<script src="lib/jquery.min.js"></script>
 	<script src="lib/angular/angular.js"></script>
 	<script src="lib/angular-animate/angular-animate.js"></script>
 	<script src="lib/angularjs-toaster/toaster.js"></script>
@@ -73,20 +76,22 @@
 	<script src="lib/angular-cooks/angular-cookies.js"></script>
 	<script src="lib/angular-resource/angular-resource.js"></script>
 	<script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
-	<script type='text/javascript' src='lib/infinite-scroll/ng-infinite-scroll.min.js'></script>
+	<script type='text/javascript'
+		src='lib/infinite-scroll/ng-infinite-scroll.min.js'></script>
 	<script src="lib/sockjs/sockjs.js"></script>
 	<script src="lib/stomp/lib/stomp.js"></script>
 
 
 	<!-- App -->
 	<script src="js/app.js"></script>
-	
+
 	<script src="js/globalFunc.js"></script>
 	<script src="js/controllers.js"></script>
+	<script src="js/ChatRouteInterface.js"></script>
 	<script src="js/chatController.js"></script>
-	<script src="js/roomController.js"></script>
 	<script src="js/consultationController.js"></script>
-	
+	<script src="js/roomController.js"></script>
+
 	<script src="js/services.js"></script>
 	<script src="js/directives.js"></script>
 </body>

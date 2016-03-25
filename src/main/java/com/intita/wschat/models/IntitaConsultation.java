@@ -101,6 +101,17 @@ public class IntitaConsultation implements Serializable,Comparable<IntitaConsult
 		return finishTime;
 	}
 	
+	public ChatConsultation getChatConsultation() {
+		return chatConsultation;
+	}
+	
+	public boolean isMy(User user)
+	{
+		if(author.equals(user) || consultant.equals(user))
+			return true;
+		return false;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)

@@ -29,12 +29,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity(name="ChatRoom")
 public class Room implements Serializable,Comparable<Room> {
-	public short getType() {
-		return type;
-	}
-	public void setType(short type) {
-		this.type = type;
-	}
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -58,13 +52,22 @@ public class Room implements Serializable,Comparable<Room> {
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 
-	//	@OneToMany
-	//@ManyToMany(mappedBy = "roomsFromUsers")
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<ChatUser> users = new HashSet<>();
 
 
+	
+	public static class RoomType
+	{
+		public static final short DEFAULT = 0;
+		public static final short PRIVATE = 1;
+		public static final short CONSULTATION = 2;
+	}
+	
+	
+	/*
+	 * GET/SET
+	 */
 	public Set<ChatUser> getUsers() {
 		return users;
 	}
@@ -139,6 +142,13 @@ public class Room implements Serializable,Comparable<Room> {
 	public String toString() {
 		return "ChatMessage ";
 	}
+	public short getType() {
+		return type;
+	}
+	public void setType(short type) {
+		this.type = type;
+	}
+	
 	@Override
 	public int compareTo(Room o) {
 		if (o==null)return -1;

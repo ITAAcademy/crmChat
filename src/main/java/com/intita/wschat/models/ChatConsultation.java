@@ -37,19 +37,24 @@ public class ChatConsultation implements Serializable,Comparable<ChatConsultatio
 	private Long id;
 
 	@OneToOne(fetch=FetchType.EAGER)
+	@NotNull
 	private IntitaConsultation intitaConsultation;
 
-	@NotNull
-	private Date startDate;
+	private Date startDate = null;
 
-	private Date finishDate;
+	private Date finishDate = null;
 
 	@OneToOne
-	@NotFound(action=NotFoundAction.IGNORE)
+	@NotNull
 	private Room room;
 
-	public ChatConsultation() {
-
+	public ChatConsultation(IntitaConsultation cons, Room room) {
+		this.intitaConsultation = cons;
+		this.room = room;
+	}
+	public ChatConsultation()
+	{
+		
 	}
 
 	/*

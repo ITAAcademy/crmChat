@@ -216,6 +216,15 @@ public class RoomsService {
 		public String date;
 		public Long roomId;
 		public Long roomAuthorId;
+		public boolean active;
+
+		public boolean isActive() {
+			return active;
+		}
+
+		public void setActive(boolean active) {
+			this.active = active;
+		}
 
 		public String getDate() {
 			return date;
@@ -237,6 +246,7 @@ public class RoomsService {
 			this.date = date;
 			this.roomId=room.getId();
 			this.roomAuthorId=room.getAuthor().getId();
+			this.active = room.isActive();
 		}
 	}
 }

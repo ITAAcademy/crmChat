@@ -15,6 +15,6 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 
 @Qualifier("IntitaConf") 
-public interface ConsultationRepository extends CrudRepository<ChatConsultationResult, Long> {
+public interface ConsultationRepository extends CrudRepository<ChatConsultation, Long> {
 
 }

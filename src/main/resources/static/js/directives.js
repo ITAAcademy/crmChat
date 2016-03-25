@@ -81,6 +81,7 @@ function starRating() {
             updateStars();
           }
         };
+        scope.ratingValue = 0;
         /*scope.$watch('ratingValue', function(oldValue, newValue) {
           if (newValue) {
             updateStars();
