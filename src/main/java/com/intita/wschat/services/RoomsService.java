@@ -185,7 +185,7 @@ public class RoomsService {
 						messages_cnt += 1;
 					}
 			}
-			if (entry.getLastRoom()==null) continue;
+			if (entry.getLastRoom()==null || entry.getLastRoom().getType() == Room.RoomType.CONSULTATION) continue;
 			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom());
 			result.add(sb);
 		}

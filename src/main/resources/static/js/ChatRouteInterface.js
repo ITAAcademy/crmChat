@@ -39,7 +39,7 @@ $scope.fileDropped = function(){
     $scope.uploadedFile = null;
 };
 
-	Scopes.store('ChatController', $scope);
+	Scopes.store('ChatRouteInterface', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 	var lastRoomBindings = [];
 
