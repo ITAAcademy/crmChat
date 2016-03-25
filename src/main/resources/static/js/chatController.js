@@ -355,6 +355,7 @@ $scope.fileDropped = function(){
 	$scope.loadOtherMessages = function () {
 		$scope.message_busy = true;
 		console.log("TRY " + $scope.messages.length);
+		if ($scope.messages!=undefined && $scope.length>0)
 		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE onLOAD OK " + data);
@@ -369,8 +370,8 @@ $scope.fileDropped = function(){
 			$scope.message_busy = false;
 		}).
 		error(function(data, status, headers, config) {
-			
-			//messageError("no other message");
+			$scope.message_busy = false;
+			messageError("no other message");
 		});
 	}
 

@@ -402,7 +402,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 							break;
 						case Operations.add_room_on_login:
 							debugger;
+							$timeout(function(){
 							changeLocation("dialog_view/"+operationStatus.description);
+						},1000);
 							break;
 						case Operations.add_room_from_tenant:
 							//changeLocation("dialog_view/"+operationStatus.description);
