@@ -27,29 +27,27 @@ import com.intita.wschat.models.User;
 import com.intita.wschat.repositories.ChatUserLastRoomDateRepository;
 
 @Service
+@Transactional
 public class ChatUserLastRoomDateService {
 
 	@Autowired
 	private ChatUserLastRoomDateRepository chatUserLastRoomDateRepo;
 
-	@Transactional
+	
 	public Page<ChatUserLastRoomDate> getUserLastRoomDatPages(int page, int pageSize){
 		return chatUserLastRoomDateRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля	}
 	}
 
-	@Transactional
 	public List<ChatUserLastRoomDate> getLastRoomDates(){
 		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findAll();
 		return res;
 	}
 	
-	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user){
 		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findByChatUser(user);
 		return res;
 	}
 	
-	@Transactional
 	public ChatUserLastRoomDate getUserLastRoomDate(Room room, ChatUser chatUser) {
 		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, chatUser);
 		if (obj == null)
@@ -65,12 +63,10 @@ public class ChatUserLastRoomDateService {
 		return obj;
 	}
 
-	@Transactional
 	public void updateUserLastRoomDateInfo(ChatUserLastRoomDate u){
 		chatUserLastRoomDateRepo.save(u);
 	}
 	
-	@Transactional
 	public ChatUserLastRoomDate addUserLastRoomDateInfo(ChatUser user, Room room){
 		ChatUserLastRoomDate date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
 		date.setChatUser(user);
@@ -79,7 +75,6 @@ public class ChatUserLastRoomDateService {
 		return date;
 	}
 
-	@Transactional
 	public void removeUserLastRoomDate(Long id){
 		chatUserLastRoomDateRepo.delete(id);
 	}

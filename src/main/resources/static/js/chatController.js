@@ -1,5 +1,4 @@
 springChatControllers.controller('ChatRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
-
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
 	}
@@ -124,7 +123,6 @@ $scope.fileDropped = function(){
 		$scope.messages=[];
 		console.log("roomId:"+chatControllerScope.currentRoom.roomId);
 		room=chatControllerScope.currentRoom.roomId+'/';
-
 		//debugger;
 		if($rootScope.socketSupport == true)
 		{
@@ -241,6 +239,7 @@ $scope.fileDropped = function(){
 
 	function subscribeParticipantsLP(){
 		var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
+		if ($scope.currentRoom.roomId!='')
 		$scope.ajaxRequestsForRoomLP.push(
 				$.ajax({
 					type: "POST",
@@ -262,6 +261,7 @@ $scope.fileDropped = function(){
 
 
 				}));
+	else console.log("subscribeParticipantsLP error: current roomId is null !!!");
 	};
 
 	/*************************************
@@ -428,7 +428,8 @@ $scope.fileDropped = function(){
 	/*
 	 * close event
 	 */
-	$scope.$on('$locationChangeStart', function( event ) {
+
+	 function onLocationChanged ( event ) {
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 
@@ -440,7 +441,7 @@ $scope.fileDropped = function(){
 			}
 		}
 
-
+		if (typeof $scope.ajaxRequestsForRoomLP !='undefined')
 		while ($scope.ajaxRequestsForRoomLP.length>0)
 		{
 
@@ -452,6 +453,7 @@ $scope.fileDropped = function(){
 	    if (!answer) {
 	        event.preventDefault();
 	    }*/
-	});
+	}
+	//$scope.$on('$locationChangeStart',onLocationChanged );
 
 }]);

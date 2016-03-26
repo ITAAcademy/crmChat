@@ -21,6 +21,7 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.RoomRepository;
 
 @Service
+@Transactional
 public class RoomsService {
 
 	@Autowired
@@ -31,56 +32,54 @@ public class RoomsService {
 	@Autowired private UserMessageService userMessageService;
 
 	@PostConstruct
-	@Transactional
 	public void createDefRoom() {
 
 	}
 
-	@Transactional
+	
 	public Page<Room> getRooms(int page, int pageSize){
 		return roomRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 
 	}
 
-	@Transactional
+	
 	public List<Room> getRooms(){
 		return (List<Room>) roomRepo.findAll(); // spring рахує сторінки з нуля
 	}
 
-	@Transactional
+	
 	public Room getRoom(Long id){
 		if(id < 0)
 			return null;
 		return roomRepo.findOne(id);
 	}
 
-	@Transactional
+	
 	public boolean addRooms(Iterable<Room> rooms) {
 		if (rooms==null) return false;
 		roomRepo.save(rooms);
 		return true;
 	}
 
-	@Transactional
+	
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}
-	@Transactional
+	
 	public Room getPrivateRoom(ChatUser author, ChatUser privateUser) {
 		return roomRepo.findByAuthorAndTypeAndUsersContaining(author, (short) 1, privateUser);
 	}
-	@Transactional
+	
 	public ArrayList<Room> getRoomByAuthor(String author) {
 
 		return roomRepo.findByAuthor(chatUserService.getChatUser(author));
 	}
-	@Transactional
+	
 	public ArrayList<Room> getRoomByAuthor(ChatUser user) {
 
 		return roomRepo.findByAuthor(user);
 	}
 
-	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author) {
 		if (name==null || name.length()==0) return null;
 		Room r = new Room();
@@ -92,7 +91,6 @@ public class RoomsService {
 		roomRepo.save(r);
 		return r;
 	}
-	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author, short type) {
 		Room r = new Room();
 		r.setAuthor(author);
@@ -103,7 +101,6 @@ public class RoomsService {
 		roomRepo.save(r);
 		return r;
 	}
-	@Transactional(readOnly = false)
 	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);
 		if(!author.getRootRooms().contains(room))
@@ -113,25 +110,21 @@ public class RoomsService {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
 	public boolean addUserToRoom(Long id, User user) {
 		Room room = roomRepo.findOne(id);
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
-	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
 		return true;
 	}
 
-	@Transactional(readOnly = false)
 	public boolean addUserByNameToRoom(Long id, String name) {
 		Room room = roomRepo.findOne(id);
 		return addUserToRoom(chatUserService.getChatUser(name), room);
 	}
 
-	@Transactional(readOnly = false)
 	public boolean addUserToRoom(ChatUser user, Room room) {
 		if(room == null)
 			return false;
@@ -145,7 +138,6 @@ public class RoomsService {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
 	public boolean removeUserFromRoom(User user, Room room) {
 		if(room == null)
 			return false;
@@ -158,7 +150,6 @@ public class RoomsService {
 		return true;
 	}
 
-	@Transactional
 	public List<StringIntDate> getRoomsByChatUser(ChatUser currentUser) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 		System.out.println("currentUser:"+currentUser.getId());

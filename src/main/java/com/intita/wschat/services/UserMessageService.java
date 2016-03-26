@@ -16,6 +16,7 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.UserMessageRepository;
 
 @Service
+@Transactional
 public class UserMessageService {
 
 	@Autowired
@@ -27,11 +28,11 @@ public class UserMessageService {
 	@Autowired
 	private RoomsService roomsService;
 	
-	@Transactional
+	
 	public ArrayList<UserMessage> getUserMesagges(){
 		return (ArrayList<UserMessage>) IteratorUtils.toList(userMessageRepository.findAll().iterator());
 	}
-	@Transactional
+	
 	public UserMessage getUserMessage(Long id){
 		return userMessageRepository.findOne(id);
 	}
@@ -40,12 +41,12 @@ public class UserMessageService {
 		
 		return userMessageRepository.findByAuthor(chatUserService.getChatUser(author));
 	}*/
-	@Transactional
+	
 	public ArrayList<UserMessage> getChatUserMessagesById(Long id) {
 		
 		return userMessageRepository.findByAuthor(chatUserService.getChatUser(id));
 	}
-	@Transactional
+	
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
 		return userMessageRepository.findByRoom(room);
 	}
@@ -58,7 +59,7 @@ public class UserMessageService {
 		return userMessageRepository.findByRoom(new Room(roomId));
 	}
 
-	@Transactional
+	
 	public boolean addMessage(ChatUser user, Room room,String body) {
 		if(user == null || room == null || body == null) return false;
 		//have premition?
@@ -66,48 +67,48 @@ public class UserMessageService {
 	userMessageRepository.save(userMessage);
 		return true;
 	}
-	@Transactional
+	
 	public boolean addMessage(UserMessage message) {
 		if (message==null) return false;
 		userMessageRepository.save(message);
 		return true;
 	}
-	@Transactional
+	
 	public boolean addMessages(Iterable<UserMessage> messages) {
 		if (messages==null) return false;
 		userMessageRepository.save(messages);
 		return true;
 	}
 	
-	@Transactional
+	
 	public ArrayList<UserMessage> getMessagesByDate(Date date) {
 		return userMessageRepository.findAllByDateAfter(date);
 	}
 	
-	@Transactional
+	
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date) {
 		return userMessageRepository.findAllByRoomAndDateAfter(room, date);
 	}
-	@Transactional
+	
 	public ArrayList<UserMessage> get10MessagesByRoomDateAfter(Room room, Date date) {
 		return userMessageRepository.findFirst10ByRoomAndDateAfter(room, date);
 	}
-	@Transactional
+	
 	public ArrayList<UserMessage> get10MessagesByRoomDateBefore(Room room, Date date) {
 		return userMessageRepository.findFirst10ByRoomAndDateBefore(room, date);
 	}
 
-	@Transactional
+	
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user) {
 		return userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
 	}
 	
-	@Transactional
+	
 	public List<UserMessage> getMessagesByDateNotUser(Date date, ChatUser user) {
 		return userMessageRepository.findAllByDateAfterAndAuthorNot( date, user);
 	}
 	
-	@Transactional
+	
 	public List<UserMessage> getMessagesByNotUser( ChatUser user) {
 		return userMessageRepository.findAllByAuthorNot( user);
 	}

@@ -11,13 +11,14 @@ import com.intita.wschat.models.User;
 import com.intita.wschat.repositories.UserRepository;
 
 @Service
+@Transactional
 public class UserSecurityService implements UserDetailsService {
 	
 	@Autowired
 	private UserRepository usersRepo;
 	
 	@Override
-	@Transactional
+	
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 		

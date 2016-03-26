@@ -145,7 +145,7 @@ public class ChatController {
 		}
 	}
 
-	@Transactional
+	
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 
@@ -218,7 +218,7 @@ public class ChatController {
 		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
 		if( struct == null)
-			return null;
+			return new ArrayList<ChatMessage>();
 		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDateBefore(struct.getRoom(), message.getDate()));
 
 		if(messagesAfter.size() == 0)
@@ -264,7 +264,7 @@ public class ChatController {
 
 
 	@MessageMapping("/{room}/chat.message")
-	@Transactional
+	
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long room, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
@@ -408,7 +408,7 @@ public class ChatController {
 	 */
 
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
-	@Transactional
+	
 	public void userGoToDialogListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
@@ -433,7 +433,7 @@ public class ChatController {
 	 * Out from room
 	 */
 	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
-	@Transactional
+	
 	public void userGoToDialogListListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 

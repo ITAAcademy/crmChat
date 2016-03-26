@@ -19,20 +19,20 @@ import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.repositories.ChatTenantRepository;
 
 @Service
+@Transactional
 public class ChatTenantService {
 	private final static Logger log = LoggerFactory.getLogger(ChatTenantService.class);
 	@Autowired
 	private ChatTenantRepository chatTenantRepo;
 
 	@PostConstruct
-	@Transactional
+	
 	public void createAdminUser() {
 		System.out.println("admin user created");
 		//register("user", "user", "user");
 
 	}
 
-	@Transactional
 	public Page<ChatTenant> getTenantsFromPages(int page, int pageSize){
 		Page<ChatTenant> chatTenantPage = null;
 		try{
@@ -45,7 +45,6 @@ public class ChatTenantService {
 		return chatTenantPage; // spring рахує сторінки з нуля	}
 	}
 	
-	@Transactional
 	public ArrayList<ChatTenant> getTenants(){
 		Iterable<ChatTenant> chatTenantsIterable = null;
 		try{
@@ -57,7 +56,6 @@ public class ChatTenantService {
 		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator()); // spring рахує сторінки з нуля
 		return tenantsList;
 	}
-	@Transactional
 	public ChatTenant getChatTenant(Long id){
 		ChatTenant chatTenant =null;
 	
@@ -71,7 +69,6 @@ public class ChatTenantService {
 		return chatTenant;
 	}
 
-	@Transactional
 	public void updateChatTenantInfo(ChatTenant u){
 		if (u==null){
 			log.info("ChatTenant is null");
@@ -80,11 +77,10 @@ public class ChatTenantService {
 		chatTenantRepo.save(u);
 	}
 
-	@Transactional
 	public void removeTenant(Long id){
 		chatTenantRepo.delete(id);
 	}
-	@Transactional
+	
 	public long getCount(){
 		return chatTenantRepo.count();
 	}

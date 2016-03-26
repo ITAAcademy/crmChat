@@ -100,7 +100,6 @@ public class RoomController {
 	 * what doing with new auth user 
 	 **********************/
 	@SubscribeMapping("/chat.login/{userId}")
-	@Transactional
 	 public Map<String, String> login(Principal principal, @DestinationVariable("userId") Long userId)//Control user page after auth 
 	{
 		
@@ -256,6 +255,7 @@ public class RoomController {
 
 		Long timeOut = 100000000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
+		result.setResult("{}"); 
 		Queue<DeferredResult<String>> queue = responseBodyQueueForParticipents.get(room);
 		if(queue == null)
 		{
@@ -264,6 +264,10 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
 		if(struct != null)
 		{
+			responseBodyQueueForParticipents.put(room.toString(), queue);		
+			queue.add(result);
+		}
+		else {
 			responseBodyQueueForParticipents.put(room.toString(), queue);		
 			queue.add(result);
 		}
@@ -295,6 +299,8 @@ public class RoomController {
 				try {
 					if(!response.isSetOrExpired())
 						response.setResult(mapper.writeValueAsString(result));
+					else
+					response.setResult("{}");
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					response.setResult("");
@@ -429,9 +435,11 @@ public class RoomController {
 					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
 					if(!response.isSetOrExpired())
 						response.setResult(str);
+					else response.setResult("{}");
 			}
 			responseRoomBodyQueue.remove(chatUser.getId());
 		}
+
 		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		subscribedtoRoomsUsersBuffer.clear();//!!!
 		

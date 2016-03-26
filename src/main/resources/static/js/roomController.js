@@ -49,6 +49,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 		//$scope.templateName = 'dialogsTemplate.html';
 		//changeLocation("/chatrooms")
 		$scope.dialogName = '';
+	if (typeof chatControllerScope.currentRoom.roomId != 'undefined')
+	{
 		if ($rootScope.socketSupport){
 			chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));	
 		}
@@ -56,6 +58,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 		{
 			$http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId));
 		}
+	}
+	else console.log('ERROR:chat.go.to.dialog.list:currentRoom.roomId is null');
 
 		chatControllerScope.currentRoom = {roomId: ''} ;
 	}

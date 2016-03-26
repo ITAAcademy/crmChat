@@ -22,6 +22,7 @@ import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.UserRepository;
 
 @Service
+@Transactional
 public class UsersService {
 
 	@Autowired
@@ -31,19 +32,19 @@ public class UsersService {
 	private ChatUsersService chatUsersService;
 
 	@PostConstruct
-	@Transactional
+	
 	public void createAdminUser() {
 		System.out.println("admin user created");
 		//register("user", "user", "user");
 
 	}
 
-	@Transactional
+	
 	public Page<User> getUsers(int page, int pageSize){
 		return usersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 
 	}
-	@Transactional
+	
 	public User getUser(Principal principal){
 		String chatUserIdStr = principal.getName();
 		Long chatUserId = 0L;
@@ -58,7 +59,7 @@ public class UsersService {
 		return user;
 	}
 
-	@Transactional
+	
 	public List<String> getUsersEmailsFist5(String login, List<String> logins){
 		List<User> users = usersRepo.findFirst5ByLoginNotInAndLoginLike( logins, login + "%");
 		List<String> emails = new ArrayList<String>();
@@ -69,15 +70,15 @@ public class UsersService {
 	}
 	
 	
-	@Transactional
+	
 	public ArrayList<User> getUsers(){
 		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); // spring рахує сторінки з нуля
 	}
-	@Transactional
+	
 	public User getUser(Long id){
 		return usersRepo.findOne(id);
 	}
-	@Transactional
+	
 	public User getUserFromChat(Long chatUserId){
 		ChatUser chatUser= chatUsersService.getChatUser(chatUserId);
 		if (chatUser==null) return null;
@@ -85,12 +86,11 @@ public class UsersService {
 		
 	}
 
-	@Transactional
+	
 	public User getUser(String login) {
 		return usersRepo.findByLogin(login);
 	}
 
-	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
 		String passHash = new ShaPasswordEncoder().encodePassword(pass, null);
 		//encode(pass);
@@ -102,7 +102,7 @@ public class UsersService {
 
 		usersRepo.save(u);
 	}
-	@Transactional(readOnly = false)
+
 	public void register(String login, String email, String pass,Permissions permission) {
 		String passHash = new BCryptPasswordEncoder().encode(pass);
 		//String passHash = pass;
@@ -112,26 +112,26 @@ public class UsersService {
 
 		usersRepo.save(u);
 	}
-	@Transactional(readOnly = false)
+
 	public void togglePermissionById(Long id){
 		User u = getById(id);
 		u.togglePermission();
 		usersRepo.save(u);
 	}
-	@Transactional
+
 	public void updateUserInfo(User u){
 		usersRepo.save(u);
 	}
 
-	@Transactional
+
 	public void removeUser(Long id){
 		usersRepo.delete(id);
 	}
-	@Transactional
+
 	public User getById(Long id){
 		return usersRepo.findOne(id);
 	}
-	@Transactional
+
 	public boolean isAdmin(String id){
 		if(usersRepo.findInAdminTable(id) != null)
 			return true;

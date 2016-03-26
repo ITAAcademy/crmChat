@@ -10,10 +10,11 @@ import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.repositories.ConfigParamRepository;
 
 @Service
+@Transactional
 public class ConfigParamService {
 	@Autowired
 	ConfigParamRepository configParamRepo;
-	@Transactional
+	
 public ConfigParam getParam(String param){
 	return configParamRepo.findFirstByParam(param);
 }

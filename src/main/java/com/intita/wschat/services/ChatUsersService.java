@@ -25,6 +25,7 @@ import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.UserRepository;
 
 @Service
+@Transactional
 public class ChatUsersService {
 
 	@Autowired
@@ -33,14 +34,12 @@ public class ChatUsersService {
 	private UsersService userService;
 
 	@PostConstruct
-	@Transactional
+	
 	public void createAdminUser() {
 		System.out.println("admin user created");
 		//register("user", "user", "user");
 
 	}
-
-	@Transactional
 	public ChatUser getChatUser(Principal principal){
 		if (principal==null)return null;
 		String chatUserIdStr = principal.getName();
@@ -59,13 +58,11 @@ public class ChatUsersService {
 		return user;
 	}
 
-	@Transactional
 	public Page<ChatUser> getChatUsers(int page, int pageSize){
 		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 
 	}
 
-	@Transactional
 	public List<String> getUsersNickNameFist5(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		List<String> nickNames = new ArrayList<String>();
@@ -74,31 +71,25 @@ public class ChatUsersService {
 		return nickNames;
 
 	}
-	@Transactional
 	public List<ChatUser> getUsersFist5(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		return users;
 
 	}
-	@Transactional
 	public ArrayList<ChatUser> getUsers(){
 		return (ArrayList<ChatUser>) IteratorUtils.toList(chatUsersRepo.findAll().iterator()); // spring рахує сторінки з нуля
 	}
-	@Transactional
 	public ChatUser getChatUser(Long id){
 		return chatUsersRepo.findOne(id);
 	}
-	@Transactional
 	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){
 		User currentUser = userService.getById(id);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
-	@Transactional
 	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){
 		User currentUser = userService.getUser(email);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
-	@Transactional
 	public ChatUser getChatUserFromIntitaUser(User currentUser, boolean createGuest){
 		if(currentUser == null  )
 		{
@@ -114,38 +105,36 @@ public class ChatUsersService {
 		}
 		return tempChatUser;
 	}
-	@Transactional
+
 	public User getUsersFromChatUserId(Long id) {
 		ChatUser cUser = getChatUser(id);
 		return cUser.getIntitaUser();
 	}
 
-	@Transactional
+
 	public ChatUser getChatUser(String nickName) {
 		return chatUsersRepo.findOneByNickName(nickName);
 	}
 
-	@Transactional(readOnly = false)
 	public ChatUser register(String nickName, User intitaUser) {
 		ChatUser u = new ChatUser(nickName,intitaUser);
 		chatUsersRepo.save(u);
 		return u;
 	}
 
-	@Transactional
+
 	public void updateChatUserInfo(ChatUser u){
 		chatUsersRepo.save(u);
 	}
-	@Transactional
+
 	public void removeUser(Long id){
 		chatUsersRepo.delete(id);
 	}
-	@Transactional
+
 	public List<ChatUser> getChatUsersLike(String nickName){
 		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
 	}
 
-	@Transactional
 	public ChatUser isMyRoom(String roomId, String userId){
 		ArrayList<Room> roomList = new ArrayList<>();
 		roomList.add(new Room(Long.parseLong(roomId)));
