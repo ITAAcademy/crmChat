@@ -130,12 +130,12 @@ public class RoomsService {
 	public boolean update(Room room){
 		roomRepo.save(room);
 		
-		Map<String, Object> sendedMap = new HashMap<>();
+		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", room);
 		
 		String subscriptionStr = "/topic/users/info";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, sendedMap);
-		ChatController.addFieldToInfoMap("updateRoom", room);
+		ChatController.addFieldToInfoMap("updateRoom", room);*/
 		return true;
 	}
 
