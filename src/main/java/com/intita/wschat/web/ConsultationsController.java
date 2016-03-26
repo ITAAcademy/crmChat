@@ -209,6 +209,9 @@ public class ConsultationsController {
 			{
 				cons.setStartDate(new Date());
 				chatConsultationsService.update(cons);
+				Room room = cons.getRoom();
+				room.setActive(true);//activate room
+				roomService.update(room);
 				return new ResponseEntity<String>(HttpStatus.OK);
 			}
 

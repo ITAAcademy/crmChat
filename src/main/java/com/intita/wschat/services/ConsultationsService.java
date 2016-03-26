@@ -124,6 +124,7 @@ public class ConsultationsService {
 			consultationRoom.setType((short) RoomType.CONSULTATION);
 			consultationRoom.setAuthor(iCons.getAuthor().getChatUser());
 			consultationRoom.setName("Consultation_" + new Date().toString());
+			consultationRoom.setActive(false);
 			chatRoomsService.addUserToRoom(iCons.getConsultant().getChatUser(), consultationRoom);
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);

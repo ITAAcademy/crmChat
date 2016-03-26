@@ -4,15 +4,15 @@
 var springChatControllers = angular.module('springChat.controllers', ['infinite-scroll','toaster','ngRoute', 'ngAnimate','ngResource','ngCookies']);
 springChatControllers.config(function($routeProvider){
 	$routeProvider.when("/chatrooms",
-	{
+			{
 		templateUrl: "dialogsTemplate.html",
 		controller: "DialogsRouteController"
-	});
+			});
 	$routeProvider.when("/dialog_view/:roomId/",
-	{
+			{
 		templateUrl: "chatTemplate.html",
 		controller: "ChatRouteController"
-	});
+			});
 	$routeProvider.when("/teachers_list",{
 		templateUrl: "teachersTemplate.html",
 		controller: "TeachersListRouteController"
@@ -232,6 +232,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				$scope.currentRoom.roomId = data["newGuestRoom"];
 				changeLocation("/dialog_view/"+data["newGuestRoom"]);
 			}
+			if(data["updateRoom"] != null)
+			{
+				$scope.currentRoom = data["updateRoom"];
+			}
 			subscribeInfoUpdateLP();
 		}).error(function errorHandler(data, status, headers, config) {
 			subscribeInfoUpdateLP();
@@ -411,17 +415,24 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 							$timeout(function(){
 								changeLocation("dialog_view/"+operationStatus.description);
 							}, 1000);
-
-
 							break;
 						case Operations.add_room_from_tenant:
 							//changeLocation("dialog_view/"+operationStatus.description);
+							break;
+						case "updateRoom":
+							debugger;
+							//$scope.currentRoom = 
 							break;
 
 						}
 //						ZIGZAG OPS
 
 						console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
+					});
+					
+					chatSocket.subscribe("/topic/users/info", function(message) {
+						var operationStatus = JSON.parse(message.body);
+						debugger;
 					});
 
 					chatSocket.subscribe("/user/exchange/amq.direct/errors", function(message) {

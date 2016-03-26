@@ -21,7 +21,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				$scope.status = 0;
 			}
 		}).error(function errorHandler(data, status, headers, config) {
-
+			
 		});
 	}
 
@@ -33,7 +33,10 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				var status = data["status"];
 				$scope.status = status;
 				if(status < 0 || status == undefined)
+				{
+					
 					return; //access deny show MSG
+				}
 
 				if(status == 1 || status == 0)
 					$scope.isMyRoom = false;

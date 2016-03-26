@@ -84,7 +84,7 @@ import jsonview.Views;
 /**
  * Controller that handles WebSocket chat messages
  * 
- * @author Nicolas
+ * @author Nicolas Haiduchok
  */
 
 @Controller
@@ -242,7 +242,7 @@ public class ChatController {
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, chatUsersService, roomService);//Control room from LP
-		if(struct == null)
+		if(struct == null || !struct.room.isActive())//cant add msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(struct.user, struct.room, message);
@@ -252,6 +252,9 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
+		if(!room.isActive())//cant add msg
+			return null;
+		
 		UserMessage messageToSave = new UserMessage(chatUser,room,message);
 		return messageToSave;
 	}
@@ -288,10 +291,13 @@ public class ChatController {
 		Room o_room = new Room(room);
 		UserMessage messageToSave = filterMessageWithoutFakeObj(r, message, o_room);//filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
+		{
 			addMessageToBuffer(room, messageToSave);
-		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
-		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+			
+			OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
+			String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
+			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		}
 		return message;
 	}
 

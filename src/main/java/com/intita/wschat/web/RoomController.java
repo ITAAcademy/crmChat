@@ -460,7 +460,7 @@ public class RoomController {
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
-		if(room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue())
+		if(room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive())
 		{
 			return false;
 		}

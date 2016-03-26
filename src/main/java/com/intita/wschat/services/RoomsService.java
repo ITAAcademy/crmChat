@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,15 +12,19 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
+import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.repositories.RoomRepository;
+import com.intita.wschat.web.ChatController;
 
 @Service
 public class RoomsService {
@@ -30,6 +35,7 @@ public class RoomsService {
 	@Autowired private ChatUsersService chatUserService;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private UserMessageService userMessageService;
+	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
 	@PostConstruct
 	@Transactional
@@ -123,6 +129,13 @@ public class RoomsService {
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
+		
+		Map<String, Object> sendedMap = new HashMap<>();
+		sendedMap.put("updateRoom", room);
+		
+		String subscriptionStr = "/topic/users/info";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, sendedMap);
+		ChatController.addFieldToInfoMap("updateRoom", room);
 		return true;
 	}
 
