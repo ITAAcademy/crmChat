@@ -176,6 +176,13 @@ public class ConsultationsController {
 		result.put("status", -2);//consultation not found
 		return mapper.writeValueAsString(result);
 	}
+	@RequestMapping(value = "/chat/consultation/fromRoom/{id}", method = RequestMethod.POST)
+	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+		ChatConsultation cons = chatConsultationsService.getConsultationByRoom(new Room(roomId));
+		if(cons != null) 
+			return mapper.writeValueAsString(cons.getId());
+		return null;
+	}
 
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
 	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts, HttpRequest req) throws InterruptedException, JsonProcessingException {

@@ -83,8 +83,8 @@ public class ConsultationsService {
 	}
 	
 	@Transactional(readOnly = false)
-	public void getConsultationByRoom(Room room) {
-		
+	public ChatConsultation getConsultationByRoom(Room room) {
+		return chatConsultationRepository.findOneByRoom(room);
 	}
 	
 	@Transactional(readOnly = false)

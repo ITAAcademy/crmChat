@@ -180,6 +180,11 @@ public class ChatController {
 	@PostConstruct
 	public void onCreate()
 	{
+		updateLangMap();
+	}
+	
+	private void updateLangMap()
+	{
 		Iterable<Lang> it = chatLangRepository.findAll();
 		for(Lang lg:it)
 		{
@@ -582,6 +587,7 @@ public class ChatController {
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpRequest request, Model model) {
 		authenticationProvider.autorization(authenticationProvider);
+		updateLangMap();
 		addLocolization(model);
 		return "index";
 	}

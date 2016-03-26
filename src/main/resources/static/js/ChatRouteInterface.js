@@ -7,14 +7,14 @@ springChatControllers.controller('ChatRouteInterface',['$routeParams','$rootScop
 		toaster.pop('error', "Error", mess, 1000);
 	}
 
-$scope.fileDropped = function(){
-    //Get the file
-    debugger;
-    var files = $scope.uploadedFiles;
+	$scope.fileDropped = function(){
+		//Get the file
+		debugger;
+		var files = $scope.uploadedFiles;
 
-    //Upload the image
-    //(Uploader is a service in my application, you will need to create your own)
-   if (files) {
+		//Upload the image
+		//(Uploader is a service in my application, you will need to create your own)
+		if (files) {
 			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
 					function successCallback(data){    
 				$scope.uploadProgress = 0;
@@ -35,9 +35,9 @@ $scope.fileDropped = function(){
 			}) ;
 		}
 
-    //Clear the uploaded file
-    $scope.uploadedFile = null;
-};
+		//Clear the uploaded file
+		$scope.uploadedFile = null;
+	};
 
 	Scopes.store('ChatRouteInterface', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
@@ -82,8 +82,8 @@ $scope.fileDropped = function(){
 		console.log("roomId:" + roomId);
 		return goToDialogEvn(roomId).then(function(){
 			if (chatControllerScope.currentRoom!==undefined && getRoomById($scope.rooms,chatControllerScope.currentRoom) !== undefined )
-			getRoomById($scope.rooms,chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
-	});
+				getRoomById($scope.rooms,chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
+		});
 		//$scope.templateName = 'chatTemplate.html';
 		//$scope.dialogName = "private";
 
@@ -323,6 +323,17 @@ $scope.fileDropped = function(){
 	{
 		$scope.participants = message["participants"];
 		$scope.roomType = message["type"];
+		debugger;
+		if($scope.roomType == 2)
+		{
+			$http.post(serverPrefix+"/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
+			.success(function(data, status, headers, config) {
+				$location.path("consultation_view/" + data);
+			}).error(function errorHandler(data, status, headers, config) {
+				$location.path("/");//go out
+			});
+			return;
+		}
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.push(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
@@ -362,7 +373,7 @@ $scope.fileDropped = function(){
 			console.log("MESSAGE onLOAD OK " + data);
 			if(data == "")
 				return;
-			
+
 			for(var index=data.length - 1; index >= 0 ; index--) { 
 				if(data[index].hasOwnProperty("message")){
 					$scope.messages.push(data[index]);
@@ -371,7 +382,7 @@ $scope.fileDropped = function(){
 			$scope.message_busy = false;
 		}).
 		error(function(data, status, headers, config) {
-			
+
 			//messageError("no other message");
 		});
 	}
@@ -403,7 +414,7 @@ $scope.fileDropped = function(){
 		}
 		return false;
 	}
-	
+
 	$scope.getNameFromUrl=function getNameFromUrl(url){
 		var fileNameSignaturePrefix = "file_name=";
 		var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
