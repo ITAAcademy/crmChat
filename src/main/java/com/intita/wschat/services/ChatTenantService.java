@@ -42,7 +42,7 @@ public class ChatTenantService {
 			log.info(e.getMessage());
 			return new PageImpl<ChatTenant>(new ArrayList<ChatTenant>());
 		}
-		return chatTenantPage; // spring рахує сторінки з нуля	}
+		return chatTenantPage; 
 	}
 	
 	@Transactional
@@ -54,7 +54,7 @@ public class ChatTenantService {
 		catch(EntityNotFoundException e){
 			return new ArrayList<ChatTenant>();
 		}
-		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator()); // spring рахує сторінки з нуля
+		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator());
 		return tenantsList;
 	}
 	@Transactional

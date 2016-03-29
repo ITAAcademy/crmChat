@@ -13,6 +13,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +35,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -52,7 +55,6 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
-import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.RoomsService.StringIntDate;
 import com.intita.wschat.services.UserMessageService;
@@ -254,7 +256,7 @@ public class RoomController {
 	@ResponseBody
 	 public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") Long room, Principal principal) throws JsonProcessingException {
 
-		Long timeOut = 100000000L;
+		Long timeOut = 5000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		Queue<DeferredResult<String>> queue = responseBodyQueueForParticipents.get(room);
 		if(queue == null)
@@ -267,6 +269,8 @@ public class RoomController {
 			responseBodyQueueForParticipents.put(room.toString(), queue);		
 			queue.add(result);
 		}
+		else result.setResult("{}");
+		
 		return result;
 	}
 
@@ -278,23 +282,31 @@ public class RoomController {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
 			Long longKey = 0L;
+			boolean status = true;
 			try{
 				longKey = Long.parseLong(key);
 			}
 			catch(NumberFormatException e){
 				log.info("Participants update error:"+e.getMessage());
-				return;
+				status = false;
 			}
-			Room room_o = roomService.getRoom(longKey);
-			HashMap<String, Object> result = new HashMap();
+			Room room_o = null;
+			HashMap<String, Object> result = null;
+			if (status)
+			{
+			room_o=roomService.getRoom(longKey);
+			 result = new HashMap();
+			}
 			if(room_o != null)
 				result.put("participants", GetParticipants(room_o));
 			
 			for(DeferredResult<String> response : responseBodyQueueForParticipents.get(key))
 			{
+				//response.setResult("");
 				try {
 					if(!response.isSetOrExpired())
 						response.setResult(mapper.writeValueAsString(result));
+					else response.setResult("{}");
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					response.setResult("");
