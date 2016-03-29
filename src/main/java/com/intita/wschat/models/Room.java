@@ -22,6 +22,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import jsonview.Views;
 
 /**
  * 
@@ -31,19 +34,23 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Room implements Serializable,Comparable<Room> {
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 
 	@OneToMany(mappedBy = "room")
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
 
+	@JsonView(Views.Public.class)
 	private boolean active = true;
 
 	@NotBlank
 	@Size(min = 1, max = 255)
 	@Column(unique = false)
+	@JsonView(Views.Public.class)
 	private String name;
 
 	@NotNull
+	@JsonView(Views.Public.class)
 	private short type;
 
 	@ManyToOne

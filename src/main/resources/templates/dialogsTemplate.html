@@ -4,7 +4,7 @@
         <h4 th:text="${lgPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs </h4>
         <div class="share">
         <ul ng-repeat="room in rooms | orderBy: '-date' " ng-show="socketSupport">
-                <li>               
+                <li>  
                     <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
                     <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
                   <a ng-href="#/dialog_view/{{room.roomId}}"  >{{room.string}}</a>

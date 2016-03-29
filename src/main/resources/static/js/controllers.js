@@ -432,6 +432,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					
 					chatSocket.subscribe("/topic/users/info", function(message) {
 						var operationStatus = JSON.parse(message.body);
+						operationStatus = JSON.parse(operationStatus);
+						$scope.currentRoom = operationStatus["updateRoom"];
 						debugger;
 					});
 

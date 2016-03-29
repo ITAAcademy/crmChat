@@ -207,11 +207,14 @@ public class ConsultationsController {
 
 			if(varible.equals("start") && cons.getStartDate() == null)
 			{
-				cons.setStartDate(new Date());
-				chatConsultationsService.update(cons);
 				Room room = cons.getRoom();
+				if(!participantRepository.isOnline(iCons.getConsultant().getChatUser().getId().toString()))//need wait
+					return new ResponseEntity<String>(HttpStatus.METHOD_NOT_ALLOWED);
+				
 				room.setActive(true);//activate room
 				roomService.update(room);
+				cons.setStartDate(new Date());
+				chatConsultationsService.update(cons);
 				return new ResponseEntity<String>(HttpStatus.OK);
 			}
 

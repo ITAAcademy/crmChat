@@ -27,7 +27,7 @@ public class ParticipantRepository {
 	}
 
 	public boolean isOnline(String chatId) {
-	return activeSessions.contains(chatId);
+		return activeSessions.contains(chatId);
 	}
 
 	public void removeParticipant(String chatId) {

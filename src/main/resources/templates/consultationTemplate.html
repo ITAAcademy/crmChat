@@ -1,7 +1,5 @@
 <div class="row">
-
 	<div th:include="chatTemplate"></div>
-
 </div>
 <span ng-hide="consultant">
 	<div th:each="rating : ${ratingsPack}" class="row">
@@ -10,13 +8,16 @@
 			th:attr="ng-model=${'ratings[' + rating.id + ']'}" max="10"></star-rating>
 		<span th:attr="ng-bind=${'ratings[' + rating.id + ']'}"
 			class="col-xs-1">khj</span>
-	</div> <span ng-if="status == 1" class="col-xs-2">
-		<button class="btn btn-block btn-lg btn-info" ng-click="ssFunction('start')">
+	</div> <span  ng-if="status == 1" class="col-xs-2">
+
+		<button ng-disabled="isCanStart()" class="btn btn-block btn-lg btn-info"
+			ng-click="ssFunction('start')">
 			<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
 			<span ng-show="messageSended">Start</span>
 		</button>
 </span> <span ng-if="status == 2" class="col-xs-2">
-		<button class="btn btn-block btn-lg btn-info" ng-click="ssFunction('finish')">
+		<button class="btn btn-block btn-lg btn-info"
+			ng-click="ssFunction('finish')">
 			<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
 			<span ng-show="messageSended">Finish</span>
 		</button>

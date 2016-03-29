@@ -12,10 +12,14 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.OperationStatus;
@@ -25,6 +29,8 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
+
+import jsonview.Views;
 
 @Service
 public class RoomsService {
@@ -130,12 +136,23 @@ public class RoomsService {
 	public boolean update(Room room){
 		roomRepo.save(room);
 		
-		/*Map<String, Object> sendedMap = new HashMap<>();
+		Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", room);
 		
 		String subscriptionStr = "/topic/users/info";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, sendedMap);
-		ChatController.addFieldToInfoMap("updateRoom", room);*/
+		ObjectMapper mapper =  new ObjectMapper();
+		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+		
+		try {
+			simpMessagingTemplate.convertAndSend(subscriptionStr, mapper.writerWithView(Views.Public.class).writeValueAsString(sendedMap));
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ChatController.addFieldToInfoMap("updateRoom", room);
 		return true;
 	}
 
@@ -230,6 +247,15 @@ public class RoomsService {
 		public Long roomId;
 		public Long roomAuthorId;
 		public boolean active;
+		public short type;
+
+		public short getType() {
+			return type;
+		}
+
+		public void setType(short type) {
+			this.type = type;
+		}
 
 		public boolean isActive() {
 			return active;
@@ -260,6 +286,7 @@ public class RoomsService {
 			this.roomId=room.getId();
 			this.roomAuthorId=room.getAuthor().getId();
 			this.active = room.isActive();
+			this.type = room.getType();
 		}
 	}
 }

@@ -5,7 +5,18 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 	$scope.ratings = new Map();
 	$scope.consultant = false;
 	$scope.status = 0;
+	$scope.name = "ConsultationController";
 
+	$scope.isCanStart = function() 
+	{
+		var result = true; 
+		for(participant in $scope.participants)
+		{
+			result &= $scope.participants[participant].online;
+		}
+		debugger;
+		return !result;
+	}
 
 	$scope.ssFunction = function(SS){	//SS - start/stop
 		$http.post(serverPrefix+"/chat/consultation/" + SS + "/" + $routeParams.consultationId, $scope.ratings)
@@ -21,7 +32,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				$scope.status = 0;
 			}
 		}).error(function errorHandler(data, status, headers, config) {
-			
+
 		});
 	}
 
@@ -34,7 +45,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				$scope.status = status;
 				if(status < 0 || status == undefined)
 				{
-					
+
 					return; //access deny show MSG
 				}
 

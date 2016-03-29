@@ -1,4 +1,4 @@
-springChatControllers.controller('ChatRouteInterface',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
+springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
 
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
@@ -321,19 +321,20 @@ springChatControllers.controller('ChatRouteInterface',['$routeParams','$rootScop
 
 	function loadSubscribeAndMessage(message)
 	{
-		$scope.participants = message["participants"];
 		$scope.roomType = message["type"];
-		debugger;
-		if($scope.roomType == 2)
+		if($scope.roomType == 2 && $route.current.scope.name != "ConsultationController")//redirect to consultation
 		{
+			debugger;
 			$http.post(serverPrefix+"/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
 			.success(function(data, status, headers, config) {
 				$location.path("consultation_view/" + data);
 			}).error(function errorHandler(data, status, headers, config) {
-				$location.path("/");//go out
+				$location.path("/");//not found => go out
 			});
 			return;
 		}
+		
+		$scope.participants = message["participants"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.push(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
