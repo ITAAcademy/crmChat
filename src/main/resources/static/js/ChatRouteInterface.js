@@ -46,7 +46,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	$scope.messages     = [];
 	$scope.participants = [];
 	$scope.roomType = -1;
-	$scope.ajaxRequestsForRoomLP     = [];
+	$scope.ajaxRequestsForRoomLP = [];
 	$scope.newMessage   = '';
 	$scope.uploadProgress = 0;
 	$scope.message_busy = true;
@@ -326,9 +326,12 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			$http.post(serverPrefix+"/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
 			.success(function(data, status, headers, config) {
-				$location.path("consultation_view/" + data);
+				if(data == "" || data == undefined)
+					$location.path("/access_deny");//not found => go out
+				else
+					$location.path("consultation_view/" + data);
 			}).error(function errorHandler(data, status, headers, config) {
-				$location.path("/");//not found => go out
+				$location.path("/access_deny");//not found => go out
 			});
 			return;
 		}
@@ -362,7 +365,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			loadSubscribeAndMessage(data);
 		}).
 		error(function(data, status, headers, config) {
-
+			
 		});
 	}
 	$scope.loadOtherMessages = function () {

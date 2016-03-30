@@ -21,6 +21,11 @@ springChatControllers.config(function($routeProvider){
 		templateUrl: "redirectPage.html",
 		controller: "StrictedDialogRouteController"
 	});
+	$routeProvider.when("/access_deny",{
+		templateUrl: "accessDeny.html",
+		controller: "AccessDeny"
+	});
+	
 	$routeProvider.when("/consultation_view/:consultationId",{
 		templateUrl: "consultationTemplate.html",
 		controller: "ConsultationController"
@@ -40,6 +45,13 @@ springChatControllers.controller('TeachersListRouteController',['$routeParams','
 //	typeof chatControllerScope.socketSupport!=='undefined'
 	chatControllerScope.goToTeachersList();
 	$scope.pageClass = 'page-contact';
+}]);
+
+
+springChatControllers.controller('AccessDeny',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
+	Scopes.store('AccessDeny', $scope);
+	var chatControllerScope = Scopes.get('ChatController');
+	//maybe add button
 }]);
 
 springChatControllers.controller('StrictedDialogRouteController',['$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {

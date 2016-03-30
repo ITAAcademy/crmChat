@@ -9,10 +9,22 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	$rootScope.$watch('isInited',function(){
 			console.log("try " + chatControllerScope.currentRoom);
 			if($rootScope.isInited == true)
-			$scope.goToDialog($routeParams.roomId).then(function() {
-				chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-				$scope.pageClass = 'page-about';
-			}, function(){alert("ERR")});
+			{
+				if ($rootScope.socketSupport){
+					$scope.goToDialog($routeParams.roomId).promise.then(function() {
+						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
+						$scope.pageClass = 'page-about';
+					}, function(){alert("ERR")});
+				}
+				else
+				{
+					$scope.goToDialog($routeParams.roomId).then(function() {
+						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
+						$scope.pageClass = 'page-about';
+					}, function(){alert("ERR")});
+				}
+			}
+
 	});
 	
 }]);
