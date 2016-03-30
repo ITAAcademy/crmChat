@@ -232,9 +232,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 				$scope.currentRoom.roomId = data["newGuestRoom"];
 				changeLocation("/dialog_view/"+data["newGuestRoom"]);
 			}
-			if(data["updateRoom"] != null)
+			if(data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId)
 			{
-				$scope.currentRoom = data["updateRoom"];
+				debugger;
+				$scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
 			}
 			subscribeInfoUpdateLP();
 		}).error(function errorHandler(data, status, headers, config) {
@@ -314,7 +315,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			{
 				updateRooms(JSON.parse(mess_obj.chat_rooms));
 			}
-
+			else
+			{
+				$scope.rooms = JSON.parse(mess_obj.chat_rooms);
+				$scope.roomsCount = $scope.rooms.length;
+			}
 			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1)
 			{
 				//mess_obj.nextWindow=$scope.currentRoom.roomId;
@@ -487,7 +492,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		console.log("initStompClient");
 
-		chatSocket.init(serverPrefix+"/ws");
+		chatSocket.init(serverPrefix+"/wsq");
 
 
 		chatSocket.connect(onConnect, function(error) {

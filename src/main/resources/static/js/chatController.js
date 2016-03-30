@@ -5,10 +5,11 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	 */
 	$scope.name = "ChatRouteController";
 	var chatControllerScope = Scopes.get('ChatController');
+	
 	$rootScope.$watch('isInited',function(){
 			console.log("try " + chatControllerScope.currentRoom);
 			if($rootScope.isInited == true)
-			$scope.goToDialog($routeParams.roomId).then(function() {
+			$scope.goToDialog($routeParams.roomId).promise.then(function() {
 				chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 				$scope.pageClass = 'page-about';
 			}, function(){alert("ERR")});

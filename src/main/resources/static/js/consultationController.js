@@ -6,7 +6,8 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 	$scope.consultant = false;
 	$scope.status = 0;
 	$scope.name = "ConsultationController";
-
+	var chatControllerScope = Scopes.get('ChatController');
+	
 	$scope.isCanStart = function() 
 	{
 		var result = true; 
@@ -55,7 +56,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				var roomId = data["roomId"];
 				$scope.consultant = data["consultant"];
 
-				$scope.goToDialog(roomId).promise.then(function() {
+				$scope.goToDialog(roomId).then(function() {
 					chatControllerScope.currentRoom.roomId = roomId;
 					$scope.pageClass = 'page-about';
 				});
