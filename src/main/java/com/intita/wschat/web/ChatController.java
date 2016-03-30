@@ -242,7 +242,7 @@ public class ChatController {
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, chatUsersService, roomService);//Control room from LP
-		if(struct == null || !struct.room.isActive())//cant add msg
+		if(struct == null || !struct.room.isActive() || message.getMessage().isEmpty())//cant add msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(struct.user, struct.room, message);
@@ -252,7 +252,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
-		if(!room.isActive())//cant add msg
+		if(!room.isActive() || message.getMessage().isEmpty())//cant add msg
 			return null;
 		
 		UserMessage messageToSave = new UserMessage(chatUser,room,message);
