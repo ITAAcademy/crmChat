@@ -1,0 +1,16 @@
+# in the com/foo/package
+<html>
+    <body>
+        <h3>Hi ${user}, welcome to the Chipping Sodbury On-the-Hill message boards!</h3>
+#foreach( $message in $messages )
+		<div>
+		<h1> Username:${message.username}</h1>>
+          Message:${message.message}
+          <hr/>
+          </div>
+#end
+        <div>
+            Your email address is <a href="mailto:${user.emailAddress}">${user.emailAddress}</a>.
+        </div>
+    </body>
+</html>
