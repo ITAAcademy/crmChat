@@ -46,7 +46,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				$scope.status = status;
 				if(status < 0 || status == undefined)
 				{
-
+					$location.path("/access_deny");//not found => go out
 					return; //access deny show MSG
 				}
 

@@ -103,6 +103,11 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			room.nums = 0;
 			$scope.dialogName = room.string;
 		}
+		else
+			{
+				$location.path("/access_deny");//not found => go out
+				return;
+			}
 
 		if ($rootScope.socketSupport){
 			chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));

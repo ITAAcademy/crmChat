@@ -5,6 +5,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	/*
 	 * 
 	 */
+	//$location.path("http://localhost/IntITA/site/authorize");//not found => go out
+	//window.top.location.href = 'http://localhost/IntITA/site/authorize';
 	$scope.dialogName = '';
 	
 	$scope.addDialog = function() {
