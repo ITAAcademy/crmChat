@@ -9,7 +9,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	$scope.fileDropped = function(){
 		//Get the file
-		debugger;
 		var files = $scope.uploadedFiles;
 
 		//Upload the image
@@ -18,7 +17,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
 					function successCallback(data){    
 				$scope.uploadProgress = 0;
-				debugger;
 				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
 				$scope.$apply();
 			},
@@ -122,12 +120,10 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	 * CHANGE ROOM
 	 *************************************/
 	$scope.changeRoom=function(){
-		debugger;
 		$scope.messages=[];
 		console.log("roomId:"+chatControllerScope.currentRoom.roomId);
 		room=chatControllerScope.currentRoom.roomId+'/';
 
-		//debugger;
 		if($rootScope.socketSupport == true)
 		{
 			lastRoomBindings.push(
@@ -235,7 +231,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 					error: function(xhr, text_status, error_thrown){
 						//if (text_status == "abort")return;
 						if (xhr.status === 0 || xhr.readyState === 0) {
-							return;}
+							//alert("discardMsg");
+							return;
+						}
 						subscribeMessageLP();    	
 					}
 				}));
@@ -326,7 +324,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.roomType = message["type"];
 		if($scope.roomType == 2 && $route.current.scope.name != "ConsultationController")//redirect to consultation
 		{
-			debugger;
 			$http.post(serverPrefix+"/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
 			.success(function(data, status, headers, config) {
 				$location.path("consultation_view/" + data);
@@ -395,7 +392,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var input = this.elements.myfile;
 		var files =[];
 		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
-		debugger;
 		if (files) {
 			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
 					function successCallback(data){    

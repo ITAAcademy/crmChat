@@ -309,17 +309,18 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			return;
 		}
 
+		if($rootScope.socketSupport == false)
+		{
+			updateRooms(JSON.parse(mess_obj.chat_rooms));
+		}
+		else
+		{
+			$scope.rooms = JSON.parse(mess_obj.chat_rooms);
+			$scope.roomsCount = $scope.rooms.length;
+		}
+		
 		if(mess_obj.nextWindow == 0)
 		{
-			if($rootScope.socketSupport == false)
-			{
-				updateRooms(JSON.parse(mess_obj.chat_rooms));
-			}
-			else
-			{
-				$scope.rooms = JSON.parse(mess_obj.chat_rooms);
-				$scope.roomsCount = $scope.rooms.length;
-			}
 			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1)
 			{
 				//mess_obj.nextWindow=$scope.currentRoom.roomId;

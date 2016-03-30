@@ -317,14 +317,14 @@ public class ChatController {
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") Long room) throws JsonProcessingException {
-		Long timeOut = 1000000000L;
+		Long timeOut = 60000L;
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
-		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room);
+		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room.toString());
 		if(queue == null)
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
+			responseBodyQueue.put(room.toString(), queue);
 		}
-		responseBodyQueue.put(room.toString(), queue);
 		//System.out.println("updateMessageLP responseBodyQueue:"+queue.size());
 		queue.add(result);
 		return result;
@@ -339,17 +339,14 @@ public class ChatController {
 			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(roomId);
 			if(responseList != null)
 			{
+				String str = "";
+				try {
+					str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}	
 				for(DeferredResult<String> response : responseList)
 				{
-					String str = "";
-					if(responseList != null)
-					{
-						try {
-							str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
-						} catch (JsonProcessingException e) {
-							e.printStackTrace();
-						}												
-					}
 					if(!response.isSetOrExpired())
 						response.setResult(str);
 				}
