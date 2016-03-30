@@ -122,10 +122,10 @@ public class ConsultationsService {
 		{
 			Room consultationRoom = new Room();
 			consultationRoom.setType((short) RoomType.CONSULTATION);
-			consultationRoom.setAuthor(iCons.getAuthor().getChatUser());
+			consultationRoom.setAuthor(iCons.getConsultant().getChatUser());
 			consultationRoom.setName("Consultation_" + new Date().toString());
 			consultationRoom.setActive(false);
-			chatRoomsService.addUserToRoom(iCons.getConsultant().getChatUser(), consultationRoom);
+			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);
 		}

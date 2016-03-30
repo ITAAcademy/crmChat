@@ -180,7 +180,7 @@ public class ConsultationsController {
 	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
 		ChatConsultation cons = chatConsultationsService.getConsultationByRoom(new Room(roomId));
 		if(cons != null) 
-			return mapper.writeValueAsString(cons.getId());
+			return mapper.writeValueAsString(cons.getIntitaConsultation().getId());
 		return null;
 	}
 
