@@ -486,7 +486,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		console.log("initStompClient");
 
-		chatSocket.init(serverPrefix+"/wsi");
+		chatSocket.init(serverPrefix+"/ws");
 
 
 		chatSocket.connect(onConnect, function(error) {
