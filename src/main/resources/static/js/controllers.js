@@ -432,8 +432,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 					
 					chatSocket.subscribe("/topic/users/info", function(message) {
 						var operationStatus = JSON.parse(message.body);
-						operationStatus = JSON.parse(operationStatus);
-						$scope.currentRoom = operationStatus["updateRoom"];
+						//operationStatus = JSON.parse(operationStatus);
+						if(operationStatus["updateRoom"].roomId == $scope.currentRoom.roomId)
+							$scope.currentRoom = operationStatus["updateRoom"];
 						debugger;
 					});
 
@@ -486,7 +487,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		console.log("initStompClient");
 
-		chatSocket.init(serverPrefix+"/wsi");
+		chatSocket.init(serverPrefix+"/ws");
 
 
 		chatSocket.connect(onConnect, function(error) {

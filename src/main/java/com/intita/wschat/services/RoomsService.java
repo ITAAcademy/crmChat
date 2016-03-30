@@ -137,22 +137,19 @@ public class RoomsService {
 		roomRepo.save(room);
 		
 		Map<String, Object> sendedMap = new HashMap<>();
-		sendedMap.put("updateRoom", room);
+		sendedMap.put("updateRoom", new StringIntDate(0, new Date().toString(), room));
 		
 		String subscriptionStr = "/topic/users/info";
 		ObjectMapper mapper =  new ObjectMapper();
-		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+		//mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 		
 		try {
-			simpMessagingTemplate.convertAndSend(subscriptionStr, mapper.writerWithView(Views.Public.class).writeValueAsString(sendedMap));
+			simpMessagingTemplate.convertAndSend(subscriptionStr, sendedMap);
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		ChatController.addFieldToInfoMap("updateRoom", room);
+		ChatController.addFieldToInfoMap("updateRoom", sendedMap);
 		return true;
 	}
 
@@ -216,7 +213,7 @@ public class RoomsService {
 					}
 			}
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) continue;
-			StringIntDate sb = new StringIntDate(entry.getLastRoom().getName(), messages_cnt , date.toString(),entry.getLastRoom());
+			StringIntDate sb = new StringIntDate(messages_cnt , date.toString(),entry.getLastRoom());
 			result.add(sb);
 		}
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
@@ -279,8 +276,8 @@ public class RoomsService {
 			date = new Date().toString();
 		}
 
-		public StringIntDate(String string, Integer nums, String date,Room room) {
-			this.string = string;
+		public StringIntDate(Integer nums, String date,Room room) {
+			this.string = room.getName();
 			this.nums = nums;
 			this.date = date;
 			this.roomId=room.getId();

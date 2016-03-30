@@ -42,7 +42,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	Scopes.store('ChatRouteInterface', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
 	var lastRoomBindings = [];
-
+	chatControllerScope.$watch('currentRoom', function(){
+		$scope.currentRoom = chatControllerScope.currentRoom;
+	});
 	$scope.messages     = [];
 	$scope.participants = [];
 	$scope.roomType = -1;

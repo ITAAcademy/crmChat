@@ -288,7 +288,7 @@ public class ChatController {
 		if(r == null)
 			return null;
 
-		Room o_room = new Room(room);
+		Room o_room = struct.getRoom();
 		UserMessage messageToSave = filterMessageWithoutFakeObj(r, message, o_room);//filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
 		{
@@ -297,8 +297,9 @@ public class ChatController {
 			OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 			String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+			return message;
 		}
-		return message;
+		return null;
 	}
 
 	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)

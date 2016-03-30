@@ -35,7 +35,8 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@Autowired
     private SessionFactory factory;
 	
-	@OneToMany(mappedBy = "chatUser")
+	
+	@OneToMany(mappedBy = "chatUser", fetch = FetchType.EAGER)
 	List<ChatUserLastRoomDate> chatUserLastRoomDate;
 
 	@Id
