@@ -18,6 +18,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
@@ -91,7 +93,8 @@ import jsonview.Views;
 public class ChatController {
 	@Autowired
 	ConfigParamService configParamService;
-
+	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
+	
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -152,21 +155,24 @@ public class ChatController {
 	@Transactional
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
-
+		long startTime = System.currentTimeMillis();
+		
 		Room o_room = chat_room_service.getRoom(roomId);
 		if(o_room == null)
 			return null;
-
 		ChatUser o_user = chat_user_service.getChatUser(principal);
 		if(o_user == null)
 			return null;
 
 		Set<Room> all = o_user.getRoomsFromUsers();
 		all.addAll(o_user.getRootRooms());
+	
 
 		if(!all.contains(o_room))
 			return null;
-
+		
+		long timeSpend = System.currentTimeMillis() - startTime;
+		log.info("isMyRoom time#4:" + timeSpend );
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
 	}
 
