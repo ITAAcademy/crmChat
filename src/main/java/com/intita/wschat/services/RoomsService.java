@@ -51,13 +51,13 @@ public class RoomsService {
 
 	@Transactional
 	public Page<Room> getRooms(int page, int pageSize){
-		return roomRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
+		return roomRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
 
 	@Transactional
 	public List<Room> getRooms(){
-		return (List<Room>) roomRepo.findAll(); // spring рахує сторінки з нуля
+		return (List<Room>) roomRepo.findAll(); 
 	}
 
 	@Transactional

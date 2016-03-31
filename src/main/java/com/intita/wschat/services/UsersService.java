@@ -108,7 +108,6 @@ public class UsersService {
 		//String passHash = pass;
 		User u = new User(login, email.toLowerCase(), passHash);
 		u.setPermission(permission);
-		// підпишемо користувача на самого себе
 
 		usersRepo.save(u);
 	}
