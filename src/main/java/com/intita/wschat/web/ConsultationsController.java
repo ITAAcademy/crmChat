@@ -150,7 +150,7 @@ public class ConsultationsController {
 			 */
 			User author = iCons.getAuthor();
 			User consultant = iCons.getConsultant();
-
+			
 			if(author.equals(iUser))
 				result.put("consultant", false);
 			else
@@ -167,10 +167,21 @@ public class ConsultationsController {
 
 			ChatConsultation cons = chatConsultationsService.getByIntitaConsultation(iCons);
 
+			
 			if(cons.getStartDate() == null)
 				result.put("status", 1);//not begin
 			else
 			{
+				Date finishDate = iCons.getDate();
+				finishDate.setTime(iCons.getFinishTime().getTime());
+				
+				ChatUser chatAuthor = author.getChatUser();
+				ChatUser chatConsultant = consultant.getChatUser();
+				if(new Date().after(finishDate))
+				{
+					if(!participantRepository.isOnline(chatAuthor.getId().toString()) || !participantRepository.isOnline(chatConsultant.getId().toString()))
+						finishConsultation(cons);
+				}
 				if(cons.getFinishDate() == null)
 					result.put("status", 2);//not finish
 				else
@@ -191,8 +202,16 @@ public class ConsultationsController {
 		return null;
 	}
 
+	private void finishConsultation(ChatConsultation cons)
+	{
+		cons.setFinishDate(new Date());
+		Room room = cons.getRoom();
+		room.setActive(false);
+		roomService.update(room);
+		chatConsultationsService.update(cons);
+	}
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts, HttpRequest req) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */
@@ -227,11 +246,7 @@ public class ConsultationsController {
 
 			if(varible.equals("finish") && cons.getFinishDate() == null)
 			{
-				cons.setFinishDate(new Date());
-				Room room = cons.getRoom();
-				room.setActive(false);
-				roomService.update(room);
-				chatConsultationsService.update(cons);
+				finishConsultation(cons);
 				chatConsultationsService.setRatings(cons, starts);
 				return new ResponseEntity<String>(HttpStatus.OK);
 			}

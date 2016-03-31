@@ -15,6 +15,7 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,20 +39,14 @@ import com.intita.wschat.repositories.UserRepository;
 @Service
 public class ConsultationsService {
 
-	@Autowired
-	private UserRepository usersRepo;
-	@Autowired
-	private ChatUsersService chatUsersService;
-	@Autowired
-	private RoomsService chatRoomsService;
-	@Autowired
-	private ConsultationRepository chatConsultationRepository;
-	@Autowired
-	private IntitaConsultationRepository chatIntitaConsultationRepository;
-	@Autowired
-	private ConsultationRatingsRepository chatConsultationRatingsRepository;
-	@Autowired
-	private ConsultationResultRepository chatConsultationResultRepository;
+	@Autowired private UserRepository usersRepo;
+	@Autowired private ChatUsersService chatUsersService;
+	@Autowired private RoomsService chatRoomsService;
+	@Autowired private ConsultationRepository chatConsultationRepository;
+	@Autowired private IntitaConsultationRepository chatIntitaConsultationRepository;
+	@Autowired private ConsultationRatingsRepository chatConsultationRatingsRepository;
+	@Autowired private ConsultationResultRepository chatConsultationResultRepository;
+	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
 	@PostConstruct
 	@Transactional
@@ -120,12 +115,15 @@ public class ConsultationsService {
 		ChatConsultation result = iCons.getChatConsultation();
 		if(result == null)
 		{
+			ChatUser consultant = iCons.getConsultant().getChatUser();
 			Room consultationRoom = new Room();
 			consultationRoom.setType((short) RoomType.CONSULTATION);
 			consultationRoom.setAuthor(iCons.getConsultant().getChatUser());
 			consultationRoom.setName("Consultation_" + new Date().toString());
 			consultationRoom.setActive(false);
 			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsByChatUser(consultant));
+			
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);
 		}
