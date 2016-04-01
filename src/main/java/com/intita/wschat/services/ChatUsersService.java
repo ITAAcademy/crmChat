@@ -61,7 +61,7 @@ public class ChatUsersService {
 
 	@Transactional
 	public Page<ChatUser> getChatUsers(int page, int pageSize){
-		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
+		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
 
@@ -82,7 +82,7 @@ public class ChatUsersService {
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(){
-		return (ArrayList<ChatUser>) IteratorUtils.toList(chatUsersRepo.findAll().iterator()); // spring рахує сторінки з нуля
+		return (ArrayList<ChatUser>) IteratorUtils.toList(chatUsersRepo.findAll().iterator());
 	}
 	@Transactional
 	public ChatUser getChatUser(Long id){

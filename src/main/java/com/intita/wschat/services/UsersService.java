@@ -40,7 +40,7 @@ public class UsersService {
 
 	@Transactional
 	public Page<User> getUsers(int page, int pageSize){
-		return usersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
+		return usersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
 	@Transactional
@@ -71,7 +71,7 @@ public class UsersService {
 	
 	@Transactional
 	public ArrayList<User> getUsers(){
-		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); // spring рахує сторінки з нуля
+		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); 
 	}
 	@Transactional
 	public User getUser(Long id){
@@ -98,7 +98,6 @@ public class UsersService {
 
 		User u = new User(login, email.toLowerCase(), passHash);
 
-		// підпишемо користувача на самого себе
 
 		usersRepo.save(u);
 	}

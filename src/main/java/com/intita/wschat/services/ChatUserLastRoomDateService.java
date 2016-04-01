@@ -34,7 +34,7 @@ public class ChatUserLastRoomDateService {
 
 	@Transactional
 	public Page<ChatUserLastRoomDate> getUserLastRoomDatPages(int page, int pageSize){
-		return chatUserLastRoomDateRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля	}
+		return chatUserLastRoomDateRepo.findAll(new PageRequest(page-1, pageSize)); // spring count pages from zero	}
 	}
 
 	@Transactional

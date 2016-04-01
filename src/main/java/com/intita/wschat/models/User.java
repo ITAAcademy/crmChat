@@ -170,8 +170,8 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	}
 
 	public static boolean isAnonymous() {
-		// Метод SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
-		// нічого не дасть, оскільки анонімний користувач теж вважається авторизованим
+		// Method SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+		// do nothing because anonimus user is considered authorized too
 		return "anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
