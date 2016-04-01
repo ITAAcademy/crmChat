@@ -172,7 +172,7 @@ public class ChatController {
 			return null;
 		
 		long timeSpend = System.currentTimeMillis() - startTime;
-		log.info("isMyRoom time#4:" + timeSpend );
+		log.info("isMyRoom time:" + timeSpend );
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
 	}
 

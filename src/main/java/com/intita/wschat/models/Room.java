@@ -37,7 +37,7 @@ public class Room implements Serializable,Comparable<Room> {
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@OneToMany(mappedBy = "room")
+	@OneToMany(mappedBy = "room",fetch = FetchType.LAZY)
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
 
 	@JsonView(Views.Public.class)
@@ -59,7 +59,7 @@ public class Room implements Serializable,Comparable<Room> {
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
 
 
