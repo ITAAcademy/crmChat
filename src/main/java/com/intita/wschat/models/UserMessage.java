@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -47,14 +48,14 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	private Long id;
 	
 	//@NotBlank
-	@ManyToOne
+	@ManyToOne( fetch = FetchType.LAZY )
 	@NotNull
 	@JsonManagedReference
 	@JsonView(Views.Public.class)
 	@NotFound(action=NotFoundAction.IGNORE)
 	private ChatUser author;
 	
-	@ManyToOne
+	@ManyToOne(  fetch = FetchType.LAZY )
 	@NotFound(action=NotFoundAction.IGNORE)
 	private Room room;
 	

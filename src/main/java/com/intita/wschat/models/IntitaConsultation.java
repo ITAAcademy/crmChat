@@ -40,7 +40,7 @@ public class IntitaConsultation implements Serializable,Comparable<IntitaConsult
 	private Long id;
 
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne( fetch = FetchType.LAZY)
 	@NotNull
 	@JsonManagedReference
 	@JsonView(Views.Public.class)
@@ -48,7 +48,7 @@ public class IntitaConsultation implements Serializable,Comparable<IntitaConsult
 	@JoinColumn(name="user_id")
 	private User author;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne( fetch = FetchType.LAZY)
 	@NotNull
 	@JsonManagedReference
 	@JsonView(Views.Public.class)

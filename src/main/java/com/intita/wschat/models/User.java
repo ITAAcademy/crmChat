@@ -48,7 +48,7 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	private String login;
 
 	//@NotNull
-	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.LAZY)
 	private ChatUser chatUser;
 
 	@NotBlank

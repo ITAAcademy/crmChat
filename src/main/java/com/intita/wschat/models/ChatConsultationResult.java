@@ -37,10 +37,10 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 	@JsonView(Views.Public.class)
 	private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	private ChatConsultation consultation;
 
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	private ConsultationRatings rating;
 
 	private int value; 

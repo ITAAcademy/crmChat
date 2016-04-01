@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -26,12 +27,12 @@ public class ChatUserLastRoomDate implements Serializable,Comparable<ChatUserLas
 	@GeneratedValue
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne( fetch = FetchType.LAZY)
 	private Room room;
 	
 	private Date last_logout;
 	
-	@ManyToOne
+	@ManyToOne( fetch = FetchType.LAZY)
 	private ChatUser chatUser;
 	
 	

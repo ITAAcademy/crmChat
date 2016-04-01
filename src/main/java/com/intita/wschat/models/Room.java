@@ -53,7 +53,7 @@ public class Room implements Serializable,Comparable<Room> {
 	@JsonView(Views.Public.class)
 	private short type;
 
-	@ManyToOne
+	@ManyToOne( fetch = FetchType.LAZY)
 	private ChatUser author;
 
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
