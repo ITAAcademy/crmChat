@@ -589,6 +589,8 @@ public class ChatController {
 	public void addLocolization(Model model)
 	{
 		model.addAttribute("lgPack", getLocolization());
+		List<ConfigParam> config =  configParamService.getParams();
+		model.addAttribute("config",ConfigParam.listAsMap(config));
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
@@ -608,14 +610,14 @@ public class ChatController {
 			retings.add(consultationRatings);
 		}
 		model.addAttribute("ratingsPack", retings);
+		List<ConfigParam> config =  configParamService.getParams();
+		model.addAttribute("config",ConfigParam.listAsMap(config));
 		return getTeachersTemplate(request, "consultationTemplate", model);
 	}
 
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
-		List<ConfigParam> config =  configParamService.getParams();
-		model.addAttribute("config",ConfigParam.listAsMap(config));
 		addLocolization(model);
 		
 		return page;

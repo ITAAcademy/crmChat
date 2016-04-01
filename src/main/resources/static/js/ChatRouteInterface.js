@@ -105,7 +105,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 		else
 			{
-				$location.path("/access_deny");//not found => go out
+				$rootScope.goToAuthorize();//not found => go out
 				return;
 			}
 
@@ -332,11 +332,11 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$http.post(serverPrefix+"/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
 			.success(function(data, status, headers, config) {
 				if(data == "" || data == undefined)
-					$location.path("/access_deny");//not found => go out
+					$rootScope.goToAuthorize();//not found => go out
 				else
 					$location.path("consultation_view/" + data);
 			}).error(function errorHandler(data, status, headers, config) {
-				$location.path("/access_deny");//not found => go out
+				$rootScope.goToAuthorize();//not found => go out
 			});
 			return;
 		}

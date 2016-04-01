@@ -75,6 +75,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	};
 	//$scope.templateName = null;
 	$rootScope.socketSupport = true;
+	$rootScope.authorize = false;
+	$rootScope.goToAuthorize = function(){
+		if($rootScope.authorize)
+			$location.path("/access_deny");
+		else
+			//window.top.location.href = globalConfig["baseUrl"] + '/IntITA/site/authorize';
+			window.top.location.href = 'http://localhost/IntITA/site/authorize';
+	}
 
 	var typing = undefined;
 	var addingUserToRoom = undefined;
@@ -333,6 +341,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		
 		if(mess_obj.nextWindow == 0)
 		{
+			$rootScope.authorize = true;
 			if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1)
 			{
 				//mess_obj.nextWindow=$scope.currentRoom.roomId;
@@ -349,6 +358,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}
 		else
 		{
+			$rootScope.authorize = false;
+			if($location.path() != "/")
+				{
+					$rootScope.goToAuthorize();
+					return;
+				}
 			changeLocation("/dialog_view/" + mess_obj.nextWindow);
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}

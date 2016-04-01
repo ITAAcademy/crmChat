@@ -85,6 +85,9 @@
 	<!-- App -->
 	<script src="js/app.js"></script>
 
+	<script th:inline="javascript">
+		var globalConfig = { baseUrl:[[${config.get('baseUrl')}]] };
+	</script>
 	<script src="js/globalFunc.js"></script>
 	<script src="js/controllers.js"></script>
 	<script src="js/ChatRouteInterface.js"></script>
