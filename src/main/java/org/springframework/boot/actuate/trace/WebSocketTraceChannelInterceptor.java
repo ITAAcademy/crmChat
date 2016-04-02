@@ -2,6 +2,7 @@ package org.springframework.boot.actuate.trace;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -42,6 +44,7 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private RoomsService roomsService;
 	@Autowired private UsersService userService;
+	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	
 	private class RegexResult {
 		public RegexResult(){
@@ -104,15 +107,16 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor headerAccessor= StompHeaderAccessor.wrap(message);
-		if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
+		/*if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand()) && headerAccessor.getUser() !=null ) {
 			Principal userPrincipal = headerAccessor.getUser();
 			//System.out.println("!!!!!!DDDDDDDDDDDDd");
 			if(!validateSubscription(userPrincipal, headerAccessor.getDestination()))
 			{
+				simpMessagingTemplate.convertAndSend(headerAccessor.getDestination(), "");
 				//throw new IllegalArgumentException("No permission for this topic");
 				return null;
 			}
-		}
+		}*/
 		return message;
 	}
 
