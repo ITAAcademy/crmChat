@@ -222,7 +222,8 @@ public class ChatController {
 		Set<LoginEvent> userList = new HashSet<>();
 		for(User user : pageUsers)
 		{
-			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar(),participantRepository.isOnline(""+user.getChatUser().getId())));
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(user, true); 
+			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar(),participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
 	}
