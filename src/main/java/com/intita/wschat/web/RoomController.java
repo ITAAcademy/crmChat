@@ -226,8 +226,11 @@ public class RoomController {
 	}
 	
 	@SubscribeMapping("/{room}/chat.participants")
-	 public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room) {//ONLY FOR TEST NEED FIX
-
+	 public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room, Principal principal) {//ONLY FOR TEST NEED FIX
+		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, chatUserServise, roomService); 
+		if(status == null)
+			return new HashMap<String, Object>();
+		
 		Room room_o = roomService.getRoom(room);
 		return retrieveParticipantsSubscribeAndMessagesObj(room_o);
 	}
@@ -321,7 +324,17 @@ public class RoomController {
 	 * GET/ADD ROOMS
 	 * @throws JsonProcessingException 
 	 ***************************/
-
+	@RequestMapping(value="/chat/rooms/roomInfo/{roomID}", method=RequestMethod.POST)
+	@ResponseBody
+	 public String getRoomInfo( @PathVariable("roomID") Long roomId, Principal principal) throws JsonProcessingException {
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, chatUserServise, roomService);//Control room from LP
+		if( struct == null)
+			return "{}";
+		StringIntDate sb = new StringIntDate(0 , new Date().toString(), struct.getRoom());
+		return mapper.writeValueAsString(sb);
+	}
+	
+	
 	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
 	@ResponseBody
 	 public String getPrivateRoom( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
@@ -357,7 +370,6 @@ public class RoomController {
 	@SubscribeMapping("/chat/rooms/user.{userId}")
 	 public List<StringIntDate> getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { //000
 		ChatUser user = chatUserServise.getChatUser(userId);
-		 
 		
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
 		{

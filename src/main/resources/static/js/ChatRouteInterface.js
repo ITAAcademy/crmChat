@@ -104,10 +104,18 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$scope.dialogName = room.string;
 		}
 		else
-			{
+		{
+			/*	$http.post(serverPrefix + "/chat/rooms/roomInfo/" + $scope.currentRoom.roomId)).
+			success(function(data, status, headers, config) {
+
+				$scope.goToDialog();
+				chatControllerScope.rooms.push("");
+			}).
+			error(function(data, status, headers, config) {
 				$rootScope.goToAuthorize();//not found => go out
-				return;
-			}
+			});*/
+			return;
+		}
 
 		if ($rootScope.socketSupport){
 			chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
@@ -140,8 +148,16 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
 					{
-				var o = JSON.parse(message.body);
-				loadSubscribeAndMessage(o);
+						if(message.body != "{}")
+						{
+							var o = JSON.parse(message.body);
+							loadSubscribeAndMessage(o);
+						}
+						else
+						{
+							$rootScope.goToAuthorize();
+							return;
+						}
 					}));
 
 			lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) 
@@ -340,7 +356,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			});
 			return;
 		}
-		
+
 		$scope.participants = message["participants"];
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.push(message["messages"][i]);
@@ -370,7 +386,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			loadSubscribeAndMessage(data);
 		}).
 		error(function(data, status, headers, config) {
-			
+
 		});
 	}
 	$scope.loadOtherMessages = function () {
