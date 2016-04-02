@@ -36,7 +36,7 @@ public class PresenceEventListener {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String chatId = headers.getUser().getName();
 
-		LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), "test");
+		LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), "test",participantRepository.isOnline(chatId));
 		messagingTemplate.convertAndSend(loginDestination, loginEvent);
 		
 		// We store the session as we need to be idempotent in the disconnect event processing
@@ -54,9 +54,11 @@ public class PresenceEventListener {
 				});*/
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String chatId = headers.getUser().getName();
-		
-		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
 		participantRepository.removeParticipant(chatId);
+		if(!participantRepository.isOnline(chatId)){
+		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
+		}
+		
 		
 				
 	}
