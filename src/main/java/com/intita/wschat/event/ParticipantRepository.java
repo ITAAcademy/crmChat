@@ -1,9 +1,6 @@
 package com.intita.wschat.event;
 
-import java.util.Date;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
@@ -16,21 +13,44 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParticipantRepository {
 
-	public ConcurrentSkipListSet<String> getActiveSessions() {
+	public ConcurrentSkipListMap<String,Integer> getActiveSessions() {
 		return activeSessions;
 	}
 
-	private ConcurrentSkipListSet<String> activeSessions = new ConcurrentSkipListSet<String>();
+	private ConcurrentSkipListMap<String,Integer> activeSessions = new ConcurrentSkipListMap<String,Integer>();
 	//put null to distinguish WS from LP sessions. We need no last action time for Web Sockets
 	public void add(String chatId) {
-	activeSessions.add(chatId);
+		if (activeSessions.containsKey(chatId)){
+			int presenceIndex = activeSessions.get(chatId);
+			activeSessions.put(chatId, presenceIndex+1);
+			System.out.println("presence increased to:"+(presenceIndex+1));
+		}
+		else{
+	activeSessions.put(chatId,1);
+	System.out.println("presence added with start value:"+1);
+		}
+		
 	}
 
 	public boolean isOnline(String chatId) {
-		return activeSessions.contains(chatId);
+		boolean online = activeSessions.containsKey(chatId) &&  activeSessions.get(chatId)>0;
+		System.out.println("isOnline "+chatId+" ? "+ online);
+		return online;
 	}
 
 	public void removeParticipant(String chatId) {
-		activeSessions.remove(chatId);
+		if (activeSessions.containsKey(chatId)){
+			int presenceIndex = activeSessions.get(chatId);
+			if (presenceIndex<=0)
+			{
+				activeSessions.remove(chatId);
+				System.out.println("presence removed");
+			}
+			else
+			{
+			activeSessions.put(chatId, presenceIndex-1);
+			System.out.println("presence decreased to:"+(presenceIndex-1));
+			}
+		}
 	}
 }

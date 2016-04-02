@@ -48,12 +48,12 @@ public class LoginEvent {
 		this.online = online;
 	}
 
-	public LoginEvent(Long chatUserId,String username) {
+	public LoginEvent(Long chatUserId,String username,boolean isOnline) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
-		online = false;
+		online = isOnline;
 	}
 	public LoginEvent(Long intitaUserId, Long chatUserId,String username, boolean isOnline) {
 		this.intitaUserId = intitaUserId;
@@ -64,12 +64,13 @@ public class LoginEvent {
 		online = isOnline;
 	}
 
-	public LoginEvent(Long chatUserId,String username, String avatar) {
+	public LoginEvent(Long chatUserId,String username, String avatar,boolean isOnline) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		this.avatar = avatar;
 		time = new Date();
 		typing = false;
+		online = isOnline;
 	}
 
 	public String getUsername() {

@@ -222,7 +222,7 @@ public class ChatController {
 		Set<LoginEvent> userList = new HashSet<>();
 		for(User user : pageUsers)
 		{
-			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar()));
+			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar(),participantRepository.isOnline(""+user.getChatUser().getId())));
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
 	}
@@ -373,7 +373,7 @@ public class ChatController {
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
 
-		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test");
+		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
 		simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
 
 		System.out.println("globalInfoResult.add:"+principal.getName());
@@ -395,9 +395,9 @@ public class ChatController {
 		{
 
 			//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
-			participantRepository.getActiveSessions().remove(globalInfoResult.get(nextUser));
+			participantRepository.removeParticipant((globalInfoResult.get(nextUser)));
 
-			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), globalInfoResult.get(nextUser));
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), globalInfoResult.get(nextUser),participantRepository.isOnline(globalInfoResult.get(nextUser)));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 
 			if(!nextUser.isSetOrExpired())
@@ -546,7 +546,7 @@ public class ChatController {
 		for (ChatUser singleChatUser: users){
 			String nn = singleChatUser.getNickName();
 			if (!nicks.contains(nn))continue;
-			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn);
+			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn,participantRepository.isOnline(""+singleChatUser.getId()));
 			usersData.add(userData);	
 		}
 		return usersData;
@@ -565,7 +565,7 @@ public class ChatController {
 
 		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
 		for (ChatUser nick: nicks){
-			usersData.add(new LoginEvent(nick.getId(), nick.getNickName()));
+			usersData.add(new LoginEvent(nick.getId(), nick.getNickName(),participantRepository.isOnline(""+nick.getId())));
 		}
 		return usersData;
 		/*ObjectMapper mapper = new ObjectMapper();
