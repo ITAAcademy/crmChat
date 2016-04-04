@@ -114,7 +114,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			error(function(data, status, headers, config) {
 				$rootScope.goToAuthorize();//not found => go out
 			});*/
-			return;
+			deferred.reject();
+			return deferred.promise;
 		}
 
 		if ($rootScope.socketSupport){
@@ -251,9 +252,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 					},
 					error: function(xhr, text_status, error_thrown){
 						//if (text_status == "abort")return;
+						
 						if (xhr.status === 0 || xhr.readyState === 0) {
 							//alert("discardMsg");
 							return;
+						}
+						if (xhr.status === 404 || xhr.status === 405){
+							chatControllerScope.changeLocation("/chatrooms");
 						}
 						subscribeMessageLP();    	
 					}
@@ -277,6 +282,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 					},
 					error: function(xhr, text_status, error_thrown){
 						if (xhr.status === 0 || xhr.readyState === 0) return;
+						if (xhr.status === 404 || xhr.status === 405){
+							chatControllerScope.changeLocation("/chatrooms");
+						}
 						subscribeParticipantsLP();
 
 					}
@@ -358,6 +366,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 
 		$scope.participants = message["participants"];
+		if (typeof message["messages"] !='undefined')
 		for (var i=0; i< message["messages"].length;i++){
 			$scope.messages.push(message["messages"][i]);
 			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
@@ -406,7 +415,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$scope.message_busy = false;
 		}).
 		error(function(data, status, headers, config) {
-
+			console.log('TEST');
+			if (status=="404" || status=="405") chatControllerScope.changeLocation("/chatrooms");
 			//messageError("no other message");
 		});
 	}
@@ -455,7 +465,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	/*
 	 * close event
 	 */
-	$scope.$on('$locationChangeStart', function( event ) {
+	 function unsubscribeCurrentRoom(event){
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 
@@ -479,6 +489,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	    if (!answer) {
 	        event.preventDefault();
 	    }*/
-	});
+	}
+	$scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
 
 }]);
