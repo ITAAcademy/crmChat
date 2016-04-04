@@ -1,5 +1,7 @@
 package com.intita.wschat.repositories;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +17,7 @@ public interface ChatTenantRepository extends CrudRepository<ChatTenant, Long> {
 	   Page<ChatTenant> findById(Long id, Pageable pageable);
 	   ChatTenant findById(Long id);
 	   Page<ChatTenant> findAll(Pageable pageable);
+	   ArrayList<ChatTenant> findAllByEndDateAfterOrEndDateIsNull(Date date);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);
 	 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);

@@ -61,17 +61,24 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	@Column(name="nickname")
 	private String nickname;
 
+	@Column(name="firstname")
+	private String firstName;
+	
+	@Column(name="secondname")
+	private String secondName;
+
+
 	@Column(name="role")
 	private int role;
-	
-	
-	
+
+
+
 	/*@OneToMany(mappedBy = "teacher_id", fetch = FetchType.LAZY)
 	private List<IntitaConsultation> consultantedConsultation = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "user_id", fetch = FetchType.LAZY)
 	private List<IntitaConsultation> createdConsultation = new ArrayList<>();
-	*/
+	 */
 	//private Permissions permission=Permissions.PERMISSIONS_USER;
 
 	public Long getId() {
@@ -202,12 +209,33 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	}
 
 	public String getNickName() {
-		if(nickname.isEmpty())
+		if(firstName != null && !firstName.isEmpty() && secondName != null && !secondName.isEmpty())
+			return firstName + " " + secondName;
+		
+		if(nickname == null || nickname.isEmpty())
 			return getLogin();
 
 		return nickname;
 	}
 
+	public String getNickname() {
+		return nickname;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getSecondName() {
+		return secondName;
+	}
+	public void setSecondName(String secondName) {
+		this.secondName = secondName;
+	}
 	public ChatUser getChatUser() {
 		return chatUser;
 	}

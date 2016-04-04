@@ -1,6 +1,7 @@
 package com.intita.wschat.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -49,7 +50,7 @@ public class ChatTenantService {
 	public ArrayList<ChatTenant> getTenants(){
 		Iterable<ChatTenant> chatTenantsIterable = null;
 		try{
-			chatTenantsIterable = chatTenantRepo.findAll();
+			chatTenantsIterable = chatTenantRepo.findAllByEndDateAfterOrEndDateIsNull(new Date());
 		}
 		catch(EntityNotFoundException e){
 			return new ArrayList<ChatTenant>();
