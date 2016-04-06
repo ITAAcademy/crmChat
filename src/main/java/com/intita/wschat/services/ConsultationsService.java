@@ -47,6 +47,7 @@ public class ConsultationsService {
 	@Autowired private ConsultationRatingsRepository chatConsultationRatingsRepository;
 	@Autowired private ConsultationResultRepository chatConsultationResultRepository;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 
 	@PostConstruct
 	@Transactional
@@ -122,8 +123,10 @@ public class ConsultationsService {
 			consultationRoom.setName("Consultation_" + new Date().toString());
 			consultationRoom.setActive(false);
 			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsByChatUser(consultant));
+			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
 			
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsByChatUser(consultant));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + iCons.getAuthor().getChatUser().getId(), chatRoomsService.getRoomsByChatUser(iCons.getAuthor().getChatUser()));
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);
 		}
