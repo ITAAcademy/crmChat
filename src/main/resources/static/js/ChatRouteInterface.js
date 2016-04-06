@@ -121,12 +121,14 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		if ($rootScope.socketSupport){
 			chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
 			deferred.resolve(true);
+			return deferred.promise;
 		}
 		else
 		{
 			deferred = $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));
+			return deferred;
 		}
-		return deferred;
+
 	}
 
 
