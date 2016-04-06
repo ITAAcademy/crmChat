@@ -153,7 +153,7 @@ public class ChatController {
 	}
 
 	
-	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, ChatUsersService chat_user_service, RoomsService chat_room_service)
+	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, UsersService user_service, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 		long startTime = System.currentTimeMillis();
 		
@@ -166,11 +166,10 @@ public class ChatController {
 
 		Set<Room> all = o_user.getRoomsFromUsers();
 		all.addAll(o_user.getRootRooms());
-	
 
 		if(!all.contains(o_room))
-			return null;
-		
+				return null;
+
 		long timeSpend = System.currentTimeMillis() - startTime;
 		log.info("isMyRoom time:" + timeSpend );
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
@@ -232,7 +231,7 @@ public class ChatController {
 	@ResponseBody
 	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody ChatMessage message, Principal principal) throws JsonProcessingException {
 		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
 		if( struct == null)
 			return null;
 		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDateBefore(struct.getRoom(), message.getDate()));
@@ -248,7 +247,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, chatUsersService, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, userService, chatUsersService, roomService);//Control room from LP
 		if(struct == null || !struct.room.isActive() || message.getMessage().isEmpty())//cant add msg
 			return null;
 
@@ -286,7 +285,7 @@ public class ChatController {
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long room, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUsersService, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
 		if(struct == null)
 			return null;
 
@@ -431,7 +430,7 @@ public class ChatController {
 		//	checkProfanityAndSanitize(message);
 
 
-		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, chatUsersService, roomService);
+		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, userService, chatUsersService, roomService);
 		if(struct == null)
 			return;
 
@@ -454,7 +453,7 @@ public class ChatController {
 	public void userGoToDialogListListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
 		//	checkProfanityAndSanitize(message);
 
-		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, chatUsersService, roomService);
+		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, userService, chatUsersService, roomService);
 		if(struct == null)
 			return;
 

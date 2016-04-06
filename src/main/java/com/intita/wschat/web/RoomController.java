@@ -227,9 +227,22 @@ public class RoomController {
 	
 	@SubscribeMapping("/{room}/chat.participants")
 	 public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room, Principal principal) {//ONLY FOR TEST NEED FIX
-		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, chatUserServise, roomService); 
+		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService); 
 		if(status == null)
-			return new HashMap<String, Object>();
+		{
+			ChatUser o_object = chatUserServise.getChatUser(principal);
+			if(o_object != null)
+			{
+				User iUser = o_object.getIntitaUser();
+				
+				if( iUser == null || !userService.isAdmin(iUser.getId().toString()))
+				{
+					return new HashMap<String, Object>();
+				}
+			}
+			else
+				return new HashMap<String, Object>();
+		}
 		
 		Room room_o = roomService.getRoom(room);
 		return retrieveParticipantsSubscribeAndMessagesObj(room_o);
@@ -247,7 +260,7 @@ public class RoomController {
 	@RequestMapping(value = "/{room}/chat/participants_and_messages", method = RequestMethod.POST)
 	@ResponseBody
 	 public String retrieveParticipantsAndMessagesLP(@PathVariable("room") Long room, Principal principal) throws JsonProcessingException {
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
 		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));
@@ -264,7 +277,7 @@ public class RoomController {
 		{
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);//Control room from LP
 		if(struct != null)
 		{
 			responseBodyQueueForParticipents.put(room.toString(), queue);		
@@ -327,7 +340,7 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/roomInfo/{roomID}", method=RequestMethod.POST)
 	@ResponseBody
 	 public String getRoomInfo( @PathVariable("roomID") Long roomId, Principal principal) throws JsonProcessingException {
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, chatUserServise, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
 		StringIntDate sb = new StringIntDate(0 , new Date().toString(), struct.getRoom());
