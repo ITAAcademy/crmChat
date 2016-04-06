@@ -43,6 +43,8 @@ import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
+import com.intita.wschat.exception.ChatUserNotInRoomException;
+import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
@@ -263,7 +265,9 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
-		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));
+		String participantsAndMessages = mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));
+		log.info("P&M:"+participantsAndMessages);
+		return participantsAndMessages;
 	}
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
@@ -283,7 +287,7 @@ public class RoomController {
 			responseBodyQueueForParticipents.put(room.toString(), queue);		
 			queue.add(result);
 		}
-		else result.setResult("{}");
+		else result.setErrorResult(new ChatUserNotInRoomException(""));
 		
 		return result;
 	}
@@ -354,10 +358,10 @@ public class RoomController {
 		log.info("getPrivateRoom");
 		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
 		if(privateCharUser == null)
-			return "-1";
+			throw new RoomNotFoundException("privateChatUser is null");
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		if(chatUser.getIntitaUser() == null)
-			return "-1";
+			throw new RoomNotFoundException("Intita use is null");
 		
 		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
 		if(room == null)

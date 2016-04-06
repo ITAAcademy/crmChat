@@ -67,11 +67,15 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	Scopes.store('ChatController', $scope);
 	$rootScope.isInited = false;
 
+	$scope.changeLocation = function changeLocation(url ) {
+		$location.path(url);
+		console.log("Change location:"+$location.path());
+		// $scope.$apply();
+	};
 	function changeLocation(url ) {
 		$location.path(url);
 		console.log("Change location:"+$location.path());
 		// $scope.$apply();
-
 	};
 	//$scope.templateName = null;
 	$rootScope.socketSupport = true;
@@ -236,6 +240,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}).
 		error(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE FAILD ");
+				changeLocation("/chatrooms");
 		});
 	}
 

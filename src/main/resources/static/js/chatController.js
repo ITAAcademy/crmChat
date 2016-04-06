@@ -11,17 +11,21 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 			if($rootScope.isInited == true)
 			{
 				if ($rootScope.socketSupport){
-					$scope.goToDialog($routeParams.roomId).promise.then(function() {
+					$scope.goToDialog($routeParams.roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 						$scope.pageClass = 'page-about';
-					}, function(){alert("ERR")});
+					}, function(){
+					chatControllerScope.changeLocation("/chatrooms");
+						alert("ERR")});
 				}
 				else
 				{
 					$scope.goToDialog($routeParams.roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 						$scope.pageClass = 'page-about';
-					}, function(){alert("ERR")});
+					}, function(){
+						chatControllerScope.changeLocation("/chatrooms");
+						alert("ERR")});
 				}
 			}
 
