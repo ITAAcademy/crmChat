@@ -88,7 +88,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			//window.top.location.href = 'http://localhost/IntITA/site/authorize';
 	}
 
-	var typing = undefined;
+	
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
@@ -148,6 +148,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.searchInputValue.email = value;
 		$scope.show_search_list = false;
 	}
+	
 
 	$scope.showSearchListAdmin = function () {
 
@@ -288,28 +289,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 
 	}
-
-	$scope.startTyping = function() {
-		// Don't send notification if we are still typing or we are typing a private message
-		if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
-
-		typing = $interval(function() {
-			$scope.stopTyping();
-		}, 500);
-
-		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: true}));
-	};
-
-	$scope.stopTyping = function() {
-		if (angular.isDefined(typing)) {
-			$interval.cancel(typing);
-			typing = undefined;
-
-			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: false}));
-
-		}
-	};
-
+	
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};

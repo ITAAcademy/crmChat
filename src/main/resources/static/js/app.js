@@ -9,3 +9,4 @@ var springChat = angular.module('springChat', ['springChat.controllers',//'sprin
 var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services',
                                                    'springChat.directives']);
 
+

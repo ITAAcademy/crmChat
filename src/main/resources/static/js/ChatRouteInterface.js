@@ -1,10 +1,145 @@
+String.prototype.insertAt=function(index, string) { 
+  return this.substr(0, index) + string + this.substr(index);
+}
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
-
+	$scope.show_search_list_in_message_input = false;
+	var dogMode = false;
+	var showUsersListInMessageInputTimer;
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
 	}
 	function messageError(mess){
 		toaster.pop('error', "Error", mess, 1000);
+	}
+
+	function getCaretPosition(oField) {
+		
+	// Initialize
+	var iCaretPos = 0;
+
+	// IE Support
+	if (document.selection) {
+
+	   // Set focus on the element
+	   oField.focus ();
+
+	   // To get cursor position, get empty selection range
+	   var oSel = document.selection.createRange ();
+
+	   // Move selection start to 0 position
+	   oSel.moveStart ('character', -oField.value.length);
+
+	   // The caret position is selection length
+	   iCaretPos = oSel.text.length;
+	}
+
+	// Firefox support
+	else if (oField.selectionStart || oField.selectionStart == '0')
+	      iCaretPos = oField.selectionStart;
+
+	    // Return results
+	   return iCaretPos;
+	};
+	var typing = undefined;
+	$scope.beforeTyping = function(event){
+	var typedChar = String.fromCharCode(event.keyCode);
+		var shiftPressed = event.shiftKey;
+		var ctrlPressed = event.ctrlKey || event.metaKey;
+		var selectAllHotKeyPressed = typedChar == 'A' && ctrlPressed;
+		var kk = event.keyCode;
+		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+		var dogKeyPressed = shiftPressed && typedChar=='2';
+
+			if(dogKeyPressed){
+				dogMode=true;
+			}
+			
+		if(selectAllHotKeyPressed || arrowKeyPressed){
+			$scope.onMessageInputClick();
+		}
+		
+	}
+	$scope.startTyping = function(event) {
+		var typedChar = String.fromCharCode(event.keyCode);
+		if(typedChar==' ')onMessageInputClick();
+		processDogInput();			
+// Don't send notification if we are still typing or we are typing a private message
+		if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
+
+		typing = $interval(function() {
+			$scope.stopTyping();
+		}, 500);
+
+		chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: true}));
+	};
+
+	$scope.stopTyping = function() {
+		if (angular.isDefined(typing)) {
+			$interval.cancel(typing);
+			typing = undefined;
+
+			chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({username: $scope.chatUserId, typing: false}));
+
+		}
+	};
+
+	$scope.showUsersListInMessageInput = function (email) {
+
+		$scope.show_search_list_in_message_input = true;
+		$scope.emails_in_message_input = [];
+		$timeout.cancel(showUsersListInMessageInputTimer);
+
+		showUsersListInMessageInputTimer = $timeout(function () {
+			$scope.show_search_list_in_message_input = true;
+			var request = $http({
+				method: "get",
+				url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId,//'/get_users_emails_like',
+				data: null ,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			});
+
+			request.success(function (data) {
+				$scope.emails_in_message_input = data;
+			});
+		}, 500);//for click event
+	};
+	$scope.onMessageInputClick = function(){
+		dogMode=false;
+		$scope.show_search_list_in_message_input = false;
+
+	}
+$scope.appendToSearchInput_in_message_input = function(value) {
+		console.log("searchInputValue:"+$scope.searchInputValue.email);
+		var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
+		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex-1,value);
+		$scope.show_search_list_in_message_input = false;
+		dogMode=false;
+	}
+$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+		var message = $scope.newMessage;
+		var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
+		var userNameStartIndex = message.lastIndexOf('@')+1;
+		//var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
+		var charactersAlreadyKnownCount = carretPosIndex - userNameStartIndex;
+		var differenceValue = value.substring(charactersAlreadyKnownCount);
+		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex,differenceValue);
+		$scope.show_search_list_in_message_input = false;
+		dogMode=false;
+	}
+	
+	function processDogInput(){
+		var message = $scope.newMessage;
+		var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
+
+		//debugger;
+		if (!dogMode)return;//return if @ is not present in word
+		var userNameStartIndex = message.lastIndexOf('@')+1;
+		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
+		
+		$scope.showUsersListInMessageInput(userNamePrefix);
 	}
 
 	$scope.fileDropped = function(){

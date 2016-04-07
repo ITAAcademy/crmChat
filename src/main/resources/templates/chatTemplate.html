@@ -71,8 +71,16 @@
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."
 					ng-model="newMessage"
-					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping()" />
+          ng-keydown="beforeTyping($event)"
+					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)" ng-click="onMessageInputClick()"/>
+         <div id="search_list_in_message_input" class="search-list" ng-show="show_search_list_in_message_input">
+              <ul aria-labelledby="dropdownMenu1">
+                <li role="presentation" ng-repeat='item in emails_in_message_input'
+                  ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a> {{item}} </a></li>
+              </ul>
+            </div>
 				</span>
+
 				<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> -->
 				<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
 				<span class="col-xs-2">
