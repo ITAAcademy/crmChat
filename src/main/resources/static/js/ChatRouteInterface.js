@@ -61,7 +61,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	$scope.startTyping = function(event) {
 		var typedChar = String.fromCharCode(event.keyCode);
-		if(typedChar==' ')onMessageInputClick();
+		if(typedChar==' ')$scope.onMessageInputClick();
 		processDogInput();			
 // Don't send notification if we are still typing or we are typing a private message
 		if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
