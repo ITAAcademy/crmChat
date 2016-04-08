@@ -62,7 +62,7 @@
 				</div>
 			</div>
 		</div>
-		<div ng-show="currentRoom.active" class="row">
+		<div ng-show="currentRoom.active &#38;&#38; isMyRoom" class="row">
 			<div class="form-group row" id="controlFormGroup">
 				<small>You will send this message to <strong>{{sendTo}}</strong>
 					(click a participant name to send a private message)

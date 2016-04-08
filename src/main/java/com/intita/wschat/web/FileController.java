@@ -49,6 +49,16 @@ public class FileController {
 		ArrayList<String> downloadLinks = new ArrayList<String>();
 		log.info("hasNext:"+itr.hasNext());
 
+		if(!itr.hasNext())
+		{
+			try {
+				response.getWriter().write("Error, file is empty !");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
 		while (itr.hasNext())
 		{
 			MultipartFile mpf = request.getFile(itr.next());
