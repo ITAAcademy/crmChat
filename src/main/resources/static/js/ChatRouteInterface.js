@@ -2,8 +2,23 @@ String.prototype.insertAt=function(index, string) {
   return this.substr(0, index) + string + this.substr(index);
 }
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
+	var INPUT_MODE = {
+		STANDART_MODE : 0,
+		DOG_MODE : 1
+	};
 	$scope.show_search_list_in_message_input = false;
-	var dogMode = false;
+	var isSpecialInput = false;
+	var specialInputMode = INPUT_MODE.STANDART_MODE;
+	var enableInputMode = function(input_mode){
+		isSpecialInput = true;
+		specialInputMode = input_mode;
+	}
+	var resetSpecialInput = function(){
+			isSpecialInput=false;
+			specialInputMode = INPUT_MODE.STANDART_MODE;
+	}
+	
+
 	var showUsersListInMessageInputTimer;
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
@@ -41,28 +56,45 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	   return iCaretPos;
 	};
 	var typing = undefined;
-	$scope.beforeTyping = function(event){
-	var typedChar = String.fromCharCode(event.keyCode);
+	$scope.onKeyMessageKeyPressEvent = function(event){
+
+		var keyCode = event.which || event.keyCode;
+		var typedChar = String.fromCharCode(event.keyCode);
 		var shiftPressed = event.shiftKey;
 		var ctrlPressed = event.ctrlKey || event.metaKey;
 		var selectAllHotKeyPressed = typedChar == 'A' && ctrlPressed;
-		var kk = event.keyCode;
+		var kk = keyCode;
 		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
-		var dogKeyPressed = shiftPressed && typedChar=='2';
+		switch(typedChar){
+			case '@': enableInputMode(INPUT_MODE.DOG_MODE);
+			break;
+			case ' ': $scope.onMessageInputClick();
+			break;
 
-			if(dogKeyPressed){
-				dogMode=true;
-			}
+		}
 			
 		if(selectAllHotKeyPressed || arrowKeyPressed){
 			$scope.onMessageInputClick();
 		}
+	
 		
 	}
+	$scope.beforeMessageInputKeyPress = function(event){
+var keyCode = event.which || event.keyCode;
+var kk = keyCode;
+var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+if (arrowKeyPressed) $scope.onMessageInputClick();
+}
+
 	$scope.startTyping = function(event) {
-		var typedChar = String.fromCharCode(event.keyCode);
-		if(typedChar==' ')$scope.onMessageInputClick();
-		processDogInput();			
+		//var keyCode = event.which || event.keyCode;
+		//var typedChar = String.fromCharCode(keyCode);
+		//if(typedChar==' ')$scope.onMessageInputClick();
+		//processDogInput();		
+			switch(specialInputMode){
+			case INPUT_MODE.DOG_MODE:processDogInput();
+			break;
+		}	
 // Don't send notification if we are still typing or we are typing a private message
 		if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
 
@@ -104,7 +136,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}, 500);//for click event
 	};
 	$scope.onMessageInputClick = function(){
-		dogMode=false;
+		resetSpecialInput();
 		$scope.show_search_list_in_message_input = false;
 
 	}
@@ -114,7 +146,7 @@ $scope.appendToSearchInput_in_message_input = function(value) {
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex-1,value);
 		$scope.show_search_list_in_message_input = false;
-		dogMode=false;
+		resetSpecialInput();
 	}
 $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var message = $scope.newMessage;
@@ -126,7 +158,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var differenceValue = value.substring(charactersAlreadyKnownCount);
 		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex,differenceValue);
 		$scope.show_search_list_in_message_input = false;
-		dogMode=false;
+		resetSpecialInput();
 	}
 	
 	function processDogInput(){
@@ -135,7 +167,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var carretPosIndex = getCaretPosition(msgInputElm);
 
 		//debugger;
-		if (!dogMode)return;//return if @ is not present in word
+		//if (!isSpecialInput)return;//return if @ is not present in word
 		var userNameStartIndex = message.lastIndexOf('@')+1;
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
 		

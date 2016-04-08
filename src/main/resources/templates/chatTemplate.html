@@ -71,7 +71,8 @@
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."
 					ng-model="newMessage"
-          ng-keydown="beforeTyping($event)"
+          ng-keydown="beforeMessageInputKeyPress($event)"
+          ng-keypress="onKeyMessageKeyPressEvent($event)"
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)" ng-click="onMessageInputClick()"/>
          <div id="search_list_in_message_input" class="search-list" ng-show="show_search_list_in_message_input">
               <ul aria-labelledby="dropdownMenu1">
