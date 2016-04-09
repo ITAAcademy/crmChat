@@ -1,10 +1,10 @@
 String.prototype.insertAt=function(index, string) { 
-  return this.substr(0, index) + string + this.substr(index);
+	return this.substr(0, index) + string + this.substr(index);
 }
-springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
+springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q', '$sce',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q, $sce) {
 	var INPUT_MODE = {
-		STANDART_MODE : 0,
-		DOG_MODE : 1
+			STANDART_MODE : 0,
+			DOG_MODE : 1
 	};
 	$scope.show_search_list_in_message_input = false;
 	var isSpecialInput = false;
@@ -14,10 +14,10 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		specialInputMode = input_mode;
 	}
 	var resetSpecialInput = function(){
-			isSpecialInput=false;
-			specialInputMode = INPUT_MODE.STANDART_MODE;
+		isSpecialInput=false;
+		specialInputMode = INPUT_MODE.STANDART_MODE;
 	}
-	
+
 
 	var showUsersListInMessageInputTimer;
 	function messageError(){
@@ -28,32 +28,32 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 
 	function getCaretPosition(oField) {
-		
-	// Initialize
-	var iCaretPos = 0;
 
-	// IE Support
-	if (document.selection) {
+		// Initialize
+		var iCaretPos = 0;
 
-	   // Set focus on the element
-	   oField.focus ();
+		// IE Support
+		if (document.selection) {
 
-	   // To get cursor position, get empty selection range
-	   var oSel = document.selection.createRange ();
+			// Set focus on the element
+			oField.focus ();
 
-	   // Move selection start to 0 position
-	   oSel.moveStart ('character', -oField.value.length);
+			// To get cursor position, get empty selection range
+			var oSel = document.selection.createRange ();
 
-	   // The caret position is selection length
-	   iCaretPos = oSel.text.length;
-	}
+			// Move selection start to 0 position
+			oSel.moveStart ('character', -oField.value.length);
 
-	// Firefox support
-	else if (oField.selectionStart || oField.selectionStart == '0')
-	      iCaretPos = oField.selectionStart;
+			// The caret position is selection length
+			iCaretPos = oSel.text.length;
+		}
 
-	    // Return results
-	   return iCaretPos;
+		// Firefox support
+		else if (oField.selectionStart || oField.selectionStart == '0')
+			iCaretPos = oField.selectionStart;
+
+		// Return results
+		return iCaretPos;
 	};
 	var typing = undefined;
 	$scope.onKeyMessageKeyPressEvent = function(event){
@@ -66,36 +66,36 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var kk = keyCode;
 		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
 		switch(typedChar){
-			case '@': enableInputMode(INPUT_MODE.DOG_MODE);
-			break;
-			case ' ': $scope.onMessageInputClick();
-			break;
+		case '@': enableInputMode(INPUT_MODE.DOG_MODE);
+		break;
+		case ' ': $scope.onMessageInputClick();
+		break;
 
 		}
-			
+
 		if(selectAllHotKeyPressed || arrowKeyPressed){
 			$scope.onMessageInputClick();
 		}
-	
-		
+
+
 	}
 	$scope.beforeMessageInputKeyPress = function(event){
-var keyCode = event.which || event.keyCode;
-var kk = keyCode;
-var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
-if (arrowKeyPressed) $scope.onMessageInputClick();
-}
+		var keyCode = event.which || event.keyCode;
+		var kk = keyCode;
+		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+		if (arrowKeyPressed) $scope.onMessageInputClick();
+	}
 
 	$scope.startTyping = function(event) {
 		//var keyCode = event.which || event.keyCode;
 		//var typedChar = String.fromCharCode(keyCode);
 		//if(typedChar==' ')$scope.onMessageInputClick();
 		//processDogInput();		
-			switch(specialInputMode){
-			case INPUT_MODE.DOG_MODE:processDogInput();
-			break;
+		switch(specialInputMode){
+		case INPUT_MODE.DOG_MODE:processDogInput();
+		break;
 		}	
-// Don't send notification if we are still typing or we are typing a private message
+//		Don't send notification if we are still typing or we are typing a private message
 		if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
 
 		typing = $interval(function() {
@@ -140,7 +140,7 @@ if (arrowKeyPressed) $scope.onMessageInputClick();
 		$scope.show_search_list_in_message_input = false;
 
 	}
-$scope.appendToSearchInput_in_message_input = function(value) {
+	$scope.appendToSearchInput_in_message_input = function(value) {
 		console.log("searchInputValue:"+$scope.searchInputValue.email);
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
@@ -148,7 +148,7 @@ $scope.appendToSearchInput_in_message_input = function(value) {
 		$scope.show_search_list_in_message_input = false;
 		resetSpecialInput();
 	}
-$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+	$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var message = $scope.newMessage;
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
@@ -160,7 +160,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		$scope.show_search_list_in_message_input = false;
 		resetSpecialInput();
 	}
-	
+
 	function processDogInput(){
 		var message = $scope.newMessage;
 		var msgInputElm = document.getElementById("newMessageInput");
@@ -170,7 +170,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		//if (!isSpecialInput)return;//return if @ is not present in word
 		var userNameStartIndex = message.lastIndexOf('@')+1;
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
-		
+
 		$scope.showUsersListInMessageInput(userNamePrefix);
 	}
 
@@ -217,6 +217,22 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	$scope.newMessage   = '';
 	$scope.uploadProgress = 0;
 	$scope.message_busy = true;
+
+	$scope.addPhrase = function( text )
+	{
+		$scope.newMessage += text;
+	}
+	$scope.parseMsg = function(msg, symbol, callback)
+	{
+		var expr = new RegExp('@\\w+', 'g');
+		msg = msg.replace(expr, function(str){ return " <a ng-show='false'>hfghfg</a>";})
+		return $sce.trustAsHtml(msg);
+	}
+	$scope.goToEmail = function(email)
+	{
+		console.log(email);
+	}
+
 
 	$rootScope.$on("login", function (event, chatUserId) {
 		for(var index in $scope.participants) {
@@ -318,16 +334,16 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
 					{
-						if(message.body != "{}")
-						{
-							var o = JSON.parse(message.body);
-							loadSubscribeAndMessage(o);
-						}
-						else
-						{
-							$rootScope.goToAuthorize();
-							return;
-						}
+				if(message.body != "{}")
+				{
+					var o = JSON.parse(message.body);
+					loadSubscribeAndMessage(o);
+				}
+				else
+				{
+					$rootScope.goToAuthorize();
+					return;
+				}
 					}));
 
 			lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) 
@@ -421,7 +437,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 					},
 					error: function(xhr, text_status, error_thrown){
 						//if (text_status == "abort")return;
-						
+
 						if (xhr.status === 0 || xhr.readyState === 0) {
 							//alert("discardMsg");
 							return;
@@ -536,10 +552,10 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
-		for (var i=0; i< message["messages"].length;i++){
-			$scope.messages.push(message["messages"][i]);
-			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
-		}
+			for (var i=0; i< message["messages"].length;i++){
+				$scope.messages.push(message["messages"][i]);
+				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+			}
 		$scope.message_busy = false;
 	}
 
@@ -634,7 +650,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	/*
 	 * close event
 	 */
-	 function unsubscribeCurrentRoom(event){
+	function unsubscribeCurrentRoom(event){
 		var isLastRoomBindingsEmpty = lastRoomBindings==undefined || lastRoomBindings.length == 0;
 		if ( !isLastRoomBindingsEmpty ) {
 

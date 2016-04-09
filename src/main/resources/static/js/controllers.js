@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-var springChatControllers = angular.module('springChat.controllers', ['infinite-scroll','toaster','ngRoute', 'ngAnimate','ngResource','ngCookies']);
+var springChatControllers = angular.module('springChat.controllers', ['infinite-scroll','toaster','ngRoute', 'ngAnimate','ngResource','ngCookies', 'ngSanitize']);
 springChatControllers.config(function($routeProvider){
 	$routeProvider.when("/chatrooms",
 			{

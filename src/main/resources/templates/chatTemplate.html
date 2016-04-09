@@ -54,7 +54,8 @@
 					infinite-scroll-distance='0' infinite-scroll-parent="true"
 					infinite-scroll-container='"#messagesScroll"'>
 					<div ng-repeat="message in messages track by $index">
-						<small print-message=""></small>
+						<div ng-bind-html=" parseMsg(message.username + ':' + message.message, '@', 'goToEmail(#)')">
+						</div>
 						<div ng-repeat="file in message.attachedFiles track by $index">
 							<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
 						</div>
@@ -66,25 +67,42 @@
 			<div class="form-group row" id="controlFormGroup">
 				<small>You will send this message to <strong>{{sendTo}}</strong>
 					(click a participant name to send a private message)
-				</small> <span class="col-xs-10"> <input id="newMessageInput"
+				</small> <span class="col-xs-9"> <input id="newMessageInput"
 					type="text" class="form-control "
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."
 					ng-model="newMessage"
-          ng-keydown="beforeMessageInputKeyPress($event)"
-          ng-keypress="onKeyMessageKeyPressEvent($event)"
-					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)" ng-click="onMessageInputClick()"/>
-         <div id="search_list_in_message_input" class="search-list" ng-show="show_search_list_in_message_input">
-              <ul aria-labelledby="dropdownMenu1">
-                <li role="presentation" ng-repeat='item in emails_in_message_input'
-                  ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a> {{item}} </a></li>
-              </ul>
-            </div>
+					ng-keydown="beforeMessageInputKeyPress($event)"
+					ng-keypress="onKeyMessageKeyPressEvent($event)"
+					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
+					ng-click="onMessageInputClick()" />
+					<div id="search_list_in_message_input" class="search-list"
+						ng-show="show_search_list_in_message_input">
+						<ul aria-labelledby="dropdownMenu1">
+							<li role="presentation"
+								ng-repeat='item in emails_in_message_input'
+								ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a>
+									{{item}} </a></li>
+						</ul>
+					</div>
 				</span>
 
 				<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> -->
 				<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
-				<span class="col-xs-2">
+				<span class="col-xs-1">
+					<button class="btn btn-block btn-lg btn-info "
+						ng-click="$parent.show_search_list_phrase = true">
+						<span ng-show="messageSended">)</span>
+						<div class="search-list" ng-show="$parent.show_search_list_phrase">
+							<ul aria-labelledby="dropdownMenu1" class="row">
+								<li role="presentation" th:each="phrase : ${phrasesPack}"
+									ng-click=""><a
+									th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
+									th:text="${phrase.getText()}"></a></li>
+							</ul>
+						</div>
+					</button>
+				</span> <span class="col-xs-2">
 					<button class="btn btn-block btn-lg btn-info"
 						ng-click="sendMessage()">
 						<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
@@ -94,11 +112,11 @@
 
 				<form name="uploadfile" enctype="multipart/form-data"
 					id="upload_file_form">
-					<input class="col-xs-4" type="file" multiple="multiple" name="myfile" /> <input
-						type="submit" value="Загрузить" />
-          <!--  <a ng-href="chat/consultation/get_mail/{{consultationId}}">send consultation by mail</a> -->
+					<input class="col-xs-4" type="file" multiple="multiple"
+						name="myfile" /> <input type="submit" value="Загрузить" />
+					<!--  <a ng-href="chat/consultation/get_mail/{{consultationId}}">send consultation by mail</a> -->
 
-					<div  ng-hide="uploadProgress==0" class="progress col-xs-2">
+					<div ng-hide="uploadProgress==0" class="progress col-xs-2">
 						<div class="progress-bar progress-bar-striped active"
 							role="progressbar" aria-valuenow="{{uploadProgress}}"
 							aria-valuemin="0" aria-valuemax="100"

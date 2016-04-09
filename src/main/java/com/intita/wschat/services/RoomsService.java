@@ -27,6 +27,8 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.models.OperationStatus.OperationType;
+import com.intita.wschat.models.Phrase;
+import com.intita.wschat.repositories.ChatPhrasesRepository;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
@@ -35,8 +37,8 @@ import jsonview.Views;
 @Service
 public class RoomsService {
 
-	@Autowired
-	private RoomRepository roomRepo;
+	@Autowired private RoomRepository roomRepo;
+	@Autowired private ChatPhrasesRepository phrasesRepo;
 	@Autowired private UsersService userService;
 	@Autowired private ChatUsersService chatUserService;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
@@ -184,6 +186,11 @@ public class RoomsService {
 		room.removeUser(user);
 		roomRepo.save(room);
 		return true;
+	}
+	@Transactional
+	public ArrayList<Phrase> getPhrases(){
+		return phrasesRepo.findAll(); 
+
 	}
 
 	@Transactional

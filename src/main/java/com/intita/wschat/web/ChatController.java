@@ -587,6 +587,8 @@ public class ChatController {
 		model.addAttribute("lgPack", getLocolization());
 		List<ConfigParam> config =  configParamService.getParams();
 		model.addAttribute("config",ConfigParam.listAsMap(config));
+		model.addAttribute("phrasesPack", roomService.getPhrases());
+		model.addAttribute("config",ConfigParam.listAsMap(config));
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
