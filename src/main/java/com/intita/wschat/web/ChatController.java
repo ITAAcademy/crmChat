@@ -527,7 +527,6 @@ public class ChatController {
 	@ResponseBody
 	public String getCoursesLike(@RequestParam String prefix, @RequestParam String lang) throws JsonProcessingException {
 		ArrayList<String> coursesNames = courseService.getAllCoursesNamesWithTitlePrefix(prefix,lang);
-
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonInString = mapper.writeValueAsString(coursesNames);

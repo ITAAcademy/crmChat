@@ -76,7 +76,7 @@
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)" ng-click="onMessageInputClick()"/>
          <div id="search_list_in_message_input" class="search-list" ng-show="show_search_list_in_message_input">
               <ul aria-labelledby="dropdownMenu1">
-                <li role="presentation" ng-repeat='item in data_in_message_input'
+                <li role="presentation" ng-repeat='item in data_in_message_input track by $index' 
                   ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a> {{item}} </a></li>
               </ul>
             </div>

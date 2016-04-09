@@ -176,10 +176,19 @@ $scope.appendToSearchInput_in_message_input = function(value) {
 		resetSpecialInput();
 	}
 $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+		var functionalChar;
+		switch(specialInputMode){
+			case INPUT_MODE.DOG_MODE:
+			functionalChar = "@";
+			break;
+			case INPUT_MODE.TILDA_MODE:
+			functionalChar = "~";
+			break;
+		}
 		var message = $scope.newMessage;
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
-		var userNameStartIndex = message.lastIndexOf('@')+1;
+		var userNameStartIndex = message.lastIndexOf(functionalChar)+1;
 		//var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
 		var charactersAlreadyKnownCount = carretPosIndex - userNameStartIndex;
 		var differenceValue = value.substring(charactersAlreadyKnownCount);
