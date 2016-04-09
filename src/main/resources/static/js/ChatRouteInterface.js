@@ -315,11 +315,10 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	}
 	$scope.parseMsg = function(msg, symbol, callback)
 	{
-		var expr = new RegExp('@\\w+', 'g');
+		var expr = new RegExp('\\B@\\w+@\\w+[.]\\w+', 'g');
 		msg = msg.replace(expr, function(str){ return " <a ng-click=" + callback.replace(new RegExp('#', 'g'), "&#39;" + str.substr(1)+ "&#39;") + ">" + str.substr(1) + "</a>";})
 		//$interval($route.reload(), 200);
-		
-		return $sce.trustAsHtml(msg);
+		return msg;
 	}
 	$scope.goToEmail = function(email)
 	{

@@ -44,6 +44,18 @@ angular.module('springChat.directives').directive("imagedrop", function ($parse,
 		}
 	};
 });
+
+angular.module('springChat.directives').directive('dir', function($compile, $parse) {
+    return {
+        restrict: 'E',
+        link: function(scope, element, attr) {
+          scope.$watch(attr.content, function() {
+            element.html($parse(attr.content)(scope));
+            $compile(element.contents())(scope);
+          }, true);
+        }
+      }
+    })
 angular.module('springChat.directives').directive('starRating', starRating);
 function starRating() {
     return {
