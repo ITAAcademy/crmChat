@@ -15,7 +15,7 @@ headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 });
 request.success(function (data) {
 if (data!=null){
-window.location.href =generateUrlToUserPage(data);
+window.top.location.href =generateUrlToUserPage(data);
 return true;
 }
 });
