@@ -59,6 +59,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.ConsultationRatings;
+import com.intita.wschat.models.Course;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -71,6 +72,7 @@ import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
+import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -108,6 +110,7 @@ public class ChatController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
+	@Autowired private CourseService courseService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
@@ -519,6 +522,17 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}
+	
+	@RequestMapping(value="/get_courses_like", method = RequestMethod.GET)
+	@ResponseBody
+	public String getCoursesLike(@RequestParam String prefix, @RequestParam String lang) throws JsonProcessingException {
+		ArrayList<String> coursesNames = courseService.getAllCoursesNamesWithTitlePrefix(prefix,lang);
+		ObjectMapper mapper = new ObjectMapper();
+
+		String jsonInString = mapper.writeValueAsString(coursesNames);
+		return jsonInString;
+	}
+	
 
 	@RequestMapping(value="/get_users_nicknames_like", method = RequestMethod.GET)
 	@ResponseBody
