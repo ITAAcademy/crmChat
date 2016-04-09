@@ -54,7 +54,7 @@
 					infinite-scroll-distance='0' infinite-scroll-parent="true"
 					infinite-scroll-container='"#messagesScroll"'>
 					<div ng-repeat="message in messages track by $index">
-						<div ng-bind-html=" parseMsg(message.username + ':' + message.message, '@', 'goToEmail(#)')">
+						<div ng-bind-html=" parseMsg(message.username + ':' + message.message, '@', 'goToUserPage(#)')">
 						</div>
 						<div ng-repeat="file in message.attachedFiles track by $index">
 							<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
