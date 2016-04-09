@@ -4,7 +4,8 @@ String.prototype.insertAt=function(index, string) {
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q) {
 	var INPUT_MODE = {
 		STANDART_MODE : 0,
-		DOG_MODE : 1
+		DOG_MODE : 1,
+		TILDA_MODE : 2
 	};
 	$scope.show_search_list_in_message_input = false;
 	var isSpecialInput = false;
@@ -19,7 +20,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	
 
-	var showUsersListInMessageInputTimer;
+	var showListInMessageInputTimer;
 	function messageError(){
 		toaster.pop('error', "Error","server request timeout",1000);
 	}
@@ -68,6 +69,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		switch(typedChar){
 			case '@': enableInputMode(INPUT_MODE.DOG_MODE);
 			break;
+			case '~': enableInputMode(INPUT_MODE.TILDA_MODE);
+			break;
 			case ' ': $scope.onMessageInputClick();
 			break;
 
@@ -89,10 +92,11 @@ if (arrowKeyPressed) $scope.onMessageInputClick();
 	$scope.startTyping = function(event) {
 		//var keyCode = event.which || event.keyCode;
 		//var typedChar = String.fromCharCode(keyCode);
-		//if(typedChar==' ')$scope.onMessageInputClick();
-		//processDogInput();		
+		//if(typedChar==' ')$scope.onMessageInputClick();		
 			switch(specialInputMode){
-			case INPUT_MODE.DOG_MODE:processDogInput();
+			case INPUT_MODE.DOG_MODE: processDogInput();
+			break;
+			case INPUT_MODE.TILDA_MODE: processTildaInput();
 			break;
 		}	
 // Don't send notification if we are still typing or we are typing a private message
@@ -116,12 +120,11 @@ if (arrowKeyPressed) $scope.onMessageInputClick();
 	};
 
 	$scope.showUsersListInMessageInput = function (email) {
-
 		$scope.show_search_list_in_message_input = true;
-		$scope.emails_in_message_input = [];
-		$timeout.cancel(showUsersListInMessageInputTimer);
+		$scope.data_in_message_input = [];
+		$timeout.cancel(showListInMessageInputTimer);
 
-		showUsersListInMessageInputTimer = $timeout(function () {
+		showListInMessageInputTimer = $timeout(function () {
 			$scope.show_search_list_in_message_input = true;
 			var request = $http({
 				method: "get",
@@ -131,10 +134,34 @@ if (arrowKeyPressed) $scope.onMessageInputClick();
 			});
 
 			request.success(function (data) {
-				$scope.emails_in_message_input = data;
+				$scope.data_in_message_input = data;
 			});
 		}, 500);//for click event
 	};
+
+$scope.showCoursesListInMessageInput = function (coursePrefix,courseLang) {
+
+		$scope.show_search_list_in_message_input = true;
+		$scope.data_in_message_input = [];
+		$timeout.cancel(showListInMessageInputTimer);
+
+		showListInMessageInputTimer = $timeout(function () {
+			$scope.show_search_list_in_message_input = true;
+			var request = $http({
+				method: "get",
+				url: serverPrefix + "/get_courses_like?prefix=" + coursePrefix + "&lang=" + courseLang,//'/get_users_emails_like',
+				data: null ,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			});
+
+			request.success(function (data) {
+				$scope.data_in_message_input = data;
+			});
+		}, 500);//for click event
+	};
+
+
+
 	$scope.onMessageInputClick = function(){
 		resetSpecialInput();
 		$scope.show_search_list_in_message_input = false;
@@ -172,6 +199,18 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
 		
 		$scope.showUsersListInMessageInput(userNamePrefix);
+	}
+	function processTildaInput(){
+		var message = $scope.newMessage;
+		var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
+
+		//debugger;
+		//if (!isSpecialInput)return;//return if @ is not present in word
+		var userNameStartIndex = message.lastIndexOf('~')+1;
+		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
+		
+		$scope.showCoursesListInMessageInput(userNamePrefix,"ua");
 	}
 
 	$scope.fileDropped = function(){
