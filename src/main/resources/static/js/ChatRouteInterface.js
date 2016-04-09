@@ -9,9 +9,15 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	};
 	$scope.show_search_list_in_message_input = false;
 	var isSpecialInput = false;
+	var specialInputPositionInText;
 	var specialInputMode = INPUT_MODE.STANDART_MODE;
-	var enableInputMode = function(input_mode){
+	var enableInputMode = function(input_mode,positionInText){
+		if (isSpecialInput){
+			//special input is already enabled, so cancel further actions
+			return;
+		}
 		isSpecialInput = true;
+		specialInputPositionInText = positionInText;
 		specialInputMode = input_mode;
 	}
 	var resetSpecialInput = function(){
@@ -66,13 +72,20 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var selectAllHotKeyPressed = typedChar == 'A' && ctrlPressed;
 		var kk = keyCode;
 		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+		var enterPressed = keyCode==13;
+		if (enterPressed){
+			$scope.onMessageInputClick();
+			return;
+		}
+			var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
 		switch(typedChar){
-			case '@': enableInputMode(INPUT_MODE.DOG_MODE);
-			break;
-			case '~': enableInputMode(INPUT_MODE.TILDA_MODE);
-			break;
-			case ' ': $scope.onMessageInputClick();
-			break;
+			case '@': enableInputMode(INPUT_MODE.DOG_MODE,carretPosIndex);
+			return;
+			case '~': enableInputMode(INPUT_MODE.TILDA_MODE,carretPosIndex);
+			return;
+			/*case ' ': $scope.onMessageInputClick();
+			break;*/
 
 		}
 			
@@ -83,7 +96,14 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		
 	}
 	$scope.beforeMessageInputKeyPress = function(event){
+			var msgInputElm = document.getElementById("newMessageInput");
+		var carretPosIndex = getCaretPosition(msgInputElm);
 var keyCode = event.which || event.keyCode;
+var backSpacePressed = keyCode == 8;
+if (backSpacePressed && carretPosIndex <= specialInputPositionInText + 1){
+$scope.onMessageInputClick();
+return;
+}
 var kk = keyCode;
 var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
 if (arrowKeyPressed) $scope.onMessageInputClick();
