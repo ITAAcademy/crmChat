@@ -52,6 +52,7 @@ import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
+import com.intita.wschat.exception.ChatUserNotFoundException;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
@@ -59,7 +60,6 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.ConsultationRatings;
-import com.intita.wschat.models.Course;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -565,7 +565,14 @@ public class ChatController {
 					String jsonInString = mapper.writeValueAsString(nicks);
 					return jsonInString;*/
 	}
-
+	@RequestMapping(value="/get_id_by_username",method = RequestMethod.GET)
+	@ResponseBody
+	public Long getIdByUsername(@RequestParam String intitaUsername){
+		User user = userService.getUser(intitaUsername);
+		if (user == null) throw new ChatUserNotFoundException("");
+		return user.getId();
+	}
+	
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
@@ -625,7 +632,7 @@ public class ChatController {
 		List<ConfigParam> config =  configParamService.getParams();
 		model.addAttribute("config",ConfigParam.listAsMap(config));
 		return getTeachersTemplate(request, "consultationTemplate", model);
-	}
+	}	
 
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
