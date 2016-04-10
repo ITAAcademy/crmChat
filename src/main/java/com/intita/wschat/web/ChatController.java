@@ -60,6 +60,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.ConsultationRatings;
+import com.intita.wschat.models.Course;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -571,6 +572,19 @@ public class ChatController {
 		User user = userService.getUser(intitaUsername);
 		if (user == null) throw new ChatUserNotFoundException("");
 		return user.getId();
+	}
+	@RequestMapping(value="/get_course_alias_by_title",method = RequestMethod.GET)
+	@ResponseBody
+	public String getCourseAliasByTitle(@RequestParam String title,@RequestParam String lang){
+		Course course = courseService.getByTitle(title,lang);
+		String jsonInString = null;
+		try {
+			jsonInString = mapper.writeValueAsString(course.getAlias());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jsonInString;
 	}
 	
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)

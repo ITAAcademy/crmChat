@@ -1,11 +1,26 @@
+String.prototype.HTMLEncode = function (str) {
+	var result = "";
+	var str = (arguments.length === 1) ? str : this;
+	for (var i = 0; i < str.length; i++) {
+		var chrcode = str.charCodeAt(i);
+		result += (chrcode > 128) ? "&#" + chrcode + ";" : str.substr(i, 1)
+	}
+	return result;
+}
 String.prototype.insertAt=function(index, string) { 
 	return this.substr(0, index) + string + this.substr(index);
 }
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q', '$sce',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q, $sce) {
+
 	function generateUrlToUserPage(user_id){
 		var baseurl = globalConfig["baseUrl"];
 		return baseurl+"/profile/"+user_id+"/";
 	}
+	function generateUrlToCourse(course_alias,lang){
+		var baseurl = globalConfig["baseUrl"];
+		return baseurl + "/course/"+lang+"/"+course_alias+"/";
+	}
+
 	$scope.goToUserPage = function(username){
 		var request = $http({
 			method: "get",
@@ -21,6 +36,22 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		});
 		return false;
 	}
+	$scope.goToCourseByTitle = function(title,lang){
+		var request = $http({
+			method: "get",
+			url: serverPrefix + "/get_course_alias_by_title?title=" + title+"&lang="+lang,
+			data: null ,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
+		request.success(function (data) {
+			if (data!=null){
+				window.top.location.href =generateUrlToCourse(data,lang);
+				return true;
+			}
+		});
+
+	}
+
 
 	var INPUT_MODE = {
 			STANDART_MODE : 0,
@@ -220,12 +251,16 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var functionalChar;
+		var prefix="";
+		var suffix="";
 		switch(specialInputMode){
 		case INPUT_MODE.DOG_MODE:
 			functionalChar = "@";
 			break;
 		case INPUT_MODE.TILDA_MODE:
 			functionalChar = "~";
+			prefix='"';
+			suffix='"';
 			break;
 		}
 		var message = $scope.newMessage;
@@ -235,7 +270,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		//var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
 		var charactersAlreadyKnownCount = carretPosIndex - userNameStartIndex;
 		var differenceValue = value.substring(charactersAlreadyKnownCount);
-		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex,differenceValue);
+		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex,differenceValue).insertAt(userNameStartIndex,prefix)+suffix;
 		$scope.show_search_list_in_message_input = false;
 		resetSpecialInput();
 	}
@@ -245,7 +280,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 
-		//debugger;
 		//if (!isSpecialInput)return;//return if @ is not present in word
 		var userNameStartIndex = message.lastIndexOf('@')+1;
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
@@ -257,7 +291,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 
-		//debugger;
 		//if (!isSpecialInput)return;//return if @ is not present in word
 		var userNameStartIndex = message.lastIndexOf('~')+1;
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
@@ -340,13 +373,18 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	$scope.parseMsg = function(msg)
 	{
-		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)');
-		return msg;
+		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)',1);
+		msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)',2,3);
+		//msg = msg.HTMLEncode();
+		return msg;//.replace(' ','&#32;');
 	}
-	$scope.parseMain = function(msg, reg, callback)
+	$scope.parseMain = function(msg, reg, callback,trimLeft,trimRight)
 	{
+		trimLeft = trimLeft || 0;
+		trimRight = trimRight || 0;
 		var expr = new RegExp(reg, 'g');
-		msg = msg.replace(expr, function(str){ return " <a ng-click=" + callback.replace(new RegExp('#', 'g'), "&#39;" + str.substr(1)+ "&#39;") + ">" + str.substr(1) + "</a>";})
+		msg = msg.replace(expr, function(str){ return ' <a ng-click="' + callback.replace(new RegExp('#', 'g'), "'" + str.substr(trimLeft,str.length - trimRight)+ "'") + '">' + str.substr(trimLeft,str.length - trimRight) + "</a>";})
+
 		//$interval($route.reload(), 200);
 		return msg;
 	}
@@ -804,7 +842,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	$scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
 	var nice = $(".chat").niceScroll();
-	nice.hide();
+	//nice.hide();
 
 }]);
 
