@@ -313,9 +313,15 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	{
 		$scope.newMessage += text;
 	}
-	$scope.parseMsg = function(msg, symbol, callback)
+	
+	$scope.parseMsg = function(msg)
 	{
-		var expr = new RegExp('\\B@\\w+@\\w+[.]\\w+', 'g');
+		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)');
+		return msg;
+	}
+	$scope.parseMain = function(msg, reg, callback)
+	{
+		var expr = new RegExp(reg, 'g');
 		msg = msg.replace(expr, function(str){ return " <a ng-click=" + callback.replace(new RegExp('#', 'g'), "&#39;" + str.substr(1)+ "&#39;") + ">" + str.substr(1) + "</a>";})
 		//$interval($route.reload(), 200);
 		return msg;
