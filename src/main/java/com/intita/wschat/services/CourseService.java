@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.intita.wschat.exception.CourseNotFoundException;
 import com.intita.wschat.models.Course;
 import com.intita.wschat.repositories.CourseRepository;
 
@@ -18,6 +19,29 @@ CourseRepository courseRepository;
 @Transactional
 public List<Course> getAllCourses(){
 	return courseRepository.findAll();
+}
+@Transactional
+public Course getByAlias(String alias){
+	return courseRepository.findByAlias(alias);
+}
+@Transactional
+public Course getByTitle(String title,String lang){
+	Course course = null;
+	String lowcaseLang = lang.toLowerCase();
+	switch(lowcaseLang){
+	case "ua":
+		course = courseRepository.findFirstByTitleUa(title);
+		break;
+	case "ru":
+		course = courseRepository.findFirstByTitleRu(title);
+		break;
+	case "en":
+		course = courseRepository.findFirstByTitleEn(title);
+		break;
+	}
+	if (course == null ) throw new CourseNotFoundException("");
+	return course;
+	
 }
 @Transactional
 public ArrayList<Course> getAllCoursesWithTitlePrefix(String prefix,String lang){
