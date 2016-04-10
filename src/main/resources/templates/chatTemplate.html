@@ -1,74 +1,104 @@
-<span>
-	<h4 th:text="${lgPack.lable_dialog} + ': [{{dialogName}}]'">Dialog
-		name</h4>
-	<div>
-		<div class="row">
-			<div class="col-xs-4">
-				<h4
-					th:text="${lgPack.lable_participants} + ' [{{participants.length}}]'">Participants
-					[{{participants.length}}]</h4>
-				<div class="dropdown dropdown-scroll" ng-app="app">
-					<div ng-show="checkUserAdditionPermission()">
-						<div class="input-group input-group-sm search-control">
+<div class="content container-fluid bootstrap snippets container">
+	<div class="row row-broken">
+		<div class="col-sm-3 col-xs-12">
+			<div class="col-inside-lg decor-default chat"
+				style="overflow: hidden; outline: none;" tabindex="5000">
+				<div class="chat-users">
+					<h4 th:text="${lgPack.lable_dialog} + ': [{{dialogName}}]'">Dialog
+						name</h4>
+					<div class="dropdown dropdown-scroll" ng-app="app">
+						<div ng-show="checkUserAdditionPermission()">
+							<div class="input-group input-group-sm search-control">
 
-							<input type="text" class="form-control" placeholder="Query"
-								ng-model="$parent.searchInputValue.email"
-								ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
-							<span ng-click="addUserToRoom()" class="input-group-addon">
-								<span ng-show="$parent.userAddedToRoom"
-								class="glyphicon glyphicon-search"></span> <img
-								ng-hide="$parent.userAddedToRoom"
-								src="images/ajax_loader_blue_32.gif" />
-							</span>
-						</div>
-						<div class="search-list" ng-show="$parent.show_search_list">
-							<ul aria-labelledby="dropdownMenu1">
-								<li role="presentation" ng-repeat='item in $parent.emails'
-									ng-click="appendToSearchInput(item)"><a> {{item}} </a></li>
-							</ul>
+								<input type="text" class="form-control" placeholder="Query"
+									ng-model="$parent.searchInputValue.email"
+									ng-blur="hideSearchList()" ng-change="showSearchList()"></input>
+								<span ng-click="addUserToRoom()" class="input-group-addon">
+									<span ng-show="$parent.userAddedToRoom"
+									class="glyphicon glyphicon-search"></span> <img
+									ng-hide="$parent.userAddedToRoom"
+									src="images/ajax_loader_blue_32.gif" />
+								</span>
+							</div>
+							<div class="search-list" ng-show="$parent.show_search_list">
+								<ul aria-labelledby="dropdownMenu1">
+									<li role="presentation" ng-repeat='item in $parent.emails'
+										ng-click="appendToSearchInput(item)"><a> {{item}} </a></li>
+								</ul>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="share">
-					<ul ng-repeat="participant in participants | orderBy:'-username'">
-						<li><span class="input-icon fui-new"
-							ng-show="participant.typing"></span> <span
-							ng-style="!participant.online ? {color:'red' } : {color:'green'}"
-							class="input-icon fui-user" ng-show="!participant.typing"></span>
-							<a ng-if="participant.intitaUserId != null"
-							class="a_user_nickname" target="_parent"
-							th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">{{participant.username}}</a>
-							<span ng-if="participant.intitaUserId == null"
-							class="a_user_nickname">{{participant.username}}</span> <!--ng-click="privateSending(participant.username)"-->
+					<h6
+						th:text="${lgPack.lable_participants} + ' [{{participants.length}}]'">Participants
+						[{{participants.length}}]</h6>
+					<div ng-repeat="participant in participants | orderBy:'-username'"
+						class="user">
+						<div class="avatar">
+							<a target="_parent" ng-if="participant.intitaUserId"
+								th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
+								<img
+								th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
+								alt="{{participant.username}}" />
+							</a> <a target="_parent" ng-if="!participant.intitaUserId">
+								<img
+								th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
+								alt="{{participant.username}}" />
+							</a>
 
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div id="messagesScroll" name="messagesScroll"
-				class="col-xs-8 chat-box" imagedrop="true"
-				on-image-drop="fileDropped()">
-				<h4 th:text="${lgPack.lable_messages}">Messages</h4>
-				<div class="testq" infinite-scroll='loadOtherMessages()'
-					infinite-scroll-disabled='message_busy'
-					infinite-scroll-distance='0' infinite-scroll-parent="true"
-					infinite-scroll-container='"#messagesScroll"'>
-					<div ng-repeat="message in messages track by $index">
-						<dir content=" parseMsg(message.username + ':' + message.message)">
-						</dir >
-						<div ng-repeat="file in message.attachedFiles track by $index">
-							<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
+							<div
+								ng-class="!participant.online ? 'status offline' : 'status online'"
+								class=""></div>
 						</div>
+						<div class="name">{{participant.username}}</div>
+						<div class="mood">User</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div ng-show="currentRoom.active &#38;&#38; isMyRoom" class="row">
-			<div class="form-group row" id="controlFormGroup">
-				<small>You will send this message to <strong>{{sendTo}}</strong>
-					(click a participant name to send a private message)
-				</small> <span class="col-xs-9"> <input id="newMessageInput"
-					type="text" class="form-control "
+		<div class="col-sm-9 col-xs-12 chat no-pading" imagedrop="true"
+			on-image-drop="fileDropped()" id="messagesScroll"
+			name="messagesScroll" style="overflow: hidden; outline: none;"
+			tabindex="5001">
+			<div class="col-inside-lg decor-default "
+				infinite-scroll='loadOtherMessages()'
+				infinite-scroll-disabled='message_busy' infinite-scroll-distance='0'
+				infinite-scroll-parent="true"
+				infinite-scroll-container='"#messagesScroll"'>
+				<div class="chat-body testq">
+					<h6 th:text="${lgPack.lable_messages}">Mini Chat</h6>
+
+					<div class="answer" ng-class="rightLeft($index) ? 'right' : 'left'"
+						ng-repeat="message in messages track by $index">
+						<div class="avatar">
+							<img
+								th:src="${config.get('baseUrl')+'/images/avatars/{{findParticipant(message.username).avatar}}'}"
+								alt="User name" />
+							<div
+								ng-class="!findParticipant(message.username).online ? 'status offline' : 'status online'"
+								class="status"></div>
+						</div>
+						<div class="name">{{message.username}}</div>
+						<div class="text">
+							<dir style="margin: 0px" content=" parseMsg(message.message)">
+							</dir>
+							<span ng-repeat="file in message.attachedFiles track by $index">
+								<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
+							</span>
+						</div>
+						<div
+							ng-bind="$parent.formatDateWithLast(message.date, 'minutes ago')"
+							class="time"></div>
+					</div>
+					<div class="chat-body answer-end"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class=" row row-broken"
+		ng-show="currentRoom.active &#38;&#38; isMyRoom">
+		<div class="chat">
+			<div class="answer-add">
+				<textarea id="newMessageInput" type="text" class="form-control "
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."
 					ng-model="newMessage"
@@ -76,53 +106,41 @@
 					ng-keypress="onKeyMessageKeyPressEvent($event)"
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
 					ng-click="onMessageInputClick()" />
-					<div id="search_list_in_message_input" class="search-list"
-						ng-show="show_search_list_in_message_input">
-						<ul aria-labelledby="dropdownMenu1">
-							<li role="presentation" ng-repeat='item in data_in_message_input track by $index'
-								ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a>
-									{{item}} </a></li>
-						</ul>
-					</div>
-				</span>
-
-				<!-- <input id="newUserInput" type="text" class="form-control" placeholder="Enter new user" ng-model="$parent.newUser" ng-keyup="$event.keyCode == 13 ? addUserToRoom() : 0"/> -->
-				<!--   <input id="roomId" type="text" class="form-control" placeholder="Enter roomId" ng-model="$parent.roomId" ng-keyup="$event.keyCode == 13 ? changeRoom() : 0"/> -->
-				<span class="col-xs-1">
-					<button class="btn btn-block btn-lg btn-info "
-						ng-click="$parent.show_search_list_phrase = true">
-						<span ng-show="messageSended">)</span>
-						<div class="search-list" ng-show="$parent.show_search_list_phrase">
-							<ul aria-labelledby="dropdownMenu1" class="row">
-								<li role="presentation" th:each="phrase : ${phrasesPack}"
-									ng-click=""><a
-									th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
-									th:text="${phrase.getText()}"></a></li>
-							</ul>
-						</div>
-					</button>
-				</span> <span class="col-xs-2">
-					<button class="btn btn-block btn-lg btn-info"
-						ng-click="sendMessage()">
-						<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
-						<span th:text="${lgPack.lable_send}" ng-show="messageSended">Send</span>
-					</button>
-				</span>
-
-				<form name="uploadfile" enctype="multipart/form-data"
-					id="upload_file_form">
-					<input class="col-xs-4" type="file" multiple="multiple"
-						name="myfile" /> <input type="submit" value="Загрузить" />
-					<!--  <a ng-href="chat/consultation/get_mail/{{consultationId}}">send consultation by mail</a> -->
-
-					<div ng-hide="uploadProgress==0" class="progress col-xs-2">
-						<div class="progress-bar progress-bar-striped active"
-							role="progressbar" aria-valuenow="{{uploadProgress}}"
-							aria-valuemin="0" aria-valuemax="100"
-							style="width: {{uploadProgress">{{uploadProgress}}%</div>
-					</div>
-				</form>  
+				<span class="answer-btn answer-btn-1"
+					ng-click="$parent.show_search_list_phrase = true"> </span> <span
+					class="answer-btn answer-btn-2" ng-click="sendMessage()"></span>
+				<div id="search_list_in_message_input" class="search-list"
+					ng-show="show_search_list_in_message_input">
+					<ul aria-labelledby="dropdownMenu1">
+						<li role="presentation"
+							ng-repeat='item in data_in_message_input track by $index'
+							ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a>
+								{{item}} </a></li>
+					</ul>
+				</div>
+				<div class="search-list" ng-show="$parent.show_search_list_phrase">
+					<ul aria-labelledby="dropdownMenu1" class="row">
+						<li role="presentation" th:each="phrase : ${phrasesPack}"
+							ng-click=""><a
+							th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
+							th:text="${phrase.getText()}"></a></li>
+					</ul>
+				</div>
 			</div>
+			<form name="uploadfile" enctype="multipart/form-data"
+				id="upload_file_form">
+				<input class="col-xs-4" type="file" multiple="multiple"
+					name="myfile" data-filename-placement="inside" /> <input
+					type="submit" value="Загрузить" />
+				<!--  <a ng-href="chat/consultation/get_mail/{{consultationId}}">send consultation by mail</a> -->
+
+				<div ng-hide="uploadProgress==0" class="progress col-xs-2">
+					<div class="progress-bar progress-bar-striped active"
+						role="progressbar" aria-valuenow="{{uploadProgress}}"
+						aria-valuemin="0" aria-valuemax="100"
+						style="width: {{uploadProgress">{{uploadProgress}}%</div>
+				</div>
+			</form>
 		</div>
 	</div>
-</span>
+</div>

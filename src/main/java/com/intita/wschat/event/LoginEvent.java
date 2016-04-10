@@ -55,13 +55,14 @@ public class LoginEvent {
 		typing = false;
 		online = isOnline;
 	}
-	public LoginEvent(Long intitaUserId, Long chatUserId,String username, boolean isOnline) {
+	public LoginEvent(Long intitaUserId, Long chatUserId,String username, String avatar, boolean isOnline) {
 		this.intitaUserId = intitaUserId;
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
 		online = isOnline;
+		this.avatar = avatar;
 	}
 
 	public LoginEvent(Long chatUserId,String username, String avatar,boolean isOnline) {

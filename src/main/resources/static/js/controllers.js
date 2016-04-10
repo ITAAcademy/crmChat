@@ -25,7 +25,7 @@ springChatControllers.config(function($routeProvider){
 		templateUrl: "accessDeny.html",
 		controller: "AccessDeny"
 	});
-	
+
 	$routeProvider.when("/consultation_view/:consultationId",{
 		templateUrl: "consultationTemplate.html",
 		controller: "ConsultationController"
@@ -85,10 +85,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			$location.path("/access_deny");
 		else
 			window.top.location.href = globalConfig["baseUrl"] + '/IntITA/site/authorize';
-			//window.top.location.href = 'http://localhost/IntITA/site/authorize';
+		//window.top.location.href = 'http://localhost/IntITA/site/authorize';
 	}
 
-	
+
 	var addingUserToRoom = undefined;
 	var sendingMessage = undefined;
 	var addingRoom = undefined;
@@ -148,7 +148,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		$scope.searchInputValue.email = value;
 		$scope.show_search_list = false;
 	}
-	
+
 
 	$scope.showSearchListAdmin = function () {
 
@@ -241,7 +241,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		}).
 		error(function(data, status, headers, config) {
 			console.log("PRIVATE ROOM CREATE FAILD ");
-				changeLocation("/chatrooms");
+			changeLocation("/chatrooms");
 		});
 	}
 
@@ -289,7 +289,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 
 	}
-	
+
 	$scope.privateSending = function(username) {
 		$scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
 	};
@@ -299,6 +299,37 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		if($scope.chatUserRole & 256)
 			return true;
 		return false;
+	}
+	$scope.formatDateWithLast = function(date, minutesName)
+	{
+		// need translate and move to global to config map
+		var dateObj = new Date(date);
+		var delta = new Date().getTime() - date;
+		if(delta > 60000*60)
+			return $scope.formatDate(date);
+		else
+			if(Math.round(delta/60000) == 0)
+				return null;
+
+		return Math.round(delta/60000) + " " + minutesName;
+	}
+
+	$scope.formatDate = function(date)
+	{
+		// need translate and move to global to config map
+		var monthNames = [
+		                  "January", "February", "March",
+		                  "April", "May", "June", "July",
+		                  "August", "September", "October",
+		                  "November", "December"
+		                  ];
+
+		var dateObj = new Date(date);
+		var day = dateObj.getDate();
+		var monthIndex = dateObj.getMonth();
+		var year = dateObj.getFullYear();
+
+		return day + " " + monthNames[monthIndex] + " " + dateObj.getHours() + ":" + dateObj.getMinutes();
 	}
 
 	function login(mess_obj)
@@ -323,7 +354,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 			$scope.rooms = JSON.parse(mess_obj.chat_rooms);
 			$scope.roomsCount = $scope.rooms.length;
 		}
-		
+
 		if(mess_obj.nextWindow == 0)
 		{
 			$rootScope.authorize = true;
@@ -345,10 +376,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		{
 			$rootScope.authorize = false;
 			if($location.path() != "/")
-				{
-					$rootScope.goToAuthorize();
-					return;
-				}
+			{
+				$rootScope.goToAuthorize();
+				return;
+			}
 			changeLocation("/dialog_view/" + mess_obj.nextWindow);
 			toaster.pop('note', "Wait for teacher connect", "...thank",{'position-class':'toast-top-full-width'});
 		}
@@ -447,7 +478,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 						console.log("SERVER MESSAGE OPERATION STATUS:"+operationStatus.success+ operationStatus.description);
 					});
-					
+
 					chatSocket.subscribe("/topic/users/info", function(message) {
 						var operationStatus = JSON.parse(message.body);
 						//operationStatus = JSON.parse(operationStatus);

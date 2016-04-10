@@ -195,19 +195,30 @@ public class RoomController {
 	{
 		Set<LoginEvent> userList = new HashSet<>();
 		Long intitaId = null;
-		if(room_o.getAuthor().getIntitaUser() != null)
-			intitaId =  room_o.getAuthor().getIntitaUser().getId();
+		String avatar = "noname.png";
+		User iUser = room_o.getAuthor().getIntitaUser();
+		if(iUser != null)
+		{
+			intitaId =  iUser.getId();
+			avatar = iUser.getAvatar();
+		}
 		
 		LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
-				room_o.getAuthor().getNickName(),  participantRepository.isOnline(room_o.getAuthor().getId().toString()));
+				room_o.getAuthor().getNickName(), avatar, participantRepository.isOnline(room_o.getAuthor().getId().toString()));
 		userList.add(currentChatUserLoginEvent);
 		for(ChatUser user : room_o.getUsers())
 		{
 			
-			if(user.getIntitaUser() != null)
-				intitaId =  user.getIntitaUser().getId();
+			intitaId = null;
+			avatar = "noname.png";
+			iUser = user.getIntitaUser();
+			if(iUser != null)
+			{
+				intitaId =  iUser.getId();
+				avatar = iUser.getAvatar();
+			}
 			
-			userList.add(new LoginEvent(intitaId, user.getId(),user.getNickName(), participantRepository.isOnline(user.getId().toString())));
+			userList.add(new LoginEvent(intitaId, user.getId(),user.getNickName(), avatar, participantRepository.isOnline(user.getId().toString())));
 		}
 		return  userList;
 	}

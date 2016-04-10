@@ -95,7 +95,7 @@ public class UserMessageService {
 	}
 	@Transactional
 	public ArrayList<UserMessage> get10MessagesByRoomDateBefore(Room room, Date date) {
-		return userMessageRepository.findFirst10ByRoomAndDateBefore(room, date);
+		return userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date);
 	}
 
 	@Transactional

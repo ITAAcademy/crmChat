@@ -2,30 +2,30 @@ String.prototype.insertAt=function(index, string) {
 	return this.substr(0, index) + string + this.substr(index);
 }
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q', '$sce',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q, $sce) {
-function generateUrlToUserPage(user_id){
-	var baseurl = globalConfig["baseUrl"];
-return baseurl+"/profile/"+user_id+"/";
-}
-$scope.goToUserPage = function(username){
-var request = $http({
-method: "get",
-url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
-data: null ,
-headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-});
-request.success(function (data) {
-if (data!=null){
-window.top.location.href =generateUrlToUserPage(data);
-return true;
-}
-});
-return false;
-}
+	function generateUrlToUserPage(user_id){
+		var baseurl = globalConfig["baseUrl"];
+		return baseurl+"/profile/"+user_id+"/";
+	}
+	$scope.goToUserPage = function(username){
+		var request = $http({
+			method: "get",
+			url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
+			data: null ,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
+		request.success(function (data) {
+			if (data!=null){
+				window.top.location.href =generateUrlToUserPage(data);
+				return true;
+			}
+		});
+		return false;
+	}
 
 	var INPUT_MODE = {
-		STANDART_MODE : 0,
-		DOG_MODE : 1,
-		TILDA_MODE : 2
+			STANDART_MODE : 0,
+			DOG_MODE : 1,
+			TILDA_MODE : 2
 	};
 	$scope.show_search_list_in_message_input = false;
 	var isSpecialInput = false;
@@ -97,14 +97,14 @@ return false;
 			$scope.onMessageInputClick();
 			return;
 		}
-			var msgInputElm = document.getElementById("newMessageInput");
+		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		switch(typedChar){
-			case '@': enableInputMode(INPUT_MODE.DOG_MODE,carretPosIndex);
-			return;
-			case '~': enableInputMode(INPUT_MODE.TILDA_MODE,carretPosIndex);
-			return;
-			/*case ' ': $scope.onMessageInputClick();
+		case '@': enableInputMode(INPUT_MODE.DOG_MODE,carretPosIndex);
+		return;
+		case '~': enableInputMode(INPUT_MODE.TILDA_MODE,carretPosIndex);
+		return;
+		/*case ' ': $scope.onMessageInputClick();
 			break;*/
 
 		}
@@ -116,29 +116,29 @@ return false;
 
 	}
 	$scope.beforeMessageInputKeyPress = function(event){
-			var msgInputElm = document.getElementById("newMessageInput");
+		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
-var keyCode = event.which || event.keyCode;
-var backSpacePressed = keyCode == 8;
-if (backSpacePressed && carretPosIndex <= specialInputPositionInText + 1){
-$scope.onMessageInputClick();
-return;
-}
-var kk = keyCode;
-var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
-if (arrowKeyPressed) $scope.onMessageInputClick();
-}
+		var keyCode = event.which || event.keyCode;
+		var backSpacePressed = keyCode == 8;
+		if (backSpacePressed && carretPosIndex <= specialInputPositionInText + 1){
+			$scope.onMessageInputClick();
+			return;
+		}
+		var kk = keyCode;
+		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+		if (arrowKeyPressed) $scope.onMessageInputClick();
+	}
 
 
 	$scope.startTyping = function(event) {
 		//var keyCode = event.which || event.keyCode;
 		//var typedChar = String.fromCharCode(keyCode);
 		//if(typedChar==' ')$scope.onMessageInputClick();		
-			switch(specialInputMode){
-			case INPUT_MODE.DOG_MODE: processDogInput();
-			break;
-			case INPUT_MODE.TILDA_MODE: processTildaInput();
-			break;
+		switch(specialInputMode){
+		case INPUT_MODE.DOG_MODE: processDogInput();
+		break;
+		case INPUT_MODE.TILDA_MODE: processTildaInput();
+		break;
 
 		}	
 //		Don't send notification if we are still typing or we are typing a private message
@@ -181,7 +181,7 @@ if (arrowKeyPressed) $scope.onMessageInputClick();
 		}, 500);//for click event
 	};
 
-$scope.showCoursesListInMessageInput = function (coursePrefix,courseLang) {
+	$scope.showCoursesListInMessageInput = function (coursePrefix,courseLang) {
 
 		$scope.show_search_list_in_message_input = true;
 		$scope.data_in_message_input = [];
@@ -217,14 +217,14 @@ $scope.showCoursesListInMessageInput = function (coursePrefix,courseLang) {
 		$scope.show_search_list_in_message_input = false;
 		resetSpecialInput();
 	}
-	
-$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+
+	$scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		var functionalChar;
 		switch(specialInputMode){
-			case INPUT_MODE.DOG_MODE:
+		case INPUT_MODE.DOG_MODE:
 			functionalChar = "@";
 			break;
-			case INPUT_MODE.TILDA_MODE:
+		case INPUT_MODE.TILDA_MODE:
 			functionalChar = "~";
 			break;
 		}
@@ -261,7 +261,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		//if (!isSpecialInput)return;//return if @ is not present in word
 		var userNameStartIndex = message.lastIndexOf('~')+1;
 		var userNamePrefix = message.substring(userNameStartIndex,carretPosIndex);
-		
+
 		$scope.showCoursesListInMessageInput(userNamePrefix,"ua");
 	}
 
@@ -309,11 +309,35 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	$scope.uploadProgress = 0;
 	$scope.message_busy = true;
 
+	$scope.findParticipant = function(nickname)
+	{
+		for(var c_index in $scope.participants)
+			if($scope.participants[c_index].username == nickname)
+				return $scope.participants[c_index];
+		return null;
+	}
+	var bool_rightLeft = false;
+	$scope.rightLeft = function(index)
+	{
+		if(index == 0)
+		{
+			bool_rightLeft = false;
+			return bool_rightLeft;
+		}
+
+		if($scope.messages[index].username == $scope.messages[index - 1].username)
+			return bool_rightLeft;
+
+		bool_rightLeft = !bool_rightLeft;
+		return bool_rightLeft;
+
+		console.log(index);
+	}
 	$scope.addPhrase = function( text )
 	{
 		$scope.newMessage += text;
 	}
-	
+
 	$scope.parseMsg = function(msg)
 	{
 		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)');
@@ -594,7 +618,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 				destination = "/app/{0}chat.private.".format(chatControllerScope.currentRoom.roomId) + $scope.sendTo;
 				$scope.messages.unshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
 			}
-			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:$scope.chatUserNickname,attachedFiles:attaches}));
+			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:chatControllerScope.chatUserNickname,attachedFiles:attaches}));
 
 
 			var myFunc = function(){
@@ -613,7 +637,7 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		else
 		{
 
-			$http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), {message: textOfMessage, username:$scope.chatUserNickname,attachedFiles:attaches}).
+			$http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), {message: textOfMessage, username:chatControllerScope.chatUserNickname,attachedFiles:attaches}).
 			success(function(data, status, headers, config) {
 				console.log("MESSAGE SEND OK " + data);
 				chatControllerScope.messageSended = true;
@@ -682,6 +706,8 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 		});
 	}
 	$scope.loadOtherMessages = function () {
+		if($scope.message_busy)
+			return;
 		$scope.message_busy = true;
 		console.log("TRY " + $scope.messages.length);
 		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
@@ -690,12 +716,15 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 			if(data == "")
 				return;
 
-			for(var index=data.length - 1; index >= 0 ; index--) { 
+			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
 					$scope.messages.push(data[index]);
 				}
 			}
-			$scope.message_busy = false;
+			$scope.$$postDigest(function () {
+				$scope.message_busy = false;
+				$scope.$apply();
+			})
 		}).
 		error(function(data, status, headers, config) {
 			console.log('TEST');
@@ -774,5 +803,8 @@ $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
 	    }*/
 	}
 	$scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
+	var nice = $(".chat").niceScroll();
+	nice.hide();
 
 }]);
+
