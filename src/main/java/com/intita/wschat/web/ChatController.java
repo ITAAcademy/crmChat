@@ -577,7 +577,14 @@ public class ChatController {
 	@ResponseBody
 	public String getCourseAliasByTitle(@RequestParam String title,@RequestParam String lang){
 		Course course = courseService.getByTitle(title,lang);
-		return course.getAlias();
+		String jsonInString = null;
+		try {
+			jsonInString = mapper.writeValueAsString(course.getAlias());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jsonInString;
 	}
 	
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
