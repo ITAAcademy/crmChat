@@ -119,6 +119,29 @@
 	background-color: white;
 	width: 100%;
 }
+.chat .answer-add .search-list {
+	position: relative;
+	z-index: 500;
+	border: 1px solid black;
+	border-width: 2px;
+	border-color: white;
+	border-radius: 8px;
+	background: #5c81b4;
+	display: block;
+	width: 100%;
+	padding: 0;
+	 
+	margin: 0px;
+	margin-top: 10px;
+	color: #ffffff;
+	min-height: 80px;
+	max-width: 92%;
+}
+.chat .answer-add .search-list a {
+
+	color: #ffffff;
+
+}
 /* RATING STYLES
 ============================================================================= */
 

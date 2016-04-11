@@ -93,7 +93,7 @@
 	<div class=" row row-broken"
 		ng-show="currentRoom.active &#38;&#38; isMyRoom">
 		<div class="chat">
-			<div class="answer-add">
+			<div class="answer-add" ng-mouseleave="show_search_list_in_message_input = false">
 				<textarea id="newMessageInput" type="text" class="form-control "
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."
@@ -102,15 +102,15 @@
 					ng-keypress="onKeyMessageKeyPressEvent($event)"
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
 					ng-click="onMessageInputClick()" />
-				<span
-					class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
+				<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 
 				<div class="answer-btn answer-btn-1">
-					<button class="btn" type="button" style="width: 100%;height: 100%;z-index: 9999;position: relative;z-index: 10;background: none;border: none;" 
+					<button class="btn" type="button"
+						style="width: 100%; height: 100%; z-index: 9999; position: relative; z-index: 10; background: none; border: none;"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					</button>
 					<ul class="row dropdown-menu dropdown-menu-right">
-					
+
 						<li role="presentation" th:each="phrase : ${phrasesPack}"
 							ng-click=""><a
 							th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
@@ -129,14 +129,13 @@
 							style="width: {{uploadProgress">{{uploadProgress}}%</div>
 					</div>
 				</form>
-
-
-				<div class="search-list" ng-show="$parent.show_search_list_phrase">
-					<ul aria-labelledby="dropdownMenu1" class="row">
-						<li role="presentation" th:each="phrase : ${phrasesPack}"
-							ng-click=""><a
-							th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
-							th:text="${phrase.getText()}"></a></li>
+				<div id="search_list_in_message_input" class="search-list"
+					ng-show="show_search_list_in_message_input">
+					<ul aria-labelledby="dropdownMenu1">
+						<li role="presentation"
+							ng-repeat='item in data_in_message_input track by $index'
+							ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a>
+								{{item}} </a></li>
 					</ul>
 				</div>
 			</div>
