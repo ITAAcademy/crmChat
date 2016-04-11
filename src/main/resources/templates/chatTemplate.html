@@ -1,10 +1,14 @@
 <div class="content container-fluid bootstrap snippets container">
+<a ng-show="showDialogListButton" class="menu-ng-click"
+						ng-href="#/chatrooms">
+						<h4 class="chat-dialog name"
+							th:text="${lgPack.lable_dialog} + ':{{dialogName}}'"></h4>
+					</a>
 	<div class="row row-broken">
 		<div class="col-sm-3 col-xs-12">
 			<div class="col-inside-lg decor-default chat"
 				style="overflow: hidden; outline: none;" tabindex="5000">
 				<div class="chat-users">
-					<h4 class="chat-dialog name" th:text="${lgPack.lable_dialog} + ':'"></h4>
 
 					<form action="" class="search-form"
 						ng-show="checkUserAdditionPermission()">
@@ -93,7 +97,8 @@
 	<div class=" row row-broken"
 		ng-show="currentRoom.active &#38;&#38; isMyRoom">
 		<div class="chat">
-			<div class="answer-add" ng-mouseleave="show_search_list_in_message_input = false">
+			<div class="answer-add"
+				ng-mouseleave="show_search_list_in_message_input = false">
 				<textarea id="newMessageInput" type="text" class="form-control "
 					th:placeholder="${lgPack.lable_message_placeholder}"
 					placeholder="Write your message and hit enter..."

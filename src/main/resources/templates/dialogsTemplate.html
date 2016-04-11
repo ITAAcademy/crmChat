@@ -1,40 +1,38 @@
-		
 <div class="row">
-    <div class="col-xs-12 chat-box">
-        <h4 th:text="${lgPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs </h4>
-        <div class="share">
-        <ul ng-repeat="room in rooms | orderBy: '-date' " ng-show="socketSupport">
-                <li>  
-                    <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
-                    <span	class="input-icon fui-user" ng-show="!participant.typing"></span>
-                  <a ng-href="#/dialog_view/{{room.roomId}}"  >{{room.string}}</a>
-                </li>
-            </ul>
-            <div ng-hide="socketSupport">
+	<div class="col-xs-12 chat-box">
+		<h4 th:text="${lgPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs
+		</h4>
+		<ul ng-repeat="room in rooms | orderBy: '-date' "
+			ng-show="socketSupport" class="list-group">
+			<li class="list-group-item"><span ng-show="room.nums > 0"
+				class="badge">{{room.nums}}</span> <a
+				ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a></li>
+		</ul>
+		<div ng-hide="socketSupport">
+			<p>Test longpolling</p>
+			<ul ng-repeat="room in rooms | orderBy: '-date' "
+				class="list-group-item">
+				<li class="list-group-item"><span ng-show="room.nums > 0"
+					class="badge">{{room.nums}}</span> <a
+					ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a></li>
+			</ul>
+		</div>
 
-                <p>Test longpolling</p>
-                <ul ng-repeat="room in rooms | orderBy: '-date' " >
-                    <li>               
-                        <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span>
-                        <span   class="input-icon fui-user" ng-show="!participant.typing"></span>
-                        <a ng-href="#/dialog_view/{{room.roomId}}" >{{room.string}}</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<div ng-show="isMyRoom" class="row">
-    <div class="col-xs-10">
-        <div class="form-group">
-            <input id="newMessageInput" type="text" class="form-control"
-            placeholder="Write name of new dialog and hit enter or click plus..."
-            ng-model="dialogName" ng-keyup="$event.keyCode == 13 ? addDialog():0"
-            />
-        </div>
-    </div>
-    <div class="col-xs-2">
-    	<img ng-hide="$parent.roomAdded" src="images/ajax_loader_blue_32.gif"/>
-     <span ng-show="$parent.roomAdded" type="submit" class="buttonPlus" value="Submit" ng-click="addDialog()"/>
- </div>
+	</div>
+	<div id="addRoom" ng-show="isMyRoom" class="col-xs-12 chat-box">
+		<div class="col-xs-10">
+			<div class="form-group">
+				<input id="newMessageInput" type="text" class="form-control"
+					placeholder="Write name of new dialog and hit enter or click plus..."
+					ng-model="dialogName"
+					ng-keyup="$event.keyCode == 13 ? addDialog():0" />
+			</div>
+		</div>
+		<button type="button" class="btn btn-default col-xs-2"
+			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<img ng-hide="$parent.roomAdded" src="images/ajax_loader_blue_32.gif" />
+			<span ng-show="$parent.roomAdded" type="submit"  class="glyphicon glyphicon-plus"
+				value="Submit" ng-click="addDialog()" />
+		</button>
+	</div>
 </div>

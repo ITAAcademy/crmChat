@@ -58,13 +58,21 @@
 	margin-top: 15px;
 	font-size: 22px;
 	float: left;
-	color: #fff;
 }
 
 .chat-box {
 	height: 400px;
+	width:100%;
 	overflow: auto;
 }
+.chat-box ul{
+	margin: 0px;
+}
+#addRoom
+{
+	margin-top: 20px;
+}
+
 .a_user_nickname
 {
 	 word-wrap: break-word;
@@ -176,11 +184,10 @@
 ============================================================================= */
 .page        { 
     bottom:0; 
-    position:absolute;
+  //  position:absolute;
     top:80px;  
-    width: 950px !important;
-    max-height:100px;
-    height:100px;
+    width: 100%;
+    height:100%;
     background:#fff;
 }
 
