@@ -460,36 +460,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	}
 	
-	function calcPositionUnshift(msg)
-	{
-		if($scope.messages.length > 0)
-		{
-			if($scope.messages[0].username == msg.username)
-				msg.position = $scope.messages[0].position;
-			else
-				msg.position = !$scope.messages[0].position;
-		}
-		else
-			msg.position = false;
-				
-		$scope.messages.unshift(msg);
-	}
-	function calcPositionPush(msg)
-	{
-		if($scope.messages.length > 0)
-		{
-			if($scope.messages[$scope.messages.length - 1].username == msg.username)
-				msg.position = $scope.messages[$scope.messages.length - 1].position;
-			else
-				msg.position = !$scope.messages[$scope.messages.length - 1].position;
-		}
-		else
-			msg.position = false;
-				
-		$scope.messages.push(msg);
-	}
-
-
 	/*************************************
 	 * CHANGE ROOM
 	 *************************************/
@@ -707,6 +677,35 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	 * LOAD MESSAGE LP
 	 *************************************/
 
+	function calcPositionUnshift(msg)
+	{
+		if($scope.messages.length > 0)
+		{
+			if($scope.messages[0].username == msg.username)
+				msg.position = $scope.messages[0].position;
+			else
+				msg.position = !$scope.messages[0].position;
+		}
+		else
+			msg.position = false;
+				
+		$scope.messages.unshift(msg);
+	}
+	function calcPositionPush(msg)
+	{
+		if($scope.messages.length > 0)
+		{
+			if($scope.messages[$scope.messages.length - 1].username == msg.username)
+				msg.position = $scope.messages[$scope.messages.length - 1].position;
+			else
+				msg.position = !$scope.messages[$scope.messages.length - 1].position;
+		}
+		else
+			msg.position = false;
+				
+		$scope.messages.push(msg);
+	}
+	
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.roomType = message["type"];

@@ -110,7 +110,7 @@
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
 					ng-click="onMessageInputClick()" />
 				<span class="answer-btn answer-btn-1"
-					ng-click="$parent.show_search_list_phrase = true" ng-blur="$parent.show_search_list_phrase = false"> </span> <span
+					ng-click="$parent.show_search_list_phrase = true" ngFocus="$parent.show_search_list_phrase = false"> </span> <span
 					class="answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 				<div id="search_list_in_message_input" class="search-list"
 					ng-show="show_search_list_in_message_input">
