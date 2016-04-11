@@ -1,4 +1,9 @@
 
+body{
+    margin-top:20px;
+    background:#eee;
+}
+
 .search-form .form-group {
   float: right !important;
   transition: all 0.35s, border-radius 0s;
@@ -61,7 +66,7 @@
 }
 
 .chat-box {
-	height: 400px;
+	height: calc(80vh - 180px);
 	width:100%;
 	overflow: auto;
 }
