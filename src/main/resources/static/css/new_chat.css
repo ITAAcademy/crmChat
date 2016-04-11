@@ -83,6 +83,14 @@ body {
 	position: absolute;
 }
 
+.chat-dialog .name{
+		font-size: 18px;
+	font-weight: bold;
+	line-height: 20px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .chat-users .user .name {
 	font-size: 14px;
 	font-weight: bold;
@@ -132,7 +140,7 @@ body {
 }
 
 .chat-body .answer .avatar {
-	bottom: 36px;
+	bottom: 12px;
 }
 
 .chat .avatar {

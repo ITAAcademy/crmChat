@@ -4,8 +4,11 @@
 			<div class="col-inside-lg decor-default chat"
 				style="overflow: hidden; outline: none;" tabindex="5000">
 				<div class="chat-users">
-					<h4 th:text="${lgPack.lable_dialog} + ': [{{dialogName}}]'">Dialog
-						name</h4>
+					<h4 class="chat-dialog name" th:text="${lgPack.lable_dialog} + ':'">
+					
+					 
+					</h4>
+					<h4 class="chat-dialog name"> {{dialogName}}</h4>
 					<div class="dropdown dropdown-scroll" ng-app="app">
 						<div ng-show="checkUserAdditionPermission()">
 							<div class="input-group input-group-sm search-control">
@@ -67,7 +70,7 @@
 				<div class="chat-body testq">
 					<h6 th:text="${lgPack.lable_messages}">Mini Chat</h6>
 
-					<div class="answer" ng-class="rightLeft($index) ? 'right' : 'left'"
+					<div ng-class="message.position ? 'answer right' : 'answer left'"
 						ng-repeat="message in messages track by $index">
 						<div class="avatar">
 							<img
@@ -107,7 +110,7 @@
 					ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
 					ng-click="onMessageInputClick()" />
 				<span class="answer-btn answer-btn-1"
-					ng-click="$parent.show_search_list_phrase = true"> </span> <span
+					ng-click="$parent.show_search_list_phrase = true" ng-blur="$parent.show_search_list_phrase = false"> </span> <span
 					class="answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 				<div id="search_list_in_message_input" class="search-list"
 					ng-show="show_search_list_in_message_input">

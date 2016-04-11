@@ -349,23 +349,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 				return $scope.participants[c_index];
 		return null;
 	}
-	var bool_rightLeft = false;
-	$scope.rightLeft = function(index)
-	{
-		if(index == 0)
-		{
-			bool_rightLeft = false;
-			return bool_rightLeft;
-		}
 
-		if($scope.messages[index].username == $scope.messages[index - 1].username)
-			return bool_rightLeft;
+	$scope.bool_rightLeft = false;
 
-		bool_rightLeft = !bool_rightLeft;
-		return bool_rightLeft;
-
-		console.log(index);
-	}
 	$scope.addPhrase = function( text )
 	{
 		$scope.newMessage += text;
@@ -473,6 +459,35 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 
 	}
+	
+	function calcPositionUnshift(msg)
+	{
+		if($scope.messages.length > 0)
+		{
+			if($scope.messages[0].username == msg.username)
+				msg.position = $scope.messages[0].position;
+			else
+				msg.position = !$scope.messages[0].position;
+		}
+		else
+			msg.position = false;
+				
+		$scope.messages.unshift(msg);
+	}
+	function calcPositionPush(msg)
+	{
+		if($scope.messages.length > 0)
+		{
+			if($scope.messages[$scope.messages.length - 1].username == msg.username)
+				msg.position = $scope.messages[$scope.messages.length - 1].position;
+			else
+				msg.position = !$scope.messages[$scope.messages.length - 1].position;
+		}
+		else
+			msg.position = false;
+				
+		$scope.messages.push(msg);
+	}
 
 
 	/*************************************
@@ -488,8 +503,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			lastRoomBindings.push(
 					chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
 							{
-						$scope.messages.unshift(JSON.parse(message.body));
-
+						calcPositionUnshift(JSON.parse(message.body));
 							}));
 
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
@@ -588,7 +602,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 						var parsedData = JSON.parse(data);
 						for(var index=0; index < parsedData.length; index++) { 
 							if(parsedData[index].hasOwnProperty("message")){
-								$scope.messages.unshift(parsedData[index])
+								calcPositionUnshift(parsedData[index])
 								console.log("subscribeMessageLP success:"+parsedData[index]);
 							}
 						}
@@ -654,7 +668,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			if($scope.sendTo != "everyone") {
 				destination = "/app/{0}chat.private.".format(chatControllerScope.currentRoom.roomId) + $scope.sendTo;
-				$scope.messages.unshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
+				calcPositionUnshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
 			}
 			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:chatControllerScope.chatUserNickname,attachedFiles:attaches}));
 
@@ -713,8 +727,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
 			for (var i=0; i< message["messages"].length;i++){
-				$scope.messages.push(message["messages"][i]);
-				//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+				calcPositionPush(message["messages"][i]);
+				//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 			}
 		$scope.message_busy = false;
 	}
@@ -728,8 +742,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	{
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
-			$scope.messages.unshift(message["messages"][i]);
-			//$scope.messages.unshift(JSON.parse(o["messages"][i].text));
+			calcPositionUnshift(message["messages"][i]);
+			//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 		}
 	}
 
@@ -756,7 +770,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
-					$scope.messages.push(data[index]);
+					calcPositionPush(data[index]);
 				}
 			}
 			$scope.$$postDigest(function () {
