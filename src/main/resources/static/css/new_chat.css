@@ -268,6 +268,8 @@ body {
 	line-height: 20px;
 	padding: 0;
 	color: #ffffff;
+	min-height: 80px;
+	max-width: 92%;
 }
 
 .chat input {
@@ -288,10 +290,20 @@ body {
 	width: 36px;
 	height: 36px;
 	position: absolute;
-	top: 50%;
+	top: 36px;
 	margin-top: -18px;
 }
-
+.chat .answer-add .load-btn {
+	display: block;
+	cursor: pointer;
+	position: absolute;
+	right: 56px;
+	width: 36px;
+	height: 36px;
+	margin-top: -36px;
+	background: none;
+	border: none;
+}
 .chat .answer-add .answer-btn-2 {
 	background:
 		url("http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-41.png")
@@ -313,9 +325,4 @@ body {
 
 .chat textarea:-ms-input-placeholder {
 	color: #fff;
-}
-
-.chat textarea {
-	-webkit-appearance: none;
-	border-radius: 0;
 }

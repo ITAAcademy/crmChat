@@ -119,7 +119,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$scope.searchInputValue = {email: ""};
 
 	$scope.hideSearchList = function () {
-		$timeout(function ()  {$scope.show_search_list = false; $scope.show_search_list_admin = false; }, 200);
+		$scope.show_search_list = false; $scope.show_search_list_admin = false;
 	}
 
 	$scope.showSearchList = function () {

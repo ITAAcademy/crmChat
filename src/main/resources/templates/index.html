@@ -4,13 +4,14 @@
 <head>
 <meta charset="utf-8" />
 <title>Spring WebSocket Chat</title>
-<link href="lib/flat-ui/dist/css/vendor/bootstrap.min.css"
-	rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="lib/angularjs-toaster/toaster.css" rel="stylesheet" />
 <link href="css/font-awesome.min.css" rel="stylesheet" />
 <link
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
 	rel="stylesheet" />
+<link href="css/fileinput.min.css" media="all" rel="stylesheet"
+	type="text/css" />
 <link href="css/chat.css" rel="stylesheet" />
 <link href="css/new_chat.css" rel="stylesheet" />
 
@@ -78,8 +79,15 @@
 		src='lib/infinite-scroll/ng-infinite-scroll.min.js'></script>
 	<script src="lib/sockjs/sockjs.js"></script>
 	<script src="lib/stomp/lib/stomp.js"></script>
-	
+
 	<script src="lib/nice_scroll.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="lib/fileinputModule/plugins/canvas-to-blob.min.js"
+		type="text/javascript"></script>
+	
+	<script src="lib/fileinputModule/fileinput.min.js"></script>
+	<script src="lib/fileinputModule/fileinput_locale_uk.js"></script>
+
 
 
 	<!-- App -->
@@ -98,6 +106,6 @@
 	<script src="js/services.js"></script>
 	<script src="js/directives.js"></script>
 
-	
+
 </body>
 </html>

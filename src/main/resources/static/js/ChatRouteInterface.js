@@ -459,7 +459,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 
 	}
-	
+
 	/*************************************
 	 * CHANGE ROOM
 	 *************************************/
@@ -688,7 +688,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 		else
 			msg.position = false;
-				
+
 		$scope.messages.unshift(msg);
 	}
 	function calcPositionPush(msg)
@@ -702,10 +702,10 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 		else
 			msg.position = false;
-				
+
 		$scope.messages.push(msg);
 	}
-	
+
 	function loadSubscribeAndMessage(message)
 	{
 		$scope.roomType = message["type"];
@@ -794,6 +794,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 					function successCallback(data){    
 				$scope.uploadProgress = 0;
 				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
+				$('#myfile').fileinput('clear');
 				$scope.$apply();
 			},
 			function(xhr) {
@@ -854,7 +855,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	    }*/
 	}
 	$scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
-	var nice = $(".chat").niceScroll();
+	$scope.$$postDigest(function () {
+		var nice = $(".chat").niceScroll();
+		var fileInput = $("#myfile").fileinput({language: "uk", showCaption: false, initialPreviewShowDelete:true, browseLabel: "", browseClass: " btn btn-primary load-btn",  uploadExtraData: {kvId: '10'}});
+		
+        
+	})
+
 	//nice.hide();
 
 }]);
