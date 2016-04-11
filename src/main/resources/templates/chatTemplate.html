@@ -13,14 +13,16 @@
 					<form action="" class="search-form"
 						ng-show="checkUserAdditionPermission()">
 						<div class="form-group has-feedback"
-							ng-mouseleave="hideSearchList()">
-							<label for="search" class="sr-only">Search</label> <input
-								autocomplete="off" type="text" class="form-control"
+							ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }" ng-mouseover="showedSearchForm=true"
+              ng-mouseout="showedSearchForm=false">
+							<label for="search" class="sr-only">Search</label> 
+              <input ng-focus="searchFocus=true;" ng-blur="searchFocus=false;" 
+              autocomplete="off" type="text" class="form-control"
 								name="search" id="search"
 								ng-model="$parent.searchInputValue.email"
 								ng-change="showSearchList()" placeholder="search" /> <span
 								class="glyphicon glyphicon-plus form-control-feedback"></span>
-							<div class="search-list" ng-show="$parent.show_search_list">
+							<div class="search-list" ng-show="(showedSearchForm || searchFocus) &amp;&amp; $parent.show_search_list">
 								<ul aria-labelledby="dropdownMenu1">
 									<li role="presentation" ng-repeat='item in $parent.emails'
 										ng-click="appendToSearchInput(item); addUserToRoom();"><a>

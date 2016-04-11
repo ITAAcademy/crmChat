@@ -28,11 +28,11 @@
 					ng-keyup="$event.keyCode == 13 ? addDialog():0" />
 			</div>
 		</div>
-		<button type="button" class="btn btn-default col-xs-2"
+		<button ng-click="addDialog()" type="button" class="btn btn-default col-xs-2"
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<img ng-hide="$parent.roomAdded" src="images/ajax_loader_blue_32.gif" />
 			<span ng-show="$parent.roomAdded" type="submit"  class="glyphicon glyphicon-plus"
-				value="Submit" ng-click="addDialog()" />
+				value="Submit" />
 		</button>
 	</div>
 </div>

@@ -35,8 +35,7 @@ body{
 .search-form .form-group input.form-control:-ms-input-placeholder {
   display: none;
 }
-.search-form .form-group:hover,
-.search-form .form-group.hover {
+.search-form .showed-search-form{
   width: 100%;
   border-radius: 4px 25px 25px 4px;
 }
