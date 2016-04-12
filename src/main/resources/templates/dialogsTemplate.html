@@ -47,7 +47,7 @@
     
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
               <div class="input-group">
-                <input type="text" class="contacts-list-search" placeholder="Search"/>
+                <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
                 <div class="input-group-addon">
                   <button type="button"><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></button>
                 </div>
@@ -73,7 +73,7 @@
                 </div>
               </div>
 
-              <ul ng-repeat="room in rooms | orderBy: '-date' "
+              <ul ng-repeat="room in rooms | orderBy: '-date' | filter:{string:(roomsearchquery||'')} "
 			ng-show="socketSupport" class="list-group">
 			<li class="list-group-item">
 		
