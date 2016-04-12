@@ -3,6 +3,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	/*
 	 * 
 	 */
+	 
 	$scope.name = "ChatRouteController";
 	var chatControllerScope = Scopes.get('ChatController');
 	

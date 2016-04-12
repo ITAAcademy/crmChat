@@ -14,6 +14,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.repositories.UserMessageRepository;
 
 @Service
@@ -49,6 +50,10 @@ public class UserMessageService {
 	@Transactional
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
 		return userMessageRepository.findByRoom(room);
+	}
+	@Transactional
+	public UserMessage getLastUserMessageByRoom(Room room){
+		return userMessageRepository.findFirstByRoomOrderByDateDesc(room);
 	}
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
 		return userMessageRepository.findFirst20ByRoomOrderByIdDesc(room);

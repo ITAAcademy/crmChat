@@ -1,3 +1,4 @@
+<!--OLD
 <div class="row">
 	<div class="col-xs-12 chat-box">
 		<h4 th:text="${lgPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs
@@ -35,4 +36,69 @@
 				value="Submit" />
 		</button>
 	</div>
+</div>
+-->
+<!-- NEW TEMPLATE -->
+<div class="container bootstrap snippets">
+    <div class="row decor-default">
+        <div class="col-xs-12">
+          <div class="contacts-list">
+            <h5 class="title">Contact List</h5>
+    
+            <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
+              <div class="input-group">
+                <input type="text" class="contacts-list-search" placeholder="Search"/>
+                <div class="input-group-addon">
+                  <button type="button"><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></button>
+                </div>
+              </div>
+              <div class="unit head">
+                <div class="field name">
+                  Dialog Name
+                </div>
+                <div class="field phone">
+                  Last Message
+                </div>
+                <div class="field email icons">
+                  Participant Count
+                  <div class="btn-group pull-right" role="group">
+                    <button type="button" class="btn btn-default"><span class="icon icon-folder"></span></button>
+    
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="icon icon-label"></span></button>
+    
+                    </div>
+                    <button type="button" class="btn btn-default"><span class="icon icon-trash"></span></button>
+                  </div>
+                </div>
+              </div>
+
+              <ul ng-repeat="room in rooms | orderBy: '-date' "
+			ng-show="socketSupport" class="list-group">
+			<li class="list-group-item">
+		
+              <div class="unit">
+                <div class="field name">
+                  <div>
+                    <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
+                    <a ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
+                  </div>
+                  <div class="lab lab-warning" ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
+                </div>
+                <div class="field phone">
+                <!-- last message text and count of new messages -->
+                {{room.lastMessage}}<span ng-hide="room.lastMessage.length>0">No message</span>
+                 <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span> 
+                </div>
+                <div class="field email">
+                  {{room.participantsCount}}
+                </div>
+              </div>
+				</li>
+              </ul>
+
+            </form>
+          </div>
+        </div>
+    </div>
 </div>

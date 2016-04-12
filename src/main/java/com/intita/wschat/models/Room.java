@@ -70,6 +70,9 @@ public class Room implements Serializable,Comparable<Room> {
 		public static final short PRIVATE = 1;
 		public static final short CONSULTATION = 2;
 	}
+	public int getParticipantsCount(){
+		return users.size()+1; //+1 because author is also participants;
+	}
 	
 	
 	/*

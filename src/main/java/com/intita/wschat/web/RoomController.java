@@ -13,10 +13,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +47,13 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.RoomsService.StringIntDate;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
@@ -358,7 +354,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
-		StringIntDate sb = new StringIntDate(0 , new Date().toString(), struct.getRoom());
+		RoomModelSimple sb = new RoomModelSimple(0 , new Date().toString(), struct.getRoom(),userMessageService.getLastUserMessageByRoom(struct.getRoom()));
 		return mapper.writeValueAsString(sb);
 	}
 	
@@ -396,7 +392,7 @@ public class RoomController {
 	}
 
 	@SubscribeMapping("/chat/rooms/user.{userId}")
-	 public List<StringIntDate> getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { //000
+	 public List<RoomModelSimple> getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { //000
 		ChatUser user = chatUserServise.getChatUser(userId);
 		
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
@@ -597,12 +593,13 @@ public class RoomController {
 		}
 	 @MessageExceptionHandler(NumberFormatException.class)
 		public String handleMessageNumberFormatException(Exception ex) {
-			log.error("NumberFormatException handler executed");
+			log.error("NumberFormatException handler executed:"+ex.getMessage());
 			return "NumberFormatException handler executed:"+ex.getMessage();
 		}
 	 @MessageExceptionHandler(Exception.class)
 		public String handleMessageException(Exception ex) {
-			log.error("NumberFormatException handler executed");
+			log.error("Exception handler executed:");
+			ex.printStackTrace();
 			return "NumberFormatException handler executed";
 		}
 }

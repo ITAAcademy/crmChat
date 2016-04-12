@@ -66,6 +66,37 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$route', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $route,$location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 	$rootScope.isInited = false;
+	$rootScope.formatDateWithLast = function(date, minutesName)
+	{
+		// need translate and move to global to config map
+		var dateObj = new Date(date);
+		var delta = new Date().getTime() - date;
+		if(delta > 60000*60)
+			return $rootScope.formatDate(date);
+		else
+			if(Math.round(delta/60000) == 0)
+				return null;
+
+		return Math.round(delta/60000) + " " + minutesName;
+	}
+
+	$rootScope.formatDate = function(date)
+	{
+		// need translate and move to global to config map
+		var monthNames = [
+		                  "January", "February", "March",
+		                  "April", "May", "June", "July",
+		                  "August", "September", "October",
+		                  "November", "December"
+		                  ];
+
+		var dateObj = new Date(date);
+		var day = dateObj.getDate();
+		var monthIndex = dateObj.getMonth();
+		var year = dateObj.getFullYear();
+
+		return day + " " + monthNames[monthIndex] + " " + dateObj.getHours() + ":" + dateObj.getMinutes();
+	}
 
 	$scope.changeLocation = function changeLocation(url ) {
 		$location.path(url);
@@ -299,37 +330,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		if($scope.chatUserRole & 256)
 			return true;
 		return false;
-	}
-	$scope.formatDateWithLast = function(date, minutesName)
-	{
-		// need translate and move to global to config map
-		var dateObj = new Date(date);
-		var delta = new Date().getTime() - date;
-		if(delta > 60000*60)
-			return $scope.formatDate(date);
-		else
-			if(Math.round(delta/60000) == 0)
-				return null;
-
-		return Math.round(delta/60000) + " " + minutesName;
-	}
-
-	$scope.formatDate = function(date)
-	{
-		// need translate and move to global to config map
-		var monthNames = [
-		                  "January", "February", "March",
-		                  "April", "May", "June", "July",
-		                  "August", "September", "October",
-		                  "November", "December"
-		                  ];
-
-		var dateObj = new Date(date);
-		var day = dateObj.getDate();
-		var monthIndex = dateObj.getMonth();
-		var year = dateObj.getFullYear();
-
-		return day + " " + monthNames[monthIndex] + " " + dateObj.getHours() + ":" + dateObj.getMinutes();
 	}
 
 	function login(mess_obj)
