@@ -107,7 +107,7 @@
 			<div class="col-xs-12 chat no-pading">
 				<div class="answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom"
 					ng-mouseleave="show_search_list_in_message_input = false">
-					<textarea id="newMessageInput" type="text" class="form-control "
+					<textarea tabindex="-1" id="newMessageInput" type="text" class="form-control "
 						th:placeholder="${lgPack.lable_message_placeholder}"
 						placeholder="Write your message and hit enter..."
 						ng-model="newMessage"

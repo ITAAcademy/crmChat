@@ -141,6 +141,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$scope.onMessageInputClick();
 			return;
 		}
+
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		switch(typedChar){
@@ -160,6 +161,25 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	}
 	$scope.beforeMessageInputKeyPress = function(event){
+
+		 if (event.keyCode === 9) { // tab was pressed
+
+		            // get caret position/selection
+		            debugger;
+		            var val = event.target.value,
+		            start = event.target.selectionStart,
+		            end = event.target.selectionEnd;
+
+		            // set textarea value to: text before caret + tab + text after caret
+		            event.target.value = val.substring(0, start) + '\t' + val.substring(end);
+
+		            // put caret at right position again
+		            event.target.selectionStart = event.target.selectionEnd = start + 1;
+
+		            // prevent the focus lose
+		             event.preventDefault();
+
+		}
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		var keyCode = event.which || event.keyCode;
@@ -720,6 +740,10 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	function calcPositionPush(msg)
 	{		
+		debugger;
+		var objDiv = document.getElementById("messagesScroll");
+		var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
+
 		if($scope.messages.length > 0)
 		{
 			if($scope.messages[$scope.messages.length - 1].username == msg.username)
@@ -747,9 +771,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			$scope.messages.push(msg);
 		}
-
-		var objDiv = document.getElementById("messagesScroll");
-		var needScrollDown = (objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
 
 		$scope.$$postDigest(function () {
 			 var objDiv = document.getElementById("messagesScroll");
