@@ -20,15 +20,27 @@ body {
 	background: #fff;
 	margin-top: 10px;
 }
+.head-title{
+    font-size: 24px;
+    color: #fff;
+    height: 100%;
+}
 
 .chat {
 	
+}
+
+.no-margin-left {
+	margin-left: 0 !important;
 }
 
 .no-pading {
 	padding: 0 !important;
 	margin-left: 0 !important;
 	margin-right: 0 !important;
+}
+.no-pading-left{
+	padding-left: 0 !important;
 }
 
 .decor-default {
@@ -261,6 +273,7 @@ body {
 	padding: 20px;
 	background: #4b70a3;
 	margin-right: 0px;
+	margin-left: 0px;
 }
 
 .chat-body .answer-end {

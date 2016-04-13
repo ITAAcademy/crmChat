@@ -88,9 +88,7 @@ button {
 .contacts-labels .list .unit .lab-warning {
     background: #f2a654;
 }
-.btn-primary {
-    background-color: #7266ba;
-}
+
 .contacts-labels .list .unit .lab {
     font-size: 16px;
     line-height: 32px;
@@ -106,33 +104,7 @@ button {
     line-height: 32px;
     font-weight: bold;
 }
-.btn {
-    min-width: 180px;
-    font-size: 26px;
-    line-height: 48px;
-    font-weight: normal;
-    color: #ffffff;
-    padding: 0 24px;
-    -webkit-transition: background false false, 0.25s false false, cubic-bezier(0.4, 1, 0.3, 1) false false;
-    -moz-transition: background false false false, 0.25s false false false, cubic-bezier(0.4, 1, 0.3, 1) false false false;
-    -o-transition: background false false false, 0.25s false false false, cubic-bezier(0.4, 1, 0.3, 1) false false false;
-    transition: background, 0.25s, cubic-bezier(0.4, 1, 0.3, 1);
-}
-.btn {
-    display: inline-block;
-    margin-bottom: 0;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    background-image: none;
-    white-space: nowrap;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: none;
-}
+
 .contacts-list {
     border-left: 1px solid #d8d8d8;
     margin: -20px 0 40px;

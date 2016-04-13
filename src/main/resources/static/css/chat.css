@@ -4,6 +4,26 @@ body{
     background:#eee;
 }
 
+.chat-head {
+  min-height: 60px;
+  background-color: #585b9c;
+  min-width: 100%;
+  
+}
+
+.vertical-align {
+  display: flex;
+  flex-direction: row;
+}
+
+.vertical-align > [class^="col-"],
+.vertical-align > [class*=" col-"] {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Optional, to align inner items 
+                              horizontally inside the column */
+}
+
 .search-form .form-group {
   float: right !important;
   transition: all 0.35s, border-radius 0s;
@@ -57,12 +77,6 @@ body{
 /*
  *
 */
-
-.navbar h1 {
-	margin-top: 15px;
-	font-size: 22px;
-	float: left;
-}
 
 .chat-box {
 	height: calc(80vh - 180px);
