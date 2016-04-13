@@ -135,17 +135,18 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 
 	}
-	$rootScope.parseMsg = function(msg)
+		$rootScope.parseMsg = function(msg)
 	{
 		if (msg==null) return null;
 		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)',1);
 		msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)',2,3);
+		
 		//msg = msg.HTMLEncode();
 		return msg;//.replace(' ','&#32;');
 	}
 	$rootScope.parseMain = function(msg, reg, callback,trimLeft,trimRight)
 	{
-		if (msg==null)return;
+		if (msg==null) return null;
 		trimLeft = trimLeft || 0;
 		trimRight = trimRight || 0;
 		var expr = new RegExp(reg, 'g');
@@ -154,6 +155,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		//$interval($route.reload(), 200);
 		return msg;
 	}
+
 
 	$scope.changeLocation = function changeLocation(url ) {
 		$location.path(url);

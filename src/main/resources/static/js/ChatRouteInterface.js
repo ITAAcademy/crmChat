@@ -73,6 +73,21 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		return iCaretPos;
 	};
 	var typing = undefined;
+	
+	$scope.onKeyMessageKeyReleaseEvent = function(event) {		
+		if (event.keyCode == 13) {			
+			if (event.shiftKey) {
+				$scope.startTyping(event);
+			}
+			else
+				$scope.sendMessage();
+		}
+		else
+			$scope.startTyping(event);
+	}
+	
+	$scope.oldMessage;// = $scope.messages[0];
+	
 	$scope.onKeyMessageKeyPressEvent = function(event){
 
 		var keyCode = event.which || event.keyCode;
@@ -87,6 +102,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$scope.onMessageInputClick();
 			return;
 		}
+
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		switch(typedChar){
@@ -106,6 +122,25 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	}
 	$scope.beforeMessageInputKeyPress = function(event){
+
+		 if (event.keyCode === 9) { // tab was pressed
+
+		            // get caret position/selection
+		            debugger;
+		            var val = event.target.value,
+		            start = event.target.selectionStart,
+		            end = event.target.selectionEnd;
+
+		            // set textarea value to: text before caret + tab + text after caret
+		            event.target.value = val.substring(0, start) + '\t' + val.substring(end);
+
+		            // put caret at right position again
+		            event.target.selectionStart = event.target.selectionEnd = start + 1;
+
+		            // prevent the focus lose
+		             event.preventDefault();
+
+		}
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		var keyCode = event.which || event.keyCode;
@@ -316,7 +351,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.newMessage += text;
 	}
 
-	
 	$scope.goToEmail = function(email)
 	{
 		console.log(email);
@@ -416,7 +450,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			lastRoomBindings.push(
 					chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
 							{
-						calcPositionUnshift(JSON.parse(message.body));
+						calcPositionPush(JSON.parse(message.body));//POP
 							}));
 
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
@@ -515,7 +549,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 						var parsedData = JSON.parse(data);
 						for(var index=0; index < parsedData.length; index++) { 
 							if(parsedData[index].hasOwnProperty("message")){
-								calcPositionUnshift(parsedData[index])
+								calcPositionPush(parsedData[index]);//POP
 								console.log("subscribeMessageLP success:"+parsedData[index]);
 							}
 						}
@@ -581,7 +615,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			if($scope.sendTo != "everyone") {
 				destination = "/app/{0}chat.private.".format(chatControllerScope.currentRoom.roomId) + $scope.sendTo;
-				calcPositionUnshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
+				calcPositionPush({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});//POP
 			}
 			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:chatControllerScope.chatUserNickname,attachedFiles:attaches}));
 
@@ -622,20 +656,42 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	function calcPositionUnshift(msg)
 	{
+		if(msg == null)
+			return null;
+
+		var summarised = false;
+		$scope.oldMessage = msg;
 		if($scope.messages.length > 0)
 		{
 			if($scope.messages[0].username == msg.username)
-				msg.position = $scope.messages[0].position;
+			{
+						summarised = true;
+						$scope.messages[0].message =   msg.message + "\n\n" 
+							+ $scope.messages[0].message;
+
+					//	$scope.messages[0].date = msg.date;
+			}
 			else
+			{
 				msg.position = !$scope.messages[0].position;
+			}
 		}
 		else
+		{
 			msg.position = false;
+		}
 
-		$scope.messages.unshift(msg);
+		if ( summarised == false)
+			$scope.messages.unshift(msg);
 	}
 	function calcPositionPush(msg)
-	{
+	{		
+				if(msg == null)
+			return null;
+		
+		var objDiv = document.getElementById("messagesScroll");
+		var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
+
 		if($scope.messages.length > 0)
 		{
 			if($scope.messages[$scope.messages.length - 1].username == msg.username)
@@ -646,7 +702,30 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		else
 			msg.position = false;
 
-		$scope.messages.push(msg);
+	
+		if($scope.messages.length > 0)
+		{
+			if($scope.messages[$scope.messages.length - 1].username == msg.username)
+			{
+				//$scope.messages[$scope.messages.length - 1].date = msg.date;
+				$scope.messages[$scope.messages.length - 1].message += "\n\n" + msg.message;
+			}
+			else
+			{
+				$scope.messages.push(msg);
+			}
+		}
+		else
+		{
+			$scope.messages.push(msg);
+		}
+
+		$scope.$$postDigest(function () {
+			 var objDiv = document.getElementById("messagesScroll");
+			 if(needScrollDown)
+				objDiv.scrollTop = objDiv.scrollHeight;				
+			});
+
 	}
 
 	function loadSubscribeAndMessage(message)
@@ -668,11 +747,23 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
-			for (var i=0; i< message["messages"].length;i++){
-				calcPositionPush(message["messages"][i]);
-				//calcPositionUnshift(JSON.parse(o["messages"][i].text));
+			{	
+
+					$scope.oldMessage = message["messages"][message["messages"].length -1 ];
+
+				for (var i=0; i< message["messages"].length;i++){
+					calcPositionUnshift(message["messages"][i]);
+					//calcPositionUnshift(JSON.parse(o["messages"][i].text));
+				}
 			}
+			
 		$scope.message_busy = false;
+
+		$scope.$$postDigest(function () {
+			 var objDiv = document.getElementById("messagesScroll");
+				objDiv.scrollTop = objDiv.scrollHeight;				
+			});
+
 	}
 
 	function loadSubscribesOnly(message)
@@ -684,7 +775,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	{
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
-			calcPositionUnshift(message["messages"][i]);
+			calcPositionPush(message["messages"][i]);//POP
 			//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 		}
 	}
@@ -704,21 +795,29 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			return;
 		$scope.message_busy = true;
 		console.log("TRY " + $scope.messages.length);
-		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
+		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.oldMessage).//  messages[0]). //
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE onLOAD OK " + data);
+			
+			 var objDiv = document.getElementById("messagesScroll");
+			var lastHeight = objDiv.scrollHeight;	
 			if(data == "")
 				return;
 
+					
+
 			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
-					calcPositionPush(data[index]);
+					calcPositionUnshift(data[index]);
 				}
 			}
+			//restore scrole
 			$scope.$$postDigest(function () {
+				var objDiv = document.getElementById("messagesScroll");
+				objDiv.scrollTop = objDiv.scrollHeight - lastHeight;	
 				$scope.message_busy = false;
 				$scope.$apply();
-			})
+			});
 		}).
 		error(function(data, status, headers, config) {
 			console.log('TEST');

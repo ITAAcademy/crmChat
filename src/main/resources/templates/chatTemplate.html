@@ -8,7 +8,7 @@
 					></h4>
 			</a>
 			<div class="input-group chat-head vertical-align">
-			<button ng-click="changeLocation('/chatrooms')" type="button" class="btn btn-default btn-lg back-btn"><i class="glyphicon glyphicon-chevron-left"></i></button>
+			<button  ng-show="showDialogListButton" ng-click="changeLocation('/chatrooms')" type="button" class="btn btn-default btn-lg back-btn"><i class="glyphicon glyphicon-chevron-left"></i></button>
 				<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 			</div>
 
@@ -74,7 +74,7 @@
 					infinite-scroll='loadOtherMessages()'
 					infinite-scroll-disabled='message_busy'
 					infinite-scroll-distance='0' infinite-scroll-parent="true"
-					infinite-scroll-container='"#messagesScroll"'>
+					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
 					<div class="chat-body testq">
 						<h6 th:text="${lgPack.lable_messages}">Mini Chat</h6>
 
@@ -90,7 +90,7 @@
 							</div>
 							<div class="name">{{message.username}}</div>
 							<div class="text">
-								<dir style="margin: 0px" content=" parseMsg(message.message)">
+								<dir style="margin: 0px; white-space: pre" content=" parseMsg(message.message) ">
 								</dir>
 								<span ng-repeat="file in message.attachedFiles track by $index">
 									<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
@@ -105,15 +105,15 @@
 				</div>
 			</div>
 			<div class="col-xs-12 chat no-pading">
-				<div class="answer-add "
+				<div class="answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom"
 					ng-mouseleave="show_search_list_in_message_input = false">
-					<textarea id="newMessageInput" type="text" class="form-control "
+					<textarea tabindex="-1" id="newMessageInput" type="text" class="form-control "
 						th:placeholder="${lgPack.lable_message_placeholder}"
 						placeholder="Write your message and hit enter..."
 						ng-model="newMessage"
 						ng-keydown="beforeMessageInputKeyPress($event)"
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
-						ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
+						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
 						ng-click="onMessageInputClick()" />
 					<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 
@@ -154,7 +154,5 @@
 				</div>
 			</div>
 		</div>
-		<div class=" row row-broken"
-			ng-show="currentRoom.active &#38;&#38; isMyRoom"></div>
 	</div>
 </div>
