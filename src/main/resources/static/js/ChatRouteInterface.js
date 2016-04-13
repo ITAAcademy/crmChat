@@ -715,8 +715,11 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	function calcPositionUnshift(msg)
 	{
-		//$scope.messages[0].summarised = false;
+		if(msg != null)
+			return null;
+		
 		var summarised = false;
+		$scope.oldMessage = msg;
 		if($scope.messages.length > 0)
 		{
 			if($scope.messages[0].username == msg.username)
@@ -742,7 +745,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	function calcPositionPush(msg)
 	{		
-		debugger;
+				if(msg != null)
+			return null;
+		
 		var objDiv = document.getElementById("messagesScroll");
 		var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
 
