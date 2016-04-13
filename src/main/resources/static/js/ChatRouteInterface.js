@@ -684,11 +684,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var summarised = false;
 		if($scope.messages.length > 0)
 		{
-			if($scope.messages[$scope.messages.length - 1].username == msg.username)
+			if($scope.messages[0].username == msg.username)
 			{
 						summarised = true;
-						$scope.messages[$scope.messages.length - 1].message =   msg.message + "\n\n" 
-							+ $scope.messages[$scope.messages.length - 1].message
+						$scope.messages[0].message =   msg.message + "\n\n" 
+							+ $scope.messages[0].message;
+
+						$scope.messages[0].date = msg.date;
 			}
 			else
 			{
@@ -732,15 +734,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			$scope.messages.push(msg);
 		}
-		
-		//$scope.messages.push(msg);
-
 
 		var objDiv = document.getElementById("messagesScroll");
 		var needScrollDown = (objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
-
-debugger;
-		//$scope.messages.push(msg);
 
 		$scope.$$postDigest(function () {
 			 var objDiv = document.getElementById("messagesScroll");
