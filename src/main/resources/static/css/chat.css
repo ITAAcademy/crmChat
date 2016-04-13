@@ -6,22 +6,45 @@ body{
 
 .chat-head {
   min-height: 60px;
-  background-color: #585b9c;
+  background-color: #4b70a3;
   min-width: 100%;
+  line-height: 60px;
+
+}
+
+.vcenter {
+   vertical-align: middle;
+    display: inline-block;
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 15px;
+}
+.btn-lg i{
+    left: -2px;
+}
   
+ .btn-lg {
+  width: 50px;
+  height: 50px;
+  padding: 10px 16px;
+  font-size: 24px;
+  line-height: 1.33;
+  border-radius: 25px;
 }
-
-.vertical-align {
-  display: flex;
-  flex-direction: row;
-}
-
-.vertical-align > [class^="col-"],
-.vertical-align > [class*=" col-"] {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Optional, to align inner items 
-                              horizontally inside the column */
+.btn-circle .btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  font-size: 24px;
+  line-height: 1.33;
+  border-radius: 35px;
 }
 
 .search-form .form-group {

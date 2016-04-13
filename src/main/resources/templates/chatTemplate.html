@@ -1,17 +1,18 @@
 <div class="content container-fluid bootstrap snippets container">
 
 	<div class="col-xs-12">
-		<div class="row row-broken ">
+		<div class="row row-broken vdivide">
 			<a ng-show="showDialogListButton" class="menu-ng-click"
-				ng-href="#/chatrooms">
+				>
 				<h4 class="chat-dialog name"
-					th:text="${lgPack.lable_dialog} + ':{{dialogName}}'"></h4>
+					></h4>
 			</a>
 			<div class="input-group chat-head vertical-align">
-				<p class="col-sm-12 text-center head-title vcenter">gdgfdgfd</p>
+			<button ng-click="changeLocation('/chatrooms')" type="button" class="btn btn-default btn-lg back-btn"><i class="glyphicon glyphicon-chevron-left"></i></button>
+				<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 			</div>
 
-			<div class="col-sm-3 col-xs-12 no-pading-left">
+			<div class="col-sm-3 col-xs-3 no-pading-left">
 				<div class="col-inside-lg decor-default chat chat-white"
 					style="overflow: hidden; outline: none;" tabindex="5000">
 					<div class="chat-users">
@@ -65,7 +66,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-9 col-xs-12 chat chat-white no-pading"
+			<div class="col-sm-9 col-xs-9 chat chat-white no-pading"
 				imagedrop="true" on-image-drop="fileDropped()" id="messagesScroll"
 				name="messagesScroll" style="overflow: hidden; outline: none;"
 				tabindex="5001">

@@ -1,10 +1,5 @@
 @CHARSET "UTF-8";
 
-body{
-    margin-top:20px;
-    background:#eee;
-}
-
 .decor-default {
     background-color: #ffffff;
 }
@@ -25,12 +20,6 @@ body{
     line-height: 38px;
     float: left;
     margin-right: 10px;
-}
-.btn-default {
-    background-color: #ffffff;
-    border: 1px solid #d8d8d8 !important;
-    color: #333333;
-    line-height: 46px;
 }
 .input-group {
     position: relative;
@@ -217,12 +206,7 @@ input {
     position: relative;
     float: left;
 }
-.btn-default {
-    background-color: #ffffff;
-    border: 1px solid #d8d8d8 !important;
-    color: #333333;
-    line-height: 46px;
-}
+
 .contacts-list .icons .icon-folder {
     background: url("http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-9.png") no-repeat 50% 50%;
 }
