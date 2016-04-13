@@ -756,7 +756,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
 			for (var i=0; i< message["messages"].length;i++){
-				calcPositionPush(message["messages"][i],true);
+				calcPositionPush(message["messages"][i]);
 				//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 			}
 		$scope.message_busy = false;
