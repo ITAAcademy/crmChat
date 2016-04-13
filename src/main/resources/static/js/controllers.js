@@ -66,6 +66,21 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$route', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $route,$location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 	$rootScope.isInited = false;
+		$rootScope.goToUserPage = function(username){
+		var request = $http({
+			method: "get",
+			url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
+			data: null ,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
+		request.success(function (data) {
+			if (data!=null){
+				window.top.location.href =generateUrlToUserPage(data);
+				return true;
+			}
+		});
+		return false;
+	}
 	$rootScope.formatDateWithLast = function(date, minutesName)
 	{
 		// need translate and move to global to config map
@@ -96,6 +111,48 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		var year = dateObj.getFullYear();
 
 		return day + " " + monthNames[monthIndex] + " " + dateObj.getHours() + ":" + dateObj.getMinutes();
+	}
+	function generateUrlToUserPage(user_id){
+		var baseurl = globalConfig["baseUrl"];
+		return baseurl+"/profile/"+user_id+"/";
+	}
+	function generateUrlToCourse(course_alias,lang){
+		var baseurl = globalConfig["baseUrl"];
+		return baseurl + "/course/"+lang+"/"+course_alias+"/";
+	}
+	$rootScope.goToCourseByTitle = function(title,lang){
+		var request = $http({
+			method: "get",
+			url: serverPrefix + "/get_course_alias_by_title?title=" + title+"&lang="+lang,
+			data: null ,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
+		request.success(function (data) {
+			if (data!=null){
+				window.top.location.href =generateUrlToCourse(data,lang);
+				return true;
+			}
+		});
+
+	}
+	$rootScope.parseMsg = function(msg)
+	{
+		if (msg==null) return null;
+		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)',1);
+		msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)',2,3);
+		//msg = msg.HTMLEncode();
+		return msg;//.replace(' ','&#32;');
+	}
+	$rootScope.parseMain = function(msg, reg, callback,trimLeft,trimRight)
+	{
+		if (msg==null)return;
+		trimLeft = trimLeft || 0;
+		trimRight = trimRight || 0;
+		var expr = new RegExp(reg, 'g');
+		msg = msg.replace(expr, function(str){ return ' <a ng-click="' + callback.replace(new RegExp('#', 'g'), "'" + str.substr(trimLeft,str.length - trimRight)+ "'") + '">' + str.substr(trimLeft,str.length - trimRight) + "</a>";})
+
+		//$interval($route.reload(), 200);
+		return msg;
 	}
 
 	$scope.changeLocation = function changeLocation(url ) {

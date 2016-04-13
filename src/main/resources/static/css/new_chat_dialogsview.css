@@ -151,7 +151,7 @@ input {
     display: inline-block;
     width: 100%;
     font-size: 16px;
-    line-height: 40px;
+    line-height: 25px;
     color: #333333;
     -webkit-transition: background false false, 0.3s false false;
     -moz-transition: background false false false, 0.3s false false false;
@@ -237,7 +237,7 @@ input {
     min-width: 150px;
     padding: 0 0 0 18px;
     color: #ffffff;
-    margin-left: 60px;
+    margin-left: 0px;
 }
 .contacts-list .lab-warning {
     background: #f2a654;
@@ -250,4 +250,8 @@ input {
 }
 .contacts-list .lab-primary {
     background: #7266ba;
+}
+/*My Bidlo*/
+.left_image_block {
+    float:left;
 }

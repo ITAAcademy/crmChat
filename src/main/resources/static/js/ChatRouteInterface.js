@@ -12,47 +12,6 @@ String.prototype.insertAt=function(index, string) {
 }
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q', '$sce',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q, $sce) {
 
-	function generateUrlToUserPage(user_id){
-		var baseurl = globalConfig["baseUrl"];
-		return baseurl+"/profile/"+user_id+"/";
-	}
-	function generateUrlToCourse(course_alias,lang){
-		var baseurl = globalConfig["baseUrl"];
-		return baseurl + "/course/"+lang+"/"+course_alias+"/";
-	}
-
-	$scope.goToUserPage = function(username){
-		var request = $http({
-			method: "get",
-			url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
-			data: null ,
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-		});
-		request.success(function (data) {
-			if (data!=null){
-				window.top.location.href =generateUrlToUserPage(data);
-				return true;
-			}
-		});
-		return false;
-	}
-	$scope.goToCourseByTitle = function(title,lang){
-		var request = $http({
-			method: "get",
-			url: serverPrefix + "/get_course_alias_by_title?title=" + title+"&lang="+lang,
-			data: null ,
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-		});
-		request.success(function (data) {
-			if (data!=null){
-				window.top.location.href =generateUrlToCourse(data,lang);
-				return true;
-			}
-		});
-
-	}
-
-
 	var INPUT_MODE = {
 			STANDART_MODE : 0,
 			DOG_MODE : 1,
@@ -357,23 +316,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.newMessage += text;
 	}
 
-	$scope.parseMsg = function(msg)
-	{
-		msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)',1);
-		msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)',2,3);
-		//msg = msg.HTMLEncode();
-		return msg;//.replace(' ','&#32;');
-	}
-	$scope.parseMain = function(msg, reg, callback,trimLeft,trimRight)
-	{
-		trimLeft = trimLeft || 0;
-		trimRight = trimRight || 0;
-		var expr = new RegExp(reg, 'g');
-		msg = msg.replace(expr, function(str){ return ' <a ng-click="' + callback.replace(new RegExp('#', 'g'), "'" + str.substr(trimLeft,str.length - trimRight)+ "'") + '">' + str.substr(trimLeft,str.length - trimRight) + "</a>";})
-
-		//$interval($route.reload(), 200);
-		return msg;
-	}
+	
 	$scope.goToEmail = function(email)
 	{
 		console.log(email);
