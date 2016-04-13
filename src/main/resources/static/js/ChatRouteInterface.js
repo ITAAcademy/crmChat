@@ -703,17 +703,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		if ( summarised == false)
 			$scope.messages.unshift(msg);
 	}
-	function calcPositionPush(msg, summarize)
-	{
-		if (typeof(summarize)==='undefined') 
-			{
-			//alert('34134')
-			summarize = false;
-			//return;
-			}
-		
-		summarize = true;
-		
+	function calcPositionPush(msg)
+	{		
 		if($scope.messages.length > 0)
 		{
 			if($scope.messages[$scope.messages.length - 1].username == msg.username)
@@ -723,21 +714,14 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		}
 		else
 			msg.position = false;
-
-		if (summarize)
+	
+		if($scope.messages.length > 0)
 		{
-			if($scope.messages.length > 0)
+			if($scope.messages[$scope.messages.length - 1].username == msg.username)
 			{
-				if($scope.messages[$scope.messages.length - 1].username == msg.username)
-				{
-					$scope.messages[$scope.messages.length - 1].date = msg.date;
-					$scope.messages[$scope.messages.length - 1].message =  msg.message + 
-					"\n\n" + $scope.messages[0].message ; 
-				}
-				else
-				{
-					$scope.messages.push(msg);
-				}
+				$scope.messages[$scope.messages.length - 1].date = msg.date;
+				$scope.messages[$scope.messages.length - 1].message =  msg.message + 
+				"\n\n" + $scope.messages[0].message ; 
 			}
 			else
 			{
@@ -748,12 +732,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			$scope.messages.push(msg);
 		}
-		//$scope.messages.push(msg);
-	}
-	
-	function summarizeMessages()
-	{
 		
+		//$scope.messages.push(msg);
 	}
 
 	function loadSubscribeAndMessage(message)
