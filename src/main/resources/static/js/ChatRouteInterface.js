@@ -715,9 +715,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 	function calcPositionUnshift(msg)
 	{
-		if(msg != null)
+		if(msg == null)
 			return null;
-		
+
 		var summarised = false;
 		$scope.oldMessage = msg;
 		if($scope.messages.length > 0)
@@ -728,7 +728,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 						$scope.messages[0].message =   msg.message + "\n\n" 
 							+ $scope.messages[0].message;
 
-						$scope.messages[0].date = msg.date;
+					//	$scope.messages[0].date = msg.date;
 			}
 			else
 			{
@@ -745,7 +745,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	function calcPositionPush(msg)
 	{		
-				if(msg != null)
+				if(msg == null)
 			return null;
 		
 		var objDiv = document.getElementById("messagesScroll");
@@ -766,7 +766,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			if($scope.messages[$scope.messages.length - 1].username == msg.username)
 			{
-				$scope.messages[$scope.messages.length - 1].date = msg.date;
+				//$scope.messages[$scope.messages.length - 1].date = msg.date;
 				$scope.messages[$scope.messages.length - 1].message += "\n\n" + msg.message;
 			}
 			else
