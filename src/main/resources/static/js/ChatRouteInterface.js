@@ -127,6 +127,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			$scope.startTyping(event);
 	}
 	
+	$scope.oldMessage;// = $scope.messages[0];
+	
 	$scope.onKeyMessageKeyPressEvent = function(event){
 
 		var keyCode = event.which || event.keyCode;
@@ -799,10 +801,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
-			for (var i=0; i< message["messages"].length;i++){
-				calcPositionUnshift(message["messages"][i]);
-				//calcPositionUnshift(JSON.parse(o["messages"][i].text));
+			{	
+				for (var i=0; i< message["messages"].length;i++){
+					calcPositionUnshift(message["messages"][i]);
+					//calcPositionUnshift(JSON.parse(o["messages"][i].text));
+				}
 			}
+			
 		$scope.message_busy = false;
 
 		$scope.$$postDigest(function () {
@@ -841,7 +846,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			return;
 		$scope.message_busy = true;
 		console.log("TRY " + $scope.messages.length);
-		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[0]).
+		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), oldMessage).//  messages[0]). //
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE onLOAD OK " + data);
 			
@@ -849,6 +854,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			var lastHeight = objDiv.scrollHeight;	
 			if(data == "")
 				return;
+
+			$scope.oldMessage = data[0];			
 
 			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
