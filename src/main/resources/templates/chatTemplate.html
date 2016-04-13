@@ -113,7 +113,7 @@
 						ng-model="newMessage"
 						ng-keydown="beforeMessageInputKeyPress($event)"
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
-						ng-keyup="$event.keyCode == 13 ? sendMessage() : startTyping($event)"
+						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
 						ng-click="onMessageInputClick()" />
 					<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 

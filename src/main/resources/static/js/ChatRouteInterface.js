@@ -114,6 +114,19 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		return iCaretPos;
 	};
 	var typing = undefined;
+	
+	$scope.onKeyMessageKeyReleaseEvent = function(event) {		
+		if (event.keyCode == 13) {			
+			if (event.shiftKey) {
+				$scope.startTyping(event);
+			}
+			else
+				$scope.sendMessage();
+		}
+		else
+			$scope.startTyping(event);
+	}
+	
 	$scope.onKeyMessageKeyPressEvent = function(event){
 
 		var keyCode = event.which || event.keyCode;
