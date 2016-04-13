@@ -684,11 +684,11 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var summarised = false;
 		if($scope.messages.length > 0)
 		{
-			if($scope.messages[0].username == msg.username)
+			if($scope.messages[$scope.messages.length - 1].username == msg.username)
 			{
 						summarised = true;
-						$scope.messages[0].message +=  "\n\n" + msg.message ; 
-						
+						$scope.messages[$scope.messages.length - 1].message =   msg.message + "\n\n" 
+							+ $scope.messages[$scope.messages.length - 1].message
 			}
 			else
 			{
@@ -721,8 +721,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			if($scope.messages[$scope.messages.length - 1].username == msg.username)
 			{
 				$scope.messages[$scope.messages.length - 1].date = msg.date;
-				$scope.messages[$scope.messages.length - 1].message =  msg.message + 
-				"\n\n" + $scope.messages[0].message ; 
+				$scope.messages[$scope.messages.length - 1].message += "\n\n" + msg.message;
 			}
 			else
 			{
@@ -741,7 +740,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var needScrollDown = (objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
 
 debugger;
-		$scope.messages.push(msg);
+		//$scope.messages.push(msg);
 
 		$scope.$$postDigest(function () {
 			 var objDiv = document.getElementById("messagesScroll");
