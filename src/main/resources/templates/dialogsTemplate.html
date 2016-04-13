@@ -39,40 +39,25 @@
 </div>
 -->
 <!-- NEW TEMPLATE -->
+
 <div class="content container-fluid bootstrap snippets container">
     <div class="row decor-default">
-        <div class="col-xs-12">
           <div class="contacts-list">
-            <h5 class="title">Contact List</h5>
-    
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
-              <div class="input-group chat-head">
+              <div class="input-group chat-head ">
+               <span><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span>
                 <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
-                <div class="input-group-addon chat-head">
-                  <span><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span>
-                </div>
-              </div>
-              <div class="unit head">
-                <div class="field name">
-                  Dialog Name
-                </div>
-                <div class="field phone">
-                  Last Message
-                </div>
-                <div class="field email icons">
-                  Participant Count
-                  <div class="btn-group pull-right" role="group">
+                	<button type="button" style="height: 100%" class="btn btn-default" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                    <div class="btn-group" role="group" style="float: right;height: 30%;padding: 30px 0px 0px 0px;">
                     <button type="button" class="btn btn-default"><span class="icon icon-folder"></span></button>
-    
-                    <div class="btn-group" role="group">
-                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="icon icon-label"></span></button>
-    
+					<div class="btn-group" role="group" style="">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=""><span class="icon icon-label"></span></button>
                     </div>
                     <button type="button" class="btn btn-default"><span class="icon icon-trash"></span></button>
                   </div>
-                </div>
-              </div>
 
+
+              </div>
               <ul ng-repeat="room in rooms | orderBy: '-date' | filter:{string:(roomsearchquery||'')} "
 			ng-show="socketSupport" class="list-group">
 			<li class="list-group-item">
@@ -83,15 +68,16 @@
                     <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
                     <a ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                   </div>
+                    <div class="lab lab-warning"> учасників:{{room.participantsCount}}</div>
                   <div class="lab lab-warning" ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
                 </div>
                 <div class="field phone">
                 <!-- last message text and count of new messages -->
                 {{room.lastMessage}}<span ng-hide="room.lastMessage.length>0">No message</span>
-                 <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span> 
+                 
                 </div>
                 <div class="field email">
-                  {{room.participantsCount}}
+                <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span> 
                 </div>
               </div>
 				</li>
@@ -99,6 +85,27 @@
 
             </form>
           </div>
-        </div>
     </div>
 </div>
+<!--MODAL -->
+<div id="new_room_modal" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
+        <h4 class="modal-title">Створення кімнати</h4>
+      </div>
+      <div class="modal-body">
+        <input id="roomNameInput" type="text" ng-model="dialogName" placeholder="Назва кімнати"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="toggleNewRoomModal()">Close</button>
+         <button type="button" class="btn btn-default" ng-click="addDialog()">Add</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!--///////////////MODAL -->

@@ -7,6 +7,11 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	 */
 	//$location.path("http://localhost/IntITA/site/authorize");//not found => go out
 	$scope.dialogName = '';
+
+	$scope.showNewRoomModal = false;
+	$scope.toggleNewRoomModal = function(){
+		$('#new_room_modal').modal('toggle');
+	}
 	
 	$scope.addDialog = function() {
 		if ($rootScope.socketSupport){

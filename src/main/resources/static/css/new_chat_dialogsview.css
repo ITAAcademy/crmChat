@@ -22,9 +22,9 @@
     margin-right: 10px;
 }
 .input-group {
-    position: relative;
+    /*position: relative;
     display: table;
-    border-collapse: separate;
+    border-collapse: separate;*/
 }
 .contacts-search {
     width: 100%;
@@ -109,7 +109,7 @@ button {
     border-collapse: separate;
 }
 .contacts-list-search {
-    width: 100%;
+    width: 70%;
     line-height: 60px;
     background: #585b9c;
     font-size: 24px;
@@ -224,11 +224,11 @@ input {
 }
 .contacts-list .unit .name .avatar {
     display: inline-block;
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
     border-radius: 20px;
     margin: 0 16px 0 0;
-    vertical-align: top;
+    vertical-align: middle;
 }
 .contacts-list .lab {
     font-size: 14px;
