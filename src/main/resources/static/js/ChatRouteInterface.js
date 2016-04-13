@@ -473,7 +473,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			lastRoomBindings.push(
 					chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) 
 							{
-						calcPositionUnshift(JSON.parse(message.body));
+						calcPositionPush(JSON.parse(message.body));//POP
 							}));
 
 			lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) 
@@ -572,7 +572,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 						var parsedData = JSON.parse(data);
 						for(var index=0; index < parsedData.length; index++) { 
 							if(parsedData[index].hasOwnProperty("message")){
-								calcPositionUnshift(parsedData[index])
+								calcPositionPush(parsedData[index]);//POP
 								console.log("subscribeMessageLP success:"+parsedData[index]);
 							}
 						}
@@ -638,7 +638,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		{
 			if($scope.sendTo != "everyone") {
 				destination = "/app/{0}chat.private.".format(chatControllerScope.currentRoom.roomId) + $scope.sendTo;
-				calcPositionUnshift({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});
+				calcPositionPush({message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo});//POP
 			}
 			chatSocket.send(destination, {}, JSON.stringify({message: textOfMessage, username:chatControllerScope.chatUserNickname,attachedFiles:attaches}));
 
@@ -703,7 +703,18 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		else
 			msg.position = false;
 
+		var objDiv = document.getElementById("messagesScroll");
+		var needScrollDown = (objDiv.scrollTop + objDiv.clientHeight) == objDiv.scrollHeight;	
+
+debugger;
 		$scope.messages.push(msg);
+
+		$scope.$$postDigest(function () {
+			 var objDiv = document.getElementById("messagesScroll");
+			 if(needScrollDown)
+				objDiv.scrollTop = objDiv.scrollHeight;				
+			});
+
 	}
 
 	function loadSubscribeAndMessage(message)
@@ -726,10 +737,16 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
 			for (var i=0; i< message["messages"].length;i++){
-				calcPositionPush(message["messages"][i]);
+				calcPositionUnshift(message["messages"][i]);
 				//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 			}
 		$scope.message_busy = false;
+
+		$scope.$$postDigest(function () {
+			 var objDiv = document.getElementById("messagesScroll");
+				objDiv.scrollTop = objDiv.scrollHeight;				
+			});
+
 	}
 
 	function loadSubscribesOnly(message)
@@ -741,7 +758,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	{
 		$scope.roomType = message["type"];
 		for (var i=0; i< message["messages"].length;i++){
-			calcPositionUnshift(message["messages"][i]);
+			calcPositionPush(message["messages"][i]);//POP
 			//calcPositionUnshift(JSON.parse(o["messages"][i].text));
 		}
 	}
@@ -761,21 +778,27 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			return;
 		$scope.message_busy = true;
 		console.log("TRY " + $scope.messages.length);
-		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[$scope.messages.length - 1]).
+		$http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), $scope.messages[0]).
 		success(function(data, status, headers, config) {
 			console.log("MESSAGE onLOAD OK " + data);
+			
+			 var objDiv = document.getElementById("messagesScroll");
+			var lastHeight = objDiv.scrollHeight;	
 			if(data == "")
 				return;
 
 			for(var index=0; index < data.length; index++) { 
 				if(data[index].hasOwnProperty("message")){
-					calcPositionPush(data[index]);
+					calcPositionUnshift(data[index]);
 				}
 			}
+			//restore scrole
 			$scope.$$postDigest(function () {
+				var objDiv = document.getElementById("messagesScroll");
+				objDiv.scrollTop = objDiv.scrollHeight - lastHeight;	
 				$scope.message_busy = false;
 				$scope.$apply();
-			})
+			});
 		}).
 		error(function(data, status, headers, config) {
 			console.log('TEST');
