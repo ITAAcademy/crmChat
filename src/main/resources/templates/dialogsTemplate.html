@@ -41,50 +41,60 @@
 <!-- NEW TEMPLATE -->
 
 <div class="content container-fluid bootstrap snippets container">
-    <div class="row decor-default">
+    <div class="decor-default">
           <div class="contacts-list">
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
-              <div class="input-group chat-head ">
-               <span><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span>
+              <div class="input-group chat-head">
+              <div class="row">
+               <div class="col-md-1">
+               <span ><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span></div>
+               <div class="col-md-7">
                 <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
-                	<button type="button" style="height: 100%" class="btn btn-default" ng-click="toggleNewRoomModal()">ADD ROOM</button>
-                    <div class="btn-group" role="group" style="float: right;height: 30%;padding: 30px 0px 0px 0px;">
-                    <button type="button" class="btn btn-default"><span class="icon icon-folder"></span></button>
+                </div>
+                 <div class="btn-group col-md-2" role="group" style="height: 30%;padding: 0px 0px 0px 0px;">
+                    <button type="button" class="btn btn-default"></button>
 					<div class="btn-group" role="group" style="">
-                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=""><span class="icon icon-label"></span></button>
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=""></button>
                     </div>
-                    <button type="button" class="btn btn-default"><span class="icon icon-trash"></span></button>
+                    <button type="button" class="btn btn-default"></button>
                   </div>
+                  <div class="col-md-2">
+                	<button type="button" style="height: 100%" class="btn btn-default" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                	</div>
+                   
 
-
+                	</div>
               </div>
               <ul ng-repeat="room in rooms | orderBy: '-date' | filter:{string:(roomsearchquery||'')} "
 			ng-show="socketSupport" class="list-group">
+
 			<li class="list-group-item">
 		
-              <div class="unit">
-                <div class="field name">
-                  <div class="left_image_block">
+              <div class="row">
+        
+                  <div class="col-md-2">
                     <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
                     
                   </div>
-                  <div class="left_image_bloc">
-                  <a ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
-                    <div> учасників:{{room.participantsCount}}</div>
-                  <div ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
+                  <div class="col-md-3">
+                  <ul class="leftside_list_without_style">
+                  <a class="long_text" ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
+                    <li> учасників:{{room.participantsCount}}</li>
+                  <li ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></li>
+                  </ul>
                   </div>
-                </div>
-                <div class="field phone">
+               
+                <div class="col-md-6">
                 <!-- last message text and count of new messages -->
-					<div>{{room.lastMessageAuthor}}:</div>
+					<div class="message_author_header">{{room.lastMessageAuthor}}:</div>
 					<dir style="margin: 0px" content=" parseMsg(room.lastMessage)"></dir>
 					<span ng-hide="room.lastMessage.length>0">No message</span>
 
                 <!-- {{room.lastMessage}} -->
                  
                 </div>
-                <div class="field email">
-                <span ng-show="room.nums > 0" class="badge">{{room.nums}}</span> 
+                <div class="col-md-1">
+                <span ng-show="room.nums > 0" class="badge vertical-align">{{room.nums}}</span> 
                 </div>
               </div>
 				</li>
