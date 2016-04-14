@@ -11,7 +11,17 @@ body{
   line-height: 60px;
 
 }
-
+.circular {
+  width: 30px;
+  height: 30px;
+  border-radius: 150px;
+  -webkit-border-radius: 150px;
+  -moz-border-radius: 150px;
+  }
+.circular img {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  }
 .vcenter {
    vertical-align: middle;
     display: inline-block;

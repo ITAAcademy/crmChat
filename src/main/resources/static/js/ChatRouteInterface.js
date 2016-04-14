@@ -17,6 +17,12 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			DOG_MODE : 1,
 			TILDA_MODE : 2
 	};
+
+	$scope.states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];	//nice.hide();
+ $scope.selected = undefined;
+   $scope.totalItems = 64;
+  $scope.currentPage = 4;
+
 	$scope.show_search_list_in_message_input = false;
 	var isSpecialInput = false;
 	var specialInputPositionInText;
@@ -759,10 +765,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			
 		$scope.message_busy = false;
 
-		$scope.$$postDigest(function () {
-			 var objDiv = document.getElementById("messagesScroll");
-				objDiv.scrollTop = objDiv.scrollHeight;				
-			});
+	
 
 	}
 
@@ -826,33 +829,6 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		});
 	}
 
-	// file upload button click reaction
-	angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
-		var input = this.elements.myfile;
-		var files =[];
-		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
-		if (files) {
-			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
-					function successCallback(data){    
-				$scope.uploadProgress = 0;
-				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
-				$('#myfile').fileinput('clear');
-				$scope.$apply();
-			},
-			function(xhr) {
-				$scope.uploadProgress = 0;
-				$scope.$apply();
-				alert("SEND FAILD:"+xhr);
-			},
-			function(event, loaded) {
-				console.log(event.loaded + ' / ' + event.totalSize);
-				$scope.uploadProgress = Math.floor((event.loaded/event.totalSize)*100);
-				$scope.$apply();
-
-			}) ;
-		}
-		return false;
-	}
 
 	$scope.getNameFromUrl=function getNameFromUrl(url){
 		var fileNameSignaturePrefix = "file_name=";
@@ -904,7 +880,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
         
 	})
 
-	//nice.hide();
+$scope.selected = undefined;
+	
+	$scope.states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
 }]);
 
