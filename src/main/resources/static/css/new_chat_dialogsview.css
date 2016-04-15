@@ -48,3 +48,12 @@ input {
    display: inline-block;
 vertical-align: middle;
 }
+.new_messages_counter {
+    margin-top: 25px;
+}
+.room_item {
+width:100%;
+}
+.room_item:hover{
+    cursor: pointer;
+}
