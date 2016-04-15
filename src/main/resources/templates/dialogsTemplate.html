@@ -72,11 +72,11 @@
 		
               <div class="row">
         
-                  <div class="col-md-2">
+                  <div class="col-md-2 col-xs-3">
                     <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
                     
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-3 col-xs-3">
                   <ul class="leftside_list_without_style">
                   <a class="long_text" ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                     <li> учасників:{{room.participantsCount}}</li>
@@ -84,16 +84,16 @@
                   </ul>
                   </div>
                
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-4">
                 <!-- last message text and count of new messages -->
 					<div class="message_author_header">{{room.lastMessageAuthor}}:</div>
-					<dir style="margin: 0px" content=" parseMsg(room.lastMessage)"></dir>
+					<dir style="margin: 0px" content=" parseMsg(room.lastMessage) | limitTo:200"></dir>
 					<span ng-hide="room.lastMessage.length>0">No message</span>
 
                 <!-- {{room.lastMessage}} -->
                  
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1 col-xs-2">
                 <span ng-show="room.nums > 0" class="badge vertical-align">{{room.nums}}</span> 
                 </div>
               </div>
