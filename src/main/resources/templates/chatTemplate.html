@@ -7,9 +7,10 @@
   </a>
 </script>
 
+
 <script type="text/ng-template" id="customPopupTemplate.html">
 
-    <ul class="dropdown-menu" style="bottom: 40px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
+    <ul class="dropdown-menu" style="bottom: 80px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
     <li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
             ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
             <div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
@@ -21,16 +22,15 @@
 		<div class="row row-broken vdivide">
 			<a ng-show="showDialogListButton" class="menu-ng-click"
 				>
-				<h4 class="chat-dialog name"
-					></h4>
+				<h4 class="chat-dialog name"></h4>
 			</a>
 			<div class="input-group chat-head vertical-align">
-			<button  ng-show="showDialogListButton" ng-click="changeLocation('/chatrooms')" type="button" class="btn btn-default btn-lg back-btn"><i class="glyphicon glyphicon-chevron-left"></i></button>
+			<button   ng-show="showDialogListButton" ng-click="changeLocation('/chatrooms')" type="button" class="btn btn-default btn-lg back-btn"><i class="glyphicon glyphicon-chevron-left"></i></button>
 				<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 			</div>
 
-			<div class="col-sm-3 col-xs-3 no-pading-left scroll">
-				<div class="col-inside-lg decor-default chat chat-white"
+			<div class="col-sm-3 col-xs-3 no-pading-left">
+				<div class="col-inside-lg decor-default chat chat-white scroll"
 					style="overflow: hidden; outline: none;" tabindex="5000">
 					<div class="chat-users">
 
@@ -114,9 +114,9 @@
 				</div>
 			</div>
 			<div class="col-xs-12 chat no-pading" style="overflow: visible">
-				<div class="answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom">
-					<div class="dropup">
-					<textarea tabindex="-1" id="newMessageInput" type="text" class="form-control "
+				<div class="row answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom">
+					<div class=" dropup">
+					<textarea  msd-elastic="\n" tabindex="-1" id="newMessageInput" type="text" class="form-control "
 						th:placeholder="${lgPack.lable_message_placeholder}"
 						placeholder="Write your message and hit enter..."
 						ng-model="newMessage"
@@ -126,6 +126,7 @@
 						ng-click="onMessageInputClick()" 
 						typeahead-wait-ms = "1000"  uib-typeahead="item for item in data_in_message_input" 	typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
 						</div>
+
 					<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 
 					<div class="answer-btn answer-btn-1">
