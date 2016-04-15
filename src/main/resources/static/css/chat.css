@@ -9,13 +9,16 @@ body{
   position: relative;
 }
 
-.chat-head {
+.chat-head{
   min-height: 60px;
-  background-color: #4b70a3;
   min-width: 100%;
-  line-height: 60px;
-
+  background-color: #4b70a3;
 }
+
+.chat-head.chat-head-room{
+  line-height: 60px;
+}
+
 .circular {
   width: 30px;
   height: 30px;

@@ -46,6 +46,18 @@
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
               <div class="input-group chat-head">
               <div class="row">
+              <div class="multiple-select-wrapper">
+  <div class="selected-items-box glyphicon glyphicon-align-left"></div>
+        <div class="list">
+                 <ul class="items-list">
+                        <li ng-repeat="airline in Airlines">
+                                <input type="checkbox" ng-model="airline.selected" />
+                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
+        <span>{{airline.name}}</span>
+      </li>
+    </ul>
+  </div>
+</div>
                <div class="col-md-1">
                <span ><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span></div>
                <div class="col-md-7">
