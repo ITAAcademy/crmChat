@@ -1,32 +1,4 @@
 <div class="content container-fluid bootstrap snippets container">
-			<input name="states" id="states" type="text" placeholder="enter a state" ng-model="selected" typeahead="state for state in states | filter:$viewValue | limitTo:8" class="form-control"/>
-			<style>
-  .typeahead-demo .custom-popup-wrapper {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    display: none;
-    background-color: #f9f9f9;
-  }
-
-  .typeahead-demo .custom-popup-wrapper > .message {
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-    color: #868686;
-  }
-
-  .typeahead-demo .custom-popup-wrapper > .dropdown-menu {
-    position: static;
-    float: none;
-    display: block;
-    min-width: 160px;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
-</style>
 
 <script type="text/ng-template" id="customTemplate.html">
   <a>
@@ -36,41 +8,14 @@
 </script>
 
 <script type="text/ng-template" id="customPopupTemplate.html">
-  <div class="custom-popup-wrapper"
-     ng-style="{top: position().top+'px', left: position().left+'px'}"
-     style="display: block;"
-     ng-show="isOpen()"
-     aria-hidden="{{!isOpen()}}">
-    <p class="message">select location from drop down.</p>
 
-    <ul class="dropdown-menu" role="listbox">
-        <li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
+    <ul class="dropdown-menu" style="bottom: 40px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
+    <li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
             ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
-            <div uib-typeahead-match =" " index="$index" match="match" query="query" template-url="templateUrl"></div>
+            <div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
         </li>
-    </ul>
-  </div>
+</ul>
 </script>
-
-    <h4>Static arrays</h4>
-    <pre>Model: {{selected | json}}</pre>
-    <input type="text" ng-model="selected" uib-typeahead="state for state in states | filter:$viewValue | limitTo:8" class="form-control"/>
-
-    <h4>Asynchronous results</h4>
-    <pre>Model: {{asyncSelected | json}}</pre>
-    <input type="text" ng-model="asyncSelected" placeholder="Locations loaded via $http" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control"/>
-    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-    <div ng-show="noResults">
-      <i class="glyphicon glyphicon-remove"></i> No Results Found
-    </div>
-
-    <h4>ngModelOptions support</h4>
-    <pre>Model: {{ngModelOptionsSelected | json}}</pre>
-    <input type="text" ng-model="ngModelOptionsSelected" ng-model-options="modelOptions" uib-typeahead="state for state in states | filter:$viewValue | limitTo:8" class="form-control"/>
-
-    <h4>Custom templates for results</h4>
-    <pre>Model: {{customSelected | json}}</pre>
-    <input type="text" ng-model="customSelected" placeholder="Custom template" uib-typeahead="state as state.name for state in statesWithFlags | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true" typeahead-min-length="0"/>
 
 	<div class="col-xs-12">
 		<div class="row row-broken vdivide">
@@ -84,12 +29,12 @@
 				<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 			</div>
 
-			<div class="col-sm-3 col-xs-3 no-pading-left">
+			<div class="col-sm-3 col-xs-3 no-pading-left scroll">
 				<div class="col-inside-lg decor-default chat chat-white"
 					style="overflow: hidden; outline: none;" tabindex="5000">
 					<div class="chat-users">
 
-						<form action="" class="search-form"
+						<div action="" class="search-form"
 							ng-show="checkUserAdditionPermission()">
 							<div class="form-group has-feedback"
 								ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }"
@@ -100,18 +45,10 @@
 									autocomplete="off" type="text" class="form-control"
 									name="search" id="search"
 									ng-model="$parent.searchInputValue.email"
-									ng-change="showSearchList()" placeholder="search" /> <span
-									class="glyphicon glyphicon-plus form-control-feedback"></span>
-								<div class="search-list"
-									ng-show="(showedSearchForm || searchFocus) &amp;&amp; $parent.show_search_list">
-									<ul aria-labelledby="dropdownMenu1">
-										<li role="presentation" ng-repeat='item in $parent.emails'
-											ng-click="appendToSearchInput(item); addUserToRoom();"><a>
-												{{item}} </a></li>
-									</ul>
-								</div>
+									ng-change="showSearchList()" placeholder="search" typeahead-wait-ms = "1000" uib-typeahead="item for item in $parent.emails" 	typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/> 
+									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 							</div>
-						</form>
+						</div>
 						<h6
 							th:text="${lgPack.lable_participants} + ' [{{participants.length}}]'">Participants
 							[{{participants.length}}]</h6>
@@ -138,7 +75,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-9 col-xs-9 chat chat-white no-pading"
+			<div class="col-sm-9 col-xs-9 chat chat-white no-pading scroll"
 				imagedrop="true" on-image-drop="fileDropped()" id="messagesScroll"
 				name="messagesScroll" style="overflow: hidden; outline: none;"
 				tabindex="5001">
@@ -176,9 +113,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-12 chat no-pading">
-				<div class="answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom"
-					ng-mouseleave="show_search_list_in_message_input = false">
+			<div class="col-xs-12 chat no-pading" style="overflow: visible">
+				<div class="answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom">
+					<div class="dropup">
 					<textarea tabindex="-1" id="newMessageInput" type="text" class="form-control "
 						th:placeholder="${lgPack.lable_message_placeholder}"
 						placeholder="Write your message and hit enter..."
@@ -186,7 +123,10 @@
 						ng-keydown="beforeMessageInputKeyPress($event)"
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
 						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
-						ng-click="onMessageInputClick()" />
+						ng-click="onMessageInputClick()" 
+						typeahead-wait-ms = "1000"  uib-typeahead="item for item in data_in_message_input" 	typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
+						{{show_search_list_in_message_input}}
+						</div>
 					<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 
 					<div class="answer-btn answer-btn-1">
@@ -207,22 +147,7 @@
 						<input data-preview-file-type="text" class="col-xs-4 file-loading"
 							type="file" multiple="multiple" id="myfile" name="myfile"
 							data-filename-placement="inside" />
-						<div ng-hide="uploadProgress==0" class="progress col-xs-2">
-							<div class="progress-bar progress-bar-striped active"
-								role="progressbar" aria-valuenow="{{uploadProgress}}"
-								aria-valuemin="0" aria-valuemax="100"
-								style="width: {{uploadProgress">{{uploadProgress}}%</div>
-						</div>
 					</form>
-					<div id="search_list_in_message_input" class="search-list"
-						ng-show="show_search_list_in_message_input">
-						<ul aria-labelledby="dropdownMenu1">
-							<li role="presentation"
-								ng-repeat='item in data_in_message_input track by $index'
-								ng-click="appendDifferenceToSearchInput_in_message_input(item)"><a>
-									{{item}} </a></li>
-						</ul>
-					</div>
 				</div>
 			</div>
 		</div>

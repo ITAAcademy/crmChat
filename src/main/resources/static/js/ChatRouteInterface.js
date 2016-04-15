@@ -86,6 +86,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 				$scope.startTyping(event);
 			}
 			else
+				if(!$scope.show_search_list_in_message_input)
 				$scope.sendMessage();
 		}
 		else
@@ -104,7 +105,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var kk = keyCode;
 		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
 		var enterPressed = keyCode==13;
-		if (enterPressed){
+		if (enterPressed && !$scope.show_search_list_in_message_input){
 			$scope.onMessageInputClick();
 			return;
 		}
@@ -236,8 +237,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 
 
 	$scope.onMessageInputClick = function(){
-		resetSpecialInput();
-		$scope.show_search_list_in_message_input = false;
+		if(!$scope.open_search_list_in_message_input)
+			resetSpecialInput();
+
+		$timeout(function () {
+		$scope.show_search_list_in_message_input = false;	
+		}, 500);
+		
 
 	}
 	$scope.appendToSearchInput_in_message_input = function(value) {
@@ -245,7 +251,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var msgInputElm = document.getElementById("newMessageInput");
 		var carretPosIndex = getCaretPosition(msgInputElm);
 		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex-1,value);
-		$scope.show_search_list_in_message_input = false;
+				$timeout(function () {
+		$scope.show_search_list_in_message_input = false;	
+			}, 500);
 		resetSpecialInput();
 	}
 
@@ -271,7 +279,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var charactersAlreadyKnownCount = carretPosIndex - userNameStartIndex;
 		var differenceValue = value.substring(charactersAlreadyKnownCount);
 		$scope.newMessage=$scope.newMessage.insertAt(carretPosIndex,differenceValue).insertAt(userNameStartIndex,prefix)+suffix;
-		$scope.show_search_list_in_message_input = false;
+				$timeout(function () {
+		$scope.show_search_list_in_message_input = false;	
+			}, 500);
 		resetSpecialInput();
 	}
 
@@ -754,7 +764,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
 			{	
-
+					$scope.message_busy = true;
 					$scope.oldMessage = message["messages"][message["messages"].length -1 ];
 
 				for (var i=0; i< message["messages"].length;i++){
@@ -763,8 +773,13 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 				}
 			}
 			
-		$scope.message_busy = false;
-
+		
+	
+		$scope.$$postDigest(function () {
+				var objDiv = document.getElementById("messagesScroll");
+				objDiv.scrollTop = 9999999999;	
+				$scope.message_busy = false;
+			});
 	
 
 	}
@@ -843,6 +858,34 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		return resultOfChecking;
 	}
 
+	// file upload button click reaction
+	angular.element( document.querySelector( '#upload_file_form' ) ).context.onsubmit = function() {
+		var input = this.elements.myfile;
+		var files =[];
+		for( var i = 0 ; i < input.files.length;i++) files.push(input.files[i]);
+		if (files) {
+			uploadXhr(files,"upload_file/"+$scope.currentRoom.roomId,
+					function successCallback(data){    
+				$scope.uploadProgress = 0;
+				$scope.sendMessage("я отправил вам файл", JSON.parse(data));
+				$('#myfile').fileinput('clear');
+				$scope.$apply();
+			},
+			function(xhr) {
+				$scope.uploadProgress = 0;
+				$scope.$apply();
+				alert("SEND FAILD:"+xhr);
+			},
+			function(event, loaded) {
+				console.log(event.loaded + ' / ' + event.totalSize);
+				$scope.uploadProgress = Math.floor((event.loaded/event.totalSize)*100);
+				$scope.$apply();
+
+			}) ;
+		}
+		return false;
+	}
+
 
 	/*
 	 * close event
@@ -874,15 +917,11 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	}
 	$scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
 	$scope.$$postDigest(function () {
-		var nice = $(".chat").niceScroll();
+		var nice = $(".scroll").niceScroll();
 		var fileInput = $("#myfile").fileinput({language: "uk", showCaption: false, initialPreviewShowDelete:true, browseLabel: "", browseClass: " btn btn-primary load-btn",  uploadExtraData: {kvId: '10'}});
 		
         
 	})
-
-$scope.selected = undefined;
-	
-	$scope.states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
 }]);
 

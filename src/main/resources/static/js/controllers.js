@@ -229,6 +229,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 			request.success(function (data) {
 				$scope.emails = data;
+				//$scope.$apply();
 			});
 		}, 500);//for click event
 	};

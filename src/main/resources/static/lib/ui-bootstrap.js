@@ -6582,7 +6582,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.debounce', 'ui.bootstrap
       selected = true;
       locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
       model = parserResult.modelMapper(originalScope, locals);
-      $setModelValue(originalScope, model);
+     // $setModelValue(originalScope, model);
       modelCtrl.$setValidity('editable', true);
       modelCtrl.$setValidity('parse', true);
 

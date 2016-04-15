@@ -293,7 +293,15 @@
 	padding: 0px;
 	background: #ffffff;
 }
-
+/* This is an EXAMPLE.  Selectors will be replaced by elements relevant to your theme */
+#header{
+  position:relative;
+  z-index:50;
+}
+#content{
+  position:relative;
+  z-index:30;
+}
 .chat .answer-add textarea {
 	border: none;
 	border-color: white;
@@ -307,7 +315,10 @@
 	min-height: 80px;
 	max-width: 92%;
 }
-
+#header{
+/* i unchecked this css property */
+overflow: hidden;
+}
 .chat input {
 	-webkit-appearance: none;
 	border-radius: 0;
