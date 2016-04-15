@@ -57,21 +57,21 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 				$scope.consultant = data["consultant"];
 
 				if ($rootScope.socketSupport){
-					$scope.goToDialog(roomId).promise.success(function() {
+					$scope.goToDialog(roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = roomId;
 						$scope.pageClass = 'page-about';
-					}).error(function() {
+					}),function() {
 						chatControllerScope.changeLocation("/chatrooms");
-					});
+					};
 				}
 				else
 				{
-					$scope.goToDialog(roomId).promise.success(function() {
+					$scope.goToDialog(roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = roomId;
 						$scope.pageClass = 'page-about';
-					}).error(function(){
+					}),function(){
 						chatControllerScope.changeLocation("/chatrooms");
-					});
+					};
 				}
 			}).error(function errorHandler(data, status, headers, config) {
 

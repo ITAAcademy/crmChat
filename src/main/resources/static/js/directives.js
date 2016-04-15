@@ -96,7 +96,11 @@ angular.module('springChat.directives').directive('dir', function($compile, $par
             //element.html =$parse(attr.content)(scope);
             $compile(element.contents())(scope);
           }, true);
-        }
+        },
+         compile: function(element, attrs){
+       
+      
+    },
       }
     })
 angular.module('springChat.directives').directive('starRating', starRating);
@@ -116,6 +120,11 @@ function starRating() {
         readonly: '=?'
       },
       link: function(scope, element, attributes) {
+      	    	if(attributes.onratingselect == "angular.noop")
+      	 	attributes.onratingselect = function(){};
+
+      	//(onRatingSelect || angular.noop)
+
         if (scope.max == undefined) {
           scope.max = 5;
         }
@@ -130,7 +139,7 @@ function starRating() {
         scope.toggle = function(index) {
           if (scope.readonly == undefined || scope.readonly === false){
             scope.ratingValue = index + 1;
-            scope.onRatingSelect({
+            attributes.onratingselect({
               rating: index + 1
             });
             updateStars();
