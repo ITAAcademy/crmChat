@@ -75,7 +75,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 		request.success(function (data) {
 			if (data!=null){
-				window.top.location.href =generateUrlToUserPage(data);
+				window.open(generateUrlToUserPage(data),'_blank');
+				//window.top.location.href =generateUrlToUserPage(data);
 				return true;
 			}
 		});
@@ -129,7 +130,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 		});
 		request.success(function (data) {
 			if (data!=null){
-				window.top.location.href =generateUrlToCourse(data,lang);
+				window.open(generateUrlToCourse(data,lang),'_blank');
+				//window.top.location.href =generateUrlToCourse(data,lang);
 				return true;
 			}
 		});

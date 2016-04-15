@@ -55,12 +55,12 @@
 						<div ng-repeat="participant in participants | orderBy:'-username'"
 							class="user">
 							<div class="avatar">
-								<a target="_parent" ng-if="participant.intitaUserId"
+								<a target="_blank" ng-if="participant.intitaUserId"
 									th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
 									<img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 									alt="{{participant.username}}" />
-								</a> <a target="_parent" ng-if="!participant.intitaUserId"> <img
+								</a> <a target="_blank" ng-if="!participant.intitaUserId"> <img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 									alt="{{participant.username}}" />
 								</a>
@@ -125,7 +125,6 @@
 						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
 						ng-click="onMessageInputClick()" 
 						typeahead-wait-ms = "1000"  uib-typeahead="item for item in data_in_message_input" 	typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
-						{{show_search_list_in_message_input}}
 						</div>
 					<span class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 

@@ -679,13 +679,16 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.oldMessage = msg;
 		if($scope.messages.length > 0)
 		{
-			if($scope.messages[0].username == msg.username)
+			if($scope.messages[0].username == msg.username )
 			{
+				if(msg.attachedFiles.length == 0)
+				{
 						summarised = true;
 						$scope.messages[0].message =   msg.message + "\n\n" 
 							+ $scope.messages[0].message;
+												//	$scope.messages[0].date = msg.date;
+				}
 
-					//	$scope.messages[0].date = msg.date;
 			}
 			else
 			{
@@ -721,9 +724,9 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 	
 		if($scope.messages.length > 0)
 		{
-			if($scope.messages[$scope.messages.length - 1].username == msg.username)
+			if($scope.messages[$scope.messages.length - 1].username == msg.username  && msg.attachedFiles.length == 0)
 			{
-				//$scope.messages[$scope.messages.length - 1].date = msg.date;
+				$scope.messages[$scope.messages.length - 1].date = msg.date;
 				$scope.messages[$scope.messages.length - 1].message += "\n\n" + msg.message;
 			}
 			else
@@ -764,7 +767,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		$scope.participants = message["participants"];
 		if (typeof message["messages"] !='undefined')
 			{	
-					$scope.message_busy = true;
+				//	$scope.message_busy = true;
 					$scope.oldMessage = message["messages"][message["messages"].length -1 ];
 
 				for (var i=0; i< message["messages"].length;i++){
@@ -775,11 +778,12 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			
 		
 	
-		$scope.$$postDigest(function () {
+		$timeout(function () {
 				var objDiv = document.getElementById("messagesScroll");
-				objDiv.scrollTop = 9999999999;	
+				var count = 5;
+					objDiv.scrollTop = objDiv.scrollHeight;	
 				$scope.message_busy = false;
-			});
+			},100);
 	
 
 	}
