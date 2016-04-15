@@ -222,6 +222,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 
 		getEmailsTimer = $timeout(function () {
 			$scope.show_search_list = true;
+			debugger;
 			var request = $http({
 				method: "get",
 				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId,//'/get_users_emails_like',

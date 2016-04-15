@@ -510,10 +510,12 @@ public class ChatController {
 		users.addAll(users_set);
 		users.add(roomService.getRoom(room).getAuthor());
 
-		List<String> room_emails = new  ArrayList<String>();
+		List<Long> room_emails = new  ArrayList<>();
 		for(int i = 0; i <  users.size(); i++)
 		{
-			room_emails.add(users.get(i).getNickName());
+			User i_user = users.get(i).getIntitaUser();
+			if(i_user != null)
+				room_emails.add(i_user.getId());
 		}
 
 		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);

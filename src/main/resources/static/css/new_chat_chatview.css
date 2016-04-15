@@ -3,13 +3,13 @@
 }
 
 .col-inside-lg {
-	padding: 20px;
+	padding: 8px;
 }
 
 .chat-white {
 	height: calc(80vh - 180px);
 	background: #fff;
-	margin-top: 10px;
+	margin-top: 5px;
 }
 .head-title{
     font-size: 24px;
@@ -22,16 +22,22 @@
 }
 
 .no-margin-left {
-	margin-left: 0 !important;
+	margin-left: 0px !important;
+}
+.no-margin-right-5 {
+	margin-right: 5px !important;
 }
 
 .no-pading {
-	padding: 0 !important;
-	margin-left: 0 !important;
-	margin-right: 0 !important;
+	padding: 0px !important;
+	margin-left: 0px !important;
+	margin-right: 0px !important;
 }
 .no-pading-left{
-	padding-left: 0 !important;
+	padding-left: 0px !important;
+}
+.no-pading-right-5{
+	padding-right: 5px !important;
 }
 
 .decor-default {
@@ -309,7 +315,7 @@
 	padding: 10;
 	color: #ffffff;
 	min-height: 80px;
-	max-width: calc(100% - 120px);
+	max-width: calc(100% - 90px);
 	resize: none;
 }
 #header{
