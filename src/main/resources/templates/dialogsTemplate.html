@@ -72,29 +72,32 @@
 		
               <div class="row room_item" ng-click="changeLocation('/dialog_view/'+room.roomId)">
      
-                  <div class="col-md-2 col-xs-3">
+     			<div class="col-md-3 col-xs-5">
+                  <div>
                     <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
                     
                   </div>
-                  <div class="col-md-3 col-xs-3">
-                  <ul class="leftside_list_without_style">
+                  <div class="room_info">
+                  <ul class="unstyled_list">
                   <a class="long_text" ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                     <li> учасників:{{room.participantsCount}}</li>
                   <li ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></li>
                   </ul>
                   </div>
-               
-                <div class="col-md-6 col-xs-4">
+              </div> 
+                <div class="col-md-9 col-xs-7">
                 <!-- last message text and count of new messages -->
-					<div class="message_author_header">{{room.lastMessageAuthor}}:</div>
-					<dir style="margin: 0px" content=" room.lastMessage | limitTo:200"></dir>
-					<span  ng-hide="room.lastMessage.length>0">No message</span>
-
+                	<div class="message_container">
+					<div class="message_author_header">{{room.lastMessageAuthor}}
+					</div>
+					<div class="message_body_breakable message_body_nopadding">
+					<dir content=" room.lastMessage | limitTo:200"></dir>
+					<div class="message_text_dialogs" ng-hide="room.lastMessage.length>0">No message</div>
+					</div>
+					</div>
+					<span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
                 <!-- {{room.lastMessage}} -->
                  
-                </div>
-                <div class="col-md-1 col-xs-2">
-                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
                 </div>
               </div>
 				</li>
