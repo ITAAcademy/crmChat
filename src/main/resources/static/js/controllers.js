@@ -66,6 +66,7 @@ springChatControllers.controller('StrictedDialogRouteController',['$routeParams'
 var chatController = springChatControllers.controller('ChatController', ['$q','$rootScope','$scope', '$http', '$route', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $route,$location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('ChatController', $scope);
 	$rootScope.isInited = false;
+	$rootScope.baseurl = globalConfig["baseUrl"];
 		$rootScope.goToUserPage = function(username){
 		var request = $http({
 			method: "get",

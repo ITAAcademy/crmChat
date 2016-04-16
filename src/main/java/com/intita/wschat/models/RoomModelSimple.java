@@ -1,13 +1,20 @@
 package com.intita.wschat.models;
 
 import java.util.Date;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.intita.wschat.services.UserMessageService;
+import com.intita.wschat.web.ChatController;
 @Component
 public class RoomModelSimple {
+	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
+	final int MULTI_IMAGE_MAX_IMAGE_COUNT = 4;
+	final String NO_AVATAR_IMAGE_NAME = "noname.png";
 	@Autowired UserMessageService userMessageService;
 	public Long getRoomAuthorId() {
 		return roomAuthorId;
@@ -34,8 +41,10 @@ public class RoomModelSimple {
 	public short type;
 	public String lastMessage;
 	public String lastMessageAuthor;
+	public String lastMessageAuthorAvatar;
 	public Date lastMessageDate;
 	public int participantsCount;
+	public String avatars[];
 
 	public short getType() {
 		return type;
@@ -65,6 +74,7 @@ public class RoomModelSimple {
 		string = "";
 		nums = 0;
 		date = new Date().toString();
+		avatars = new String[4];
 	}
 
 	public RoomModelSimple(Integer nums, String date,Room room,UserMessage lastMessage) {
@@ -79,8 +89,37 @@ public class RoomModelSimple {
 		this.lastMessage =  lastMessage.getBody();
 		this.lastMessageAuthor = lastMessage.getAuthor().getNickName();
 		this.lastMessageDate = lastMessage.getDate();
+		User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
+		if (lastMessageIntitaUser!=null)
+		this.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
 		}
 		this.participantsCount = room.getParticipantsCount();
+		this.avatars = generateMultiImageLinks(room);
+	
+	}
+	public String[]	generateMultiImageLinks(Room room){
+		Set<ChatUser> roomUsers = room.getUsers();
+		int usersCount = roomUsers.size()+1;
+		if (usersCount<=0){
+			log.info("error, usersCount is "+usersCount);
+			return null;
+		}
+		int imagesCountInMultiImage = (usersCount <= MULTI_IMAGE_MAX_IMAGE_COUNT) ? usersCount : MULTI_IMAGE_MAX_IMAGE_COUNT;
+		String multiImageLinksArray[] = new String[imagesCountInMultiImage];
+		multiImageLinksArray[0]=room.getAuthor().getIntitaUser().getAvatar();
+		for (int i = 1; i < imagesCountInMultiImage;i++){
+			ChatUser chatUser = room.getUsers().iterator().next();
+			User intitaUser = chatUser.getIntitaUser();
+			if (intitaUser != null)multiImageLinksArray[i]=intitaUser.getAvatar();
+			else {
+				multiImageLinksArray[i]=NO_AVATAR_IMAGE_NAME;
+			}
+		}
+		log.info("AVATARS of room "+room.getName());
+		for (int i = 0; i < multiImageLinksArray.length;i++){
+			log.info(i+":"+multiImageLinksArray[i]);
+		}
+		return multiImageLinksArray;
 	}
 
 	public String getLastMessage() {
@@ -113,5 +152,13 @@ public class RoomModelSimple {
 
 	public void setLastMessageDate(Date lastMessageDate) {
 		this.lastMessageDate = lastMessageDate;
+	}
+
+	public String[] getAvatars() {
+		return avatars;
+	}
+
+	public void setAvatars(String[] avatars) {
+		this.avatars = avatars;
 	}
 }

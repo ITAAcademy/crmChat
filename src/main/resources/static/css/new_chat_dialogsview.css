@@ -13,18 +13,17 @@
     color: #fff;
     padding: 0 20px;
 }
-.test.input {
+.modal_input {
     -webkit-appearance: none;
     border-radius: 0;
-}
-.test.input {
     padding: 0;
     border: none;
     outline: none;
+    width:100%;
 }
 
 /************ Contact list*********************/
-    .avatar {
+    .avatar_group {
     display: inline-block;
     position:absolute;
     width: 80px;
@@ -175,4 +174,12 @@ word-break: break-all;
 }
 .title{
   color: white;
+}
+.avatars_list{
+list-style-type: none;
+display:inline-block;
+}
+.avatar {
+    width:10px;
+    height:10px;
 }
