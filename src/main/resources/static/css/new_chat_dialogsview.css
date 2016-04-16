@@ -122,6 +122,8 @@ height:70px;
 position:absolute;
 margin-left:280px; /*280*/
 top:calc(50% - 35px);
+border-radius: 255px;
+box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
 
 @media (min-width: @screen-xs-min){
