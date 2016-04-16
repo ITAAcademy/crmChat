@@ -86,18 +86,18 @@ public class RoomModelSimple {
 		this.active = room.isActive();
 		this.type = room.getType();
 		if (lastMessage!=null){
-		this.lastMessage =  lastMessage.getBody();
-		this.lastMessageAuthor = lastMessage.getAuthor().getNickName();
-		this.lastMessageDate = lastMessage.getDate();
-		User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
-		if (lastMessageIntitaUser!=null)
-		this.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
-		else
-			this.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
+			this.lastMessage =  lastMessage.getBody();
+			this.lastMessageAuthor = lastMessage.getAuthor().getNickName();
+			this.lastMessageDate = lastMessage.getDate();
+			User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
+			if (lastMessageIntitaUser!=null)
+				this.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
+			else
+				this.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
 		}
 		this.participantsCount = room.getParticipantsCount();
 		this.avatars = generateMultiImageLinks(room);
-	
+
 	}
 	public String[]	generateMultiImageLinks(Room room){
 		Set<ChatUser> roomUsers = room.getUsers();
