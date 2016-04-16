@@ -46,8 +46,12 @@
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
               <div class="input-group chat-head">
               <div class="row">
-              <div class="multiple-select-wrapper">
-  <div class="selected-items-box glyphicon glyphicon-align-left"></div>
+         
+               <div class="col-xs-12 col-sm-10">
+                     <img style="position: absolute; margin-top: 20px; margin-left: 5px;" src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/>
+                <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
+                             <div class="multiple-select-wrapper" style="position: absolute; z-index: 10; top: 0;
+    margin-top: 20px; right: 10px;"><span class="glyphicon glyphicon-align-left"></span>
         <div class="list">
                  <ul class="items-list">
                         <li ng-repeat="airline in Airlines">
@@ -58,20 +62,9 @@
     </ul>
   </div>
 </div>
-               <div class="col-md-1">
-               <span ><img src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/></span></div>
-               <div class="col-md-7">
-                <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
                 </div>
-                 <div class="btn-group col-md-2" role="group" style="height: 30%;padding: 0px 0px 0px 0px;">
-                    <button type="button" class="btn btn-default"></button>
-					<div class="btn-group" role="group" style="">
-                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=""></button>
-                    </div>
-                    <button type="button" class="btn btn-default"></button>
-                  </div>
-                  <div class="col-md-2">
-                	<button type="button" style="height: 100%" class="btn btn-default" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                  <div class="col-xs-12 col-sm-2">
+                	<button type="button" class="btn btn-default add-room-btn" ng-click="toggleNewRoomModal()">ADD ROOM</button>
                 	</div>
                    
 
@@ -82,7 +75,7 @@
 
 			<li class="list-group-item">
 		
-              <div class="row room_item" ng-click="changeLocation('/dialog_view/'+room.roomId)">
+              <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
      
      			<div class="col-md-3 col-xs-5">
                   <div>

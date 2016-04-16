@@ -116,6 +116,10 @@ function starRating() {
         readonly: '=?'
       },
       link: function(scope, element, attributes) {
+
+      	if(attributes.onratingselect == "angular.noop")
+      		attributes.onratingselect = function(){};
+      	
         if (scope.max == undefined) {
           scope.max = 5;
         }
@@ -131,7 +135,7 @@ function starRating() {
           if (scope.readonly == undefined || scope.readonly === false){
             scope.ratingValue = index + 1;
             debugger;
-            scope.onRatingSelect({
+            attributes.onratingselect({
               rating: index + 1
             });
             updateStars();

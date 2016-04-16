@@ -4,14 +4,35 @@
     background-color: #ffffff;
 }
 
+.add-room-btn{
+    border: none;
+    border-radius: 0px;
+    border-left: 2px solid;
+    border-color: #aaa;
+    height: 60px;
+    width: 100%;
+    background: none;
+    color: white;
+}
+
+
+.add-room-btn:hover{
+    color: #fff;
+    background-color: rgba(255,255,255,0.3);
+}
+
 
 .contacts-list-search {
     width:100%;
     line-height: 60px;
-    background: #585b9c;
+    background: #4b70a3;
     font-size: 24px;
     color: #fff;
-    padding: 0 20px;
+    padding: 0 40px;
+    border:none;
+}
+.contacts-list-search:focus{
+    outline: none;
 }
 .test.input {
     -webkit-appearance: none;
@@ -84,8 +105,13 @@ word-break: break-all;
 
 
 .multiple-select-wrapper {
-    width: 190px;
-    position: relative;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    margin-top: 15px !important;
+    right: 30px;
+    font-size: 30px;
+    color: white;
 }
 .multiple-select-wrapper .selected-items-box {
     box-shadow: inset 1px -1px 5px 0 #CCCCCC;
@@ -121,7 +147,7 @@ word-break: break-all;
 }
 .multiple-select-wrapper .list {
     display: none;
-    height: 90px;
+    height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
     border-left: solid 1px #C7C6C7;
@@ -129,7 +155,7 @@ word-break: break-all;
     border-bottom: solid 1px #C7C6C7;
     z-index: 9999;
     position: absolute;
-    width: 99%;
+    width: 200px;
     border-radius: 5px;
     -mox-border-radius: 5px;
     -webkit-border-radius: 5px;

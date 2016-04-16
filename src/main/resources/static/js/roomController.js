@@ -12,7 +12,12 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	$scope.toggleNewRoomModal = function(){
 		$('#new_room_modal').modal('toggle');
 	}
-	
+	$scope.dcGoToRoom = function(roomId)
+	{
+		debugger;
+		if($scope.mouseBusy == false)
+		chatControllerScope.changeLocation('/dialog_view/'+ roomId);
+	}
 	$scope.addDialog = function() {
 		if ($rootScope.socketSupport){
 			chatControllerScope.roomAdded = false;
@@ -65,8 +70,10 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 
 		chatControllerScope.currentRoom = {roomId: ''} ;
 	}
+	$scope.mouseBusy = false;
 
-	$('.selected-items-box').bind('click', function(e){
+	$('.multiple-select-wrapper').bind('click', function(e){
+		$scope.mouseBusy = true;
   e.stopPropagation();
   $('.multiple-select-wrapper .list').toggle('slideDown');
 });
@@ -76,6 +83,7 @@ $('.multiple-select-wrapper .list').bind('click', function(e){
 });
 
 $(document).bind('click', function(){
+	$scope.mouseBusy = false;
 	$('.multiple-select-wrapper .list').slideUp();	
 });
   
