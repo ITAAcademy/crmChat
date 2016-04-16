@@ -70,7 +70,8 @@
 
                 	</div>
               </div>
-              <ul ng-repeat="room in rooms | orderBy: '-date' | filter:{string:(roomsearchquery||'')} "
+              <ul ng-repeat="room in rooms | orderBy: '-date'| filter:filterDialogsByType
+               | filter:{string:(roomsearchquery||'')} "
 			ng-show="socketSupport" class="list-group">
 
 			<li class="list-group-item">
