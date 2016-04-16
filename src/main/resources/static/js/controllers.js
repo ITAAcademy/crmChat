@@ -125,7 +125,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q','$
 	$rootScope.goToCourseByTitle = function(title,lang){
 		var request = $http({
 			method: "get",
-			url: serverPrefix + "/get_course_alias_by_title?title=" + title+"&lang="+lang,
+			url: serverPrefix + "/get_course_alias_by_title?title=" + encodeURIComponent(title)+"&lang="+encodeURIComponent(lang),
 			data: null ,
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 		});
