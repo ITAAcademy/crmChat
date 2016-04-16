@@ -147,7 +147,7 @@ word-break: break-all;
 }
 .multiple-select-wrapper .list {
     display: none;
-    height: 300px;
+    height: auto;
     overflow-y: auto;
     overflow-x: hidden;
     border-left: solid 1px #C7C6C7;
