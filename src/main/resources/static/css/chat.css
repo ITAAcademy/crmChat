@@ -410,3 +410,7 @@ body{
 .slidedown.ng-leave-active {
     top: 100%;
 }
+
+.noveredmark:HOVER {
+	background-color: #819BBF !important;
+}

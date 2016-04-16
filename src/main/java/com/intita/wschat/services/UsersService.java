@@ -127,7 +127,7 @@ public class UsersService {
 	}
 	@Transactional
 	public User getById(Long id){
-		return usersRepo.findOne(id);
+		return usersRepo.findFisrtById(id);
 	}
 	@Transactional
 	public boolean isAdmin(String id){
