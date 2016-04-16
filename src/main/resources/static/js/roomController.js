@@ -1,3 +1,4 @@
+
 springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes',function($q,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes) {
 	Scopes.store('DialogsRouteController', $scope);
 	var chatControllerScope = Scopes.get('ChatController');
@@ -80,16 +81,24 @@ $(document).bind('click', function(){
 });
   
 $scope.Airlines = [
-  {selected: false, name:'SWISS', img:'http://s9.postimage.org/d9t33we17/Swiss.png'},
-	{selected: false, name:'UNITED', img:'http://s9.postimage.org/ykqn85w5n/United.png'},
-	{selected: false, name:'KLM', img:'http://s9.postimage.org/p7unhshsb/Klm.png'},
-	{selected: false, name:'EL AL', img:'http://s18.postimage.org/oi8ndntud/image.gif'},
-	{selected: false, name:'Ethiopian', img:'http://s9.postimage.org/hqlg2ks97/image.gif'}
+  {selected: true, name:'Анонімні', img:'http://s9.postimage.org/d9t33we17/Swiss.png'},
+	{selected: true, name:'Приватні', img:'http://s9.postimage.org/ykqn85w5n/United.png'},
+	{selected: true, name:'Консультації', img:'http://s9.postimage.org/p7unhshsb/Klm.png'}
 ];
 
 $scope.getSelectedItemsOnly = function(item){
 	return item.selected;
 };
+
+$scope.filterDialogsByType = function(value) {
+if ($scope.Airlines[value.type].selected)
+	return true;
+else
+	return false;
+};
+
+
+
 	
 	/*
 	 * 
