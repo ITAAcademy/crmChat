@@ -72,12 +72,12 @@
               </div>
               <ul ng-repeat="room in rooms | orderBy: '-date'| filter:filterDialogsByType
                | filter:{string:(roomsearchquery||'')} "
-			ng-show="socketSupport" class="list-group">
+			ng-show="socketSupport" class="list-group list-group-dialogs">
 
-			<li class="list-group-item">
+			<li class="list-group-item list-group-item-dialogs">
 		
               <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
-     
+     			<img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>
      			<div class="col-md-3 col-xs-5">
                   <div class=" avatar_group avatar-container">
 
@@ -92,7 +92,7 @@
                   </div>
               </div> 
                 <div class="col-md-9 col-xs-7">
-                <!-- last message text and count of new messages -->
+                <!-- last message text and count of new messages -->              	
                 	<div class="message_container">
 					<div class="message_author_header">{{room.lastMessageAuthor}}
 					</div>
