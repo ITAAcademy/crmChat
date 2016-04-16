@@ -13,11 +13,11 @@
     color: #fff;
     padding: 0 20px;
 }
-.bad input {
+input {
     -webkit-appearance: none;
     border-radius: 0;
 }
-.bad input {
+input {
     padding: 0;
     border: none;
     outline: none;
@@ -26,17 +26,22 @@
 /************ Contact list*********************/
     .avatar {
     display: inline-block;
+    position:absolute;
     width: 80px;
     height: 80px;
-    border-radius: 20px;
-    margin: 0 16px 0 0;
+    /*border-radius: 20px;
+    margin: 0 16px 0 0;*/
+    margin:10px;
     vertical-align: middle;
 }
 /*My Bidlo*/
 
-.leftside_list_without_style {
-    list-style-type: none;
-    padding: 0px 0px 0px 0px;       
+.room_info {
+    padding: 10px 10px 10px 100px;
+}
+.unstyled_list{
+    padding: 0px ;
+     list-style-type: none; 
 }
 .message_author_header{
     text-align: center;
@@ -48,112 +53,28 @@
    display: inline-block;
 vertical-align: middle;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.multiple-select-wrapper {
-    width: 190px;
-    position: relative;
-}
-.multiple-select-wrapper .selected-items-box {
-    box-shadow: inset 1px -1px 5px 0 #CCCCCC;
-    -webkit-box-shadow: inset 1px -1px 5px 0 #CCCCCC;
-    -moz-box-shadow: inset 1px -1px 5px 0 #CCCCCC;
-    -o-box-shadow: inset 1px -1px 5px 0 #CCCCCC;
-    cursor: pointer;
-    border: solid 1px #C7C6C7;
-    padding: 5px;
-    height: 22px;
-    background-color: #fff;
-    border-radius: 5px;
-    -mox-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -o-border-radius: 5px;
-}
-.selected-items-box .items-list {
-    list-style-type: none;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-.selected-items-box .items-list li {
-    display: inline;
-}
-.selected-items-box .items-list li img {
-    display: inline;
-    padding-left: 10px;
-    height: 18px;
-}
-.selected-items-box .items-list li img {
-    font-size: 20px;
-}
-.multiple-select-wrapper .list {
-    display: none;
-    height: 90px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-left: solid 1px #C7C6C7;
-    border-right: solid 1px #C7C6C7;
-    border-bottom: solid 1px #C7C6C7;
-    z-index: 9999;
-    position: absolute;
-    width: 99%;
-    border-radius: 5px;
-    -mox-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -o-border-radius: 5px;
-}
-.list .items-list {
-    list-style-type: none;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-.list .items-list li {
-    margin: 0;
-    width: 100%;
-    padding: 0;
-    border-bottom: solid 1px #C7C6C7;
-    padding: 5px;
-    background-color: #fff;
-}
-.list .items-list li input {
-    padding-left: 10px;
-}
-.list .items-list li img {
-    padding-left: 10px;
-    padding-right: 6px;
-    height: 18px;
-}
-
-.list .items-list li span {
-    color: #4A4A4A;
-    font-size: 14px;
-}
-.dropdown-icon {
-    position: absolute;
+.new_messages_counter {
+    position:absolute;
+    right: 0px;
     top: 50%;
-    right: 0;
-    margin-top: -8px;
-    width: 16px;
-    height: 16px;
-    background-image: url("http://s18.postimage.org/ht23xn8id/menu_arrow_down.png");
-    background-repeat: no-repeat;
-    background-position: 0 center;
 }
-.title{
-  color: white;
+.room_item {
+width:100%;
+}
+.room_item:hover{
+    cursor: pointer;
+}
+.message_body_breakable{
+word-break: break-all;
+}
+.message_container{
+    margin-right:40px;
+
+}
+.message_text_dialogs{
+    margin-left:40px;
+}
+.message_body_nopadding{
+    padding:0px 0px;
+    margin: 0px 0px;
 }
