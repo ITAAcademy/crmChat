@@ -13,11 +13,11 @@
     color: #fff;
     padding: 0 20px;
 }
-input {
+.test.input {
     -webkit-appearance: none;
     border-radius: 0;
 }
-input {
+.test.input {
     padding: 0;
     border: none;
     outline: none;
