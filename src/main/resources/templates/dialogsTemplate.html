@@ -79,8 +79,10 @@
               <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
      
      			<div class="col-md-3 col-xs-5">
-                  <div>
-                    <img src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="image" class="avatar"/> 
+                  <div class="avatar_group">
+                  <ul ng-repeat="avatar in room.avatars" class="avatars_list">
+                    <li><img ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> </li>
+                    </ul>
                     
                   </div>
                   <div class="room_info">
@@ -124,11 +126,11 @@
         <h4 class="modal-title">Створення кімнати</h4>
       </div>
       <div class="modal-body">
-        <input id="roomNameInput" type="text" ng-model="dialogName" placeholder="Назва кімнати"></input>
+        <input class="modal_input" id="roomNameInput" type="text" ng-model="dialogName" placeholder="Назва кімнати"></input>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="toggleNewRoomModal()">Close</button>
-         <button type="button" class="btn btn-default" ng-click="addDialog()">Add</button>
+         <button type="button" class="btn btn-default" ng-click="addDialog();toggleNewRoomModal();">Add</button>
       </div>
     </div>
 

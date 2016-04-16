@@ -11,7 +11,6 @@ String.prototype.insertAt=function(index, string) {
 	return this.substr(0, index) + string + this.substr(index);
 }
 springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams','$rootScope','$scope', '$http', '$location', '$interval','$cookies','$timeout','toaster', 'ChatSocket', '$cookieStore','Scopes','$q', '$sce',function($route, $routeParams,$rootScope,$scope, $http, $location, $interval,$cookies,$timeout, toaster, chatSocket, $cookieStore,Scopes,$q, $sce) {
-
 	var INPUT_MODE = {
 			STANDART_MODE : 0,
 			DOG_MODE : 1,
