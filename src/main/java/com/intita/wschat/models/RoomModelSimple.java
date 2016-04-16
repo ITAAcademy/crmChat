@@ -92,6 +92,8 @@ public class RoomModelSimple {
 		User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
 		if (lastMessageIntitaUser!=null)
 		this.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
+		else
+			this.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
 		}
 		this.participantsCount = room.getParticipantsCount();
 		this.avatars = generateMultiImageLinks(room);
@@ -160,5 +162,13 @@ public class RoomModelSimple {
 
 	public void setAvatars(String[] avatars) {
 		this.avatars = avatars;
+	}
+
+	public String getLastMessageAuthorAvatar() {
+		return lastMessageAuthorAvatar;
+	}
+
+	public void setLastMessageAuthorAvatar(String lastMessageAuthorAvatar) {
+		this.lastMessageAuthorAvatar = lastMessageAuthorAvatar;
 	}
 }
