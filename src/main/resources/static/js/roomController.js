@@ -13,6 +13,27 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	$scope.toggleNewRoomModal = function(){
 		$('#new_room_modal').modal('toggle');
 	}
+
+	$scope.calcImage = function(count, index)
+	{
+		var k = 'right';
+		if(!index%2)
+			k = 'left';
+		var size = 80;
+		var border = 2;
+		var obj = {'position':'absolute','width':size, 'height':size};
+		size -= border;
+		if(count == 1)
+			return obj;
+		if(count == 2)
+		{
+			obj[k]= size/2
+			return obj;
+		}
+		return {'width':size/2, 'height':size/2};
+
+
+	}
 	$scope.dcGoToRoom = function(roomId)
 	{
 		debugger;

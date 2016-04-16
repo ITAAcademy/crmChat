@@ -79,11 +79,9 @@
               <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
      
      			<div class="col-md-3 col-xs-5">
-                  <div class="avatar_group">
-                  <ul ng-repeat="avatar in room.avatars" class="avatars_list">
-                    <li><img ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> </li>
-                    </ul>
-                    
+                  <div class=" avatar_group avatar-container">
+
+                    <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> 
                   </div>
                   <div class="room_info">
                   <ul class="unstyled_list">
