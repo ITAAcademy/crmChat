@@ -89,9 +89,9 @@ $(document).bind('click', function(){
 });
   
 $scope.Airlines = [
-  {selected: true, name:'Анонімні', img:'http://s9.postimage.org/d9t33we17/Swiss.png'},
-	{selected: true, name:'Приватні', img:'http://s9.postimage.org/ykqn85w5n/United.png'},
-	{selected: true, name:'Консультації', img:'http://s9.postimage.org/p7unhshsb/Klm.png'}
+  {selected: true, name:'Анонімні', img:'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png'},
+	{selected: true, name:'Приватні', img:'http://megaicons.net/static/img/icons_title/40/110/title/lock-icon.png'},
+	{selected: true, name:'Консультації', img:'https://cdn4.iconfinder.com/data/icons/staff-management-soft/512/family_users_forum_consultation_friends_people_group_social_connection-128.png'}
 ];
 
 $scope.getSelectedItemsOnly = function(item){
