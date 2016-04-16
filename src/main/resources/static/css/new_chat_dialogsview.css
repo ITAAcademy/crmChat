@@ -96,11 +96,13 @@ vertical-align: middle;
 .new_messages_counter {
     position:absolute;
     right: 0px;
+    margin-right:20px;
     top: 50%;
 }
 .room_item {
 width:100%;
 margin: 0px 0px;
+min-height: 100px;
 }
 .room_item:hover{
     cursor: pointer;
