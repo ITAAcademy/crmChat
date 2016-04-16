@@ -117,10 +117,6 @@ public class RoomModelSimple {
 				multiImageLinksArray[i]=NO_AVATAR_IMAGE_NAME;
 			}
 		}
-		log.info("AVATARS of room "+room.getName());
-		for (int i = 0; i < multiImageLinksArray.length;i++){
-			log.info(i+":"+multiImageLinksArray[i]);
-		}
 		return multiImageLinksArray;
 	}
 
