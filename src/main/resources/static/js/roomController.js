@@ -96,8 +96,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 
 	$('.multiple-select-wrapper').bind('click', function(e){
 		$scope.mouseBusy = true;
-  e.stopPropagation();
-  $('.multiple-select-wrapper .list').toggle('slideDown');
+   e.stopPropagation();
+  $('.multiple-select-wrapper .list').toggle('10');
 });
 
 $('.multiple-select-wrapper .list').bind('click', function(e){

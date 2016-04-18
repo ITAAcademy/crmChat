@@ -215,6 +215,8 @@ margin-left:230px; /*280*/
     -mox-border-radius: 5px;
     -webkit-border-radius: 5px;
     -o-border-radius: 5px;
+    
+    right: 0px;
 }
 .list .items-list {
     list-style-type: none;
@@ -277,3 +279,14 @@ margin-bottom: 5px;
 	background-color: #819BBF;
 	cursor: pointer;
 }
+
+
+.dlg-filter-li:HOVER   {
+	background-color: #819abe !important;
+	color: white !important;
+}
+
+.dlg-filter-li:HOVER span {
+	color: white !important ;
+}
+

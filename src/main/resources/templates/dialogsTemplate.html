@@ -54,10 +54,10 @@
                              <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
         <div class="list">
                  <ul class="items-list">
-                        <li ng-repeat="airline in Airlines">
-                                <input type="checkbox" ng-model="airline.selected" />
-                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
-        <span>{{airline.name}}</span>
+                        <li class="dlg-filter-li" ng-repeat="airline in Airlines"  ng-click="airline.selected = !airline.selected"  >
+                                <input  type="checkbox" ng-model="airline.selected" />                               
+                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}"  />
+        						<span>{{airline.name}}</span>
       </li>
     </ul>
   </div>
