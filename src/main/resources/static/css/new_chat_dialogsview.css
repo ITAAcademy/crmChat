@@ -182,11 +182,27 @@ display:none;
     position: absolute;
     z-index: 10;
     top: 0;
-    margin-top: 15px !important;
-    right: 30px;
+    right: -15px;
     font-size: 30px;
     color: white;
+    width: 50px;
+    height: 100%;
 }
+
+
+.dialog-filter-icon {
+	position: relative;
+    top: 10px;
+    left: 10px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 .multiple-select-wrapper .selected-items-box {
     box-shadow: inset 1px -1px 5px 0 #CCCCCC;
     -webkit-box-shadow: inset 1px -1px 5px 0 #CCCCCC;
@@ -234,6 +250,8 @@ display:none;
     -mox-border-radius: 5px;
     -webkit-border-radius: 5px;
     -o-border-radius: 5px;
+    
+    right: 0px;
 }
 .list .items-list {
     list-style-type: none;
@@ -291,3 +309,19 @@ padding: 0px 0px 0px 0px;
 .list-group-dialogs{
 margin-bottom: 5px;
 }
+
+.dialog-filter-wraper:HOVER {
+	background-color: #819BBF;
+	cursor: pointer;
+}
+
+
+.dlg-filter-li:HOVER   {
+	background-color: #819abe !important;
+	color: white !important;
+}
+
+.dlg-filter-li:HOVER span {
+	color: white !important ;
+}
+
