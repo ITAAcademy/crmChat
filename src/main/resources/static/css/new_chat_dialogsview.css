@@ -71,22 +71,33 @@
     height: 80px;
     /*border-radius: 20px;
     margin: 0 16px 0 0;*/
-    margin:10px;
+    /*margin:10px;*/
     vertical-align: middle;
 }
 /*My Bidlo*/
 
 .room_info {
     padding: 10px 10px 10px 100px;
+    vertical-align: middle;
 }
-.unstyled_list{
+/*.unstyled_list{
     padding: 0px ;
      list-style-type: none; 
-}
+}*/
 .message_author_header{
-    text-align: center;
+    text-align: left; 
+    font-weight: bold; 
 }
-.long_text{
+.dialogs_room_name{
+    word-wrap: break-word;
+}
+.dialogs_room_user{
+    width:120px;
+    white-space: nowrap;
+   /* text-overflow: ellipsis;*/
+}
+.wrapped{
+    overflow: hidden;
     word-wrap: break-word;
 }
 .vertical-align {
@@ -101,8 +112,14 @@ vertical-align: middle;
 }
 .room_item {
 width:100%;
+padding:10px;
 margin: 0px 0px;
-min-height: 100px;
+/*min-height: 100px;
+max-height: 100px;*/
+height:100px;
+/*new, for vertical align*/
+align-items: center;
+display: flex;
 }
 .room_item:hover{
     cursor: pointer;
@@ -111,37 +128,46 @@ min-height: 100px;
     -o-transition: all 1s ease;
      background: #9EE7FF;
 }
-.message_body_breakable{
+.message_body_item{
 word-break: break-all;
+padding:0px 0px;
+margin: 0px 0px;
+}
+
+.message_body_text{
+    padding:0px 0px;
+    margin:0px 0px;
 }
 .message_container{
-    margin-right:40px;
-    margin-left:40px;
+    margin-right:60px;
+    margin-left:60px;
+    height:70px;
+   overflow:hidden;
+     /*text-overflow:ellipsis;*/
 }
 .new_message_author_avatar{
-width:70px;
-height:70px;
+width:45px;
+height:45px;
 position:absolute;
-margin-left:280px; /*280*/
+/*vertical-align: middle;
+margin-left:280px; 
 top:calc(50% - 35px);
-border-radius: 255px;
+*/
+border-radius: 255px; 
 box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
 
-@media (min-width: @screen-xs-min){
+/*@media (min-width: @screen-xs-min){
 .new_message_author_avatar{
 margin-left:230px; /*280*/
 }
-}
+}*/
 
 
 .message_text_dialogs{
     margin-left:40px;
 }
-.message_body_nopadding{
-    padding:0px 0px;
-    margin: 0px 0px;
-}
+
 
 .multiple-select-wrapper {
     position: absolute;

@@ -93,8 +93,14 @@ angular.module('springChat.directives').directive('dir', function($compile, $par
         link: function(scope, element, attr) {
           scope.$watch(attr.content, function() {
             element.html($parse(attr.content)(scope));
-            //element.html =$parse(attr.content)(scope);
+            if (typeof attr.callback != 'undefined'){
+            	var callBackFunction = new Function("return "+attr.callback)();
+            	  if (typeof callBackFunction != 'undefined')
+            	callBackFunction(element);
+            }
             $compile(element.contents())(scope);
+            //element.html =$parse(attr.content)(scope);
+            
           }, true);
         }
       }

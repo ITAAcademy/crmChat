@@ -77,28 +77,32 @@
 			<li class="list-group-item list-group-item-dialogs">
 		
               <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
-     			<img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>
+     			
      			<div class="col-md-3 col-xs-5">
                   <div class=" avatar_group avatar-container">
 
                     <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> 
                   </div>
                   <div class="room_info">
-                  <ul class="unstyled_list">
-                  <a class="long_text" ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
-                    <li> учасників:{{room.participantsCount}}</li>
-                  <li ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></li>
-                  </ul>
+                  <div class="dialogs_room_user wrapped">
+                  <a class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
+                  </div>
+                    <div class="dialogs_room_participants"> учасників:{{room.participantsCount}}</div>
+                  <div ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
                   </div>
               </div> 
                 <div class="col-md-9 col-xs-7">
-                <!-- last message text and count of new messages -->              	
+                <!-- last message text and count of new messages -->    <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>         	
                 	<div class="message_container">
 					<div class="message_author_header">{{room.lastMessageAuthor}}
 					</div>
-					<div class="message_body_breakable message_body_nopadding">
-					<dir content=" room.lastMessage | limitTo:200"></dir>
-					<div class="message_text_dialogs" ng-hide="room.lastMessage.length>0">No message</div>
+					<div class="message_body_item">
+					<dir id ="messageBodyText" class="message_body_text" content="room.lastMessage" callback="function(roomElement){
+					debugger;
+					var elm = roomElement.context;
+					$clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
+					}"></dir>
+					<div class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
 					</div>
 					</div>
 					<span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
