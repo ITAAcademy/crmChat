@@ -92,7 +92,10 @@
                   </div>
               </div> 
                 <div class="col-md-9 col-xs-7">
-                <!-- last message text and count of new messages -->    <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>         	
+                <!-- last message text and count of new messages -->  
+                <div class="new_message_author_avatar_container">  
+                <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img> 
+                </div>        	
                 	<div class="message_container">
 					<div class="message_author_header">{{room.lastMessageAuthor}}
 					</div>

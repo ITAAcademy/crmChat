@@ -90,11 +90,12 @@
 }
 .dialogs_room_name{
     word-wrap: break-word;
+    text-transform: uppercase;
 }
 .dialogs_room_user{
     width:120px;
     white-space: nowrap;
-   /* text-overflow: ellipsis;*/
+    text-overflow: ellipsis;
 }
 .wrapped{
     overflow: hidden;
@@ -159,10 +160,18 @@ box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 
 /*@media (min-width: @screen-xs-min){
 .new_message_author_avatar{
-margin-left:230px; /*280*/
+margin-left:230px; 
 }
-}*/
-
+}
+*/
+.new_message_author_avatar_container{
+display:block;
+}
+@media (max-width: 600px) { 
+ .new_message_author_avatar_container{
+display:none;
+}
+}
 
 .message_text_dialogs{
     margin-left:40px;
