@@ -21,8 +21,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 			k = 'left';
 		var size = 80;
 		var border = 2;
+		size -= border*2;
 		var obj = {'position':'absolute','width':size, 'height':size};
-		size -= border;
 		if(count == 1)
 			return obj;
 		if(count == 2)

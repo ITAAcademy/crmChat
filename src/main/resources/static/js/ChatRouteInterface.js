@@ -708,7 +708,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 			return null;
 		
 		var objDiv = document.getElementById("messagesScroll");
-		var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 10;	
+		var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 100;	
 
 		if($scope.messages.length > 0)
 		{
