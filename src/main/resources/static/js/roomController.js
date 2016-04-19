@@ -37,7 +37,6 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 			if(index%2)
 			{    
 				obj[k] = size/4;
-				obj['border-left'] = '2px solid';
 			}
 			else
 				obj[k]= size/4;
