@@ -141,9 +141,9 @@ public class RoomController {
 
 				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
 				subscribedtoRoomsUsersBuffer.add(t_user.getChatUser());
-				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), roomService.getRoomsByChatUser(t_user.getChatUser()));
+				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), roomService.getRoomsModelByChatUser(t_user.getChatUser()));
 			}
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsByChatUser(user));
+			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			
 			result.put("nextWindow", room.getId().toString());
@@ -166,7 +166,7 @@ public class RoomController {
 		
 		String rooms = "{}";
 		try {
-			rooms = mapper.writeValueAsString(roomService.getRoomsByChatUser(user));
+			rooms = mapper.writeValueAsString(roomService.getRoomsModelByChatUser(user));
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -379,9 +379,9 @@ public class RoomController {
 			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
 			if (chatUser.getId()!=privateCharUser.getId())
 			roomService.addUserToRoom(privateCharUser, room);
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(), roomService.getRoomsByChatUser(chatUser));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(), roomService.getRoomsModelByChatUser(chatUser));
 			if (chatUser.getId()!=privateCharUser.getId())
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), roomService.getRoomsByChatUser(privateCharUser));	
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), roomService.getRoomsModelByChatUser(privateCharUser));	
 			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_FROM_TENANT,true,""+room.getId());
 			String subscriptionStr = "/topic/users/" + userId + "/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
@@ -402,7 +402,7 @@ public class RoomController {
 				return null;
 		}
 		
-		return roomService.getRoomsByChatUser(user);
+		return roomService.getRoomsModelByChatUser(user);
 	}
 
 	@MessageMapping("/chat/rooms/add.{name}")
@@ -472,7 +472,7 @@ public class RoomController {
 			}
 			for(DeferredResult<String> response : responseList)
 			{
-					String str = mapper.writeValueAsString(roomService.getRoomsByChatUser(chatUser));
+					String str = mapper.writeValueAsString(roomService.getRoomsModelByChatUser(chatUser));
 					if(!response.isSetOrExpired())
 						response.setResult(str);
 			}
@@ -516,7 +516,7 @@ public class RoomController {
 		updateParticipants();
 		
 		simpMessagingTemplate.convertAndSend("/topic/" + room.toString() + "/chat.participants", retrieveParticipantsMessage(room));
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsByChatUser(user_o));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), roomService.getRoomsModelByChatUser(user_o));
 		return true;
 	}
 

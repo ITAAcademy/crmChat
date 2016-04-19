@@ -67,15 +67,23 @@
 	height: 40px;
 	position: absolute;
 }
-
-.chat .avatar img {
+.chat .avatar .avatar-contaiter {
 	display: block;
-	border-radius: 20px;
 	height: 100%;
-
+	overflow: hidden;
+	border-radius: 200px;
 	box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 	-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 	-moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+}
+
+.chat .avatar-contaiter img {
+	display: block;
+	height: 100%;
+	align-items: center;
+  justify-content: center
+//	margin-left: calc(25%/-2);
+
 }
 
 .chat .avatar .status.off {
@@ -105,6 +113,7 @@
 	height: 10px;
 	border-radius: 5px;
 	position: absolute;
+	z-index: 99;
 }
 
 .chat-dialog .name {

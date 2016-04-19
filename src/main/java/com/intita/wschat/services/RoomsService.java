@@ -188,14 +188,29 @@ public class RoomsService {
 
 	}
 
+	
 	@Transactional
-	public List<RoomModelSimple> getRoomsByChatUser(ChatUser currentUser) {
+	public List<RoomModelSimple> getRoomsModelByChatUser(ChatUser currentUser) {
+		return getRoomsByChatUserAndList(currentUser, null);				
+	}
+	
+	@Transactional
+	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser) {
+		return getRoomsByChatUserAndList(currentUser, null);				
+	}
+	
+	@Transactional
+	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		List<RoomModelSimple> result = new ArrayList <RoomModelSimple> ();
 
-		List<ChatUserLastRoomDate> rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);	
+		List<ChatUserLastRoomDate> rooms_lastd = null;
+		if(sourseRooms == null)
+			rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);
+		else
+			rooms_lastd = chatLastRoomDateService.getUserLastRoomDatesInList(currentUser, sourseRooms);
 
 		Set<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
 

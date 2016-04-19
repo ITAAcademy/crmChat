@@ -435,7 +435,10 @@ public class ChatController {
 
 		ChatUser user = struct.getUser();
 		Room room = struct.getRoom();
-		if (room==null) throw new RoomNotFoundException("room is null");
+		
+		if (room==null) 
+			throw new RoomNotFoundException("room is null");
+		
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
@@ -607,7 +610,7 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
-	public Map<String, Object> getLocolization()
+	public String getCurrentLang()
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpSession session = attr.getRequest().getSession(false);
@@ -616,16 +619,23 @@ public class ChatController {
 			lg = (String) session.getAttribute("chatLg");
 		else
 			lg = "en";
-		return langMap.get(lg);
+		return lg;
 	}
 	
+	public Map<String, Object> getLocolization()
+	{
+		return langMap.get(getCurrentLang());
+	}
+
 	public void addLocolization(Model model)
 	{
-		model.addAttribute("lgPack", getLocolization());
+		String lang = getCurrentLang();
+		model.addAttribute("lgPack", langMap.get(lang));
 		List<ConfigParam> config =  configParamService.getParams();
-		model.addAttribute("config",ConfigParam.listAsMap(config));
+		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
+		configMap.put("currentLang", lang);
+		model.addAttribute("config", configMap);
 		model.addAttribute("phrasesPack", roomService.getPhrases());
-		model.addAttribute("config",ConfigParam.listAsMap(config));
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)

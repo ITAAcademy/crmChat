@@ -102,7 +102,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		var ctrlPressed = event.ctrlKey || event.metaKey;
 		var selectAllHotKeyPressed = typedChar == 'A' && ctrlPressed;
 		var kk = keyCode;
-		var arrowKeyPressed = kk==38 || kk==39 || kk==40 || kk == 37;
+		var arrowKeyPressed = kk==39  || kk == 37;
 		var enterPressed = keyCode==13;
 		if (enterPressed && !$scope.show_search_list_in_message_input){
 			$scope.onMessageInputClick();
@@ -116,8 +116,8 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 		return;
 		case '~': enableInputMode(INPUT_MODE.TILDA_MODE,carretPosIndex);
 		return;
-		/*case ' ': $scope.onMessageInputClick();
-			break;*/
+		case ' ': $scope.onMessageInputClick();
+			break;
 
 		}
 
@@ -687,6 +687,7 @@ springChatControllers.controller('ChatRouteInterface',['$route', '$routeParams',
 							+ $scope.messages[0].message;
 												//	$scope.messages[0].date = msg.date;
 				}
+				msg.position = $scope.messages[0].position;	
 
 			}
 			else

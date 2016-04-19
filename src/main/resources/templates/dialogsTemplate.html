@@ -88,7 +88,7 @@
                   <a class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                   </div>
                     <div class="dialogs_room_participants"> учасників:{{room.participantsCount}}</div>
-                  <div ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
+                  <div ng-bind="formatDateWithLast(room.date)"></div>
                   </div>
               </div> 
                 <div class="col-md-9 col-xs-7">
