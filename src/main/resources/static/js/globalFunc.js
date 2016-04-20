@@ -104,7 +104,7 @@ function getXmlHttp(){
 			xmlhttp = false;
 		}
 	}
-	if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+	if ((!xmlhttp || !xmlhttp.upload) && typeof XMLHttpRequest!='undefined') {
 		xmlhttp = new XMLHttpRequest();
 	}
 	return xmlhttp;

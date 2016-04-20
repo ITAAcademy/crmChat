@@ -69,6 +69,7 @@
 
 /************ Contact list*********************/
     .avatar_group {
+    top:0px;
     display: inline-block;
     position:absolute;
     width: 80px;
@@ -81,7 +82,7 @@
 /*My Bidlo*/
 
 .room_info {
-    padding: 10px 10px 10px 100px;
+    padding: 0px 10px 0px 100px;
     vertical-align: middle;
 }
 /*.unstyled_list{
@@ -115,6 +116,24 @@ vertical-align: middle;
     margin-right:20px;
     top: 50%;
 }
+.center_flex_vertical {
+/* Internet Explorer 10 */
+display:-ms-flexbox;
+/*-ms-flex-pack:center;*/
+-ms-flex-align:center;
+/* Firefox */
+display:-moz-box;
+/*-moz-box-pack:center;*/
+-moz-box-align:center;
+/* Safari, Opera, and Chrome */
+display:-webkit-box;
+/*-webkit-box-pack:center;*/
+-webkit-box-align:center;
+/* W3C */
+display:box;
+/*box-pack:center*/;
+box-align:center;
+}
 .room_item {
 width:100%;
 padding:10px;
@@ -125,6 +144,10 @@ height:100px;
 /*new, for vertical align*/
 align-items: center;
 display: flex;
+}
+.participants_avatar_column{
+    height:100%;
+
 }
 .room_item:hover{
     cursor: pointer;
@@ -146,11 +169,12 @@ margin: 0px 0px;
 .message_container{
     margin-right:60px;
     margin-left:60px;
-    height:70px;
+    /*height:70px;*/
    overflow:hidden;
      /*text-overflow:ellipsis;*/
 }
 .new_message_author_avatar{
+top: 0px;
 width:45px;
 height:45px;
 position:absolute;
