@@ -125,8 +125,8 @@ public class ConsultationsService {
 			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
 			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
 			
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsByChatUser(consultant));
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + iCons.getAuthor().getChatUser().getId(), chatRoomsService.getRoomsByChatUser(iCons.getAuthor().getChatUser()));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsModelByChatUser(consultant));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + iCons.getAuthor().getChatUser().getId(), chatRoomsService.getRoomsModelByChatUser(iCons.getAuthor().getChatUser()));
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);
 		}
