@@ -476,4 +476,7 @@ body{
 .display-block {
 	display: block !important;
 }
+
+input::-ms-clear {
+    display: none;
 }
