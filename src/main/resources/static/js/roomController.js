@@ -34,7 +34,16 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 
 
 	}
-	$scope.dcGoToRoom = function(roomId)
+	$scope.onRoomItemClick = function(e,roomId)
+	{
+		debugger;
+		var isLink = e.target.id=="roomItemLink";
+		if (!isLink){//skip redirection to chatroom from block onclick event
+					//if click occured in <a> element
+			doGoToRoom(roomId);
+		}
+	}
+	function doGoToRoom(roomId)
 	{
 		debugger;
 		if($scope.mouseBusy == false)

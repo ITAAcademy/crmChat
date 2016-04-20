@@ -76,7 +76,7 @@
 
 			<li class="list-group-item list-group-item-dialogs">
 		
-              <div class="row room_item" ng-click="dcGoToRoom(room.roomId)">
+              <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
      			
      			<div class="col-md-3 col-xs-5">
                   <div class=" avatar_group avatar-container">
@@ -85,7 +85,7 @@
                   </div>
                   <div class="room_info">
                   <div class="dialogs_room_user wrapped">
-                  <a class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
+                  <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                   </div>
                     <div class="dialogs_room_participants"> учасників:{{room.participantsCount}}</div>
                   <div ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
