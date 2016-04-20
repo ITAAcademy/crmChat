@@ -393,3 +393,9 @@ margin-bottom: 5px;
 .btn-arrow-left:after { /* hide arrow tails background */
     background-color: white;
 }
+
+#newMessageInput {
+	 height: 100px;
+    max-height: 100px;  
+}
+

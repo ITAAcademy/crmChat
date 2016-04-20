@@ -120,7 +120,8 @@
 			<div class="col-xs-12 chat no-pading" style="overflow: visible">
 				<div class="row answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom">
 					<div class=" dropup">
-					<textarea  msd-elastic="\n" tabindex="-1" id="newMessageInput" type="text" class="form-control "
+					<textarea  msd-elastic="\n" tabindex="-1" id="newMessageInput" type="text" class="form-control scroll"
+						rows="9"
 						th:placeholder="${lgPack.lable_message_placeholder}"
 						placeholder="Write your message and hit enter..."
 						ng-model="newMessage"
