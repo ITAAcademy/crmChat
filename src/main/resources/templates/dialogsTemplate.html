@@ -48,16 +48,16 @@
               <div class="row">
          
                <div class="col-xs-12 col-sm-10">
-                     <img style="position: absolute; margin-top: 20px; margin-left: 5px;" src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/>
+                     <img style="position: absolute; margin-top: 17px; margin-left: 5px;" src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/>
                 <input type="text" ng-model="roomsearchquery" class="contacts-list-search" placeholder="Search"/>
-                             <div class="multiple-select-wrapper noveredmark" style="position: absolute; z-index: 10; top: 0;
-    margin-top: 20px; right: 10px;"><span class="glyphicon glyphicon-align-left"></span>
+                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper" >
+                             <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
         <div class="list">
                  <ul class="items-list">
-                        <li ng-repeat="airline in Airlines">
-                                <input type="checkbox" ng-model="airline.selected" />
-                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
-        <span>{{airline.name}}</span>
+                        <li class="dlg-filter-li" ng-repeat="airline in Airlines"  ng-click="airline.selected = !airline.selected"  >
+                                <input  type="checkbox" ng-model="airline.selected" />                               
+                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}"  />
+        						<span>{{airline.name}}</span>
       </li>
     </ul>
   </div>
@@ -80,7 +80,6 @@
      			
      			<div class="col-md-3 col-xs-5">
                   <div class=" avatar_group avatar-container">
-
                     <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> 
                   </div>
                   <div class="room_info">
@@ -88,7 +87,7 @@
                   <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
                   </div>
                     <div class="dialogs_room_participants"> учасників:{{room.participantsCount}}</div>
-                  <div ng-bind="formatDate(room.lastMessageDate, 'minutes ago')"></div>
+                  <div ng-bind="formatDateWithLast(room.date)"></div>
                   </div>
               </div> 
                 <div class="col-md-9 col-xs-7">

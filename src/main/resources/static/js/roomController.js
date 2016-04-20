@@ -16,18 +16,31 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 
 	$scope.calcImage = function(count, index)
 	{
-		var k = 'right';
-		if(!index%2)
-			k = 'left';
 		var size = 80;
 		var border = 2;
+
+		var k = 'right';
+		var clip = "rect(auto, auto, auto,  auto)";
+		if(index%2)
+		{
+			k = 'left';
+			clip = "rect(auto, auto, auto, " + size/4 + "px)";
+		}
+
+		size -= border*2;
 		var obj = {'position':'absolute','width':size, 'height':size};
-		size -= border;
 		if(count == 1)
 			return obj;
 		if(count == 2)
 		{
-			obj[k]= size/2
+			obj["clip"] = clip;
+			if(index%2)
+			{    
+				obj[k] = size/4;
+			}
+			else
+				obj[k]= size/4;
+			debugger;
 			return obj;
 		}
 		return {'width':size/2, 'height':size/2};
@@ -105,8 +118,8 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 
 	$('.multiple-select-wrapper').bind('click', function(e){
 		$scope.mouseBusy = true;
-  e.stopPropagation();
-  $('.multiple-select-wrapper .list').toggle('slideDown');
+   e.stopPropagation();
+  $('.multiple-select-wrapper .list').toggle('10');
 });
 
 $('.multiple-select-wrapper .list').bind('click', function(e){
@@ -144,7 +157,7 @@ else
 	if($rootScope.isInited == true)
 		$scope.goToDialogList();
 	console.log("initing:"+chatControllerScope.socketSupport);
-	$scope.pageClass = 'page-about';
+	$scope.pageClass = 'scale-fade';
 	$scope.$$postDigest(function () {
 		var nice = $(".chat-box").niceScroll();
 		

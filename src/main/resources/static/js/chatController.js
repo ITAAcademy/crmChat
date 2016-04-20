@@ -14,7 +14,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 				if ($rootScope.socketSupport){
 					$scope.goToDialog($routeParams.roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-						$scope.pageClass = 'page-contact';
+						$scope.pageClass = 'scale-fade-in';
 					}, function(){
 					chatControllerScope.changeLocation("/chatrooms");
 						alert("ERR")});
@@ -23,7 +23,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 				{
 					$scope.goToDialog($routeParams.roomId).then(function() {
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-						$scope.pageClass = 'page-contact';
+						$scope.pageClass = 'scale-fade-in';
 					}, function(){
 						chatControllerScope.changeLocation("/chatrooms");
 						alert("ERR")});

@@ -39,14 +39,19 @@ public class ChatUserLastRoomDateService {
 
 	@Transactional
 	public List<ChatUserLastRoomDate> getLastRoomDates(){
-		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findAll();
-		return res;
+		return chatUserLastRoomDateRepo.findAll();
 	}
 	
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user){
-		List<ChatUserLastRoomDate> res =  chatUserLastRoomDateRepo.findByChatUser(user);
-		return res;
+		return chatUserLastRoomDateRepo.findByChatUser(user);
+		
+	}
+	
+	@Transactional
+	public List<ChatUserLastRoomDate> getUserLastRoomDatesInList(ChatUser user, ArrayList<Room> rooms){
+		return chatUserLastRoomDateRepo.findByChatUserAndRoomIn(user, rooms);
+		 
 	}
 	
 	@Transactional
@@ -54,10 +59,6 @@ public class ChatUserLastRoomDateService {
 		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, chatUser);
 		if (obj == null)
 		{
-			//LocalDate firstDay_2000 = LocalDate.of(2000, Month.JANUARY, 1);
-			
-			//Date date = DateTime.parse("2007-03-12T00:00:00.000+01:00");
-			//obj = new  ChatUserLastRoomDate(Date.from(firstDay_2000.atStartOfDay(ZoneId.systemDefault()).toInstant()) ,room );
 			obj = new  ChatUserLastRoomDate( new Date(), room);
 			obj.setChatUser(chatUser);
 			chatUserLastRoomDateRepo.save(obj);
@@ -75,7 +76,6 @@ public class ChatUserLastRoomDateService {
 		ChatUserLastRoomDate date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
 		date.setChatUser(user);
 		updateUserLastRoomDateInfo(date);
-		chatUserLastRoomDateRepo.save(date);
 		return date;
 	}
 

@@ -57,9 +57,11 @@
 							<div class="avatar">
 								<a target="_blank" ng-if="participant.intitaUserId"
 									th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
+									<div class="avatar-contaiter">
 									<img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 									alt="{{participant.username}}" />
+									</div>
 								</a> <a target="_blank" ng-if="!participant.intitaUserId"> <img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 									alt="{{participant.username}}" />
@@ -70,7 +72,7 @@
 									class=""></div>
 							</div>
 							<div class="name">{{participant.username}}</div>
-							<div class="mood">User</div>
+							<div class="mood">&nbsp;</div>
 						</div>
 					</div>
 				</div>
@@ -90,9 +92,11 @@
 						<div ng-class="message.position ? 'answer right' : 'answer left'"
 							ng-repeat="message in messages track by $index">
 							<div class="avatar">
+							<div class="avatar-contaiter">
 								<img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{findParticipant(message.username).avatar}}'}"
 									alt="User name" />
+									</div>
 								<div
 									ng-class="!findParticipant(message.username).online ? 'status offline' : 'status online'"
 									class="status"></div>
@@ -106,7 +110,7 @@
 								</span>
 							</div>
 							<div
-								ng-bind="$parent.formatDateWithLast(message.date, 'minutes ago')"
+								ng-bind="$parent.formatDateWithLast(message.date)"
 								class="time"></div>
 						</div>
 						<div class="chat-body answer-end"></div>
