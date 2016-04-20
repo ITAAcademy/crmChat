@@ -472,3 +472,8 @@ body{
 .btn-arrow-left:after { /* hide arrow tails background */
     background-color: white;
 }
+
+.display-block {
+	display: block !important;
+}
+}
