@@ -649,8 +649,8 @@ public class ChatController {
 
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
 	public String  getConsultationTemplate(HttpRequest request, Model model) {
-		Set<ConsultationRatings> retings = new HashSet<ConsultationRatings>(chatConsultationsService.getAllSupportedRetings());
-		Map<String, Object> ratingLang = getLocolization().get("ratings");
+		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+		Map<String, Object> ratingLang = (Map<String, Object>) getLocolization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
 			String translate_rating_name = (String)ratingLang.get(consultationRatings.getName());
 			consultationRatings.setName(translate_rating_name);
