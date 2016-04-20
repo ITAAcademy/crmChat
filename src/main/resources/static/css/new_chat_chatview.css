@@ -337,10 +337,19 @@ overflow: hidden;
 }
 
 .chat .answer-add .answer-btn-1 {
-	background:
-		url("http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-40.png")
-		50% 50% no-repeat;
-	right: 56px;
+	
+		right: 56px;
+   		 top: 34px !important;
+		color: #fff
+}
+
+.answer-btn-1-icon {
+	font-size: 19px;
+    left: 0px;
+}
+
+.answer-btn-1-icon:hover , .answer-btn-1-icon:active , .answer-btn-1-icon:focus{
+	color: #fff;
 }
 
 .chat .answer-add .answer-btn {
