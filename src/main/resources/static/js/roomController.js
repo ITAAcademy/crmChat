@@ -13,6 +13,11 @@ springChatControllers.controller('DialogsRouteController',['$q','$rootScope','$s
 	$scope.toggleNewRoomModal = function(){
 		$('#new_room_modal').modal('toggle');
 	}
+	$scope.addRoomButtonKeyPress = function(event){
+		if (event.keyCode==13) {
+			$scope.addDialog();$scope.toggleNewRoomModal();
+		}
+	}
 
 	$scope.calcImage = function(count, index)
 	{
