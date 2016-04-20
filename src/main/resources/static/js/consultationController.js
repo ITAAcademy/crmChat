@@ -15,7 +15,6 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 		{
 			result &= $scope.participants[participant].online;
 		}
-		debugger;
 		return !result;
 	}
 
@@ -42,6 +41,7 @@ springChatControllers.controller('ConsultationController',['$routeParams','$root
 		{
 			$http.post(serverPrefix+"/chat/consultation/info/" + $routeParams.consultationId)
 			.success(function(data, status, headers, config) {
+				debugger;
 				var status = data["status"];
 				$scope.status = status;
 				if(status < 0 || status == undefined)

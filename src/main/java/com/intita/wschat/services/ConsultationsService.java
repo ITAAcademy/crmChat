@@ -55,6 +55,7 @@ public class ConsultationsService {
 
 	}
 	
+	@Transactional
 	public void setRatings(ChatConsultation cons, Map<Long,Integer> map)
 	{
 		if(cons != null)
@@ -64,41 +65,45 @@ public class ConsultationsService {
 			}
 		}
 	}
+	
+	@Transactional
 	public void update(ChatConsultation entity)
 	{
 		chatConsultationRepository.save(entity);
 	}
+	
+	@Transactional
 	public Set<ConsultationRatings> getAllSupportedRetings()
 	{
 		return chatConsultationRatingsRepository.findAll();
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public void getRoomByConsultation(ChatConsultation cons) {
 		
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public ChatConsultation getConsultationByRoom(Room room) {
 		return chatConsultationRepository.findOneByRoom(room);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public IntitaConsultation getIntitaConsultationById(Long iConsId) {
 		return chatIntitaConsultationRepository.findOne(iConsId);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public Room getRoomByIntitaConsultationId(Long iConsId) {
 		return getRoomByIntitaConsultation(chatIntitaConsultationRepository.findOne(iConsId));
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public ChatConsultation getByIntitaConsultationId(Long iConsId) {
 		return getByIntitaConsultation(chatIntitaConsultationRepository.findOne(iConsId));
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public Room getRoomByIntitaConsultation(IntitaConsultation iCons) {
 		ChatConsultation cons = getByIntitaConsultation(iCons);
 		
@@ -108,7 +113,7 @@ public class ConsultationsService {
 		return cons.getRoom();
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public ChatConsultation getByIntitaConsultation(IntitaConsultation iCons) {
 		if(iCons == null)
 			return null;

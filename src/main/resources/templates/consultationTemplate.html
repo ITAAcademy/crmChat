@@ -2,7 +2,7 @@
 	<div th:include="chatTemplate"></div>
 </div>
 <div ng-hide="consultant">
-	<div ng-show="currentRoom.active" th:each="rating : ${ratingsPack}" class="row">
+	<div ng-show="currentRoom.active" th:each="rating : ${ratingsPack}">
 		<span class="col-xs-4" th:text="${rating.name}"> </span>
 		<star-rating class="col-xs-7"
 			th:attr="ng-model=${'ratings[' + rating.id + ']'}" max="10" onRatingSelect="angular.noop"></star-rating>

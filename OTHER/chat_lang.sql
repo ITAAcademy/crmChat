@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1
--- Время создания: Апр 20 2016 г., 19:47
+-- Время создания: Апр 20 2016 г., 21:26
 -- Версия сервера: 5.6.17
 -- Версия PHP: 5.5.12
 
@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `chat_lang` (
 --
 
 INSERT INTO `chat_lang` (`id`, `lang`, `map`) VALUES
-(2, 'en', '{\n"lable_dialog": "Dialog",\n"lable_participants":"Participants",\n"lable_send":"Send",\n"lable_messages":"Messages",\n"lable_message_placeholder":"Write your message and hit Enter...",\n"rating_global":"How are fine",\n"rating_smart":"How are abstruse"\n}'),
-(3, 'ua', '{\n  "lables": {\n    "chatView": {\n      "goToRooms": "Діалоги",\n      "dialog": "Діалоги",\n      "participants": "Учасники",\n      "send": "Відіслати",\n      "messages": "Повідомлення",\n      "message_placeholder": "Напишіть ваше повідомлення і натисність Enter...",\n      "phrases": "Сталі вирази"\n    },\n    "roomListView": {\n      "newRoom": "Створити діалог",\n      "noMessage": "Повідомлення відсутнє",\n      "participants": "Учасники",\n      "search_placeholder": "Пошук",\n      "addRoomModal":{\n          "close":"Закрити",\n          "create":"Створити",\n          "title":"Створення діалогу",\n          "room_name_placeholder":"Назва кімнати"\n      },\n      "filters":{\n        "anonim":"Анонімні",\n        "private":"Приватні",\n        "consultation":"Консультації"\n      }\n    }\n  },\n  "ratings": {\n    "rating_global": "Наскільки все файно",\n    "rating_smart": "Наскільки все заумно"\n  }\n}');
+(2, 'en', '{\n  "lables": {\n    "chatView": {\n      "goToRooms": "Діалоги",\n      "dialog": "Діалоги",\n      "participants": "Учасники",\n      "send": "Відіслати",\n      "messages": "Повідомлення",\n      "message_placeholder": "Напишіть ваше повідомлення і натисність Enter...",\n      "phrases": "Сталі вирази"\n    },\n    "roomListView": {\n      "newRoom": "Створити діалог",\n      "noMessage": "Повідомлення відсутнє",\n      "participants": "Учасники",\n      "search_placeholder": "Пошук",\n      "addRoomModal":{\n          "close":"Закрити",\n          "create":"Створити",\n          "title":"Створення діалогу",\n          "room_name_placeholder":"Назва кімнати"\n      },\n      "filters":{\n        "anonim":"Анонімні",\n        "private":"Приватні",\n        "consultation":"Консультації"\n      }\n    }\n  },\n  "ratings": {\n    "global": "Наскільки все файно",\n    "smart": "Наскільки все заумно"\n  }\n}'),
+(3, 'ua', '{\n  "lables": {\n    "chatView": {\n      "goToRooms": "Діалоги",\n      "dialog": "Діалоги",\n      "participants": "Учасники",\n      "send": "Відіслати",\n      "messages": "Повідомлення",\n      "message_placeholder": "Напишіть ваше повідомлення і натисність Enter...",\n      "phrases": "Сталі вирази"\n    },\n    "roomListView": {\n      "newRoom": "Створити діалог",\n      "noMessage": "Повідомлення відсутнє",\n      "participants": "Учасники",\n      "search_placeholder": "Пошук",\n      "addRoomModal":{\n          "close":"Закрити",\n          "create":"Створити",\n          "title":"Створення діалогу",\n          "room_name_placeholder":"Назва кімнати"\n      },\n      "filters":{\n        "anonim":"Анонімні",\n        "private":"Приватні",\n        "consultation":"Консультації"\n      }\n    }\n  },\n  "ratings": {\n    "global": "Наскільки все файно",\n    "smart": "Наскільки все заумно"\n  }\n}');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
