@@ -67,6 +67,7 @@
 
 /************ Contact list*********************/
     .avatar_group {
+    top:0px;
     display: inline-block;
     position:absolute;
     width: 80px;
