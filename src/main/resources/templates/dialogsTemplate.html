@@ -78,7 +78,7 @@
 		
               <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
      			
-     			<div class="col-md-3 col-xs-5">
+     			<div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
                   <div class=" avatar_group avatar-container">
                     <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> 
                   </div>
@@ -90,7 +90,7 @@
                   <div ng-bind="formatDateWithLast(room.date)"></div>
                   </div>
               </div> 
-                <div class="col-md-9 col-xs-7">
+                <div class="col-md-9 col-xs-7 center_flex_vertical">
                 <!-- last message text and count of new messages -->  
                 <div class="new_message_author_avatar_container">  
                 <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img> 
