@@ -68,6 +68,7 @@
 
 	<script th:inline="javascript">
 		var globalConfig = { baseUrl:[[${config.get('baseUrl')}]], lang: [[${config.get('currentLang')}]]};
+		var filters = [[${lgPack.lables.roomListView.filters}]];
 	</script>
 	<script src="js/globalFunc.js"></script>
 	<script src="js/controllers.js"></script>

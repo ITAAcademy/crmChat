@@ -32,6 +32,8 @@
     height: 60px;
     width: 100%;
     background: none;
+
+    font-size: 16px;
     color: white;
 }
 
@@ -191,7 +193,7 @@ display:none;
 }
 
 @media(max-width:767px){.multiple-select-wrapper {right: 15px;}}
-@media(min-width:768px){.multiple-select-wrapper {right: 15px;}}
+@media(min-width:768px){.multiple-select-wrapper {right: -15px;}}
 @media(min-width:992px){.multiple-select-wrapper {right: -15px;}}
 @media(min-width:1200px){}
 

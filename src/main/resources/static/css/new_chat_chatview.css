@@ -359,12 +359,30 @@ overflow: hidden;
 .btn:focus, .btn:active{
   outline: none !important;
 }
+
 .back-btn{
 	position: absolute;
 	font-size: 18px;
+	padding-left: 15px;
 	margin-left: 5px;
 	margin-top: 5px;
+	background-color: transparent;
+	border: none;
 	z-index: 100;
+
+	color: white;
+	font-size: 22px;
+}
+.back-btn:focus{
+	outline: none;
+}
+.back-btn:hover i:hover {
+	color: #ddd;
+	cursor: pointer;
+}
+.back-btn i{
+	color: white;
+	font-size: 22px;
 }
 
 .chat .answer-add .load-btn {

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1
--- Время создания: Фев 21 2016 г., 19:06
+-- Время создания: Апр 20 2016 г., 19:47
 -- Версия сервера: 5.6.17
 -- Версия PHP: 5.5.12
 
@@ -26,20 +26,21 @@ SET time_zone = "+00:00";
 -- Структура таблицы `chat_lang`
 --
 
+DROP TABLE IF EXISTS `chat_lang`;
 CREATE TABLE IF NOT EXISTS `chat_lang` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `lang` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `map` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lang` varchar(255) COLLATE utf8_bin NOT NULL,
+  `map` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
 
 --
 -- Дамп данных таблицы `chat_lang`
 --
 
 INSERT INTO `chat_lang` (`id`, `lang`, `map`) VALUES
-(2, 'en', '{\n"lable_dialog": "Dialog",\n"lable_participants":"Participants",\n"lable_send":"Send",\n"lable_messages":"Messages",\n"lable_message_placeholder":"Write your message and hit Enter..."\n}'),
-(3, 'ua', '{\n"lable_dialog": "Діалоги",\n"lable_participants":"Учасники",\n"lable_send":"Відіслати",\n"lable_messages":"Повідомлення",\n"lable_message_placeholder":"Напишіть ваше повідомлення і натисність Enter..."\n\n}');
+(2, 'en', '{\n"lable_dialog": "Dialog",\n"lable_participants":"Participants",\n"lable_send":"Send",\n"lable_messages":"Messages",\n"lable_message_placeholder":"Write your message and hit Enter...",\n"rating_global":"How are fine",\n"rating_smart":"How are abstruse"\n}'),
+(3, 'ua', '{\n  "lables": {\n    "chatView": {\n      "goToRooms": "Діалоги",\n      "dialog": "Діалоги",\n      "participants": "Учасники",\n      "send": "Відіслати",\n      "messages": "Повідомлення",\n      "message_placeholder": "Напишіть ваше повідомлення і натисність Enter...",\n      "phrases": "Сталі вирази"\n    },\n    "roomListView": {\n      "newRoom": "Створити діалог",\n      "noMessage": "Повідомлення відсутнє",\n      "participants": "Учасники",\n      "search_placeholder": "Пошук",\n      "addRoomModal":{\n          "close":"Закрити",\n          "create":"Створити",\n          "title":"Створення діалогу",\n          "room_name_placeholder":"Назва кімнати"\n      },\n      "filters":{\n        "anonim":"Анонімні",\n        "private":"Приватні",\n        "consultation":"Консультації"\n      }\n    }\n  },\n  "ratings": {\n    "rating_global": "Наскільки все файно",\n    "rating_smart": "Наскільки все заумно"\n  }\n}');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

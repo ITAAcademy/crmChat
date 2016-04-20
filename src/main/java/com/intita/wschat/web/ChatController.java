@@ -208,6 +208,7 @@ public class ChatController {
 			}
 			langMap.put(lg.getLang(), result);
 		}
+		return;
 	}
 	/********************
 	 * GET CHAT USERS LIST FOR TEST

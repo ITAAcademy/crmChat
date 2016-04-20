@@ -132,9 +132,9 @@ $(document).bind('click', function(){
 });
   
 $scope.Airlines = [
-  {selected: true, name:'Анонімні', img:'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png'},
-	{selected: true, name:'Приватні', img:'http://megaicons.net/static/img/icons_title/40/110/title/lock-icon.png'},
-	{selected: true, name:'Консультації', img:'https://cdn4.iconfinder.com/data/icons/staff-management-soft/512/family_users_forum_consultation_friends_people_group_social_connection-128.png'}
+  {selected: true, name:filters['anonim'], img:'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png'},
+	{selected: true, name:filters['private'], img:'http://megaicons.net/static/img/icons_title/40/110/title/lock-icon.png'},
+	{selected: true, name:filters['consultation'], img:'https://cdn4.iconfinder.com/data/icons/staff-management-soft/512/family_users_forum_consultation_friends_people_group_social_connection-128.png'}
 ];
 
 $scope.getSelectedItemsOnly = function(item){
