@@ -1,144 +1,90 @@
-<!--OLD
-<div class="row">
-	<div class="col-xs-12 chat-box">
-		<h4 th:text="${lgPack.lable_dialog} + ' [{{roomsCount}}]'">Dialogs
-		</h4>
-		<ul ng-repeat="room in rooms | orderBy: '-date' "
-			ng-show="socketSupport" class="list-group">
-			<li class="list-group-item"><span ng-show="room.nums > 0"
-				class="badge">{{room.nums}}</span> <a
-				ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a></li>
-		</ul>
-		<div ng-hide="socketSupport">
-			<p>Test longpolling</p>
-			<ul ng-repeat="room in rooms | orderBy: '-date' "
-				class="list-group-item">
-				<li class="list-group-item"><span ng-show="room.nums > 0"
-					class="badge">{{room.nums}}</span> <a
-					ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a></li>
-			</ul>
-		</div>
-
-	</div>
-	<div id="addRoom" ng-show="isMyRoom" class="col-xs-12">
-		<div class="col-xs-10">
-			<div class="form-group">
-				<input id="newMessageInput" type="text" class="form-control"
-					placeholder="Write name of new dialog and hit enter or click plus..."
-					ng-model="dialogName"
-					ng-keyup="$event.keyCode == 13 ? addDialog():0" />
-			</div>
-		</div>
-		<button ng-click="addDialog()" type="button" class="btn btn-default col-xs-2"
-			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			<img ng-hide="$parent.roomAdded" src="images/ajax_loader_blue_32.gif" />
-			<span ng-show="$parent.roomAdded" type="submit"  class="glyphicon glyphicon-plus"
-				value="Submit" />
-		</button>
-	</div>
-</div>
--->
-<!-- NEW TEMPLATE -->
-
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
-          <div class="contacts-list">
+        <div class="contacts-list">
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
-              <div class="input-group chat-head">
-              <div class="row">
-         
-               <div class="col-xs-12 col-sm-10 height-full">
-                     <img style="position: absolute; margin-top: 17px; margin-left: 5px;" src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search"/>
-                <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search"/>
-                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper" >
-                             <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
-        <div class="list">
-                 <ul class="items-list">
-                        <li class="dlg-filter-li" ng-repeat="airline in Airlines"  ng-click="airline.selected = !airline.selected"  >
-                                <input  type="checkbox" ng-model="airline.selected" />                               
-                                <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}"  />
-        						<span>{{airline.name}}</span>
-      </li>
-    </ul>
-  </div>
-</div>
+                <div class="input-group chat-head">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-10 height-full">
+                            <img style="position: absolute; margin-top: 17px; margin-left: 5px;" src="http://91.234.35.26/iwiki-admin/v1.0.0/admin/img/icon-17.png" alt="search" />
+                            <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search" />
+                            <div class="multiple-select-wrapper noveredmark dialog-filter-wraper">
+                                <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
+                                <div class="list">
+                                    <ul class="items-list">
+                                        <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
+                                            <input type="checkbox" ng-model="airline.selected" />
+                                            <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}"/>
+                                            <span>{{airline.name}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-2">
+                            <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                        </div>
+                    </div>
                 </div>
-                  <div class="col-xs-12 col-sm-2">
-                	<button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn" ng-click="toggleNewRoomModal()">ADD ROOM</button>
-                	</div>
-                   
-
-                	</div>
-              </div>
-              <ul ng-repeat="room in rooms | orderBy: '-date'| filter:filterDialogsByType
-               | filter:{string:(roomsearchquery||'')} "
-			ng-show="socketSupport" class="list-group list-group-dialogs">
-
-			<li class="list-group-item list-group-item-dialogs">
-		
-              <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
-     			
-     			<div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
-                  <div class=" avatar_group avatar-container">
-                    <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar"/> 
-                  </div>
-                  <div class="room_info">
-                  <div class="dialogs_room_user wrapped">
-                  <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
-                  </div>
-                    <div th:text="${lgPack.lables.roomListView.participants + ':{{room.participantsCount}}'}" class="dialogs_room_participants">count of participants</div>
-                  <div ng-bind="formatDateWithLast(room.date)"></div>
-                  </div>
-              </div> 
-                <div class="col-md-9 col-xs-7 center_flex_vertical">
-                <!-- last message text and count of new messages -->  
-                <div class="new_message_author_avatar_container">  
-                <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img> 
-                </div>        	
-                	<div class="message_container">
-					<div class="message_author_header">{{room.lastMessageAuthor}}
-					</div>
-					<div class="message_body_item">
-					<dir id ="messageBodyText" class="message_body_text" content="room.lastMessage" callback="function(roomElement){
-					debugger;
-					var elm = roomElement.context;
-					$clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
-					}"></dir>
-					<div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
-					</div>
-					</div>
-					<span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
-                <!-- {{room.lastMessage}} -->
-                 
-                </div>
-              </div>
-				</li>
-              </ul>
-
+                <ul ng-repeat="room in rooms | orderBy: '-date'| filter:filterDialogsByType
+               | filter:{string:(roomsearchquery||'')} " ng-show="socketSupport" class="list-group list-group-dialogs">
+                    <li class="list-group-item list-group-item-dialogs">
+                        <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
+                            <div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
+                                <div class=" avatar_group avatar-container">
+                                    <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar" />
+                                </div>
+                                <div class="room_info">
+                                    <div class="dialogs_room_user wrapped">
+                                        <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.roomId}}">{{room.string}}</a>
+                                    </div>
+                                    <div th:text="${lgPack.lables.roomListView.participants + ':{{room.participantsCount}}'}" class="dialogs_room_participants">count of participants</div>
+                                    <div ng-bind="formatDateWithLast(room.date)"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-xs-7 center_flex_vertical">
+                                <!-- last message text and count of new messages -->
+                                <div class="new_message_author_avatar_container">
+                                    <img ng-show="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>
+                                </div>
+                                <div class="message_container">
+                                    <div class="message_author_header">{{room.lastMessageAuthor}}
+                                    </div>
+                                    <div class="message_body_item">
+                                        <dir id="messageBodyText" class="message_body_text" content="room.lastMessage" callback="function(roomElement){
+          debugger;
+          var elm = roomElement.context;
+          $clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
+          }"></dir>
+                                        <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
+                                    </div>
+                                </div>
+                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span>
+                                <!-- {{room.lastMessage}} -->
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </form>
-          </div>
+        </div>
     </div>
 </div>
 <!--MODAL -->
 <div id="new_room_modal" class="modal fade">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
-        <h4 th:text="${lgPack.lables.roomListView.addRoomModal.title}" class="modal-title">Створення кімнати</h4>
-      </div>
-      <div class="modal-body">
-        <input class="modal_input" id="roomNameInput" type="text" ng-model="dialogName" ng-keypress=
-         "addRoomButtonKeyPress($event)" th:placeholder="${lgPack.lables.roomListView.addRoomModal.room_name_placeholder}" placeholder="Room name"></input>
-      </div>
-      <div class="modal-footer">
-        <button th:text="${lgPack.lables.roomListView.addRoomModal.close}" type="button" class="btn btn-default" ng-click="toggleNewRoomModal()">Close</button>
-         <button th:text="${lgPack.lables.roomListView.addRoomModal.create}" type="button" class="btn btn-default" ng-click="addDialog();toggleNewRoomModal();">Add</button>
-      </div>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
+                <h4 th:text="${lgPack.lables.roomListView.addRoomModal.title}" class="modal-title">Створення кімнати</h4>
+            </div>
+            <div class="modal-body">
+                <input class="modal_input" id="roomNameInput" type="text" ng-model="dialogName" ng-keypress="addRoomButtonKeyPress($event)" th:placeholder="${lgPack.lables.roomListView.addRoomModal.room_name_placeholder}" placeholder="Room name"></input>
+            </div>
+            <div class="modal-footer">
+                <button th:text="${lgPack.lables.roomListView.addRoomModal.close}" type="button" class="btn btn-default" ng-click="toggleNewRoomModal()">Close</button>
+                <button th:text="${lgPack.lables.roomListView.addRoomModal.create}" type="button" class="btn btn-default" ng-click="addDialog();toggleNewRoomModal();">Add</button>
+            </div>
+        </div>
     </div>
-
-  </div>
 </div>
 <!--///////////////MODAL -->
