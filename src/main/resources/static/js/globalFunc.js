@@ -1,113 +1,112 @@
-function getPropertyByValue(obj, value ) {
-	for( var prop in obj ) {
-		if( obj.hasOwnProperty( prop ) ) {
-			if( obj[ prop ] === value )
-				return prop;
-		}
-	}
+function getPropertyByValue(obj, value) {
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            if (obj[prop] === value)
+                return prop;
+        }
+    }
 }
 
 var curentDateInJavaFromat = function() {
-	var currentdate = new Date(); 
-	var day = currentdate.getDate();
-	if (day < "10")
-		day = "0" + day;
+    var currentdate = new Date();
+    var day = currentdate.getDate();
+    if (day < "10")
+        day = "0" + day;
 
-	var mouth = (currentdate.getMonth()+1);
-	if (mouth < "10")
-		mouth = "0" + mouth;
+    var mouth = (currentdate.getMonth() + 1);
+    if (mouth < "10")
+        mouth = "0" + mouth;
 
-	var datetime =  currentdate.getFullYear() + "-" + mouth + "-" +
-	day +" " + currentdate.getHours() + ":"  
-	+ currentdate.getMinutes() + ":" + currentdate.getSeconds()+".0";
-	//console.log("------------------ " + datetime)
-	return  datetime;
+    var datetime = currentdate.getFullYear() + "-" + mouth + "-" +
+        day + " " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds() + ".0";
+    //console.log("------------------ " + datetime)
+    return datetime;
 };
 
-function getIdInArrayFromObjectsMap(roomNameMap,propertyName,valueToFind){
+function getIdInArrayFromObjectsMap(roomNameMap, propertyName, valueToFind) {
 
-	for (var item in roomNameMap)
-		if(roomNameMap[item][propertyName]==valueToFind) return item;
-	return undefined;
+    for (var item in roomNameMap)
+        if (roomNameMap[item][propertyName] == valueToFind) return item;
+    return undefined;
 }
 
-function getRoomById(rooms,id){
+function getRoomById(rooms, id) {
 
-	for(var i =0; i < rooms.length; i++){
-		if (rooms[i].roomId==id) return rooms[i];
-	}
-	return undefined;
+    for (var i = 0; i < rooms.length; i++) {
+        if (rooms[i].roomId == id) return rooms[i];
+    }
+    return undefined;
 }
 
 /*
  * FILE UPLOAD
  */
-function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress){
+function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress) {
 
-	var xhr = getXmlHttp();
+    var xhr = getXmlHttp();
 
-//	обработчик для закачки
-	xhr.upload.onprogress = function(event) {
-		//console.log(event.loaded + ' / ' + event.total);
-		onProgress(event, xhr.upload.loaded);
-	}
+    //	обработчик для закачки
+    xhr.upload.onprogress = function(event) {
+        //console.log(event.loaded + ' / ' + event.total);
+        onProgress(event, xhr.upload.loaded);
+    }
 
-//	обработчики успеха и ошибки
-//	если status == 200, то это успех, иначе ошибка
-	xhr.onload = xhr.onerror  = function() {
-		if (this.status == 200) {
-			console.log("SUCCESS:"+xhr.responseText);
-			successCallback(xhr.responseText);
-		} else {
-			console.log("error " + this.status);
-			errorCallback(xhr);
-		}
-	};
+    //	обработчики успеха и ошибки
+    //	если status == 200, то это успех, иначе ошибка
+    xhr.onload = xhr.onerror = function() {
+        if (this.status == 200) {
+            console.log("SUCCESS:" + xhr.responseText);
+            successCallback(xhr.responseText);
+        } else {
+            console.log("error " + this.status);
+            errorCallback(xhr);
+        }
+    };
 
-	xhr.open("POST", urlpath);
-	var boundary = String(Math.random()).slice(2);
-//	xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
-	var formData=new FormData();
+    xhr.open("POST", urlpath);
+    var boundary = String(Math.random()).slice(2);
+    //	xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+    var formData = new FormData();
 
-	for (var i = 0; i < files.length; i++){
-		formData.append("file"+i,files[i]);
-	}
-	xhr.send(formData);
+    for (var i = 0; i < files.length; i++) {
+        formData.append("file" + i, files[i]);
+    }
+    xhr.send(formData);
 
 }
 
-function upload($http,files,urlpath){
-	var formData=new FormData();
-	for (var i = 0; i < files.length; i++){
-		formData.append("file"+i,files[i]);
-	}
+function upload($http, files, urlpath) {
+    var formData = new FormData();
+    for (var i = 0; i < files.length; i++) {
+        formData.append("file" + i, files[i]);
+    }
 
-	return $http.post(urlpath, formData, {
-		transformRequest: function(data, headersGetterFunction) {
-			return data;
-		},
-		headers: { 'Content-Type': undefined }
-	}).error(function(data, status) {
-		console.log("Error ... " + status);
-	});
+    return $http.post(urlpath, formData, {
+        transformRequest: function(data, headersGetterFunction) {
+            return data;
+        },
+        headers: { 'Content-Type': undefined }
+    }).error(function(data, status) {
+        console.log("Error ... " + status);
+    });
 }
 
 
-function getXmlHttp(){
-	var xmlhttp;
-	try {
-		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	} catch (e) {
-		try {
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		} catch (E) {
-			xmlhttp = false;
-		}
-	}
-	if ((!xmlhttp || !xmlhttp.upload) && typeof XMLHttpRequest!='undefined') {
-		xmlhttp = new XMLHttpRequest();
-	}
-	return xmlhttp;
+function getXmlHttp() {
+    var xmlhttp;
+    try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (e) {
+        try {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+            xmlhttp = false;
+        }
+    }
+    if ((!xmlhttp || !xmlhttp.upload) && typeof XMLHttpRequest != 'undefined') {
+        xmlhttp = new XMLHttpRequest();
+    }
+    return xmlhttp;
 }
 /*function upload(file,urlpath) {
 
@@ -137,10 +136,14 @@ xhr.send(file);
 /*
  * CONST
  */
-var Operations = Object.freeze({"send_message_to_all":"SEND_MESSAGE_TO_ALL",
-	"send_message_to_user":"SEND_MESSAGE_TO_USER",
-	"add_user_to_room":"ADD_USER_TO_ROOM",
-	"add_room":"ADD_ROOM","add_room_from_tenant":"ADD_ROOM_FROM_TENANT","add_room_on_login":"ADD_ROOM_ON_LOGIN"});
+var Operations = Object.freeze({
+    "send_message_to_all": "SEND_MESSAGE_TO_ALL",
+    "send_message_to_user": "SEND_MESSAGE_TO_USER",
+    "add_user_to_room": "ADD_USER_TO_ROOM",
+    "add_room": "ADD_ROOM",
+    "add_room_from_tenant": "ADD_ROOM_FROM_TENANT",
+    "add_room_on_login": "ADD_ROOM_ON_LOGIN"
+});
 
 var serverPrefix = "/crmChat";
 var DEFAULT_FILE_PREFIX_LENGTH = 15;

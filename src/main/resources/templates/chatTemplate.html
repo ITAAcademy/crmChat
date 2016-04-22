@@ -1,23 +1,18 @@
 <div class="content container-fluid bootstrap snippets container">
-
-<script type="text/ng-template" id="customTemplate.html">
-  <a>
-      <img ng-src="http://upload.wikimedia.org/wikipedia/commons/thumb/{{match.model.flag}}" width="16"/>
-      <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
-  </a>
-</script>
-
-
-<script type="text/ng-template" id="customPopupTemplate.html">
-
-    <ul class="dropdown-menu" style="bottom: 80px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
-    <li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
-            ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
-            <div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
-        </li>
-</ul>
-</script>
-
+	<script type="text/ng-template" id="customTemplate.html">
+		<a>
+				<img ng-src="http://upload.wikimedia.org/wikipedia/commons/thumb/{{match.model.flag}}" width="16"/>
+				<span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<script type="text/ng-template" id="customPopupTemplate.html">
+		<ul class="dropdown-menu" style="bottom: 80px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
+				<li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }"
+					ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
+					<div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
+			</li>
+	</ul>
+	</script>
 	<div class="col-xs-12">
 		<div class="row row-broken vdivide">
 			<a ng-show="showDialogListButton" class="menu-ng-click"
@@ -25,53 +20,50 @@
 				<h4 class="chat-dialog name"></h4>
 			</a>
 			<div class="input-group chat-head chat-head-room vertical-align">
-			<div ng-show="showDialogListButton" type="button" class="back-btn">
-			<i ng-click="changeLocation('/chatrooms')"  class="glyphicon glyphicon-chevron-left"></i >
-			<span th:text="${lgPack.lables.chatView.goToRooms}">Menu</span></div>
-				<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
-			</div>
-
-			<div class="col-sm-3 col-xs-3 no-pading-left no-pading-right-5">
-				<div class="col-inside-lg decor-default chat chat-white scroll"
-					style="overflow: hidden; outline: none;" tabindex="5000">
-					<div class="chat-users">
-
-						<div action="" class="search-form"
-							ng-show="checkUserAdditionPermission()">
-							<div class="form-group has-feedback"
-								ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }"
-								ng-mouseover="showedSearchForm=true"
-								ng-mouseout="showedSearchForm=false">
-								<label for="search" class="sr-only ">Search</label> <input
+				<div ng-show="showDialogListButton" type="button" class="back-btn">
+					<i ng-click="changeLocation('/chatrooms')"  class="glyphicon glyphicon-chevron-left"></i >
+					<span th:text="${lgPack.lables.chatView.goToRooms}">Menu</span></div>
+					<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
+				</div>
+				<div class="col-sm-3 col-xs-3 no-pading-left no-pading-right-5">
+					<div class="col-inside-lg decor-default chat chat-white scroll"
+						style="overflow: hidden; outline: none;" tabindex="5000">
+						<div class="chat-users">
+							<div action="" class="search-form"
+								ng-show="checkUserAdditionPermission()">
+								<div class="form-group has-feedback"
+									ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }"
+									ng-mouseover="showedSearchForm=true"
+									ng-mouseout="showedSearchForm=false">
+									<label for="search" class="sr-only ">Search</label> <input
 									ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
 									autocomplete="off" type="text" class="form-control display-block"
 									name="search" id="search"
 									ng-model="$parent.searchInputValue.email"
-									ng-change="showSearchList()" placeholder="search" typeahead-wait-ms = "1000" uib-typeahead="item for item in $parent.emails" 	typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/> 
+									ng-change="showSearchList()" placeholder="search" typeahead-wait-ms = "1000" uib-typeahead="item for item in $parent.emails" 	typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/>
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
+								</div>
 							</div>
-						</div>
-						<h6
+							<h6
 							th:text="${lgPack.lables.chatView.participants} + ' [{{participants.length}}]'">Participants
 							[{{participants.length}}]</h6>
-						<div ng-repeat="participant in participants | orderBy:'-username'"
-							class="user">
-							<div class="avatar">
-								<a target="_blank" ng-if="participant.intitaUserId"
-									th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
-									<div class="avatar-contaiter">
-									<img
-									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
-									alt="{{participant.username}}" />
-									</div>
-								</a> <a target="_blank" ng-if="!participant.intitaUserId"> <img
+							<div ng-repeat="participant in participants | orderBy:'-username'"
+								class="user">
+								<div class="avatar">
+									<a target="_blank" ng-if="participant.intitaUserId"
+										th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
+										<div class="avatar-contaiter">
+											<img
+											th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
+											alt="{{participant.username}}" />
+										</div>
+									</a> <a target="_blank" ng-if="!participant.intitaUserId"> <img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 									alt="{{participant.username}}" />
 								</a>
-
 								<div
 									ng-class="!participant.online ? 'status offline' : 'status online'"
-									class=""></div>
+								class=""></div>
 							</div>
 							<div class="name">{{participant.username}}</div>
 							<div class="mood">&nbsp;</div>
@@ -90,18 +82,17 @@
 					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
 					<div class="chat-body testq">
 						<h6 th:text="${lgPack.lables.chatView.messages}">Mini Chat</h6>
-
 						<div ng-class="message.position ? 'answer right' : 'answer left'"
 							ng-repeat="message in messages track by $index">
 							<div class="avatar">
-							<div class="avatar-contaiter">
-								<img
+								<div class="avatar-contaiter">
+									<img
 									th:src="${config.get('baseUrl')+'/images/avatars/{{findParticipant(message.username).avatar}}'}"
 									alt="User name" />
-									</div>
+								</div>
 								<div
 									ng-class="!findParticipant(message.username).online ? 'status offline' : 'status online'"
-									class="status"></div>
+								class="status"></div>
 							</div>
 							<div class="name">{{message.username}}</div>
 							<div class="text">
@@ -113,7 +104,7 @@
 							</div>
 							<div
 								ng-bind="$parent.formatDateWithLast(message.date)"
-								class="time"></div>
+							class="time"></div>
 						</div>
 						<div class="chat-body answer-end"></div>
 					</div>
@@ -122,40 +113,37 @@
 			<div class="col-xs-12 chat no-pading" style="overflow: visible">
 				<div class="row answer-add" ng-show="currentRoom.active &#38;&#38; isMyRoom">
 					<div class=" dropup">
-					<textarea  msd-elastic="\n" tabindex="-1" id="newMessageInput" type="text" class="form-control "
+						<textarea  msd-elastic="\n" tabindex="-1" id="newMessageInput" type="text" class="form-control "
 						th:placeholder="${lgPack.lables.chatView.message_placeholder}"
 						placeholder="Write your message and hit enter..."
 						ng-model="newMessage"
 						ng-keydown="beforeMessageInputKeyPress($event)"
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
 						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
-						ng-click="onMessageInputClick()" 
+						ng-click="onMessageInputClick()"
 						typeahead-wait-ms = "1000"  uib-typeahead="item for item in data_in_message_input" 	typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
-						</div>
-
+					</div>
 					<span  th:title="${lgPack.lables.chatView.send}" class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
-
 					<div th:title="${lgPack.lables.chatView.phrases}" class="answer-btn answer-btn-1">
 						<button class="btn glyphicon glyphicon-font answer-btn-1-icon" type="button"
-							style="width: 100%; height: 100%; z-index: 9999; position: relative; z-index: 10; background: none; border: none;"
-							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						style="width: 100%; height: 100%; z-index: 9999; position: relative; z-index: 10; background: none; border: none;"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						</button>
 						<ul class="row dropdown-menu dropdown-menu-right">
-
 							<li role="presentation" th:each="phrase : ${phrasesPack}"
 								ng-click=""><a
-								th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
+									th:attr="ng-click=${'addPhrase(&quot;' + phrase.getText() + '&quot;)'}"
 								th:text="${phrase.getText()}" ></a></li>
-						</ul>
-					</div>
-					<form name="uploadfile" enctype="multipart/form-data"
-						id="upload_file_form">
-						<input data-preview-file-type="text" class="col-xs-4 file-loading"
+							</ul>
+						</div>
+						<form name="uploadfile" enctype="multipart/form-data"
+							id="upload_file_form">
+							<input data-preview-file-type="text" class="col-xs-4 file-loading"
 							type="file" multiple="multiple" id="myfile" name="myfile"
 							data-filename-placement="inside" />
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
