@@ -707,9 +707,10 @@ public class ChatController {
 		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
 		Map<String, Object> ratingLang = (Map<String, Object>) getLocolization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
-			String translate_rating_name = (String)ratingLang.get(consultationRatings.getName());
-			consultationRatings.setName(translate_rating_name);
-			retings.add(consultationRatings);
+			ConsultationRatings consultationRatingsCopy = new ConsultationRatings(consultationRatings);
+			String translate_rating_name = (String)ratingLang.get(consultationRatingsCopy.getName());
+			consultationRatingsCopy.setName(translate_rating_name);
+			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
 		List<ConfigParam> config =  configParamService.getParams();

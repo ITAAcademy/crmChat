@@ -25,8 +25,11 @@ import jsonview.Views;
  * @author Nicolas Haiduchok
  */
 @Entity(name = "chat_consultation_ratings")
-public class ConsultationRatings implements Serializable,Comparable<ConsultationRatings>  {
+public class ConsultationRatings implements Serializable,Comparable<ConsultationRatings>, Cloneable  {
 
+	protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 	@Id
 	@GeneratedValue
 	@JsonView(Views.Public.class)
@@ -36,6 +39,10 @@ public class ConsultationRatings implements Serializable,Comparable<Consultation
 
 	public ConsultationRatings() {
 		// TODO Auto-generated constructor stub
+	}
+	public ConsultationRatings(ConsultationRatings source){
+		this.id=source.getId();
+		this.name=source.getName();	
 	}
 	/*
 	 * GET/SET
