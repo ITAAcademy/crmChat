@@ -50,10 +50,10 @@
 							<div ng-repeat="participant in participants | orderBy:'-username'"
 								class="user">
 								<div class="avatar">
-									<a target="_blank" ng-if="participant.intitaUserId"
+									<a target="_blank" ng-if="participant.intitaUserId" 
 										th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
-										<div class="avatar-contaiter">
-											<img
+										<div class="avatar-contaiter"  ng-init="scaleCenterIconCircle()">
+											<img											
 											th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 											alt="{{participant.username}}" />
 										</div>
