@@ -1,11 +1,14 @@
 package com.intita.wschat.web;
 
+import java.io.Console;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -69,6 +72,7 @@ import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -82,6 +86,7 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
 import jsonview.Views;
 
@@ -96,7 +101,7 @@ public class ChatController {
 	@Autowired
 	ConfigParamService configParamService;
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
-	
+
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -162,11 +167,11 @@ public class ChatController {
 		}
 	}
 
-	
+
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, UsersService user_service, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 		long startTime = System.currentTimeMillis();
-		
+
 		Room o_room = chat_room_service.getRoom(roomId);
 		if(o_room == null)
 			return null;
@@ -178,7 +183,7 @@ public class ChatController {
 		all.addAll(o_user.getRootRooms());
 
 		if(!all.contains(o_room))
-				return null;
+			return null;
 
 		long timeSpend = System.currentTimeMillis() - startTime;
 		log.info("isMyRoom time:" + timeSpend );
@@ -197,7 +202,7 @@ public class ChatController {
 	{
 		updateLangMap();
 	}
-	
+
 	private void updateLangMap()
 	{
 		Iterable<Lang> it = chatLangRepository.findAll();
@@ -271,7 +276,7 @@ public class ChatController {
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
 		if(!room.isActive() || message.getMessage().isEmpty())//cant add msg
 			return null;
-		
+
 		UserMessage messageToSave = new UserMessage(chatUser,room,message);
 		return messageToSave;
 	}
@@ -309,7 +314,7 @@ public class ChatController {
 		if (messageToSave!=null)
 		{
 			addMessageToBuffer(room, messageToSave);
-			
+
 			OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 			String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
@@ -447,10 +452,10 @@ public class ChatController {
 
 		ChatUser user = struct.getUser();
 		Room room = struct.getRoom();
-		
+
 		if (room==null) 
 			throw new RoomNotFoundException("room is null");
-		
+
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
@@ -465,8 +470,9 @@ public class ChatController {
 	 * Out from room
 	 */
 	@MessageMapping("/chat.go.to.dialog.list/{roomId}")
-	public void userGoToDialogListListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
+	public void userGoToDialogListListener(@DestinationVariable("roomId") Long roomId, Principal principal, @RequestBody Map<String,Object> params) {
 		//	checkProfanityAndSanitize(message);
+
 
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, userService, chatUsersService, roomService);
 		if(struct == null)
@@ -489,12 +495,47 @@ public class ChatController {
 			last.setLastLogout(new Date());
 		}		
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
+
+		updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
+
 	}
+
+	private void updateRoomsByUser(ChatUser user, HashMap<String, Object> roomsId)
+	{
+		ArrayList<Room> roomForUpdate = new ArrayList<>();
+
+		//HashMap<String, Object> roomsId = (HashMap<String, Object>) params.get("roomForUpdate");
+		Set<String> set = roomsId.keySet();
+
+		if(roomsId.size() > 0)
+		{
+			for (String string : set) {
+				try {
+					roomForUpdate.add(new Room(Long.parseLong(string)));
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}	
+			}
+		}
+		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUserAndList(user, roomForUpdate), false));
+	}
+	
+	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)
+	@ResponseBody
+	public void updateRoomsByList(Principal principal, @RequestBody Map<String,Object> params) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		if(user != null)
+		{
+			updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
+		}
+	}
+	
 	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void userGoToDialogListListenerLP(@PathVariable("roomId") Long roomId, Principal principal) {
+	public void userGoToDialogListListenerLP(@PathVariable("roomId") Long roomId, Principal principal, @RequestBody Map<String,Object> params) {
 
-		userGoToDialogListListener(roomId, principal);
+		userGoToDialogListListener(roomId, principal, params);
 	}
 
 	/* 
@@ -517,30 +558,35 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody
-	public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
-
-		List<ChatUser> users = new  ArrayList<ChatUser>();
-		Set<ChatUser>  users_set = null;
-		users_set = roomService.getRoom(room).getUsers();
-		users.addAll(users_set);
-		users.add(roomService.getRoom(room).getAuthor());
-
-		List<Long> room_emails = new  ArrayList<>();
-		for(int i = 0; i <  users.size(); i++)
+	public String getEmailsLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
+		List<String> emails = null;
+		
+		if(eliminate_users_of_current_room)
 		{
-			User i_user = users.get(i).getIntitaUser();
-			if(i_user != null)
-				room_emails.add(i_user.getId());
+			List<ChatUser> users = new  ArrayList<ChatUser>();
+			Set<ChatUser>  users_set = null;
+			users_set = roomService.getRoom(room).getUsers();
+			users.addAll(users_set);
+			users.add(roomService.getRoom(room).getAuthor());
+	
+			List<Long> room_emails = new  ArrayList<>();
+			for(int i = 0; i <  users.size(); i++)
+			{
+				User i_user = users.get(i).getIntitaUser();
+				if(i_user != null)
+					room_emails.add(i_user.getId());
+			}
+			emails = userService.getUsersEmailsFist5(login, room_emails);
 		}
-
-		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);
-
+		else
+			emails = userService.getUsersEmailsFist5(login);
+		
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}
-	
+
 	@RequestMapping(value="/get_courses_like", method = RequestMethod.GET)
 	@ResponseBody
 	public String getCoursesLike(@RequestParam String prefix, @RequestParam String lang) throws JsonProcessingException {
@@ -550,7 +596,7 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(coursesNames);
 		return jsonInString;
 	}
-	
+
 
 	@RequestMapping(value="/get_users_nicknames_like", method = RequestMethod.GET)
 	@ResponseBody
@@ -603,7 +649,7 @@ public class ChatController {
 		}
 		return jsonInString;
 	}
-	
+
 	@RequestMapping(value="/get_users_nicknames_like_without_room", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent>  getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
@@ -633,7 +679,7 @@ public class ChatController {
 			lg = "en";
 		return lg;
 	}
-	
+
 	public Map<String, Object> getLocolization()
 	{
 		return langMap.get(getCurrentLang());
@@ -678,7 +724,7 @@ public class ChatController {
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		addLocolization(model);
-		
+
 		return page;
 	}
 

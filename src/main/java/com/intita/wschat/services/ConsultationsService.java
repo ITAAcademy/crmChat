@@ -35,6 +35,8 @@ import com.intita.wschat.repositories.ConsultationRepository;
 import com.intita.wschat.repositories.ConsultationResultRepository;
 import com.intita.wschat.repositories.IntitaConsultationRepository;
 import com.intita.wschat.repositories.UserRepository;
+import com.intita.wschat.web.RoomController;
+import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
 @Service
 public class ConsultationsService {
@@ -122,6 +124,8 @@ public class ConsultationsService {
 		if(result == null)
 		{
 			ChatUser consultant = iCons.getConsultant().getChatUser();
+			ChatUser author = iCons.getAuthor().getChatUser();
+			
 			Room consultationRoom = new Room();
 			consultationRoom.setType((short) RoomType.CONSULTATION);
 			consultationRoom.setAuthor(iCons.getConsultant().getChatUser());
@@ -130,8 +134,12 @@ public class ConsultationsService {
 			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
 			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
 			
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), chatRoomsService.getRoomsModelByChatUser(consultant));
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + iCons.getAuthor().getChatUser().getId(), chatRoomsService.getRoomsModelByChatUser(iCons.getAuthor().getChatUser()));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsModelByChatUser(consultant)));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(iCons.getAuthor().getChatUser())));
+			//LP
+			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
+			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+			
 			result = new ChatConsultation(iCons, consultationRoom);
 			chatConsultationRepository.save(result);
 		}

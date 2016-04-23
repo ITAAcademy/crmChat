@@ -40,7 +40,6 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
                 obj[k] = size / 4;
             } else
                 obj[k] = size / 4;
-            debugger;
             return obj;
         }
         return { 'width': size / 2, 'height': size / 2 };
@@ -48,7 +47,6 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
 
     }
     $scope.onRoomItemClick = function(e, roomId) {
-        debugger;
         var isLink = e.target.id == "roomItemLink";
         if (!isLink) { //skip redirection to chatroom from block onclick event
             //if click occured in <a> element
@@ -102,12 +100,16 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         //$scope.templateName = 'dialogsTemplate.html';
         //changeLocation("/chatrooms")
         $scope.dialogName = '';
+        if($rootScope.roomForUpdate == undefined)
+        	$rootScope.roomForUpdate = new Map();
+
         if ($rootScope.socketSupport) {
-            chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
+            chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({"roomForUpdate" : $rootScope.roomForUpdate}));
         } else {
-            $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId));
+            $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {"roomForUpdate" : $rootScope.roomForUpdate});
         }
 
+        $rootScope.roomForUpdate = new Map();//clear list
         chatControllerScope.currentRoom = { roomId: '' };
     }
     $scope.mouseBusy = false;
@@ -127,6 +129,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         $('.multiple-select-wrapper .list').slideUp();
     });
 
+	/* need rename */
     $scope.Airlines = [
         { selected: true, name: filters['anonim'], img: 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png' },
         { selected: true, name: filters['private'], img: 'http://megaicons.net/static/img/icons_title/40/110/title/lock-icon.png' },

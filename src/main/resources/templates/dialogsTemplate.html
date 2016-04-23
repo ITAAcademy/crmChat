@@ -13,7 +13,7 @@
                                     <ul class="items-list">
                                         <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
                                             <input type="checkbox" ng-model="airline.selected" />
-                                            <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}"/>
+                                            <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
                                             <span>{{airline.name}}</span>
                                         </li>
                                     </ul>
@@ -25,8 +25,8 @@
                         </div>
                     </div>
                 </div>
-                <ul ng-repeat="room in rooms | orderBy: '-date'| filter:filterDialogsByType
-               | filter:{string:(roomsearchquery||'')} " ng-show="socketSupport" class="list-group list-group-dialogs">
+                <ul ng-repeat="room in rooms | orderBy: ['-nums', '-date'] | filter:filterDialogsByType
+               | filter:{string:(roomsearchquery||'')} " class="list-group list-group-dialogs">
                     <li class="list-group-item list-group-item-dialogs">
                         <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
                             <div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">

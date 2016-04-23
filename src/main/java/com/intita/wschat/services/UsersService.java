@@ -68,6 +68,16 @@ public class UsersService {
 
 	}
 	
+	@Transactional
+	public List<String> getUsersEmailsFist5(String login){
+		List<User> users = usersRepo.findFirst5ByLoginLike(login + "%");
+		List<String> emails = new ArrayList<String>();
+		for(int i = 0; i < users.size(); i++)
+			emails.add(users.get(i).getEmail());
+		return emails;
+
+	}
+	
 	
 	@Transactional
 	public ArrayList<User> getUsers(){

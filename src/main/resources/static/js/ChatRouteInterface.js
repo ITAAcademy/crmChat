@@ -206,7 +206,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             $scope.show_search_list_in_message_input = true;
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId, //'/get_users_emails_like',
+                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId
+                +"&eliminate_users_of_current_room=false", //'/get_users_emails_like',
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
