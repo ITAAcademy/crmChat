@@ -444,8 +444,6 @@ public class ChatController {
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
 	public void userGoToDialogListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
 		//	checkProfanityAndSanitize(message);
-
-
 		CurrentStatusUserRoomStruct struct =  isMyRoom(roomId, principal, userService, chatUsersService, roomService);
 		if(struct == null)
 			throw new ChatUserNotInRoomException("CurrentStatusUserRoomStruct struct is null");

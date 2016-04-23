@@ -481,10 +481,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 changeLocation("/chatrooms");
         } else {
             $rootScope.authorize = false;
+            /*
             if ($location.path() != "/") {
                 $rootScope.goToAuthorize();
                 return;
             }
+            */
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
             toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
         }
