@@ -368,7 +368,7 @@ $scope.scaleCenterIconCircle = function() {
           var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
           
           $scope.showCommandListInMessageInput(commandPrefix);
-    }
+    };
     
 
     function processTildaInput() {
