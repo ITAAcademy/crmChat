@@ -239,7 +239,38 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         }, 500); //for click event
     };
 
-
+$scope.scaleCenterIconCircle = function() {
+    	
+    	var avatar_contaiter = $('.centered').children(); 
+    	avatar_contaiter.on('load', function(){
+    		
+    	for (var i = 0; i <  avatar_contaiter.length; i++)
+		{
+    		var image = avatar_contaiter.eq(i);
+    			var width = image.width();
+        	var height = image.height();
+        	image.css("position",  "static");
+        	if (parseInt(width, 10) < parseInt(height, 10)  )
+        	{
+        		var proportcialHeight = height * 100 / width;
+        		image.css("height", proportcialHeight + "%");
+        		image.css("width", "100%");
+        		image.css("top", "-75px");
+        		image.css("overflow", "hidden");
+        		image.css("transform", " translateX(-0%) translateY(-5%)");
+        	}
+        	else
+        	if (parseInt(width, 10) > parseInt(height, 10) )
+        	{
+        		var proportcialWidth = width * 100 / height;
+        		image.css("width", proportcialWidth + "%"); 
+        		image.css("height", "100%");
+        		image.css("transform", " translateX(-"+ (proportcialWidth - 100)/2 + "%)");
+        	}
+        	
+		}
+    	});
+    };
 
     $scope.onMessageInputClick = function() {
         if (!$scope.open_search_list_in_message_input)
