@@ -17,8 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,7 +95,7 @@ import jsonview.Views;
  * 
  * @author Nicolas Haiduchok
  */
-
+@Service
 @Controller
 public class ChatController {
 	@Autowired
@@ -117,6 +121,13 @@ public class ChatController {
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
+
+	@PersistenceContext
+	   EntityManager entityManager;
+
+	   protected Session getCurrentHibernateSession()  {
+	      return entityManager.unwrap(Session.class);
+	   }
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
