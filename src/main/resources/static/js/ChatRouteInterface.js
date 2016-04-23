@@ -204,7 +204,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         }
     };
     
-    $scope.showCommandListInMessageInput(command) {
+    $scope.showCommandListInMessageInput = function(command) {
     	$scope.show_search_list_in_message_input = true;
         $scope.data_in_message_input = [];
         $timeout.cancel(showCommandListInMessageInputTimer); //888
