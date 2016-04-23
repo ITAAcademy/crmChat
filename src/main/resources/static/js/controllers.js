@@ -277,11 +277,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.show_search_list = true;
             debugger;
             var request = $http({
-                method: "get",
-                url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId, //'/get_users_emails_like',
-                data: null,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
+				method: "get",
+				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId
+					+"&eliminate_users_of_current_room=true",//'/get_users_emails_like',
+				data: null ,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			});
 
             request.success(function(data) {
                 $scope.emails = data;
