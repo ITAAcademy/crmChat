@@ -517,24 +517,29 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody
-	public String getEmailsLike(@RequestParam String login, @RequestParam Long room) throws JsonProcessingException {
-
-		List<ChatUser> users = new  ArrayList<ChatUser>();
-		Set<ChatUser>  users_set = null;
-		users_set = roomService.getRoom(room).getUsers();
-		users.addAll(users_set);
-		users.add(roomService.getRoom(room).getAuthor());
-
-		List<Long> room_emails = new  ArrayList<>();
-		for(int i = 0; i <  users.size(); i++)
+	public String getEmailsLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
+		List<String> emails = null;
+		
+		if(eliminate_users_of_current_room)
 		{
-			User i_user = users.get(i).getIntitaUser();
-			if(i_user != null)
-				room_emails.add(i_user.getId());
+			List<ChatUser> users = new  ArrayList<ChatUser>();
+			Set<ChatUser>  users_set = null;
+			users_set = roomService.getRoom(room).getUsers();
+			users.addAll(users_set);
+			users.add(roomService.getRoom(room).getAuthor());
+	
+			List<Long> room_emails = new  ArrayList<>();
+			for(int i = 0; i <  users.size(); i++)
+			{
+				User i_user = users.get(i).getIntitaUser();
+				if(i_user != null)
+					room_emails.add(i_user.getId());
+			}
+			emails = userService.getUsersEmailsFist5(login, room_emails);
 		}
-
-		List<String> emails = userService.getUsersEmailsFist5(login, room_emails);
-
+		else
+			emails = userService.getUsersEmailsFist5(login);
+		
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonInString = mapper.writeValueAsString(emails);
