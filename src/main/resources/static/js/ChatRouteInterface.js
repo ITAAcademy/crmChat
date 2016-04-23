@@ -14,7 +14,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     var INPUT_MODE = {
         STANDART_MODE: 0,
         DOG_MODE: 1,
-        TILDA_MODE: 2
+        TILDA_MODE: 2,
+        COMMAND_MODE: 3
     };
 
     $scope.states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]; //nice.hide();
@@ -118,6 +119,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             case '~':
                 enableInputMode(INPUT_MODE.TILDA_MODE, carretPosIndex);
                 return;
+            case '/':
+                enableInputMode(INPUT_MODE.COMMAND_MODE, carretPosIndex);
+                return;
             case ' ':
                 $scope.onMessageInputClick();
                 break;
@@ -172,6 +176,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             case INPUT_MODE.DOG_MODE:
                 processDogInput();
                 break;
+            case INPUT_MODE.COMMAND_MODE:
+                processCommandInput();
+                break;
             case INPUT_MODE.TILDA_MODE:
                 processTildaInput();
                 break;
@@ -195,6 +202,26 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             chatSocket.send("/topic/{0}chat.typing".format(room), {}, JSON.stringify({ username: $scope.chatUserId, typing: false }));
 
         }
+    };
+    
+    $scope.showCommandListInMessageInput(command) {
+    	$scope.show_search_list_in_message_input = true;
+        $scope.data_in_message_input = [];
+        $timeout.cancel(showCommandListInMessageInputTimer); //888
+        
+        showCommandListInMessageInputTimer = $timeout(function() {
+            $scope.show_search_list_in_message_input = true;
+            var request = $http({
+                method: "get",
+                url: serverPrefix + "/get_commands_like?login=" + command,
+                data: null,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+
+            request.success(function(data) {
+                $scope.data_in_message_input = data;
+            });
+        }, 500); //for click event
     };
 
     $scope.showUsersListInMessageInput = function(email) {
@@ -332,6 +359,17 @@ $scope.scaleCenterIconCircle = function() {
 
         $scope.showUsersListInMessageInput(userNamePrefix);
     }
+    
+    function processCommandInput() {
+    	  var message = $scope.newMessage;
+    	  var msgInputElm = document.getElementById("newMessageInput");
+    	  var carretPosIndex = getCaretPosition(msgInputElm);
+    	  var commandStartIndex = message.lastIndexOf('@') + 1;
+          var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
+          
+          $scope.showCommandListInMessageInput(commandPrefix);
+    }
+    
 
     function processTildaInput() {
         var message = $scope.newMessage;
