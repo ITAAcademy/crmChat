@@ -4,7 +4,9 @@
 	<title>Bot</title>
 </head>
 <body ng-controller="BotController">
-<div>{{testStr}}</div>
+<div class="items_list" ng-repeat="listItem in listItems">
+	<a ng-href="bot_operations/sequences/{{currentSequence}}/{{currentContainer}}/nextContainer{{$index}}">{{listItem.data}}</a>
+</div>
 
 <script src="lib/jquery.min.js"></script>
 <script src="lib/angular/angular.js"></script>
