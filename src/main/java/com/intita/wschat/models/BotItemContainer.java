@@ -24,6 +24,9 @@ import com.intita.wschat.web.ChatController;
 
 @Entity
  public class BotItemContainer {
+	public BotItemContainer(){
+		
+	}
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
 	@Autowired
 	@Transient
