@@ -14,8 +14,8 @@ public class BotSequenceService {
 	@Autowired
 	BotSequenceRepository botSequenceRepository;
 	
-	public void add(BotSequence sequence){
-		botSequenceRepository.save(sequence);
+	public BotSequence add(BotSequence sequence){
+		return botSequenceRepository.save(sequence);
 	}
 	
 	
