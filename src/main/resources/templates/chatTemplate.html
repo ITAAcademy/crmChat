@@ -96,7 +96,7 @@
 							</div>
 							<div class="name">{{message.username}}</div>
 							<div class="text">
-								<dir style="margin: 0px; white-space: pre" content=" parseMsg(message.message) ">
+								<dir style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message) ">
 								</dir>
 								<span ng-repeat="file in message.attachedFiles track by $index">
 									<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
