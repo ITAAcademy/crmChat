@@ -2,6 +2,7 @@ package com.intita.wschat.web;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
@@ -15,19 +16,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.util.Transliterator;
 
-import javassist.Translator;
 import utils.RandomString;
 
 @Controller
@@ -144,10 +148,12 @@ public class FileController {
 		String fullPath = uploadDir +File.separator+mainDir+File.separator+subDir+File.separator+ file_name;      
 		File downloadFile = new File(fullPath);
 		if (!downloadFile.exists()){
+			//response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			log.debug("No such file:"+fullPath);
-			return;
+			//return;
 		}
-		FileInputStream inputStream = new FileInputStream(downloadFile);
+		FileInputStream inputStream = null;
+		inputStream = new FileInputStream(downloadFile);
 
 		// get MIME type of the file
 		String mimeType = context.getMimeType(fullPath);
@@ -183,6 +189,16 @@ public class FileController {
 		outStream.close();
 
 	}
+	@ExceptionHandler(FileNotFoundException.class)
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public ModelAndView handleException(FileNotFoundException e) {
+		ModelAndView mav = new ModelAndView();
+	    mav.setViewName("errorpage");
+	    mav.addObject("errorName", "File not found");
+	    mav.addObject("errorMessage", e.getMessage());
+	    return mav;
+	}
+	
 	private String randomizeFileName(String fileName){
 		RandomString randString = new RandomString(DEFAULT_FILE_PREFIX_LENGTH);
 		String nameSufix = randString.nextString();
