@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.BotItemContainer;
 import com.intita.wschat.models.BotSequence;
+import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.BotSequenceService;
 
 @Service
@@ -23,6 +24,9 @@ import com.intita.wschat.services.BotSequenceService;
 public class BotController {
 	@Autowired
 	BotSequenceService botSeuenceService;
+	
+	@Autowired
+	BotItemContainerService botItemContainerService;
 	
 	@PostConstruct
 	public void addTestInfoToDb(){
@@ -45,14 +49,18 @@ public class BotController {
 	public BotSequence generateTestSequnce(){
 		BotSequence botSequence = new BotSequence();
 		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
-		BotItemContainer testItemContainer1 = new BotItemContainer(getJsonContainerBodySimple(container1));//begin
-		BotItemContainer testItemContainer2 = new BotItemContainer(getJsonContainerBodySimple(container1));
-		BotItemContainer testItemContainer3 = new BotItemContainer(getJsonContainerBodySimple(container1));
-		BotItemContainer testItemContainer4 = new BotItemContainer(getJsonContainerBodySimple(container1));//end
-		BotItemContainer testItemContainer5 = new BotItemContainer(getJsonContainerBodySimple(container1));
+		BotItemContainer testItemContainer1 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));//begin
+		BotItemContainer testItemContainer2 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
+		BotItemContainer testItemContainer3 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
+		BotItemContainer testItemContainer4 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));//end
+		BotItemContainer testItemContainer5 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
 		testItemContainer1.addBranch(0, testItemContainer2);
 		testItemContainer2.addBranch(0, testItemContainer3);
 		testItemContainer3.addBranch(0, testItemContainer4);
+		botItemContainerService.update(testItemContainer1);
+		botItemContainerService.update(testItemContainer2);
+		botItemContainerService.update(testItemContainer3);
+		botItemContainerService.update(testItemContainer4);
 		botSequence.addElement(testItemContainer1);
 		return botSequence;
 	}
