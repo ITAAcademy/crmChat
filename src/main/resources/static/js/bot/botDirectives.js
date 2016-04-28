@@ -100,3 +100,43 @@ angular.module('springChat.directives').directive('botList', function($compile, 
         }
     }
 });
+/*
+attributes list: 
+content,
+linkindex, //unique index of link for sending to server
+ispost,//if false - redirect to link href, true - make post request
+href, //link to other page or address for post request 
+classes; // list of classes like: "btn btn-large"
+*/
+angular.module('springChat.directives').directive('botlink', function($compile, $parse,$http) {
+        return {
+        controller: 'ChatViewItemController',
+        link: function(scope, element, attr, ctrl) {
+            scope.$watch(attr.content, function() {
+                var body = attr.content.escapeHtml();
+                console.log("body:"+body);
+                var usePost = attr.ispost  === 'true';
+               
+                var ngclickFunction = '';
+                if (usePost && (typeof attr.href !== 'undefined') && 
+                    (typeof attr.linkindex !== 'undefined')&& 
+                    attr.href.length>0 && attr.linkindex.length>0){
+                    ngclickFunction = "sendPostToUrl({0},{1})".format(attr.href,attr.linkindex)
+                }
+                var linkHref = '#';
+                if (!usePost){
+                    linkHref = attr.href;
+                }
+
+                var prefix = '<a class="{0}" ng-click="{1}" href="{2}">'.format(attr.classes,ngclickFunction,linkHref);
+                var suffix = '</a>';
+                var elementValue = prefix + body + suffix;
+
+                element.html(elementValue);
+     
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+            }, true);
+        }
+    }
+});
