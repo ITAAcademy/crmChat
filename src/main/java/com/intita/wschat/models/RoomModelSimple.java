@@ -108,7 +108,11 @@ public class RoomModelSimple {
 		}
 		int imagesCountInMultiImage = (usersCount <= MULTI_IMAGE_MAX_IMAGE_COUNT) ? usersCount : MULTI_IMAGE_MAX_IMAGE_COUNT;
 		String multiImageLinksArray[] = new String[imagesCountInMultiImage];
-		multiImageLinksArray[0]=room.getAuthor().getIntitaUser().getAvatar();
+		if(room.getAuthor().getIntitaUser() != null)
+			multiImageLinksArray[0]=room.getAuthor().getIntitaUser().getAvatar();
+		else
+			multiImageLinksArray[0] = NO_AVATAR_IMAGE_NAME;
+		
 		for (int i = 1; i < imagesCountInMultiImage;i++){
 			ChatUser chatUser = room.getUsers().iterator().next();
 			User intitaUser = chatUser.getIntitaUser();

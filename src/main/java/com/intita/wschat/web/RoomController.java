@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +62,7 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 
 import jsonview.Views;
@@ -84,6 +88,9 @@ public class RoomController {
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
+	@Autowired private ChatController chatController;
+
+	
 	public static class ROLE
 	{
 		public static final int ADMIN = 256;
@@ -134,6 +141,21 @@ public class RoomController {
 					return result;
 				}
 				int k = new Random().nextInt(countTenant.size());
+				/*
+				 * ADD BOT TO CHAT
+				 */
+				
+				ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
+
+				room = roomService.register(bot.getId() + "_" + userId + "_" + new Date().toString(), bot);
+				roomService.addUserToRoom(user, room);
+				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+				String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
+				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+				
+				UserMessage msg = new UserMessage(bot, room, "Can I help you?");
+				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
+				/*
 				ChatTenant t_user = countTenant.get(k);//choose method
 
 				room = roomService.register(t_user.getId() + "_" + userId + "_" + new Date().toString(), t_user.getChatUser());
@@ -141,11 +163,11 @@ public class RoomController {
 				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 				String subscriptionStr = "/topic/users/" + t_user.getChatUser().getId() + "/status";
 				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-				ChatController.addFieldToInfoMap("newGuestRoom", room.getId());
 
 				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
 				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(t_user.getChatUser()));
-				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(t_user.getChatUser())));
+				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(t_user.getChatUser())));*/
+				ChatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
@@ -212,6 +234,10 @@ public class RoomController {
 			intitaId = null;
 			avatar = "noname.png";
 			iUser = user.getIntitaUser();
+			//Bot avatar
+			if(user.getId() == BotParam.BOT_ID)
+				avatar = BotParam.BOT_AVATAR;
+			
 			if(iUser != null)
 			{
 				intitaId =  iUser.getId();
@@ -659,5 +685,11 @@ public class RoomController {
 			this.chatUser = chatUser;
 			replace = true;
 		}
+	}
+	
+	@PostConstruct
+	private void PostConstructor()
+	{
+		participantRepository.add("0");
 	}
 }

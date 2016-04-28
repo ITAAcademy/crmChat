@@ -1,5 +1,7 @@
 package com.intita.wschat.web;
 
+import java.security.Principal;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +64,21 @@ public class BotController {
 		
 		 
 		return objectMapper.writeValueAsString(botSequence);
+	}
+	
+	public static class BotParam{
+		public static final long BOT_ID = 0;
+		public static final String BOT_AVATAR = "noname.png";
+		public static Principal getBotPrincipal()
+		{
+			return new Principal() {
+				
+				@Override
+				public String getName() {
+					return String.valueOf(BOT_ID);
+				}
+			};
+			
+		}
 	}
 }

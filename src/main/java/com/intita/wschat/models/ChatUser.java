@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.SessionFactory;
@@ -33,6 +34,7 @@ import jsonview.Views;
 @Entity(name="chat_user")
 public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@Autowired
+	@Transient
     private SessionFactory factory;
 	
 	
