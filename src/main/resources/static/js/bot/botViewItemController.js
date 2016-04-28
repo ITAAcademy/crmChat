@@ -7,5 +7,13 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     $scope.parse = function() {
 
     };
+     $scope.sendPostToUrl = function(href,linkData){
+                    $http({
+                        method: 'POST',
+                        url: href,
+                        data: linkData,
+                        //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
+                    });
+                }
 
 }]);
