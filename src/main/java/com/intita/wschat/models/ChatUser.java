@@ -2,6 +2,7 @@ package com.intita.wschat.models;
 
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -135,6 +136,17 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	}
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+	
+	public Principal getPrincipal()
+	{
+		return new Principal() {
+			
+			@Override
+			public String getName() {
+				return getId().toString();
+			}
+		};
 	}
 	
 	@Override

@@ -1,8 +1,20 @@
 'use strict';
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
-	    return {
+    return {
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
+
+            scope.$watch('disabled', function() {
+            	console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+                if (scope.disabled) {
+                    for (var i = 0; i < element[0].children.length; i++) {
+                        //       element[0].children[i].style.disabled = "true";
+                        element[0].children[i].style.pointerEvents = "none";
+                    }
+                    // element[0]..style.disabled = "true";
+                    element[0].style.pointerEvents = "none";
+                }
+            });
             scope.$watch(attr.content, function() {
 
                 element.html($parse(attr.content)(scope));
@@ -12,8 +24,11 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                         callBackFunction(element);
                 }
                 scope.content = $parse(attr.content)(scope);
+
                 $compile(element.contents())(scope);
             }, true);
+
+            //scope.giveTenant();
         }
     }
 });
@@ -69,7 +84,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                 var result = head;
 
                 for (var i = 0; i < elements.length; i++) {
-                	result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                    result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
                 }
 
                 element.html(result);

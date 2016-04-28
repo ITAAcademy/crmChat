@@ -134,13 +134,6 @@ public class RoomController {
 			}
 			else
 			{
-				ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
-				if(countTenant.isEmpty())
-				{
-					result.put("nextWindow", "-1");
-					return result;
-				}
-				int k = new Random().nextInt(countTenant.size());
 				/*
 				 * ADD BOT TO CHAT
 				 */
@@ -156,6 +149,14 @@ public class RoomController {
 				UserMessage msg = new UserMessage(bot, room, "Can I help you?");
 				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
 				/*
+				
+								ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
+				if(countTenant.isEmpty())
+				{
+					result.put("nextWindow", "-1");
+					return result;
+				}
+				int k = new Random().nextInt(countTenant.size());
 				ChatTenant t_user = countTenant.get(k);//choose method
 
 				room = roomService.register(t_user.getId() + "_" + userId + "_" + new Date().toString(), t_user.getChatUser());
@@ -536,10 +537,9 @@ public class RoomController {
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
 
-	boolean addUserToRoomFn( String nickName, Long room, Principal principal,boolean ws)
+	
+	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ws)
 	{
-		Room room_o = roomService.getRoom(room);
-		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
@@ -552,8 +552,16 @@ public class RoomController {
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
 		updateParticipants();
 
-		simpMessagingTemplate.convertAndSend("/topic/" + room.toString() + "/chat.participants", retrieveParticipantsMessage(room));
+		simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants", retrieveParticipantsMessage(room_o.getId()));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
+		return true;
+	}
+	
+	boolean addUserToRoomFn( String nickName, Long room, Principal principal,boolean ws)
+	{
+		Room room_o = roomService.getRoom(room);
+		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
+		addUserToRoom(user_o, room_o, principal, ws);
 		return true;
 	}
 
