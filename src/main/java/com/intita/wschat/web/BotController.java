@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.BotItemContainer;
-import com.intita.wschat.models.BotSequence;
+import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
@@ -65,7 +65,7 @@ public class BotController {
 	}
 
 	BotItemContainer currentContainer = null;
-	BotSequence botSequence;
+	BotCategory botSequence;
 
 	public String getJsonContainerBodySimple(String[] itemsText){
 		String res = "{";
@@ -76,8 +76,8 @@ public class BotController {
 		res+="}";
 		return res;
 	}
-	public BotSequence generateTestSequnce(){
-		BotSequence botSequence = new BotSequence();
+	public BotCategory generateTestSequnce(){
+		BotCategory botSequence = new BotCategory();
 		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
 		BotItemContainer testItemContainer1 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));//begin
 		BotItemContainer testItemContainer2 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
