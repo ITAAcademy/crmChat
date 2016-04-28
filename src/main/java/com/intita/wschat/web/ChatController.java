@@ -553,6 +553,23 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}*/
+	
+	
+	@RequestMapping(value="/get_commands_like", method = RequestMethod.GET)
+	@ResponseBody
+	public String getEmailsLike(@RequestParam String command) throws JsonProcessingException{
+		List<String> commands = new  ArrayList<String>();
+		commands.add(new String("command1"));
+		commands.add(new String("command134"));
+		commands.add(new String("command167"));
+		commands.add(new String("command112"));
+		commands.add(new String("command1126"));
+			
+		ObjectMapper mapper = new ObjectMapper();
+
+		String jsonInString = mapper.writeValueAsString(commands);
+		return jsonInString;
+	}
 
 	@RequestMapping(value="/get_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody
