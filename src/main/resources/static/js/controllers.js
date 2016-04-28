@@ -501,7 +501,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         } else {
             parseObj = message;
         }
-        debugger;
         var needReplace = parseObj.replace;
         var roomList = parseObj.list;
         if (needReplace) {
