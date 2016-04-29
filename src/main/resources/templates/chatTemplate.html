@@ -52,7 +52,8 @@
 								<div class="avatar">
 									<a target="_blank" ng-if="participant.intitaUserId" 
 										th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
-										<div class="avatar-contaiter centered"  ng-init="scaleCenterIconCircle()">
+										<div class="avatar-contaiter centered"  >
+										<!--ng-init="scaleCenterIconCircle()" -->
 											<img											
 											th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
 											alt="{{participant.username}}" />
@@ -99,7 +100,7 @@
 								
 								<dir ng-if="message.chatUserId != null" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message) "></dir>
 								<div ng-if="message.chatUserId == null" bot-container = " "  style="margin: 0px; white-space: pre" content=" parseMsg(message.message)" ></div>
-								
+
 								<span ng-repeat="file in message.attachedFiles track by $index">
 									<a ng-href="{{file}}">{{getNameFromUrl(file)}}</a>
 								</span>

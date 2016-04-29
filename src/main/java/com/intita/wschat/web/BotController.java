@@ -121,10 +121,15 @@ public class BotController {
 		int k = new Random().nextInt(countTenant.size());
 
 		ChatTenant t_user = countTenant.get(k);//choose method
-		ChatUser c_user = t_user.getChatUser(); 
+		ChatUser c_user = t_user.getChatUser();
 		
+		/*
+		 * Tenant author of room && can add new user
+		 */
+		room_o.setAuthor(c_user);
+		roomService.update(room_o);
 		
-		roomControler.addUserToRoom(c_user, room_o, room_o.getAuthor().getPrincipal(), true);
+		roomControler.addUserToRoom(c_user, room_o, c_user.getPrincipal(), true);
 		
 		
 	}

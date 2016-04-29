@@ -205,15 +205,16 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     };
     
     $scope.showCommandListInMessageInput = function(command) {
-    	$scope.show_search_list_in_message_input = true;
+
         $scope.data_in_message_input = [];
-        $timeout.cancel(showCommandListInMessageInputTimer); //888
+        if($scope.showCommandListInMessageInputTimer != null && $scope.showCommandListInMessageInputTimer != undefined)
+        	$timeout.cancel($scope.showCommandListInMessageInputTimer); //888
         
-        showCommandListInMessageInputTimer = $timeout(function() {
+        $scope.showCommandListInMessageInputTimer = $timeout(function() {
             $scope.show_search_list_in_message_input = true;
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_commands_like?login=" + command,
+                url: serverPrefix + "/get_commands_like?command=" + command,
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });

@@ -103,11 +103,11 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         if($rootScope.roomForUpdate == undefined)
         	$rootScope.roomForUpdate = new Map();
 
-        if ($rootScope.socketSupport) {
+			if ($rootScope.socketSupport) {
             chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({"roomForUpdate" : $rootScope.roomForUpdate}));
         } else {
             $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {"roomForUpdate" : $rootScope.roomForUpdate});
-        }
+		}
 
         $rootScope.roomForUpdate = new Map();//clear list
         chatControllerScope.currentRoom = { roomId: '' };
@@ -158,7 +158,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     console.log("initing:" + chatControllerScope.socketSupport);
     $scope.pageClass = 'scale-fade';
     $scope.$$postDigest(function() {
-        var nice = $(".chat-box").niceScroll();
+     //   var nice = $(".chat-box").niceScroll();
 
     })
 
