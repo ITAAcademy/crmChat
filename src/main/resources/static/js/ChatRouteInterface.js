@@ -346,6 +346,9 @@ $scope.scaleCenterIconCircle = function() {
                 prefix = '"';
                 suffix = '"';
                 break;
+            case INPUT_MODE.COMMAND_MODE:
+            	 functionalChar = "/";
+            	break;
         }
         var message = $scope.newMessage;
         var msgInputElm = document.getElementById("newMessageInput");
@@ -377,7 +380,7 @@ $scope.scaleCenterIconCircle = function() {
     	  var message = $scope.newMessage;
     	  var msgInputElm = document.getElementById("newMessageInput");
     	  var carretPosIndex = getCaretPosition(msgInputElm);
-    	  var commandStartIndex = message.lastIndexOf('@') + 1;
+    	  var commandStartIndex = message.lastIndexOf('/') + 1;
           var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
           
           $scope.showCommandListInMessageInput(commandPrefix);

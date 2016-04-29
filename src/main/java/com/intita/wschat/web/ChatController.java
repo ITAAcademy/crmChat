@@ -566,10 +566,21 @@ public class ChatController {
 		commands.add(new String("xcvbx"));
 		commands.add(new String("erwtert"));
 		commands.add(new String("wertwert"));
+		commands.add(new String("banana"));
+		commands.add(new String("vuka"));
+		commands.add(new String("kolapa"));
+		commands.add(new String("nima"));
+		
+		List<String> result = new  ArrayList<String>();
+		for (int i = 0; i < commands.size(); i++)
+		{
+			if (commands.get(i).matches(new String(".*" + command + ".*")))
+				result.add(commands.get(i));
+		}
 			
 		ObjectMapper mapper = new ObjectMapper();
 
-		String jsonInString = mapper.writeValueAsString(commands);
+		String jsonInString = mapper.writeValueAsString(result);
 		return jsonInString;
 	}
 
