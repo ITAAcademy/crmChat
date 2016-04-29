@@ -277,12 +277,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.show_search_list = true;
             debugger;
             var request = $http({
-				method: "get",
-				url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId
-					+"&eliminate_users_of_current_room=true",//'/get_users_emails_like',
-				data: null ,
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-			});
+                method: "get",
+                url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=true", //'/get_users_emails_like',
+                data: null,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
 
             request.success(function(data) {
                 $scope.emails = data;
@@ -522,10 +521,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     function newMessageEvent(roomId) {
         for (var roomIndex = 0; roomIndex < $scope.rooms.length; roomIndex++) {
             var room = $scope.rooms[roomIndex];
-            
+
 
             if (room.roomId == roomId) {
-            	$rootScope.roomForUpdate[room.roomId] = true;
+                $rootScope.roomForUpdate[room.roomId] = true;
                 if ($scope.currentRoom.roomId != room.roomId) {
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
@@ -539,17 +538,28 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         var updateDialogListTimeout = null;
         //Update if user see rooms
         if ($scope.currentRoom.roomId == "" && $rootScope.roomForUpdate.keys().next() != undefined) {
-        	if(updateDialogListTimeout != null)
-        		updateDialogListTimeout.cancel();
+            if (updateDialogListTimeout != null)
+                updateDialogListTimeout.cancel();
 
-        	updateDialogListTimeout = $timeout(function() {
-        		$http.post(serverPrefix + "/chat/update/dialog_list", { "roomForUpdate": $rootScope.roomForUpdate });
-            	$rootScope.roomForUpdate = new Map();
-            	updateDialogListTimeout = null;
-        	}, 2500);
+            updateDialogListTimeout = $timeout(function() {
+                $http.post(serverPrefix + "/chat/update/dialog_list", { "roomForUpdate": $rootScope.roomForUpdate });
+                $rootScope.roomForUpdate = new Map();
+                updateDialogListTimeout = null;
+            }, 2500);
         }
     }
 
+    $scope.getKeys = function(obj) {
+        var keys = Object.keys(obj);
+        for (var i = 0; i < keys.length; i++)
+        {
+        	var value = undefined;
+        	if(obj[keys[i]] != undefined)
+        		value = obj[keys[i]];
+        	
+            console.log(i + ") " + keys[i] + " = " + value);
+        }
+    }
 
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId), function(message) {
