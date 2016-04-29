@@ -10,13 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class BotSequence {
-@OneToMany(fetch = FetchType.LAZY, mappedBy = "parentSequence")
+public class BotCategory {
+@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
 List<BotItemContainer> elements;
 @Id
 @GeneratedValue
 private Long id;
-public BotSequence(){
+
+private String name;
+
+public BotCategory(){
 	elements = new ArrayList<BotItemContainer>(); 
 }
 
@@ -37,5 +40,13 @@ public Long getId() {
 
 public void setId(Long id) {
 	this.id = id;
+}
+
+public String getName() {
+	return name;
+}
+
+public void setName(String name) {
+	this.name = name;
 }
 }

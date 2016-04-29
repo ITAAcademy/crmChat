@@ -36,7 +36,7 @@ import com.intita.wschat.web.ChatController;
 	 private Long id;
 	String body;
 	@ManyToOne
-	BotSequence parentSequence;
+	BotCategory category;
 	
 	public  BotItemContainer(String body){
 		this.body=body;
@@ -53,9 +53,6 @@ public void setTransitions(String str){
 }
 
 String conditionalTransitions="";
-
-@OneToOne
-BotItemContainer previousNode;
 
 public String getBody() {
 	return body;
@@ -99,11 +96,5 @@ public void setConditionalTransitionsMap(HashMap<Integer, Long> map){
 }
 public void setConditionalTransitions(String conditionalTransitions) {
 	this.conditionalTransitions = conditionalTransitions;
-}
-public BotItemContainer getPreviousNode() {
-	return previousNode;
-}
-public void setPreviousNode(BotItemContainer previousNode) {
-	this.previousNode = previousNode;
 }
 }
