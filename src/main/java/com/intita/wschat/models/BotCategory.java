@@ -8,19 +8,26 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class BotCategory {
 @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-List<BotItemContainer> elements;
+List<BotItemContainer> elements = new ArrayList<BotItemContainer>();
 @Id
 @GeneratedValue
 private Long id;
 
 private String name;
 
+@OneToOne
+BotItemContainer mainElement;
+
 public BotCategory(){
-	elements = new ArrayList<BotItemContainer>(); 
+	
+}
+public BotCategory(String name){
+this.name = name;	
 }
 
 public List<BotItemContainer> getElements() {
@@ -48,5 +55,11 @@ public String getName() {
 
 public void setName(String name) {
 	this.name = name;
+}
+public BotItemContainer getMainElement() {
+	return mainElement;
+}
+public void setMainElement(BotItemContainer mainElement) {
+	this.mainElement = mainElement;
 }
 }
