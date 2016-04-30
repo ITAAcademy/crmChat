@@ -16,15 +16,20 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 }
             });
             scope.$watch(attr.content, function() {
-
-                element.html($parse(attr.content)(scope));
+                  debugger;
+                  var receivedData = attr.content.unescapeHtml();
+                  var dataWithRemovedBrackets=receivedData.slice(1,-1);// 'string' to string
+                var parsedData = JSON.parse(dataWithRemovedBrackets.unescapeHtml()); 
+                console.log('botContainer content:'+parsedData.body);
+               // var elementValue = parsedData.body.replace(/\\"/g, '"');
+                element.html(parsedData.body);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
                     if (typeof callBackFunction != 'undefined')
                         callBackFunction(element);
                 }
-                scope.content = $parse(attr.content)(scope);
-
+                //scope.content = $parse(parsedData.body)(scope);
+                debugger;
                 $compile(element.contents())(scope);
             }, true);
 
@@ -86,7 +91,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                 for (var i = 0; i < elements.length; i++) {
                     result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
                 }
-
+                debugger;
                 element.html(result);
 
                 if (typeof attr.callback != 'undefined') {
@@ -94,7 +99,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     if (typeof callBackFunction != 'undefined')
                         callBackFunction(element);
                 }
-                scope.content = $parse(attr.content)(scope);
+                //scope.content = $parse(attr.content)(scope);
                 $compile(element.contents())(scope);
             }, true);
         }
@@ -131,6 +136,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 var prefix = '<a class="{0}" ng-click="{1}" href="{2}">'.format(attr.classes,ngclickFunction,linkHref);
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
+
 
                 element.html(elementValue);
      

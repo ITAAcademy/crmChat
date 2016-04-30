@@ -1,6 +1,7 @@
 package com.intita.wschat.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.slf4j.Logger;
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.services.BotItemContainerService;
+import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.web.ChatController;
 
 
@@ -34,12 +35,14 @@ import com.intita.wschat.web.ChatController;
 	 @Id
 	 @GeneratedValue
 	 private Long id;
-	String body;
+	 
+	private String body;
 	@ManyToOne
 	BotCategory category;
 	
-	public  BotItemContainer(String body){
+	public  BotItemContainer(String body,BotCategory category){
 		this.body=body;
+		this.category = category;
 	}
 
 public BotItemContainer getNextNode(int chosedItem){
@@ -96,5 +99,18 @@ public void setConditionalTransitionsMap(HashMap<Integer, Long> map){
 }
 public void setConditionalTransitions(String conditionalTransitions) {
 	this.conditionalTransitions = conditionalTransitions;
+}
+public static BotItemContainer createFromCategories(ArrayList<BotCategory> categories){
+	BotItemContainer container = new BotItemContainer();
+	String itemTemplate = "<div botlink=\" \" href=\"%s\" ispost=\"true\" classes=\"btn btn-default\" content=\"'%s'\"> </div><br>";
+	String body  = "";
+	for (BotCategory category : categories){
+		String categoryName = category.getName();
+		Long mainContainerId = category.getMainElement().getId();
+		body += String.format(itemTemplate,"get_bot_container/"+category.getId()+"/"+mainContainerId,categoryName );
+		}
+	log.info("body:"+body);
+	container.setBody(body);
+	return container;
 }
 }

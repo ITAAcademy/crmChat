@@ -47,6 +47,8 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.BotCategory;
+import com.intita.wschat.models.BotItemContainer;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.OperationStatus;
@@ -55,12 +57,14 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
+import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -89,6 +93,8 @@ public class RoomController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 
 	@Autowired private ChatController chatController;
+	
+	@Autowired private BotCategoryService botCategoryService;
 
 	
 	public static class ROLE
@@ -145,8 +151,16 @@ public class RoomController {
 				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 				String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
 				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-				
-				UserMessage msg = new UserMessage(bot, room, "Can I help you?");
+				ArrayList<BotCategory> allCategories = botCategoryService.getAll();
+				BotItemContainer mainContainer = BotItemContainer.createFromCategories(allCategories);
+				String containerString = "";
+				try {
+					containerString = HtmlUtility.escapeHtml(mapper.writeValueAsString(mainContainer));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				UserMessage msg = new UserMessage(bot, room, containerString);
 				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
 				/*
 				

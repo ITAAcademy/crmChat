@@ -34,3 +34,22 @@ if (!String.prototype.escapeHtml) {
 	  return this.replace(/[&<>"']/g, function(m) { return map[m]; });
 	}
 }
+
+if (!String.prototype.unescapeHtml) {
+	String.prototype.unescapeHtml = function() {
+	  var map = {
+	     '&amp;' : '&',
+	     '&lt;' : '<',
+	    '&gt;' : '>',
+	    '&quot;' : '"' ,
+	    '&#039;' : "'",
+	    '&#123;' : '{',
+	    '&#125;' : '}'
+	  };
+
+	  return this.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&#123;|&#125;/g, function(m) { 
+	  	debugger;
+	  	return map[m]; 
+	  });
+	}
+}

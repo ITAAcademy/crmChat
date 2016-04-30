@@ -24,7 +24,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.BotItemContainerService;
-import com.intita.wschat.services.BotSequenceService;
+import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -38,7 +38,7 @@ import com.intita.wschat.services.UsersService;
 @Controller
 public class BotController {
 	@Autowired
-	BotSequenceService botSeuenceService;
+	BotCategoryService botCategoryService;
 
 	@Autowired
 	BotItemContainerService botItemContainerService;
@@ -60,12 +60,13 @@ public class BotController {
 
 	@PostConstruct
 	public void addTestInfoToDb(){
-		botSequence = generateTestSequnce();
-		botSeuenceService.add(botSequence);
+		if (botCategoryService.getCount()>0)return;
+		botCategory = botCategoryService.add(new BotCategory("Main category"));
+		generateTestSequnce(botCategory);
 	}
 
 	BotItemContainer currentContainer = null;
-	BotCategory botSequence;
+	BotCategory botCategory;
 
 	public String getJsonContainerBodySimple(String[] itemsText){
 		String res = "{";
@@ -76,14 +77,13 @@ public class BotController {
 		res+="}";
 		return res;
 	}
-	public BotCategory generateTestSequnce(){
-		BotCategory botSequence = new BotCategory();
+	public void generateTestSequnce(BotCategory botCategory){
 		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
-		BotItemContainer testItemContainer1 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));//begin
-		BotItemContainer testItemContainer2 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
-		BotItemContainer testItemContainer3 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
-		BotItemContainer testItemContainer4 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));//end
-		BotItemContainer testItemContainer5 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
+		BotItemContainer testItemContainer1 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));//begin
+		BotItemContainer testItemContainer2 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));
+		BotItemContainer testItemContainer3 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));
+		BotItemContainer testItemContainer4 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));//end
+		//BotItemContainer testItemContainer5 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
 		testItemContainer1.addBranch(0, testItemContainer2);
 		testItemContainer2.addBranch(0, testItemContainer3);
 		testItemContainer3.addBranch(0, testItemContainer4);
@@ -91,8 +91,9 @@ public class BotController {
 		botItemContainerService.update(testItemContainer2);
 		botItemContainerService.update(testItemContainer3);
 		botItemContainerService.update(testItemContainer4);
-		botSequence.addElement(testItemContainer1);
-		return botSequence;
+		botCategory.setMainElement(testItemContainer1);
+		botCategoryService.update(botCategory);
+	    botItemContainerService.update(testItemContainer1);
 	}
 
 	@RequestMapping(value = "bot_operations/sequences/{sequenceId}/{containerId}/nextContainer{choseIndex}", method = RequestMethod.GET)
@@ -101,7 +102,7 @@ public class BotController {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 
-		return objectMapper.writeValueAsString(botSequence);
+		return objectMapper.writeValueAsString(botCategory);
 	}
 
 
