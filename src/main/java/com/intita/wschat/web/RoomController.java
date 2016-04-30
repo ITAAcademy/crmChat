@@ -117,29 +117,20 @@ public class RoomController {
 	public Room createDialogWithBot(String roomName, Principal principal)
 	{
 		Room room = new Room();	
-		System.out.println("111111111111111111111111111111111111111");
 		ChatUser user = chatUserServise.getChatUser(principal);
-		System.out.println("222222222222222222222222222 " + user.getNickName());
 		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
-		System.out.println("3333333333333333333333333333333333 " + bot.getNickName());
 		if (roomName == "")
 			roomName = bot.getId() + "_" + principal.getName() + "_" + new Date().toString();
-		System.out.println("444444444444444444444444444444444444444 " + roomName);
 		
 		room = roomService.register(roomName, bot);
-		System.out.println("5555555555555555555555555555555555555555 " + room.getName());
 		roomService.addUserToRoom(user, room);
-		System.out.println("6666666666666666666666666666666666");
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
-		System.out.println("777777777777777777777777777777777777777 " + operationStatus.getDescription());
 		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
-		System.out.println("888888888888888888888888888888888888888888");
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-		System.out.println("99999999999999999999999999999999999999999999999");
 		UserMessage msg = new UserMessage(bot, room, "Can I help you?");
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
 		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
-		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+
 		return room;
 	}
 

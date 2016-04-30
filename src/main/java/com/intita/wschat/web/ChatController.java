@@ -557,7 +557,7 @@ public class ChatController {
 	
 	@RequestMapping(value="/get_commands_like", method = RequestMethod.GET)
 	@ResponseBody
-	public String getEmailsLike(@RequestParam String command) throws JsonProcessingException{
+	public String getCommandsLike(@RequestParam String command) throws JsonProcessingException{
 		List<String> commands = new  ArrayList<String>();
 		commands.add(new String("createDialogWithBot"));
 		
