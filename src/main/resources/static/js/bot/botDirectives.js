@@ -126,14 +126,19 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 if (usePost && (typeof attr.href !== 'undefined') && 
                     (typeof attr.linkindex !== 'undefined')&& 
                     attr.href.length>0 && attr.linkindex.length>0){
-                    ngclickFunction = "sendPostToUrl({0},{1})".format(attr.href,attr.linkindex)
+                    var dataObject ={"body":null};
+                    dataObject.body =attr.linkindex;
+                    var payLoad = JSON.stringify(dataObject);
+                    debugger;
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId,attr.href);
+                    ngclickFunction = "sendPostToUrl({0},{1})".format("get_container/"+attr.href+attr.linkindex,payLoad)
                 }
                 var linkHref = '#';
                 if (!usePost){
                     linkHref = attr.href;
                 }
 
-                var prefix = '<a class="{0}" ng-click="{1}" href="{2}">'.format(attr.classes,ngclickFunction,linkHref);
+                var prefix = '<a class="{0}" ng-click=\'{1}\' href="{2}">'.format(attr.classes,ngclickFunction,link);
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
 
