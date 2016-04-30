@@ -48,7 +48,6 @@ if (!String.prototype.unescapeHtml) {
 	  };
 
 	  return this.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&#123;|&#125;/g, function(m) { 
-	  	debugger;
 	  	return map[m]; 
 	  });
 	}

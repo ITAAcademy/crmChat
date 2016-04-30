@@ -52,7 +52,7 @@ public class BotController {
 	BotItemContainerService botItemContainerService;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
-	
+
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
 	@Autowired private UserMessageService userMessageService;
@@ -62,16 +62,23 @@ public class BotController {
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
-	
-	
+
+
 	@Autowired private RoomController roomControler;
 
 	@PostConstruct
-	public void addTestInfoToDb(){
-		if (botCategoryService.getCount()>0)return;
+	public void postConstructor(){
+
+		ChatUser chatUser = new ChatUser("Mr.Bot", null);
+		chatUser.setId((long)0);
+		chatUsersService.updateChatUserInfo(chatUser);
+		
+		if (botCategoryService.getCount() > 0)
+			return;
+		
 		botCategory = botCategoryService.add(new BotCategory("Main category"));
 		generateTestSequnce(botCategory);
-	}
+	}	
 
 	BotItemContainer currentContainer = null;
 	BotCategory botCategory;
@@ -101,7 +108,7 @@ public class BotController {
 		botItemContainerService.update(testItemContainer4);
 		botCategory.setMainElement(testItemContainer1);
 		botCategoryService.update(botCategory);
-	    botItemContainerService.update(testItemContainer1);
+		botItemContainerService.update(testItemContainer1);
 	}
 
 	@RequestMapping(value = "bot_operations/sequences/{sequenceId}/{containerId}/nextContainer{choseIndex}", method = RequestMethod.GET)
@@ -112,27 +119,27 @@ public class BotController {
 
 		return objectMapper.writeValueAsString(botCategory);
 	}
-	
+
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{categoryId}", method = RequestMethod.GET)
 	@ResponseBody
 	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("categoryId") Long categoryId, @RequestBody Map<String,Object> param) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		
+
 		ChatUser bot = chatUsersService.getChatUser(BotParam.BOT_ID);
 
 		Room room = roomService.getRoom(roomId);
-		
+
 		/*OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
 		boolean toMainContainer = true;
 		BotItemContainer nextContainer;
-		
+
 		if(toMainContainer)
 			nextContainer = botItemContainerService.getById(categoryId);
 		else
 			nextContainer = botCategoryService.getById(categoryId).getMainElement();
-		
+
 		String containerString = "";
 		try {
 			containerString = HtmlUtility.escapeHtml(objectMapper.writeValueAsString(nextContainer));
@@ -145,15 +152,15 @@ public class BotController {
 		return objectMapper.writeValueAsString(botCategory);
 	}
 
-	
+
 	@RequestMapping(value = "bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
-		
+
 		Room room_o = roomService.getRoom(roomId);
 		if(room_o == null)
 			return;			
-			
+
 		ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
 		if(countTenant.isEmpty())
 		{
@@ -163,16 +170,16 @@ public class BotController {
 
 		ChatTenant t_user = countTenant.get(k);//choose method
 		ChatUser c_user = t_user.getChatUser();
-		
+
 		/*
 		 * Tenant author of room && can add new user
 		 */
 		room_o.setAuthor(c_user);
 		roomService.update(room_o);
-		
+
 		roomControler.addUserToRoom(c_user, room_o, c_user.getPrincipal(), true);
-		
-		
+
+
 	}
 
 	public static class BotParam{

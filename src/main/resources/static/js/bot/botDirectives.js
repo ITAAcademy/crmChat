@@ -138,7 +138,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     linkHref = attr.href;
                 }
 
-                var prefix = '<a class="{0}" ng-click=\'{1}\' href="{2}">'.format(attr.classes,ngclickFunction,link);
+                var prefix = '<a class="{0}" ng-click=\'{1}\' ">'.format(attr.classes,ngclickFunction);
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
 
