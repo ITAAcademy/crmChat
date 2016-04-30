@@ -142,9 +142,9 @@ public class RoomController {
 
 				room = roomService.register(bot.getId() + "_" + userId + "_" + new Date().toString(), bot);
 				roomService.addUserToRoom(user, room);
-				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+				/*OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 				String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
-				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
 				
 				UserMessage msg = new UserMessage(bot, room, "Can I help you?");
 				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
