@@ -17,5 +17,13 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
                         //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
                     });
                 }
+      $scope.sendPostToUrlRoom = function(href,linkData,roomId){
+                    $http({
+                        method: 'POST',
+                        url: roomId+"/"+href,
+                        data: linkData,
+                        //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
+                    });
+                }
 
 }]);

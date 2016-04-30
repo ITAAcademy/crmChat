@@ -102,12 +102,12 @@ public void setConditionalTransitions(String conditionalTransitions) {
 }
 public static BotItemContainer createFromCategories(ArrayList<BotCategory> categories){
 	BotItemContainer container = new BotItemContainer();
-	String itemTemplate = "<div botlink=\" \" href=\"%s\" ispost=\"true\" classes=\"btn btn-default\" content=\"'%s'\"> </div><br>";
+	String itemTemplate = "<div botlink=\" \" href=\"%s\" ispost=\"true\" classes=\"btn btn-default\" linkindex=\"%d\" content=\"'%s'\"> </div><br>";
 	String body  = "";
 	for (BotCategory category : categories){
 		String categoryName = category.getName();
 		Long mainContainerId = category.getMainElement().getId();
-		body += String.format(itemTemplate,"get_bot_container/"+category.getId()+"/"+mainContainerId,categoryName );
+		body += String.format(itemTemplate,category.getId(),mainContainerId,categoryName );
 		}
 	log.info("body:"+body);
 	container.setBody(body);
