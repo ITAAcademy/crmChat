@@ -1,0 +1,18 @@
+<div >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
+                <h4 id="wndTitle" th:text="${lgPack.lables.roomListView.addRoomModal.title}" class="modal-title">Створення кімнати</h4>
+            </div>
+            <div class="modal-body">
+                <input class="modal_input" id="roomNameInput" type="text" ng-model="dialogName" ng-keypress="addRoomButtonKeyPress($event)" th:placeholder="${lgPack.lables.roomListView.addRoomModal.room_name_placeholder}" placeholder="Room name"></input>
+            </div>
+            <div class="modal-footer">
+                <button id="closeButton" th:text="${lgPack.lables.roomListView.addRoomModal.close}" type="button" class="btn btn-default" ng-click="toggleNewRoomModal()">Close</button>
+                <button id="createButton"  th:text="${lgPack.lables.roomListView.addRoomModal.create}" type="button" class="btn btn-default" ng-click="addDialog();toggleNewRoomModal();">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

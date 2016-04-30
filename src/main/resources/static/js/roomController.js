@@ -9,9 +9,9 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     $scope.dialogName = '';
 
     $scope.showNewRoomModal = false;
-    $scope.toggleNewRoomModal = function() {
+    /*$scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
-    }
+    }*/
     $scope.addRoomButtonKeyPress = function(event) {
         if (event.keyCode == 13) {
             $scope.addDialog();
@@ -59,6 +59,9 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         if ($scope.mouseBusy == false)
             chatControllerScope.changeLocation('/dialog_view/' + roomId);
     }
+    
+   
+    
     $scope.addDialog = function() {
         if ($rootScope.socketSupport) {
             chatControllerScope.roomAdded = false;

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.ModelAndView;
@@ -105,6 +106,42 @@ public class RoomController {
 
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
+		
+	@RequestMapping(value = "/chat/rooms/create/with_bot/", method = RequestMethod.POST)
+	@ResponseBody
+	public void createDialogWithBotRequesr(@RequestBody String roomName, Principal principal)
+	{
+		createDialogWithBot(roomName,principal);
+	}
+	
+	public Room createDialogWithBot(String roomName, Principal principal)
+	{
+		Room room = new Room();	
+		System.out.println("111111111111111111111111111111111111111");
+		ChatUser user = chatUserServise.getChatUser(principal);
+		System.out.println("222222222222222222222222222 " + user.getNickName());
+		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
+		System.out.println("3333333333333333333333333333333333 " + bot.getNickName());
+		if (roomName == "")
+			roomName = bot.getId() + "_" + principal.getName() + "_" + new Date().toString();
+		System.out.println("444444444444444444444444444444444444444 " + roomName);
+		
+		room = roomService.register(roomName, bot);
+		System.out.println("5555555555555555555555555555555555555555 " + room.getName());
+		roomService.addUserToRoom(user, room);
+		System.out.println("6666666666666666666666666666666666");
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+		System.out.println("777777777777777777777777777777777777777 " + operationStatus.getDescription());
+		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
+		System.out.println("888888888888888888888888888888888888888888");
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		System.out.println("99999999999999999999999999999999999999999999999");
+		UserMessage msg = new UserMessage(bot, room, "Can I help you?");
+		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
+		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+		return room;
+	}
 
 	/**********************
 	 * what doing with new auth user 
@@ -138,16 +175,7 @@ public class RoomController {
 				 * ADD BOT TO CHAT
 				 */
 				
-				ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
-
-				room = roomService.register(bot.getId() + "_" + userId + "_" + new Date().toString(), bot);
-				roomService.addUserToRoom(user, room);
-				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
-				String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
-				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-				
-				UserMessage msg = new UserMessage(bot, room, "Can I help you?");
-				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
+				room = createDialogWithBot("", principal);
 				/*
 				
 								ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
@@ -439,6 +467,7 @@ public class RoomController {
 
 	@MessageMapping("/chat/rooms/add.{name}")
 	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
+		System.out.println("111111111111111111111111111111111");
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		Room room = roomService.register(name, user);
@@ -456,6 +485,7 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
 	@ResponseBody
 	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
+		System.out.println("2222222222222222222222222222");
 		ChatUser auth = chatUserServise.getChatUser(principal);
 		if (auth==null)return -1L;
 		User authorOfDialog = auth.getIntitaUser();
