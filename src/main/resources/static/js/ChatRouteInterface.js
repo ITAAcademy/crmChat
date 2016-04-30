@@ -106,10 +106,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         var kk = keyCode;
         var arrowKeyPressed = kk == 39 || kk == 37;
         var enterPressed = keyCode == 13;
+     
         if (enterPressed && !$scope.show_search_list_in_message_input) {
             $scope.onMessageInputClick();
             return;
         }
+        
+       
 
         var msgInputElm = document.getElementById("newMessageInput");
         var carretPosIndex = getCaretPosition(msgInputElm);
@@ -136,6 +139,15 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     }
     $scope.beforeMessageInputKeyPress = function(event) {
+    	
+		 var escapePressed = event.keyCode  == 27;
+	     if (escapePressed)
+     	 {
+	    	 data_in_message_input = [];
+	    	 $scope.show_search_list_in_message_input = false;
+	    	 resetSpecialInput();
+	    	 return;
+         }
 
         if (event.keyCode === 9) { // tab was pressed
 
@@ -335,6 +347,9 @@ $scope.scaleCenterIconCircle = function() {
                 prefix = '"';
                 suffix = '"';
                 break;
+            case INPUT_MODE.COMMAND_MODE:
+            	 functionalChar = "/";
+            	break;
         }
         var message = $scope.newMessage;
         var msgInputElm = document.getElementById("newMessageInput");
@@ -366,7 +381,7 @@ $scope.scaleCenterIconCircle = function() {
     	  var message = $scope.newMessage;
     	  var msgInputElm = document.getElementById("newMessageInput");
     	  var carretPosIndex = getCaretPosition(msgInputElm);
-    	  var commandStartIndex = message.lastIndexOf('@') + 1;
+    	  var commandStartIndex = message.lastIndexOf('/') + 1;
           var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
           
           $scope.showCommandListInMessageInput(commandPrefix);

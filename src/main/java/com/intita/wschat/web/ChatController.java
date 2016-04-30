@@ -559,15 +559,28 @@ public class ChatController {
 	@ResponseBody
 	public String getEmailsLike(@RequestParam String command) throws JsonProcessingException{
 		List<String> commands = new  ArrayList<String>();
-		commands.add(new String("command1"));
-		commands.add(new String("command134"));
-		commands.add(new String("command167"));
-		commands.add(new String("command112"));
-		commands.add(new String("command1126"));
+		commands.add(new String("createDialog"));
+		commands.add(new String("createDialogWithBot"));
+		commands.add(new String("asdfaq34"));
+		commands.add(new String("23423423"));
+		commands.add(new String("xcvbx"));
+		commands.add(new String("erwtert"));
+		commands.add(new String("wertwert"));
+		commands.add(new String("banana"));
+		commands.add(new String("vuka"));
+		commands.add(new String("kolapa"));
+		commands.add(new String("nima"));
+		
+		List<String> result = new  ArrayList<String>();
+		for (int i = 0; i < commands.size(); i++)
+		{
+			if (commands.get(i).matches(new String(".*" + command + ".*")))
+				result.add(commands.get(i));
+		}
 			
 		ObjectMapper mapper = new ObjectMapper();
 
-		String jsonInString = mapper.writeValueAsString(commands);
+		String jsonInString = mapper.writeValueAsString(result);
 		return jsonInString;
 	}
 

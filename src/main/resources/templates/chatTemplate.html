@@ -124,7 +124,11 @@
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
 						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
 						ng-click="onMessageInputClick()"
-						typeahead-wait-ms = "1000"  uib-typeahead="item for item in data_in_message_input" 	typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
+						
+						typeahead-wait-ms = "1000"  
+						uib-typeahead="item for item in data_in_message_input" 							
+						typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" 
+						typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
 					</div>
 					<span  th:title="${lgPack.lables.chatView.send}" class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
 					<div th:title="${lgPack.lables.chatView.phrases}" class="answer-btn answer-btn-1">
