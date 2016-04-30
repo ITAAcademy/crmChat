@@ -368,7 +368,7 @@ $scope.scaleCenterIconCircle = function() {
        if (specialInputMode == INPUT_MODE.COMMAND_MODE)
        {                    
 	         var funcCall = value + "()";
-	         alert(funcCall);
+	         //alert(funcCall);
 	         //Call the function
 	         var ret = eval(funcCall);
         }       
