@@ -1,5 +1,7 @@
 'use strict';
 
+
+
 /* Controllers */
 var springChatControllers = angular.module('springChat.controllers', ['monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 springChatControllers.config(function($routeProvider) {
@@ -81,6 +83,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
+    
+    $scope.toggleNewRoomModal = function() {
+        $('#new_room_modal').modal('toggle');
+    };
+    
+    $scope.addDialog = function() {     };
+    
     $rootScope.formatDateWithLast = function(date) {
 
         var daysName = {},

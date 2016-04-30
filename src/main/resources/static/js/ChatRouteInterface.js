@@ -335,6 +335,7 @@ $scope.scaleCenterIconCircle = function() {
     }
 
     $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+    	//alert(value)
         var functionalChar;
         var prefix = "";
         var suffix = "";
@@ -362,8 +363,53 @@ $scope.scaleCenterIconCircle = function() {
         $timeout(function() {
             $scope.show_search_list_in_message_input = false;
         }, 500);
-        resetSpecialInput();
+       
+      
+       if (specialInputMode == INPUT_MODE.COMMAND_MODE)
+       {                    
+	         var funcCall = value + "()";
+	         alert(funcCall);
+	         //Call the function
+	         var ret = eval(funcCall);
+        }       
+       resetSpecialInput();
     }
+
+    function createDialogWithBot() {
+    	$('#wndTitle').text("Створити діалог з ботом");
+    	$('#roomNameInput').attr("placeholder", "Назва діалогу");
+    	
+    	$scope.dialogNameBackup = $scope.dialogName;
+    	
+    	$scope.dialogName = ""
+        $scope.toggleNewRoomModal(); //999
+        
+    }
+    
+    $scope.createSmtVisible = false;
+    
+    $scope.toggleNewRoomModal = function() {
+        $('#new_room_modal').modal('toggle');
+        
+        if ( $scope.createSmtVisible == true)
+        	$scope.dialogName = $scope.dialogNameBackup;
+        
+        $scope.createSmtVisible = !$scope.createSmtVisible;
+    };
+    
+   $scope.addDialog = function () {
+	  var dialName = $scope.dialogName;
+	   $scope.toggleNewRoomModal();
+             $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
+            success(function(data, status, headers, config) {
+                console.log('room with bot created: ' + $scope.dialogName )
+             }).
+             error(function(data, status, headers, config) {
+                 console.log('creating room with bot failed '  )
+             });
+            
+    };
+
 
     function processDogInput() {
         var message = $scope.newMessage;
