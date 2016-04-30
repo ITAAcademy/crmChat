@@ -122,6 +122,9 @@ public class RoomController {
 	
 	public Room createDialogWithBot(String roomName, Principal principal)
 	{
+		if(roomName.isEmpty())
+			return null;
+		
 		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
 
 		Room room = roomService.register(roomName, bot);
