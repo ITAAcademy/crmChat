@@ -2,6 +2,8 @@ package com.intita.wschat.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +24,10 @@ import com.intita.wschat.models.BotItemContainer;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.BotCategoryService;
@@ -33,6 +39,8 @@ import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
+import com.intita.wschat.util.HtmlUtility;
+import com.intita.wschat.web.BotController.BotParam;
 
 @Service
 @Controller
@@ -104,8 +112,40 @@ public class BotController {
 
 		return objectMapper.writeValueAsString(botCategory);
 	}
+	
+	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{categoryId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("categoryId") Long categoryId, @RequestBody Map<String,Object> param) throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		ChatUser bot = chatUsersService.getChatUser(BotParam.BOT_ID);
 
+		Room room = roomService.getRoom(roomId);
+		
+		/*OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
+		boolean toMainContainer = true;
+		BotItemContainer nextContainer;
+		
+		if(toMainContainer)
+			nextContainer = botItemContainerService.getById(categoryId);
+		else
+			nextContainer = botCategoryService.getById(categoryId).getMainElement();
+		
+		String containerString = "";
+		try {
+			containerString = HtmlUtility.escapeHtml(objectMapper.writeValueAsString(nextContainer));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		UserMessage msg = new UserMessage(bot, room, containerString);
 
+		return objectMapper.writeValueAsString(botCategory);
+	}
+
+	
 	@RequestMapping(value = "bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void giveTenant(@PathVariable Long roomId) throws JsonProcessingException {

@@ -28,6 +28,10 @@ public class BotCategoryService {
 	public ArrayList<BotCategory> getAll(){
 		return botCategoryRepository.findAll();
 	}
+	public BotCategory getById(Long id)
+	{
+		return botCategoryRepository.findOne(id);
+	}
 	
 	
 }
