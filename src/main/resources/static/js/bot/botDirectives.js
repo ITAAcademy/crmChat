@@ -129,7 +129,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                     debugger;
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.href);
-                    ngclickFunction = "getNewItem({0},{1})".format(attr.linkindex,payLoad.escapeBrackets());
+                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeBrackets(),link);
                 }
                 var linkHref = '';
                 if (!usePost) {
