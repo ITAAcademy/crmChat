@@ -48,8 +48,12 @@ if (!String.prototype.unescapeHtml) {
 	  };
 
 	  return this.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&#123;|&#125;/g, function(m) { 
-	  	debugger;
 	  	return map[m]; 
 	  });
+	}
+}
+if (!String.prototype.escapeBrackets){
+	String.prototype.escapeBrackets = function(){
+		return this.replace(/\"/g,'\\"');
 	}
 }

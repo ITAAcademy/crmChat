@@ -16,7 +16,6 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 }
             });
             scope.$watch(attr.content, function() {
-                  debugger;
                   var receivedData = attr.content.unescapeHtml();
                   var dataWithRemovedBrackets=receivedData.slice(1,-1);// 'string' to string
                 var parsedData = JSON.parse(dataWithRemovedBrackets.unescapeHtml()); 
@@ -29,7 +28,6 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                         callBackFunction(element);
                 }
                 //scope.content = $parse(parsedData.body)(scope);
-                debugger;
                 $compile(element.contents())(scope);
             }, true);
 
@@ -91,7 +89,6 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                 for (var i = 0; i < elements.length; i++) {
                     result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
                 }
-                debugger;
                 element.html(result);
 
                 if (typeof attr.callback != 'undefined') {
@@ -129,16 +126,17 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var dataObject ={"body":null};
                     dataObject.body =attr.linkindex;
                     var payLoad = JSON.stringify(dataObject);
-                    debugger;
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId,attr.href);
-                    ngclickFunction = "sendPostToUrl({0},{1})".format("get_container/"+attr.href+attr.linkindex,payLoad)
+                    ngclickFunction = 'sendPostToUrl("{0}","{1}")'.format(link,payLoad.escapeBrackets());
                 }
-                var linkHref = '#';
+                var linkHref ="";
+               
                 if (!usePost){
-                    linkHref = attr.href;
+                    var linkTemplate ='href="{0}"';
+                    linkHref = linkTemplate.format(attr.href);
                 }
 
-                var prefix = '<a class="{0}" ng-click=\'{1}\' href="{2}">'.format(attr.classes,ngclickFunction,link);
+                var prefix = '<a class="{0}" ng-click=\'{1}\' {2}>'.format(attr.classes,ngclickFunction,linkHref);
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
 

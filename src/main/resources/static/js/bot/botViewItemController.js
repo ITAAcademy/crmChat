@@ -10,17 +10,10 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
 
     };
      $scope.sendPostToUrl = function(href,linkData){
+     		console.log('http request: methd: POST\n url:'+href+"\ndata:"+linkData+'\n');
                     $http({
                         method: 'POST',
                         url: href,
-                        data: linkData,
-                        //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
-                    });
-                }
-      $scope.sendPostToUrlRoom = function(href,linkData,roomId){
-                    $http({
-                        method: 'POST',
-                        url: roomId+"/"+href,
                         data: linkData,
                         //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
                     });
