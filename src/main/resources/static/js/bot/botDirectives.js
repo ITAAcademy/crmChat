@@ -5,7 +5,6 @@ angular.module('springChat.directives').directive('botContainer', function($comp
         link: function(scope, element, attr, ctrl) {
 
             scope.$watch('disabled', function() {
-            	console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
                 if (scope.disabled) {
                     for (var i = 0; i < element[0].children.length; i++) {
                         //       element[0].children[i].style.disabled = "true";
@@ -21,6 +20,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 var parsedData = JSON.parse(dataWithRemovedBrackets.unescapeHtml()); 
                 console.log('botContainer content:'+parsedData.body);
                // var elementValue = parsedData.body.replace(/\\"/g, '"');
+
                 element.html(parsedData.body);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
@@ -110,39 +110,41 @@ ispost,//if false - redirect to link href, true - make post request
 href, //link to other page or address for post request 
 classes; // list of classes like: "btn btn-large"
 */
-angular.module('springChat.directives').directive('botlink', function($compile, $parse,$http) {
-        return {
+angular.module('springChat.directives').directive('botlink', function($compile, $parse, $http) {
+    return {
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
             scope.$watch(attr.content, function() {
                 var body = attr.content.escapeHtml();
-                console.log("body:"+body);
-                var usePost = attr.ispost  === 'true';
-               
+                console.log("body:" + body);
+                var usePost = attr.ispost === 'true';
+
                 var ngclickFunction = '';
-                if (usePost && (typeof attr.href !== 'undefined') && 
-                    (typeof attr.linkindex !== 'undefined')&& 
-                    attr.href.length>0 && attr.linkindex.length>0){
-                    var dataObject ={"body":null};
-                    dataObject.body =attr.linkindex;
+                if (usePost && (typeof attr.href !== 'undefined') &&
+                    (typeof attr.linkindex !== 'undefined') &&
+                    attr.href.length > 0 && attr.linkindex.length > 0) {
+                    var dataObject = { "body": null };
+                    dataObject.body = attr.linkindex;
                     var payLoad = JSON.stringify(dataObject);
-                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId,attr.href);
-                    ngclickFunction = 'sendPostToUrl("{0}","{1}")'.format(link,payLoad.escapeBrackets());
+
+                    debugger;
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.href);
+                    ngclickFunction = "getNewItem({0},{1})".format(attr.linkindex,payLoad.escapeBrackets());
                 }
-                var linkHref ="";
-               
-                if (!usePost){
-                    var linkTemplate ='href="{0}"';
+                var linkHref = '';
+                if (!usePost) {
+                          var linkTemplate ='href="{0}"';
                     linkHref = linkTemplate.format(attr.href);
                 }
 
-                var prefix = '<a class="{0}" ng-click=\'{1}\' {2}>'.format(attr.classes,ngclickFunction,linkHref);
+              var prefix = '<a class="{0}" ng-click=\'{1}\' {2}>'.format(attr.classes,ngclickFunction,linkHref);
+
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
 
 
                 element.html(elementValue);
-     
+
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
             }, true);

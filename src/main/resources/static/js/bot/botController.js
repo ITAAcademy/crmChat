@@ -15,7 +15,6 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     $scope.disabled = false;
     $scope.currentRoom = chatControllerScope.currentRoom;
     chatRouteInterfaceScope.$watch('participants', function() {
-    	    debugger;
     	if(chatRouteInterfaceScope.participants.length > 2)
     	{
     		$scope.disabled = true;

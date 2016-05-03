@@ -18,7 +18,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         COMMAND_MODE: 3
     };
 
-    $scope.states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]; //nice.hide();
+    $scope.BOT_ID = 0;// need read from config
+
     $scope.selected = undefined;
     $scope.totalItems = 64;
     $scope.currentPage = 4;
@@ -105,10 +106,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         var kk = keyCode;
         var arrowKeyPressed = kk == 39 || kk == 37;
         var enterPressed = keyCode == 13;
+     
         if (enterPressed && !$scope.show_search_list_in_message_input) {
             $scope.onMessageInputClick();
             return;
         }
+        
+       
 
         var msgInputElm = document.getElementById("newMessageInput");
         var carretPosIndex = getCaretPosition(msgInputElm);
@@ -135,6 +139,15 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     }
     $scope.beforeMessageInputKeyPress = function(event) {
+    	
+		 var escapePressed = event.keyCode  == 27;
+	     if (escapePressed)
+     	 {
+	    	 data_in_message_input = [];
+	    	 $scope.show_search_list_in_message_input = false;
+	    	 resetSpecialInput();
+	    	 return;
+         }
 
         if (event.keyCode === 9) { // tab was pressed
 
@@ -322,6 +335,7 @@ $scope.scaleCenterIconCircle = function() {
     }
 
     $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
+    	//alert(value)
         var functionalChar;
         var prefix = "";
         var suffix = "";
@@ -334,6 +348,9 @@ $scope.scaleCenterIconCircle = function() {
                 prefix = '"';
                 suffix = '"';
                 break;
+            case INPUT_MODE.COMMAND_MODE:
+            	 functionalChar = "/";
+            	break;
         }
         var message = $scope.newMessage;
         var msgInputElm = document.getElementById("newMessageInput");
@@ -346,8 +363,53 @@ $scope.scaleCenterIconCircle = function() {
         $timeout(function() {
             $scope.show_search_list_in_message_input = false;
         }, 500);
-        resetSpecialInput();
+       
+      
+       if (specialInputMode == INPUT_MODE.COMMAND_MODE)
+       {                    
+	         var funcCall = value + "()";
+	         //alert(funcCall);
+	         //Call the function
+	         var ret = eval(funcCall);
+        }       
+       resetSpecialInput();
     }
+
+    function createDialogWithBot() {
+    	$('#wndTitle').text("Створити діалог з ботом");
+    	$('#roomNameInput').attr("placeholder", "Назва діалогу");
+    	
+    	$scope.dialogNameBackup = $scope.dialogName;
+    	
+    	$scope.dialogName = ""
+        $scope.toggleNewRoomModal(); //999
+        
+    }
+    
+    $scope.createSmtVisible = false;
+    
+    $scope.toggleNewRoomModal = function() {
+        $('#new_room_modal').modal('toggle');
+        
+        if ( $scope.createSmtVisible == true)
+        	$scope.dialogName = $scope.dialogNameBackup;
+        
+        $scope.createSmtVisible = !$scope.createSmtVisible;
+    };
+    
+   $scope.addDialog = function () {
+	  var dialName = $scope.dialogName;
+	   $scope.toggleNewRoomModal();
+             $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
+            success(function(data, status, headers, config) {
+                console.log('room with bot created: ' + $scope.dialogName )
+             }).
+             error(function(data, status, headers, config) {
+                 console.log('creating room with bot failed '  )
+             });
+            
+    };
+
 
     function processDogInput() {
         var message = $scope.newMessage;
@@ -365,7 +427,7 @@ $scope.scaleCenterIconCircle = function() {
     	  var message = $scope.newMessage;
     	  var msgInputElm = document.getElementById("newMessageInput");
     	  var carretPosIndex = getCaretPosition(msgInputElm);
-    	  var commandStartIndex = message.lastIndexOf('@') + 1;
+    	  var commandStartIndex = message.lastIndexOf('/') + 1;
           var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
           
           $scope.showCommandListInMessageInput(commandPrefix);

@@ -25,6 +25,7 @@ public class ChatMessage {
 		this.username = usrMsg.getAuthor().getNickName();
 		this.message = usrMsg.getBody();
 		this.attachedFiles = usrMsg.getAttachedFiles();
+		this.chatUserId = usrMsg.getAuthor().getId();
 		date = usrMsg.getDate();
 	}
 	

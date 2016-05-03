@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.ModelAndView;
@@ -111,6 +112,41 @@ public class RoomController {
 
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
+		
+	@RequestMapping(value = "/chat/rooms/create/with_bot/", method = RequestMethod.POST)
+	@ResponseBody
+	public void createDialogWithBotRequesr(@RequestBody String roomName, Principal principal)
+	{
+		createDialogWithBot(roomName,principal);
+	}
+	
+	public Room createDialogWithBot(String roomName, Principal principal)
+	{
+		if(roomName.isEmpty())
+			return null;
+		
+		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
+
+		Room room = roomService.register(roomName, bot);
+		roomService.addUserToRoom(chatUserServise.getChatUser(principal), room);
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
+		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
+		BotItemContainer mainContainer = BotItemContainer.createFromCategories(allCategories);
+		String containerString = "";
+		try {
+			containerString = HtmlUtility.escapeHtml(mapper.writeValueAsString(mainContainer));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		UserMessage msg = new UserMessage(bot, room, containerString);
+		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
+
+
+		return room;
+	}
 
 	/**********************
 	 * what doing with new auth user 
@@ -143,45 +179,8 @@ public class RoomController {
 				/*
 				 * ADD BOT TO CHAT
 				 */
-				
-				ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
 
-				room = roomService.register(bot.getId() + "_" + userId + "_" + new Date().toString(), bot);
-				roomService.addUserToRoom(user, room);
-				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
-				String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
-				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-				ArrayList<BotCategory> allCategories = botCategoryService.getAll();
-				BotItemContainer mainContainer = BotItemContainer.createFromCategories(allCategories);
-				String containerString = "";
-				try {
-					containerString = HtmlUtility.escapeHtml(mapper.writeValueAsString(mainContainer));
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				UserMessage msg = new UserMessage(bot, room, containerString);
-				chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
-				/*
-				
-								ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
-				if(countTenant.isEmpty())
-				{
-					result.put("nextWindow", "-1");
-					return result;
-				}
-				int k = new Random().nextInt(countTenant.size());
-				ChatTenant t_user = countTenant.get(k);//choose method
-
-				room = roomService.register(t_user.getId() + "_" + userId + "_" + new Date().toString(), t_user.getChatUser());
-				roomService.addUserToRoom(user, room);
-				OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
-				String subscriptionStr = "/topic/users/" + t_user.getChatUser().getId() + "/status";
-				simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-
-				//subscribedtoRoomsUsersBuffer.add(user);//Is need?
-				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(t_user.getChatUser()));
-				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + t_user.getChatUser().getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(t_user.getChatUser())));*/
+				room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				ChatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
@@ -453,6 +452,7 @@ public class RoomController {
 
 	@MessageMapping("/chat/rooms/add.{name}")
 	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
+		System.out.println("111111111111111111111111111111111");
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		Room room = roomService.register(name, user);
@@ -470,6 +470,7 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
 	@ResponseBody
 	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
+		System.out.println("2222222222222222222222222222");
 		ChatUser auth = chatUserServise.getChatUser(principal);
 		if (auth==null)return -1L;
 		User authorOfDialog = auth.getIntitaUser();
