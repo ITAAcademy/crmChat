@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.BotItemContainer;
+import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
@@ -65,6 +66,7 @@ public class BotController {
 
 
 	@Autowired private RoomController roomControler;
+	@Autowired private ChatController chatController;
 
 	@PostConstruct
 	public void postConstructor(){
@@ -120,9 +122,9 @@ public class BotController {
 		return objectMapper.writeValueAsString(botCategory);
 	}
 
-	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{categoryId}", method = RequestMethod.GET)
+	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("categoryId") Long categoryId, @RequestBody Map<String,Object> param) throws JsonProcessingException {
+	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param,Principal principal) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		ChatUser bot = chatUsersService.getChatUser(BotParam.BOT_ID);
@@ -136,19 +138,21 @@ public class BotController {
 		BotItemContainer nextContainer;
 
 		if(toMainContainer)
-			nextContainer = botItemContainerService.getById(categoryId);
+			nextContainer = botItemContainerService.getById(containerId);
 		else
-			nextContainer = botCategoryService.getById(categoryId).getMainElement();
+			nextContainer = botCategoryService.getById(containerId).getMainElement();
 
 		String containerString = "";
 		try {
-			containerString = HtmlUtility.escapeHtml(objectMapper.writeValueAsString(nextContainer));
+			containerString = objectMapper.writeValueAsString(nextContainer);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		UserMessage msg = new UserMessage(bot, room, containerString);
-
+		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, containerString);
+		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), principal);
+		 msg = new UserMessage(bot, room, containerString);
+		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), bot.getPrincipal());
 		return objectMapper.writeValueAsString(botCategory);
 	}
 

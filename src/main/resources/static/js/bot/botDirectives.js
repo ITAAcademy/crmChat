@@ -15,9 +15,8 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 }
             });
             scope.$watch(attr.content, function() {
-                  var receivedData = attr.content.unescapeHtml();
-                  var dataWithRemovedBrackets=receivedData.slice(1,-1);// 'string' to string
-                var parsedData = JSON.parse(dataWithRemovedBrackets.unescapeHtml()); 
+                  var receivedData = $parse(attr.content)(scope);
+                var parsedData = JSON.parse(receivedData); 
                 console.log('botContainer content:'+parsedData.body);
                // var elementValue = parsedData.body.replace(/\\"/g, '"');
 
@@ -113,9 +112,9 @@ classes; // list of classes like: "btn btn-large"
 angular.module('springChat.directives').directive('botlink', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
-        link: function(scope, element, attr, ctrl) {
-            scope.$watch(attr.content, function() {
-                var body = attr.content.escapeHtml();
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                var body = attr.text;
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
 
@@ -129,7 +128,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                     debugger;
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.href);
-                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeBrackets(),link);
+                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
                 }
                 var linkHref = '';
                 if (!usePost) {
@@ -147,7 +146,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-            }, true);
+            }
         }
     }
 });

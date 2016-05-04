@@ -121,6 +121,8 @@ public class ChatController {
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
+	
+
 
 	@PersistenceContext
 	   EntityManager entityManager;

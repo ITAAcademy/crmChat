@@ -15,5 +15,15 @@ public class HtmlUtility {
 		  String escaped[] = {"&amp;","&lt;","&gt;","&quot;","&#039;","&#123;","&#125;"};
 		 return StringUtils.replaceEach(str, escaped,unescaped);
 		}
+	public static String escapeQuotes(String str){
+		String unescaped[] = {"'","\""};
+		  String escaped[] = {"\\'","\\\""};
+		 return StringUtils.replaceEach(str, escaped,unescaped);
+	}
+	public static String unescapeQuotes(String str){
+		String escaped[] = {"'","\""};
+		  String unescaped[] = {"\\'","\\\""};
+		 return StringUtils.replaceEach(str, escaped,unescaped);
+	}
 	
 }

@@ -136,7 +136,7 @@ public class RoomController {
 		BotItemContainer mainContainer = BotItemContainer.createFromCategories(allCategories);
 		String containerString = "";
 		try {
-			containerString = HtmlUtility.escapeHtml(mapper.writeValueAsString(mainContainer));
+			containerString = mapper.writeValueAsString(mainContainer);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

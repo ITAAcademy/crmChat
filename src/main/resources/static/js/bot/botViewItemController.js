@@ -24,7 +24,7 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
             data: linkData,
             //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
         });*/
-        $http.post(serverPrefix + href, linkData). // + $scope.dialogName).
+        $http.post(serverPrefix +'\\'+ href, linkData). // + $scope.dialogName).
         success(function(data, status, headers, config) {
            // console.log('room with bot created: ' + $scope.dialogName)
         }).

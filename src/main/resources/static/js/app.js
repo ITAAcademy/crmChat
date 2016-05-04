@@ -52,8 +52,38 @@ if (!String.prototype.unescapeHtml) {
 	  });
 	}
 }
-if (!String.prototype.escapeBrackets){
-	String.prototype.escapeBrackets = function(){
-		return this.replace(/\"/g,'\\"');
+if (!String.prototype.escapeQuotes){
+	String.prototype.escapeQuotes = function(){
+		var s1 = this.replace(/\"/g,'\\"');
+		return s1.replace(/\'/g,"\\'");
+	}
+}
+if (!String.prototype.unescapeQuotes){
+	String.prototype.unescapeQuotes = function(){
+		var s1 = this.replace(/\\\"/g,'\"');
+		return s1.replace(/\\\'/g,"\'");
+	}
+}
+if (!String.prototype.escapeQuotesHtml) {
+	String.prototype.escapeQuotesHtml = function() {
+	  var map = {
+	    '"': '&quot;',
+	    "'": '&#039;'
+	  };
+
+	  return this.replace(/["']/g, function(m) { return map[m]; });
+	}
+}
+
+if (!String.prototype.unescapeQuotesHtml) {
+	String.prototype.unescapeQuotesHtml = function() {
+	  var map = {
+	    '&quot;' : '"' ,
+	    '&#039;' : "'"
+	  };
+
+	  return this.replace(/&quot;|&#039;/g, function(m) { 
+	  	return map[m]; 
+	  });
 	}
 }
