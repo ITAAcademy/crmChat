@@ -39,6 +39,8 @@ public class RoomsService {
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	
+	@Autowired private ChatController chatController;
 
 	@PostConstruct
 	@Transactional
@@ -146,7 +148,7 @@ public class RoomsService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ChatController.addFieldToInfoMap("updateRoom", sendedMap);
+		chatController.addFieldToInfoMap("updateRoom", sendedMap);
 		return true;
 	}
 

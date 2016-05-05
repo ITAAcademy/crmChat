@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -122,6 +126,8 @@ public class ChatController {
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
 	
+	private final Semaphore msgLocker =  new Semaphore(1);
+	
 
 
 	@PersistenceContext
@@ -134,13 +140,13 @@ public class ChatController {
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
 
-	public static final Map<String,Queue<UserMessage>> messagesBuffer = new ConcurrentHashMap<String, Queue<UserMessage>>();// key => roomId
+	private volatile Map<String,Queue<UserMessage>> messagesBuffer =  Collections.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key => roomId
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
-	public static ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
-	public static void addFieldToInfoMap(String key, Object value)
+	public void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
 		if(listElm == null)
@@ -150,6 +156,10 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
+	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
+		return messagesBuffer;
+	}
+
 
 	public static class CurrentStatusUserRoomStruct{
 		private Room room;
@@ -283,19 +293,24 @@ public class ChatController {
 		return messageToSave;
 	}
 
-	public void addMessageToBuffer(Long room, UserMessage message)
+	public synchronized void addMessageToBuffer(Long room, UserMessage message)
 	{
-		Queue<UserMessage> list = messagesBuffer.get(room);
-		if(list == null)
+		synchronized (messagesBuffer)
 		{
-			list = new ConcurrentLinkedQueue<>();
-			messagesBuffer.put(room.toString(), list);
+			Queue<UserMessage> list = messagesBuffer.get(room.toString());
+			if(list == null)
+			{
+				list = new ConcurrentLinkedQueue<>();
+				messagesBuffer.put(room.toString(), list);
+			}
+			list.add(message);
+			log.info("ADD: " + list.size());
 		}
-		list.add(message);
+		
 
 		//send message to WS users
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
-		ChatController.addFieldToInfoMap("newMessage", room);
+		addFieldToInfoMap("newMessage", room);
 	}
 
 
@@ -355,7 +370,6 @@ public class ChatController {
 
 	@Scheduled(fixedDelay=600L)
 	public void processMessage(){
-
 		for(String roomId : messagesBuffer.keySet())
 		{
 			Queue<UserMessage> array = messagesBuffer.get(roomId);
@@ -372,12 +386,13 @@ public class ChatController {
 				{
 					if(!response.isSetOrExpired())
 						response.setResult(str);
+					//responseList.remove(response);
 				}
 				responseList.clear();
 				//System.out.println("processMessage responseBodyQueue:"+responseList.size());
 			}
 
-			userMessageService.addMessages(array);
+			boolean ok = userMessageService.addMessages(array);
 			messagesBuffer.remove(roomId);
 		}
 	}

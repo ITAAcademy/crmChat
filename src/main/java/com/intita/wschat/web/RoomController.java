@@ -49,7 +49,7 @@ import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.BotCategory;
-import com.intita.wschat.models.BotItemContainer;
+import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.OperationStatus;
@@ -133,7 +133,7 @@ public class RoomController {
 		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
-		BotItemContainer mainContainer = BotItemContainer.createFromCategories(allCategories);
+		BotDialogItem mainContainer = BotDialogItem.createFromCategories(allCategories);
 		String containerString = "";
 		try {
 			containerString = mapper.writeValueAsString(mainContainer);
@@ -181,7 +181,7 @@ public class RoomController {
 				 */
 
 				room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
-				ChatController.addFieldToInfoMap("newGuestRoom", room.getId());
+				chatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
@@ -265,7 +265,7 @@ public class RoomController {
 
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o) {
 
-		Queue<UserMessage> buff = ChatController.messagesBuffer.get(room_o.getId());
+		Queue<UserMessage> buff = chatController.getMessagesBuffer().get(room_o.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o);
 		if(buff != null)
 			userMessages.addAll(buff);

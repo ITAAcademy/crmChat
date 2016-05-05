@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.intita.wschat.models.BotItemContainer;
 import com.intita.wschat.models.BotCategory;
+import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.repositories.BotItemContainerRepository;
 
 @Service
@@ -15,13 +15,13 @@ public class BotItemContainerService {
 	@Autowired
 	BotItemContainerRepository botItemContainerRepository;
 	
-	public BotItemContainer getById(Long id){
+	public BotDialogItem getById(Long id){
 		return botItemContainerRepository.findOne(id);
 	}
-	public BotItemContainer add(BotItemContainer itemContainer){
+	public BotDialogItem add(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);
 	}
-	public BotItemContainer update(BotItemContainer itemContainer){
+	public BotDialogItem update(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);
 	}
 }

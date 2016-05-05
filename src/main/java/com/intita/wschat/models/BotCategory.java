@@ -10,56 +10,60 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class BotCategory {
-@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-List<BotItemContainer> elements = new ArrayList<BotItemContainer>();
-@Id
-@GeneratedValue
-private Long id;
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+	List<BotDialogItem> elements = new ArrayList<BotDialogItem>();
+	@Id
+	@GeneratedValue
+	private Long id;
 
-private String name;
+	private String name;
 
-@OneToOne
-BotItemContainer mainElement;
+	@OneToOne
+	@JsonIgnore
+	private BotDialogItem mainElement;
 
-public BotCategory(){
-	
-}
-public BotCategory(String name){
-this.name = name;	
-}
+	public BotCategory(){
 
-public List<BotItemContainer> getElements() {
-	return elements;
-}
+	}
+	public BotCategory(String name){
+		this.name = name;	
+	}
 
-public void setElements(ArrayList<BotItemContainer> elements) {
-	this.elements = elements;
-}
-public void addElement(BotItemContainer element){
-	this.elements.add(element);
-}
+	public List<BotDialogItem> getElements() {
+		return elements;
+	}
 
-public Long getId() {
-	return id;
-}
+	public void setElements(ArrayList<BotDialogItem> elements) {
+		this.elements = elements;
+	}
+	public void addElement(BotDialogItem element){
+		this.elements.add(element);
+	}
 
-public void setId(Long id) {
-	this.id = id;
-}
+	public Long getId() {
+		return id;
+	}
 
-public String getName() {
-	return name;
-}
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-public void setName(String name) {
-	this.name = name;
-}
-public BotItemContainer getMainElement() {
-	return mainElement;
-}
-public void setMainElement(BotItemContainer mainElement) {
-	this.mainElement = mainElement;
-}
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	public BotDialogItem getMainElement() {
+		return mainElement;
+	}
+	public void setMainElement(BotDialogItem mainElement) {
+		this.mainElement = mainElement;
+	}
 }

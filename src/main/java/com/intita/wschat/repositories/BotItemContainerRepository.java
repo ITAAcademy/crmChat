@@ -2,8 +2,8 @@ package com.intita.wschat.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.intita.wschat.models.BotItemContainer;
+import com.intita.wschat.models.BotDialogItem;
 
-public interface BotItemContainerRepository extends CrudRepository<BotItemContainer, Long> {
+public interface BotItemContainerRepository extends CrudRepository<BotDialogItem, Long> {
 
 }

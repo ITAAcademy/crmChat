@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.models.BotItemContainer;
+import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.ChatTenant;
@@ -82,7 +82,7 @@ public class BotController {
 		generateTestSequnce(botCategory);
 	}	
 
-	BotItemContainer currentContainer = null;
+	BotDialogItem currentContainer = null;
 	BotCategory botCategory;
 
 	public String getJsonContainerBodySimple(String[] itemsText){
@@ -96,10 +96,10 @@ public class BotController {
 	}
 	public void generateTestSequnce(BotCategory botCategory){
 		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
-		BotItemContainer testItemContainer1 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));//begin
-		BotItemContainer testItemContainer2 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));
-		BotItemContainer testItemContainer3 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));
-		BotItemContainer testItemContainer4 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1),botCategory));//end
+		BotDialogItem testItemContainer1 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));//begin
+		BotDialogItem testItemContainer2 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
+		BotDialogItem testItemContainer3 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
+		BotDialogItem testItemContainer4 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));//end
 		//BotItemContainer testItemContainer5 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
 		testItemContainer1.addBranch(0, testItemContainer2);
 		testItemContainer2.addBranch(0, testItemContainer3);
@@ -134,13 +134,15 @@ public class BotController {
 		/*OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
-		boolean toMainContainer = true;
-		BotItemContainer nextContainer;
+		boolean toMainContainer = param.get("category") == null;
+		BotDialogItem nextContainer;
+		Long body = Long.parseLong((String) param.get("body"));
 
 		if(toMainContainer)
-			nextContainer = botItemContainerService.getById(containerId);
+			nextContainer = botCategoryService.getById(body).getMainElement();
 		else
-			nextContainer = botCategoryService.getById(containerId).getMainElement();
+			nextContainer = botItemContainerService.getById(body);
+			
 
 		String containerString = "";
 		try {
@@ -149,10 +151,11 @@ public class BotController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, containerString);
+		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, "You answer: " + nextContainer.getId());
 		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), principal);
-		 msg = new UserMessage(bot, room, containerString);
-		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), bot.getPrincipal());
+
+		UserMessage qmsg = new UserMessage(bot, room, containerString);
+		chatController.filterMessageLP(room.getId(), new ChatMessage(qmsg), bot.getPrincipal());
 		return objectMapper.writeValueAsString(botCategory);
 	}
 

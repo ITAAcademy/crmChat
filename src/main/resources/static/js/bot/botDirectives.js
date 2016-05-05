@@ -122,12 +122,17 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 if (usePost && (typeof attr.href !== 'undefined') &&
                     (typeof attr.linkindex !== 'undefined') &&
                     attr.href.length > 0 && attr.linkindex.length > 0) {
-                    var dataObject = { "body": null };
+                    var dataObject = { "body": null, "category" : null };
                     dataObject.body = attr.linkindex;
-                    var payLoad = JSON.stringify(dataObject);
-
+                    var message = JSON.parse(scope.$parent.message.message);
+                    if(message.id == null)
+                    	message.id = -1;
+                    if(message.category != null)
+                    	dataObject.category = message.category.id;
+					
+					var payLoad = JSON.stringify(dataObject);
                     debugger;
-                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.href);
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.linkindex);
                     ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
                 }
                 var linkHref = '';
