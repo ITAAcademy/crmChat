@@ -150,3 +150,85 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
         }
     }
 });
+
+angular.module('springChat.directives').directive('botinput', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                var body = attr.text;
+
+              var prefix = '<input type="text" name="{1}">'.format(attr.itemIndex);
+
+                var suffix = '</input>';
+                var elementValue = prefix + body + suffix;
+
+
+                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+            }
+        }
+    }
+});
+
+angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                var body = attr.text;
+
+              var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+
+                var suffix = '</button>';
+                var elementValue = prefix + body + suffix;
+
+
+                element.html(elementValue);
+                debugger;
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+            }
+        }
+    }
+});
+/*
+attributes:
+attr.labels[] - text of items
+attr.values[] - values of items (Not used, because we use index)
+attr.cbname - name of group, determining names of children
+attr.legend - title of checkgroup
+attr.isradio - determine if group is readiogroup
+*/
+angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                var checkBoxTemplate = '<input type="{0}" name="{1}" value="{2}" />{3}<br />';
+              //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+              var index = 0;
+              var prefix="<fieldset><legend>{0}</legend>".format(attr.legend);
+              var body = "";
+              var item_type = "checkbox";
+              if (attr.isradio === 'true' || attr.isradio === true) item_type = radio;
+              for (int i = 0; i < values.length; i++){
+                body += checkBoxTemplate.format(item_type,attr.cbname,i,attr.labels[i]);
+              }
+              
+
+                var suffix = '</fieldset>';
+                var elementValue = prefix + body + suffix;
+
+
+
+                element.html(elementValue);
+                debugger;
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+            }
+        }
+    }
+});
