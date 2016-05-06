@@ -122,8 +122,9 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 if (usePost && (typeof attr.href !== 'undefined') &&
                     (typeof attr.linkindex !== 'undefined') &&
                     attr.href.length > 0 && attr.linkindex.length > 0) {
-                    var dataObject = { "body": null, "category" : null };
-                    dataObject.body = attr.linkindex;
+                    var dataObject = { "body": null, "category" : null, "nextNode" : null, "answer": null};
+                    dataObject.nextNode = attr.linkindex;
+
                     var message = JSON.parse(scope.$parent.message.message);
                     if(message.id == null)
                     	message.id = -1;
@@ -210,21 +211,36 @@ attr.isradio - determine if group is readiogroup
 angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
+        scope:{
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
-                var checkBoxTemplate = '<input type="{0}" name="{1}" value="{2}" />{3}<br />';
+            	scope.answer = [];
+                var checkBoxTemplate = '<div><input {3} type="{0}" name="{1}" value="{{4}}"/><span>  {1}</span></div>';
               //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
               var index = 0;
               var prefix="<fieldset><legend>{0}</legend>".format(attr.legend);
               var body = "";
               var item_type = "checkbox";
-              if (attr.isradio === 'true' || attr.isradio === true) item_type = radio;
-              for (var i = 0; i < values.length; i++){
-                body += checkBoxTemplate.format(item_type,attr.cbname,i,attr.labels[i]);
+              var modalT = 'ng-model="answer[{0}]"';
+              if (attr.isradio === 'true' || attr.isradio === true)
+              {
+              	modalT = 'ng-model="answer"';
+              	item_type = "radio";
+              	scope.answer = false;
+              } 
+              debugger;
+              var labels = eval(attr.labels);//JSON.parse(attr.labels.replace('\'', '\"'));
+
+              for (var i = 0; i < labels.length; i++){
+              	var modalTemp = modalT.format(i);
+                body += checkBoxTemplate.format(item_type,attr.cbname,i + ") " + labels[i], modalTemp, i);
+                if (attr.isradio == 'false')
+                	scope.answer[i] = false;
               }
               
 
-                var suffix = '</fieldset>';
+                var suffix = '</fieldset>{{answer}}';
                 var elementValue = prefix + body + suffix;
 
 

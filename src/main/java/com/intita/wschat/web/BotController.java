@@ -136,12 +136,12 @@ public class BotController {
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
 		boolean toMainContainer = param.get("category") == null;
 		BotDialogItem nextContainer;
-		Long body = Long.parseLong((String) param.get("body"));
+		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer)
-			nextContainer = botCategoryService.getById(body).getMainElement();
+			nextContainer = botCategoryService.getById(nextNode).getMainElement();
 		else
-			nextContainer = botItemContainerService.getById(body);
+			nextContainer = botItemContainerService.getById(nextNode);
 			
 
 		String containerString = "";
