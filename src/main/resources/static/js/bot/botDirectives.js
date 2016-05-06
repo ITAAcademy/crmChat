@@ -219,7 +219,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
               var body = "";
               var item_type = "checkbox";
               if (attr.isradio === 'true' || attr.isradio === true) item_type = radio;
-              for (int i = 0; i < values.length; i++){
+              for (var i = 0; i < values.length; i++){
                 body += checkBoxTemplate.format(item_type,attr.cbname,i,attr.labels[i]);
               }
               
