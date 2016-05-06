@@ -19,7 +19,6 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 var parsedData = JSON.parse(receivedData); 
                 console.log('botContainer content:'+parsedData.body);
                // var elementValue = parsedData.body.replace(/\\"/g, '"');
-
                 element.html(parsedData.body);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
@@ -27,9 +26,10 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                         callBackFunction(element);
                 }
                 //scope.content = $parse(parsedData.body)(scope);
+                scope.mainScope = scope;
                 $compile(element.contents())(scope);
             }, true);
-
+            scope.botChildrens = new Array();
             //scope.giveTenant();
         }
     }
@@ -111,9 +111,12 @@ classes; // list of classes like: "btn btn-large"
 */
 angular.module('springChat.directives').directive('botlink', function($compile, $parse, $http) {
     return {
-        controller: 'ChatViewItemController',
+        scope: {
+
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
+
                 var body = attr.text;
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
@@ -132,7 +135,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 					
 					var payLoad = JSON.stringify(dataObject);
                     debugger;
-                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.currentRoom.roomId, attr.linkindex);
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
                     ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
                 }
                 var linkHref = '';
@@ -151,6 +154,9 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
+                scope.mainScope=scope.$parent.mainScope;
+                scope.$parent.botChildrens.push({'element':element,'scope':scope});
+                scope.botChildrens = new Array();
             }
         }
     }
@@ -210,6 +216,9 @@ attr.isradio - determine if group is readiogroup
 angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
+        scope: {
+       
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
                 var checkBoxTemplate = '<input type="{0}" name="{1}" value="{2}" />{3}<br />';
@@ -219,7 +228,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
               var body = "";
               var item_type = "checkbox";
               if (attr.isradio === 'true' || attr.isradio === true) item_type = radio;
-              for (int i = 0; i < values.length; i++){
+              for (var i = 0; i < values.length; i++){
                 body += checkBoxTemplate.format(item_type,attr.cbname,i,attr.labels[i]);
               }
               
@@ -233,6 +242,9 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 debugger;
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
+                scope.mainScope=scope.$parent.mainScope;
+                scope.$parent.botChildrens.push({'element':element,'scope':scope});
+                scope.botChildrens = new Array();
             }
         }
     }
