@@ -116,7 +116,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-
+                scope.mainScope=scope.$parent.mainScope;
                 var body = attr.text;
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
@@ -137,7 +137,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 					var payLoad = JSON.stringify(dataObject);
                     debugger;
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
-                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
+                    ngclickFunction = 'mainScope.getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
                 }
                 var linkHref = '';
                 if (!usePost) {
@@ -155,7 +155,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-                scope.mainScope=scope.$parent.mainScope;
+                
                 scope.$parent.botChildrens.push({'element':element,'scope':scope});
                 scope.botChildrens = new Array();
             }
