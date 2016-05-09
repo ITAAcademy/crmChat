@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Form builder</title>
+	<link rel="stylesheet" type="text/css" href="formbuilder.css">
+</head>
+<body>
+	<div class="form-builder">
+		<div class="botlink_item">
+			<button class="botlink_item_header" onclick="addBotLinkItem()">BotLink</button>
+			Index:
+			<input type = "text" id ="botLinkIndex"/>
+			Text:
+			<input type = "text" id ="botLinkText"/>
+			Href:
+			<input type = "text" id ="botLinkHref"/>
+		</div>
+
+		<div class="botinput_item">
+		<button class="botinput_item_header" onclick="addBotInputItem()">Botinput</button>
+			Index:
+			<input type = "text" id ="botInputIndex"/>
+			Text:
+			<input type = "text" id ="botInputText"/>
+		</div>
+
+	</div>
+
+	<div id="output_code_area" class="code_text">
+		Output:<br>
+		<textarea id="output_code" cols="100" rows="50"></textarea></p>
+	</div>
+</body>
+<script type="text/javascript" src="formbuilderctrl.js"></script>
+</html>
