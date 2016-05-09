@@ -10,6 +10,13 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
 
     };
 
+    /*
+    $scope.getChildNodes(){
+    	var element = $scope.botChildrens.element;
+    	var scope = $scope.botChildrens.scope;
+    	var Nodes = {'childrens':};
+    }*/
+
 
     $scope.getNewItem = function(answer, href)
     {

@@ -2,12 +2,14 @@ package com.intita.wschat.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -16,22 +18,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotCategory;
+import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.repositories.ChatLangRepository;
-import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.BotCategoryService;
+import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -40,8 +41,6 @@ import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.util.HtmlUtility;
-import com.intita.wschat.web.BotController.BotParam;
 
 @Service
 @Controller
@@ -68,6 +67,8 @@ public class BotController {
 	@Autowired private RoomController roomControler;
 	@Autowired private ChatController chatController;
 
+	private final static Logger log = LoggerFactory.getLogger(BotController.class);
+	
 	@PostConstruct
 	public void postConstructor(){
 
@@ -120,6 +121,18 @@ public class BotController {
 
 
 		return objectMapper.writeValueAsString(botCategory);
+	}
+	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId,@RequestParam Map<String, String> params) throws JsonProcessingException {
+		Iterator it = params.entrySet().iterator();
+		while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        log.info("map submitted:");
+	        log.info( (pair.getKey() + " = " + pair.getValue() ) );
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+		return "good";
 	}
 
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)

@@ -16,10 +16,13 @@ angular.module('springChat.directives').directive('botContainer', function($comp
             });
             scope.$watch(attr.content, function() {
                   var receivedData = $parse(attr.content)(scope);
+
                 var parsedData = JSON.parse(receivedData); 
+                 var prefix = "<form enctype='application/json' action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId,parsedData.id);
+                 var sufix = "</form>"
                 console.log('botContainer content:'+parsedData.body);
                // var elementValue = parsedData.body.replace(/\\"/g, '"');
-                element.html(parsedData.body);
+                element.html(prefix + parsedData.body+ sufix);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
                     if (typeof callBackFunction != 'undefined')
@@ -165,12 +168,14 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
 angular.module('springChat.directives').directive('botinput', function($compile, $parse, $http) {
     return {
-        controller: 'ChatViewItemController',
+        scope:{
+
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
                 var body = attr.text;
 
-              var prefix = '<input type="text" name="{1}">'.format(attr.itemIndex);
+              var prefix = '<input type="text" name="{0}">'.format(attr.itemindex);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -187,12 +192,31 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 
 angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
+        scope:{
+
+        },
         controller: 'ChatViewItemController',
         link: {
             post: function(scope, element, attr, ctrl) {
+                scope.submitBot = function(event){
+                         event.preventDefault();
+                         var formElm = $(event.currentTarget.form);
+                    //$(event.currentTarget.form).submit();
+                    var url = formElm.attr("action");
+                    $.ajax({
+           type: "POST",
+           url: url,
+           data:JSON.stringify(formElm.serializeArray()), // serializes the form's elements.
+           success: function(data)
+           {
+               alert(data); // show response from the php script.
+           }
+         });
+
+                }
                 var body = attr.text;
 
-              var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+              var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
 
                 var suffix = '</button>';
                 var elementValue = prefix + body + suffix;

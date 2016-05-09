@@ -17,7 +17,7 @@ function addBotLinkItem(){
 	var text = document.getElementById('botLinkText').value;
 
 	var content = "";
-	var template = "<div botlink=' ' href='{0}' ispost='true' classes='btn btn-default' linkindex='{1}' text='{2}'> </div><br>\n";
+	var template = '<div botlink="" href="{0}" ispost="true" classes="btn btn-default" linkindex="{1}" text="{2}"> </div><br>\n';
 	content = template.format(href,index,text);
 	codeAreaElement.value += content;
 }
@@ -26,7 +26,7 @@ function addBotInputItem(){
 	var index = document.getElementById('botInputIndex').value;
 	var text = document.getElementById('botInputText').value;
 	var content = "";
-	var template = "<div botinput='' itemIndex='{0}' text='{1}'> </div><br>\n";
+	var template = '<div botinput="" itemIndex="{0}" text="{1}"> </div><br>\n';
 	content = template.format(index,text);
 	codeAreaElement.value += content;
 }
