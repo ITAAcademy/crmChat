@@ -1,13 +1,16 @@
 package com.intita.wschat.web;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotCategory;
@@ -124,14 +127,30 @@ public class BotController {
 	}
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId,@RequestParam Map<String, String> params) throws JsonProcessingException {
-		Iterator it = params.entrySet().iterator();
+	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId,HttpServletRequest request) throws JsonProcessingException {
+		/*Iterator it = params.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        log.info("map submitted:");
 	        log.info( (pair.getKey() + " = " + pair.getValue() ) );
 	        it.remove(); // avoids a ConcurrentModificationException
-	    }
+	    }*/
+		String jsonBody="";
+		try {
+			jsonBody = IOUtils.toString( request.getInputStream(),"UTF-8");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log.info("jsonbody:"+jsonBody);
+		HashMap<String,String> obj =null;
+		try {
+			 obj = new ObjectMapper().readValue(jsonBody,new TypeReference<Map<String, String>>(){});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return "good";
 	}
 

@@ -18,7 +18,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                   var receivedData = $parse(attr.content)(scope);
 
                 var parsedData = JSON.parse(receivedData); 
-                 var prefix = "<form enctype='application/json' action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId,parsedData.id);
+                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId,parsedData.id);
                  var sufix = "</form>"
                 console.log('botContainer content:'+parsedData.body);
                // var elementValue = parsedData.body.replace(/\\"/g, '"');
@@ -203,10 +203,16 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                          var formElm = $(event.currentTarget.form);
                     //$(event.currentTarget.form).submit();
                     var url = formElm.attr("action");
+                   // var dataToSend = JSON.stringify(formElm.serializeArray());
+                    var formData =  {}; 
+                    $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
+                    var dataToSend = JSON.stringify(formData);
+                    console.log('dataToSend:'+dataToSend);
                     $.ajax({
            type: "POST",
+           contentType:"binary/octet-stream",
            url: url,
-           data:JSON.stringify(formElm.serializeArray()), // serializes the form's elements.
+           data:dataToSend, // serializes the form's elements.
            success: function(data)
            {
                alert(data); // show response from the php script.
