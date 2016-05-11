@@ -3,6 +3,10 @@ package com.intita.wschat.web;
 import java.io.Console;
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,7 +72,9 @@ import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.Course;
+import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Lang;
+import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
@@ -76,12 +82,15 @@ import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
+import com.intita.wschat.repositories.ChatUserRepository;
+import com.intita.wschat.repositories.LecturesRepository;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.CourseService;
+import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -98,6 +107,7 @@ import jsonview.Views;
 @Service
 @Controller
 public class ChatController {
+
 	@Autowired
 	ConfigParamService configParamService;
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
@@ -109,6 +119,7 @@ public class ChatController {
 	@Autowired private ParticipantRepository participantRepository;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired private ConsultationsService chatIntitaConsultationService;
 
 	@Autowired private CustomAuthenticationProvider authenticationProvider;
 
@@ -121,13 +132,14 @@ public class ChatController {
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
+	@Autowired private LecturesService lecturesService;
 
 	@PersistenceContext
-	   EntityManager entityManager;
+	EntityManager entityManager;
 
-	   protected Session getCurrentHibernateSession()  {
-	      return entityManager.unwrap(Session.class);
-	   }
+	protected Session getCurrentHibernateSession()  {
+		return entityManager.unwrap(Session.class);
+	}
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private Map<String,Map<String,Object>> langMap = new HashMap<>();
@@ -241,6 +253,45 @@ public class ChatController {
 			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar(),participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
+	}
+
+	@RequestMapping(value = "/chat/lectures/getfivelike/", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<Lectures> getLecturesLike(@RequestBody String title) throws JsonProcessingException {
+		List<Lectures> lecturesList = new ArrayList<Lectures>();
+
+		int lang = getCurrentLangInt();
+
+		if (lang == lecturesService.EN)
+			lecturesList = lecturesService.getFirstFiveLecturesByTitleEnLike(title);
+		else
+			if (lang == lecturesService.RU)
+				lecturesList = lecturesService.getFirstFiveLecturesByTitleRuLike(title);
+		if (lang == lecturesService.UA)
+			lecturesList = lecturesService.getFirstFiveLecturesByTitleUaLike(title);	
+
+		return  new ArrayList<Lectures>(lecturesList);
+	}
+
+	@RequestMapping(value="/chat/lectures/get_five_titles_like/", method = RequestMethod.GET)
+	@ResponseBody
+	public String getLecturesTitlesLike(@RequestParam String title) throws JsonProcessingException {
+
+
+		List<String> lecturesList = new ArrayList<>();		
+		int lang = getCurrentLangInt();
+
+		if (lang == lecturesService.EN)
+			lecturesList = lecturesService.getFirstFiveLecturesTitlesByTitleEnLike(title);
+		else
+			if (lang == lecturesService.RU)
+				lecturesList = lecturesService.getFirstFiveLecturesTitlesByTitleRuLike(title);
+		if (lang == lecturesService.UA)
+			lecturesList = lecturesService.getFirstFiveLecturesTitlesByTitleUaLike(title);	
+
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString(lecturesList);
+		return jsonInString;
 	}
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
@@ -518,7 +569,7 @@ public class ChatController {
 		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUserAndList(user, roomForUpdate), false));
 	}
-	
+
 	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)
 	@ResponseBody
 	public void updateRoomsByList(Principal principal, @RequestBody Map<String,Object> params) {
@@ -528,7 +579,7 @@ public class ChatController {
 			updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
 		}
 	}
-	
+
 	@RequestMapping(value = "/chat.go.to.dialog.list/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void userGoToDialogListListenerLP(@PathVariable("roomId") Long roomId, Principal principal, @RequestBody Map<String,Object> params) {
@@ -553,21 +604,22 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}*/
-	
-	
+
+
 	@RequestMapping(value="/get_commands_like", method = RequestMethod.GET)
 	@ResponseBody
 	public String getCommandsLike(@RequestParam String command) throws JsonProcessingException{
 		List<String> commands = new  ArrayList<String>();
 		commands.add(new String("createDialogWithBot"));
-		
+		commands.add(new String("createConsultation"));
+
 		List<String> result = new  ArrayList<String>();
 		for (int i = 0; i < commands.size(); i++)
 		{
 			if (commands.get(i).matches(new String(".*" + command + ".*")))
 				result.add(commands.get(i));
 		}
-			
+
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonInString = mapper.writeValueAsString(result);
@@ -578,7 +630,7 @@ public class ChatController {
 	@ResponseBody
 	public String getEmailsLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
 		List<String> emails = null;
-		
+
 		if(eliminate_users_of_current_room)
 		{
 			List<ChatUser> users = new  ArrayList<ChatUser>();
@@ -586,7 +638,7 @@ public class ChatController {
 			users_set = roomService.getRoom(room).getUsers();
 			users.addAll(users_set);
 			users.add(roomService.getRoom(room).getAuthor());
-	
+
 			List<Long> room_emails = new  ArrayList<>();
 			for(int i = 0; i <  users.size(); i++)
 			{
@@ -598,9 +650,18 @@ public class ChatController {
 		}
 		else
 			emails = userService.getUsersEmailsFist5(login);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 
+		String jsonInString = mapper.writeValueAsString(emails);
+		return jsonInString;
+	}
+
+	@RequestMapping(value="/get_all_users_emails_like", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAllEmailsLike(@RequestParam String email) throws JsonProcessingException {
+		List<String> emails = userService.getUsersEmailsFist5(email);
+		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}
@@ -698,9 +759,114 @@ public class ChatController {
 		return lg;
 	}
 
+	public int getCurrentLangInt()
+	{
+		String lang = getCurrentLang();
+		if (lang.equals(("ua")))
+			return 0;
+		if (lang.equals(("ru")))
+			return 1;
+		return 2;
+	}
+
 	public Map<String, Object> getLocolization()
 	{
 		return langMap.get(getCurrentLang());
+	}
+
+	private static java.sql.Date getSqlDate(String date_str)
+	{	  
+		java.util.Date apptDay = null;
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		java.sql.Date sqlDate = null;
+
+		try
+		{
+			apptDay = (java.util.Date) df.parse(date_str);
+		}
+		catch(ParseException e)
+		{
+			System.out.println("Please set a valid date! Format is yyyy-mm-dd");
+		}
+		sqlDate = new java.sql.Date(apptDay.getTime());
+		return sqlDate;
+	}
+
+	@RequestMapping(value = "/chat/rooms/create/consultation/", method = RequestMethod.POST)
+	@ResponseBody
+	public void createConsultation(Principal principal, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
+			@RequestBody String time_begin, @RequestBody String time_end*/
+			) throws ParseException
+	{
+		String time_begin = param.get("begin");
+		String time_end = param.get("end");
+		String date_str = param.get("date");
+		String lection_title = param.get("lection");
+		String teacher_email = param.get("email");
+
+
+
+		IntitaConsultation consultation = new IntitaConsultation();	
+		Date date = getSqlDate(date_str);
+
+
+
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+		Time start_time = new Time(formatter.parse(time_begin).getTime());		
+		Time endTime = new Time(formatter.parse(time_end).getTime());
+
+
+		Lectures lecture = null;
+
+		int lang = getCurrentLangInt();
+
+		if (lang == lecturesService.EN)
+			lecture = lecturesService.getLectureByTitleEN(lection_title);
+		else
+			if (lang == lecturesService.RU)
+				lecture = lecturesService.getLectureByTitleRU(lection_title);
+		if (lang == lecturesService.UA)
+			lecture = lecturesService.getLectureByTitleUA(lection_title);
+
+		if (date == null)
+		{			
+			System.out.println("Date null!!!!!!");
+			return;
+		}
+
+		if (start_time == null)
+		{
+			System.out.println("start_time null!!!!!!");
+			return;
+		}
+
+		if (endTime == null)
+		{
+			System.out.println("endTime null!!!!!!");
+			return;
+		}
+
+		if (teacher_email == null)
+		{
+			System.out.println("teacher_email null!!!!!!");
+			return;
+		}
+
+		if (lecture == null)
+		{
+			System.out.println("lecture null!!!!!!");
+			return;
+		}
+
+		consultation.setDate(date);
+		consultation.setStartTime(start_time);
+		consultation.setFinishTime(endTime);
+		consultation.setAuthor(userService.getUser(principal));
+		consultation.setConsultant(userService.getUser(teacher_email));
+		consultation.setLecture(lecture);
+
+		chatIntitaConsultationService.registerConsultaion(consultation);		
 	}
 
 	public void addLocolization(Model model)

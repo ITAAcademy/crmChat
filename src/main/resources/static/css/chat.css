@@ -480,3 +480,18 @@ body{
 input::-ms-clear {
     display: none;
 }
+
+.input-cross-icon {
+	position: absolute;
+    top: 20px;
+    right: 10px	;
+    color: red;
+}
+
+.input-ok-icon {
+	position: absolute;
+    top: 20px;
+    right: 10px	;
+    color: green;
+}
+}

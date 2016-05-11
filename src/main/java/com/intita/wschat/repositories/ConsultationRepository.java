@@ -17,4 +17,5 @@ import com.intita.wschat.models.User;
 @Qualifier("IntitaConf") 
 public interface ConsultationRepository extends CrudRepository<ChatConsultation, Long> {
 	public ChatConsultation findOneByRoom(Room room);
+	
 }
