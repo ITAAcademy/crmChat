@@ -482,20 +482,6 @@ $scope.scaleCenterIconCircle = function() {
                  console.log('creating room with bot failed '  )
              });            
     }; 
-  
-/*
-     $scope.addConsultation = function () {
-  	  var dialName = $scope.dialogName;
-  	   $scope.toggleNewRoomModal();
-               $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)
-              success(function(data, status, headers, config) {
-                  console.log('consultation created: ' + $scope.dialogName )
-               }).
-               error(function(data, status, headers, config) {
-                   console.log('creating consultation with bot failed '  )
-               });
-              
-      };*/
       
       $scope.teachersList = []
       $scope.lectionsList = []
