@@ -57,6 +57,21 @@ public class IntitaConsultation implements Serializable,Comparable<IntitaConsult
 	private User consultant;
 	 
 
+	@ManyToOne( fetch = FetchType.LAZY)
+	@JsonManagedReference
+	@JsonView(Views.Public.class)
+	@NotFound(action=NotFoundAction.IGNORE)
+	@JoinColumn(name="lecture_id") //999
+	private Lectures lecture;
+	
+	public Lectures getLecture() {
+		return lecture;
+	}
+
+	public void setLecture(Lectures lecture) {
+		this.lecture = lecture;
+	}
+
 	@NotNull
 	@Column(name="date_cons")
 	private Date date;
@@ -79,6 +94,38 @@ public class IntitaConsultation implements Serializable,Comparable<IntitaConsult
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
+	}
+
+	public void setConsultant(User consultant) {
+		this.consultant = consultant;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setStartTime(Time startTime) {
+		this.startTime = startTime;
+	}
+
+	public void setFinishTime(Time finishTime) {
+		this.finishTime = finishTime;
+	}
+
+	public void setChatConsultation(ChatConsultation chatConsultation) {
+		this.chatConsultation = chatConsultation;
 	}
 
 	public User getAuthor() {

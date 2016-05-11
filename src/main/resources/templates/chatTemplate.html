@@ -12,7 +12,8 @@
 					<div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
 			</li>
 	</ul>
-	</script>
+	</script>	
+	 
 	<div class="col-xs-12">
 		<div class="row row-broken vdivide">
 			<a ng-show="showDialogListButton" class="menu-ng-click"
@@ -35,12 +36,17 @@
 									ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }"
 									ng-mouseover="showedSearchForm=true"
 									ng-mouseout="showedSearchForm=false">
-									<label for="search" class="sr-only ">Search</label> <input
+									<label for="search" class="sr-only ">Search</label> 
+									<input
 									ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
 									autocomplete="off" type="text" class="form-control display-block"
 									name="search" id="search"
 									ng-model="$parent.searchInputValue.email"
-									ng-change="showSearchList()" placeholder="search" typeahead-wait-ms = "1000" uib-typeahead="item for item in $parent.emails" 	typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/>
+									ng-change="showSearchList()" 
+									placeholder="search" 
+									typeahead-wait-ms = "1000" 
+									uib-typeahead="item for item in $parent.emails" 	
+									typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/>
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 								</div>
 							</div>
@@ -155,3 +161,5 @@
 	</div>
 	
 	<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow"/>
+	<div id="new_consultation_modal" class="modal fade" th:include="createConsultationModalWindow"/>
+	

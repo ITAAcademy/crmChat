@@ -58,6 +58,11 @@ public class ConsultationsService {
 	}
 	
 	@Transactional
+	public void registerConsultaion(IntitaConsultation consultation) {
+		chatIntitaConsultationRepository.save(consultation);			
+	}
+	
+	@Transactional
 	public void setRatings(ChatConsultation cons, Map<Long,Integer> map)
 	{
 		if(cons != null)
@@ -73,6 +78,7 @@ public class ConsultationsService {
 	{
 		chatConsultationRepository.save(entity);
 	}
+	
 	
 	@Transactional
 	public Set<ConsultationRatings> getAllSupportedRetings()

@@ -2,6 +2,10 @@ package com.intita.wschat.web;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +56,8 @@ import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.IntitaConsultation;
+import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
@@ -62,6 +68,9 @@ import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.ConsultationsService;
+import com.intita.wschat.services.LecturesService;
+//import com.intita.wschat.services.IntitaConsultationsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -71,6 +80,7 @@ import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
 
 import jsonview.Views;
+//import scala.annotation.meta.setter;
 
 
 @Controller
@@ -83,8 +93,10 @@ public class RoomController {
 	@Autowired private SessionProfanity profanity;
 
 	@Autowired private ParticipantRepository participantRepository;
+	@Autowired private  LecturesService lecturesService;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired private ConsultationsService chatIntitaConsultationService;
 
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
@@ -92,6 +104,7 @@ public class RoomController {
 	@Autowired private ChatUsersService chatUserServise;
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	//@Autowired private IntitaConsultationsService chatIntitaConsultationService;
 
 	@Autowired private ChatController chatController;
 	
@@ -119,6 +132,9 @@ public class RoomController {
 	{
 		createDialogWithBot(roomName,principal);
 	}
+	
+	
+
 	
 	public Room createDialogWithBot(String roomName, Principal principal)
 	{
