@@ -171,11 +171,9 @@ public class BotController {
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer)
-			nextContainer = botCategoryService.getById(nextNode).getMainElement();
+			nextContainer = botItemContainerService.getById(nextNode);	
 		else
-			nextContainer = botItemContainerService.getById(nextNode);
-			
-
+			nextContainer = botItemContainerService.getById(nextNode);			
 		String containerString = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
