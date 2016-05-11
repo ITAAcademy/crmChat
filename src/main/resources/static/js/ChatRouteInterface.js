@@ -467,8 +467,17 @@ $scope.scaleCenterIconCircle = function() {
         $scope.createSmtVisible = !$scope.createSmtVisible;
     };
     
+    var consultationWindowVisible = false;
+    
     $scope.toggleNewConsultationModal = function() {    	
         $('#new_consultation_modal').modal('toggle'); 
+        
+        if (consultationWindowVisible == true)
+        {
+        	 $scope.teacher_Nick = "";
+             $scope.lectionTitle = "";
+        }
+        consultationWindowVisible = !consultationWindowVisible;
     };
   
    $scope.addDialog = function () {
@@ -673,7 +682,7 @@ $scope.scaleCenterIconCircle = function() {
     				"date": getDateString($scope.consultationDate) ,"begin": getTimeString($scope.consultationTimeBegin) ,"end": getTimeString($scope.consultationTimeEnd)}).
                success(function(data, status, headers, config) {            	 
                  console.log('consultation created: '  )
-                 $scope.toggleNewConsultationModal();
+                 $scope.toggleNewConsultationModal();                
               }).
               error(function(data, status, headers, config) {
                   console.log('creating consultation failed '  )
