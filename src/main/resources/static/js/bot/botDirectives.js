@@ -134,7 +134,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var payLoad = JSON.stringify(dataObject);
                     
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
-                    ngclickFunction = 'mainScope.getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
+                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
                 var linkHref = '';
                 if (!usePost) {
@@ -223,7 +223,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                         url: url,
                         data: dataToSend, // serializes the form's elements.
                         success: function(data) {
-                            alert(data); // show response from the php script.
+                           // alert(data); // show response from the php script.
                         }
                     });
 

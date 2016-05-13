@@ -307,7 +307,7 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody ChatMessage message, Principal principal) throws JsonProcessingException {
+	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody ChatMessage message, Principal principal)  {
 		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
 		if( struct == null)
@@ -401,6 +401,18 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
 		}
 	}
+	
+	public void filterMessageBot( Long room,ChatMessage message, ChatMessage to_save, Principal principal) {
+		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
+		UserMessage messageToSave = filterMessage(room, to_save, principal);		
+		if (messageToSave!=null)
+		{
+			addMessageToBuffer(room, messageToSave);
+			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
+		}
+	}
+	
+	
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	@ResponseBody

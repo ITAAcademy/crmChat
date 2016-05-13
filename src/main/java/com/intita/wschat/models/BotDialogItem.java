@@ -41,6 +41,13 @@ public class BotDialogItem {
 	public BotDialogItem(){
 
 	}
+	
+	public BotDialogItem(BotDialogItem item){
+		this.body = item.body;
+		this.category = item.category;
+		this.id = item.id;
+	}
+	
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
 	@Autowired
 	@Transient
@@ -52,7 +59,7 @@ public class BotDialogItem {
 	private String body;
 	@ManyToOne
 	private BotCategory category;
-	
+
 	@Column(name="test_case", columnDefinition = "TEXT")
 	String testCase = new String();
 	
@@ -63,7 +70,6 @@ public class BotDialogItem {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
 	
-
 	public  BotDialogItem(String body,BotCategory category){
 		this.body=body;
 		this.category = category;
