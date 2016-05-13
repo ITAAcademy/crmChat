@@ -14,6 +14,9 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import jsonview.Views;
 
 /**
  * 
@@ -24,9 +27,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class BotAnswer {
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 
 	@NotNull
+	@JsonView(Views.Public.class)
 	private String name;
 	
 	@ManyToOne
@@ -39,6 +44,7 @@ public class BotAnswer {
 	
 	@Column(columnDefinition = "TEXT")
 	@NotNull
+	@JsonView(Views.Public.class)
 	private String value;
 	
 	

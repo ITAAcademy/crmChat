@@ -293,6 +293,14 @@ public class RoomController {
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());//0-add; 1-private; 2-not my
+		try {
+			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			log.info("BOT PARAM PROBLEM: " + room_o.getBotAnswers());
+			e.printStackTrace();
+			
+		}//0-add; 1-private; 2-not my
 		return map;
 	}
 

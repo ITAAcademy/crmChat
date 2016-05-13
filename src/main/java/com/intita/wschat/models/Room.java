@@ -61,27 +61,34 @@ public class Room implements Serializable,Comparable<Room> {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
-	
+
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
 
-
-	
 	public static class RoomType
 	{
 		public static final short DEFAULT = 0;
 		public static final short PRIVATE = 1;
 		public static final short CONSULTATION = 2;
 	}
-	public int getParticipantsCount(){
-		return users.size()+1; //+1 because author is also participants;
-	}
-	
-	
+
 	/*
 	 * GET/SET
 	 */
+
+	public int getParticipantsCount(){
+		return users.size()+1; //+1 because author is also participants;
+	}
+	public List<UserMessage> getMessages() {
+		return messages;
+	}
+
+
+	public List<BotAnswer> getBotAnswers() {
+		return botAnswers;
+	}
+
 	public Set<ChatUser> getUsers() {
 		return users;
 	}
@@ -162,7 +169,7 @@ public class Room implements Serializable,Comparable<Room> {
 	public void setType(short type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public int compareTo(Room o) {
 		if (o==null)return -1;
