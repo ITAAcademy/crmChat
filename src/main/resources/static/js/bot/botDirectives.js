@@ -15,14 +15,14 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 }
             });
             scope.$watch(attr.content, function() {
-                  var receivedData = $parse(attr.content)(scope);
+                var receivedData = $parse(attr.content)(scope);
 
-                var parsedData = JSON.parse(receivedData); 
-                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId,parsedData.id);
-                 var sufix = "</form>"
-                console.log('botContainer content:'+parsedData.body);
-               // var elementValue = parsedData.body.replace(/\\"/g, '"');
-                element.html(prefix + parsedData.body+ sufix);
+                var parsedData = JSON.parse(receivedData);
+                var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
+                var sufix = "</form>"
+                console.log('botContainer content:' + parsedData.body);
+                // var elementValue = parsedData.body.replace(/\\"/g, '"');
+                element.html(prefix + parsedData.body + sufix);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
                     if (typeof callBackFunction != 'undefined')
@@ -58,7 +58,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 var result = head;
 
                 for (var i = 0; i < elements.length; i++) {
-                	result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                    result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
                 }
 
                 element.html(result);
@@ -119,36 +119,36 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.mainScope=scope.$parent.mainScope;
+                scope.mainScope = scope.$parent.mainScope;
                 var body = attr.text;
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
-
+                scope.itemvalue = body;
                 var ngclickFunction = '';
                 if (usePost &&
                     (typeof attr.linkindex !== 'undefined') &&
                     attr.linkindex.length > 0) {
-                    var dataObject = { "body": null, "category" : null, "nextNode" : null, "answer": null};
+                    var dataObject = { "body": null, "category": null, "nextNode": null, "answer": null };
                     dataObject.nextNode = attr.linkindex;
 
                     var message = JSON.parse(scope.$parent.message.message);
-                    if(message.id == null)
-                    	message.id = -1;
-                    if(message.category != null)
-                    	dataObject.category = message.category.id;
-					
-					var payLoad = JSON.stringify(dataObject);
+                    if (message.id == null)
+                        message.id = -1;
+                    if (message.category != null)
+                        dataObject.category = message.category.id;
+
+                    var payLoad = JSON.stringify(dataObject);
                     debugger;
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
-                    ngclickFunction = 'mainScope.getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(),link);
+                    ngclickFunction = 'mainScope.getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
                 var linkHref = '';
                 if (!usePost) {
-                          var linkTemplate ='href="{0}"';
+                    var linkTemplate = 'href="{0}"';
                     linkHref = linkTemplate.format(attr.href);
                 }
 
-              var prefix = '<a class="{0}" ng-click=\'{1}\' {2}>'.format(attr.classes,ngclickFunction,linkHref);
+                var prefix = '<a class="{0}" ng-click=\'{1}\' {2} ng-bind="itemvalue">'.format(attr.classes, ngclickFunction, linkHref);
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -158,8 +158,8 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-                
-                scope.$parent.botChildrens.push({'element':element,'scope':scope});
+
+                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
                 scope.botChildrens = new Array();
             }
         }
@@ -168,14 +168,14 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
 angular.module('springChat.directives').directive('botinput', function($compile, $parse, $http) {
     return {
-        scope:{
+        scope: {
 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 var body = attr.text;
-
-              var prefix = '<input type="text" name="{0}">'.format(attr.itemindex);
+                scope.itemvalue = "";
+                var prefix = '<input type="text" name="{0}" ng-bind="itemvalue">'.format(attr.itemindex);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -192,37 +192,41 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 
 angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
-        scope:{
+        scope: {
 
         },
         controller: 'ChatViewItemController',
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.submitBot = function(event){
-                         event.preventDefault();
-                         var formElm = $(event.currentTarget.form);
+                scope.submitBot = function(event) {
+                    event.preventDefault();
+                    var formElm = $(event.currentTarget.form);
                     //$(event.currentTarget.form).submit();
                     var url = formElm.attr("action");
-                   // var dataToSend = JSON.stringify(formElm.serializeArray());
-                    var formData =  {}; 
-                    $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
+                    // var dataToSend = JSON.stringify(formElm.serializeArray());
+                    var formData = {};
+                    for (var scopeAndElementKey in scope.$parent.botChildrens) {
+                        var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
+                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined')
+                            formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
+                    }
+                    // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
                     var dataToSend = JSON.stringify(formData);
-                    console.log('dataToSend:'+dataToSend);
+                    console.log('dataToSend:' + dataToSend);
                     $.ajax({
-           type: "POST",
-           contentType:"binary/octet-stream",
-           url: url,
-           data:dataToSend, // serializes the form's elements.
-           success: function(data)
-           {
-               alert(data); // show response from the php script.
-           }
-         });
+                        type: "POST",
+                        contentType: "binary/octet-stream",
+                        url: url,
+                        data: dataToSend, // serializes the form's elements.
+                        success: function(data) {
+                            alert(data); // show response from the php script.
+                        }
+                    });
 
                 }
                 var body = attr.text;
 
-              var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
+                var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
 
                 var suffix = '</button>';
                 var elementValue = prefix + body + suffix;
@@ -249,35 +253,36 @@ attr.isradio - determine if group is readiogroup
 angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
-        scope:{},
+        scope: {},
         link: {
             post: function(scope, element, attr, ctrl) {
-            	scope.answer = [];
+                scope.itemvalue = [];
                 var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
-              //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
-              var index = 0;
-              var prefix="<fieldset><legend>{0}</legend>".format(attr.legend);
-              var body = "";
-              var item_type = "checkbox";
-              var modalT = 'ng-model="answer[{0}]"';
-              if (attr.isradio === 'true' || attr.isradio === true)
-              {
-              	modalT = 'ng-model="answer"';
-              	item_type = "radio";
-              	scope.answer = false;
-              } 
-              debugger;
-              var labels = eval(attr.labels);//JSON.parse(attr.labels.replace('\'', '\"'));
 
-              for (var i = 0; i < labels.length; i++){
-              	var modalTemp = modalT.format(i);
-                body += checkBoxTemplate.format(item_type," " + labels[i], modalTemp, i);
-                if (attr.isradio == 'false')
-                	scope.answer[i] = false;
-              }
-              
+                //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+                var index = 0;
+                var prefix = "<fieldset><legend>{0}</legend>".format(attr.legend);
+                var body = "";
+                var item_type = "checkbox";
+                var modalT = 'ng-model="itemvalue[{0}]"';
+                if (attr.isradio === 'true' || attr.isradio === true) {
+                    modalT = 'ng-model="itemvalue"';
+                    item_type = "radio";
+                    scope.itemvalue = false;
+                }
+                debugger;
+                var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
-                var suffix = '</fieldset>{{answer}}';
+                for (var i = 0; i < labels.length; i++) {
+                    var modalTemp = modalT.format(i);
+                    body += checkBoxTemplate.format(item_type, " " + labels[i], modalTemp, i);
+
+                    if (attr.isradio == 'false')
+                        scope.itemvalue[i] = false;
+                }
+
+
+                var suffix = '</fieldset>{{itemvalue}}';
                 var elementValue = prefix + body + suffix;
 
 
@@ -286,8 +291,8 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 debugger;
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-                scope.mainScope=scope.$parent.mainScope;
-                scope.$parent.botChildrens.push({'element':element,'scope':scope});
+                scope.mainScope = scope.$parent.mainScope;
+                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
                 scope.botChildrens = new Array();
             }
         }
