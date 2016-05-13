@@ -16,8 +16,10 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 						$scope.pageClass = 'scale-fade-in';
 					}, function(){
-					chatControllerScope.changeLocation("/chatrooms");
-						alert("ERR")});
+					chatControllerScope.changeLocation("/");
+						//alert("ERR");
+						location.reload();
+					});
 				}
 				else
 				{
@@ -25,8 +27,10 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 						$scope.pageClass = 'scale-fade-in';
 					}, function(){
-						chatControllerScope.changeLocation("/chatrooms");
-						alert("ERR")});
+						chatControllerScope.changeLocation("/");
+						location.reload();
+						//alert("ERR");
+					});
 				}
 			}
 

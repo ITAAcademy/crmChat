@@ -3,18 +3,23 @@ package com.intita.wschat.models;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +53,15 @@ public class BotDialogItem {
 	@ManyToOne
 	private BotCategory category;
 	
-	String conditionalTransitions="";
+	@Column(name="test_case", columnDefinition = "TEXT")
+	String testCase = new String();
+	
+	@Column(columnDefinition = "TEXT")
+	String description;
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
+	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
 	
 
 	public  BotDialogItem(String body,BotCategory category){
@@ -56,14 +69,8 @@ public class BotDialogItem {
 		this.category = category;
 	}
 
-	public BotDialogItem getNextNode(int chosedItem){
-		HashMap<Integer, Long> conditionalMap = getConditionalTransitionsMap();
-		if(conditionalMap==null) return null;
-		if (conditionalMap.containsKey(chosedItem))return botItemContainerService.getById(conditionalMap.get(chosedItem));
-		return null;
-	}
-	public void setTransitions(String str){
-		this.conditionalTransitions = str;
+	public void setTestCase(String str){
+		this.testCase = str;
 	}
 
 	public String getBody() {
@@ -78,36 +85,32 @@ public class BotDialogItem {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public void addBranch(int key, BotDialogItem destinationContainer){
-		HashMap<Integer, Long> map = getConditionalTransitionsMap();
-		if (map==null) map = new HashMap<Integer, Long>();
-		map.put(key, destinationContainer.getId());
-		setConditionalTransitionsMap(map);
-	}
-	public HashMap<Integer, Long> getConditionalTransitionsMap() {
-		ObjectMapper objectMapper = new ObjectMapper();
+	
+	public String getTestCase() {
+		/*ObjectMapper objectMapper = new ObjectMapper();
 		HashMap<Integer, Long> conditionalMap = null;
 		try {
-			conditionalMap = objectMapper.readValue(conditionalTransitions, new TypeReference<Map<Integer, Long>>(){} );
+			conditionalMap = objectMapper.readValue(testCase, new TypeReference<Map<Integer, Long>>(){} );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			log.info("conditionalTransitions is empty");
 			return null;
 
 		}
-		return conditionalMap;
+		return conditionalMap;*/
+		return testCase;
 	}
 	public void setConditionalTransitionsMap(HashMap<Integer, Long> map){
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			conditionalTransitions = objectMapper.writeValueAsString(map);
+			setConditionalTransitions(objectMapper.writeValueAsString(map));
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	public void setConditionalTransitions(String conditionalTransitions) {
-		this.conditionalTransitions = conditionalTransitions;
+		this.testCase = conditionalTransitions;
 	}
 	public static BotDialogItem createFromCategories(ArrayList<BotCategory> categories){
 		BotDialogItem container = new BotDialogItem();

@@ -61,6 +61,10 @@ public class Room implements Serializable,Comparable<Room> {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
+	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
 
 
 	

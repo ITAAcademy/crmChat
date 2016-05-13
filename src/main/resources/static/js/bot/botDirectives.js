@@ -106,7 +106,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
 });
 /*
 attributes list: 
-content,
+text,
 linkindex, //unique index of link for sending to server
 ispost,//if false - redirect to link href, true - make post request
 href, //link to other page or address for post request 
@@ -251,7 +251,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         link: {
             post: function(scope, element, attr, ctrl) {
             	scope.answer = [];
-                var checkBoxTemplate = '<div><input {3} type="{0}" name="{1}" value="{{4}}"/><span>  {1}</span></div>';
+                var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
               //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
               var index = 0;
               var prefix="<fieldset><legend>{0}</legend>".format(attr.legend);
@@ -269,7 +269,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
               for (var i = 0; i < labels.length; i++){
               	var modalTemp = modalT.format(i);
-                body += checkBoxTemplate.format(item_type,attr.cbname,i + ") " + labels[i], modalTemp, i);
+                body += checkBoxTemplate.format(item_type," " + labels[i], modalTemp, i);
                 if (attr.isradio == 'false')
                 	scope.answer[i] = false;
               }

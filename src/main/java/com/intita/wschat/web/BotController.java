@@ -104,10 +104,6 @@ public class BotController {
 		BotDialogItem testItemContainer2 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
 		BotDialogItem testItemContainer3 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
 		BotDialogItem testItemContainer4 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));//end
-		//BotItemContainer testItemContainer5 = botItemContainerService.add(new BotItemContainer(getJsonContainerBodySimple(container1)));
-		testItemContainer1.addBranch(0, testItemContainer2);
-		testItemContainer2.addBranch(0, testItemContainer3);
-		testItemContainer3.addBranch(0, testItemContainer4);
 		botItemContainerService.update(testItemContainer1);
 		botItemContainerService.update(testItemContainer2);
 		botItemContainerService.update(testItemContainer3);

@@ -14,9 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class BotCategory {
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-	List<BotDialogItem> elements = new ArrayList<BotDialogItem>();
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -26,6 +23,10 @@ public class BotCategory {
 	@OneToOne
 	@JsonIgnore
 	private BotDialogItem mainElement;
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+	List<BotDialogItem> elements = new ArrayList<BotDialogItem>();
 
 	public BotCategory(){
 

@@ -148,9 +148,11 @@ public class RoomController {
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
 		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		
+		String containerString = "Good day. Please choose the category that interests you:\n";
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
 		BotDialogItem mainContainer = BotDialogItem.createFromCategories(allCategories);
-		String containerString = "";
+		mainContainer.setBody( containerString + mainContainer.getBody());
 		try {
 			containerString = mapper.writeValueAsString(mainContainer);
 		} catch (JsonProcessingException e) {
