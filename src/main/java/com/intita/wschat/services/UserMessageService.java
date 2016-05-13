@@ -129,7 +129,6 @@ public class UserMessageService {
 			if (message.getAuthor().getId().equals(BotController.BotParam.BOT_ID) )
 			{
 				String originalBody = message.getBody();
-				System.out.println("1111111111111111111   " + originalBody);
 				
 				{
 					ObjectMapper mapper = new ObjectMapper();
@@ -149,7 +148,6 @@ public class UserMessageService {
 							String body_json = body_body.asText();
 
 							if (body_json != null) {
-								System.out.println("22222222222222 " + body_json);
 								if (isNumber(body_json))
 								{
 									Long id = new Integer(body_json).longValue();
@@ -158,7 +156,6 @@ public class UserMessageService {
 										String body = botDialogItem.getBody();
 										if (body != null) {
 											message.setBody(body);
-											System.out.println("33333333333333333 " + body);
 										}
 									}
 								}
