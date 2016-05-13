@@ -25,6 +25,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.totalItems = 64;
     $scope.currentPage = 4;
     $scope.botParameters = new Map();
+    $scope.botContainers = new Array();
 
     $scope.show_search_list_in_message_input = false;
     var isSpecialInput = false;

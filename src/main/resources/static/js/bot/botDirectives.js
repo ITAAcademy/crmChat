@@ -51,6 +51,10 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 $compile(element.contents())(scope);
             }, true);
             scope.botChildrens = new Array();
+            if(scope.chatRouteInterfaceScope.botContainers.length > 0)
+                scope.chatRouteInterfaceScope.botContainers[scope.chatRouteInterfaceScope.botContainers.length - 1].scope.disabled = true;
+            scope.chatRouteInterfaceScope.botContainers.push({ 'element': element, 'scope': scope });
+
             scope.enabledListener(scope, element);
             //scope.giveTenant();
         }
@@ -323,9 +327,6 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-                scope.mainScope = scope.$parent.mainScope;
-                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
-                scope.botChildrens = new Array();
                 scope.init(scope, element, attr);
             }
         }

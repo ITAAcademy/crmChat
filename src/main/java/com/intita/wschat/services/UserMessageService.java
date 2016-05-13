@@ -177,7 +177,6 @@ public class UserMessageService {
 											 ObjectNode jsonNode = (ObjectNode)json;
 									           jsonNode.put("body", body); 
 									           String res_json_str = jsonNode.toString();
-									           System.out.println("HHHHHHHHHHHHHHHHHHHH   " + res_json_str);
 									           message.setBody(res_json_str);
 										}
 									}
