@@ -101,6 +101,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                 }
                 //scope.content = $parse(attr.content)(scope);
                 $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
             }, true);
         }
     }
@@ -115,6 +116,7 @@ classes; // list of classes like: "btn btn-large"
 */
 angular.module('springChat.directives').directive('botlink', function($compile, $parse, $http) {
     return {
+        controller: 'ChatViewItemController',
         scope: {
 
         },
@@ -139,7 +141,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                         dataObject.category = message.category.id;
 
                     var payLoad = JSON.stringify(dataObject);
-                    debugger;
+                    
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
                     ngclickFunction = 'mainScope.getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
@@ -162,6 +164,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                 scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
                 scope.botChildrens = new Array();
+                scope.init(scope, element, attr);
             }
         }
     }
@@ -169,6 +172,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
 angular.module('springChat.directives').directive('botinput', function($compile, $parse, $http) {
     return {
+        controller: 'ChatViewItemController',
         scope: {
 
         },
@@ -189,6 +193,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
                 scope.mainScope = scope.$parent.mainScope;
                 scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
                 scope.botChildrens = new Array();
+                scope.init(scope, element, attr);
             }
         }
     }
@@ -215,7 +220,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                         if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined'){
 
                             formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
-                            scope.mainScope.chatControllerScope.botParameters = formData[scopeAndElement.element[0].attributes.name.value];
+                            scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
                         }
                     }
                     // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
@@ -278,7 +283,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     item_type = "radio";
                     scope.itemvalue = false;
                 }
-                debugger;
+                
                 var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
                 for (var i = 0; i < labels.length; i++) {
@@ -296,12 +301,13 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
                 element.html(elementValue);
-                debugger;
+                
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
                 scope.mainScope = scope.$parent.mainScope;
                 scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
                 scope.botChildrens = new Array();
+                scope.init(scope, element, attr);
             }
         }
     }

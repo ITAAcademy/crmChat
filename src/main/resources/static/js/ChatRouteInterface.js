@@ -24,6 +24,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.selected = undefined;
     $scope.totalItems = 64;
     $scope.currentPage = 4;
+    $scope.botParameters = new Map();
 
     $scope.show_search_list_in_message_input = false;
     var isSpecialInput = false;
@@ -1212,8 +1213,13 @@ $scope.scaleCenterIconCircle = function() {
                 //calcPositionUnshift(JSON.parse(o["messages"][i].text));
             }
         }
-
-
+        var bot_params = JSON.parse(message["bot_param"]);
+        if(bot_params.length > 0)
+        {
+            
+            for(var key in bot_params)
+                $scope.botParameters[bot_params[key].name] =  JSON.parse(bot_params[key].value);
+        }
 
         $timeout(function() {
             var objDiv = document.getElementById("messagesScroll");

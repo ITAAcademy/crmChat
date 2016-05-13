@@ -41,4 +41,5 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     $rootScope.$watch('isInited', function() {
 
     });
+
 }]);

@@ -5,10 +5,19 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
 
     $scope.name = "ChatViewItemController";
     $scope.chatControllerScope = Scopes.get('ChatController');
+    $scope.chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.parse = function() {
 
     };
+     $scope.init = function(scope, element, attr)
+ {
+    debugger;
+        if(scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined)
+        {
+            scope.itemvalue = scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value];
+        }
+ }
 
     /*
     $scope.getChildNodes(){

@@ -36,10 +36,12 @@ public class BotAnswer {
 	
 	@ManyToOne
 	@NotNull
+	@JsonIgnore
 	private BotDialogItem item;
 	
 	@ManyToOne
 	@NotNull
+	@JsonIgnore
 	private Room room;
 	
 	@Column(columnDefinition = "TEXT")
