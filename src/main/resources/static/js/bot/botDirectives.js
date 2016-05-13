@@ -123,7 +123,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 var body = attr.text;
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
-
+                scope.itemvalue = body;
                 var ngclickFunction = '';
                 if (usePost &&
                     (typeof attr.linkindex !== 'undefined') &&
@@ -148,7 +148,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     linkHref = linkTemplate.format(attr.href);
                 }
 
-              var prefix = '<a class="{0}" ng-click=\'{1}\' {2}>'.format(attr.classes,ngclickFunction,linkHref);
+              var prefix = '<a class="{0}" ng-click=\'{1}\' {2} ng-bind="itemvalue">'.format(attr.classes,ngclickFunction,linkHref);
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -174,8 +174,8 @@ angular.module('springChat.directives').directive('botinput', function($compile,
         link: {
             post: function(scope, element, attr, ctrl) {
                 var body = attr.text;
-
-              var prefix = '<input type="text" name="{0}">'.format(attr.itemindex);
+                scope.itemvalue = "";
+              var prefix = '<input type="text" name="{0}" ng-bind="itemvalue">'.format(attr.itemindex);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -205,7 +205,12 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     var url = formElm.attr("action");
                    // var dataToSend = JSON.stringify(formElm.serializeArray());
                     var formData =  {}; 
-                    $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
+                    for (var scopeAndElementKey in scope.$parent.botChildrens){
+                        var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
+                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined')
+                        formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
+                    }
+                   // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
                     var dataToSend = JSON.stringify(formData);
                     console.log('dataToSend:'+dataToSend);
                     $.ajax({
@@ -250,32 +255,32 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         scope:{},
         link: {
             post: function(scope, element, attr, ctrl) {
-            	scope.answer = [];
-                var checkBoxTemplate = '<div><input {3} type="{0}" name="{1}" value="{{4}}"/><span>  {1}</span></div>';
+            	scope.itemvalue = [];
+                var checkBoxTemplate = '<div><input {3} type="{0}" name="{1}" value="{4}"/><span>  {1}</span></div>';
               //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
               var index = 0;
               var prefix="<fieldset><legend>{0}</legend>".format(attr.legend);
               var body = "";
               var item_type = "checkbox";
-              var modalT = 'ng-model="answer[{0}]"';
+              var modalT = 'ng-model="itemvalue[{0}]"';
               if (attr.isradio === 'true' || attr.isradio === true)
               {
-              	modalT = 'ng-model="answer"';
+              	modalT = 'ng-model="itemvalue"';
               	item_type = "radio";
-              	scope.answer = false;
+              	scope.itemvalue = false;
               } 
               debugger;
               var labels = eval(attr.labels);//JSON.parse(attr.labels.replace('\'', '\"'));
 
               for (var i = 0; i < labels.length; i++){
               	var modalTemp = modalT.format(i);
-                body += checkBoxTemplate.format(item_type,attr.cbname,i + ") " + labels[i], modalTemp, i);
+                body += checkBoxTemplate.format(item_type,attr.name,i + ") " + labels[i], modalTemp, i);
                 if (attr.isradio == 'false')
-                	scope.answer[i] = false;
+                	scope.itemvalue[i] = false;
               }
               
 
-                var suffix = '</fieldset>{{answer}}';
+                var suffix = '</fieldset>{{itemvalue}}';
                 var elementValue = prefix + body + suffix;
 
 
