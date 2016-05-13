@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.domain.ChatMessage;
+import com.intita.wschat.models.BotAnswer;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
@@ -34,6 +36,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
+import com.intita.wschat.services.BotAnswersService;
 import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.ChatTenantService;
@@ -65,6 +68,7 @@ public class BotController {
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
+	@Autowired private BotAnswersService botAnswerService;
 
 
 	@Autowired private RoomController roomControler;
@@ -121,9 +125,9 @@ public class BotController {
 
 		return objectMapper.writeValueAsString(botCategory);
 	}
-	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}", method = RequestMethod.POST)
+	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId,HttpServletRequest request) throws JsonProcessingException {
+	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Principal principal) throws JsonProcessingException {
 		/*Iterator it = params.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
@@ -146,13 +150,25 @@ public class BotController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
 		
+		Room room = roomService.getRoom(roomId);
+		BotDialogItem item = botItemContainerService.getById(containerId);
+		
+		for(int i = 0; i < keys.size(); i++)
+		{
+			botAnswerService.add(new BotAnswer(keys.get(i), item, room, obj.get(keys.get(i))));
+		}
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("nextNode", nextContainerId.toString());//@BAD
+		
+		sendNextContainer(roomId, containerId, param, principal);
 		return "good";
 	}
 
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param,Principal principal) throws JsonProcessingException {
+	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param, Principal principal) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		ChatUser bot = chatUsersService.getChatUser(BotParam.BOT_ID);
@@ -164,6 +180,10 @@ public class BotController {
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
 		boolean toMainContainer = param.get("category") == null;
 		BotDialogItem nextContainer;
+		
+		if(!param.containsKey("nextNode"))
+			return  "";
+		
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer)

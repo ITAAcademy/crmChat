@@ -48,6 +48,15 @@ public class BotAnswer {
 	private String value;
 	
 	
+	public BotAnswer() {
+		// TODO Auto-generated constructor stub
+	}
+	public BotAnswer(String name, BotDialogItem item, Room room, String value){
+		this.name= name;
+		this.item = item;
+		this.room = room;
+		this.value = value;
+	}
 	public Long getId() {
 		return id;
 	}

@@ -205,7 +205,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     event.preventDefault();
                     var formElm = $(event.currentTarget.form);
                     //$(event.currentTarget.form).submit();
-                    var url = formElm.attr("action");
+                    var url = formElm.attr("action") + "/next_item/" + 1; 
                     // var dataToSend = JSON.stringify(formElm.serializeArray());
                     var formData = {};
                     for (var scopeAndElementKey in scope.$parent.botChildrens) {

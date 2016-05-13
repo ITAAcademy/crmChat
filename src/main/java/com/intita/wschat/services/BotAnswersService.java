@@ -27,4 +27,8 @@ public class BotAnswersService {
 	{
 		return botAnswersRespository.findAll();
 	}
+	public void add(BotAnswer answer)
+	{
+		botAnswersRespository.save(answer);
+	}
 }
