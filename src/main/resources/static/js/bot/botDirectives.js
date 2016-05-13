@@ -1,7 +1,7 @@
 'use strict';
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
     return {
-        controller: 'ChatBotController',
+        controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
             scope.mainScope = scope;
             scope.$watch('disabled', function() {
@@ -18,7 +18,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                  var functionNamesMap = {
             'time': 'getCurrentTime()'
       };
-      var botParametersMap = scope.mainScope.chatControllerScope.botParameters;
+      var botParametersMap = scope.chatControllerScope.botParameters;
       var SIGN_OF_NAME_OR_FUNCTION = "$";
       var processedStr = strWithParams;
       for (var functionNameKey in functionNamesMap){

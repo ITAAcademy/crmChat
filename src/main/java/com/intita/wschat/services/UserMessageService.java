@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
@@ -172,8 +173,12 @@ public class UserMessageService {
 									BotDialogItem botDialogItem = botItemContainerService.getById(id);
 									if (botDialogItem != null) {
 										String body = botDialogItem.getBody();
-										if (body != null) {
-											message.setBody(body);
+										if (!body.isEmpty()) {
+											 ObjectNode jsonNode = (ObjectNode)json;
+									           jsonNode.put("body", body); 
+									           String res_json_str = jsonNode.toString();
+									           System.out.println("HHHHHHHHHHHHHHHHHHHH   " + res_json_str);
+									           message.setBody(res_json_str);
 										}
 									}
 								}
