@@ -229,6 +229,8 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
 
 
                 element.html(elementValue);
+
+                //var result = new Function("param",body)(scope.rootScope.botParam); //next item calc
                 debugger;
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
