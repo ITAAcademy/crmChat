@@ -82,6 +82,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
             scope.$watch(attr.content, function() {
+                scope.mainScope = scope.$parent.mainScope;
                 var elements = element[0].children;
 
                 var head = "<ul class='list-group'>";
@@ -201,6 +202,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
         controller: 'ChatViewItemController',
         link: {
             post: function(scope, element, attr, ctrl) {
+                scope.mainScope = scope.$parent.mainScope;
                 scope.submitBot = function(event) {
                     event.preventDefault();
                     var formElm = $(event.currentTarget.form);
@@ -210,8 +212,11 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     var formData = {};
                     for (var scopeAndElementKey in scope.$parent.botChildrens) {
                         var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
-                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined')
+                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined'){
+
                             formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
+                            scope.mainScope.chatControllerScope.botParameters = formData[scopeAndElement.element[0].attributes.name.value];
+                        }
                     }
                     // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
                     var dataToSend = JSON.stringify(formData);
