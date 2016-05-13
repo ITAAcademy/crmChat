@@ -1,0 +1,75 @@
+
+<div >
+    <div class="modal-dialog"  >
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                
+                <h4 id="create_consultation_wndTitle" th:text="${lgPack.lables.roomListView.addRoomModal.title}" class="modal-title">Створення консультації</h4>
+            </div>
+            
+            
+           
+  		 <div class="modal-body"  ng-style="{'border': teacher_NickInputBorder }">
+                <input class="modal_input" id="teacherNickInput" type="text" 
+                ng-model="teacher_Nick"
+                 ng-keypress="showTeachersList()"  
+                 ng-keydown="teacherNickInputKeyDown($event)"            
+                 typeahead-wait-ms = "600" 
+                 typeahead-on-select = " $parent.teacher_Nick = $model; is_teacher_Nick_valid = true"
+                
+                 uib-typeahead="email for email in teachersList  "               
+                placeholder="Teacher name"></input>
+                 <div class="glyphicon glyphicon-remove input-cross-icon"
+               		  ng-show="!is_teacher_Nick_valid"></div>  
+                <div class="glyphicon glyphicon-ok   input-ok-icon" 
+              		  ng-show="is_teacher_Nick_valid"></div>       
+            </div>
+            
+            <div class="modal-body" ng-style="{'border': lectionTitleInputBorder }" >
+                <input class="modal_input" id="lectionTitleInput" type="text" 
+                ng-model="lectionTitle"      
+                
+ 				ng-keypress="showLectionsList()"    
+ 				ng-keydown="lectionTitleInputKeyDown($event)"   
+ 				typeahead-on-select = " $parent.lectionTitle = $model; is_lectionTitle_valid = true"           
+                 typeahead-wait-ms = "600" 
+                 uib-typeahead="emaila for emaila in lectionsList"   
+                placeholder="Назва лекції"></input>  
+                <div class="glyphicon glyphicon-remove input-cross-icon"
+               		  ng-show="!is_lectionTitle_valid"></div>  
+                <div class="glyphicon glyphicon-ok   input-ok-icon" 
+              		  ng-show="is_lectionTitle_valid"></div>            
+            </div>
+            
+            <div class="modal-body" ng-style="{'border': consultationDateInputBorder }">
+            <label for="consultationDateInput">Дата консультації</label>
+                <input class="modal_input " id="consultationDateInput" type="date" 
+             ng-keydown="consultationDateInputKeyDown($event)"  
+                ng-model="consultationDate"     ></input>              
+            </div>
+            
+            <div class="modal-body" ng-style="{'border': consultationTimeBeginInputBorder }">
+            <label for="consultationTimeBeginInput">Початок консультації</label>
+                <input class="modal_input " id="consultationTimeBeginInput" type="time" 
+                ng-keydown="consultationTimeBeginInputKeyDown($event);"
+                ng-model="consultationTimeBegin"     ></input>              
+            </div>
+            
+             <div class="modal-body" ng-style="{'border': consultationTimeEndInputBorder }" >
+            <label for="consultationTimeEndInput">Кінець консультації</label>
+                <input class="modal_input " id="consultationTimeEndInput" type="time" 
+                ng-keydown="consultationTimeEndnputKeyDown($event);"
+                ng-model="consultationTimeEnd"  ></input>              
+            </div>          
+            
+            
+            <div class="modal-footer">
+                <button id="closeButton" th:text="${lgPack.lables.roomListView.addRoomModal.close}" type="button" class="btn btn-default" 
+                ng-click="toggleNewConsultationModal()">Close</button>
+                <button id="createButton"  th:text="${lgPack.lables.roomListView.addRoomModal.create}" type="button" class="btn btn-default" 
+                ng-click="createConsultationButtonPressed()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
