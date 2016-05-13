@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
@@ -161,11 +162,13 @@ public class UserMessageService {
 						e1.printStackTrace();
 					}	
 					if (json != null) {
-						JsonNode body_body =  json.get("body");
+						JsonNode body_body =  json.get("body");						
 						if (body_body != null) {
+							System.out.println("BBBBBBBBBBBBB   " + body_body.toString());
 							String body_json = body_body.asText();
 
 							if (body_json != null) {
+								System.out.println("AAAAAAAAAAAAAAAA   " + body_json);
 								if (isNumber(body_json))
 								{
 									Long id = new Integer(body_json).longValue();
@@ -173,7 +176,11 @@ public class UserMessageService {
 									if (botDialogItem != null) {
 										String body = botDialogItem.getBody();
 										if (body != null) {
-											message.setBody(body);
+											ObjectNode jsonNode = (ObjectNode)json;
+											jsonNode.put("body", body);	
+											String res_json_str = jsonNode.toString();
+											System.out.println("HHHHHHHHHHHHHHHHHHHH   " + res_json_str);
+											message.setBody(res_json_str);
 										}
 									}
 								}
