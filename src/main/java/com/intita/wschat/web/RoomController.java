@@ -468,7 +468,6 @@ public class RoomController {
 
 	@MessageMapping("/chat/rooms/add.{name}")
 	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
-		System.out.println("111111111111111111111111111111111");
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		Room room = roomService.register(name, user);
@@ -486,7 +485,6 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/adddialogwithuser",method=RequestMethod.POST)
 	@ResponseBody
 	public Long addDialog(Principal principal,@RequestBody Long chatUserId){
-		System.out.println("2222222222222222222222222222");
 		ChatUser auth = chatUserServise.getChatUser(principal);
 		if (auth==null)return -1L;
 		User authorOfDialog = auth.getIntitaUser();

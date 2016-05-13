@@ -12,9 +12,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -122,7 +124,7 @@ public class ConsultationsService {
 	}
 	
 	@Transactional
-	public ChatConsultation getByIntitaConsultation(IntitaConsultation iCons) {
+	public ChatConsultation getByIntitaConsultation(IntitaConsultation iCons) throws MessagingException {
 		if(iCons == null)
 			return null;
 

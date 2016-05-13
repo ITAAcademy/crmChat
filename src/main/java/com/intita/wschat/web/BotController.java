@@ -1,6 +1,7 @@
 package com.intita.wschat.web;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,17 +72,17 @@ public class BotController {
 	@Autowired private ChatController chatController;
 
 	private final static Logger log = LoggerFactory.getLogger(BotController.class);
-	
+
 	@PostConstruct
 	public void postConstructor(){
 
 		ChatUser chatUser = new ChatUser("Mr.Bot", null);
 		chatUser.setId((long)0);
 		chatUsersService.updateChatUserInfo(chatUser);
-		
+
 		if (botCategoryService.getCount() > 0)
 			return;
-		
+
 		botCategory = botCategoryService.add(new BotCategory("Main category"));
 		generateTestSequnce(botCategory);
 	}	
@@ -145,13 +146,26 @@ public class BotController {
 		log.info("jsonbody:"+jsonBody);
 		HashMap<String,String> obj =null;
 		try {
-			 obj = new ObjectMapper().readValue(jsonBody,new TypeReference<Map<String, String>>(){});
+			obj = new ObjectMapper().readValue(jsonBody,new TypeReference<Map<String, String>>(){});
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return "good";
+	}
+
+	private static Object cloneObject(Object obj){
+		try{
+			Object clone = obj.getClass().newInstance();
+			for (Field field : obj.getClass().getDeclaredFields()) {
+				field.setAccessible(true);
+				field.set(clone, field.get(obj));
+			}
+			return clone;
+		}catch(Exception e){
+			return null;
+		}
 	}
 
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)
@@ -168,24 +182,37 @@ public class BotController {
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);*/
 		boolean toMainContainer = param.get("category") == null;
 		BotDialogItem nextContainer;
+		BotDialogItem nextContainerToSave = null;
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
-		if(toMainContainer)
+		if(toMainContainer) {
 			nextContainer = botItemContainerService.getById(nextNode);	
-		else
-			nextContainer = botItemContainerService.getById(nextNode);			
+		}
+		else {
+			nextContainer = botItemContainerService.getById(nextNode);	
+		}
+		
+		nextContainerToSave = new BotDialogItem(nextContainer);
+		nextContainerToSave.setBody(nextContainer.getId().toString());
+		
 		String containerString = "";
+		String containerStringToSave = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
+			if (nextContainerToSave != null)
+				containerStringToSave = objectMapper.writeValueAsString(nextContainerToSave);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, "You answer: " + nextContainer.getId());
 		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), principal);
 
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
-		chatController.filterMessageLP(room.getId(), new ChatMessage(qmsg), bot.getPrincipal());
+		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
+
+		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), new ChatMessage(messageToSave), bot.getPrincipal());
 		return objectMapper.writeValueAsString(botCategory);
 	}
 
