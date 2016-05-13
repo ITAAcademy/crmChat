@@ -125,9 +125,9 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 var usePost = attr.ispost === 'true';
 
                 var ngclickFunction = '';
-                if (usePost && (typeof attr.href !== 'undefined') &&
+                if (usePost &&
                     (typeof attr.linkindex !== 'undefined') &&
-                    attr.href.length > 0 && attr.linkindex.length > 0) {
+                    attr.linkindex.length > 0) {
                     var dataObject = { "body": null, "category" : null, "nextNode" : null, "answer": null};
                     dataObject.nextNode = attr.linkindex;
 
