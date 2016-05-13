@@ -13,10 +13,13 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
      $scope.init = function(scope, element, attr)
  {
     debugger;
-        if(scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined)
+        scope.enabledListener(scope, element);
+        if(element[0].attributes.name != undefined && scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined)
         {
             scope.itemvalue = scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value];
+            scope.mainScope.disabled = true;
         }
+        
  }
 
     /*

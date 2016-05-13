@@ -42,4 +42,20 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
 
     });
 
+    $scope.enabledListener = function(scope,element)
+    {
+        console.log("listner");
+        scope.$watch('disabled', function() {
+                if (scope.disabled) {
+                    for (var i = 0; i < element[0].children.length; i++) {
+                        element[0].children[i].style.disabled = "0.5";
+                        element[0].children[i].style.pointerEvents = "none";
+
+                    }
+                     element[0].style.opacity = ".5";
+                    element[0].style.pointerEvents = "none";
+                }
+            });
+    }
+
 }]);

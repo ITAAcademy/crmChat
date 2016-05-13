@@ -1,19 +1,9 @@
 'use strict';
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
     return {
-        controller: 'ChatViewItemController',
+        controller: 'ChatBotController',
         link: function(scope, element, attr, ctrl) {
 
-            scope.$watch('disabled', function() {
-                if (scope.disabled) {
-                    for (var i = 0; i < element[0].children.length; i++) {
-                        //       element[0].children[i].style.disabled = "true";
-                        element[0].children[i].style.pointerEvents = "none";
-                    }
-                    // element[0]..style.disabled = "true";
-                    element[0].style.pointerEvents = "none";
-                }
-            });
             scope.$watch(attr.content, function() {
                 var receivedData = $parse(attr.content)(scope);
 
@@ -33,6 +23,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 $compile(element.contents())(scope);
             }, true);
             scope.botChildrens = new Array();
+            scope.enabledListener(scope, element);
             //scope.giveTenant();
         }
     }
