@@ -3,7 +3,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
     return {
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
-
+            scope.mainScope = scope;
             scope.$watch('disabled', function() {
                 if (scope.disabled) {
                     for (var i = 0; i < element[0].children.length; i++) {
@@ -14,22 +14,39 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                     element[0].style.pointerEvents = "none";
                 }
             });
+            var processBotParameters = function (strWithParams){
+                 var functionNamesMap = {
+            'time': 'getCurrentTime()'
+      };
+      var botParametersMap = scope.mainScope.chatControllerScope.botParameters;
+      var SIGN_OF_NAME_OR_FUNCTION = "$";
+      var processedStr = strWithParams;
+      for (var functionNameKey in functionNamesMap){
+        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey, eval(functionNamesMap[functionNameKey]));
+      }
+      for (var botParameterKey in botParametersMap){
+        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION+botParameterKey,botParametersMap[botParameterKey])
+      }
+      return processedStr;
+            }
+
             scope.$watch(attr.content, function() {
                 var receivedData = $parse(attr.content)(scope);
 
                 var parsedData = JSON.parse(receivedData);
                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
                 var sufix = "</form>"
-                console.log('botContainer content:' + parsedData.body);
+                var body = processBotParameters(parsedData.body);
+                console.log('botContainer content:' +body);
                 // var elementValue = parsedData.body.replace(/\\"/g, '"');
-                element.html(prefix + parsedData.body + sufix);
+                element.html(prefix + body + sufix);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
                     if (typeof callBackFunction != 'undefined')
                         callBackFunction(element);
                 }
                 //scope.content = $parse(parsedData.body)(scope);
-                scope.mainScope = scope;
+                
                 $compile(element.contents())(scope);
             }, true);
             scope.botChildrens = new Array();

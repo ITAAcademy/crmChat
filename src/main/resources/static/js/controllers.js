@@ -89,90 +89,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     };
     
     $scope.addDialog = function() {     };
+    $rootScope.formatDateWithLast = formatDateWithLast;
+    $rootScope.formatDate = formatDate;
     
-    $rootScope.formatDateWithLast = function(date) {
-
-        var daysName = {},
-            hoursName = {},
-            minutesName = {};
-        var dayName = {},
-            hourName = {},
-            minuteName = {};
-        var endName = {};
-        daysName['ua'] = 'днів';
-        dayName['ua'] = 'день';
-        daysName['en'] = 'day';
-        dayName['en'] = 'days';
-        daysName['ru'] = 'дней';
-        dayName['ru'] = 'день';
-
-        hoursName['ua'] = 'годин';
-        hourName['ua'] = 'годину';
-        hoursName['en'] = 'hour';
-        hourName['en'] = 'hours';
-        hoursName['ru'] = 'часов';
-        hourName['ru'] = 'час';
-
-        minutesName['ua'] = ' хвилин ';
-        minuteName['ua'] = ' хвилину ';
-        minutesName['en'] = ' minutes ';
-        minuteName['en'] = ' minute ';
-        minutesName['ru'] = ' минут ';
-        minuteName['ru'] = ' минуту ';
-
-        endName['ua'] = "тому";
-        endName['en'] = "ago";
-        endName['ru'] = "спустя";
-
-        // need translate and move to global to config map
-        var dateObj = new Date(date);
-
-        var delta = new Date().getTime() - dateObj.getTime();
-        if (delta > 60000 * 59)
-            return $rootScope.formatDate(date);
-        else
-        if (Math.round(delta / 60000) == 0)
-            return null;
-
-        var minutesStr = Math.round(delta / 60000);
-        if (minutesStr > 1)
-            return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
-        else
-            return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
-    }
-
-    $rootScope.formatDate = function(date) {
-        // need translate and move to global to config map
-        var monthNames = {};
-        monthNames['ua'] = [
-            "Січеня", "Лютого", "Березеня ",
-            "Квітня", "Травня ", "Червеня ", "Липеня",
-            "Серпня", "Вересеня", "Жовтеня",
-            "Листопада", "Груденя"
-        ];
-        monthNames['en'] = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December"
-        ];
-        monthNames['ru'] = [
-            "Января", "Февраля", "Марта",
-            "Апреля", "Мая", "Июня", "Июля",
-            "Августа", "Сентября", "Октября",
-            "Ноября", "Декабря"
-        ];
-        var dateObj = new Date(date);
-        var day = dateObj.getDate();
-        var monthIndex = dateObj.getMonth();
-        var year = dateObj.getFullYear();
-        var minutes = dateObj.getMinutes();
-        if (minutes < 10)
-            minutes = '0' + minutes;
-
-        return day + " " + monthNames[globalConfig.lang][monthIndex] + " " + dateObj.getHours() + ":" + minutes;
-    }
-
     function generateUrlToUserPage(user_id) {
         var baseurl = globalConfig["baseUrl"];
         return baseurl + "/profile/" + user_id + "/";
