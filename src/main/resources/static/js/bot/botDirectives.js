@@ -148,7 +148,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     linkHref = linkTemplate.format(attr.href);
                 }
 
-                var prefix = '<a class="{0}" ng-click=\'{1}\' {2} ng-bind="itemvalue">'.format(attr.classes, ngclickFunction, linkHref);
+                var prefix = '<a class="{0}" ng-click=\'{1}\' {2} ng-model="itemvalue">'.format(attr.classes, ngclickFunction, linkHref);
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -175,7 +175,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
             post: function(scope, element, attr, ctrl) {
                 var body = attr.text;
                 scope.itemvalue = "";
-                var prefix = '<input type="text" name="{0}" ng-bind="itemvalue">'.format(attr.itemindex);
+                var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.itemindex);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -185,6 +185,9 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
+                scope.mainScope = scope.$parent.mainScope;
+                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
+                scope.botChildrens = new Array();
             }
         }
     }
