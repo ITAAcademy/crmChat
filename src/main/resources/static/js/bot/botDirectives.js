@@ -44,6 +44,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
                 var parsedData = JSON.parse(receivedData);
                 scope.currentMessage = parsedData;
+                scope.nextDialogItemJS = new Function("param",scope.currentMessage.testCase)(scope.chatRouteInterfaceScope.botParameters); //next item calc
                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
                 var sufix = "</form>"
                 var body = processBotParameters(parsedData.body);
@@ -244,7 +245,13 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     event.preventDefault();
                     var formElm = $(event.currentTarget.form);
                     //$(event.currentTarget.form).submit();
-                    var url = formElm.attr("action") + "/next_item/" + 1; 
+                    if(scope.mainScope.nextDialogItemJS == undefined || scope.mainScope.nextDialogItemJS == "")
+                    {
+                        alert("NO JS FUNCTION");
+                        return;
+                    }
+
+                    var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS; 
                     // var dataToSend = JSON.stringify(formElm.serializeArray());
                     var formData = {};
                     for (var scopeAndElementKey in scope.$parent.botChildrens) {

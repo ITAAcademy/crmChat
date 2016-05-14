@@ -46,6 +46,7 @@ public class BotDialogItem {
 		this.body = item.body;
 		this.category = item.category;
 		this.id = item.id;
+		this.testCase = item.testCase;
 	}
 	
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
