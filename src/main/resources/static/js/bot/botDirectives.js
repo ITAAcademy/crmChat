@@ -2,8 +2,15 @@
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
+         scope: {
+
+        },
         link: function(scope, element, attr, ctrl) {
             scope.mainScope = scope;
+            scope.getCurrentMessageTime = function(){
+                var date = $parse(attr.time)(scope.$parent)
+                return formatDateToTime(new Date(date));
+            }
             scope.$watch('disabled', function() {
                 if (scope.disabled) {
                     for (var i = 0; i < element[0].children.length; i++) {
@@ -16,13 +23,14 @@ angular.module('springChat.directives').directive('botContainer', function($comp
             });
             var processBotParameters = function (strWithParams){
                  var functionNamesMap = {
-            'time': 'getCurrentTime()'
+            'time': 'getCurrentMessageTime()'
       };
-      var botParametersMap = scope.chatControllerScope.botParameters;
+      var botParametersMap = scope.chatRouteInterfaceScope.botParameters;
       var SIGN_OF_NAME_OR_FUNCTION = "$";
       var processedStr = strWithParams;
       for (var functionNameKey in functionNamesMap){
-        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey, eval(functionNamesMap[functionNameKey]));
+        var functionResult = $parse(functionNamesMap[functionNameKey])(scope);
+        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey,functionResult) ;
       }
       for (var botParameterKey in botParametersMap){
         processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION+botParameterKey,botParametersMap[botParameterKey])
@@ -32,9 +40,10 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
 
             scope.$watch(attr.content, function() {
-                var receivedData = $parse(attr.content)(scope);
+                var receivedData = $parse(attr.content)(scope.$parent);
 
                 var parsedData = JSON.parse(receivedData);
+                scope.currentMessage = parsedData;
                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
                 var sufix = "</form>"
                 var body = processBotParameters(parsedData.body);
@@ -157,7 +166,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var dataObject = { "body": null, "category": null, "nextNode": null, "answer": null };
                     dataObject.nextNode = attr.linkindex;
 
-                    var message = JSON.parse(scope.$parent.message.message);
+                    var message = scope.mainScope.currentMessage;
                     if (message.id == null)
                         message.id = -1;
                     if (message.category != null)

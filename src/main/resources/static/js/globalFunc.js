@@ -86,6 +86,13 @@ var formatDateWithLast = function(date) {
     var s =  currentdate.getSeconds();
     return h+":"+m+":"+s;
    }
+   function formatDateToTime(date){
+     var h = date.getHours() ;
+    var m =  date.getMinutes();
+    var s =  date.getSeconds();
+    return h+":"+m+":"+s;
+   }
+
 
 
 function getPropertyByValue(obj, value) {
