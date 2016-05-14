@@ -41,8 +41,8 @@ springChatControllers.config(function($routeProvider) {
 springChatControllers.controller('TeachersListRouteController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes) {
     Scopes.store('TeachersListRouteController', $scope);
     var chatControllerScope = Scopes.get('ChatController');
-    //	while (!chatControllerScope.$rootScope.isInited);//chatControllerScope.initStompClient();
-    //	typeof chatControllerScope.socketSupport!=='undefined'
+    //  while (!chatControllerScope.$rootScope.isInited);//chatControllerScope.initStompClient();
+    //  typeof chatControllerScope.socketSupport!=='undefined'
     chatControllerScope.goToTeachersList();
     $scope.pageClass = 'page-contact';
 }]);
@@ -83,15 +83,15 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
-    
+
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
     };
-    
-    $scope.addDialog = function() {     };
+
+    $scope.addDialog = function() {};
     $rootScope.formatDateWithLast = formatDateWithLast;
     $rootScope.formatDate = formatDate;
-    
+
     function generateUrlToUserPage(user_id) {
         var baseurl = globalConfig["baseUrl"];
         return baseurl + "/profile/" + user_id + "/";
@@ -173,7 +173,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     var room = "1/";
 
-    //	Format string
+    //  Format string
     if (!String.prototype.format) {
         String.prototype.format = function() {
             var args = arguments;
@@ -396,7 +396,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $rootScope.authorize = true;
             if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
                 //mess_obj.nextWindow=$scope.currentRoom.roomId;
-                //	goToDialogEvn($scope.currentRoom.roomId);
+                //  goToDialogEvn($scope.currentRoom.roomId);
                 console.log("currentRoom");
                 changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
                 $scope.showDialogListButton = true;
@@ -419,7 +419,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
 
-    function updateRooms(message) {        
+    function updateRooms(message) {
         var parseObj;
 
         if ($rootScope.socketSupport) {
@@ -478,12 +478,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.getKeys = function(obj) {
         var keys = Object.keys(obj);
-        for (var i = 0; i < keys.length; i++)
-        {
-        	var value = undefined;
-        	if(obj[keys[i]] != undefined)
-        		value = obj[keys[i]];
-        	
+        for (var i = 0; i < keys.length; i++) {
+            var value = undefined;
+            if (obj[keys[i]] != undefined)
+                value = obj[keys[i]];
+
             console.log(i + ") " + keys[i] + " = " + value);
         }
     }
@@ -546,7 +545,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                                 break;
 
                         }
-                        //						ZIGZAG OPS
+                        //                      ZIGZAG OPS
 
                         console.log("SERVER MESSAGE OPERATION STATUS:" + operationStatus.success + operationStatus.description);
                     });

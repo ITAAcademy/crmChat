@@ -41,6 +41,7 @@ public class RoomModelSimple {
 	public short type;
 	public String lastMessage;
 	public String lastMessageAuthor;
+	public Long lastMessageAuthorId;
 	public String lastMessageAuthorAvatar;
 	public Date lastMessageDate;
 	public int participantsCount;
@@ -88,6 +89,7 @@ public class RoomModelSimple {
 		if (lastMessage!=null){
 			this.lastMessage =  lastMessage.getBody();
 			this.lastMessageAuthor = lastMessage.getAuthor().getNickName();
+			this.lastMessageAuthorId = lastMessage.getAuthor().getId();
 			this.lastMessageDate = lastMessage.getDate();
 			User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
 			if (lastMessageIntitaUser!=null)

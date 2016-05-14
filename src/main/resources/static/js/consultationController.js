@@ -52,7 +52,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                     if ($rootScope.socketSupport) {
                         $scope.goToDialog(roomId).then(function() {
                                 chatControllerScope.currentRoom.roomId = roomId;
-                             //   $scope.pageClass = 'page-about';
+                                //   $scope.pageClass = 'page-about';
                             }),
                             function() {
                                 chatControllerScope.changeLocation("/chatrooms");

@@ -2,12 +2,12 @@
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
-         scope: {
+        scope: {
 
         },
         link: function(scope, element, attr, ctrl) {
             scope.mainScope = scope;
-            scope.getCurrentMessageTime = function(){
+            scope.getCurrentMessageTime = function() {
                 var date = $parse(attr.time)(scope.$parent)
                 return formatDateToTime(new Date(date));
             }
@@ -21,21 +21,21 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                     element[0].style.pointerEvents = "none";
                 }
             });
-            var processBotParameters = function (strWithParams){
-                 var functionNamesMap = {
-            'time': 'getCurrentMessageTime()'
-      };
-      var botParametersMap = scope.chatRouteInterfaceScope.botParameters;
-      var SIGN_OF_NAME_OR_FUNCTION = "$";
-      var processedStr = strWithParams;
-      for (var functionNameKey in functionNamesMap){
-        var functionResult = $parse(functionNamesMap[functionNameKey])(scope);
-        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey,functionResult) ;
-      }
-      for (var botParameterKey in botParametersMap){
-        processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION+botParameterKey,botParametersMap[botParameterKey])
-      }
-      return processedStr;
+            var processBotParameters = function(strWithParams) {
+                var functionNamesMap = {
+                    'time': 'getCurrentMessageTime()'
+                };
+                var botParametersMap = scope.chatRouteInterfaceScope.botParameters;
+                var SIGN_OF_NAME_OR_FUNCTION = "$";
+                var processedStr = strWithParams;
+                for (var functionNameKey in functionNamesMap) {
+                    var functionResult = $parse(functionNamesMap[functionNameKey])(scope);
+                    processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey, functionResult);
+                }
+                for (var botParameterKey in botParametersMap) {
+                    processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + botParameterKey, botParametersMap[botParameterKey])
+                }
+                return processedStr;
             }
 
 
@@ -44,11 +44,11 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
                 var parsedData = JSON.parse(receivedData);
                 scope.currentMessage = parsedData;
-                scope.nextDialogItemJS = new Function("param",scope.currentMessage.testCase)(scope.chatRouteInterfaceScope.botParameters); //next item calc
+                scope.nextDialogItemJS = new Function("param", scope.currentMessage.testCase)(scope.chatRouteInterfaceScope.botParameters); //next item calc
                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
                 var sufix = "</form>"
                 var body = processBotParameters(parsedData.body);
-                console.log('botContainer content:' +body);
+                console.log('botContainer content:' + body);
                 // var elementValue = parsedData.body.replace(/\\"/g, '"');
                 element.html(prefix + body + sufix);
                 if (typeof attr.callback != 'undefined') {
@@ -57,11 +57,11 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                         callBackFunction(element);
                 }
                 //scope.content = $parse(parsedData.body)(scope);
-                
+
                 $compile(element.contents())(scope);
             }, true);
             scope.botChildrens = new Array();
-            if(scope.chatRouteInterfaceScope.botContainers.length > 0)
+            if (scope.chatRouteInterfaceScope.botContainers.length > 0)
                 scope.chatRouteInterfaceScope.botContainers[scope.chatRouteInterfaceScope.botContainers.length - 1].scope.disabled = true;
             scope.chatRouteInterfaceScope.botContainers.push({ 'element': element, 'scope': scope });
 
@@ -174,7 +174,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                         dataObject.category = message.category.id;
 
                     var payLoad = JSON.stringify(dataObject);
-                    
+
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
                     ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
@@ -245,18 +245,17 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     event.preventDefault();
                     var formElm = $(event.currentTarget.form);
                     //$(event.currentTarget.form).submit();
-                    if(scope.mainScope.nextDialogItemJS == undefined || scope.mainScope.nextDialogItemJS == "")
-                    {
+                    if (scope.mainScope.nextDialogItemJS == undefined || scope.mainScope.nextDialogItemJS == "") {
                         alert("NO JS FUNCTION");
                         return;
                     }
 
-                    var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS; 
+                    var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS;
                     // var dataToSend = JSON.stringify(formElm.serializeArray());
                     var formData = {};
                     for (var scopeAndElementKey in scope.$parent.botChildrens) {
                         var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
-                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined'){
+                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined') {
 
                             formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
                             scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
@@ -271,7 +270,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                         url: url,
                         data: dataToSend, // serializes the form's elements.
                         success: function(data) {
-                           // alert(data); // show response from the php script.
+                            // alert(data); // show response from the php script.
                         }
                     });
 
@@ -322,7 +321,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     item_type = "radio";
                     scope.itemvalue = false;
                 }
-                
+
                 var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
                 for (var i = 0; i < labels.length; i++) {
@@ -340,7 +339,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
                 element.html(elementValue);
-                
+
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
                 scope.init(scope, element, attr);
@@ -374,4 +373,3 @@ angular.module('springChat.directives').directive('botClose', function($compile,
         }
     }
 });
-
