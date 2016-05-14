@@ -419,8 +419,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
 
-    function updateRooms(message) {
-
+    function updateRooms(message) {        
         var parseObj;
 
         if ($rootScope.socketSupport) {
@@ -573,10 +572,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
          *
          */
         console.log("chatUserId:" + $scope.chatUserId);
-        chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) { // event update
+        /*chatSocket.subscribe("/app/chat/rooms/user.{0}".format($scope.chatUserId), function(message) { // event update
             console.log("chatUserId:" + $scope.chatUserId);
             updateRooms(message);
-        });
+        });*/
         chatSocket.subscribe("/topic/chat/rooms/user.{0}".format($scope.chatUserId), function(message) { // event update
             console.log("chatUserId:" + $scope.chatUserId);
             updateRooms(message);
