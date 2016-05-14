@@ -577,12 +577,12 @@ public class RoomController {
 	 ***************************/
 
 	
-	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ws)
+	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ignoreAuthor)
 	{
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
-		if(room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive())
+		if((room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
 		}
@@ -600,7 +600,7 @@ public class RoomController {
 	{
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);//INTITA USER SEARCH
-		addUserToRoom(user_o, room_o, principal, ws);
+		addUserToRoom(user_o, room_o, principal, false);
 		return true;
 	}
 

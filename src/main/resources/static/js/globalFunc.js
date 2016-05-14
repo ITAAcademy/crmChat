@@ -37,7 +37,7 @@ var formatDateWithLast = function(date) {
 
         var delta = new Date().getTime() - dateObj.getTime();
         if (delta > 60000 * 59)
-            return $rootScope.formatDate(date);
+            return formatDate(date);
         else
         if (Math.round(delta / 60000) == 0)
             return null;
