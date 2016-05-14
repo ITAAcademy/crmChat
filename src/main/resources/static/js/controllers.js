@@ -159,7 +159,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         if ($rootScope.authorize)
             $location.path("/access_deny");
         else
-            window.top.location.href = globalConfig["baseUrl"] + '/IntITA/site/authorize';
+            window.top.location.href = globalConfig["baseUrl"] + '/site/authorize';
         //window.top.location.href = 'http://localhost/IntITA/site/authorize';
     }
 
