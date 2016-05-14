@@ -332,3 +332,30 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         }
     }
 });
+
+
+/*
+attributes:
+
+*/
+angular.module('springChat.directives').directive('botClose', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {},
+        link: {
+            post: function(scope, element, attr, ctrl) {
+
+                var elementValue = '<a class="btn btn-default" ng-click="giveTenant()">Get tenant</a>';
+
+                element.html(elementValue);
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+
+                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
+                scope.botChildrens = new Array();
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
