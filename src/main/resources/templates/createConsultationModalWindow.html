@@ -16,7 +16,7 @@
                  ng-keypress="showTeachersList()"  
                  ng-keydown="teacherNickInputKeyDown($event)"            
                  typeahead-wait-ms = "600" 
-                 typeahead-on-select = " $parent.teacher_Nick = $model; is_teacher_Nick_valid = true"
+                 typeahead-on-select = " onSelectFromTeachersList($model)"
                 
                  uib-typeahead="email for email in teachersList  "               
                 placeholder="Teacher name"></input>
@@ -32,7 +32,7 @@
                 
  				ng-keypress="showLectionsList()"    
  				ng-keydown="lectionTitleInputKeyDown($event)"   
- 				typeahead-on-select = " $parent.lectionTitle = $model; is_lectionTitle_valid = true"           
+ 				typeahead-on-select = " onSelectFromLectionsList($model);"           
                  typeahead-wait-ms = "600" 
                  uib-typeahead="emaila for emaila in lectionsList"   
                 placeholder="Назва лекції"></input>  

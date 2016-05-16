@@ -729,6 +729,16 @@ $scope.scaleCenterIconCircle = function() {
           };
           
           var getLectionsListTimer; 
+          
+          $scope.onSelectFromLectionsList = function(value) {  
+        	  $scope.lectionTitle = value;
+        	  $scope.is_lectionTitle_valid = true;
+          };
+          
+          $scope.onSelectFromTeachersList = function(value) {  
+        	  $scope.teacher_Nick = value;
+        	  $scope.is_teacher_Nick_valid = true;
+          };
 
           $scope.showLectionsList = function() {  
         	  $scope.is_lectionTitle_valid = false;  
