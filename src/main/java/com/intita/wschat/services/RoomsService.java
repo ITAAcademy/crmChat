@@ -219,19 +219,7 @@ public class RoomsService {
 		{
 			ChatUserLastRoomDate entry = rooms_lastd.get(i);
 			Date date = entry.getLastLogout();
-			int messages_cnt = 0;// =  userMessageService.getMessagesByRoomDateNotUser(entry, date, currentUser).size();
-			/*for (UserMessage msg : messages)
-			{
-				Date m_data = msg.getDate();
-				//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
-				if (m_data != null && msg.getRoom() != null)
-					if (m_data.after(date) == true && msg.getRoom().getId() == 	entry.getRoom().getId())
-					{
-						messages_cnt += 1;
-					}
-			}*/
-			
-			messages_cnt = userMessageService.getMessagesCountByRoomDateNotUser(entry.getRoom(), date, entry.getChatUser()).intValue();
+			int messages_cnt =  userMessageService.getMessagesCountByRoomDateNotUser(entry.getRoom(), date, entry.getChatUser()).intValue();
 			
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
