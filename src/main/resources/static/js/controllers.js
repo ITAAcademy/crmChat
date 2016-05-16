@@ -83,10 +83,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
-
+    
     $scope.toggleNewRoomModal = function() {
-        $('#new_room_modal').modal('toggle');
+        $('#new_room_modal').modal('toggle');       
+        
+        $timeout.cancel($scope.setFocusToRoomNameInput); //888
+        isCreateDialogWndVisible = !isCreateDialogWndVisible;
+        
+        $scope.setFocusToRoomNameInput = $timeout(function() {
+        	 if (isCreateDialogWndVisible == true)
+         	{
+         		$('#roomNameInput').focus();
+         	}
+        },300);       
     };
+    
+    var isCreateDialogWndVisible = false;
 
     $scope.addDialog = function() {};
     $rootScope.formatDateWithLast = formatDateWithLast;
