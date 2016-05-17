@@ -1,7 +1,6 @@
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
-           
             <div class="row">
                 <div class="col-md-9 editor-left-panel">
                     <div class="panel with-nav-tabs panel-primary editor-panel-primary">
@@ -11,14 +10,30 @@
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                    <div ng-bind="view.content" class="tab-content ">
+                                    <div class="tab-content ">
+                                        <div class="editor-right-bottom-console ">
+                                            <div class="code-edit">
+                                                <div class="code-edit-title">
+                                                    Here you see source code:
+                                                </div>
+                                                <textarea class="code-edit-source">
+                                                    your code
+                                                </textarea>
+                                            </div>
+                                            <dir class="status">
+                                                Status
+                                                <span class="value"> 
+                                            some message here.....................!!!
+                                            </span>
+                                            </dir>
+                                        </div>
                                     </div>
                                 </div>
                             </uib-tab>
                             <uib-tab index="999" heading="Tab Two">
                                 <uib-tab-heading>
                                     <div class="dropdown ">
-                                        <a  class="editor-dropdown-a" href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+                                        <a class="editor-dropdown-a" href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
                                             <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
@@ -27,6 +42,22 @@
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
                                     More Tab Content
+                                    <div class="editor-right-bottom-console ">
+                                        <div class="code-edit">
+                                            <div class="code-edit-title">
+                                                Here you see source code:
+                                            </div>
+                                            <textarea class="code-edit-source">
+                                                your code
+                                            </textarea>
+                                        </div>
+                                        <dir class="status">
+                                            Status
+                                            <span class="value"> 
+                                            some message here.....................!!!
+                                            </span>
+                                        </dir>
+                                    </div>
                                 </div>
                             </uib-tab>
                         </uib-tabset>
@@ -39,72 +70,67 @@
                                 <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div  class="tab-content editor-panel-right-scroll ">
-                                            <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                              <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                              <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                              <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                              <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                              <div class="editor-tools-propertys">
-                                                <div class="atribute"> width</div>
-                                                 <span class="separator"> :</span> 
-                                                 <dir class="value"> 90px</dir> 
-                                             </div>
-                                           
+                                <div class="tab-content editor-panel-right-scroll ">
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
+                                    <div class="editor-tools-propertys">
+                                        <div class="atribute"> width</div>
+                                        <span class="separator"> :</span>
+                                        <dir class="value"> 90px</dir>
+                                    </div>
                                 </div>
                             </div>
                         </uib-tab>
-                         <uib-tab index="2"  active="true" disable="view.disabled" class="editor-right-panel-tabs-titles ">
+                        <uib-tab index="2" active="true" disable="view.disabled" class="editor-right-panel-tabs-titles ">
                             <uib-tab-heading>
                                 <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div  class="tab-content ">
-                                      
+                                <div class="tab-content ">
                                 </div>
                             </div>
                         </uib-tab>
                     </uib-tabset>
-
-                    <div class="row right-panel-lang"> 
-                    <div class="col-md-4 right-panel-lang-text">Lang: </div>
-                        <div class="dropdown col-md-8"> 
-  <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Lang-Value
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    <li><a href="#">Ukranian</a></li>
-    <li><a href="#">Russian </a></li>
-    <li><a href="#">English </a></li>
-  </ul>
-</div>
-
-
-
-                    </div><div class="right-panel-description"> 
-                    <div class="right-panel-description-title">  Descriprion:   </div>
-                    <textarea  class="right-panel-description-text">adfadfasdfasdf asdfsadf  sadfsdf asdfsadf  sadfsdf asdfsadf  sadfsdf asdfsadf  sadfsdf asdfsadf  sadfasdfasdfas </textarea >
+                    <div class="row right-panel-lang">
+                        <div class="col-md-4 right-panel-lang-text">Lang: </div>
+                        <div class="dropdown col-md-8">
+                            <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Lang-Value
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Ukranian</a></li>
+                                <li><a href="#">Russian </a></li>
+                                <li><a href="#">English </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="right-panel-description">
+                        <div class="right-panel-description-title"> Descriprion: </div>
+                        <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
                     </div>
                 </div>
             </div>
