@@ -225,6 +225,12 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
 		return  wrapBotMessages(messages);
 	}
+	
+	@Transactional
+	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
+		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);
+		return  messages_count;
+	}
 
 	@Transactional
 	public List<UserMessage> getMessagesByDateNotUser(Date date, ChatUser user) {

@@ -39,7 +39,7 @@ public class RoomsService {
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
-	
+
 	@Autowired private ChatController chatController;
 
 	@PostConstruct
@@ -134,14 +134,14 @@ public class RoomsService {
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
-		
+
 		Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));
-		
+
 		String subscriptionStr = "/topic/users/info";
 		ObjectMapper mapper =  new ObjectMapper();
 		//mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-		
+
 		try {
 			simpMessagingTemplate.convertAndSend(subscriptionStr, sendedMap);
 		} catch (MessagingException e) {
@@ -190,17 +190,17 @@ public class RoomsService {
 
 	}
 
-	
+
 	@Transactional
 	public List<RoomModelSimple> getRoomsModelByChatUser(ChatUser currentUser) {
 		return getRoomsByChatUserAndList(currentUser, null);				
 	}
-	
+
 	@Transactional
 	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser) {
 		return getRoomsByChatUserAndList(currentUser, null);				
 	}
-	
+
 	@Transactional
 	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
@@ -214,25 +214,17 @@ public class RoomsService {
 		else
 			rooms_lastd = chatLastRoomDateService.getUserLastRoomDatesInList(currentUser, sourseRooms);
 
-		Set<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
-
+		//Set<UserMessage> messages =  userMessageService.getMessagesByNotUser(currentUser);
 		for (int i = 0; i < rooms_lastd.size() ; i++)
 		{
 			ChatUserLastRoomDate entry = rooms_lastd.get(i);
 			Date date = entry.getLastLogout();
-			int messages_cnt = 0;// =  userMessageService.getMessagesByRoomDateNotUser(entry, date, currentUser).size();
-			for (UserMessage msg : messages)
-			{
-				Date m_data = msg.getDate();
-				//	System.out.println( msg.getRoom().getId() + "	" + entry.getRoom().getId());
-				if (m_data != null && msg.getRoom() != null)
-					if (m_data.after(date) == true && msg.getRoom().getId() == 	entry.getRoom().getId())
-					{
-						messages_cnt += 1;
-					}
-			}
-			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) continue;
-			RoomModelSimple sb = new RoomModelSimple(messages_cnt , date.toString(),entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
+			int messages_cnt =  userMessageService.getMessagesCountByRoomDateNotUser(entry.getRoom(), date, entry.getChatUser()).intValue();
+			
+			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
+				continue;
+			RoomModelSimple sb = new RoomModelSimple(messages_cnt , date.toString(),
+					entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
 			result.add(sb);
 		}
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
