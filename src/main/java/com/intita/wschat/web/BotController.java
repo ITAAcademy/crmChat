@@ -34,6 +34,7 @@ import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -105,10 +106,10 @@ public class BotController {
 	}
 	public void generateTestSequnce(BotCategory botCategory){
 		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
-		BotDialogItem testItemContainer1 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));//begin
-		BotDialogItem testItemContainer2 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
-		BotDialogItem testItemContainer3 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));
-		BotDialogItem testItemContainer4 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory));//end
+		BotDialogItem testItemContainer1 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,1L,"ua"));//begin
+		BotDialogItem testItemContainer2 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,2L,"ua"));
+		BotDialogItem testItemContainer3 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,3L,"ua"));
+		BotDialogItem testItemContainer4 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,4L,"ua"));//end
 		botItemContainerService.update(testItemContainer1);
 		botItemContainerService.update(testItemContainer2);
 		botItemContainerService.update(testItemContainer3);
@@ -154,7 +155,7 @@ public class BotController {
 		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
 		
 		Room room = roomService.getRoom(roomId);
-		BotDialogItem item = botItemContainerService.getById(containerId);
+		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,ChatController.getCurrentLang()));
 		
 		for(int i = 0; i < keys.size(); i++)
 		{
@@ -202,14 +203,14 @@ public class BotController {
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer) {
-			nextContainer = botItemContainerService.getById(nextNode);	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
 		else {
-			nextContainer = botItemContainerService.getById(nextNode);	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
 		
 		nextContainerToSave = new BotDialogItem(nextContainer);
-		nextContainerToSave.setBody(nextContainer.getId().toString());
+		nextContainerToSave.setBody(nextContainer.getIdObject().getId().toString());
 		
 		String containerString = "";
 		String containerStringToSave = "";
@@ -222,7 +223,7 @@ public class BotController {
 			e.printStackTrace();
 		}
 
-		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, "You answer: " + nextContainer.getId());
+		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, "You answer: " + nextContainer.getIdObject().getId());
 		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), principal);
 
 		UserMessage qmsg = new UserMessage(bot, room, containerString);

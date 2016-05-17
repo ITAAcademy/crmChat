@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
@@ -170,7 +171,7 @@ public class UserMessageService {
 								if (isNumber(body_json))
 								{
 									Long id = new Integer(body_json).longValue();
-									BotDialogItem botDialogItem = botItemContainerService.getById(id);
+									BotDialogItem botDialogItem = botItemContainerService.getByObjectId(new LangId(id));
 									if (botDialogItem != null) {
 										String body = botDialogItem.getBody();
 										if (!body.isEmpty()) {
