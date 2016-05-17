@@ -15,7 +15,7 @@ springChatControllers.config(function($routeProvider) {
     });
 
     $routeProvider.when("/builder", {
-        templateUrl: "builderTemplateJSTemp.html",
+        templateUrl: "builderTemplate.html",
         controller: "ChatBotViewBuilderController"
     });
 

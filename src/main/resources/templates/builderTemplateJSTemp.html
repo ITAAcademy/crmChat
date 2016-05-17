@@ -5,26 +5,49 @@
                 <div class="input-group chat-head">
                 </div>
             </form>
-            <div>
-
-                    <uib-tabset>
-                        <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
-                            <uib-tab-heading>
-                                <i class="glyphicon glyphicon-bell">№{{$index}}</i> 
-                            </uib-tab-heading>
-                            <div ng-bind = "view.content">
-
-                            </div>
-                        </uib-tab>
-
-                        <uib-tab index="999" heading="Tab Two">
-                            More Tab Content
-                        </uib-tab>
-                    </uib-tabset>
-
-
-                Model:
-                <pre>{{ model | json }}</pre> Nested Form:
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="panel with-nav-tabs panel-primary editor-panel-primary">
+                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
+                            <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
+                                <uib-tab-heading>
+                                    <i class="glyphicon glyphicon-bell">№{{$index}}</i>
+                                </uib-tab-heading>
+                                <div class="panel-body editor-panel-body">
+                                    <div ng-bind="view.content" class="tab-content ">
+                                    </div>
+                                </div>
+                            </uib-tab>
+                            <uib-tab index="999" heading="Tab Two">
+                                <uib-tab-heading>
+                                    <div class="dropdown">
+                                        <a href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
+                                            <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
+                                        </ul>
+                                    </div>
+                                </uib-tab-heading>
+                                <div class="panel-body editor-panel-body">
+                                    More Tab Content
+                                </div>
+                            </uib-tab>
+                        </uib-tabset>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
+                            <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
+                                <uib-tab-heading>
+                                    <i class="glyphicon glyphicon-bell">№{{$index}}</i>
+                                </uib-tab-heading>
+                                <div class="panel-body editor-panel-body">
+                                    <div ng-bind="view.content" class="tab-content ">
+                                    </div>
+                                </div>
+                            </uib-tab>
+                        </uib-tabset>
+                </div>
             </div>
         </div>
     </div>

@@ -5533,7 +5533,9 @@ angular.module('ui.bootstrap.tabs', [])
   return {
     transclude: true,
     replace: true,
-    scope: {},
+    scope: {
+      classes: '@?'
+    },
     bindToController: {
       active: '=?',
       type: '@'
@@ -5544,6 +5546,12 @@ angular.module('ui.bootstrap.tabs', [])
       return attrs.templateUrl || 'uib/template/tabs/tabset.html';
     },
     link: function(scope, element, attrs) {
+          if (angular.isUndefined(attrs.classes)) {
+        scope.classes = '';
+      }
+      else
+        attrs.classes;
+
       scope.vertical = angular.isDefined(attrs.vertical) ?
         scope.$parent.$eval(attrs.vertical) : false;
       scope.justified = angular.isDefined(attrs.justified) ?
@@ -7251,7 +7259,9 @@ angular.module("uib/template/tabs/tab.html", []).run(["$templateCache", function
 angular.module("uib/template/tabs/tabset.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("uib/template/tabs/tabset.html",
     "<div>\n" +
+    "<div class=\"{{classes}}\">\n" +
     "  <ul class=\"nav nav-{{tabset.type || 'tabs'}}\" ng-class=\"{'nav-stacked': vertical, 'nav-justified': justified}\" ng-transclude></ul>\n" +
+    "  </div>\n" +
     "  <div class=\"tab-content\">\n" +
     "    <div class=\"tab-pane\"\n" +
     "         ng-repeat=\"tab in tabset.tabs\"\n" +
