@@ -1,17 +1,32 @@
+<!-- The dnd-list directive allows to drop elements into it.
+     The dropped data will be added to the referenced list -->
+<div ng-repeat="list in models.lists">
+    <ul dnd-list="list">
+        <!-- The dnd-draggable directive makes an element draggable and will
+         transfer the object that was assigned to it. If an element was
+         dragged away, you have to remove it from the original list
+         yourself using the dnd-moved attribute -->
+        <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+            {{item.label}}
+        </li>
+    </ul>
+</div>
+<per>{{selected.properties}}</per>
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
             <div class="row">
                 <div class="col-md-9 editor-left-panel">
                     <div class="panel with-nav-tabs panel-primary editor-panel-primary">
-                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
+                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading" active="activeViewTab">
                             <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
                                 <uib-tab-heading>
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                    <div class="tab-content ">
-                                        <div class="editor-right-bottom-console ">
+                                    <div ng-bind="view.content" class="tab-content ">
+                                    </div>
+                                                              <div class="editor-right-bottom-console ">
                                             <div class="code-edit">
                                                 <div class="code-edit-title">
                                                     Here you see source code:
@@ -27,7 +42,6 @@
                                             </span>
                                             </dir>
                                         </div>
-                                    </div>
                                 </div>
                             </uib-tab>
                             <uib-tab index="999" heading="Tab Two">
@@ -42,29 +56,13 @@
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
                                     More Tab Content
-                                    <div class="editor-right-bottom-console ">
-                                        <div class="code-edit">
-                                            <div class="code-edit-title">
-                                                Here you see source code:
-                                            </div>
-                                            <textarea class="code-edit-source">
-                                                your code
-                                            </textarea>
-                                        </div>
-                                        <dir class="status">
-                                            Status
-                                            <span class="value"> 
-                                            some message here.....................!!!
-                                            </span>
-                                        </dir>
-                                    </div>
                                 </div>
                             </uib-tab>
                         </uib-tabset>
                     </div>
                 </div>
                 <div class="col-md-3 editor-right-panel">
-                    <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading ">
+                    <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading " active="2">
                         <uib-tab index="1" disable="view.disabled" class="editor-right-panel-tabs-titles ">
                             <uib-tab-heading>
                                 <i class="glyphicon glyphicon-bell">№{{$index}}</i>
@@ -106,10 +104,26 @@
                         </uib-tab>
                         <uib-tab index="2" active="true" disable="view.disabled" class="editor-right-panel-tabs-titles ">
                             <uib-tab-heading>
-                                <i class="glyphicon glyphicon-bell">№{{$index}}</i>
+                                <i class="glyphicon glyphicon-bell">Properties</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div class="tab-content ">
+                                <div class="tab-content editor-panel-right-scroll ">
+                                    <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
+                                        <div ng-if="compareType(item,'array')" class="input-group">
+                                            <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+                                            <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
+                                        </div>
+                                        <div ng-if="compareType(item,'string')" class="input-group">
+                                            <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+                                            <input ng-model="selected.properties[key]" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" />
+                                        </div>
+                                        <div ng-if="compareType(item,'bool')" class="input-group">
+                                            <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+                                            <span class="input-group-addon" id="basic-addon2">
+                                            <input ng-model = "selected.properties[key]" type="checkbox" name="vehicle"/>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </uib-tab>
