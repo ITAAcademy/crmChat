@@ -20,8 +20,8 @@
                             </uib-tab>
                             <uib-tab index="999" heading="Tab Two">
                                 <uib-tab-heading>
-                                    <div class="dropdown">
-                                        <a href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+                                    <div class="dropdown ">
+                                        <a  class="editor-dropdown-a" href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
                                             <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
@@ -36,17 +36,17 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
-                            <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
-                                <uib-tab-heading>
-                                    <i class="glyphicon glyphicon-bell">№{{$index}}</i>
-                                </uib-tab-heading>
-                                <div class="panel-body editor-panel-body">
-                                    <div ng-bind="view.content" class="tab-content ">
-                                    </div>
+                    <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
+                        <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
+                            <uib-tab-heading>
+                                <i class="glyphicon glyphicon-bell">№{{$index}}</i>
+                            </uib-tab-heading>
+                            <div class="panel-body editor-panel-body">
+                                <div ng-bind="view.content" class="tab-content ">
                                 </div>
-                            </uib-tab>
-                        </uib-tabset>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
                 </div>
             </div>
         </div>
