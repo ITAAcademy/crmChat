@@ -13,6 +13,12 @@ springChatControllers.config(function($routeProvider) {
         templateUrl: "chatTemplate.html",
         controller: "ChatRouteController"
     });
+
+    $routeProvider.when("/builder", {
+        templateUrl: "builderTemplate.html",
+        controller: "ChatBotViewBuilderController"
+    });
+
     $routeProvider.when("/teachers_list", {
         templateUrl: "teachersTemplate.html",
         controller: "TeachersListRouteController"

@@ -462,7 +462,7 @@ public class RoomController {
 
 	}
 
-	@SubscribeMapping("/chat/rooms/user.{userId}")
+	// @SubscribeMapping("/chat/rooms/user.{userId}")
 	public UpdateRoomsPacketModal getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { //000
 		ChatUser user = chatUserServise.getChatUser(userId);
 

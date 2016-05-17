@@ -50,7 +50,7 @@
                                     <div class="message_author_header">{{room.lastMessageAuthor}}
                                     </div>
                                     <div class="message_body_item">
-                                        <dir  ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage" callback="function(roomElement){
+                                        <dir  ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
           var elm = roomElement.context;
           $clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
           }"></dir>

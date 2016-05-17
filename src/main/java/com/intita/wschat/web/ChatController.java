@@ -246,6 +246,8 @@ public class ChatController {
 				e.printStackTrace();
 			}
 			langMap.put(lg.getLang(), result);
+			log.info("Current lang pack" + langMap.toString());
+			
 		}
 		return;
 	}
