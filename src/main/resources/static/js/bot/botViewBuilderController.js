@@ -7,28 +7,13 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.selected = {
-        "properties" : {
-        "vasia" : true,
-        "petia" : "sdfdsgfd",
-        "salsa" : 12,
-        "mass" : [1, 2, 5]
+        "properties": {
+            "vasia": true,
+            "petia": "sdfdsgfd",
+            "salsa": 12,
+            "mass": [1, 2, 5]
         }
     };
-    function getType(value)
-    {
-        if(value == true || value == false)
-            return "bool";
-
-        if(Array.isArray(value))
-            return "array";
-
-        return "string";
-    }
-
-    $scope.compareType = function(value, type)
-    {
-        return getType(value) == type;
-    }
     $scope.activeViewTab = 1;
 
     $scope.viewTabs = [
@@ -36,20 +21,47 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: true }
     ];
 
-     $scope.models = {
+    $scope.models = {
         selected: null,
-        lists: {"A": [], "B": []}
+        lists: { "A": [], "B": [] }
     };
 
     // Generate initial model
     for (var i = 1; i <= 3; ++i) {
-        $scope.models.lists.A.push({label: "Item A" + i});
-        $scope.models.lists.B.push({label: "Item B" + i});
+        $scope.models.lists.A.push({ label: "Item A" + i });
+        $scope.models.lists.B.push({ label: "Item B" + i });
     }
 
     // Model to JSON for demo purpose
     $scope.$watch('selected', function(model) {
-        $scope.modelAsJson = angular.toJson(model, true);
+        $scope.modelAsJson = angular.toJson(model.properties, true);
     }, true);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getType(value) {
+        if (value == true || value == false)
+            return "bool";
+
+        if (Array.isArray(value))
+            return "array";
+
+        return "string";
+    }
+
+    $scope.compareType = function(value, type) {
+        return getType(value) == type;
+    }
 }]);
