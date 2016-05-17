@@ -1,0 +1,31 @@
+<div class="content container-fluid bootstrap snippets container">
+    <div class="decor-default">
+        <div class="contacts-list">
+            <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
+                <div class="input-group chat-head">
+                </div>
+            </form>
+            <div>
+
+                    <uib-tabset>
+                        <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
+                            <uib-tab-heading>
+                                <i class="glyphicon glyphicon-bell">№{{$index}}</i> 
+                            </uib-tab-heading>
+                            <div ng-bind = "view.content">
+
+                            </div>
+                        </uib-tab>
+
+                        <uib-tab index="999" heading="Tab Two">
+                            More Tab Content
+                        </uib-tab>
+                    </uib-tabset>
+
+
+                Model:
+                <pre>{{ model | json }}</pre> Nested Form:
+            </div>
+        </div>
+    </div>
+</div>
