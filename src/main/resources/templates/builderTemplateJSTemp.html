@@ -1,17 +1,33 @@
 <!-- The dnd-list directive allows to drop elements into it.
      The dropped data will be added to the referenced list -->
-<div  ng-repeat="list in models.lists">   
-<ul dnd-list="list">
-    <!-- The dnd-draggable directive makes an element draggable and will
+<div ng-repeat="list in models.lists">
+    <ul dnd-list="list">
+        <!-- The dnd-draggable directive makes an element draggable and will
          transfer the object that was assigned to it. If an element was
          dragged away, you have to remove it from the original list
          yourself using the dnd-moved attribute -->
-    <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
-        {{item.label}}
-    </li>
-</ul>
+        <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+            {{item.label}}
+        </li>
+    </ul>
 </div>
 
+<div ng-repeat="(key, item)  in selected.properties">
+    <div ng-if="compareType(item,'array')" class="input-group">
+        <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+        <tags-input min-length="1" placeholder="Add new item" ng-model="item" />
+    </div>
+    <div ng-if="compareType(item,'string')" class="input-group">
+        <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+        <input ng-model = "item" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" />
+    </div>
+    <div ng-if="compareType(item,'bool')" class="input-group">
+        <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+        <span class="input-group-addon" id="basic-addon2">
+        <input ng-model = "item" type="checkbox" name="vehicle" value="Bike"/>
+    </span>
+    </div>
+</div>
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
@@ -22,7 +38,7 @@
             <div class="row">
                 <div class="col-md-9">
                     <div class="panel with-nav-tabs panel-primary editor-panel-primary">
-                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading">
+                        <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading" active="activeViewTab">
                             <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
                                 <uib-tab-heading>
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
@@ -33,7 +49,7 @@
                                 </div>
                             </uib-tab>
                             <uib-tab index="999" heading="Tab Two">
-                                <uib-tab-heading>
+                                <uib-tab-heading active="view.active">
                                     <div class="dropdown">
                                         <a href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                         <ul class="dropdown-menu" role="menu">
@@ -43,6 +59,8 @@
                                     </div>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
+                                    <div ng-bind="view.content" class="tab-content ">
+                                    </div>
                                 </div>
                             </uib-tab>
                         </uib-tabset>

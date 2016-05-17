@@ -3,7 +3,7 @@
 
 
 /* Controllers */
-var springChatControllers = angular.module('springChat.controllers', ['dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
+var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput','dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 springChatControllers.config(function($routeProvider) {
     $routeProvider.when("/chatrooms", {
         templateUrl: "dialogsTemplate.html",
