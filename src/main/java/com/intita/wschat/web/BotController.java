@@ -155,7 +155,7 @@ public class BotController {
 		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
 		
 		Room room = roomService.getRoom(roomId);
-		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,"ua"));
+		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,ChatController.getCurrentLang()));
 		
 		for(int i = 0; i < keys.size(); i++)
 		{
@@ -203,10 +203,10 @@ public class BotController {
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer) {
-			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,"ua"));	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
 		else {
-			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,"ua"));	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
 		
 		nextContainerToSave = new BotDialogItem(nextContainer);

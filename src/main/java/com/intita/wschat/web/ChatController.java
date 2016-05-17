@@ -777,7 +777,7 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
-	public String getCurrentLang()
+	public static String getCurrentLang()
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpSession session = attr.getRequest().getSession(false);
