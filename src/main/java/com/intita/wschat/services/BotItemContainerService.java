@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
+import com.intita.wschat.models.LangId;
 import com.intita.wschat.repositories.BotItemContainerRepository;
 
 @Service
@@ -15,8 +16,8 @@ public class BotItemContainerService {
 	@Autowired
 	BotItemContainerRepository botItemContainerRepository;
 	
-	public BotDialogItem getById(Long id){
-		return botItemContainerRepository.findOne(id);
+	public BotDialogItem getByObjectId(LangId idObject){
+		return botItemContainerRepository.findByIdObject(idObject);
 	}
 	public BotDialogItem add(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);

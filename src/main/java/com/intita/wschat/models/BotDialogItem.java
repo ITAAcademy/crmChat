@@ -1,12 +1,11 @@
 package com.intita.wschat.models;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.services.BotItemContainerService;
-import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.web.ChatController;
 
 
@@ -45,7 +42,7 @@ public class BotDialogItem {
 	public BotDialogItem(BotDialogItem item){
 		this.body = item.body;
 		this.category = item.category;
-		this.id = item.id;
+		this.idObject = item.idObject;
 		this.testCase = item.testCase;
 	}
 	
@@ -53,10 +50,10 @@ public class BotDialogItem {
 	@Autowired
 	@Transient
 	BotItemContainerService botItemContainerService;
-	@Id
-	@GeneratedValue
-	private Long id;
-
+	
+	@EmbeddedId
+	private LangId idObject;
+	
 	private String body;
 	@ManyToOne
 	private BotCategory category;
@@ -71,9 +68,10 @@ public class BotDialogItem {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
 	
-	public  BotDialogItem(String body,BotCategory category){
+	public  BotDialogItem(String body,BotCategory category,Long id,String lang){
 		this.body=body;
 		this.category = category;
+		this.idObject = new LangId(id,lang);
 	}
 
 	public void setTestCase(String str){
@@ -86,11 +84,11 @@ public class BotDialogItem {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	public Long getId() {
-		return id;
+	public LangId getIdObject() {
+		return idObject;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setIdObject(LangId id) {
+		this.idObject = id;
 	}
 	
 	public String getTestCase() {
@@ -126,11 +124,12 @@ public class BotDialogItem {
 		String body  = "";
 		for (BotCategory category : categories){
 			String categoryName = category.getName();
-			Long mainContainerId = category.getMainElement().getId();
+			Long mainContainerId = category.getMainElement().getIdObject().getId();
 			body += String.format(itemTemplate,category.getId(),mainContainerId,categoryName );
 		}
 		log.info("body:"+body);
 		container.setBody(body);
 		return container;
 	}
+
 }
