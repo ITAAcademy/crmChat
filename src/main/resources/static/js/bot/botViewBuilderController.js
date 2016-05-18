@@ -5,6 +5,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.name = "ChatBotViewBuilderController";
     var chatControllerScope = Scopes.get('ChatController');
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
+    $scope.BUILDER = BOT_ELEMENTS_MODULE;
+
+    /*******
+     *  Create tools list of JS objetc
+    *******/
+    $scope.toolsList = [];
+    for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
+        $scope.toolsList.push(BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]));
+    }
 
     $scope.selected = {
         "properties": {
@@ -16,8 +25,17 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     };
     $scope.activeViewTab = 1;
 
+    $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container");//'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
+//    $scope.containerTemplate.parent = $scope.containerTemplate;
+    $scope.containerTemplate.addedProperty = 'dnd-list="containerTemplate.childrens"';
+
+
+    var temp = BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
+   // temp.parent = $scope.containerTemplate;
+    $scope.containerTemplate.childrens.push(temp);
+
     $scope.viewTabs = [
-        { title: 'Dynamic Title 1', content: 'Dynamic content 1' },
+        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML() },
         { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: false }
     ];
 
@@ -31,11 +49,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.models.lists.A.push({ label: "Item A" + i });
         $scope.models.lists.B.push({ label: "Item B" + i });
     }
-
-    // Model to JSON for demo purpose
-    $scope.$watch('selected', function(model) {
-        $scope.modelAsJson = angular.toJson(model.properties, true);
-    }, true);
 
 
 

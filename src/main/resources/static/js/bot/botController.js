@@ -13,17 +13,18 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.disabled = false;
-    $scope.currentRoom = chatControllerScope.currentRoom;
-    chatRouteInterfaceScope.$watch('participants', function() {
-    	if(chatRouteInterfaceScope.participants.length > 2)
-    	{
-    		$scope.disabled = true;
-    		chatControllerScope.currentRoom.active = true;
-    	}
-    	else
-    		chatControllerScope.currentRoom.active = false;
+    if (chatControllerScope.currentRoom != null)
+        $scope.currentRoom = chatControllerScope.currentRoom;
 
-    });
+    if (chatRouteInterfaceScope != null || chatRouteInterfaceScope != undefined) 
+        chatRouteInterfaceScope.$watch('participants', function() {
+            if (chatRouteInterfaceScope.participants.length > 2) {
+                $scope.disabled = true;
+                chatControllerScope.currentRoom.active = true;
+            } else
+                chatControllerScope.currentRoom.active = false;
+
+        });
 
 
     $scope.giveTenant = function() {
@@ -42,20 +43,19 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
 
     });
 
-    $scope.enabledListener = function(scope,element)
-    {
+    $scope.enabledListener = function(scope, element) {
         console.log("listner");
         scope.$watch('disabled', function() {
-                if (scope.disabled) {
-                    for (var i = 0; i < element[0].children.length; i++) {
-                        element[0].children[i].style.disabled = "0.5";
-                        element[0].children[i].style.pointerEvents = "none";
+            if (scope.disabled) {
+                for (var i = 0; i < element[0].children.length; i++) {
+                    element[0].children[i].style.disabled = "0.5";
+                    element[0].children[i].style.pointerEvents = "none";
 
-                    }
-                     element[0].style.opacity = ".5";
-                    element[0].style.pointerEvents = "none";
                 }
-            });
+                element[0].style.opacity = ".5";
+                element[0].style.pointerEvents = "none";
+            }
+        });
     }
 
 }]);

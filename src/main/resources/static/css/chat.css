@@ -832,3 +832,47 @@ width: 100%;
   color: #262626;
   background-color: #ffff00;
 }
+
+
+
+
+ul[dnd-list],
+ul[dnd-list] > li {
+  position: relative;
+}
+
+/***************************** Dropzone Styling *****************************/
+
+/**
+ * The dnd-list should always have a min-height,
+ * otherwise you can't drop to it once it's empty
+ */
+ul[dnd-list] {
+    min-height: 42px;
+    margin: 0px;
+    padding-left: 0px;
+}
+
+.dndDragging {
+    opacity: 0.7;
+}
+
+/**
+ * The dndDraggingSource class will be applied to the source element of a drag
+ * operation. It makes sense to hide it to give the user the feeling that he's
+ * actually moving it. Note that the source element has also .dndDragging class.
+ */
+.dndDraggingSource {
+    display: none;
+}
+
+/**
+ * An element with .dndPlaceholder class will be added as child of the dnd-list
+ * while the user is dragging over it.
+ */
+.dndPlaceholder {
+    background-color: #ddd;
+    min-height: 42px;
+    display: block;
+    position: relative;
+}

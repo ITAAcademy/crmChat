@@ -41,13 +41,26 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
             scope.$watch(attr.content, function() {
                 var receivedData = $parse(attr.content)(scope.$parent);
+                var parsedData;
+                try {
+                    parsedData = JSON.parse(receivedData);
+                } catch (err) {
+                    console.log("JSON NOT VALID TRY CREATE");
+                    parsedData = { "id": -1, body: receivedData };
+                }
 
-                var parsedData = JSON.parse(receivedData);
                 scope.currentMessage = parsedData;
-                scope.nextDialogItemJS = new Function("param", scope.currentMessage.testCase)(scope.chatRouteInterfaceScope.botParameters); //next item calc
+                if (scope.chatRouteInterfaceScope != null || scope.chatRouteInterfaceScope != undefined)
+                    scope.nextDialogItemJS = new Function("param", scope.currentMessage.testCase)(scope.chatRouteInterfaceScope.botParameters); //next item calc
+                else
+                    scope.nextDialogItemJS = -1;
+
                 var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
                 var sufix = "</form>"
-                var body = processBotParameters(parsedData.body);
+                if (scope.chatRouteInterfaceScope != null || scope.chatRouteInterfaceScope != undefined)
+                    var body = processBotParameters(parsedData.body);
+                else
+                    var body = parsedData.body;
                 console.log('botContainer content:' + body);
                 // var elementValue = parsedData.body.replace(/\\"/g, '"');
                 element.html(prefix + body + sufix);
@@ -61,9 +74,12 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 $compile(element.contents())(scope);
             }, true);
             scope.botChildrens = new Array();
-            if (scope.chatRouteInterfaceScope.botContainers.length > 0)
-                scope.chatRouteInterfaceScope.botContainers[scope.chatRouteInterfaceScope.botContainers.length - 1].scope.disabled = true;
-            scope.chatRouteInterfaceScope.botContainers.push({ 'element': element, 'scope': scope });
+            if (scope.chatRouteInterfaceScope != null || scope.chatRouteInterfaceScope != undefined) {
+                if (scope.chatRouteInterfaceScope.botContainers.length > 0)
+                    scope.chatRouteInterfaceScope.botContainers[scope.chatRouteInterfaceScope.botContainers.length - 1].scope.disabled = true;
+                scope.chatRouteInterfaceScope.botContainers.push({ 'element': element, 'scope': scope });
+            }
+
 
             scope.enabledListener(scope, element);
             //scope.giveTenant();
@@ -286,7 +302,6 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 element.html(elementValue);
 
                 //var result = new Function("param",body)(scope.rootScope.botParam); //next item calc
-                debugger;
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
             }
