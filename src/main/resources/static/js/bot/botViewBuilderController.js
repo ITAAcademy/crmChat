@@ -49,6 +49,9 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: false }
     ];
     $scope.htmlCodeForRender = [];
+    $scope.langForRender = ['uk', 'en'];
+    $scope.descriprionForRender = ['1','2'];
+
     $scope.updateView = function() {
         $scope.$root.elementsListForLink = [];
         $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root, false);

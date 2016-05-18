@@ -1,5 +1,4 @@
 <!--<per>{{$root.models.selected}}</per>-->
-
 <div class="content container-fluid bootstrap snippets container  editor-min-size">
     <div class="decor-default">
         <div class="contacts-list">
@@ -19,9 +18,8 @@
                                             <div class="code-edit-title">
                                                 Here you see source code:
                                             </div>
-                                              <div class="btn btn-default" ng-click="addBotDialogItem()">Add botdialogitem</div>
-                                            <textarea ng-model = "htmlCodeForRender[activeViewTab - 1]" class="code-edit-source">
-                                                
+                                            <div class="btn btn-default" ng-click="addBotDialogItem()">Add botdialogitem</div>
+                                            <textarea ng-model="htmlCodeForRender[activeViewTab - 1]" class="code-edit-source">
                                             </textarea>
                                         </div>
                                         <dir class="status">
@@ -33,17 +31,13 @@
                                     </div>
                                 </div>
                             </uib-tab>
-                           
-
-                        <div class="dropdown editor-dropdown">
-                                        <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
-                                            <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
-                                        </ul>
-                                    </div>
-
-
+                            <div class="dropdown editor-dropdown">
+                                <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
+                                    <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
+                                </ul>
+                            </div>
                         </uib-tabset>
                     </div>
                 </div>
@@ -54,7 +48,7 @@
                                 <i class="glyphicon glyphicon-bell">Tools</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if = "true">
+                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="true">
                                     <div ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}" class="editor-tools-propertys">
                                         <div class="atribute">{{tool.type}}</div>
                                         <span class="separator"></span>
@@ -70,7 +64,7 @@
                             <div class="panel-body editor-panel-body-right">
                                 <div class="tab-content editor-panel-right-scroll ">
                                     <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
-                                        <div  ng-if="compareType(item,'array')" class="input-group">
+                                        <div ng-if="compareType(item,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
                                         </div>
@@ -93,20 +87,16 @@
                         <div class=" right-panel-lang">
                             <div class="right-panel-lang-text">Lang: </div>
                             <div class="dropdown right-panel-lang-dropdown">
-                                <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Lang-Value
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a>Ukranian</a></li>
-                                    <li><a>Russian </a></li>
-                                    <li><a>English </a></li>
-                                </ul>
+                                <select class="form-control lang-dropdown" ng-model="langForRender[activeViewTab - 1]">
+                                    <option label="Ukranian" value="uk" selected="selected">top</option>
+                                    <option label="English" value="en" selected="selected">top</option>
+                                    <option label="Russian" value="ru" selected="selected">top</option>
+                                </select>
                             </div>
                         </div>
                         <div class="right-panel-description">
                             <div class="right-panel-description-title"> Descriprion: </div>
-                            <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
+                            <textarea ng-model = "descriprionForRender[activeViewTab - 1]" class="right-panel-description-text"></textarea>
                         </div>
                     </div>
                 </div>
