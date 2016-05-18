@@ -11,11 +11,13 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -127,6 +129,34 @@ public class BotController {
 
 		return objectMapper.writeValueAsString(botCategory);
 	}
+	@RequestMapping(value = "bot_operations/get_bot_dialog_item/{dialogItemId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBotDialogItem(@PathVariable Long dialogItemId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		BotDialogItem dialogItem = botItemContainerService.getById(dialogItemId);
+		return objectMapper.writeValueAsString(dialogItem);
+	}
+	
+	@RequestMapping(value = "bot_operations/add_bot_dialog_item/{categoryId}", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean addBotDialogItem(@PathVariable Long categoryId,  HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
+		//ObjectMapper objectMapper = new ObjectMapper();
+		//BotDialogItem dialogItem = botItemContainerService.getById(dialogItemId);
+		BotCategory category = botCategoryService.getById(categoryId);
+		if (category==null){
+			log.error("Category is NULL !");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return false;
+		}
+		BotDialogItem dialogItemTemplate = payload;
+		Long nextId = botItemContainerService.getNextId();
+		dialogItemTemplate.setIdObject(new LangId(nextId,ChatController.getCurrentLang()));
+		BotDialogItem dialogItem = botItemContainerService.add(payload);
+		category.addElement(dialogItem);
+		botCategoryService.add(category);
+		return true;
+	}
+	
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Principal principal) throws JsonProcessingException {

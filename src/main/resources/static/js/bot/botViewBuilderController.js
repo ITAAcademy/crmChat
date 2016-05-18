@@ -95,7 +95,21 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.models.lists.B.push({ label: "Item B" + i });
     }
 
-
+    $scope.addBotDialogItem = function(body,category,testcase) {
+        var botDialogItem = {
+            "body":body,"category":null,"testCase":testcase,
+            "idObject":{
+                "id":null,"lang":null
+            }
+        };
+        
+       var requestUrl = serverPrefix + "/bot_operations/add_bot_dialog_item/{0}".format(category);
+        $http({
+        url: requestUrl,
+        method: "POST",
+        data: JSON.stringify(botDialogItem)
+    })
+    }
 
 
 
