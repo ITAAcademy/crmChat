@@ -62,7 +62,17 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null)
-            item.parent.childrens.splice(index, 1);
+        {
+            for(var intervalIndex = 0; intervalIndex < item.parent.childrens.length; intervalIndex++)
+            {
+                if(item.parent.childrens[intervalIndex] === item)
+                {
+                    item.parent.childrens.splice(intervalIndex, 1);
+                    break;
+                }       
+            }
+            //item.parent.childrens.splice(index, 1);
+        }
         item.parent = parent;
       //  parent.childrens.push(item);
         parent.childrens.splice(index, 0, item);

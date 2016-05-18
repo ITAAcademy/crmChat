@@ -251,8 +251,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
 
         },
         controller: 'ChatViewItemController',
-        link: {
-            post: function(scope, element, attr, ctrl) {
+        link:  function(scope, element, attr, ctrl) {
                 scope.mainScope = scope.$parent.mainScope;
                 scope.submitBot = function(event) {
                     event.preventDefault();
@@ -302,7 +301,6 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 scope.content = elementValue;
                 scope.init(scope, element, attr);
                 $compile(element.contents())(scope);
-            }
         }
     }
 });

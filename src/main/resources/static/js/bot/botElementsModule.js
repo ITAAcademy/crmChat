@@ -60,12 +60,14 @@ var BOT_ELEMENTS_MODULE = function() {
                     }
                 }
                 var addedPropertyFinal = ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+                var addedHeaderFinal = '<li dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
+                var addedFooterFinal = "</li>";
                 if(ignoreAddedProperties)
-                    addedPropertyFinal = "";
-                
-                var template = '<li dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">' + 
-                '<ul {0} = " " {1}>{2}</ul>'.format(this.type, propertiesStr + " " + addedPropertyFinal, childrensStr) 
-                 + "</li>";
+                {
+                    addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";
+                }
+
+                var template = addedHeaderFinal + '<ul {0} = " " {1}>{2}</ul>'.format(this.type, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
 
                 var nv = "elementsListForLink[{0}]".format(index);
                 template = template.split("this").join(nv);
