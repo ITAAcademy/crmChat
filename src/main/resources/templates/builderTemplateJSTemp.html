@@ -1,22 +1,8 @@
-<!-- The dnd-list directive allows to drop elements into it.
-     The dropped data will be added to the referenced list -->
-<div ng-repeat="list in models.lists">
-    <ul dnd-list="list">
-        <!-- The dnd-draggable directive makes an element draggable and will
-         transfer the object that was assigned to it. If an element was
-         dragged away, you have to remove it from the original list
-         yourself using the dnd-moved attribute -->
-        <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
-            {{item}}
-        </li>
-    </ul>
-</div>
-<per>{{selected.properties}}</per>
-<div class="content container-fluid bootstrap snippets container">
+<div class="content container-fluid bootstrap snippets container  editor-min-size">
     <div class="decor-default">
         <div class="contacts-list">
-            <div class="row">
-                <div class="col-md-9 editor-left-panel">
+            <div class="">
+                <div class="editor-left-panel">
                     <div class="panel with-nav-tabs panel-primary editor-panel-primary">
                         <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading" active="activeViewTab">
                             <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
@@ -24,11 +10,9 @@
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                {{containerTemplate}}
+                                    {{containerTemplate}}
                                     <dir class="tab-content" content="view.content" dnd-list="containerTemplate.childrens">
                                     </dir>
-
-
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
                                             <div class="code-edit-title">
@@ -106,23 +90,25 @@
                             </div>
                         </uib-tab>
                     </uib-tabset>
-                    <div class="row right-panel-lang">
-                        <div class="col-md-4 right-panel-lang-text">Lang: </div>
-                        <div class="dropdown col-md-8">
-                            <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Lang-Value
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <li><a>Ukranian</a></li>
-                                <li><a>Russian </a></li>
-                                <li><a>English </a></li>
-                            </ul>
+                    <div class=" right-panel-bottom">
+                        <div class=" right-panel-lang">
+                            <div class="right-panel-lang-text">Lang: </div>
+                            <div class="dropdown right-panel-lang-dropdown">
+                                <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Lang-Value
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a>Ukranian</a></li>
+                                    <li><a>Russian </a></li>
+                                    <li><a>English </a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="right-panel-description">
-                        <div class="right-panel-description-title"> Descriprion: </div>
-                        <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
+                        <div class="right-panel-description">
+                            <div class="right-panel-description-title"> Descriprion: </div>
+                            <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
+                        </div>
                     </div>
                 </div>
             </div>
