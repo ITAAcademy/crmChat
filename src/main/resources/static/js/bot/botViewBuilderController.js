@@ -110,6 +110,10 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         data: JSON.stringify(botDialogItem)
     })
     }
+    $scope.testElementModule = function () {
+      var result =   BOT_ELEMENTS_MODULE.convertTextToElementInstance("<botinput text=\"test\" name=\"kurva\"><botinput text=\"testIn1\" name=\"in1\"></botinput><botinput text=\"testIn2\" name=\"in2\"></botinput></botinput>");
+      console.log("zigzag test:"+JSON.stringify(result));
+    }
 
 
 
