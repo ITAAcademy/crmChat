@@ -11,7 +11,9 @@
         </li>
     </ul>
 </div>
-<per>{{selected.properties}}</per>
+<per>{{$root.models.selected}}</per>
+
+
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
@@ -24,8 +26,7 @@
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                {{containerTemplate}}
-                                    <dir class="tab-content" content="view.content" dnd-list="containerTemplate.childrens">
+                                    <dir class="tab-content" content="view.content">
                                     </dir>
 
 
@@ -71,8 +72,8 @@
                                 <i class="glyphicon glyphicon-bell">Tools</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll">
-                                    <div ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}" class="editor-tools-propertys">
+                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if = "true">
+                                    <div ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}" class="editor-tools-propertys">
                                         <div class="atribute">{{tool.type}}</div>
                                         <span class="separator"></span>
                                         <dir class="value">#</dir>

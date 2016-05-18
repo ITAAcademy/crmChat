@@ -129,29 +129,31 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 angular.module('springChat.directives').directive('botList', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
-        link: function(scope, element, attr, ctrl) {
-            scope.$watch(attr.content, function() {
-                scope.mainScope = scope.$parent.mainScope;
-                var elements = element[0].children;
+        scope: {},
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                scope.$watch(attr.content, function() {
+                    var elements = element[0].children;
 
-                var head = "<ul class='list-group'>";
-                var footer = "</ul>";
-                var result = head;
+                    var head = "<ul class='list-group'>";
+                    var footer = "</ul>";
+                    var result = head;
 
-                for (var i = 0; i < elements.length; i++) {
-                    result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
-                }
-                element.html(result);
+                    for (var i = 0; i < elements.length; i++) {
+                        result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                    }
+                    element.html(result);
 
-                if (typeof attr.callback != 'undefined') {
-                    var callBackFunction = new Function("return " + attr.callback)();
-                    if (typeof callBackFunction != 'undefined')
-                        callBackFunction(element);
-                }
-                //scope.content = $parse(attr.content)(scope);
-                $compile(element.contents())(scope);
-                scope.init(scope, element, attr);
-            }, true);
+                    if (typeof attr.callback != 'undefined') {
+                        var callBackFunction = new Function("return " + attr.callback)();
+                        if (typeof callBackFunction != 'undefined')
+                            callBackFunction(element);
+                    }
+                    //scope.content = $parse(attr.content)(scope);
+                    $compile(element.contents())(scope);
+                    scope.init(scope, element, attr);
+                }, true);
+            }
         }
     }
 });
@@ -211,8 +213,6 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
 
-                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
-                scope.botChildrens = new Array();
                 scope.init(scope, element, attr);
             }
         }
@@ -239,9 +239,6 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-                scope.mainScope = scope.$parent.mainScope;
-                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
-                scope.botChildrens = new Array();
                 scope.init(scope, element, attr);
             }
         }
@@ -303,6 +300,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
 
                 //var result = new Function("param",body)(scope.rootScope.botParam); //next item calc
                 scope.content = elementValue;
+                scope.init(scope, element, attr);
                 $compile(element.contents())(scope);
             }
         }

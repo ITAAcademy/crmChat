@@ -9,10 +9,17 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     /*******
      *  Create tools list of JS objetc
-    *******/
+     *******/
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
-        $scope.toolsList.push(BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]));
+        var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
+        element.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
+            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{ &#34;selected &#34; : models.selected === tool}"' ;
+        $scope.toolsList.push(element);
+    }
+    $scope.$root.elementsListForLink = [];
+    $scope.getElementsListForLink = function(index) {
+        return $scope.$root.elementsListForLink[index];
     }
 
     $scope.selected = {
@@ -25,24 +32,62 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     };
     $scope.activeViewTab = 1;
 
-    $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container");//'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
-//    $scope.containerTemplate.parent = $scope.containerTemplate;
-    $scope.containerTemplate.addedProperty = 'dnd-list="containerTemplate.childrens"';
+    $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container"); //'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
+    //$scope.containerTemplate.parent = $scope.containerTemplate;
+    $scope.containerTemplate.addedProperty = 'dnd-drop="dropCallback(event, index, item, external, type, containerTemplate)" dnd-list="containerTemplate.childrens"';
 
 
     var temp = BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
-   // temp.parent = $scope.containerTemplate;
+    temp.parent = $scope.containerTemplate;
+    temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
+            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';
     $scope.containerTemplate.childrens.push(temp);
 
+    var temp2= BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
+    temp2.parent = temp;
+    temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
+            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';
+    temp.childrens.push(temp2);
+
     $scope.viewTabs = [
-        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML() },
+        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML($scope.$root) },
         { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: false }
     ];
+    $scope.updateView = function() {
+        $scope.$root.elementsListForLink = [];
+        $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root);
+    }
+
+    $scope.dropCallback = function(event, index, item, external, type, parent) {
+        if (item.parent != null)
+            item.parent.childrens.splice(index, 1);
+        item.parent = parent;
+        parent.childrens.push(item);
+        $scope.updateView();
+    };
+
+    $scope.dragCallback = function(event, index, external, type, parent) {
+        if (parent != null)
+            parent.childrens.splice(index, 1);
+    };
+
+      $scope.dragStart = function(item) {
+        if (item != null && item.parent != null)
+            parent.childrens.splice(index, 1);
+    };
+    
+
 
     $scope.models = {
         selected: null,
         lists: { "A": [], "B": [] }
     };
+        $scope.$root.models = {
+        selected: null,
+        lists: { "A": [], "B": [] }
+    };
+
+    
 
     // Generate initial model
     for (var i = 1; i <= 3; ++i) {
@@ -65,7 +110,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
 
     function getType(value) {
-        if (value == true || value == false)
+        if (value === true || value === false)
             return "bool";
 
         if (Array.isArray(value))

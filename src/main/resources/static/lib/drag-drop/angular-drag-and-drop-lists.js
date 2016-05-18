@@ -7,6 +7,7 @@
  *
  * License: MIT
  */
+ var sendetObject;
 angular.module('dndLists', [])
 
   /**
@@ -66,11 +67,13 @@ angular.module('dndLists', [])
    *                      it's source position, and not the "element" that the user is dragging with
    *                      his mouse pointer.
    */
-  .directive('dndDraggable', ['$parse', '$timeout', 'dndDropEffectWorkaround', 'dndDragTypeWorkaround',
+
+   .directive('dndDraggable', ['$parse', '$timeout', 'dndDropEffectWorkaround', 'dndDragTypeWorkaround',
                       function($parse,   $timeout,   dndDropEffectWorkaround,   dndDragTypeWorkaround) {
     return function(scope, element, attr) {
       // Set the HTML5 draggable attribute on the element
       element.attr("draggable", "true");
+
 
       // If the dnd-disable-if attribute is set, we have to watch that
       if (attr.dndDisableIf) {
@@ -91,6 +94,27 @@ angular.module('dndLists', [])
 
         // Serialize the data associated with this element. IE only supports the Text drag type
         event.dataTransfer.setData("Text", angular.toJson(scope.$eval(attr.dndDraggable)));
+
+        if(attr.dndEffectAllowed == "copy")
+        {
+              sendetObject = jQuery.extend(true, {}, scope.$eval(attr.dndDraggable));
+               //if obj is null try find in rootScope
+              if(jQuery.isEmptyObject(sendetObject))
+              {
+                sendetObject = jQuery.extend(true, {}, scope.$root.$eval(attr.dndDraggable));
+              }
+        }
+        else
+        {
+              sendetObject = scope.$eval(attr.dndDraggable);
+               //if obj is null try find in rootScope
+              if(jQuery.isEmptyObject(sendetObject))
+              {
+                sendetObject = scope.$root.$eval(attr.dndDraggable);
+              }
+        }
+
+        // Query.extend(true, {}, scope.$eval(attr.dndDraggable));
 
         // Only allow actions specified in dnd-effect-allowed attribute
         event.dataTransfer.effectAllowed = attr.dndEffectAllowed || "move";
@@ -349,7 +373,7 @@ angular.module('dndLists', [])
         var data = event.dataTransfer.getData("Text") || event.dataTransfer.getData("text/plain");
         var transferredObject;
         try {
-          transferredObject = JSON.parse(data);
+          transferredObject = sendetObject;//JSON.parse(data);
         } catch(e) {
           return stopDragover();
         }

@@ -2,11 +2,11 @@ var BOT_ELEMENTS_MODULE = function() {
     var publicData = {};
 
     //Help to prevent mistakes
-    var BotElementTypes = ["botinput", "botcheckgroup", "radiogroup", "text", "botList", "button", "bot-container", "botlink", "botsubmit", "botClose"];
+    var BotElementTypes = ["botinput", "botcheckgroup", "radiogroup", "text", "bot-list", "button", "bot-container", "botlink", "botsubmit", "botClose"];
     var BotGlobalProperties = ["name", "value"];
     var BotElementProperties = {
         "bot-container": ["time", "content", "callback"],
-        "botList": ["content", "callback"],
+        "bot-list": ["callback"],
         "botlink": ["text", "ispost", "linkindex", "href", "classes"],
         "botinput": ["text", "linkindex"],
         "botsubmit": ["text"],
@@ -30,31 +30,35 @@ var BOT_ELEMENTS_MODULE = function() {
             object.type = type;
             object.properties = BotElementProperties[type];
             object.addedProperty = "";
-            object.getHTML = function() {
+            object.getHTML = function(scope) {
                 var have_content = false;
-
+                scope.elementsListForLink.push(this);
+                var index = scope.elementsListForLink.length - 1;
                 var childrensStr = "";
-                for (var i = 0; i < object.childrens.length; i++) {
-                    childrensStr += object.childrens[i].getHTML();
+                for (var i = 0; i < this.childrens.length; i++) {
+                    childrensStr += this.childrens[i].getHTML(scope);
                 }
 
                 var propertiesStr = "";
-                for (var key in object.properties) {
-                    var value = object.properties[key];
+                for (var key in this.properties) {
+                    var value = this.properties[key];
                     if (value == "content") {
                         var escapedValue;
                         if (typeof value === "string") escapedValue =  "'" + childrensStr.escapeHtml() + "'";
                         else escapedValue = "'" + value + "'";
                         propertiesStr += value + '="{0}" '.format(escapedValue);
-                    } /*else
+                    } else
                     if (typeof value != 'undefined') {
                         var escapedValue;
                         if (typeof value === "string") escapedValue = value.escapeHtml();
                         else escapedValue = value;
-                        propertiesStr += value + '="{0}" '.format(escapedValue);
-                    }*/
+                        
+                    }
                 }
-                var template = "<{0} {1}>{2}</{0}>".format(object.type, propertiesStr + " " + object.addedProperty, childrensStr);
+                var template = "<{0} {1}>{2}</{0}>".format(this.type, propertiesStr + " " + this.addedProperty, childrensStr);
+                var nv = "elementsListForLink[{0}]".format(index);
+                template = template.split("this").join(nv);
+                console.log(scope.elementsListForLink[index]);
                 return template;
             };
             return object;
