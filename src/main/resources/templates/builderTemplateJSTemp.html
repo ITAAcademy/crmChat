@@ -13,12 +13,11 @@
 </div>
 <per>{{$root.models.selected}}</per>
 
-
-<div class="content container-fluid bootstrap snippets container">
+<div class="content container-fluid bootstrap snippets container  editor-min-size">
     <div class="decor-default">
         <div class="contacts-list">
-            <div class="row">
-                <div class="col-md-9 editor-left-panel">
+            <div class="">
+                <div class="editor-left-panel">
                     <div class="panel with-nav-tabs panel-primary editor-panel-primary">
                         <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading" active="activeViewTab">
                             <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
@@ -28,8 +27,6 @@
                                 <div class="panel-body editor-panel-body">
                                     <dir class="tab-content" content="view.content">
                                     </dir>
-
-
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
                                             <div class="code-edit-title">
@@ -49,20 +46,17 @@
                                     </div>
                                 </div>
                             </uib-tab>
-                            <uib-tab index="999" heading="Tab Two">
-                                <uib-tab-heading>
-                                    <div class="dropdown ">
-                                        <a class="editor-dropdown-a" href="#" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
+                           
+
+                        <div class="dropdown editor-dropdown">
+                                        <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
                                             <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
                                         </ul>
                                     </div>
-                                </uib-tab-heading>
-                                <div class="panel-body editor-panel-body">
-                                    More Tab Content
-                                </div>
-                            </uib-tab>
+
+
                         </uib-tabset>
                     </div>
                 </div>
@@ -89,7 +83,7 @@
                             <div class="panel-body editor-panel-body-right">
                                 <div class="tab-content editor-panel-right-scroll ">
                                     <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
-                                        <div ng-if="compareType(item,'array')" class="input-group">
+                                        <div  ng-if="compareType(item,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
                                         </div>
@@ -108,23 +102,25 @@
                             </div>
                         </uib-tab>
                     </uib-tabset>
-                    <div class="row right-panel-lang">
-                        <div class="col-md-4 right-panel-lang-text">Lang: </div>
-                        <div class="dropdown col-md-8">
-                            <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Lang-Value
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <li><a>Ukranian</a></li>
-                                <li><a>Russian </a></li>
-                                <li><a>English </a></li>
-                            </ul>
+                    <div class=" right-panel-bottom">
+                        <div class=" right-panel-lang">
+                            <div class="right-panel-lang-text">Lang: </div>
+                            <div class="dropdown right-panel-lang-dropdown">
+                                <button class="btn btn-default dropdown-toggle lang-dropdown" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Lang-Value
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a>Ukranian</a></li>
+                                    <li><a>Russian </a></li>
+                                    <li><a>English </a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="right-panel-description">
-                        <div class="right-panel-description-title"> Descriprion: </div>
-                        <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
+                        <div class="right-panel-description">
+                            <div class="right-panel-description-title"> Descriprion: </div>
+                            <textarea class="right-panel-description-text">adfadfasdfasdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfsdf asdfsadf sadfasdfasdfas </textarea>
+                        </div>
                     </div>
                 </div>
             </div>

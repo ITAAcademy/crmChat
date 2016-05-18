@@ -513,8 +513,18 @@ input::-ms-clear {
 
 
 .editor-panel-primary {
-      margin-bottom: 0;
-
+     /* margin-bottom: 0;
+position: absolute;
+    right: 0;
+    left: 0;
+    height: 70%;*/
+        margin-bottom: 0;
+    position: absolute;
+    right: 0;
+    left: 0;
+    /* height: 70%; */
+    top: 0;
+    bottom: 0;
 }
 
 .editor-right-panel-tabs-titles {
@@ -523,21 +533,44 @@ input::-ms-clear {
 }
 
 .right-panel-lang {
-      width: 100%;
     height: 40px;
     background-color: #337AB7;
-   /* border: 1px solid #337AB7;*/
+    /* border: 1px solid #337AB7; */
+    /* margin-top: 2px; */
+    padding: 3px 5px 3px 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+.right-panel-lang-dropdown {
+    position: absolute;
+    right: 15px;
+    top: 3px;
+}
+
+.right-panel-bottom {
+      background-color: #337AB7;
+    /* border: 1px solid #337AB7; */
     margin-top: 2px;
     padding: 3px 5px 3px 5px;
     margin-left: 0px;
+    background-color: red;
+    z-index: 100;
+    position: absolute;
+    top: 69%;
+    right: 0;
+    left: 0;
+    bottom: 0;
 }
 
 .right-panel-lang-text {
-    background: white;
-    height: 34px;
+       height: 34px;
     padding: 5px 5px 5px 25px;
-    color: #337AB7;
+    color: white;
     font-size: 18px;
+    width: 40%;
   }
 
   .btn.btn-default.lang-dropdown,
@@ -547,14 +580,17 @@ input::-ms-clear {
   }
 
   .right-panel-description {
-  width: 100%;
-   
+        width: 100%;
     margin-top: 2px;
     padding: 5px;
     margin-left: 0px;
-   
-    height: calc(21vh);
+    /* height: calc(21vh); */
     border: 2px solid #337AB7;
+    position: absolute;
+    background-color: yellow;
+    bottom: 0;
+    top: 38px;
+    left: 0;
   }
 
   .right-panel-description-title {
@@ -566,17 +602,39 @@ font-size: 18px;
   }
 
   .right-panel-description-text {
-    overflow: scroll;
-      overflow-x: hidden;
-      height: 91%;
-      resize: none; 
-       width: 100%;
+        overflow: scroll;
+    overflow-x: hidden;
+    /* height: 91%; */
+    resize: none;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    top: 25px;
+    left: 0;
+    /* right: 0; */
+  }
+
+  .editor-min-size {
+    min-height: 400px;
+    min-width: 900px;
+  }
+
+  .propertys-items-size {
+    width: 100px;
   }
 
   .editor-panel-right-scroll {
-overflow-x: hidden ;
-overflow-y: scroll;
-height: calc(51vh);
+     overflow-x: hidden;
+    overflow-y: scroll;
+    /* height: calc(51vh); */
+    position: absolute;
+    left: 10px;
+    right: 0;
+    /* height: 75%; */
+    bottom: 31%;
+    /* height: 58%; */
+    top: 45px;
+    padding-top: 5px;
   }
 
 .editor-tools-propertys {
@@ -586,7 +644,12 @@ height: calc(51vh);
     border-radius: 6px;
     padding: 5px;
     background: #337AB7;
-    color: white;
+   /* color: white;*/
+}
+
+.editor-propertys-input {
+  color: black;
+  background-color: green;
 }
 
 .editor-tools-propertys .atribute {
@@ -596,19 +659,25 @@ height: calc(51vh);
     margin-left: 5px;
     margin-top: 2px;
     margin-bottom: -5px;
+        color: white;
 }
 
+tags-input input {
+      /*width: 97%;
+       max-width: 97%;
+       display: inline-block;*/
+}
 
 .editor-right-bottom-console {
-    background-color: white;
+ background-color: white;
     position: absolute;
     left: 0;
     bottom: 0;
-    height: calc(21vh);   
-    overflow:hidden;
-    margin-left: 18px;
-    margin-bottom: 3px;
-    width: 98%;
+    height: 30.4%;
+    overflow: hidden;
+    /* margin-left: 18px; */
+    /* margin-top: -5px; */
+    width: 100%;
     border: 1px solid #337AB7;
 }
 
@@ -633,6 +702,9 @@ width: 100%;
  height: 25px;
  background-color: #337AB7;
  color: white;
+ position: absolute;
+    bottom: 0;
+    margin-bottom: 0;
 }
 
 .editor-right-bottom-console .value {
@@ -652,11 +724,47 @@ width: 100%;
 }
 
 .editor-left-panel {
-  padding-right: 0px;
+     padding-right: 0px;
+    width: 70%;
+    /* height: calc(100vh); */
+    position: absolute;
+    clear: both;
+    background-color: red;
+    top: 0;
+    bottom: 0;
 }
 
 .editor-right-panel {
-  padding-left: 2px;
+        /* padding-left: 2px; */
+    position: absolute;
+    /* padding-right: 15px; */
+    right: 15px;
+    width: 28.7%;
+    /* height: 200px; */
+    background-color: green;
+    top: 0;
+    bottom: 0;
+}
+
+.editor-dropdown {
+ width: 110px;
+    height: 40px;
+    position: absolute;
+    right: 20px;
+    padding: 10px;
+    border: 1px solid white;
+}
+
+.editor-dropdown:hover {
+  background-color: #8FB6D7;
+}
+
+
+
+.editor-dropdown-a {
+  /* position: absolute;
+    right: 25px;
+    top: 10px;*/
 }
 
 
@@ -665,10 +773,6 @@ width: 100%;
 .editor-dropdown-a:hover {
     color: white;
     text-decoration: none;
-  }
-
-  .active .editor-dropdown-a {
-    color: #428BCA;
   }
 
   .ng-isolate-scope active.editor-dropdown-a {
@@ -738,7 +842,7 @@ width: 100%;
 .with-nav-tabs.panel-primary .nav-tabs > li > a:hover,
 .with-nav-tabs.panel-primary .nav-tabs > li > a:focus {
   color: #fff;
-  background-color: #3071a9;
+  background-color: #8FB6D7;
   border-color: transparent;
 }
 .with-nav-tabs.panel-primary .nav-tabs > li.active > a,
@@ -761,13 +865,12 @@ width: 100%;
  .dropdown-menu > li > a:focus {
     background-color: #3071a9;
 }
+/*
  .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
  .dropdown-menu > .active > a:focus {
-    background-color: #4a9fe9; 
+    background-color:  #428BCA;/*#4a9fe9; */
 }
-
-
 
 
 
