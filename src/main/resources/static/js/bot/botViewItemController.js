@@ -14,6 +14,8 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
  {
     if (scope.chatRouteInterfaceScope == null || scope.chatRouteInterfaceScope == undefined) 
         return null;
+        if (scope.$parent.mainScope  == null || scope.$parent.mainScope  == undefined) 
+        return null;
 
     scope.mainScope = scope.$parent.mainScope;
       //  scope.$parent.botChildrens[scope.$parent.botChildrens.length - 1].scope.disabled = true;

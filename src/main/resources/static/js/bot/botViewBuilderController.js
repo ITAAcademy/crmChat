@@ -13,8 +13,9 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
         var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
-        element.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
-            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{ &#34;selected &#34; : models.selected === tool}"' ;
+        /*element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"' +
+            'dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{ &#34;selected &#34; : models.selected === tool}"' ;*/
+            element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
         $scope.toolsList.push(element);
     }
     $scope.$root.elementsListForLink = [];
@@ -33,43 +34,57 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.activeViewTab = 1;
 
     $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container"); //'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
-    //$scope.containerTemplate.parent = $scope.containerTemplate;
-    $scope.containerTemplate.addedProperty = 'dnd-drop="dropCallback(event, index, item, external, type, containerTemplate)" dnd-list="containerTemplate.childrens"';
+    $scope.containerTemplate.parent = $scope.containerTemplate;
+    //$scope.containerTemplate.addedProperty = 'dnd-drop="dropCallback(event, index, item, external, type, containerTemplate)" dnd-list="containerTemplate.childrens"';
 
 
     var temp = BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
     temp.parent = $scope.containerTemplate;
-    temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
-            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';
+   /* temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"' +
+            'dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';*/
     $scope.containerTemplate.childrens.push(temp);
 
-    var temp2= BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
-    temp2.parent = temp;
-    temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, this)" dnd-list="this.childrens"' +
-            'dnd-draggable="this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';
-    temp.childrens.push(temp2);
-
     $scope.viewTabs = [
-        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML($scope.$root) },
+        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML($scope.$root, false) },
         { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: false }
     ];
+    $scope.htmlCodeForRender = [];
     $scope.updateView = function() {
         $scope.$root.elementsListForLink = [];
-        $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root);
+        $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root, false);
+
+        $scope.htmlCodeForRender[$scope.activeViewTab - 1] = "";
+        for( var i = 0; i < $scope.containerTemplate.childrens.length; i++)
+            $scope.htmlCodeForRender[$scope.activeViewTab - 1] += "\n" +  $scope.containerTemplate.childrens[i].getHTML($scope.$root, true);;
+
     }
 
+    
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null)
             item.parent.childrens.splice(index, 1);
         item.parent = parent;
-        parent.childrens.push(item);
+      //  parent.childrens.push(item);
+        parent.childrens.splice(index, 0, item);
         $scope.updateView();
+        //return item;
     };
 
-    $scope.dragCallback = function(event, index, external, type, parent) {
-        if (parent != null)
-            parent.childrens.splice(index, 1);
+     
+        $scope.$watch('dropCallback', function() {
+            $scope.$root.dropCallback = $scope.dropCallback;
+    });
+
+        $scope.$watch('dragoverCallback', function() {
+            $scope.$root.dragoverCallback = $scope.dragoverCallback;
+    });
+
+    $scope.$root.dragoverCallback = "";
+    $scope.dragoverCallback = function(event, index, external, type, parent) {
+       // console.log(parent.type);
+        return true;
     };
+
 
       $scope.dragStart = function(item) {
         if (item != null && item.parent != null)

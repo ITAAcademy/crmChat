@@ -30,13 +30,17 @@ var BOT_ELEMENTS_MODULE = function() {
             object.type = type;
             object.properties = BotElementProperties[type];
             object.addedProperty = "";
-            object.getHTML = function(scope) {
+            object.getHTML = function(scope, ignoreAddedProperties) {
                 var have_content = false;
                 scope.elementsListForLink.push(this);
                 var index = scope.elementsListForLink.length - 1;
+                
                 var childrensStr = "";
                 for (var i = 0; i < this.childrens.length; i++) {
-                    childrensStr += this.childrens[i].getHTML(scope);
+                    var currentStr = this.childrens[i].getHTML(scope, ignoreAddedProperties); 
+                    /*var nv = "elementsListForLink[{0}]".format(scope.elementsListForLink.length - 1);//update external file
+                    childrensStr += currentStr.split("this").join(nv);*/
+                    childrensStr += currentStr;
                 }
 
                 var propertiesStr = "";
@@ -55,7 +59,14 @@ var BOT_ELEMENTS_MODULE = function() {
                         
                     }
                 }
-                var template = "<{0} {1}>{2}</{0}>".format(this.type, propertiesStr + " " + this.addedProperty, childrensStr);
+                var addedPropertyFinal = ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+                if(ignoreAddedProperties)
+                    addedPropertyFinal = "";
+                
+                var template = '<li dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">' + 
+                '<ul {0} = " " {1}>{2}</ul>'.format(this.type, propertiesStr + " " + addedPropertyFinal, childrensStr) 
+                 + "</li>";
+
                 var nv = "elementsListForLink[{0}]".format(index);
                 template = template.split("this").join(nv);
                 console.log(scope.elementsListForLink[index]);

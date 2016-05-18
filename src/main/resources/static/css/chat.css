@@ -950,10 +950,18 @@ ul[dnd-list] > li {
  * The dnd-list should always have a min-height,
  * otherwise you can't drop to it once it's empty
  */
-ul[dnd-list] {
-    min-height: 42px;
+ 
+ul[dnd-list]{
+  /*  min-height: 42px;
+    background-color: blue;
     margin: 0px;
-    padding-left: 0px;
+    padding-left: 0px;*/
+    padding: 20px;
+}
+
+li[dnd-draggable] {
+    padding: 20px;
+/*    background-color: red;*/
 }
 
 .dndDragging {
@@ -974,8 +982,10 @@ ul[dnd-list] {
  * while the user is dragging over it.
  */
 .dndPlaceholder {
-    background-color: #ddd;
-    min-height: 42px;
+    background-color: blue;
+    min-height: 50px;
     display: block;
     position: relative;
+    color: white;
+    z-index: 9999;
 }

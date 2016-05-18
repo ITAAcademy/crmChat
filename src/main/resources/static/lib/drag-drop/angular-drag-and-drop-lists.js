@@ -93,7 +93,7 @@ angular.module('dndLists', [])
         if (element.attr('draggable') == 'false') return true;
 
         // Serialize the data associated with this element. IE only supports the Text drag type
-        event.dataTransfer.setData("Text", angular.toJson(scope.$eval(attr.dndDraggable)));
+        event.dataTransfer.setData("Text", {});
 
         if(attr.dndEffectAllowed == "copy")
         {
@@ -267,6 +267,8 @@ angular.module('dndLists', [])
     return function(scope, element, attr) {
       // While an element is dragged over the list, this placeholder element is inserted
       // at the location where the element would be inserted after dropping
+      var placeholderBody = attr.dndPlaceholderBody;
+
       var placeholder = getPlaceholderElement();
       var placeholderNode = placeholder[0];
       var listNode = element[0];
@@ -274,6 +276,7 @@ angular.module('dndLists', [])
 
       var horizontal = attr.dndHorizontalList && scope.$eval(attr.dndHorizontalList);
       var externalSources = attr.dndExternalSources && scope.$eval(attr.dndExternalSources);
+      
 
       /**
        * The dragenter event is fired when a dragged element or text selection enters a valid drop
@@ -462,7 +465,7 @@ angular.module('dndLists', [])
             placeholder = child;
           }
         });
-        return placeholder || angular.element("<li class='dndPlaceholder'></li>");
+        return placeholder || angular.element("<li class='dndPlaceholder'>" + placeholderBody + "</li>");
       }
 
       /**
