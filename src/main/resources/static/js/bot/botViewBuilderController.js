@@ -76,7 +76,10 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         item.parent = parent;
       //  parent.childrens.push(item);
         parent.childrens.splice(index, 0, item);
-        $scope.updateView();
+        $scope.$apply(function() {
+            $scope.updateView();
+        });
+        
         //return item;
     };
 
