@@ -68,7 +68,7 @@
                             <div class="panel-body editor-panel-body-right">
                                 <div class="tab-content editor-panel-right-scroll ">
                                     <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
-                                        <div ng-if="compareType(item,'array')" class="input-group">
+                                        <div  ng-if="compareType(item,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
                                         </div>
