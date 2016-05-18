@@ -786,6 +786,8 @@ public class ChatController {
 			lg = (String) session.getAttribute("chatLg");
 		else
 			lg = "en";
+		if(lg == null)
+			return "en";
 		return lg;
 	}
 
@@ -929,8 +931,7 @@ public class ChatController {
 			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
-		List<ConfigParam> config =  configParamService.getParams();
-		model.addAttribute("config",ConfigParam.listAsMap(config));
+		addLocolization(model);
 		return getTeachersTemplate(request, "consultationTemplate", model);
 	}	
 
