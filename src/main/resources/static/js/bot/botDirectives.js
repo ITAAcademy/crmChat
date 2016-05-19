@@ -130,21 +130,17 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
 */
 
-angular.module('springChat.directives').directive('botList', function($compile, $parse) {
-    return {
-        controller: 'ChatViewItemController',
-        scope: {
 
-        },
-        link: {
+/*        link: {
             post: function(scope, element, attr, ctrl) {
                 var last = "";
                 scope.$watch(
                     function() {
                         return element[0].children.length; },
                     function(newValue, oldValue) {
-                        if (element[0].style.border == "none") {
-                            debugger;
+                        debugger;
+                        if (element[0].children[element[0].children.length - 1].classList.length > 0) {
+                            
                             var elements = element[0].children;
 
                             var head = "<ul class='list-group'>";
@@ -168,6 +164,38 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     }
                 );
 
+            }
+        }
+        */
+angular.module('springChat.directives').directive('botList', function($compile, $parse) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                scope.$watch(attr.content, function() {
+                    var elements = element[0].children;
+
+                    var head = "<ul class='list-group'>";
+                    var footer = "</ul>";
+                    var result = head;
+
+                    for (var i = 0; i < elements.length; i++) {
+                        result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                    }
+                    element.html(result);
+
+                    if (typeof attr.callback != 'undefined') {
+                        var callBackFunction = new Function("return " + attr.callback)();
+                        if (typeof callBackFunction != 'undefined')
+                            callBackFunction(element);
+                    }
+                    //scope.content = $parse(attr.content)(scope);
+                    $compile(element.contents())(scope);
+                    scope.init(scope, element, attr);
+                }, true);
             }
         }
     }

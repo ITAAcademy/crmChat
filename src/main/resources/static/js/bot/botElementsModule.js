@@ -63,9 +63,9 @@ var BOT_ELEMENTS_MODULE = function() {
                     propertiesStr += key + '= "{{$root.this.properties.' + key + '}}" ';
                 }
             }
-            var addedClassesFinal = 'class = "render-element" ';
-            var addedPropertyFinal = this.addedProperty + 'tooltip-placement="top" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type) + ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
-            var addedHeaderFinal = '<li dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
+            var addedClassesFinal = ' ';
+            var addedPropertyFinal = this.addedProperty +  ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+            var addedHeaderFinal = '<li  ' + 'tooltip-placement="top" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type)  + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
             var addedFooterFinal = "</li>";
             if (ignoreAddedProperties) {
                 addedClassesFinal = addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";
