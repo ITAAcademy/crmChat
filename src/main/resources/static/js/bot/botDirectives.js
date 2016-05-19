@@ -11,16 +11,6 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 var date = $parse(attr.time)(scope.$parent)
                 return formatDateToTime(new Date(date));
             }
-            scope.$watch('disabled', function() {
-                if (scope.disabled) {
-                    for (var i = 0; i < element[0].children.length; i++) {
-                        //       element[0].children[i].style.disabled = "true";
-                        element[0].children[i].style.pointerEvents = "none";
-                    }
-                    // element[0]..style.disabled = "true";
-                    element[0].style.pointerEvents = "none";
-                }
-            });
             var processBotParameters = function(strWithParams) {
                 var functionNamesMap = {
                     'time': 'getCurrentMessageTime()'
@@ -72,7 +62,21 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 //scope.content = $parse(parsedData.body)(scope);
 
                 $compile(element.contents())(scope);
+                            if(attr.disabled != null || attr.disabled != undefined)
+                scope.disabled = attr.disabled;
+            
+            scope.$watch('disabled', function() {
+                if (scope.disabled) {
+                    for (var i = 0; i < element[0].children.length; i++) {
+                        //       element[0].children[i].style.disabled = "true";
+                        element[0].children[i].style.pointerEvents = "none";
+                    }
+                    // element[0]..style.disabled = "true";
+                    element[0].style.pointerEvents = "none";
+                }
+            });
             }, true);
+
             scope.botChildrens = new Array();
             if (scope.chatRouteInterfaceScope != null || scope.chatRouteInterfaceScope != undefined) {
                 if (scope.chatRouteInterfaceScope.botContainers.length > 0)

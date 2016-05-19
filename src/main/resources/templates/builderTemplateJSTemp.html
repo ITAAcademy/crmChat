@@ -49,7 +49,7 @@
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
                                 <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="true">
-                                    <div ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}" class="editor-tools-propertys">
+                                    <div class="editor-tools-propertys animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}">
                                         <div class="atribute">{{tool.type}}</div>
                                         <span class="separator"></span>
                                         <dir class="value">#</dir>
@@ -63,7 +63,7 @@
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
                                 <div class="tab-content editor-panel-right-scroll ">
-                                    <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
+                                    <div class="editor-tools-propertys animate-properties" ng-repeat="(key, item)  in selected.properties">
                                         <div ng-if="compareType(item,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
@@ -96,7 +96,7 @@
                         </div>
                         <div class="right-panel-description">
                             <div class="right-panel-description-title"> Descriprion: </div>
-                            <textarea ng-model = "descriprionForRender[activeViewTab - 1]" class="right-panel-description-text"></textarea>
+                            <textarea ng-model="descriprionForRender[activeViewTab - 1]" class="right-panel-description-text"></textarea>
                         </div>
                     </div>
                 </div>

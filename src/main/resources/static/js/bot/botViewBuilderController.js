@@ -15,7 +15,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
         /*element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"' +
             'dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{ &#34;selected &#34; : models.selected === tool}"' ;*/
-            element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+          //  element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
         $scope.toolsList.push(element);
     }
     $scope.$root.elementsListForLink = [];
@@ -35,7 +35,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container"); //'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
     $scope.containerTemplate.parent = $scope.containerTemplate;
-    //$scope.containerTemplate.addedProperty = 'dnd-drop="dropCallback(event, index, item, external, type, containerTemplate)" dnd-list="containerTemplate.childrens"';
+    //$scope.containerTemplate.addedProperty = 'disabled = "true"';
 
 
     var temp = BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
