@@ -5,19 +5,20 @@ var BOT_ELEMENTS_MODULE = function() {
     var BotElementTypes = ["botinput", "botcheckgroup", "radiogroup", "text", "bot-list", "button", "bot-container", "botlink", "botsubmit", "botClose"];
     var BotGlobalProperties = ["name", "value"];
     var BotElementProperties = {
-        "bot-container": ["time", "content", "callback"],
-        "bot-list": ["callback"],
-        "botlink": ["text", "ispost", "linkindex", "href", "classes"],
-        "botinput": ["text", "linkindex"],
-        "botsubmit": ["text"],
-        "botcheckgroup": ["labels", "values", "legend", "isradio"],
-        "botClose": []
+        "bot-container": {"time":"00:00", "content":"", "callback":""},
+        "bot-list": {"callback":""},
+        "botlink": {"text":"empty_text", "ispost":true, "linkindex":0, "href":"", "classes":""},
+        "botinput": {"text":"empty_text", "linkindex":0},
+        "botsubmit": {"text":""},
+        "botcheckgroup": {"labels":[], "values":[], "legend":"", "isradio":false},
+        "botClose": {}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
     publicData.GlobalProperties = BotGlobalProperties;
 
 
+  
 
 
     publicData.ElementInstance = function(type) {
@@ -75,7 +76,36 @@ var BOT_ELEMENTS_MODULE = function() {
                 return template;
             };
             return object;
+        
+
+
         }
+          function jqueryElementToElementInstance(jElement){
+  var elmType =  jElement.prop('nodeName').toLowerCase();
+  var jqueryChildrens = [];
+        for (var i = 0; i < jElement.children().length; i++){
+           jqueryChildrens.push($(jElement.children()[i])); 
+        }
+       //var elmProperties = BotElementProperties[nodeName];
+      // var attrName = jElement.attr();
+       var elementInstance = publicData.ElementInstance(elmType);
+       for (var propertie in elementInstance.properties ){
+        elementInstance.properties[propertie]=jElement.attr(propertie);
+       }
+       for (var i = 0; i < jqueryChildrens.length; i++){
+        var pare = {};
+        pare[jqueryChildrens[i].prop('nodeName')]=jqueryElementToElementInstance(jqueryChildrens[i]);
+        elementInstance.childrens.push(pare);
+       }
+       return elementInstance;
+    }
+        publicData.convertTextToElementInstance = function(str) {
+        var jElement = $( str );
+        //var appContainer = $('#app-container', jElement);        
+      var  elementInstance = jqueryElementToElementInstance(jElement);
+      return elementInstance;
+
+    }
         /* var testProperties = { "name": "default" };
          var testElementType = "botcheckgroup";
          var testElementProperties = { "name": "group1", "labels": "myarrvar" };
@@ -90,3 +120,5 @@ var BOT_ELEMENTS_MODULE = function() {
     return publicData;
 
 }();
+
+
