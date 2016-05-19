@@ -785,9 +785,9 @@ public class ChatController {
 		if(session != null)
 			lg = (String) session.getAttribute("chatLg");
 		else
-			lg = "en";
+			lg = "ua";
 		if(lg == null)
-			return "en";
+			return "ua";
 		return lg;
 	}
 

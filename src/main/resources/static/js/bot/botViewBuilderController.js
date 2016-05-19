@@ -13,9 +13,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
         var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
-        /*element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"' +
-            'dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{ &#34;selected &#34; : models.selected === tool}"' ;*/
-          //  element.addedProperty = 'dnd-dragstart = "dragStart($root.this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+        
         $scope.toolsList.push(element);
     }
     $scope.$root.elementsListForLink = [];
@@ -35,13 +33,12 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container"); //'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
     $scope.containerTemplate.parent = $scope.containerTemplate;
+    //$scope.containerTemplate.properties["content"] = 
     //$scope.containerTemplate.addedProperty = 'disabled = "true"';
 
 
     var temp = BOT_ELEMENTS_MODULE.ElementInstance("botsubmit");
     temp.parent = $scope.containerTemplate;
-   /* temp.addedProperty = 'dnd-dragstart = "dragStart(this)" dnd-drop="dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"' +
-            'dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this"';*/
     $scope.containerTemplate.childrens.push(temp);
 
     $scope.viewTabs = [
@@ -53,15 +50,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.descriprionForRender = ['1','2'];
 
     $scope.updateView = function() {
+        $scope.$evalAsync(function() { 
         $scope.$root.elementsListForLink = [];
         $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root, false);
 
         $scope.htmlCodeForRender[$scope.activeViewTab - 1] = "";
         for( var i = 0; i < $scope.containerTemplate.childrens.length; i++)
-            $scope.htmlCodeForRender[$scope.activeViewTab - 1] += "\n" +  $scope.containerTemplate.childrens[i].getHTML($scope.$root, true);;
-
+            $scope.htmlCodeForRender[$scope.activeViewTab - 1] += "\n" +  $scope.containerTemplate.childrens[i].getHTML($scope.$root, true);
+});
     }
-
     
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null)

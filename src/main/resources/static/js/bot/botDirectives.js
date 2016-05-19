@@ -3,7 +3,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
     return {
         controller: 'ChatViewItemController',
         scope: {
-
+            content: '@'
         },
         link: function(scope, element, attr, ctrl) {
             scope.mainScope = scope;
@@ -29,7 +29,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
             }
 
 
-            scope.$watch(attr.content, function() {
+            scope.$watch('content', function() {
                 var receivedData = $parse(attr.content)(scope.$parent);
                 var parsedData;
                 try {
@@ -62,19 +62,19 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 //scope.content = $parse(parsedData.body)(scope);
 
                 $compile(element.contents())(scope);
-                            if(attr.disabled != null || attr.disabled != undefined)
-                scope.disabled = attr.disabled;
-            
-            scope.$watch('disabled', function() {
-                if (scope.disabled) {
-                    for (var i = 0; i < element[0].children.length; i++) {
-                        //       element[0].children[i].style.disabled = "true";
-                        element[0].children[i].style.pointerEvents = "none";
+                if (attr.disabled != null || attr.disabled != undefined)
+                    scope.disabled = attr.disabled;
+
+                scope.$watch('disabled', function() {
+                    if (scope.disabled) {
+                        for (var i = 0; i < element[0].children.length; i++) {
+                            //       element[0].children[i].style.disabled = "true";
+                            element[0].children[i].style.pointerEvents = "none";
+                        }
+                        // element[0]..style.disabled = "true";
+                        element[0].style.pointerEvents = "none";
                     }
-                    // element[0]..style.disabled = "true";
-                    element[0].style.pointerEvents = "none";
-                }
-            });
+                });
             }, true);
 
             scope.botChildrens = new Array();
@@ -133,30 +133,41 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 angular.module('springChat.directives').directive('botList', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
-        scope: {},
+        scope: {
+
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.$watch(attr.content, function() {
-                    var elements = element[0].children;
+                var last = "";
+                scope.$watch(
+                    function() {
+                        return element[0].children.length; },
+                    function(newValue, oldValue) {
+                        if (element[0].style.border == "none") {
+                            debugger;
+                            var elements = element[0].children;
 
-                    var head = "<ul class='list-group'>";
-                    var footer = "</ul>";
-                    var result = head;
+                            var head = "<ul class='list-group'>";
+                            var footer = "</ul>";
+                            var result = head;
 
-                    for (var i = 0; i < elements.length; i++) {
-                        result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                            for (var i = 0; i < elements.length; i++) {
+                                result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                            }
+                            element.html(result);
+
+                            if (typeof attr.callback != 'undefined') {
+                                var callBackFunction = new Function("return " + attr.callback)();
+                                if (typeof callBackFunction != 'undefined')
+                                    callBackFunction(element);
+                            }
+                            //scope.content = $parse(attr.content)(scope);
+                            $compile(element.contents())(scope);
+                            scope.init(scope, element, attr);
+                        }
                     }
-                    element.html(result);
+                );
 
-                    if (typeof attr.callback != 'undefined') {
-                        var callBackFunction = new Function("return " + attr.callback)();
-                        if (typeof callBackFunction != 'undefined')
-                            callBackFunction(element);
-                    }
-                    //scope.content = $parse(attr.content)(scope);
-                    $compile(element.contents())(scope);
-                    scope.init(scope, element, attr);
-                }, true);
             }
         }
     }
@@ -255,56 +266,56 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
 
         },
         controller: 'ChatViewItemController',
-        link:  function(scope, element, attr, ctrl) {
-                scope.mainScope = scope.$parent.mainScope;
-                scope.submitBot = function(event) {
-                    event.preventDefault();
-                    var formElm = $(event.currentTarget.form);
-                    //$(event.currentTarget.form).submit();
-                    if (scope.mainScope.nextDialogItemJS == undefined || scope.mainScope.nextDialogItemJS == "") {
-                        alert("NO JS FUNCTION");
-                        return;
-                    }
-
-                    var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS;
-                    // var dataToSend = JSON.stringify(formElm.serializeArray());
-                    var formData = {};
-                    for (var scopeAndElementKey in scope.$parent.botChildrens) {
-                        var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
-                        if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined') {
-
-                            formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
-                            scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
-                        }
-                    }
-                    // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
-                    var dataToSend = JSON.stringify(formData);
-                    console.log('dataToSend:' + dataToSend);
-                    $.ajax({
-                        type: "POST",
-                        contentType: "binary/octet-stream",
-                        url: url,
-                        data: dataToSend, // serializes the form's elements.
-                        success: function(data) {
-                            // alert(data); // show response from the php script.
-                        }
-                    });
-
+        link: function(scope, element, attr, ctrl) {
+            scope.mainScope = scope.$parent.mainScope;
+            scope.submitBot = function(event) {
+                event.preventDefault();
+                var formElm = $(event.currentTarget.form);
+                //$(event.currentTarget.form).submit();
+                if (scope.mainScope.nextDialogItemJS == undefined || scope.mainScope.nextDialogItemJS == "") {
+                    alert("NO JS FUNCTION");
+                    return;
                 }
-                var body = attr.text;
 
-                var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
+                var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS;
+                // var dataToSend = JSON.stringify(formElm.serializeArray());
+                var formData = {};
+                for (var scopeAndElementKey in scope.$parent.botChildrens) {
+                    var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
+                    if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined') {
 
-                var suffix = '</button>';
-                var elementValue = prefix + body + suffix;
+                        formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
+                        scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
+                    }
+                }
+                // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
+                var dataToSend = JSON.stringify(formData);
+                console.log('dataToSend:' + dataToSend);
+                $.ajax({
+                    type: "POST",
+                    contentType: "binary/octet-stream",
+                    url: url,
+                    data: dataToSend, // serializes the form's elements.
+                    success: function(data) {
+                        // alert(data); // show response from the php script.
+                    }
+                });
+
+            }
+            var body = attr.text;
+
+            var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
+
+            var suffix = '</button>';
+            var elementValue = prefix + body + suffix;
 
 
-                element.html(elementValue);
+            element.html(elementValue);
 
-                //var result = new Function("param",body)(scope.rootScope.botParam); //next item calc
-                scope.content = elementValue;
-                scope.init(scope, element, attr);
-                $compile(element.contents())(scope);
+            //var result = new Function("param",body)(scope.rootScope.botParam); //next item calc
+            scope.content = elementValue;
+            scope.init(scope, element, attr);
+            $compile(element.contents())(scope);
         }
     }
 });

@@ -68,7 +68,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				
 				String value = null;
 				String IntitaId = null;
-				String IntitaLg = "en";
+				String IntitaLg = "ua";
 				String ChatId = null;
 				if(array != null)
 					for(Cookie cook : array)
