@@ -1130,7 +1130,7 @@ li[dnd-draggable] {
  */
 .dndPlaceholder {
     background-color: blue;
-    min-height: 50px;
+    min-height: 5px;
     display: block;
     position: relative;
     color: white;
