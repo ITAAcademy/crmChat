@@ -3,7 +3,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
     return {
         controller: 'ChatViewItemController',
         scope: {
-            content: '@'
+            content: '&'
         },
         link: function(scope, element, attr, ctrl) {
             scope.mainScope = scope;
@@ -55,7 +55,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 // var elementValue = parsedData.body.replace(/\\"/g, '"');
                 element.html(prefix + body + sufix);
                 if (typeof attr.callback != 'undefined') {
-                    var callBackFunction = new Function("return " + attr.callback)();
+                    var callBackFunction = new Function("return " + scope.$eval(attr.callback))();
                     if (typeof callBackFunction != 'undefined')
                         callBackFunction(element);
                 }
@@ -291,7 +291,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
         scope: {
-
+            text : '&'
         },
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
@@ -330,7 +330,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 });
 
             }
-            var body = attr.text;
+            var body = "{{text()}}";
 
             var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
 
