@@ -144,16 +144,14 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $http.get(requestUrl, {}).
         success(function(data, status, headers, config) {
             console.log("Load view: " + data);
-            var tab = {"title": "test1", "content" : new Map(), "objects" : new Map(),"items": data};
+            var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
             $scope.viewTabs.push(tab);
-            for(var key in tab.items)
-            {
+            for (var key in tab.items) {
                 tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
             }
             $scope.updateView();
         }).
-        error(function(data, status, headers, config) {
-        });
+        error(function(data, status, headers, config) {});
     }
 
 
