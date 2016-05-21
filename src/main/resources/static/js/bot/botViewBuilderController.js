@@ -13,7 +13,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
         var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
-        
+
         $scope.toolsList.push(element);
     }
     $scope.$root.elementsListForLink = [];
@@ -41,81 +41,75 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     temp.parent = $scope.containerTemplate;
     $scope.containerTemplate.childrens.push(temp);
 
-    $scope.viewTabs = [
-        { title: 'Dynamic Title 1', content: $scope.containerTemplate.getHTML($scope.$root, false) },
-        { title: 'Dynamic Title 2', content: 'Dynamic content 2', disabled: false }
-    ];
+    $scope.viewTabs = [];
     $scope.htmlCodeForRender = [];
-    $scope.langForRender = ['uk', 'en'];
-    $scope.descriprionForRender = ['1','2'];
+    $scope.langForRender = ['ua', 'en'];
+    $scope.descriprionForRender = ['1', '2'];
 
     $scope.updateView = function() {
-        $scope.$evalAsync(function() { 
-        $scope.$root.elementsListForLink = [];
-        $scope.viewTabs[$scope.activeViewTab - 1].content = $scope.containerTemplate.getHTML($scope.$root, false);
+        $scope.$evalAsync(function() {
+            $scope.$root.elementsListForLink = [];
+            $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
-        $scope.htmlCodeForRender[$scope.activeViewTab - 1] = "";
-        for( var i = 0; i < $scope.containerTemplate.childrens.length; i++)
-            $scope.htmlCodeForRender[$scope.activeViewTab - 1] += "\n" +  $scope.containerTemplate.childrens[i].getHTML($scope.$root, true);
-});
+            $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
+            for (var i = 0; i < $scope.containerTemplate.childrens.length; i++)
+                $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, true);
+        });
     }
-    
+
     $scope.dropCallback = function(event, index, item, external, type, parent) {
-        if (item.parent != null)
-        {
-            for(var intervalIndex = 0; intervalIndex < item.parent.childrens.length; intervalIndex++)
-            {
-                if(item.parent.childrens[intervalIndex] === item)
-                {
+        if (item.parent != null) {
+            for (var intervalIndex = 0; intervalIndex < item.parent.childrens.length; intervalIndex++) {
+                if (item.parent.childrens[intervalIndex] === item) {
                     item.parent.childrens.splice(intervalIndex, 1);
                     break;
-                }       
+                }
             }
             //item.parent.childrens.splice(index, 1);
         }
         item.parent = parent;
-      //  parent.childrens.push(item);
+        //  parent.childrens.push(item);
         parent.childrens.splice(index, 0, item);
         $scope.$apply(function() {
             $scope.updateView();
         });
-        
+
         //return item;
     };
 
-     
-        $scope.$watch('dropCallback', function() {
-            $scope.$root.dropCallback = $scope.dropCallback;
+
+    $scope.$watch('dropCallback', function() {
+        $scope.$root.dropCallback = $scope.dropCallback;
     });
 
-        $scope.$watch('dragoverCallback', function() {
-            $scope.$root.dragoverCallback = $scope.dragoverCallback;
+    $scope.$watch('dragoverCallback', function() {
+        $scope.$root.dragoverCallback = $scope.dragoverCallback;
     });
 
     $scope.$root.dragoverCallback = "";
     $scope.dragoverCallback = function(event, index, external, type, parent) {
-       // console.log(parent.type);
+        // console.log(parent.type);
         return true;
     };
 
 
-      $scope.dragStart = function(item) {
+    $scope.dragStart = function(item) {
         if (item != null && item.parent != null)
             parent.childrens.splice(index, 1);
     };
-    
+
 
 
     $scope.models = {
         selected: null,
         lists: { "A": [], "B": [] }
     };
-        $scope.$root.models = {
+    $scope.$root.models = {
         selected: null,
         lists: { "A": [], "B": [] }
     };
 
-    
+
 
     // Generate initial model
     for (var i = 1; i <= 3; ++i) {
@@ -123,24 +117,56 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.models.lists.B.push({ label: "Item B" + i });
     }
 
-    $scope.addBotDialogItem = function(body,category,testcase) {
+    $scope.addBotDialogItem = function(body, category, testcase) {
         var botDialogItem = {
-            "body":body,"category":null,"testCase":testcase,
-            "idObject":{
-                "id":null,"lang":null
+            "body": body,
+            "category": null,
+            "testCase": testcase,
+            "idObject": {
+                "id": null,
+                "lang": null
             }
         };
-        
-       var requestUrl = serverPrefix + "/bot_operations/add_bot_dialog_item/{0}".format(category);
+
+        /*var requestUrl = serverPrefix + "/bot_operations/add_bot_dialog_item/{0}".format(category);
         $http({
-        url: requestUrl,
-        method: "POST",
-        data: JSON.stringify(botDialogItem)
-    })
+            url: requestUrl,
+            method: "POST",
+            data: JSON.stringify(botDialogItem)
+        })*/
     }
-    $scope.testElementModule = function () {
-      var result =   BOT_ELEMENTS_MODULE.convertTextToElementInstance("<botinput text=\"test\" name=\"kurva\"><botinput text=\"testIn1\" name=\"in1\"></botinput><botinput text=\"testIn2\" name=\"in2\"></botinput></botinput>");
-      console.log("zigzag test:"+JSON.stringify(result));
+
+
+    $scope.getBotDialogItem = function(id) {
+        var botDialogItem = {};
+
+        var requestUrl = serverPrefix + "/bot_operations/get_bot_dialog_item/{0}".format(id);
+        $http.get(requestUrl, {}).
+        success(function(data, status, headers, config) {
+            console.log("Load view: " + data);
+            var tab = {"title": "test1", "content" : new Map(), "objects" : new Map(),"items": data};
+            $scope.viewTabs.push(tab);
+            for(var key in tab.items)
+            {
+                tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
+            }
+            $scope.updateView();
+        }).
+        error(function(data, status, headers, config) {
+        });
+    }
+
+
+
+
+
+    $scope.testElementModule = function() {
+        var result = BOT_ELEMENTS_MODULE.convertTextToElementInstance("<botsubmit text=\"test\" name=\"kurva\"><botinput text=\"testIn1\" name=\"in1\"></botinput><botinput text=\"testIn2\" name=\"in2\"></botinput></botsubmit>");
+        $scope.$evalAsync(function() {
+            $scope.$root.elementsListForLink = [];
+            $scope.viewTabs[$scope.activeViewTab - 1].content = result.getHTML($scope.$root, false);
+        });
+        console.log("zigzag test:" + JSON.stringify(result));
     }
 
 
@@ -168,4 +194,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.compareType = function(value, type) {
         return getType(value) == type;
     }
+
+    $scope.getBotDialogItem(1);
 }]);

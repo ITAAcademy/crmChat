@@ -12,7 +12,7 @@
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
                                  <div class="tab-content editor-panel-right-scroll ">
-                                    <dir class="tab-content" content="view.content">
+                                    <dir class="tab-content" content="view.content[langForRender[activeViewTab - 1]]">
                                     </dir>
                                     </div>
                                     <div class="editor-right-bottom-console ">
@@ -37,8 +37,9 @@
                             <div class="dropdown editor-dropdown">
                                 <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#tab4primary" data-toggle="tab">Primary 4</a></li>
-                                    <li><a href="#tab5primary" data-toggle="tab">Primary 5</a></li>
+                                    <li><a >Save</a></li>
+                                    <li><a >Create</a></li>
+                                    <li ng-click = "getBotDialogItem(1)"><a >Load</a></li>
                                 </ul>
                             </div>
                         </uib-tabset>

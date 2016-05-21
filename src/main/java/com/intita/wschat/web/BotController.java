@@ -133,8 +133,18 @@ public class BotController {
 	@ResponseBody
 	public String getBotDialogItem(@PathVariable Long dialogItemId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		BotDialogItem dialogItem = botItemContainerService.getById(dialogItemId);
-		return objectMapper.writeValueAsString(dialogItem);
+		/*
+		 *  :(((
+		 */
+		BotDialogItem dialogItemUA = botItemContainerService.getByIdAndLang(dialogItemId, "ua");
+		BotDialogItem dialogItemEN = botItemContainerService.getByIdAndLang(dialogItemId, "en");
+		BotDialogItem dialogItemRU = botItemContainerService.getByIdAndLang(dialogItemId, "ru");
+		Map<String, BotDialogItem> array = new HashMap<>();
+		array.put("ua", dialogItemUA);
+		array.put("en", dialogItemEN);
+		array.put("ru", dialogItemRU);
+		
+		return objectMapper.writeValueAsString(array);
 	}
 	
 	@RequestMapping(value = "bot_operations/add_bot_dialog_item/{categoryId}", method = RequestMethod.POST)

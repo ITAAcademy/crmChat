@@ -47,9 +47,7 @@ var BOT_ELEMENTS_MODULE = function() {
             for (var key in this.properties) {
                 var value = this.properties[key];
                 if (key == "content") {
-                    var escapedValue;
-                    if (typeof value === "string") escapedValue = "'" + childrensStr.escapeHtml() + "'";
-                    else escapedValue = "'" + value + "'";
+                    var escapedValue = "'" + childrensStr.escapeHtml() + "'";
                 } else
                 if (typeof value != 'undefined') {
                     var escapedValue;
@@ -103,13 +101,13 @@ var BOT_ELEMENTS_MODULE = function() {
         }
         for (var i = 0; i < jqueryChildrens.length; i++) {
             var pare = {};
-            pare[jqueryChildrens[i].prop('nodeName')] = jqueryElementToElementInstance(jqueryChildrens[i]);
-            elementInstance.childrens.push(pare);
+          //  pare[jqueryChildrens[i].prop('nodeName').toLowerCase()] = jqueryElementToElementInstance(jqueryChildrens[i]);
+            elementInstance.childrens.push(jqueryElementToElementInstance(jqueryChildrens[i]));
         }
         return elementInstance;
     }
     publicData.convertTextToElementInstance = function(str) {
-            var jElement = $(str);
+            var jElement = $("<bot-container>" + str + "</bot-container>");
             //var appContainer = $('#app-container', jElement);        
             var elementInstance = jqueryElementToElementInstance(jElement);
             return elementInstance;
