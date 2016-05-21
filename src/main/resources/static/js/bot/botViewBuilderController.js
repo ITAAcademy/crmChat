@@ -47,8 +47,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.descriprionForRender = ['1', '2'];
 
     $scope.updateView = function() {
+        $scope.$root.elementsListForLink = [];
+        $scope.$root.models.selected = null;
+        $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
+
         $scope.$evalAsync(function() {
-            $scope.$root.elementsListForLink = [];
             $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
             $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
@@ -56,6 +59,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, true);
         });
     }
+
 
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null) {
@@ -145,10 +149,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         success(function(data, status, headers, config) {
             console.log("Load view: " + data);
             var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
-            $scope.viewTabs.push(tab);
+             //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
             for (var key in tab.items) {
                 tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
             }
+            $scope.viewTabs.push(tab);
             $scope.updateView();
         }).
         error(function(data, status, headers, config) {});

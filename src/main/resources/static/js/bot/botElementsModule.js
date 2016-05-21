@@ -29,6 +29,8 @@ var BOT_ELEMENTS_MODULE = function() {
         }
         object.parent = null;
         object.type = type;
+        object.id = Math.random();
+
         object.properties = BotElementProperties[type];
         object.addedProperty = "";
         object.getHTML = function(scope, ignoreAddedProperties) {
@@ -95,7 +97,7 @@ var BOT_ELEMENTS_MODULE = function() {
         }
         //var elmProperties = BotElementProperties[nodeName];
         // var attrName = jElement.attr();
-        var elementInstance = publicData.ElementInstance(elmType);
+        var elementInstance = BOT_ELEMENTS_MODULE.ElementInstance(elmType);
         for (var propertie in elementInstance.properties) {
             elementInstance.properties[propertie] = jElement.attr(propertie);
         }
