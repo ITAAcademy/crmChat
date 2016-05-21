@@ -1099,17 +1099,19 @@ ul{
  * otherwise you can't drop to it once it's empty
  */
 ul[dnd-list] {
-    min-height: 20px;
-    /*background-color: blue;
-    margin: 0px;
+    min-height: 12px;
+    z-index: 999;
+   /* background-color: blue;*/
+    /*margin: 0px;
     padding-left: 0px;*/
     /*display: inline;*/
     padding: 0px;
 }
 li[dnd-draggable] {
     padding: 20px;
+    z-index: 999;
     list-style-type: none;
-    /*    background-color: red;*/
+   /* background-color: red;*/
 }
 .dndDragging {
     opacity: 0.7;
@@ -1130,7 +1132,7 @@ li[dnd-draggable] {
  */
 .dndPlaceholder {
     background-color: blue;
-    min-height: 5px;
+    min-height: 3px;
     display: block;
     position: relative;
     color: white;
@@ -1228,8 +1230,14 @@ li[dnd-draggable] {
 }
 .render-element:hover {
     border-style: dashed;
-    border-width: 3px;
+    border-width: 1px;
     border-color: red;
+}
+
+.render-element:hover  ul{
+ border-style: dashed;
+    border-width: 1px;
+    border-color: blue;   
 }
 .render-element:parent {
     border-style: dashed;

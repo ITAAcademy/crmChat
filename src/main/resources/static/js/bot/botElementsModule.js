@@ -43,7 +43,6 @@ var BOT_ELEMENTS_MODULE = function() {
                 childrensStr += currentStr.split("this").join(nv);*/
                 childrensStr += currentStr;
             }
-
             var propertiesStr = "";
             for (var key in this.properties) {
                 var value = this.properties[key];
@@ -60,12 +59,15 @@ var BOT_ELEMENTS_MODULE = function() {
                 if (ignoreAddedProperties || key == "content") {
                     propertiesStr += key + '="{0} " '.format(escapedValue);
                 } else {
-                    propertiesStr += key + '= "{{$root.this.properties.' + key + '}}" ';
+                    propertiesStr += key + '= "$root.this.properties.' + key + '" ';
                 }
             }
             var addedClassesFinal = ' ';
+            var leftTooltip = "top-left";
+            /*if((scope.elementsListForLink.length - 1) %2 == 0)
+                leftTooltip = "";*/
             var addedPropertyFinal = this.addedProperty +  ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
-            var addedHeaderFinal = '<li  ' + 'tooltip-placement="top" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type)  + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
+            var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip)  + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
             var addedFooterFinal = "</li>";
             if (ignoreAddedProperties) {
                 addedClassesFinal = addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";

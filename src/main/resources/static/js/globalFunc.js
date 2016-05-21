@@ -205,6 +205,15 @@ function getXmlHttp() {
     }
     return xmlhttp;
 }
+
+function replacer(str, offset, s) {
+  return "{{call(" + str.substring(2,str.length - 4) + ")}}";
+}
+
+function call(str) {
+  return "{{" + str + "}}";
+}
+
 /*function upload(file,urlpath) {
 
 var xhr = new XMLHttpRequest();
