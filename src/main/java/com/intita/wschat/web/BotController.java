@@ -167,6 +167,13 @@ public class BotController {
 		return true;
 	}
 	
+	@RequestMapping(value = "bot_operations/save_dialog_item", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
+		BotDialogItem dialogItem = botItemContainerService.update(payload);
+		return true;
+	}
+	
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Principal principal) throws JsonProcessingException {
