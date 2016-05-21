@@ -32,6 +32,9 @@ public class BotItemContainerService {
 	public BotDialogItem getById(Long id){
 		return botItemContainerRepository.findByIdObject(new LangId(id,ChatController.getCurrentLang()));
 	}
+	public BotDialogItem getByIdAndLang(Long id, String lang){
+		return botItemContainerRepository.findByIdObject(new LangId(id, lang));
+	}
 	public BotDialogItem add(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);
 	}
