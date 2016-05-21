@@ -171,7 +171,8 @@ angular.module('springChat.directives').directive('botList', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-
+             content: '&',
+             callback: '&'
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -212,16 +213,25 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-
+        text: '=',
+        ispost: '=',
+        linkindex: '=',
+        href: '=',
+        classes: '=',
+        ngclickFunction: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 scope.mainScope = scope.$parent.mainScope;
-                var body = attr.text;
+                var body ="{{text}}";
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
+                  scope.$watch('ispost', function() {
+                    if (scope.ispost) {
+                    scope.href = "";
+                    }
+                });
                 scope.itemvalue = body;
-                var ngclickFunction = '';
                 if (usePost &&
                     (typeof attr.linkindex !== 'undefined') &&
                     attr.linkindex.length > 0) {
@@ -236,16 +246,11 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                     var payLoad = JSON.stringify(dataObject);
 
-                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
-                    ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
-                }
-                var linkHref = '';
-                if (!usePost) {
-                    var linkTemplate = 'href="{0}"';
-                    linkHref = linkTemplate.format(attr.href);
+                    var link = 'bot_operations/{0}/get_bot_container/{{linkindex}}'.format(scope.$parent.currentRoom.roomId);
+                    scope.ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
 
-                var prefix = '<a class="{0}" ng-click=\'{1}\' {2} ng-model="itemvalue">'.format(attr.classes, ngclickFunction, linkHref);
+                var prefix = '<a class="{{classes}}" ng-click=\'{{ngclickFunction}}\' href="{{href}}" ng-model="itemvalue">';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -266,11 +271,12 @@ angular.module('springChat.directives').directive('botinput', function($compile,
     return {
         controller: 'ChatViewItemController',
         scope: {
-
+        text: '=',
+        itemindex: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                var body = attr.text;
+                var body = "{{text}}";
                 scope.itemvalue = "";
                 var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.itemindex);
 
@@ -291,7 +297,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
         scope: {
-            text : '&'
+            text : '='
         },
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
@@ -330,7 +336,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 });
 
             }
-            var body = "{{text()}}";
+            var body = "{{text}}";
 
             var prefix = '<button name="{0}" ng-click="submitBot($event)">'.format('submitBtn');
 
@@ -358,7 +364,11 @@ attr.isradio - determine if group is readiogroup
 angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
-        scope: {},
+        scope: {
+            legend: '=',
+            isradio: '=',
+            labels: '='
+        },
         link: {
             post: function(scope, element, attr, ctrl) {
                 scope.itemvalue = [];
