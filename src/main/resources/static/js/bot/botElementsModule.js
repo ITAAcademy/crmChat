@@ -68,13 +68,13 @@ var BOT_ELEMENTS_MODULE = function() {
                 leftTooltip = "";*/
             var addedPropertyFinal = this.addedProperty +  ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
             var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip)  + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
-            var addedFooterFinal = "</li>";
+            var addedFooterFinal = '</li>';
             if (ignoreAddedProperties) {
                 addedClassesFinal = addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";
             }
             var template;
             if (!ignoreAddedProperties)
-                template = addedHeaderFinal + '<ul {0} = " " {1} {2}>{3}</ul>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
+                template = addedHeaderFinal + '<div class="wrap"><ul {0} = " " {1} {2}>{3}</ul></div>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
             else
                 template = addedHeaderFinal + '<{0} {1} {2}>{3}</{0}>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
 

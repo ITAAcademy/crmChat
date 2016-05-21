@@ -1105,10 +1105,10 @@ ul[dnd-list] {
     /*margin: 0px;
     padding-left: 0px;*/
     /*display: inline;*/
-    padding: 0px;
+    padding: 10px;
 }
 li[dnd-draggable] {
-    padding: 20px;
+    padding: 10px;
     z-index: 999;
     list-style-type: none;
    /* background-color: red;*/
@@ -1228,6 +1228,7 @@ li[dnd-draggable] {
         right: 0px;
     }
 }
+
 .render-element:hover {
     border-style: dashed;
     border-width: 1px;
@@ -1243,4 +1244,13 @@ li[dnd-draggable] {
     border-style: dashed;
     border-width: 3px;
     border-color: red;
+}
+
+.dndDragover{
+   border-style: dashed;
+    border-width: 1px;
+    border-color: red;
+}
+.wrap{
+  padding: 10px;
 }

@@ -45,8 +45,8 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 else
                     scope.nextDialogItemJS = -1;
 
-                var prefix = "<form action='bot_operations/{0}/submit_dialog_item/{1}'>".format(scope.currentRoom.roomId, parsedData.id);
-                var sufix = "</form>"
+                var prefix = "";
+                var sufix = ""
                 if (scope.chatRouteInterfaceScope != null || scope.chatRouteInterfaceScope != undefined)
                     var body = processBotParameters(parsedData.body);
                 else
