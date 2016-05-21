@@ -367,30 +367,34 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         scope: {
             legend: '=',
             isradio: '=',
-            labels: '='
+            labels: '=',
+            itemvalue: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.itemvalue = [];
+                //scope.itemvalue = [];
                 var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
-                var prefix = "<fieldset><legend>{0}</legend>".format(attr.legend);
+                var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                var modalT = 'ng-model="itemvalue[{0}]"';
+                var modalT = 'ng-model="{{itemvalue[{0}]}}"';
                 if (attr.isradio === 'true' || attr.isradio === true) {
-                    modalT = 'ng-model="itemvalue"';
+                    modalT = 'ng-model="{{itemvalue}}"';
                     item_type = "radio";
                     scope.itemvalue = false;
                 }
+                 scope.$watch('labels', function() {
+                    
+                });
 
                 var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
                 for (var i = 0; i < labels.length; i++) {
                     var modalTemp = modalT.format(i);
-                    body += checkBoxTemplate.format(item_type, " " + labels[i], modalTemp, i);
+                    body += checkBoxTemplate.format(item_type, " " + "{{labels["+i+"]}}", modalTemp, i);
 
                     if (attr.isradio == 'false')
                         scope.itemvalue[i] = false;
