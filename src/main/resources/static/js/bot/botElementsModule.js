@@ -49,13 +49,14 @@ var BOT_ELEMENTS_MODULE = function() {
             for (var key in this.properties) {
                 var value = this.properties[key];
                 if (key == "content") {
-                    var escapedValue = "'" + childrensStr.escapeHtml() + "'";
+                    var escapedValue = childrensStr.escapeHtml();
                 } else
                 if (typeof value != 'undefined') {
                     var escapedValue;
                     if (typeof value === "string") escapedValue = value.escapeHtml();
                     else escapedValue = value;
                 }
+                escapedValue = "'"+escapedValue+"'";
                 if (ignoreAddedProperties || key == "content") {
                     propertiesStr += key + '="{0} " '.format(escapedValue);
                 } else {
@@ -99,7 +100,9 @@ var BOT_ELEMENTS_MODULE = function() {
         // var attrName = jElement.attr();
         var elementInstance = BOT_ELEMENTS_MODULE.ElementInstance(elmType);
         for (var propertie in elementInstance.properties) {
-            elementInstance.properties[propertie] = jElement.attr(propertie);
+            var attrValue = jElement.attr(propertie);
+            if (typeof (attrValue)!= 'undefined') 
+            elementInstance.properties[propertie] = jElement.attr(propertie).slice(1,-1);//set propertie and remove ' symbols on start and end
         }
         for (var i = 0; i < jqueryChildrens.length; i++) {
             var pare = {};

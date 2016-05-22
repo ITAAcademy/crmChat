@@ -250,7 +250,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     scope.ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                 }
 
-                var prefix = '<a class="{{classes}}" ng-click=\'{{ngclickFunction}}\' href="{{href}}" ng-model="itemvalue">';
+                var prefix = '<a class="{{classes}}" ng-click=\"ngclickFunction\" href="{{href}}" ng-model="itemvalue">';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;

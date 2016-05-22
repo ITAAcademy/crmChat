@@ -120,7 +120,7 @@ public class BotDialogItem {
 	public static BotDialogItem createFromCategories(ArrayList<BotCategory> categories){
 		BotDialogItem container = new BotDialogItem();
 		//container.setId((long) -1);
-		String itemTemplate = "<div botlink=' ' href='%s' ispost='true' classes='btn btn-default' linkindex='%d' text='%s'> </div><br>";
+		String itemTemplate = "<div botlink=\"''\" href=\"'%s'\" ispost=\"'true'\" classes=\"'btn btn-default'\" linkindex=\"'%d'\" text=\"'%s'\"> </div><br>";
 		String body  = "";
 		for (BotCategory category : categories){
 			String categoryName = category.getName();
