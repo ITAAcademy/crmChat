@@ -427,3 +427,56 @@ angular.module('springChat.directives').directive('botClose', function($compile,
         }
     }
 });
+
+
+
+angular.module('springChat.directives').directive('inputListBox', function($compile, $parse) {
+    return {
+        restrict: 'E',
+       scope: {
+           inputValue: '=ngModel',
+           listData: '=ngListData'
+        },  
+         link: function(scope, element, attributes) {
+          
+  scope.$watch('inputValue', function(){
+       console.log('scope.$watch inputValue ' + scope.inputValue)
+
+       if ( scope.keyPressProcessed == false)
+       {
+
+            var result = [];     
+            for (var i = 0; i < scope.listData.length; i++)
+                   {
+                    var listElement = scope.listData[i];
+
+                    var size = scope.inputValue.length;
+
+                    var substr = listElement.substring(0, size);
+
+                    console.log("scope.inputValue = " + scope.inputValue + " listElement = "+ listElement + " input_size = " + size + " substr = " + substr);
+
+                    if (size == 1)
+                    {
+                     if (listElement[0] == scope.inputValue) 
+                                                result.push(listElement);
+                                        }
+                                        else
+                                        if (listElement.substring(0, scope.inputValue.length) == scope.inputValue) 
+                                                result.push(listElement);
+                                       }                  
+                                       scope.listToShow = result ;//scope.listData;
+                           }
+        });  
+
+
+             scope.listToShow = [];       
+             scope.onSelectFromList = function(value) {  
+              scope.inputValue = value;
+            };
+
+         },
+       template: ' <input class="modal_input" type="text"  ng-keypress="keyPressProcessed = false;"  ng-keydown="keyDown($event)"     typeahead-wait-ms = "1"          typeahead-on-select = " onSelectFromList($model)"     uib-typeahead="value for value in listToShow"     ></input>'
+     
+    }
+})
