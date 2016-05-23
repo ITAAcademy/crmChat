@@ -10,7 +10,8 @@ var BOT_ELEMENTS_MODULE = function() {
         "botlink": { "text": "empty_text", "ispost": false, "linkindex": 0, "href": "", "classes": "" },
         "botinput": { "text": "empty_text", "linkindex": 0 },
         "botsubmit": { "text": "" },
-        "botcheckgroup": { "labels": [], "values": [], "legend": "", "isradio": false },
+        "botradiogroup": { "labels": [], "values": [], "legend": "" },
+        "botcheckgroup": { "labels": [], "values": [], "legend": "" },
         "botClose": {},
         "inputListBox": {}
     };

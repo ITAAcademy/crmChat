@@ -125,7 +125,10 @@ public class BotDialogItem {
 		String body  = "";
 		for (BotCategory category : categories){
 			String categoryName = category.getName();
-			Long mainContainerId = category.getMainElement().getIdObject().getId();
+			BotDialogItem bodyDialogItem = category.getMainElement();
+			LangId langId = bodyDialogItem.getIdObject();
+			
+			Long mainContainerId = langId.getId();
 			body += String.format(itemTemplate,category.getId(),mainContainerId,categoryName );
 		}
 		log.info("body:"+body);
