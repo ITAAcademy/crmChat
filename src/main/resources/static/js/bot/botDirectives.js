@@ -216,16 +216,18 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
         text: '=',
         ispost: '=',
         linkindex: '=',
-        href: '=',
+        href: '<',
         classes: '=',
-        ngclickFunction: '='
+        ngclickFunction: '<'
         },
         link: {
             post: function(scope, element, attr, ctrl) {
+               // scope.href = "";
                 scope.mainScope = scope.$parent.mainScope;
                 var body ="{{text}}";
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
+
                   scope.$watch('ispost', function() {
                     if (scope.ispost) {
                     scope.href = "";
@@ -246,11 +248,18 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                     var payLoad = JSON.stringify(dataObject);
 
-                    var link = 'bot_operations/{0}/get_bot_container/{{linkindex}}'.format(scope.$parent.currentRoom.roomId);
-                    scope.ngclickFunction = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
+                    var link = 'bot_operations/{0}/get_bot_container/{{1}}'.format(scope.$parent.currentRoom.roomId,attr.linkindex);
+                    var functionStr = 'console.log("test");getNewItem("{0}","{1}");'.format(payLoad.escapeQuotes(),link);
+                    //scope.ngclickFunction = Function(functionStr);
+                    scope.ngclickFunction = function(){
+                        console.log('test');
+                    }
+                    //   scope.$watch('labels', function() {
+                   // linkindex
+               // });
                 }
 
-                var prefix = '<a class="{{classes}}" ng-click=\"ngclickFunction\" href="{{href}}" ng-model="itemvalue">';
+                var prefix = '<a class="{{classes}}" ng-click="ngclickFunction()"  ng-href="{{href}}" href ng-model="itemvalue">';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
