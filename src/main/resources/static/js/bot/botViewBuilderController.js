@@ -55,8 +55,8 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
             $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
-            for (var i = 0; i < $scope.containerTemplate.childrens.length; i++)
-                $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, true);
+            for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
+                $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
         });
     }
 
@@ -64,7 +64,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null) {
             for (var intervalIndex = 0; intervalIndex < item.parent.childrens.length; intervalIndex++) {
-                if (item.parent.childrens[intervalIndex] === item) {
+                if (item.parent.childrens[intervalIndex] == item) {
                     item.parent.childrens.splice(intervalIndex, 1);
                     break;
                 }

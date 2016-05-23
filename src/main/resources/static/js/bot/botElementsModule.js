@@ -12,7 +12,7 @@ var BOT_ELEMENTS_MODULE = function() {
         "botsubmit": { "text": "" },
         "botcheckgroup": { "labels": [], "values": [], "legend": "", "isradio": false },
         "botClose": {},
-        "inputListBox" : {}
+        "inputListBox": {}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
@@ -57,7 +57,11 @@ var BOT_ELEMENTS_MODULE = function() {
                     if (typeof value === "string") escapedValue = value.escapeHtml();
                     else escapedValue = value;
                 }
-                escapedValue = "'"+escapedValue+"'";
+                if (ignoreAddedProperties)
+                    escapedValue = escapedValue;
+                else
+                    escapedValue = "'" + escapedValue + "'";
+
                 if (ignoreAddedProperties || key == "content") {
                     propertiesStr += key + '="{0} " '.format(escapedValue);
                 } else {
@@ -68,8 +72,8 @@ var BOT_ELEMENTS_MODULE = function() {
             var leftTooltip = "top-left";
             /*if((scope.elementsListForLink.length - 1) %2 == 0)
                 leftTooltip = "";*/
-            var addedPropertyFinal = this.addedProperty +  ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
-            var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip)  + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
+            var addedPropertyFinal = this.addedProperty + ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-dragstart = "$root.dragStart($root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';
+            var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this">';
             var addedFooterFinal = '</li>';
             if (ignoreAddedProperties) {
                 addedClassesFinal = addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";
@@ -91,7 +95,7 @@ var BOT_ELEMENTS_MODULE = function() {
 
     }
 
-    function jqueryElementToElementInstance(jElement) {
+    publicData.jqueryElementToElementInstance = function(jElement) {
         var elmType = jElement.prop('nodeName').toLowerCase();
         var jqueryChildrens = [];
         for (var i = 0; i < jElement.children().length; i++) {
@@ -102,20 +106,23 @@ var BOT_ELEMENTS_MODULE = function() {
         var elementInstance = BOT_ELEMENTS_MODULE.ElementInstance(elmType);
         for (var propertie in elementInstance.properties) {
             var attrValue = jElement.attr(propertie);
-            if (typeof (attrValue)!= 'undefined') 
-            elementInstance.properties[propertie] = jElement.attr(propertie).slice(1,-1);//set propertie and remove ' symbols on start and end
+            if (typeof(attrValue) != 'undefined')
+                elementInstance.properties[propertie] = jElement.attr(propertie).slice(1, -1); //set propertie and remove ' symbols on start and end
         }
         for (var i = 0; i < jqueryChildrens.length; i++) {
             var pare = {};
-          //  pare[jqueryChildrens[i].prop('nodeName').toLowerCase()] = jqueryElementToElementInstance(jqueryChildrens[i]);
-            elementInstance.childrens.push(jqueryElementToElementInstance(jqueryChildrens[i]));
+            //  pare[jqueryChildrens[i].prop('nodeName').toLowerCase()] = jqueryElementToElementInstance(jqueryChildrens[i]);
+            var child = BOT_ELEMENTS_MODULE.jqueryElementToElementInstance(jqueryChildrens[i]);
+            child.parent = elementInstance;
+            elementInstance.childrens.push(child);
         }
         return elementInstance;
     }
     publicData.convertTextToElementInstance = function(str) {
-            var jElement = $("<bot-container>" + str + "</bot-container>");
+            //var jElement = $('<bot-container content = "\'' + str + '\'"></bot-container>');
+            var jElement = $('<bot-container>' + str + '</bot-container>');
             //var appContainer = $('#app-container', jElement);        
-            var elementInstance = jqueryElementToElementInstance(jElement);
+            var elementInstance = BOT_ELEMENTS_MODULE.jqueryElementToElementInstance(jElement);
             return elementInstance;
 
         }
