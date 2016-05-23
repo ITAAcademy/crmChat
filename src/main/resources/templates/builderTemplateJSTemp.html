@@ -31,8 +31,8 @@
                             <div class="dropdown editor-dropdown">
                                 <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a >Save</a></li>
-                                    <li><a >Create</a></li>
+                                    <li ng-click = "saveBotDialogItem()"><a>Save</a></li>
+                                    <!--<li><a ng-click = "createBotDialogItem()">Create</a></li> -->
                                     <li ng-click = "getBotDialogItem(1)"><a >Load</a></li>
                                 </ul>
                             </div>
@@ -94,7 +94,7 @@
                         </div>
                         <div class="right-panel-description">
                             <div class="right-panel-description-title" th:text="${lgPack.lables.formBuilder.description}"> Descriprion: </div>
-                            <textarea ng-model="descriprionForRender[activeViewTab - 1]" class="right-panel-description-text"></textarea>
+                            <textarea ng-model="viewTabs[activeViewTab - 1].items[langForRender[activeViewTab - 1]].description" class="right-panel-description-text"></textarea>
                         </div>
                     </div>
                 </div>

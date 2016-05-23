@@ -51,13 +51,13 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
 
-        $scope.$evalAsync(function() {
+       // $scope.$evalAsync(function() {
             $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
             $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
             for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
                 $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
-        });
+        //});
     }
 
 
@@ -131,7 +131,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 "lang": null
             }
         };
-
         /*var requestUrl = serverPrefix + "/bot_operations/add_bot_dialog_item/{0}".format(category);
         $http({
             url: requestUrl,
@@ -139,6 +138,21 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             data: JSON.stringify(botDialogItem)
         })*/
     }
+
+    $scope.saveBotDialogItem = function() {
+        $scope.updateView();
+        var object = $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]];
+        var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
+       /* $http.get(requestUrl, JSON.stringify(object)).
+        success(function(data, status, headers, config) {}).
+        error(function(data, status, headers, config) {});*/
+
+          $http({
+            url: requestUrl,
+            method: "POST",
+            data: JSON.stringify(object)
+        })
+    };
 
 
     $scope.getBotDialogItem = function(id) {
@@ -149,7 +163,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         success(function(data, status, headers, config) {
             console.log("Load view: " + data);
             var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
-             //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
+            //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
             for (var key in tab.items) {
                 tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
             }
