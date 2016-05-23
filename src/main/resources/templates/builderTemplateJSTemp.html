@@ -22,7 +22,7 @@
                                             </div>
                                             <div class="btn btn-default" th:text="${lgPack.lables.formBuilder.addFormToDB}" ng-click="testElementModule()">Add botdialogitem</div>
                                             <div class="btn btn-default" ng-click="updateView()" th:text="${lgPack.lables.formBuilder.update}">Update</div>
-                                            <textarea ng-model="htmlCodeForRender[activeViewTab - 1]" class="code-edit-source">
+                                            <textarea ng-model="view.items[langForRender[activeViewTab - 1]].body" class="code-edit-source">
                                             </textarea>
                                         </div>
                                         <dir class="status" th:text="${lgPack.lables.formBuilder.status}">
