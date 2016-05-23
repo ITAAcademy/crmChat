@@ -361,12 +361,11 @@ attr.cbname - name of group, determining names of children
 attr.legend - title of checkgroup
 attr.isradio - determine if group is readiogroup
 */
-angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
+angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
             legend: '=',
-            isradio: '=',
             labels: '=',
             itemvalue: '='
         },
@@ -381,30 +380,20 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 var body = "";
                 var item_type = "checkbox";
                 var modalT = 'ng-model="{{itemvalue[{0}]}}"';
-                if (attr.isradio === 'true' || attr.isradio === true) {
-                    modalT = 'ng-model="{{itemvalue}}"';
-                    item_type = "radio";
-                    scope.itemvalue = false;
-                }
-                 scope.$watch('labels', function() {
-                    
-                });
+              
+                modalT = 'ng-model="{{itemvalue}}"';
+                item_type = "radio";
+                scope.itemvalue = false;
 
                 var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
                 for (var i = 0; i < labels.length; i++) {
                     var modalTemp = modalT.format(i);
                     body += checkBoxTemplate.format(item_type, " " + "{{labels["+i+"]}}", modalTemp, i);
-
-                    if (attr.isradio == 'false')
-                        scope.itemvalue[i] = false;
                 }
-
 
                 var suffix = '</fieldset>{{itemvalue}}';
                 var elementValue = prefix + body + suffix;
-
-
 
                 element.html(elementValue);
 
@@ -494,3 +483,43 @@ angular.module('springChat.directives').directive('inputListBox', function($comp
      
     }
 })
+
+angular.module('springChat.directives').directive('botcheckbox', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            legend: '=',
+            labels: '=',
+            itemvalue: '='
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                //scope.itemvalue = [];
+                var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
+
+                //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+                var index = 0;
+                var prefix = "<fieldset><legend>{{legend}}</legend>";
+                var body = "";
+                var item_type = "checkbox";
+                var modalT = 'ng-model="{{itemvalue[{0}]}}"';  
+                var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+
+                for (var i = 0; i < labels.length; i++) {
+                    var modalTemp = modalT.format(i);
+                    body += checkBoxTemplate.format(item_type, " " + "{{labels["+i+"]}}", modalTemp, i);                  
+                    scope.itemvalue[i] = false;
+                }
+
+
+                var suffix = '</fieldset>{{itemvalue}}';
+                var elementValue = prefix + body + suffix;
+                                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
