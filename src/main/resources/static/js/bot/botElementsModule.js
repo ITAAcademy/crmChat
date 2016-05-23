@@ -11,7 +11,8 @@ var BOT_ELEMENTS_MODULE = function() {
         "botinput": { "text": "empty_text", "linkindex": 0 },
         "botsubmit": { "text": "" },
         "botcheckgroup": { "labels": [], "values": [], "legend": "", "isradio": false },
-        "bot-close": {}
+        "botClose": {},
+        "inputListBox" : {}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
