@@ -44,6 +44,7 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     {
     	//generation here data
     	///take message from parent scope
+        console.log('getNewItem func called');
     	$scope.sendPostToUrl(href,answer);
     }
     $scope.sendPostToUrl = function(href, linkData) {
