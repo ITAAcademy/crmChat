@@ -62,7 +62,7 @@ var BOT_ELEMENTS_MODULE = function() {
                 escapedValue = "'" + escapedValue + "'";
 
                 if (ignoreAddedProperties || key == "content") {
-                    propertiesStr += key + '="{0} " '.format(escapedValue);
+                    propertiesStr += key + '="{0}" '.format(escapedValue);
                 } else {
                     propertiesStr += key + '= "$root.this.properties.' + key + '" ';
                 }
