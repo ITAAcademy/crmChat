@@ -31,6 +31,7 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.web.BotController;
+import com.intita.wschat.web.ChatController;
 
 @Service
 public class UserMessageService {
@@ -66,23 +67,23 @@ public class UserMessageService {
 	@Transactional
 	public ArrayList<UserMessage> getChatUserMessagesById(Long id) {
 
-		return userMessageRepository.findByAuthor(chatUserService.getChatUser(id));
+		return wrapBotMessages(userMessageRepository.findByAuthor(chatUserService.getChatUser(id)));
 	}
 	@Transactional
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
-		return userMessageRepository.findByRoom(room);
+		return wrapBotMessages(userMessageRepository.findByRoom(room));
 	}
 	@Transactional
 	public UserMessage getLastUserMessageByRoom(Room room){
 		return userMessageRepository.findFirstByRoomOrderByDateDesc(room);
 	}
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
-		return userMessageRepository.findFirst20ByRoomOrderByIdDesc(room);
+		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
 
-		return userMessageRepository.findByRoom(new Room(roomId));
+		return wrapBotMessages(userMessageRepository.findByRoom(new Room(roomId)));
 	}
 
 	@Transactional
@@ -127,32 +128,33 @@ public class UserMessageService {
 
 	@SuppressWarnings("deprecation")
 	public boolean isValidJSON(final String json) {
-		   boolean valid = false;
-		   try {
-		      final JsonParser parser = new ObjectMapper().getJsonFactory()
-		            .createJsonParser(json);
-		      while (parser.nextToken() != null) {
-		      }
-		      valid = true;
-		   } catch (JsonParseException jpe) {
-		     // jpe.printStackTrace();
-		   } catch (IOException ioe) {
-		     // ioe.printStackTrace();
-		   }
-
-		   return valid;
+		boolean valid = false;
+		try {
+			final JsonParser parser = new ObjectMapper().getJsonFactory()
+					.createJsonParser(json);
+			while (parser.nextToken() != null) {
+			}
+			valid = true;
+		} catch (JsonParseException jpe) {
+			// jpe.printStackTrace();
+		} catch (IOException ioe) {
+			// ioe.printStackTrace();
 		}
+
+		return valid;
+	}
 	public ArrayList<UserMessage> wrapBotMessages(ArrayList<UserMessage> input_messages) {
 		ArrayList<UserMessage> result = new ArrayList<>();
+		String lang = ChatController.getCurrentLang();
 		for (UserMessage message : input_messages) {
 			if (message.getAuthor().getId().equals(BotController.BotParam.BOT_ID) && isValidJSON(message.getBody()))
 			{
 				String originalBody = message.getBody();
-				
+
 				{
 					ObjectMapper mapper = new ObjectMapper();
 					JsonNode json = null;
-					
+
 					try {
 						json = mapper.readTree(originalBody);
 					} catch (JsonProcessingException e1) {
@@ -171,14 +173,14 @@ public class UserMessageService {
 								if (isNumber(body_json))
 								{
 									Long id = new Integer(body_json).longValue();
-									BotDialogItem botDialogItem = botItemContainerService.getByObjectId(new LangId(id));
+									BotDialogItem botDialogItem = botItemContainerService.getByObjectId(new LangId(id, lang));
 									if (botDialogItem != null) {
 										String body = botDialogItem.getBody();
 										if (!body.isEmpty()) {
-											 ObjectNode jsonNode = (ObjectNode)json;
-									           jsonNode.put("body", body); 
-									           String res_json_str = jsonNode.toString();
-									           message.setBody(res_json_str);
+											ObjectNode jsonNode = (ObjectNode)json;
+											jsonNode.put("body", body); 
+											String res_json_str = jsonNode.toString();
+											message.setBody(res_json_str);
 										}
 									}
 								}
@@ -226,7 +228,7 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
 		return  wrapBotMessages(messages);
 	}
-	
+
 	@Transactional
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);

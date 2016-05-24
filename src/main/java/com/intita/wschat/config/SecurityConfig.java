@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.filter.RequestContextFilter;
 /**
  * 
  * @author Nicolas Haiduchok
@@ -30,6 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private CustomAuthenticationProvider authenticationProvider;
 	@Autowired
 	private CustomFilter authenticationTokenFilter;
+	
+	/*@Autowired
+	private RequestContextFilter requestContextFilter;*/
 
 	/*  @Autowired
 	DataSource dataSource;
@@ -49,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.csrf().disable()
 		//.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
+		//.addFilterBefore( requestContextFilter, BasicAuthenticationFilter.class)
 		.formLogin()
 		.loginPage("/")
 		.passwordParameter("password")

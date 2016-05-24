@@ -149,7 +149,7 @@ public class BotController {
 	
 	@RequestMapping(value = "bot_operations/add_bot_dialog_item/{categoryId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean addBotDialogItem(@PathVariable Long categoryId,  HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
+	public boolean addBotDialogItem(@PathVariable Long categoryId,  HttpServletRequest request, HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
 		//ObjectMapper objectMapper = new ObjectMapper();
 		//BotDialogItem dialogItem = botItemContainerService.getById(dialogItemId);
 		BotCategory category = botCategoryService.getById(categoryId);

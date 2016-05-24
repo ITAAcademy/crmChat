@@ -171,8 +171,8 @@ angular.module('springChat.directives').directive('botList', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-             content: '&',
-             callback: '&'
+            content: '&',
+            callback: '&'
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -213,30 +213,28 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-        text: '=',
-        ispost: '=',
-        linkindex: '=',
-        href: '<',
-        classes: '=',
-        ngclickFunction: '<'
+            text: '=',
+            ispost: '=',
+            linkindex: '=',
+            href: '<',
+            classes: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-               // scope.href = "";
+                // scope.href = "";
                 scope.mainScope = scope.$parent.mainScope;
-                var body ="{{text}}";
+                var body = "{{text}}";
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
 
-                  scope.$watch('ispost', function() {
+                scope.$watch('ispost', function() {
                     if (scope.ispost) {
-                    scope.href = "";
+                        scope.href = "";
                     }
                 });
                 scope.itemvalue = body;
                 if (usePost &&
-                    (typeof attr.linkindex !== 'undefined') &&
-                    attr.linkindex.length > 0) {
+                    (typeof attr.linkindex !== 'undefined') && attr.linkindex.length > 0) {
                     var dataObject = { "body": null, "category": null, "nextNode": null, "answer": null };
                     dataObject.nextNode = attr.linkindex;
 
@@ -248,18 +246,19 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
                     var payLoad = JSON.stringify(dataObject);
 
-                    var link = 'bot_operations/{0}/get_bot_container/{{1}}'.format(scope.$parent.currentRoom.roomId,attr.linkindex);
-                    var functionStr = 'console.log("test");getNewItem("{0}","{1}");'.format(payLoad.escapeQuotes(),link);
-                    //scope.ngclickFunction = Function(functionStr);
-                    scope.ngclickFunction = function(){
-                        console.log('test');
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
+                    var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
+                    scope.onClick = function() {
+                        debugger;
+                        scope.$evalAsync(functionStr)(scope);
                     }
-                    //   scope.$watch('labels', function() {
-                   // linkindex
-               // });
+
+                    // });
                 }
 
-                var prefix = '<a class="{{classes}}" ng-click="ngclickFunction()"  ng-href="{{href}}" href ng-model="itemvalue">';
+
+
+                var prefix = '<a class="{{classes}}" ng-click="onClick()" ng-model="itemvalue">';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -280,14 +279,15 @@ angular.module('springChat.directives').directive('botinput', function($compile,
     return {
         controller: 'ChatViewItemController',
         scope: {
-        text: '=',
-        itemindex: '='
+            text: '=',
+            linkindex: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
+                debugger;
                 var body = "{{text}}";
                 scope.itemvalue = "";
-                var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.itemindex);
+                var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.linkindex);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -306,7 +306,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
 angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
         scope: {
-            text : '='
+            text: '='
         },
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
@@ -389,7 +389,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 var body = "";
                 var item_type = "checkbox";
                 var modalT = 'ng-model="{{itemvalue[{0}]}}"';
-              
+
                 modalT = 'ng-model="{{itemvalue}}"';
                 item_type = "radio";
                 scope.itemvalue = false;
@@ -398,7 +398,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 
                 for (var i = 0; i < labels.length; i++) {
                     var modalTemp = modalT.format(i);
-                    body += checkBoxTemplate.format(item_type, " " + "{{labels["+i+"]}}", modalTemp, i);
+                    body += checkBoxTemplate.format(item_type, " " + "{{labels[" + i + "]}}", modalTemp, i);
                 }
 
                 var suffix = '</fieldset>{{itemvalue}}';
@@ -445,51 +445,47 @@ angular.module('springChat.directives').directive('botClose', function($compile,
 angular.module('springChat.directives').directive('inputListBox', function($compile, $parse) {
     return {
         restrict: 'E',
-       scope: {
-           inputValue: '=ngModel',
-           listData: '=ngListData'
-        },  
-         link: function(scope, element, attributes) {
-          
-  scope.$watch('inputValue', function(){
-       console.log('scope.$watch inputValue ' + scope.inputValue)
+        scope: {
+            inputValue: '=ngModel',
+            listData: '=ngListData'
+        },
+        link: function(scope, element, attributes) {
 
-       if ( scope.keyPressProcessed == false)
-       {
+            scope.$watch('inputValue', function() {
+                console.log('scope.$watch inputValue ' + scope.inputValue)
 
-            var result = [];     
-            for (var i = 0; i < scope.listData.length; i++)
-                   {
-                    var listElement = scope.listData[i];
+                if (scope.keyPressProcessed == false) {
 
-                    var size = scope.inputValue.length;
+                    var result = [];
+                    for (var i = 0; i < scope.listData.length; i++) {
+                        var listElement = scope.listData[i];
 
-                    var substr = listElement.substring(0, size);
+                        var size = scope.inputValue.length;
 
-                    console.log("scope.inputValue = " + scope.inputValue + " listElement = "+ listElement + " input_size = " + size + " substr = " + substr);
+                        var substr = listElement.substring(0, size);
 
-                    if (size == 1)
-                    {
-                     if (listElement[0] == scope.inputValue) 
-                                                result.push(listElement);
-                                        }
-                                        else
-                                        if (listElement.substring(0, scope.inputValue.length) == scope.inputValue) 
-                                                result.push(listElement);
-                                       }                  
-                                       scope.listToShow = result ;//scope.listData;
-                           }
-        });  
+                        console.log("scope.inputValue = " + scope.inputValue + " listElement = " + listElement + " input_size = " + size + " substr = " + substr);
+
+                        if (size == 1) {
+                            if (listElement[0] == scope.inputValue)
+                                result.push(listElement);
+                        } else
+                        if (listElement.substring(0, scope.inputValue.length) == scope.inputValue)
+                            result.push(listElement);
+                    }
+                    scope.listToShow = result; //scope.listData;
+                }
+            });
 
 
-             scope.listToShow = [];       
-             scope.onSelectFromList = function(value) {  
-              scope.inputValue = value;
+            scope.listToShow = [];
+            scope.onSelectFromList = function(value) {
+                scope.inputValue = value;
             };
 
-         },
-       template: ' <input class="modal_input" type="text"  ng-keypress="keyPressProcessed = false;"  ng-keydown="keyDown($event)"     typeahead-wait-ms = "1"          typeahead-on-select = " onSelectFromList($model)"     uib-typeahead="value for value in listToShow"     ></input>'
-     
+        },
+        template: ' <input class="modal_input" type="text"  ng-keypress="keyPressProcessed = false;"  ng-keydown="keyDown($event)"     typeahead-wait-ms = "1"          typeahead-on-select = " onSelectFromList($model)"     uib-typeahead="value for value in listToShow"     ></input>'
+
     }
 })
 
@@ -511,19 +507,19 @@ angular.module('springChat.directives').directive('botcheckbox', function($compi
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                var modalT = 'ng-model="{{itemvalue[{0}]}}"';  
+                var modalT = 'ng-model="{{itemvalue[{0}]}}"';
                 var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
 
                 for (var i = 0; i < labels.length; i++) {
                     var modalTemp = modalT.format(i);
-                    body += checkBoxTemplate.format(item_type, " " + "{{labels["+i+"]}}", modalTemp, i);                  
+                    body += checkBoxTemplate.format(item_type, " " + "{{labels[" + i + "]}}", modalTemp, i);
                     scope.itemvalue[i] = false;
                 }
 
 
                 var suffix = '</fieldset>{{itemvalue}}';
                 var elementValue = prefix + body + suffix;
-                                element.html(elementValue);
+                element.html(elementValue);
 
                 scope.content = elementValue;
                 $compile(element.contents())(scope);

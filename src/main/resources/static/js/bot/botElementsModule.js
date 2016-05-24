@@ -58,10 +58,8 @@ var BOT_ELEMENTS_MODULE = function() {
                     if (typeof value === "string") escapedValue = value.escapeHtml();
                     else escapedValue = value;
                 }
-                if (ignoreAddedProperties)
-                    escapedValue = escapedValue;
-                else
-                    escapedValue = "'" + escapedValue + "'";
+
+                escapedValue = "'" + escapedValue + "'";
 
                 if (ignoreAddedProperties || key == "content") {
                     propertiesStr += key + '="{0} " '.format(escapedValue);

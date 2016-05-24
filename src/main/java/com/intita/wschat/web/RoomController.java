@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,6 +90,8 @@ public class RoomController {
 	final String DIALOG_NAME_PREFIX = "DIALOG_";
 	private final static Logger log = LoggerFactory.getLogger(RoomController.class);
 
+	@Autowired(required=true) private HttpServletRequest request;
+	
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -306,9 +310,11 @@ public class RoomController {
 
 	@SubscribeMapping("/{room}/chat.participants")
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room, Principal principal) {//ONLY FOR TEST NEED FIX
-		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService); 
+		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);
+		String lang = ChatController.getCurrentLang();
 		if(status == null)
 		{
+			
 			ChatUser o_object = chatUserServise.getChatUser(principal);
 			if(o_object != null)
 			{

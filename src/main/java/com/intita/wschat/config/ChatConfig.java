@@ -6,12 +6,14 @@ import java.util.Set;
 
 import org.springframework.boot.actuate.endpoint.MessageMappingEndpoint;
 import org.springframework.boot.actuate.endpoint.WebSocketEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.socket.config.WebSocketMessageBrokerStats;
 
 import com.intita.wschat.domain.SessionProfanity;
@@ -87,6 +89,12 @@ public class ChatConfig {
 	public MessageMappingEndpoint messageMappingEndpoint() {
 		return new MessageMappingEndpoint();
 	}
+	
+	@Bean
+    @ConditionalOnMissingBean(RequestContextListener.class)
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
+    }
 
 
 }

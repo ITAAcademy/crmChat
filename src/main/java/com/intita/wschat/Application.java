@@ -2,6 +2,9 @@ package com.intita.wschat;
 
 import java.util.concurrent.Executor;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.SpringApplication;
@@ -10,10 +13,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.context.request.RequestContextListener;
 
 import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 
@@ -40,7 +43,12 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
 
 	}
 
-    @Override
+    @Override public void onStartup( ServletContext servletContext ) throws ServletException {
+        super.onStartup( servletContext );
+        servletContext.addListener( new RequestContextListener() ); 
+    }
+    
+	@Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setMaxPoolSize(10);
