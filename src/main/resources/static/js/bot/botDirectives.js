@@ -184,8 +184,9 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     var result = head;
 
                     for (var i = 0; i < elements.length; i++) {
-                        result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                        result += "<div class=\"list-group-item toggle animation\">" + elements[i].innerHTML + "</div>";
                     }
+                    result +=footer;
                     element.html(result);
 
                     if (typeof attr.callback != 'undefined') {
@@ -235,7 +236,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     }
                 });
                 scope.$watch('href', function() {
-                    if (scope.href.length>0)
+                    if (typeof scope.href!='undefined' && scope.href.length>0)
                     scope.ispost = false;
                 });
                 scope.itemvalue = body;
@@ -534,3 +535,29 @@ angular.module('springChat.directives').directive('botcheckbox', function($compi
         }
     }
 });
+
+angular.module('springChat.directives').directive('bottext', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            text : "=",
+             textcolor : "=",
+             textsize: "=",
+             textalign : "="
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                //scope.itemvalue = [];
+                var textItemTemplate = '<p style="color:{0};font-size:{1}px;text-align:{2};">{3}</p>';
+                var elementBody = "{{text}}";
+                var elementValue= textItemTemplate.format("{{textcolor}}","{{textsize}}","{{textalign}}","{{text}}");
+                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+

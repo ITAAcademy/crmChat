@@ -2,7 +2,7 @@ var BOT_ELEMENTS_MODULE = function() {
     var publicData = {};
 
     //Help to prevent mistakes
-    var BotElementTypes = ["botinput", "botcheckgroup", "text", "bot-list", "button", "bot-container", "botlink", "botsubmit", "bot-close"];
+    var BotElementTypes = ["botinput", "botcheckgroup", "bottext", "bot-list", "button", "bot-container", "botlink", "botsubmit", "bot-close"];
     var BotGlobalProperties = ["name", "value"];
     var BotElementProperties = {
         "bot-container": { "time": "00:00", "content": "", "callback": "" },
@@ -13,7 +13,8 @@ var BOT_ELEMENTS_MODULE = function() {
         "botradiogroup": { "labels": [], "values": [], "legend": "" },
         "botcheckgroup": { "labels": [], "values": [], "legend": "" },
         "botClose": {},
-        "inputListBox": {}
+        "inputListBox": {},
+        "bottext": {"text":"some_text","textcolor":"black","textsize":18,"textalign":"left"}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
