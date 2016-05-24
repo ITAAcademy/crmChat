@@ -129,7 +129,7 @@ public class BotDialogItem {
 			LangId langId = bodyDialogItem.getIdObject();
 			
 			Long mainContainerId = langId.getId();
-			body += String.format(itemTemplate,category.getId(),mainContainerId,categoryName );
+			body += String.format(itemTemplate,mainContainerId,categoryName );
 		}
 		log.info("body:"+body);
 		container.setBody(body);
