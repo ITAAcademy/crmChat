@@ -7,7 +7,7 @@ var BOT_ELEMENTS_MODULE = function() {
     var BotElementProperties = {
         "bot-container": { "time": "00:00", "content": "", "callback": "" },
         "bot-list": { "callback": "" },
-        "botlink": { "text": "empty_text", "ispost": false, "linkindex": 0, "href": "", "classes": "" },
+        "botlink": { "text": "empty_text", "ispost": true, "linkindex": 0, "href": "", "classes": "" },
         "botinput": { "text": "empty_text", "linkindex": 0 },
         "botsubmit": { "text": "" },
         "botradiogroup": { "labels": [], "values": [], "legend": "" },

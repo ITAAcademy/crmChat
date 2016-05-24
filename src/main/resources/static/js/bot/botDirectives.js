@@ -189,7 +189,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     element.html(result);
 
                     if (typeof attr.callback != 'undefined') {
-                        var callBackFunction = new Function("return " + attr.callback)();
+                        var callBackFunction = Function("return " + $parse(attr.callback))();
                         if (typeof callBackFunction != 'undefined')
                             callBackFunction(element);
                     }
@@ -226,11 +226,17 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 var body = "{{text}}";
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
-
+                if (usePost) {
+                        scope.href = "";
+                    }
                 scope.$watch('ispost', function() {
                     if (scope.ispost) {
                         scope.href = "";
                     }
+                });
+                scope.$watch('href', function() {
+                    if (scope.href.length>0)
+                    scope.ispost = false;
                 });
                 scope.itemvalue = body;
                 if (usePost &&
@@ -258,7 +264,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
 
 
-                var prefix = '<a class="{{classes}}" ng-click="onClick()" ng-model="itemvalue">';
+                var prefix = '<a class="{{classes}}" ng-click="onClick()" ng-model="itemvalue" ng-href="{{href}}"> ';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
