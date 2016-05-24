@@ -77,8 +77,13 @@ public class UserMessageService {
 	public UserMessage getLastUserMessageByRoom(Room room){
 		return userMessageRepository.findFirstByRoomOrderByDateDesc(room);
 	}
+	@Transactional
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
+	}
+	@Transactional
+	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang) {
+		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
@@ -144,8 +149,12 @@ public class UserMessageService {
 		return valid;
 	}
 	public ArrayList<UserMessage> wrapBotMessages(ArrayList<UserMessage> input_messages) {
-		ArrayList<UserMessage> result = new ArrayList<>();
 		String lang = ChatController.getCurrentLang();
+		return wrapBotMessages(input_messages, lang);
+	}
+
+	public ArrayList<UserMessage> wrapBotMessages(ArrayList<UserMessage> input_messages, String lang) {
+		ArrayList<UserMessage> result = new ArrayList<>();
 		for (UserMessage message : input_messages) {
 			if (message.getAuthor().getId().equals(BotController.BotParam.BOT_ID) && isValidJSON(message.getBody()))
 			{

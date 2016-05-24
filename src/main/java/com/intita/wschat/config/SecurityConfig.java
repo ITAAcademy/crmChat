@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 		.csrf().disable()
-		//.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
+		.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
 		//.addFilterBefore( requestContextFilter, BasicAuthenticationFilter.class)
 		.formLogin()
 		.loginPage("/")

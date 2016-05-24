@@ -29,6 +29,7 @@ import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
@@ -285,10 +286,10 @@ public class RoomController {
 		return  userList;
 	}
 
-	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o) {
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o, String lang) {
 
 		Queue<UserMessage> buff = chatController.getMessagesBuffer().get(room_o.getId());
-		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o);
+		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang);
 		if(buff != null)
 			userMessages.addAll(buff);
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
@@ -308,10 +309,9 @@ public class RoomController {
 		return map;
 	}
 
-	@SubscribeMapping("/{room}/chat.participants")
-	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room, Principal principal) {//ONLY FOR TEST NEED FIX
+	@SubscribeMapping("/{room}/chat.participants/{lang}")
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room, @DestinationVariable("lang") String lang, SimpMessageHeaderAccessor headerAccessor, Principal principal) {//ONLY FOR TEST NEED FIX
 		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);
-		String lang = ChatController.getCurrentLang();
 		if(status == null)
 		{
 			
@@ -330,7 +330,7 @@ public class RoomController {
 		}
 
 		Room room_o = roomService.getRoom(room);
-		return retrieveParticipantsSubscribeAndMessagesObj(room_o);
+		return retrieveParticipantsSubscribeAndMessagesObj(room_o, lang);
 	}
 
 	@MessageMapping("/{room}/chat.participants")
@@ -348,7 +348,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
-		String participantsAndMessages = mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));
+		String participantsAndMessages = mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), ChatController.getCurrentLang()));
 		log.info("P&M:"+participantsAndMessages);
 		return participantsAndMessages;
 	}

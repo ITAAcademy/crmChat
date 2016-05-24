@@ -951,7 +951,7 @@ $scope.scaleCenterIconCircle = function() {
                     calcPositionPush(JSON.parse(message.body)); //POP
                 }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants".format(room), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants/{1}".format(room, globalConfig.lang), function(message) {
                 if (message.body != "{}") {
                     var o = JSON.parse(message.body);
                     loadSubscribeAndMessage(o);
@@ -961,7 +961,7 @@ $scope.scaleCenterIconCircle = function() {
                 }
             }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room, globalConfig.lang), function(message) {
                 var o = JSON.parse(message.body);
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			");
                 console.log(o);
