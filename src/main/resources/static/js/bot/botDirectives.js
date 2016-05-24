@@ -377,38 +377,44 @@ attr.cbname - name of group, determining names of children
 attr.legend - title of checkgroup
 attr.isradio - determine if group is readiogroup
 */
-angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
+angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
             legend: '=',
             labels: '=',
-            itemvalue: '='
+            values: '=',
+            groupname: '=' 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" ng-model="{3}"/>{4}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                var modalT = 'ng-model="{{itemvalue[{0}]}}"';
+                scope.values = [];
 
-                modalT = 'ng-model="{{itemvalue}}"';
-                item_type = "radio";
-                scope.itemvalue = false;
-
-                var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
-
+                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               /* scope.$watch('labels', function() {
+                if (scope.labels.length > scope.values.length){
+                    scope.values.push('false');
+                }
+                else
+               scope.values.pop();
+                }, true);*/ // watching properties
                 for (var i = 0; i < labels.length; i++) {
-                    var modalTemp = modalT.format(i);
-                    body += checkBoxTemplate.format(item_type, " " + "{{labels[" + i + "]}}", modalTemp, i);
+                    var name = "{{groupname}}_item";
+                    var value = "{{values[" + i + "]}}";
+                    var label = "{{labels[{0}].text}}".format(i);
+                    var modelValue = "values[{0}]".format(i);
+                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
                 }
 
-                var suffix = '</fieldset>{{itemvalue}}';
+                var suffix = '</fieldset>';
                 var elementValue = prefix + body + suffix;
 
                 element.html(elementValue);
