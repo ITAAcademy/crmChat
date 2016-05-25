@@ -11,13 +11,13 @@
                                     <i class="glyphicon glyphicon-bell">№{{$index}}</i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                 <div class="tab-content editor-panel-right-scroll ">
-                                    <dir class="tab-content" content="view.content[langForRender[activeViewTab - 1]]">
-                                    </dir>
+                                    <div class="tab-content editor-panel-right-scroll ">
+                                        <dir class="tab-content" content="view.content[langForRender[activeViewTab - 1]]">
+                                        </dir>
                                     </div>
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
-                                            <div class="code-edit-title" th:text="${lgPack.lables.formBuilder.codePromt}" >
+                                            <div class="code-edit-title" th:text="${lgPack.lables.formBuilder.codePromt}">
                                                 Here you see source code:
                                             </div>
                                             <div class="btn btn-default" th:text="${lgPack.lables.formBuilder.addFormToDB}" ng-click="testElementModule()">Add botdialogitem</div>
@@ -29,11 +29,12 @@
                                 </div>
                             </uib-tab>
                             <div class="dropdown editor-dropdown">
-                                <a class="editor-dropdown-a" href="" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li ng-click = "saveBotDialogItem()"><a>Save</a></li>
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Menu
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li ng-click="saveBotDialogItem()"><a>Save</a></li>
                                     <!--<li><a ng-click = "createBotDialogItem()">Create</a></li> -->
-                                    <li ng-click = "getBotDialogItem(1)"><a >Load</a></li>
+                                    <li ng-click="getBotDialogItem(1)"><a>Load</a></li>
                                 </ul>
                             </div>
                         </uib-tabset>
@@ -46,7 +47,7 @@
                                 <i class="glyphicon glyphicon-bell" th:text="${lgPack.lables.formBuilder.tools}">Tools</i>
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
-                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="true">
+                                <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="false" dnd-drop="$root.deleteCallback(event, index, item, external, type, $root.this)">
                                     <div class="editor-tools-propertys animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}">
                                         <div class="atribute">{{tool.type}}</div>
                                         <span class="separator"></span>
@@ -85,7 +86,7 @@
                         <div class=" right-panel-lang">
                             <div class="right-panel-lang-text" th:text="${lgPack.lables.formBuilder.lang}">Lang: </div>
                             <div class="dropdown right-panel-lang-dropdown">
-                                <select class="form-control lang-dropdown" ng-change = "updateView()" ng-model="langForRender[activeViewTab - 1]">
+                                <select class="form-control lang-dropdown" ng-change="updateView()" ng-model="langForRender[activeViewTab - 1]">
                                     <option label="Ukranian" value="ua" selected="selected">Ukranian</option>
                                     <option label="English" value="en" selected="selected">English</option>
                                     <option label="Russian" value="ru" selected="selected">Russian</option>
@@ -102,7 +103,5 @@
         </div>
     </div>
 </div>
-
-    <span id="tooltip-mouse">
+<span id="tooltip-mouse">
     </span>
-

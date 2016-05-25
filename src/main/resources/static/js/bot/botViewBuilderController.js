@@ -51,12 +51,12 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
 
-       // $scope.$evalAsync(function() {
-            $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
+        // $scope.$evalAsync(function() {
+        $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
-            $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
-            for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
-                $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
+        $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
+        for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
+            $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
         //});
     }
 
@@ -81,6 +81,23 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         //return item;
     };
 
+    $scope.deleteCallback = function(event, index, item, external, type, parent) {
+        if (item.parent != null) {
+            for (var intervalIndex = 0; intervalIndex < item.parent.childrens.length; intervalIndex++) {
+                if (item.parent.childrens[intervalIndex] == item) {
+                    item.parent.childrens.splice(intervalIndex, 1);
+                    break;
+                }
+            }
+            //item.parent.childrens.splice(index, 1);
+        }
+        $scope.$apply(function() {
+            $scope.updateView();
+        });
+
+        //return item;
+    };
+
 
     $scope.$watch('dropCallback', function() {
         $scope.$root.dropCallback = $scope.dropCallback;
@@ -89,6 +106,12 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.$watch('dragoverCallback', function() {
         $scope.$root.dragoverCallback = $scope.dragoverCallback;
     });
+
+    $scope.$watch('deleteCallback', function() {
+        $scope.$root.deleteCallback = $scope.deleteCallback;
+    });
+
+
 
     $scope.$root.dragoverCallback = "";
     $scope.dragoverCallback = function(event, index, external, type, parent) {
@@ -108,6 +131,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         selected: null,
         lists: { "A": [], "B": [] }
     };
+
     $scope.$root.models = {
         selected: null,
         lists: { "A": [], "B": [] }
@@ -143,11 +167,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.updateView();
         var object = $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]];
         var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
-       /* $http.get(requestUrl, JSON.stringify(object)).
-        success(function(data, status, headers, config) {}).
-        error(function(data, status, headers, config) {});*/
+        /* $http.get(requestUrl, JSON.stringify(object)).
+         success(function(data, status, headers, config) {}).
+         error(function(data, status, headers, config) {});*/
 
-          $http({
+        $http({
             url: requestUrl,
             method: "POST",
             data: JSON.stringify(object)

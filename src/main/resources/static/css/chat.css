@@ -1086,12 +1086,11 @@ tags-input input {
 ul[dnd-list],
 ul[dnd-list] > li {
     position: relative;
-    
+}
+ul {
+    list-style-type: none;
 }
 
-ul{
-  list-style-type: none;
-}
 /***************************** Dropzone Styling *****************************/
 
 /**
@@ -1101,7 +1100,7 @@ ul{
 ul[dnd-list] {
     min-height: 12px;
     z-index: 999;
-   /* background-color: blue;*/
+    /* background-color: blue;*/
     /*margin: 0px;
     padding-left: 0px;*/
     /*display: inline;*/
@@ -1111,7 +1110,7 @@ li[dnd-draggable] {
     padding: 10px;
     z-index: 999;
     list-style-type: none;
-   /* background-color: red;*/
+    /* background-color: red;*/
 }
 .dndDragging {
     opacity: 0.7;
@@ -1130,13 +1129,18 @@ li[dnd-draggable] {
  * An element with .dndPlaceholder class will be added as child of the dnd-list
  * while the user is dragging over it.
  */
-.dndPlaceholder {
-    background-color: blue;
-    min-height: 3px;
+.editor-panel-body .dndPlaceholder {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
     display: block;
-    position: relative;
-    color: white;
-    z-index: 9999;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    color: gray;
+}
+.editor-panel-body-right .dndPlaceholder {
+    display: none;
 }
 .animate-properties.ng-enter {
     -webkit-animation: animate-properties-enter 600ms cubic-bezier(0.445,
@@ -1228,29 +1232,26 @@ li[dnd-draggable] {
         right: 0px;
     }
 }
-
 .render-element:hover {
     border-style: dashed;
     border-width: 1px;
     border-color: red;
 }
-
-.render-element:hover  ul{
- border-style: dashed;
+.render-element:hover ul {
+    border-style: dashed;
     border-width: 1px;
-    border-color: blue;   
+    border-color: blue;
 }
 .render-element:parent {
     border-style: dashed;
     border-width: 3px;
     border-color: red;
 }
-
-.dndDragover{
-   border-style: dashed;
+.dndDragover {
+    border-style: dashed;
     border-width: 1px;
     border-color: red;
 }
-.wrap{
-  padding: 10px;
+.wrap {
+    padding: 10px;
 }
