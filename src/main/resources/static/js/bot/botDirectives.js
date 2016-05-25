@@ -389,7 +389,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" ng-model="{3}"/>{4}</div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
@@ -408,7 +408,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 }, true);*/ // watching properties
                 for (var i = 0; i < labels.length; i++) {
                     var name = "{{groupname}}_item";
-                    var value = "{{values[" + i + "]}}";
+                    var value = "{{values[{0}].text}}".format(i);
                     var label = "{{labels[{0}].text}}".format(i);
                     var modelValue = "values[{0}]".format(i);
                     body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
@@ -426,6 +426,57 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         }
     }
 });
+
+angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            legend: '=',
+            labels: '=',
+            values: '=',
+            groupname: '=' 
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                //scope.itemvalue = [];
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+
+                //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+                var index = 0;
+                var prefix = "<fieldset><legend>{{legend}}</legend>";
+                var body = "";
+                var item_type = "radio";
+                scope.values = [];
+
+                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               /* scope.$watch('labels', function() {
+                if (scope.labels.length > scope.values.length){
+                    scope.values.push('false');
+                }
+                else
+               scope.values.pop();
+                }, true);*/ // watching properties
+                for (var i = 0; i < labels.length; i++) {
+                    var name = "{{groupname}}_item";
+                    var value = "{{values[{0}].text}}".format(i);
+                    var label = "{{labels[{0}].text}}".format(i);
+                    var modelValue = "values[{0}]".format(i);
+                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
+                }
+
+                var suffix = '</fieldset>';
+                var elementValue = prefix + body + suffix;
+
+                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
 
 
 /*
