@@ -63,6 +63,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
    
     
     $scope.addDialog = function() {
+    	 $scope.toggleNewRoomModal();
         if ($rootScope.socketSupport) {
             chatControllerScope.roomAdded = false;
             chatSocket.send("/app/chat/rooms/add." + "{0}".format($scope.dialogName), {}, JSON.stringify({}));
@@ -72,7 +73,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
                     $timeout.cancel(addingRoom);
                     addingRoom = undefined;
                 }
-                if ($scope.roomAdded) return;
+                if ($scope.roomAdded) 
+                	return;
                 toaster.pop('error', "Error", "server request timeout", 1000);
                 $scope.roomAdded = true;
                 console.log("!!!!!!!!!!!!!!!!!!!!!Room added");

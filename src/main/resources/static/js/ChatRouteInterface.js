@@ -449,9 +449,9 @@ $scope.scaleCenterIconCircle = function() {
     	
     	$('#create_consultation_wndTitle').text("Створити консультацію");    	 
     	 $scope.consultationDate =  new Date()    	 
-    	/* $scope.teacher_Nick = "antongriadchenko@gmail.com"
-    	$scope.lectionTitle = "fhfghgfhfghgfhgf"    	
-    	*/
+    	 $scope.teacher_Nick = "red2015in@gmail.com"
+    	$scope.lectionTitle = "r4fregv"    	
+    	
     	 var time = new Date();
     	$scope.consultationTimeBegin = getTimeInInputFormat(time.getHours() + 1 ,time.getMinutes() ,time.getSeconds());
     	$scope.consultationTimeEnd = getTimeInInputFormat(time.getHours() + 2 ,time.getMinutes() ,time.getSeconds());    	  	
@@ -484,14 +484,15 @@ $scope.scaleCenterIconCircle = function() {
   
    $scope.addDialog = function () {
 	  var dialName = $scope.dialogName;
-	   $scope.toggleNewRoomModal();
-             $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
-            success(function(data, status, headers, config) {
-                console.log('room with bot created: ' + $scope.dialogName )
-             }).
-             error(function(data, status, headers, config) {
-                 console.log('creating room with bot failed '  )
-             });            
+	  $scope.toggleNewRoomModal();
+	   $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
+	   success(function(data, status, headers, config) {
+	       console.log('room with bot created: ' + $scope.dialogName )	      
+	    }).
+	    error(function(data, status, headers, config) {
+	        console.log('creating room with bot failed '  )
+	    });
+             
     }; 
       
       $scope.teachersList = []
@@ -678,7 +679,7 @@ $scope.scaleCenterIconCircle = function() {
     	 
     	 if (all_ok)
     	 {    		
-    		 console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
+    		 //console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
     		 //send kson
     		 $http.post(serverPrefix + "/chat/rooms/create/consultation/", {"email": $scope.teacher_Nick, "lection": $scope.lectionTitle,
     				"date": getDateString($scope.consultationDate) ,"begin": getTimeString($scope.consultationTimeBegin) ,"end": getTimeString($scope.consultationTimeEnd)}).

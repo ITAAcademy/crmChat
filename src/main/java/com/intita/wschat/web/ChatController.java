@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -72,6 +73,7 @@ import com.intita.wschat.exception.ChatUserNotFoundException;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
@@ -127,6 +129,8 @@ public class ChatController {
 	@Autowired private ConsultationsService chatIntitaConsultationService;
 
 	@Autowired private CustomAuthenticationProvider authenticationProvider;
+	
+	@Autowired private RoomsService chatRoomsService;
 
 	@Autowired private RoomsService roomService;
 	@Autowired private UsersService userService;
@@ -138,10 +142,10 @@ public class ChatController {
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
 	@Autowired private LecturesService lecturesService;
-	
+
 	private final Semaphore msgLocker =  new Semaphore(1);
 
-	
+
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -248,7 +252,7 @@ public class ChatController {
 			}
 			langMap.put(lg.getLang(), result);
 			log.info("Current lang pack" + langMap.toString());
-			
+
 		}
 		return;
 	}
@@ -359,7 +363,7 @@ public class ChatController {
 			list.add(message);
 			log.info("ADD: " + list.size());
 		}
-		
+
 
 		//send message to WS users
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
@@ -404,7 +408,7 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
 		}
 	}
-	
+
 	public void filterMessageBot( Long room,ChatMessage message, ChatMessage to_save, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(room, to_save, principal);		
@@ -414,8 +418,8 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
 		}
 	}
-	
-	
+
+
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
 	@ResponseBody
@@ -837,18 +841,13 @@ public class ChatController {
 		String lection_title = param.get("lection");
 		String teacher_email = param.get("email");
 
-
-
 		IntitaConsultation consultation = new IntitaConsultation();	
 		Date date = getSqlDate(date_str);
-
-
 
 		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
 		Time start_time = new Time(formatter.parse(time_begin).getTime());		
 		Time endTime = new Time(formatter.parse(time_end).getTime());
-
 
 		Lectures lecture = null;
 
@@ -896,10 +895,36 @@ public class ChatController {
 		consultation.setStartTime(start_time);
 		consultation.setFinishTime(endTime);
 		consultation.setAuthor(userService.getUser(principal));
-		consultation.setConsultant(userService.getUser(teacher_email));
+
+		User consultant = userService.getUser(teacher_email);
+
+		ChatUser chatUserTest = consultant.getChatUser();
+		if (chatUserTest == null)
+		{
+			chatUserTest = chatUsersService.getChatUserFromIntitaEmail(consultant.getEmail(), false);
+			consultant.setChatUser(chatUserTest);
+		}
+
+		consultation.setConsultant(consultant);
 		consultation.setLecture(lecture);
 
-		chatIntitaConsultationService.registerConsultaion(consultation);		
+		IntitaConsultation consultation_registered = chatIntitaConsultationService.registerConsultaion(consultation);
+
+		ChatConsultation chatConsultation = chatConsultationsService.getByIntitaConsultation(consultation_registered);
+
+		//Room room_consultation = chatConsultation.getRoom();		
+
+		Long chatUserId = Long.parseLong(principal.getName());	
+		
+		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
+		
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,
+				new RoomController.UpdateRoomsPacketModal (list,false));
+		
+		//this said ti author that he nust update room`s list
+		ChatUser author = chatUsersService.getChatUser(principal);
+		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		//777
 	}
 
 	public void addLocolization(Model model)
