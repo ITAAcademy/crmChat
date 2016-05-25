@@ -57,12 +57,12 @@ public class ConsultationsService {
 	public void postConstruct() {
 
 	}
-	
+
 	@Transactional
-	public void registerConsultaion(IntitaConsultation consultation) {
-		chatIntitaConsultationRepository.save(consultation);			
+	public IntitaConsultation registerConsultaion(IntitaConsultation consultation) {
+		return chatIntitaConsultationRepository.save(consultation);			
 	}
-	
+
 	@Transactional
 	public void setRatings(ChatConsultation cons, Map<Long,Integer> map)
 	{
@@ -73,14 +73,14 @@ public class ConsultationsService {
 			}
 		}
 	}
-	
+
 	@Transactional
 	public void update(ChatConsultation entity)
 	{
 		chatConsultationRepository.save(entity);
 	}
-	
-	
+
+
 	@Transactional
 	public Set<ConsultationRatings> getAllSupportedRetings()
 	{
@@ -89,39 +89,39 @@ public class ConsultationsService {
 
 	@Transactional
 	public void getRoomByConsultation(ChatConsultation cons) {
-		
+
 	}
-	
+
 	@Transactional
 	public ChatConsultation getConsultationByRoom(Room room) {
 		return chatConsultationRepository.findOneByRoom(room);
 	}
-	
+
 	@Transactional
 	public IntitaConsultation getIntitaConsultationById(Long iConsId) {
 		return chatIntitaConsultationRepository.findOne(iConsId);
 	}
-	
+
 	@Transactional
 	public Room getRoomByIntitaConsultationId(Long iConsId) {
 		return getRoomByIntitaConsultation(chatIntitaConsultationRepository.findOne(iConsId));
 	}
-	
+
 	@Transactional
 	public ChatConsultation getByIntitaConsultationId(Long iConsId) {
 		return getByIntitaConsultation(chatIntitaConsultationRepository.findOne(iConsId));
 	}
-	
+
 	@Transactional
 	public Room getRoomByIntitaConsultation(IntitaConsultation iCons) {
 		ChatConsultation cons = getByIntitaConsultation(iCons);
-		
+
 		if(cons == null)
 			return null;
-		
+
 		return cons.getRoom();
 	}
-	
+
 	@Transactional
 	public ChatConsultation getByIntitaConsultation(IntitaConsultation iCons) throws MessagingException {
 		if(iCons == null)
@@ -130,9 +130,10 @@ public class ConsultationsService {
 		ChatConsultation result = iCons.getChatConsultation();
 		if(result == null)
 		{
-			ChatUser consultant = iCons.getConsultant().getChatUser();
+			User consultant_user =  iCons.getConsultant();
+			ChatUser consultant = consultant_user.getChatUser();
 			ChatUser author = iCons.getAuthor().getChatUser();
-			
+
 			Room consultationRoom = new Room();
 			consultationRoom.setType((short) RoomType.CONSULTATION);
 			consultationRoom.setAuthor(iCons.getConsultant().getChatUser());
@@ -140,15 +141,15 @@ public class ConsultationsService {
 			consultationRoom.setActive(false);
 			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
 			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
-			
+
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsModelByChatUser(consultant)));
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(iCons.getAuthor().getChatUser())));
 			//LP
 			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
 			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
-			
+
 			result = new ChatConsultation(iCons, consultationRoom);
-			chatConsultationRepository.save(result);
+			result = chatConsultationRepository.save(result);
 		}
 		return result;
 	}

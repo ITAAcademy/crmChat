@@ -124,7 +124,7 @@ public class ConsultationsController {
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/chat/consultation/info/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Principal principal) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */

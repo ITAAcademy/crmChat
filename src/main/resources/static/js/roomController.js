@@ -63,6 +63,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
    
     
     $scope.addDialog = function() {
+    	 $scope.toggleNewRoomModal();
         if ($rootScope.socketSupport) {
             chatControllerScope.roomAdded = false;
             chatSocket.send("/app/chat/rooms/add." + "{0}".format($scope.dialogName), {}, JSON.stringify({}));
