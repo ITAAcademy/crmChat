@@ -33,7 +33,7 @@
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li ng-click="saveBotDialogItem()"><a>Save</a></li>
-                                    <li ng-click = "createBotDialogItem()"><a>Create</a></li>
+                                    <li ng-click="createBotDialogItem()"><a>Create</a></li>
                                     <li ng-click="loadBotDialogItem(1)"><a>Load</a></li>
                                 </ul>
                             </div>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 editor-right-panel">
-                    <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading " active="1">
+                    <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading " active="activeToolsTab">
                         <uib-tab index="1" disable="view.disabled" class="editor-right-panel-tabs-titles ">
                             <uib-tab-heading>
                                 <i class="glyphicon glyphicon-bell" th:text="${lgPack.lables.formBuilder.tools}">Tools</i>

@@ -9,8 +9,8 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
 
     /*************************************
-     *  Create tools list of JS objetc
-    *************************************/
+     *  Create tools list and JS objetc
+     *************************************/
 
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
@@ -18,6 +18,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
         $scope.toolsList.push(element);
     }
+
     $scope.$root.elementsListForLink = [];
     $scope.getElementsListForLink = function(index) {
         return $scope.$root.elementsListForLink[index];
@@ -32,12 +33,24 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         }
     };
 
+    function goToProperties() {
+        $scope.activeToolsTab = 2;
+    }
+
+    function goToTools() {
+        $scope.activeToolsTab = 1;
+    }
+
     $scope.$root.models = {
         selected: null,
     };
+    $scope.$root.$watch('models.selected', function() {
+        goToProperties(); //show properties if new item selected
+    });
 
+    $scope.activeToolsTab = 1;
     $scope.activeViewTab = 0;
-    $scope.$watch('activeViewTab', function(){
+    $scope.$watch('activeViewTab', function() {
         $scope.updateView();
     });
 
@@ -55,12 +68,13 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.htmlCodeForRender = [];
     $scope.langForRender = [];
 
+    //create NULL dialogItem JS object
     var botDialogItemClean = function() {
         return {
             "body": "",
             "category": {
-                "id" : 1,
-                "name" : null
+                "id": 1,
+                "name": null
             },
             "testCase": "",
             "idObject": {
@@ -73,8 +87,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.newDialogItem = botDialogItemClean();
 
     $scope.updateView = function() {
-        if($scope.activeViewTab == 0 || $scope.activeViewTab === null)
-        {
+        if ($scope.activeViewTab == 0 || $scope.activeViewTab === null) {
             console.log("ignore activeViewTab == 0");
             return;
         }
@@ -93,8 +106,24 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
 
     /********************
-     * CALLBACKS
-    ********************/
+     * DRAG& DROP CALLBACKS
+     ********************/
+
+    $scope.$watch('dropCallback', function() {
+        $scope.$root.dropCallback = $scope.dropCallback;
+    });
+
+    $scope.$watch('dragoverCallback', function() {
+        $scope.$root.dragoverCallback = $scope.dragoverCallback;
+    });
+
+    $scope.$watch('deleteCallback', function() {
+        $scope.$root.deleteCallback = $scope.deleteCallback;
+    });
+
+    $scope.$watch('dragStart', function() {
+        $scope.$root.dragStart = $scope.dragStart;
+    });
 
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null) {
@@ -126,25 +155,17 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             }
             //item.parent.childrens.splice(index, 1);
         }
+        //update after apply params
         $scope.$apply(function() {
             $scope.updateView();
+        });
+        //update after render
+        $scope.$$postDigest(function() {
+            goToTools();
         });
 
         //return item;
     };
-
-
-    $scope.$watch('dropCallback', function() {
-        $scope.$root.dropCallback = $scope.dropCallback;
-    });
-
-    $scope.$watch('dragoverCallback', function() {
-        $scope.$root.dragoverCallback = $scope.dragoverCallback;
-    });
-
-    $scope.$watch('deleteCallback', function() {
-        $scope.$root.deleteCallback = $scope.deleteCallback;
-    });
 
 
     $scope.$root.dragoverCallback = "";
@@ -155,13 +176,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
 
     $scope.dragStart = function(item) {
-        if (item != null && item.parent != null)
-            parent.childrens.splice(index, 1);
+        $scope.$$postDigest(function() {
+            goToTools();
+        });
+
     };
 
     /*****************************
      * TOOLS FOR CONTROLL
-    *****************************/
+     *****************************/
     var loadView = function loadView(data, status, headers, config) {
         console.log("Load view: " + data);
         var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
@@ -171,10 +194,10 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         }
         $scope.viewTabs.push(tab);
         $scope.langForRender[$scope.viewTabs.length - 1] = "ua";
-        $scope.$$postDigest(function(){
+        $scope.$$postDigest(function() {
             $scope.activeViewTab = $scope.viewTabs.length;
         });
-        
+
     }
 
     $scope.createBotDialogItem = function() {
@@ -203,7 +226,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.updateView();
         var object = $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]];
         var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
-        
+
         $http.post(requestUrl, object).
         success(function(data, status, headers, config) {}).
         error(function(data, status, headers, config) {});
@@ -211,7 +234,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     /*****************************
      * TEST
-    *****************************/
+     *****************************/
 
 
 
@@ -243,4 +266,8 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     }
 
     $scope.loadBotDialogItem(1);
+    $scope.$$postDigest(function() {
+        goToTools();
+    });
+
 }]);
