@@ -72,7 +72,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
                     $timeout.cancel(addingRoom);
                     addingRoom = undefined;
                 }
-                if ($scope.roomAdded) return;
+                if ($scope.roomAdded) 
+                	return;
                 toaster.pop('error', "Error", "server request timeout", 1000);
                 $scope.roomAdded = true;
                 console.log("!!!!!!!!!!!!!!!!!!!!!Room added");

@@ -92,7 +92,7 @@ public class RoomController {
 	private final static Logger log = LoggerFactory.getLogger(RoomController.class);
 
 	@Autowired(required=true) private HttpServletRequest request;
-	
+
 	@Autowired private ProfanityChecker profanityFilter;
 
 	@Autowired private SessionProfanity profanity;
@@ -112,10 +112,10 @@ public class RoomController {
 	//@Autowired private IntitaConsultationsService chatIntitaConsultationService;
 
 	@Autowired private ChatController chatController;
-	
+
 	@Autowired private BotCategoryService botCategoryService;
 
-	
+
 	public static class ROLE
 	{
 		public static final int ADMIN = 256;
@@ -130,29 +130,33 @@ public class RoomController {
 
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
-		
+
 	@RequestMapping(value = "/chat/rooms/create/with_bot/", method = RequestMethod.POST)
 	@ResponseBody
 	public void createDialogWithBotRequesr(@RequestBody String roomName, Principal principal)
 	{
 		createDialogWithBot(roomName,principal);
 	}
-	
-	
 
-	
+
+
+
 	public Room createDialogWithBot(String roomName, Principal principal)
 	{
 		if(roomName.isEmpty())
 			return null;
-		
+
 		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
 
 		Room room = roomService.register(roomName, bot);
-		roomService.addUserToRoom(chatUserServise.getChatUser(principal), room);
-		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_ON_LOGIN,true,""+room.getId());
-		String subscriptionStr = "/topic/users/" + bot.getId() + "/status";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+		ChatUser author = chatUserServise.getChatUser(principal);
+		roomService.addUserToRoom(author, room);
+		
+		//send to user about room apearenced
+		Long chatUserId = Long.parseLong(principal.getName());		
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
+		//this said ti author that he nust update room`s list
+		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 		
 		String containerString = "Good day. Please choose the category that interests you:\n";
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
@@ -274,7 +278,7 @@ public class RoomController {
 			//Bot avatar
 			if(user.getId() == BotParam.BOT_ID)
 				avatar = BotParam.BOT_AVATAR;
-			
+
 			if(iUser != null)
 			{
 				intitaId =  iUser.getId();
@@ -304,7 +308,7 @@ public class RoomController {
 			// TODO Auto-generated catch block
 			log.info("BOT PARAM PROBLEM: " + room_o.getBotAnswers());
 			e.printStackTrace();
-			
+
 		}//0-add; 1-private; 2-not my
 		return map;
 	}
@@ -314,7 +318,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise, roomService);
 		if(status == null)
 		{
-			
+
 			ChatUser o_object = chatUserServise.getChatUser(principal);
 			if(o_object != null)
 			{
@@ -487,11 +491,14 @@ public class RoomController {
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser user = chatUserServise.getChatUser(chatUserId);
 		Room room = roomService.register(name, user);
+		//send to user about room apearenced
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
 		boolean operationSuccess = true;
-		if (room==null)operationSuccess = false;
+		if (room == null)
+			operationSuccess = false;
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,operationSuccess,"ADD ROOM");
 		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
+		//send to user that operation success
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 	}
 
@@ -549,13 +556,13 @@ public class RoomController {
 			}
 			for(DeferredResult<String> response : responseList)
 			{
-				
+
 				String str;
 				if(modal.replace)
 					str = mapper.writeValueAsString(new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(modal.chatUser), modal.replace));
 				else
 					str = mapper.writeValueAsString(new UpdateRoomsPacketModal(roomService.getRoomsByChatUserAndList(modal.chatUser, modal.roomsForUpdate), modal.replace));
-				
+
 				if(!response.isSetOrExpired())
 					response.setResult(str);
 			}
@@ -582,7 +589,7 @@ public class RoomController {
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
 
-	
+
 	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ignoreAuthor)
 	{
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
@@ -601,7 +608,7 @@ public class RoomController {
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
 		return true;
 	}
-	
+
 	boolean addUserToRoomFn( String nickName, Long room, Principal principal,boolean ws)
 	{
 		Room room_o = roomService.getRoom(room);
@@ -702,12 +709,12 @@ public class RoomController {
 		 * For serialization
 		 */
 		private static final long serialVersionUID = -3202901391346608368L;
-		
+
 		@JsonView(Views.Public.class)
 		List<RoomModelSimple> list;
 		@JsonView(Views.Public.class)
 		boolean replace;
-		
+
 		public UpdateRoomsPacketModal(List<RoomModelSimple> list) {
 			this.list = list;
 			replace = true;
@@ -722,7 +729,7 @@ public class RoomController {
 		ChatUser chatUser;
 		boolean replace = true;
 		ArrayList<Room> roomsForUpdate;
-		
+
 		public SubscribedtoRoomsUsersBufferModal() {
 			chatUser = null;
 		}
@@ -731,7 +738,7 @@ public class RoomController {
 			this.chatUser = chatUser;
 			replace = false;
 			roomsForUpdate = arr;
-			
+
 		}
 		public SubscribedtoRoomsUsersBufferModal(ChatUser chatUser)
 		{
@@ -739,7 +746,7 @@ public class RoomController {
 			replace = true;
 		}
 	}
-	
+
 	@PostConstruct
 	private void PostConstructor()
 	{

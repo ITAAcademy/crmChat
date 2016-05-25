@@ -485,13 +485,14 @@ $scope.scaleCenterIconCircle = function() {
    $scope.addDialog = function () {
 	  var dialName = $scope.dialogName;
 	   $scope.toggleNewRoomModal();
-             $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
-            success(function(data, status, headers, config) {
-                console.log('room with bot created: ' + $scope.dialogName )
-             }).
-             error(function(data, status, headers, config) {
-                 console.log('creating room with bot failed '  )
-             });            
+	   $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
+	   success(function(data, status, headers, config) {
+	       console.log('room with bot created: ' + $scope.dialogName )
+	    }).
+	    error(function(data, status, headers, config) {
+	        console.log('creating room with bot failed '  )
+	    });
+             
     }; 
       
       $scope.teachersList = []
@@ -678,7 +679,7 @@ $scope.scaleCenterIconCircle = function() {
     	 
     	 if (all_ok)
     	 {    		
-    		 console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
+    		 //console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
     		 //send kson
     		 $http.post(serverPrefix + "/chat/rooms/create/consultation/", {"email": $scope.teacher_Nick, "lection": $scope.lectionTitle,
     				"date": getDateString($scope.consultationDate) ,"begin": getTimeString($scope.consultationTimeBegin) ,"end": getTimeString($scope.consultationTimeEnd)}).
