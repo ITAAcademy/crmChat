@@ -34,7 +34,7 @@ var BOT_ELEMENTS_MODULE = function() {
         object.type = type;
         object.id = Math.random();
 
-        object.properties = BotElementProperties[type];
+        object.properties = jQuery.extend(true, {}, BotElementProperties[type]);
         object.addedProperty = "";
         object.getHTML = function(scope, ignoreAddedProperties) {
             var have_content = false;

@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.web.ChatController;
 
-
 @Entity
 public class BotDialogItem {
 	public BotCategory getCategory() {
@@ -35,78 +34,79 @@ public class BotDialogItem {
 		this.category = category;
 	}
 
-	public BotDialogItem(){
+	public BotDialogItem() {
 
 	}
-	
-	public BotDialogItem(BotDialogItem item){
+
+	public BotDialogItem(BotDialogItem item) {
 		this.body = item.body;
 		this.category = item.category;
-		this.idObject = item.idObject;
+		this.idObject = new LangId(idObject);
 		this.testCase = item.testCase;
 		this.description = item.description;
 	}
-	
+
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
 	@Autowired
 	@Transient
 	BotItemContainerService botItemContainerService;
-	
+
 	@EmbeddedId
 	private LangId idObject;
-	
+
 	private String body;
 	@ManyToOne
 	private BotCategory category;
 
-	@Column(name="test_case", columnDefinition = "TEXT")
+	@Column(name = "test_case", columnDefinition = "TEXT")
 	String testCase = new String();
-	
+
 	@Column(columnDefinition = "TEXT")
 	String description;
-	
+
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
-	
-	public  BotDialogItem(String body,BotCategory category,Long id,String lang){
-		this.body=body;
+
+	public BotDialogItem(String body, BotCategory category, Long id, String lang) {
+		this.body = body;
 		this.category = category;
-		this.idObject = new LangId(id,lang);
+		this.idObject = new LangId(id, lang);
 	}
 
-	public void setTestCase(String str){
+	public void setTestCase(String str) {
 		this.testCase = str;
 	}
 
 	public String getBody() {
 		return body;
 	}
+
 	public void setBody(String body) {
 		this.body = body;
 	}
+
 	public LangId getIdObject() {
 		return idObject;
 	}
+
 	public void setIdObject(LangId id) {
 		this.idObject = id;
 	}
-	
-	public String getTestCase() {
-		/*ObjectMapper objectMapper = new ObjectMapper();
-		HashMap<Integer, Long> conditionalMap = null;
-		try {
-			conditionalMap = objectMapper.readValue(testCase, new TypeReference<Map<Integer, Long>>(){} );
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			log.info("conditionalTransitions is empty");
-			return null;
 
-		}
-		return conditionalMap;*/
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getTestCase() {
 		return testCase;
 	}
-	public void setConditionalTransitionsMap(HashMap<Integer, Long> map){
+
+	public void setConditionalTransitionsMap(HashMap<Integer, Long> map) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			setConditionalTransitions(objectMapper.writeValueAsString(map));
@@ -115,23 +115,25 @@ public class BotDialogItem {
 			e.printStackTrace();
 		}
 	}
+
 	public void setConditionalTransitions(String conditionalTransitions) {
 		this.testCase = conditionalTransitions;
 	}
-	public static BotDialogItem createFromCategories(ArrayList<BotCategory> categories){
+
+	public static BotDialogItem createFromCategories(ArrayList<BotCategory> categories) {
 		BotDialogItem container = new BotDialogItem();
-		//container.setId((long) -1);
+		// container.setId((long) -1);
 		String itemTemplate = "<div botlink=\"\" href=\" \" ispost=\"true\" classes=\"'btn btn-default'\" linkindex=\"%d\" text=\"'%s'\"> </div><br>";
-		String body  = "";
-		for (BotCategory category : categories){
+		String body = "";
+		for (BotCategory category : categories) {
 			String categoryName = category.getName();
 			BotDialogItem bodyDialogItem = category.getMainElement();
 			LangId langId = bodyDialogItem.getIdObject();
-			
+
 			Long mainContainerId = langId.getId();
-			body += String.format(itemTemplate,mainContainerId,categoryName );
+			body += String.format(itemTemplate, mainContainerId, categoryName);
 		}
-		log.info("body:"+body);
+		log.info("body:" + body);
 		container.setBody(body);
 		return container;
 	}

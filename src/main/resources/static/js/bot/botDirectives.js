@@ -291,7 +291,6 @@ angular.module('springChat.directives').directive('botinput', function($compile,
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                debugger;
                 var body = "{{text}}";
                 scope.itemvalue = "";
                 var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.linkindex);

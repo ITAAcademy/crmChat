@@ -1195,7 +1195,7 @@ li[dnd-draggable] {
     0.050,
     0.550,
     0.950);
-    animation: animate-properties-leave 600ms cubic-bezier(0.445,
+    animation: animate-properties-leave 300ms cubic-bezier(0.445,
     0.050,
     0.550,
     0.950);

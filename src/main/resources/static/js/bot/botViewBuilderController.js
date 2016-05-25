@@ -7,9 +7,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
     $scope.BUILDER = BOT_ELEMENTS_MODULE;
 
-    /*******
+
+    /*************************************
      *  Create tools list of JS objetc
-     *******/
+    *************************************/
+
     $scope.toolsList = [];
     for (var type in BOT_ELEMENTS_MODULE.ElementTypes) {
         var element = BOT_ELEMENTS_MODULE.ElementInstance(BOT_ELEMENTS_MODULE.ElementTypes[type]);
@@ -29,7 +31,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             "mass": [1, 2, 5]
         }
     };
-    $scope.activeViewTab = 1;
+
+    $scope.$root.models = {
+        selected: null,
+    };
+
+    $scope.activeViewTab = 0;
+    $scope.$watch('activeViewTab', function(){
+        $scope.updateView();
+    });
 
     $scope.containerTemplate = BOT_ELEMENTS_MODULE.ElementInstance("bot-container"); //'<div dnd-list="toolsList" bot-container = " "  style="margin: 0px; white-space: pre" content="{0}" time="22" ></div>';
     $scope.containerTemplate.parent = $scope.containerTemplate;
@@ -43,10 +53,31 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     $scope.viewTabs = [];
     $scope.htmlCodeForRender = [];
-    $scope.langForRender = ['ua', 'en'];
-    $scope.descriprionForRender = ['1', '2'];
+    $scope.langForRender = [];
+
+    var botDialogItemClean = function() {
+        return {
+            "body": "",
+            "category": {
+                "id" : 1,
+                "name" : null
+            },
+            "testCase": "",
+            "idObject": {
+                "id": null,
+                "lang": null
+            }
+        }
+    }
+
+    $scope.newDialogItem = botDialogItemClean();
 
     $scope.updateView = function() {
+        if($scope.activeViewTab == 0 || $scope.activeViewTab === null)
+        {
+            console.log("ignore activeViewTab == 0");
+            return;
+        }
         $scope.$root.elementsListForLink = [];
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
@@ -60,6 +91,10 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         //});
     }
 
+
+    /********************
+     * CALLBACKS
+    ********************/
 
     $scope.dropCallback = function(event, index, item, external, type, parent) {
         if (item.parent != null) {
@@ -112,7 +147,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     });
 
 
-
     $scope.$root.dragoverCallback = "";
     $scope.dragoverCallback = function(event, index, external, type, parent) {
         // console.log(parent.type);
@@ -125,79 +159,59 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             parent.childrens.splice(index, 1);
     };
 
-
-
-    $scope.models = {
-        selected: null,
-        lists: { "A": [], "B": [] }
-    };
-
-    $scope.$root.models = {
-        selected: null,
-        lists: { "A": [], "B": [] }
-    };
-
-
-
-    // Generate initial model
-    for (var i = 1; i <= 3; ++i) {
-        $scope.models.lists.A.push({ label: "Item A" + i });
-        $scope.models.lists.B.push({ label: "Item B" + i });
+    /*****************************
+     * TOOLS FOR CONTROLL
+    *****************************/
+    var loadView = function loadView(data, status, headers, config) {
+        console.log("Load view: " + data);
+        var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
+        //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
+        for (var key in tab.items) {
+            tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
+        }
+        $scope.viewTabs.push(tab);
+        $scope.langForRender[$scope.viewTabs.length - 1] = "ua";
+        $scope.$$postDigest(function(){
+            $scope.activeViewTab = $scope.viewTabs.length;
+        });
+        
     }
 
-    $scope.addBotDialogItem = function(body, category, testcase) {
-        var botDialogItem = {
-            "body": body,
-            "category": null,
-            "testCase": testcase,
-            "idObject": {
-                "id": null,
-                "lang": null
-            }
-        };
-        /*var requestUrl = serverPrefix + "/bot_operations/add_bot_dialog_item/{0}".format(category);
-        $http({
-            url: requestUrl,
-            method: "POST",
-            data: JSON.stringify(botDialogItem)
-        })*/
+    $scope.createBotDialogItem = function() {
+        var requestUrl = serverPrefix + "/bot_operations/create_bot_dialog_item"
+
+        $http.post(requestUrl, $scope.newDialogItem).
+        success(function(data, status, headers, config) {
+            loadView(data, status, headers, config);
+            $scope.newDialogItem = botDialogItemClean();
+        }).
+        error(function(data, status, headers, config) {
+            $scope.newDialogItem = botDialogItemClean();
+        });
+    }
+
+    $scope.loadBotDialogItem = function(id) {
+        var botDialogItem = {};
+        var requestUrl = serverPrefix + "/bot_operations/get_bot_dialog_item/{0}".format(id);
+
+        $http.get(requestUrl, {}).
+        success(loadView).
+        error(function(data, status, headers, config) {});
     }
 
     $scope.saveBotDialogItem = function() {
         $scope.updateView();
         var object = $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]];
         var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
-        /* $http.get(requestUrl, JSON.stringify(object)).
-         success(function(data, status, headers, config) {}).
-         error(function(data, status, headers, config) {});*/
-
-        $http({
-            url: requestUrl,
-            method: "POST",
-            data: JSON.stringify(object)
-        })
+        
+        $http.post(requestUrl, object).
+        success(function(data, status, headers, config) {}).
+        error(function(data, status, headers, config) {});
     };
 
-
-    $scope.getBotDialogItem = function(id) {
-        var botDialogItem = {};
-
-        var requestUrl = serverPrefix + "/bot_operations/get_bot_dialog_item/{0}".format(id);
-        $http.get(requestUrl, {}).
-        success(function(data, status, headers, config) {
-            console.log("Load view: " + data);
-            var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
-            //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
-            for (var key in tab.items) {
-                tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
-            }
-            $scope.viewTabs.push(tab);
-            $scope.updateView();
-        }).
-        error(function(data, status, headers, config) {});
-    }
-
-
+    /*****************************
+     * TEST
+    *****************************/
 
 
 
@@ -209,14 +223,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         });
         console.log("zigzag test:" + JSON.stringify(result));
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -236,5 +242,5 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         return getType(value) == type;
     }
 
-    $scope.getBotDialogItem(1);
+    $scope.loadBotDialogItem(1);
 }]);

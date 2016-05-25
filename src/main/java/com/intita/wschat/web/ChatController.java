@@ -782,6 +782,14 @@ public class ChatController {
 					return jsonInString;*/
 	}
 
+	public static class ChatLangEnum{ 
+		public static final String UA = "ua";
+		public static final String EN = "en";
+		public static final String RU = "ru";
+		public static final ArrayList<String> LANGS = new ArrayList<String>(
+			    Arrays.asList(UA, EN, RU));
+		
+	}
 	public static String getCurrentLang()
 	{
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();

@@ -51,6 +51,7 @@ import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
+import com.intita.wschat.web.ChatController.ChatLangEnum;
 
 @Service
 @Controller
@@ -78,6 +79,7 @@ public class BotController {
 	@Autowired private RoomController roomControler;
 	@Autowired private ChatController chatController;
 
+	private ObjectMapper objectMapper = new ObjectMapper();
 	private final static Logger log = LoggerFactory.getLogger(BotController.class);
 
 	@PostConstruct
@@ -124,56 +126,57 @@ public class BotController {
 	@RequestMapping(value = "bot_operations/sequences/{sequenceId}/{containerId}/nextContainer{choseIndex}", method = RequestMethod.GET)
 	@ResponseBody
 	public String getSequence(@PathVariable Long sequenceId,@PathVariable Long containerId, @PathVariable int choseIndex) throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-
-
 		return objectMapper.writeValueAsString(botCategory);
 	}
 	@RequestMapping(value = "bot_operations/get_bot_dialog_item/{dialogItemId}", method = RequestMethod.GET)
 	@ResponseBody
 	public String getBotDialogItem(@PathVariable Long dialogItemId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		/*
-		 *  :(((
-		 */
-		BotDialogItem dialogItemUA = botItemContainerService.getByIdAndLang(dialogItemId, "ua");
-		BotDialogItem dialogItemEN = botItemContainerService.getByIdAndLang(dialogItemId, "en");
-		BotDialogItem dialogItemRU = botItemContainerService.getByIdAndLang(dialogItemId, "ru");
 		Map<String, BotDialogItem> array = new HashMap<>();
-		array.put("ua", dialogItemUA);
-		array.put("en", dialogItemEN);
-		array.put("ru", dialogItemRU);
-		
+		for(String lang : ChatLangEnum.LANGS)
+		{
+			BotDialogItem dialogItemTemplate = botItemContainerService.getByIdAndLang(dialogItemId, "ua");
+			array.put(lang, dialogItemTemplate);
+		}
 		return objectMapper.writeValueAsString(array);
 	}
-	
-	@RequestMapping(value = "bot_operations/add_bot_dialog_item/{categoryId}", method = RequestMethod.POST)
+
+	@RequestMapping(value = "bot_operations/create_bot_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean addBotDialogItem(@PathVariable Long categoryId,  HttpServletRequest request, HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
-		//ObjectMapper objectMapper = new ObjectMapper();
-		//BotDialogItem dialogItem = botItemContainerService.getById(dialogItemId);
-		BotCategory category = botCategoryService.getById(categoryId);
-		if (category==null){
+	public String addBotDialogItem( HttpServletRequest request, HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
+		if(payload == null)
+		{
+			log.error("send params (object) faild!");//@LANG@
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return "Send params (object) faild!";
+		}
+		
+		BotCategory category = payload.getCategory();
+		if (category == null || category.getId() == null){
 			log.error("Category is NULL !");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return false;
+			return "Category is NULL !";//@LANG@
 		}
-		BotDialogItem dialogItemTemplate = payload;
+		
+		Map<String, BotDialogItem> array = new HashMap<>();
 		Long nextId = botItemContainerService.getNextId();
-		dialogItemTemplate.setIdObject(new LangId(nextId,ChatController.getCurrentLang()));
-		BotDialogItem dialogItem = botItemContainerService.add(payload);
-		category.addElement(dialogItem);
-		botCategoryService.add(category);
-		return true;
+		
+		for(String lang : ChatLangEnum.LANGS)
+		{
+			BotDialogItem dialogItemTemplate = new BotDialogItem(payload);
+			dialogItemTemplate.setIdObject(new LangId(nextId, lang));
+			botItemContainerService.add(dialogItemTemplate);
+			array.put(lang, dialogItemTemplate);
+		}
+		return objectMapper.writeValueAsString(array);
 	}
-	
+
 	@RequestMapping(value = "bot_operations/save_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
 		BotDialogItem dialogItem = botItemContainerService.update(payload);
 		return true;
 	}
-	
+
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Principal principal) throws JsonProcessingException {
@@ -200,17 +203,17 @@ public class BotController {
 			e.printStackTrace();
 		}
 		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
-		
+
 		Room room = roomService.getRoom(roomId);
 		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,ChatController.getCurrentLang()));
-		
+
 		for(int i = 0; i < keys.size(); i++)
 		{
 			botAnswerService.add(new BotAnswer(keys.get(i), item, room, obj.get(keys.get(i))));
 		}
 		Map<String,Object> param = new HashMap<String, Object>();
 		param.put("nextNode", nextContainerId.toString());//@BAD
-		
+
 		sendNextContainer(roomId, containerId, param, principal);
 
 		return "good";
@@ -255,10 +258,10 @@ public class BotController {
 		else {
 			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
-		
+
 		nextContainerToSave = new BotDialogItem(nextContainer);
 		nextContainerToSave.setBody(nextContainer.getIdObject().getId().toString());
-		
+
 		String containerString = "";
 		String containerStringToSave = "";
 		try {
@@ -303,10 +306,10 @@ public class BotController {
 		/*
 		 * Tenant author of room && can add new user
 		 */
-		
+
 		room_o.setAuthor(c_user);
 		roomService.update(room_o);
-		
+
 		roomControler.addUserToRoom(b_user, room_o, b_user.getPrincipal(), true);
 
 

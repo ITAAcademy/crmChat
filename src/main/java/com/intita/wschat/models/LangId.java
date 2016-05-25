@@ -17,6 +17,13 @@ public class LangId implements Serializable{
     	this.id = val;
     	this.lang = lang;
     }
+    public LangId(LangId id){
+    	if(id == null)
+    		return;
+
+    	this.id = id.getId();
+    	this.lang = id.getLang();
+    }
 	public Long getId() {
 		return id;
 	}
