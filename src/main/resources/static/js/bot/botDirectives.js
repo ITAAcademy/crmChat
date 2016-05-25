@@ -184,12 +184,13 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     var result = head;
 
                     for (var i = 0; i < elements.length; i++) {
-                        result += "<li class=\"list-group-item toggle animation\">" + elements[i].outerHTML + "</li>";
+                        result += "<div class=\"list-group-item toggle animation\">" + elements[i].innerHTML + "</div>";
                     }
+                    result +=footer;
                     element.html(result);
 
                     if (typeof attr.callback != 'undefined') {
-                        var callBackFunction = new Function("return " + attr.callback)();
+                        var callBackFunction = Function("return " + $parse(attr.callback))();
                         if (typeof callBackFunction != 'undefined')
                             callBackFunction(element);
                     }
@@ -226,11 +227,17 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 var body = "{{text}}";
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
-
+                if (usePost) {
+                        scope.href = "";
+                    }
                 scope.$watch('ispost', function() {
                     if (scope.ispost) {
                         scope.href = "";
                     }
+                });
+                scope.$watch('href', function() {
+                    if (typeof scope.href!='undefined' && scope.href.length>0)
+                    scope.ispost = false;
                 });
                 scope.itemvalue = body;
                 if (usePost &&
@@ -258,7 +265,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
 
 
 
-                var prefix = '<a class="{{classes}}" ng-click="onClick()" ng-model="itemvalue">';
+                var prefix = '<a class="{{classes}}" ng-click="onClick()" ng-model="itemvalue" ng-href="{{href}}"> ';
 
                 var suffix = '</a>';
                 var elementValue = prefix + body + suffix;
@@ -370,38 +377,44 @@ attr.cbname - name of group, determining names of children
 attr.legend - title of checkgroup
 attr.isradio - determine if group is readiogroup
 */
-angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
+angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
             legend: '=',
             labels: '=',
-            itemvalue: '='
+            values: '=',
+            groupname: '=' 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input {2} type="{0}" name="{1}" value="{{3}}"/><span>  {1}</span></div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                var modalT = 'ng-model="{{itemvalue[{0}]}}"';
+                scope.values = [];
 
-                modalT = 'ng-model="{{itemvalue}}"';
-                item_type = "radio";
-                scope.itemvalue = false;
-
-                var labels = eval(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
-
+                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               /* scope.$watch('labels', function() {
+                if (scope.labels.length > scope.values.length){
+                    scope.values.push('false');
+                }
+                else
+               scope.values.pop();
+                }, true);*/ // watching properties
                 for (var i = 0; i < labels.length; i++) {
-                    var modalTemp = modalT.format(i);
-                    body += checkBoxTemplate.format(item_type, " " + "{{labels[" + i + "]}}", modalTemp, i);
+                    var name = "{{groupname}}_item";
+                    var value = "{{values[{0}].text}}".format(i);
+                    var label = "{{labels[{0}].text}}".format(i);
+                    var modelValue = "values[{0}]".format(i);
+                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
                 }
 
-                var suffix = '</fieldset>{{itemvalue}}';
+                var suffix = '</fieldset>';
                 var elementValue = prefix + body + suffix;
 
                 element.html(elementValue);
@@ -413,6 +426,57 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
         }
     }
 });
+
+angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            legend: '=',
+            labels: '=',
+            values: '=',
+            groupname: '=' 
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                //scope.itemvalue = [];
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+
+                //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
+                var index = 0;
+                var prefix = "<fieldset><legend>{{legend}}</legend>";
+                var body = "";
+                var item_type = "radio";
+                scope.values = [];
+
+                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               /* scope.$watch('labels', function() {
+                if (scope.labels.length > scope.values.length){
+                    scope.values.push('false');
+                }
+                else
+               scope.values.pop();
+                }, true);*/ // watching properties
+                for (var i = 0; i < labels.length; i++) {
+                    var name = "{{groupname}}_item";
+                    var value = "{{values[{0}].text}}".format(i);
+                    var label = "{{labels[{0}].text}}".format(i);
+                    var modelValue = "values[{0}]".format(i);
+                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
+                }
+
+                var suffix = '</fieldset>';
+                var elementValue = prefix + body + suffix;
+
+                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
 
 
 /*
@@ -528,3 +592,29 @@ angular.module('springChat.directives').directive('botcheckbox', function($compi
         }
     }
 });
+
+angular.module('springChat.directives').directive('bottext', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            text : "=",
+             textcolor : "=",
+             textsize: "=",
+             textalign : "="
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                //scope.itemvalue = [];
+                var textItemTemplate = '<p style="color:{0};font-size:{1}px;text-align:{2};">{3}</p>';
+                var elementBody = "{{text}}";
+                var elementValue= textItemTemplate.format("{{textcolor}}","{{textsize}}","{{textalign}}","{{text}}");
+                element.html(elementValue);
+
+                scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
