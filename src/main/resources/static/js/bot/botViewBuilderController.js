@@ -76,6 +76,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 "id": 1,
                 "name": null
             },
+            "discription" : "",
             "testCase": "",
             "idObject": {
                 "id": null,
@@ -209,7 +210,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             $scope.newDialogItem = botDialogItemClean();
         }).
         error(function(data, status, headers, config) {
-            $scope.newDialogItem = botDialogItemClean();
+          //  $scope.newDialogItem = botDialogItemClean();
         });
     }
 

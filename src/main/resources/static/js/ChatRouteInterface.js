@@ -181,7 +181,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             return;
         }
         var kk = keyCode;
-        var arrowKeyPressed = kk == 38 || kk == 39 || kk == 40 || kk == 37;
+        var arrowKeyPressed = kk == 39 || kk == 37;
         if (arrowKeyPressed) $scope.onMessageInputClick();
     }
 
