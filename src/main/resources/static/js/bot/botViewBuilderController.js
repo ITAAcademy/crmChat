@@ -1,6 +1,6 @@
 'use strict';
 
-springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams', '$rootScope', '$scope', '$window', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $window, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
+springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams', '$rootScope', '$scope', '$window', '$uibModal', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $window, $uibModal, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
 
     $scope.name = "ChatBotViewBuilderController";
     var chatControllerScope = Scopes.get('ChatController');
@@ -66,6 +66,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
     $scope.viewTabs = [];
     $scope.langForRender = [];
+    $scope.tabsChanges = [];
 
     //create NULL dialogItem JS object
     var botDialogItemClean = function() {
@@ -96,15 +97,16 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
 
-        // $scope.$evalAsync(function() {
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].getHTML($scope.$root, false);
 
         $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body = "";
         for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
             $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
-        //});
+        $scope.tabsChanges[$scope.viewTabs.length - 1] = true;
+
         var nice = $(".editor-panel-right-scroll").niceScroll();
         var nice = $("textarea").niceScroll();
+
 
     }
 
@@ -198,6 +200,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         }
         $scope.viewTabs.push(tab);
         $scope.langForRender[$scope.viewTabs.length - 1] = "ua";
+        $scope.tabsChanges[$scope.viewTabs.length - 1] = false;
         $scope.$$postDigest(function() {
             $scope.activeViewTab = $scope.viewTabs.length;
         });
@@ -232,8 +235,12 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
 
         $http.post(requestUrl, object).
-        success(function(data, status, headers, config) {}).
-        error(function(data, status, headers, config) {});
+        success(function(data, status, headers, config) {
+            $scope.tabsChanges[$scope.viewTabs.length - 1] = false;
+        }).
+        error(function(data, status, headers, config) {
+
+        });
     };
 
     /*****************************
@@ -292,6 +299,46 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             loadView(obj[index], null, null, null, null);
         }
     }
+
+    function closeTab(index) {
+        $scope.viewTabs.splice(index, 1);
+    }
+
+    $scope.tryCloseTabDialog = null;
+    $scope.tryCloseTabDialogOpen = function(index) {
+        var real_index = index - 1;
+        if (index == null || index == undefined) {
+            real_index = $scope.activeViewTab - 1;
+        }
+
+        var needWarning = $scope.tabsChanges[real_index];
+        if (needWarning) {
+            $scope.tryCloseTabDialog = $uibModal.open({
+                animation: true,
+                scope: $scope,
+                templateUrl: 'close_tab.html',
+                size: "md"
+            });
+            $scope.tryCloseTabDialog.index = real_index;
+        } else {
+            $scope.$$postDigest(function(){
+            closeTab(real_index);    
+            });
+        }
+    };
+
+    $scope.tryCloseTabDialogClose = function(b_closeTab) {
+        $scope.tryCloseTabDialog.close();
+        if (b_closeTab == true) {
+            if ($scope.tryCloseTabDialog.index == null || $scope.tryCloseTabDialog.index == undefined)
+                closeTab($scope.activeViewTab - 1);
+            else
+                closeTab($scope.tryCloseTabDialog.index);
+        }
+        $scope.tryCloseTabDialog = null;
+
+    };
+
 
     loadFromCookise();
     $scope.$$postDigest(function() {
