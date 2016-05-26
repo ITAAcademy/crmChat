@@ -725,8 +725,15 @@ input::-ms-clear {
 .right-panel-lang-dropdown {
     position: absolute;
     right: 15px;
-    top: 3px;
+    top: 0px;
+
 }
+.lang-dropdown
+{
+      padding: 0px !important;
+     height: 100% !important;
+}
+
 .right-panel-bottom {
     background-color: #337AB7;
     /* border: 1px solid #337AB7; */
@@ -962,10 +969,14 @@ tags-input input {
     padding: 10px;
     margin-left: 2px;
 }
+  .editor-menu .editor-menu-icon .icon{
+    color: white;
+    font-size: 20px;
+}
 
-.editor-menu .editor-menu-icon:hover {
+.editor-menu .editor-menu-icon .icon:hover {
     cursor: pointer;
-    background: #8FB6D7;
+    /*background: #8FB6D7;*/
 }
 
 .editor-dropdown {

@@ -1,10 +1,10 @@
 <!--<per>{{$root.models.selected}}</per>-->
 <div class="content container-fluid bootstrap snippets container  editor-min-size">
-    <div class="decor-default">
+    <div>
         <div class="contacts-list">
             <div class="">
                 <div class="editor-left-panel">
-                    <div class="panel with-nav-tabs panel-primary editor-panel-primary">
+                    <div class="panel with-nav-tabs panel-primary editor-panel-primary" style="right : 10px;">
                         <uib-tabset class="panel with-nav-tabs panel-primary editor-panel-primary" classes="panel-heading my-panel-heading" active="activeViewTab">
                             <uib-tab index="$index + 1" ng-repeat="view in viewTabs track by $index" active="view.active" disable="view.disabled">
                                 <uib-tab-heading>
@@ -12,7 +12,7 @@
                                     <i class="glyphicon glyphicon-remove-circle tab-head-close-icon" ng-click="tryCloseTabDialogOpen($index + 1)"></i>
                                 </uib-tab-heading>
                                 <div class="panel-body editor-panel-body">
-                                    <div class="tab-content editor-panel-left-scroll ">
+                                    <div class="tab-content editor-panel-right-scroll ">
                                         <dir class="tab-content" content="view.content[langForRender[activeViewTab - 1]]">
                                         </dir>
                                     </div>
@@ -29,8 +29,12 @@
                                 </div>
                             </uib-tab>
                             <div class="editor-menu">
-                                <div class="glyphicon glyphicon-repeat editor-menu-icon" ng-click="updateView()"></div>
-                                <div class="glyphicon glyphicon-download-alt editor-menu-icon" ng-click="loadBotDialogItem(1)"></div>
+                                <div class="editor-menu-icon">
+                                    <a class="glyphicon glyphicon-repeat icon" ng-click="updateView()"></a>
+                                </div>
+                                <div class="editor-menu-icon">
+                                    <a class="glyphicon glyphicon-saved icon" ng-click="saveBotDialogItem()"></a>
+                                </div>
                                 <div class="dropdown editor-dropdown-wraper">
                                     <button class="btn btn-primary dropdown dropdown-toggle editor-dropdown" type="button" data-toggle="dropdown">Menu
                                         <span class="caret"></span></button>
@@ -116,11 +120,11 @@
                             </div>
                         </uib-tab>
                     </uib-tabset>
-                    <div class=" right-panel-bottom">                       
+                    <div class=" right-panel-bottom">
                         <div class="right-panel-description">
                             <div class="right-panel-description-title" th:text="${lgPack.lables.formBuilder.description}"> Descriprion: </div>
                             <div class="dropdown right-panel-lang-dropdown">
-                                <select class=" lang-dropdown" ng-change="updateView()" ng-model="langForRender[activeViewTab - 1]">
+                                <select class="form-control lang-dropdown" ng-change="updateView()" ng-model="langForRender[activeViewTab - 1]">
                                     <option label="UA" value="ua" selected="selected"></option>
                                     <option label="EN" value="en" selected="selected"></option>
                                     <option label="RU" value="ru" selected="selected"></option>
