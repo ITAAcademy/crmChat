@@ -23,7 +23,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                     processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + functionNameKey, functionResult);
                 }
                 for (var botParameterKey in botParametersMap) {
-                    processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + botParameterKey, botParametersMap[botParameterKey])
+                    processedStr = processedStr.replace(SIGN_OF_NAME_OR_FUNCTION + botParameterKey.slice(1, -1), botParametersMap[botParameterKey])
                 }
                 return processedStr;
             }
