@@ -680,24 +680,17 @@ input::-ms-clear {
     padding: 5px 5px 0px 5px;
 }
 .editor-panel-body {
-    min-height: calc(100vh - 200px);
+    
 }
 .editor-panel-body-right {
     min-height: calc(75vh - 200px);
 }
 .editor-panel-primary {
-    /* margin-bottom: 0;
-position: absolute;
+       margin: 0;
+    position: absolute;
     right: 0;
     left: 0;
-    height: 70%;*/
-    
-    margin-bottom: 0;
-    position: absolute;
-    right: 8px;
-    left: 0;
     /* height: 70%; */
-    
     top: 0;
     bottom: 0;
 }
@@ -883,15 +876,16 @@ tags-input input {
     height: 20px;
 }
 .editor-left-panel {
-    padding-right: 0px;
+        padding-right: 0px;
     width: 70%;
     /* height: calc(100vh); */
-    
     position: absolute;
     clear: both;
-   /* background-color: red;*/
+    /* background-color: red; */
     top: 0;
     bottom: 0;
+    right: 0;
+    left: 0;
 }
 .editor-right-panel {
     /* padding-left: 2px; */
