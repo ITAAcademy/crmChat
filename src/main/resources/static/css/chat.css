@@ -906,11 +906,15 @@ tags-input input {
     top: 0;
     bottom: 0;
 }
+.editor-dropdown-wraper {
+     position: absolute;
+    right: 20px;
+}
+
 .editor-dropdown {
     width: 110px;
     height: 40px;
-    position: absolute;
-    right: 20px;
+   
     padding: 10px;
     border: 1px solid white;
 }
