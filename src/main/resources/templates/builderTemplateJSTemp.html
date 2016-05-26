@@ -21,29 +21,42 @@
                                                 Here you see source code:
                                             </div>
                                             <div class="btn btn-default" th:text="${lgPack.lables.formBuilder.addFormToDB}" ng-click="testElementModule()">Add botdialogitem</div>
-                                            <div class="btn btn-default" ng-click="updateView()" th:text="${lgPack.lables.formBuilder.update}">Update</div>
                                             <textarea ng-model="view.items[langForRender[activeViewTab - 1]].body" class="code-edit-source">
                                             </textarea>
                                         </div>
                                     </div>
                                 </div>
                             </uib-tab>
-
-
-
-                            <div class="dropdown editor-dropdown-wraper">
-                                <button class="btn btn-primary dropdown dropdown-toggle editor-dropdown" type="button" data-toggle="dropdown">Menu
-                                    <span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li ng-click="saveBotDialogItem()"><a>Save</a></li>
-                                    <li ng-click="createBotDialogItem()"><a>Create</a></li>
-                                    <li ng-click="loadBotDialogItem(1)"><a>Load</a></li>
-                                </ul>
+                            <div class="editor-menu">
+                                <div class="glyphicon glyphicon-repeat editor-menu-icon" ng-click="updateView()"></div>
+                                <div class="glyphicon glyphicon-download-alt editor-menu-icon" ng-click="loadBotDialogItem(1)"    ></div>
+                                <div class="dropdown editor-dropdown-wraper">
+                                    <button class="btn btn-primary dropdown dropdown-toggle editor-dropdown" type="button" data-toggle="dropdown">Menu
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="saveBotDialogItem()"><a>
+                                         <div class="glyphicon glyphicon-saved"></div>
+                                         Save
+                                         </a></li>
+                                        <li ng-click="createBotDialogItem()"><a>
+                                         <div class="glyphicon glyphicon-plus"></div>
+                                         Create
+                                         </a></li>
+                                        <li ng-click="loadBotDialogItem(1)">
+                                            <a>
+                                            <div class="glyphicon glyphicon-download-alt"></div>
+                                            Load
+                                            </a>
+                                        </li>
+                                        <li ng-click="updateView()">
+                                            <a>
+                                            <div class="glyphicon glyphicon-repeat"></div>
+                                            Refresh
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-
-
-
-
                         </uib-tabset>
                     </div>
                 </div>

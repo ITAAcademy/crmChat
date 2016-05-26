@@ -902,13 +902,15 @@ tags-input input {
     width: 28.7%;
     /* height: 200px; */
     
-    background-color: green;
+    
     top: 0;
     bottom: 0;
 }
 .editor-dropdown-wraper {
-     position: absolute;
+    position: absolute;
     right: 20px;
+    width: 45%;
+    top: 5px;
 }
 
 .editor-dropdown-wraper > *:hover,
@@ -916,12 +918,38 @@ tags-input input {
     cursor: pointer;
 }
 
+ .editor-menu {
+         width: 30%;
+    min-height: 47px;
+    /* min-width: 220px; */
+    /* float: right; */
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+  .editor-menu .editor-menu-icon {
+        float: left;
+    width: 20%;
+    height: 35px;
+    /*background: red;*/
+    color: white;
+    font-size: 20px;
+    margin-top: 5px;
+    padding: 10px;
+    margin-left: 2px;
+}
+
+.editor-menu .editor-menu-icon:hover {
+    cursor: pointer;
+    background: #8FB6D7;
+}
+
 .editor-dropdown {
     width: 110px;
     height: 40px;
    
     padding: 10px;
-    border: 1px solid white;
 }
 .editor-dropdown:hover {
     background-color: #8FB6D7;
