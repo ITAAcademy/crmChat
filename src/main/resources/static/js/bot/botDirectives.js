@@ -287,13 +287,13 @@ angular.module('springChat.directives').directive('botinput', function($compile,
         controller: 'ChatViewItemController',
         scope: {
             text: '=',
-            linkindex: '='
+            name : '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 var body = "{{text}}";
                 scope.itemvalue = "";
-                var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.linkindex);
+                var prefix = '<input type="text" name="{0}" ng-model="itemvalue">'.format(attr.name);
 
                 var suffix = '</input>';
                 var elementValue = prefix + body + suffix;
@@ -325,8 +325,8 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     alert("NO JS FUNCTION");
                     return;
                 }
-
-                var url = formElm.attr("action") + "/next_item/" + scope.mainScope.nextDialogItemJS;
+                var urlPrefix = "bot_operations/{0}/submit_dialog_item/{1}".format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
+                var url = urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
                 // var dataToSend = JSON.stringify(formElm.serializeArray());
                 var formData = {};
                 for (var scopeAndElementKey in scope.$parent.botChildrens) {

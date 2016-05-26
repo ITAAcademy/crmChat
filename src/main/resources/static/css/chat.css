@@ -1162,14 +1162,14 @@ li[dnd-draggable] {
 
 .editor-panel-body .selected{
 background-color: #eee;
-opacity: 0.5;
+opacity: 0.7;
     border: 1px solid #ddd;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
     display: block;
     padding: 10px 15px;
     margin-bottom: -1px;
-    color: gray;
+   //* color: gray;*/
 }
 .animate-properties.ng-enter {
     -webkit-animation: animate-properties-enter 600ms cubic-bezier(0.445,

@@ -41,7 +41,7 @@ public class BotDialogItem {
 	public BotDialogItem(BotDialogItem item) {
 		this.body = item.body;
 		this.category = item.category;
-		this.idObject = new LangId(idObject);
+		this.idObject = new LangId(item.idObject);
 		this.testCase = item.testCase;
 		this.description = item.description;
 	}

@@ -259,15 +259,17 @@ public class BotController {
 			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
 		}
 
-		nextContainerToSave = new BotDialogItem(nextContainer);
+		/*nextContainerToSave = new BotDialogItem(nextContainer);
 		nextContainerToSave.setBody(nextContainer.getIdObject().getId().toString());
-
+*/
 		String containerString = "";
 		String containerStringToSave = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
-			if (nextContainerToSave != null)
-				containerStringToSave = objectMapper.writeValueAsString(nextContainerToSave);
+/*			if (nextContainerToSave != null)
+				containerStringToSave = objectMapper.writeValueAsString(nextContainerToSave);*/
+				containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
+				
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

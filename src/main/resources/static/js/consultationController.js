@@ -5,7 +5,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
     $scope.ratings = new Map();
     $scope.consultant = false;
     $scope.status = 0;
-    $scope.name = "ConsultationController";
+    $scope.controllerName = "ConsultationController";
     var chatControllerScope = Scopes.get('ChatController');
 
     $scope.isCanStart = function() {

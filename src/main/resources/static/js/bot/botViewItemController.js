@@ -3,7 +3,7 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
 
     angular.extend(this, $controller('ChatBotController', { $scope: $scope }));
 
-    $scope.name = "ChatViewItemController";
+    $scope.controllerName = "ChatViewItemController";
     $scope.chatControllerScope = Scopes.get('ChatController');
     $scope.chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 

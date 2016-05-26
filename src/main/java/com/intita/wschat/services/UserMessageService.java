@@ -174,7 +174,7 @@ public class UserMessageService {
 						e1.printStackTrace();
 					}	
 					if (json != null) {
-						JsonNode body_body =  json.get("body");
+						JsonNode body_body =  json.get("id");
 						if (body_body != null) {
 							String body_json = body_body.asText();
 
@@ -184,12 +184,19 @@ public class UserMessageService {
 									Long id = new Integer(body_json).longValue();
 									BotDialogItem botDialogItem = botItemContainerService.getByObjectId(new LangId(id, lang));
 									if (botDialogItem != null) {
-										String body = botDialogItem.getBody();
+										/*String body = botDialogItem.getBody();
 										if (!body.isEmpty()) {
 											ObjectNode jsonNode = (ObjectNode)json;
 											jsonNode.put("body", body); 
 											String res_json_str = jsonNode.toString();
 											message.setBody(res_json_str);
+										}*/
+										try {
+											String res_json_str = mapper.writeValueAsString(botDialogItem);
+											message.setBody(res_json_str);
+										} catch (JsonProcessingException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
 										}
 									}
 								}

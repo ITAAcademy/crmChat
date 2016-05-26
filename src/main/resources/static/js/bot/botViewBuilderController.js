@@ -2,7 +2,7 @@
 
 springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams', '$rootScope', '$scope', '$window', '$uibModal', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $window, $uibModal, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
 
-    $scope.name = "ChatBotViewBuilderController";
+    $scope.controllerName = "ChatBotViewBuilderController";
     var chatControllerScope = Scopes.get('ChatController');
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
     $scope.BUILDER = BOT_ELEMENTS_MODULE;
@@ -193,7 +193,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
      *****************************/
     var loadView = function loadView(data, status, headers, config) {
         console.log("Load view: " + data);
-        var tab = { "title": "test1", "content": new Map(), "objects": new Map(), "items": data };
+        var tab = { "title": "№" + data["en"].idObject.id, "content": new Map(), "objects": new Map(), "items": data };
         //tab.objects["ua"] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items["ua"].body);
         for (var key in tab.items) {
             tab.objects[key] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[key].body);
@@ -298,6 +298,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         for (var index in obj) {
             loadView(obj[index], null, null, null, null);
         }
+    }
+
+    function checkChanges(index)
+    {
+
     }
 
     function closeTab(index) {
