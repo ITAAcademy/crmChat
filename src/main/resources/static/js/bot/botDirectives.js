@@ -383,7 +383,8 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
             legend: '=',
             labels: '=',
             values: '=',
-            groupname: '=' 
+            groupname: '=',
+            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -397,7 +398,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 var item_type = "checkbox";
                 scope.values = [];
 
-                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                /* scope.$watch('labels', function() {
                 if (scope.labels.length > scope.values.length){
                     scope.values.push('false');
@@ -405,7 +406,11 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 else
                scope.values.pop();
                 }, true);*/ // watching properties
-                for (var i = 0; i < labels.length; i++) {
+
+
+                function initElement(){
+                    body = "";
+                    for (var i = 0; i < scope.itemscount; i++) {
                     var name = "{{groupname}}_item";
                     var value = "{{values[{0}].text}}".format(i);
                     var label = "{{labels[{0}].text}}".format(i);
@@ -422,9 +427,15 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 $compile(element.contents())(scope);
                 scope.init(scope, element, attr);
             }
+              scope.$watch('itemscount', function() {
+                 initElement(); 
+                });
+                }
+            }
         }
-    }
-});
+    });
+
+
 
 angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
     return {
@@ -433,7 +444,8 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
             legend: '=',
             labels: '=',
             values: '=',
-            groupname: '=' 
+            groupname: '=',
+            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -447,7 +459,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 var item_type = "radio";
                 scope.values = [];
 
-                var labels = $parse(attr.labels); //JSON.parse(attr.labels.replace('\'', '\"'));
+               // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                /* scope.$watch('labels', function() {
                 if (scope.labels.length > scope.values.length){
                     scope.values.push('false');
@@ -455,7 +467,11 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 else
                scope.values.pop();
                 }, true);*/ // watching properties
-                for (var i = 0; i < labels.length; i++) {
+
+
+                function initElement(){
+                    body = "";
+                    for (var i = 0; i < scope.itemscount; i++) {
                     var name = "{{groupname}}_item";
                     var value = "{{values[{0}].text}}".format(i);
                     var label = "{{labels[{0}].text}}".format(i);
@@ -472,9 +488,13 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 $compile(element.contents())(scope);
                 scope.init(scope, element, attr);
             }
+              scope.$watch('itemscount', function() {
+                 initElement(); 
+                });
+                }
+            }
         }
-    }
-});
+    });
 
 
 
