@@ -34,7 +34,7 @@
                                 <ul class="dropdown-menu">
                                     <li ng-click="saveBotDialogItem()"><a>Save</a></li>
                                     <li ng-click="createBotDialogItem()"><a>Create</a></li>
-                                    <li ng-click="loadBotDialogItem(1)"><a>Load</a></li>
+                                    <li ng-click="toggleLoadDialogItemModal()"><a>Load</a></li>
                                 </ul>
                             </div>
                         </uib-tabset>
@@ -105,3 +105,4 @@
 </div>
 <span id="tooltip-mouse">
     </span>
+    <div id="dialog_item_modal_loader" class="modal fade" th:include="loadDialogItemModalWindow"/>

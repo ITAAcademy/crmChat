@@ -214,6 +214,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         });
     }
 
+
     $scope.loadBotDialogItem = function(id) {
         var botDialogItem = {};
         var requestUrl = serverPrefix + "/bot_operations/get_bot_dialog_item/{0}".format(id);
@@ -222,6 +223,77 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         success(loadView).
         error(function(data, status, headers, config) {});
     }
+    $scope.initDialogItemModalLoader =function(){
+
+    }
+
+
+$scope.botDialogItemsIdsForModal = [];
+    $scope.botCategoriesIdsForModal = [];
+    $scope.selectedBotDialogItemForModal;
+    $scope.selectedBotCategoryForModal;
+     $scope.loadCategoriesIds = function() {
+
+        var requestUrl = serverPrefix + "/bot_operations/get_all_categories_ids";
+
+        return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.botCategoriesIdsForModal = data;
+            console.log("get_dialog_items_ids:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+    }
+
+    $scope.loadDialogItemsIds = function(categoryId) {
+
+        var requestUrl = serverPrefix + "/bot_operations/get_dialog_items_ids/{0}".format(categoryId);
+
+       return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.botDialogItemsIdsForModal = data;
+            console.log("get_dialog_items_ids:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+    }
+      function initDialogItemsIds(categoryId){
+     $scope.loadDialogItemsIds(categoryId).success(function(){
+             if ( $scope.botDialogItemsIdsForModal.length>0){
+            var firstDialogItemId = $scope.botDialogItemsIdsForModal[0];
+             $scope.selectedBotDialogItemForModal = firstDialogItemId;
+         } 
+         });
+  }
+  $scope.categoriesNamesList = [];
+  $scope.reloadCategoriesNames = function(){
+       $timeout.cancel($scope.reloadingCategoriesNamesPromise);
+    $scope.reloadingCategoriesNamesPromise = $timeout(function(){
+        loadFirst5CategoriesNames($scope.categoryNameToLoad);
+    },200);
+ 
+  }
+  function loadFirst5CategoriesNames(name){
+    var nameToCheck = name || "_";
+      var requestUrl = serverPrefix + "/bot_operations/get_five_categories_names_like/{0}".format(nameToCheck);
+       return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.categoriesNamesList = data;
+            console.log("get_categories_by_name:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+  }
+
+     function initCategoriesAndDialogItems(){
+         $scope.loadCategoriesIds().success(function(){
+           if ($scope.botCategoriesIdsForModal.length>0){
+        var firsCategorytId = $scope.botCategoriesIdsForModal[0];
+           $scope.selectedBotCategoryForModal=firsCategorytId;
+        initDialogItemsIds(firsCategorytId );
+     }
+     });
+     }
+
+    initCategoriesAndDialogItems();
+    
 
     $scope.saveBotDialogItem = function() {
         $scope.updateView();
@@ -232,6 +304,18 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         success(function(data, status, headers, config) {}).
         error(function(data, status, headers, config) {});
     };
+
+ $scope.loadDlgItemModalVisible = false;
+
+    $scope.toggleLoadDialogItemModal = function() {
+        $('#dialog_item_modal_loader').modal('toggle');
+
+        //if ($scope.loadDlgItemModalVisible == true)
+          //  $scope.dialogName = $scope.dialogNameBackup;
+
+        $scope.loadDlgItemModalVisible = !$scope.loadDlgItemModalVisible;
+    };
+
 
     /*****************************
      * TEST

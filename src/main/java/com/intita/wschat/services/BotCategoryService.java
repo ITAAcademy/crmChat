@@ -3,6 +3,7 @@ package com.intita.wschat.services;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,15 @@ public class BotCategoryService {
 	public BotCategory getById(Long id)
 	{
 		return botCategoryRepository.findOne(id);
+	}
+	public ArrayList<Long> getAllIds(){
+		return botCategoryRepository.getAllIds();
+	}
+	public ArrayList<String> getFirstNamesLike(String name,int limit){
+		return botCategoryRepository.getNamesLike(name,new PageRequest(0,limit));
+	}
+	public ArrayList<String> getFirst5NamesLike(String name){
+		return getFirstNamesLike(name,5);
 	}
 	
 	

@@ -1,0 +1,22 @@
+<div >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="toggleLoadDialogItemModal()">&times;</button>
+                <h4 id="wndTitle" class="modal-title">Завантаження DialogItem</h4>
+            </div>
+            <div class="modal-body">
+            <input comparator="substringMatcher" typeahead="name for name in categoriesNamesList" data-animation="am-flip-x" type="text" ng-model="categoryNameToLoad" ng-keypress="reloadCategoriesNames()" placeholder="Назва Категорії"></input>
+            <select  id="categoryIdToLoad" type="text" ng-options="c for c in botCategoriesIdsForModal" ng-model="selectedBotCategoryForModal" placeholder="Room name"></select>
+             <input  type="text" ng-model="dialogItemDescriptionToLoad" ng-keypress="" placeholder="Опис елементу"></input> 
+                <select  id="dialogItemIdToLoad" type="text" ng-options="n for n in botDialogItemsIdsForModal" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
+                
+            <div class="modal-footer">
+                <button id="closeDialogItemLoadModalButton" type="button" class="btn btn-default" ng-click="toggleLoadDialogItemModal()">Close</button>
+                <button id="DialogItemLoadModalButton" type="button" class="btn btn-default" ng-click="loadBotDialogItem(selectedBotDialogItemForModal)">Завантажити</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
