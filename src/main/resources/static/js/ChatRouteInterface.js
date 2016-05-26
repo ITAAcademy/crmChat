@@ -17,9 +17,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         TILDA_MODE: 2,
         COMMAND_MODE: 3
     };
-    
-  
-    $scope.BOT_ID = 0;// need read from config
+
+
+    $scope.BOT_ID = 0; // need read from config
 
     $scope.selected = undefined;
     $scope.totalItems = 64;
@@ -47,8 +47,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
 
     var showListInMessageInputTimer;
-    
-    
+
+
 
     function messageError() {
         toaster.pop('error', "Error", "server request timeout", 1000);
@@ -111,13 +111,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         var kk = keyCode;
         var arrowKeyPressed = kk == 39 || kk == 37;
         var enterPressed = keyCode == 13;
-     
+
         if (enterPressed && !$scope.show_search_list_in_message_input) {
             $scope.onMessageInputClick();
             return;
         }
-        
-       
+
+
 
         var msgInputElm = document.getElementById("newMessageInput");
         var carretPosIndex = getCaretPosition(msgInputElm);
@@ -144,15 +144,14 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     }
     $scope.beforeMessageInputKeyPress = function(event) {
-    	
-		 var escapePressed = event.keyCode  == 27;
-	     if (escapePressed)
-     	 {
-	    	 data_in_message_input = [];
-	    	 $scope.show_search_list_in_message_input = false;
-	    	 resetSpecialInput();
-	    	 return;
-         }
+
+        var escapePressed = event.keyCode == 27;
+        if (escapePressed) {
+            data_in_message_input = [];
+            $scope.show_search_list_in_message_input = false;
+            resetSpecialInput();
+            return;
+        }
 
         if (event.keyCode === 9) { // tab was pressed
 
@@ -189,7 +188,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.startTyping = function(event) {
         //var keyCode = event.which || event.keyCode;
         //var typedChar = String.fromCharCode(keyCode);
-        //if(typedChar==' ')$scope.onMessageInputClick();		
+        //if(typedChar==' ')$scope.onMessageInputClick();       
         switch (specialInputMode) {
             case INPUT_MODE.DOG_MODE:
                 processDogInput();
@@ -202,7 +201,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 break;
 
         }
-        //		Don't send notification if we are still typing or we are typing a private message
+        //      Don't send notification if we are still typing or we are typing a private message
         if (angular.isDefined(typing) || $scope.sendTo != "everyone") return;
 
         typing = $interval(function() {
@@ -221,13 +220,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
         }
     };
-    
+
     $scope.showCommandListInMessageInput = function(command) {
 
         $scope.data_in_message_input = [];
-        if($scope.showCommandListInMessageInputTimer != null && $scope.showCommandListInMessageInputTimer != undefined)
-        	$timeout.cancel($scope.showCommandListInMessageInputTimer); //888
-        
+        if ($scope.showCommandListInMessageInputTimer != null && $scope.showCommandListInMessageInputTimer != undefined)
+            $timeout.cancel($scope.showCommandListInMessageInputTimer); //888
+
         $scope.showCommandListInMessageInputTimer = $timeout(function() {
             $scope.show_search_list_in_message_input = true;
             var request = $http({
@@ -252,8 +251,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             $scope.show_search_list_in_message_input = true;
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId
-                +"&eliminate_users_of_current_room=false", //'/get_users_emails_like',
+                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=false", //'/get_users_emails_like',
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
@@ -285,37 +283,33 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         }, 500); //for click event
     };
 
-$scope.scaleCenterIconCircle = function() {
-    	
-    	var avatar_contaiter = $('.centered').children(); 
-    	avatar_contaiter.on('load', function(){
-    		
-    	for (var i = 0; i <  avatar_contaiter.length; i++)
-		{
-    		var image = avatar_contaiter.eq(i);
-    			var width = image.width();
-        	var height = image.height();
-        	image.css("position",  "static");
-        	if (parseInt(width, 10) < parseInt(height, 10)  )
-        	{
-        		var proportcialHeight = height * 100 / width;
-        		image.css("height", proportcialHeight + "%");
-        		image.css("width", "100%");
-        		image.css("top", "-75px");
-        		image.css("overflow", "hidden");
-        		image.css("transform", " translateX(-0%) translateY(-5%)");
-        	}
-        	else
-        	if (parseInt(width, 10) > parseInt(height, 10) )
-        	{
-        		var proportcialWidth = width * 100 / height;
-        		image.css("width", proportcialWidth + "%"); 
-        		image.css("height", "100%");
-        		image.css("transform", " translateX(-"+ (proportcialWidth - 100)/2 + "%)");
-        	}
-        	
-		}
-    	});
+    $scope.scaleCenterIconCircle = function() {
+
+        var avatar_contaiter = $('.centered').children();
+        avatar_contaiter.on('load', function() {
+
+            for (var i = 0; i < avatar_contaiter.length; i++) {
+                var image = avatar_contaiter.eq(i);
+                var width = image.width();
+                var height = image.height();
+                image.css("position", "static");
+                if (parseInt(width, 10) < parseInt(height, 10)) {
+                    var proportcialHeight = height * 100 / width;
+                    image.css("height", proportcialHeight + "%");
+                    image.css("width", "100%");
+                    image.css("top", "-75px");
+                    image.css("overflow", "hidden");
+                    image.css("transform", " translateX(-0%) translateY(-5%)");
+                } else
+                if (parseInt(width, 10) > parseInt(height, 10)) {
+                    var proportcialWidth = width * 100 / height;
+                    image.css("width", proportcialWidth + "%");
+                    image.css("height", "100%");
+                    image.css("transform", " translateX(-" + (proportcialWidth - 100) / 2 + "%)");
+                }
+
+            }
+        });
     };
 
     $scope.onMessageInputClick = function() {
@@ -340,7 +334,7 @@ $scope.scaleCenterIconCircle = function() {
     }
 
     $scope.appendDifferenceToSearchInput_in_message_input = function(value) {
-    	//alert(value)
+        //alert(value)
         var functionalChar;
         var prefix = "";
         var suffix = "";
@@ -354,8 +348,8 @@ $scope.scaleCenterIconCircle = function() {
                 suffix = '"';
                 break;
             case INPUT_MODE.COMMAND_MODE:
-            	 functionalChar = "/";
-            	break;
+                functionalChar = "/";
+                break;
         }
         var message = $scope.newMessage;
         var msgInputElm = document.getElementById("newMessageInput");
@@ -368,405 +362,387 @@ $scope.scaleCenterIconCircle = function() {
         $timeout(function() {
             $scope.show_search_list_in_message_input = false;
         }, 500);
-       
-      
-       if (specialInputMode == INPUT_MODE.COMMAND_MODE)
-       {                    
-	         var funcCall = value + "()";
-	         //alert(funcCall);
-	         //Call the function
-	         var ret = eval(funcCall);
-        }       
-       resetSpecialInput();
+
+
+        if (specialInputMode == INPUT_MODE.COMMAND_MODE) {
+            var funcCall = value + "()";
+            //alert(funcCall);
+            //Call the function
+            var ret = eval(funcCall);
+        }
+        resetSpecialInput();
     }
 
     function createDialogWithBot() {
-    	$('#wndTitle').text("Створити діалог з ботом");
-    	$('#roomNameInput').attr("placeholder", "Назва діалогу");
-    	
-    	$scope.dialogNameBackup = $scope.dialogName;
-    	
-    	$scope.dialogName = ""
+        $('#wndTitle').text("Створити діалог з ботом");
+        $('#roomNameInput').attr("placeholder", "Назва діалогу");
+
+        $scope.dialogNameBackup = $scope.dialogName;
+
+        $scope.dialogName = ""
         $scope.toggleNewRoomModal(); //999
-        
+
     }
-    
+
     function getCurrentTime(hour_shift) {
-    	var currentdate = new Date(); 
-    	return (currentdate.getHours() + hour_shift) + ":"  
-         + currentdate.getMinutes() + ":" 
-         + currentdate.getSeconds();
-    } 
-    
-    function getTimeString(time) {
-    	return time.getHours() + ":"  
-        + time.getMinutes() + ":" 
-        + time.getSeconds();    	
-    };
-    
-    var validate_create_consultation_form = true;
-    
-    function getDateString(time) {
-    	var year = time.getUTCFullYear() ;
-    	
-    	var month = time.getUTCMonth() + 1;
-    	var day = time.getUTCDate();
-    	
-    	var date = year  + "-" ;
-    	
-    	if (month > 9)
-    		date += month + "-" ;
-    	else
-    		date += "0" + month + "-" ;
-    	
-    	if (day > 9)
-    		date += day;
-    	else
-    		date += "0" + day ;
-    	
-    	return date;  	
-    };
-    
-    function getTimeInInputFormat(hour,minutes,sec) {
-    	var currentdate = new Date(); 
-    	currentdate.setHours(hour);
-    	currentdate.setMinutes(minutes);
-    	currentdate.setSeconds(sec);
-    	currentdate.setMilliseconds(0);
-    //	currentdate.setMiliseconds(0);
-    	return currentdate;
+        var currentdate = new Date();
+        return (currentdate.getHours() + hour_shift) + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
     }
-    
-    
+
+    function getTimeString(time) {
+        return time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+    };
+
+    var validate_create_consultation_form = true;
+
+    function getDateString(time) {
+        var year = time.getUTCFullYear();
+
+        var month = time.getUTCMonth() + 1;
+        var day = time.getUTCDate();
+
+        var date = year + "-";
+
+        if (month > 9)
+            date += month + "-";
+        else
+            date += "0" + month + "-";
+
+        if (day > 9)
+            date += day;
+        else
+            date += "0" + day;
+
+        return date;
+    };
+
+    function getTimeInInputFormat(hour, minutes, sec) {
+        var currentdate = new Date();
+        currentdate.setHours(hour);
+        currentdate.setMinutes(minutes);
+        currentdate.setSeconds(sec);
+        currentdate.setMilliseconds(0);
+        //  currentdate.setMiliseconds(0);
+        return currentdate;
+    }
+
+
     $scope.consultationDate
     $scope.consultationTimeBeginInput
     $scope.is_teacher_Nick_valid = false;
     $scope.is_lectionTitle_valid = false;
-    
-  
-    
+
+
+
     function createConsultation() {
-    	
-    	$('#create_consultation_wndTitle').text("Створити консультацію");    	 
-    	 $scope.consultationDate =  new Date()    	 
-    	 $scope.teacher_Nick = "red2015in@gmail.com"
-    	$scope.lectionTitle = "r4fregv"    	
-    	
-    	 var time = new Date();
-    	$scope.consultationTimeBegin = getTimeInInputFormat(time.getHours() + 1 ,time.getMinutes() ,time.getSeconds());
-    	$scope.consultationTimeEnd = getTimeInInputFormat(time.getHours() + 2 ,time.getMinutes() ,time.getSeconds());    	  	
-    	$scope.toggleNewConsultationModal();       	 
+
+        $('#create_consultation_wndTitle').text("Створити консультацію");
+        $scope.consultationDate = new Date()
+        $scope.teacher_Nick = "red2015in@gmail.com"
+        $scope.lectionTitle = "r4fregv"
+
+        var time = new Date();
+        $scope.consultationTimeBegin = getTimeInInputFormat(time.getHours() + 1, time.getMinutes(), time.getSeconds());
+        $scope.consultationTimeEnd = getTimeInInputFormat(time.getHours() + 2, time.getMinutes(), time.getSeconds());
+        $scope.toggleNewConsultationModal();
     };
-    
+
     $scope.createSmtVisible = false;
-    
+
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
-        
-        if ( $scope.createSmtVisible == true)
-        	$scope.dialogName = $scope.dialogNameBackup;
-        
+
+        if ($scope.createSmtVisible == true)
+            $scope.dialogName = $scope.dialogNameBackup;
+
         $scope.createSmtVisible = !$scope.createSmtVisible;
     };
-    
+
     var consultationWindowVisible = false;
-    
-    $scope.toggleNewConsultationModal = function() {    	
-        $('#new_consultation_modal').modal('toggle'); 
-        
-        if (consultationWindowVisible == true)
-        {
-        	 $scope.teacher_Nick = "";
-             $scope.lectionTitle = "";
+
+    $scope.toggleNewConsultationModal = function() {
+        $('#new_consultation_modal').modal('toggle');
+
+        if (consultationWindowVisible == true) {
+            $scope.teacher_Nick = "";
+            $scope.lectionTitle = "";
         }
         consultationWindowVisible = !consultationWindowVisible;
     };
-  
-   $scope.addDialog = function () {
-	  var dialName = $scope.dialogName;
-	  $scope.toggleNewRoomModal();
-	   $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName)// + $scope.dialogName).
-	   success(function(data, status, headers, config) {
-	       console.log('room with bot created: ' + $scope.dialogName )	      
-	    }).
-	    error(function(data, status, headers, config) {
-	        console.log('creating room with bot failed '  )
-	    });
-             
-    }; 
-      
-      $scope.teachersList = []
-      $scope.lectionsList = []
-      
-      $scope.teacher_Nick = ""
-      $scope.lectionTitle = ""
-      
-      var getTeachersEmailsTimer; 
-      
-     
-      
-      $scope.teacherNickInputKeyDown = function(event) {
-    	  var enterPressed = event.keyCode  == 13;
- 	     if (enterPressed)
-      	 {
- 	    	 $('#lectionTitleInput').focus();
- 	    	 return;
-      	 }
-      };     
-    
-      
-      $scope.lectionTitleInputKeyDown = function(event) {
-    	  var enterPressed = event.keyCode  == 13;
- 	     if (enterPressed)
-      	 {
- 	    	 $('#consultationDateInput').focus();
- 	    	 return
-      	 }  
-      };
-      
-      
-      $scope.consultationDateInputKeyDown = function(event) {
-    	  var enterPressed = event.keyCode  == 13;
- 	     if (enterPressed)
-      	 {
- 	    	 $('#consultationTimeBeginInput').focus();
-      	 }      
-      };
-      
-      $scope.consultationTimeBeginInputKeyDown = function(event) {
-    	  var enterPressed = event.keyCode  == 13;
- 	     if (enterPressed)
-      	 {
- 	    	 $('#consultationTimeEndInput').focus();
-      	 }      
-      };
-      
-      $scope.consultationTimeEndInputKeyDown = function(event) {
-    	  var enterPressed = event.keyCode  == 13;
- 	     if (enterPressed)
-      	 {
- 	    	 	//submit
-      	 }      
-      };
-      
-      $scope.lectionTitleInputBorder =  "";
-      $scope.teacher_NickInputBorder =  "";
-      $scope.consultationDateInputBorder =  "";
-      $scope.consultationTimeBeginInputBorder = "";
-      $scope.consultationTimeEndInputBorder = "";
-      
-      function isFirstTimeLessThanSecond(time1, time2) {
-    	  var consultationTimeBegin_hour = time1.getHours();
-     	 var consultationTimeBegin_minute = time1.getMinutes();
-     	 var consultationTimeBegin_second = time1.getSeconds();
-     	 
-     	 var consultationTimeEnd_hour = time2.getHours();
-     	 var consultationTimeEnd_minute = time2.getMinutes();
-     	 var consultationTimeEnd_second = time2.getSeconds();
-     	 
-     	 var is_begin_time_less_end_time = false;
-     	 if (consultationTimeBegin_hour <  consultationTimeEnd_hour)
-     		 is_begin_time_less_end_time = true;
-     	 else
-     		 if (consultationTimeBegin_hour == consultationTimeEnd_hour)
- 			 {
-     			 if (consultationTimeBegin_minute < consultationTimeEnd_minute)
-     				 is_begin_time_less_end_time = true;
-     			 else
-     				 if (consultationTimeBegin_minute == consultationTimeEnd_minute)
- 					 {
-     					 if ( consultationTimeBegin_second < consultationTimeEnd_second)
-     						 is_begin_time_less_end_time = true;
- 					 }
- 			 }  
-     	 return is_begin_time_less_end_time;
-      };
-      
-     function isDatesEquials(date1, date2) {
-    	  var curDay = date1.getUTCDate();    	
-      	 var curYear = date1.getUTCFullYear();
-      	 var curMonth = date1.getUTCMonth() + 1;
-      	 
-      	 var consultationDate_day = date2.getUTCDate();    	
-     	 var consultationDate_Year =  date2.getUTCFullYear();
-     	 var consultationDate_Month =  date2.getUTCMonth() + 1;
-     	 
-     	 var is_equials = (consultationDate_day == curDay && consultationDate_Year == curYear && consultationDate_Month == curMonth);
-     	 return is_equials;
-     };
-      
-      function isFirstDateLessEquialThanSecond(date1, date2) {
-    	  var curDay = date1.getUTCDate();    	
-     	 var curYear = date1.getUTCFullYear();
-     	 var curMonth = date1.getUTCMonth() + 1;
-     	 
-     	 var consultationDate_day = date2.getUTCDate();    	
-    	 var consultationDate_Year =  date2.getUTCFullYear();
-    	 var consultationDate_Month =  date2.getUTCMonth() + 1;
-    	  
-    	  var isconsultationDateValid = false;
-     	 if (consultationDate_Year > curYear)
-     		 isconsultationDateValid = true;
-     	 else
-     		 if (consultationDate_Year == curYear)
- 			 {
- 	    		 if (consultationDate_Month > curMonth)
- 	    			 isconsultationDateValid = true;
- 	    		 else
- 	    			 if (consultationDate_Month == curMonth)
-     				 {
- 	    			 	if (consultationDate_day >= curDay)
- 	    			 		isconsultationDateValid = true;
-     				 }
- 			 }
-     	 return isconsultationDateValid;
-      };
-      
-      
-      $scope.createConsultationButtonPressed = function(event) {   	 
-    	  
-    	  var all_ok ;
-    	  if (validate_create_consultation_form == true)
-		  {
-	    	  if ($scope.is_lectionTitle_valid == false)
-	    		  $scope.lectionTitleInputBorder =  "solid 1px red";
-	    	  else
-	    		  $scope.lectionTitleInputBorder =  "";
-	    	  
-	    	 if ($scope.is_teacher_Nick_valid == false)
-	    		  $scope.teacher_NickInputBorder =  "solid 1px red";
-	    	 else
-	    		 $scope.teacher_NickInputBorder =  "";
-	
-	    	 var cur_time = new Date();   	 
-	    	 
-	    	 var curHour = cur_time.getHours();
-	    	 var curMinute = cur_time.getMinutes();
-	    	 var curSecond = cur_time.getSeconds();
-	    	 
-	    	
-	    	 var isconsultationDateValid = isFirstDateLessEquialThanSecond(cur_time,  $scope.consultationDate);
-	    	 
-	    	 if (isconsultationDateValid == false)
-	   		  $scope.consultationDateInputBorder =  "solid 1px red";
-	    	 else
-	    		 $scope.consultationDateInputBorder =  "";  	
-	    	 
-	    	 var is_begin_time_less_end_time = isFirstTimeLessThanSecond($scope.consultationTimeBegin, $scope.consultationTimeEnd);    	    	 
-	    	
-	    	 if (is_begin_time_less_end_time == false)   
-	    		 $scope.consultationTimeEndInputBorder =  "solid 1px red";
-	    	 else
-	    		 $scope.consultationTimeEndInputBorder =  "";  
-	    	 
-	    	 all_ok = ($scope.is_lectionTitle_valid && $scope.is_teacher_Nick_valid  && isconsultationDateValid && is_begin_time_less_end_time );
-	    	 
-	    	 if ( isDatesEquials($scope.consultationDate, cur_time) )
-			 {
-	    		 var is_cur_time_less_begin_time = isFirstTimeLessThanSecond( cur_time, $scope.consultationTimeBegin);
-			 
-	    		 if (is_cur_time_less_begin_time == false)
-	    		 {
-	    			 $scope.consultationTimeBeginInputBorder =  "solid 1px red";
-	    			 all_ok = false;
-	    		 }
-	        	 else
-	        		 $scope.consultationTimeBeginInputBorder =  "";
-			 } 
-	     }
-    	  else
-    		  all_ok = true;
-    	 
-    	 if (all_ok)
-    	 {    		
-    		 //console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
-    		 //send kson
-    		 $http.post(serverPrefix + "/chat/rooms/create/consultation/", {"email": $scope.teacher_Nick, "lection": $scope.lectionTitle,
-    				"date": getDateString($scope.consultationDate) ,"begin": getTimeString($scope.consultationTimeBegin) ,"end": getTimeString($scope.consultationTimeEnd)}).
-               success(function(data, status, headers, config) {            	 
-                 console.log('consultation created: '  )
-                 $scope.toggleNewConsultationModal();                
-              }).
-              error(function(data, status, headers, config) {
-                  console.log('creating consultation failed '  )
-              });
-    	 }
 
-      };
-      
-    
-      $scope.$watch('teacher_Nick', function() {
-    	  $scope.showTeachersList();      
-      }, true);
-      
-      $scope.$watch('lectionTitle', function() {
-    	  $scope.showLectionsList();      
-      }, true);
-      
+    $scope.addDialog = function() {
+        var dialName = $scope.dialogName;
+        $scope.toggleNewRoomModal();
+        $http.post(serverPrefix + "/chat/rooms/create/with_bot/", dialName) // + $scope.dialogName).
+        success(function(data, status, headers, config) {
+            console.log('room with bot created: ' + $scope.dialogName)
+        }).
+        error(function(data, status, headers, config) {
+            console.log('creating room with bot failed ')
+        });
 
-      $scope.showTeachersList = function() { 
-    	  $scope.is_teacher_Nick_valid = false; 
-              $scope.teachersList = [];
-              $timeout.cancel(getTeachersEmailsTimer);
-              getTeachersEmailsTimer = $timeout(function() {                      
-                  $http.get(serverPrefix + "/get_all_users_emails_like?email=" + $scope.teacher_Nick).
-                  success(function(data, status, headers, config) {
-                	  $scope.teachersList = data;
-                      //$scope.$apply();                      
-                     
-                      var list_len = data.length;
-                      if (list_len == 1)
-                	  	  if ($scope.teacher_Nick == data[0])
-                    	  {
-                	  		  $scope.is_teacher_Nick_valid = true;    
-                	  		  $scope.teacher_NickInputBorder = "";
-                    	  }    
-                  }).
-                  error(function(data, status, headers, config) {
-                    // log error
-                  });
-                  
-              }, 500);  
-          };
-          
-          var getLectionsListTimer; 
-          
-          $scope.onSelectFromLectionsList = function(value) {  
-        	  $scope.lectionTitle = value;
-        	  $scope.is_lectionTitle_valid = true;
-          };
-          
-          $scope.onSelectFromTeachersList = function(value) {  
-        	  $scope.teacher_Nick = value;
-        	  $scope.is_teacher_Nick_valid = true;
-          };
+    };
 
-          $scope.showLectionsList = function() {  
-        	  $scope.is_lectionTitle_valid = false;  
-                 $scope.lectionsList = [];
-                  $timeout.cancel(getLectionsListTimer);
-                                    
-                  getLectionsListTimer = $timeout(function() {                	 
-                      $http.get(serverPrefix + "/chat/lectures/get_five_titles_like/?title=" + $scope.lectionTitle).
-                       success(function(data, status, headers, config) {
-                      	 $scope.lectionsList =  data;
-                      	// $scope.$apply();
+    $scope.teachersList = []
+    $scope.lectionsList = []
 
-                      	 var list_len = data.length;
-                         if (list_len == 1)
-                   	  	  if ($scope.lectionTitle == data[0])
-                       	  {
-                   	  		  $scope.is_lectionTitle_valid = true;  
-                   	  		  $scope.lectionTitleInputBorder = "";
-                       	  }    
-                        }).
-                        error(function(data, status, headers, config) {  
-                        	
-                        });                       
-                  }, 500); //for click event
-              };
-      
-                
+    $scope.teacher_Nick = ""
+    $scope.lectionTitle = ""
+
+    var getTeachersEmailsTimer;
+
+
+
+    $scope.teacherNickInputKeyDown = function(event) {
+        var enterPressed = event.keyCode == 13;
+        if (enterPressed) {
+            $('#lectionTitleInput').focus();
+            return;
+        }
+    };
+
+
+    $scope.lectionTitleInputKeyDown = function(event) {
+        var enterPressed = event.keyCode == 13;
+        if (enterPressed) {
+            $('#consultationDateInput').focus();
+            return
+        }
+    };
+
+
+    $scope.consultationDateInputKeyDown = function(event) {
+        var enterPressed = event.keyCode == 13;
+        if (enterPressed) {
+            $('#consultationTimeBeginInput').focus();
+        }
+    };
+
+    $scope.consultationTimeBeginInputKeyDown = function(event) {
+        var enterPressed = event.keyCode == 13;
+        if (enterPressed) {
+            $('#consultationTimeEndInput').focus();
+        }
+    };
+
+    $scope.consultationTimeEndInputKeyDown = function(event) {
+        var enterPressed = event.keyCode == 13;
+        if (enterPressed) {
+            //submit
+        }
+    };
+
+    $scope.lectionTitleInputBorder = "";
+    $scope.teacher_NickInputBorder = "";
+    $scope.consultationDateInputBorder = "";
+    $scope.consultationTimeBeginInputBorder = "";
+    $scope.consultationTimeEndInputBorder = "";
+
+    function isFirstTimeLessThanSecond(time1, time2) {
+        var consultationTimeBegin_hour = time1.getHours();
+        var consultationTimeBegin_minute = time1.getMinutes();
+        var consultationTimeBegin_second = time1.getSeconds();
+
+        var consultationTimeEnd_hour = time2.getHours();
+        var consultationTimeEnd_minute = time2.getMinutes();
+        var consultationTimeEnd_second = time2.getSeconds();
+
+        var is_begin_time_less_end_time = false;
+        if (consultationTimeBegin_hour < consultationTimeEnd_hour)
+            is_begin_time_less_end_time = true;
+        else
+        if (consultationTimeBegin_hour == consultationTimeEnd_hour) {
+            if (consultationTimeBegin_minute < consultationTimeEnd_minute)
+                is_begin_time_less_end_time = true;
+            else
+            if (consultationTimeBegin_minute == consultationTimeEnd_minute) {
+                if (consultationTimeBegin_second < consultationTimeEnd_second)
+                    is_begin_time_less_end_time = true;
+            }
+        }
+        return is_begin_time_less_end_time;
+    };
+
+    function isDatesEquials(date1, date2) {
+        var curDay = date1.getUTCDate();
+        var curYear = date1.getUTCFullYear();
+        var curMonth = date1.getUTCMonth() + 1;
+
+        var consultationDate_day = date2.getUTCDate();
+        var consultationDate_Year = date2.getUTCFullYear();
+        var consultationDate_Month = date2.getUTCMonth() + 1;
+
+        var is_equials = (consultationDate_day == curDay && consultationDate_Year == curYear && consultationDate_Month == curMonth);
+        return is_equials;
+    };
+
+    function isFirstDateLessEquialThanSecond(date1, date2) {
+        var curDay = date1.getUTCDate();
+        var curYear = date1.getUTCFullYear();
+        var curMonth = date1.getUTCMonth() + 1;
+
+        var consultationDate_day = date2.getUTCDate();
+        var consultationDate_Year = date2.getUTCFullYear();
+        var consultationDate_Month = date2.getUTCMonth() + 1;
+
+        var isconsultationDateValid = false;
+        if (consultationDate_Year > curYear)
+            isconsultationDateValid = true;
+        else
+        if (consultationDate_Year == curYear) {
+            if (consultationDate_Month > curMonth)
+                isconsultationDateValid = true;
+            else
+            if (consultationDate_Month == curMonth) {
+                if (consultationDate_day >= curDay)
+                    isconsultationDateValid = true;
+            }
+        }
+        return isconsultationDateValid;
+    };
+
+
+    $scope.createConsultationButtonPressed = function(event) {
+
+        var all_ok;
+        if (validate_create_consultation_form == true) {
+            if ($scope.is_lectionTitle_valid == false)
+                $scope.lectionTitleInputBorder = "solid 1px red";
+            else
+                $scope.lectionTitleInputBorder = "";
+
+            if ($scope.is_teacher_Nick_valid == false)
+                $scope.teacher_NickInputBorder = "solid 1px red";
+            else
+                $scope.teacher_NickInputBorder = "";
+
+            var cur_time = new Date();
+
+            var curHour = cur_time.getHours();
+            var curMinute = cur_time.getMinutes();
+            var curSecond = cur_time.getSeconds();
+
+
+            var isconsultationDateValid = isFirstDateLessEquialThanSecond(cur_time, $scope.consultationDate);
+
+            if (isconsultationDateValid == false)
+                $scope.consultationDateInputBorder = "solid 1px red";
+            else
+                $scope.consultationDateInputBorder = "";
+
+            var is_begin_time_less_end_time = isFirstTimeLessThanSecond($scope.consultationTimeBegin, $scope.consultationTimeEnd);
+
+            if (is_begin_time_less_end_time == false)
+                $scope.consultationTimeEndInputBorder = "solid 1px red";
+            else
+                $scope.consultationTimeEndInputBorder = "";
+
+            all_ok = ($scope.is_lectionTitle_valid && $scope.is_teacher_Nick_valid && isconsultationDateValid && is_begin_time_less_end_time);
+
+            if (isDatesEquials($scope.consultationDate, cur_time)) {
+                var is_cur_time_less_begin_time = isFirstTimeLessThanSecond(cur_time, $scope.consultationTimeBegin);
+
+                if (is_cur_time_less_begin_time == false) {
+                    $scope.consultationTimeBeginInputBorder = "solid 1px red";
+                    all_ok = false;
+                } else
+                    $scope.consultationTimeBeginInputBorder = "";
+            }
+        } else
+            all_ok = true;
+
+        if (all_ok) {
+            //console.log("dddddddddddddd   " + getDateString($scope.consultationDate)  + " " + $scope.consultationDate)
+            //send kson
+            $http.post(serverPrefix + "/chat/rooms/create/consultation/", {
+                "email": $scope.teacher_Nick,
+                "lection": $scope.lectionTitle,
+                "date": getDateString($scope.consultationDate),
+                "begin": getTimeString($scope.consultationTimeBegin),
+                "end": getTimeString($scope.consultationTimeEnd)
+            }).
+            success(function(data, status, headers, config) {
+                console.log('consultation created: ')
+                $scope.toggleNewConsultationModal();
+            }).
+            error(function(data, status, headers, config) {
+                console.log('creating consultation failed ')
+            });
+        }
+
+    };
+
+
+    $scope.$watch('teacher_Nick', function() {
+        $scope.showTeachersList();
+    }, true);
+
+    $scope.$watch('lectionTitle', function() {
+        $scope.showLectionsList();
+    }, true);
+
+
+    $scope.showTeachersList = function() {
+        $scope.is_teacher_Nick_valid = false;
+        $scope.teachersList = [];
+        $timeout.cancel(getTeachersEmailsTimer);
+        getTeachersEmailsTimer = $timeout(function() {
+            $http.get(serverPrefix + "/get_all_users_emails_like?email=" + $scope.teacher_Nick).
+            success(function(data, status, headers, config) {
+                $scope.teachersList = data;
+                //$scope.$apply();                      
+
+                var list_len = data.length;
+                if (list_len == 1)
+                    if ($scope.teacher_Nick == data[0]) {
+                        $scope.is_teacher_Nick_valid = true;
+                        $scope.teacher_NickInputBorder = "";
+                    }
+            }).
+            error(function(data, status, headers, config) {
+                // log error
+            });
+
+        }, 500);
+    };
+
+    var getLectionsListTimer;
+
+    $scope.onSelectFromLectionsList = function(value) {
+        $scope.lectionTitle = value;
+        $scope.is_lectionTitle_valid = true;
+    };
+
+    $scope.onSelectFromTeachersList = function(value) {
+        $scope.teacher_Nick = value;
+        $scope.is_teacher_Nick_valid = true;
+    };
+
+    $scope.showLectionsList = function() {
+        $scope.is_lectionTitle_valid = false;
+        $scope.lectionsList = [];
+        $timeout.cancel(getLectionsListTimer);
+
+        getLectionsListTimer = $timeout(function() {
+            $http.get(serverPrefix + "/chat/lectures/get_five_titles_like/?title=" + $scope.lectionTitle).
+            success(function(data, status, headers, config) {
+                $scope.lectionsList = data;
+                // $scope.$apply();
+
+                var list_len = data.length;
+                if (list_len == 1)
+                    if ($scope.lectionTitle == data[0]) {
+                        $scope.is_lectionTitle_valid = true;
+                        $scope.lectionTitleInputBorder = "";
+                    }
+            }).
+            error(function(data, status, headers, config) {
+
+            });
+        }, 500); //for click event
+    };
+
+
     function processDogInput() {
         var message = $scope.newMessage;
         var msgInputElm = document.getElementById("newMessageInput");
@@ -778,17 +754,17 @@ $scope.scaleCenterIconCircle = function() {
 
         $scope.showUsersListInMessageInput(userNamePrefix);
     }
-    
+
     function processCommandInput() {
-    	  var message = $scope.newMessage;
-    	  var msgInputElm = document.getElementById("newMessageInput");
-    	  var carretPosIndex = getCaretPosition(msgInputElm);
-    	  var commandStartIndex = message.lastIndexOf('/') + 1;
-          var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
-          
-          $scope.showCommandListInMessageInput(commandPrefix);
+        var message = $scope.newMessage;
+        var msgInputElm = document.getElementById("newMessageInput");
+        var carretPosIndex = getCaretPosition(msgInputElm);
+        var commandStartIndex = message.lastIndexOf('/') + 1;
+        var commandPrefix = message.substring(commandStartIndex, carretPosIndex);
+
+        $scope.showCommandListInMessageInput(commandPrefix);
     };
-    
+
 
     function processTildaInput() {
         var message = $scope.newMessage;
@@ -914,14 +890,14 @@ $scope.scaleCenterIconCircle = function() {
             room.nums = 0;
             $scope.dialogName = room.string;
         } else {
-            /*	$http.post(serverPrefix + "/chat/rooms/roomInfo/" + $scope.currentRoom.roomId)).
+            /*  $http.post(serverPrefix + "/chat/rooms/roomInfo/" + $scope.currentRoom.roomId)).
             success(function(data, status, headers, config) {
 
-            	$scope.goToDialog();
-            	chatControllerScope.rooms.push("");
+                $scope.goToDialog();
+                chatControllerScope.rooms.push("");
             }).
             error(function(data, status, headers, config) {
-            	$rootScope.goToAuthorize();//not found => go out
+                $rootScope.goToAuthorize();//not found => go out
             });*/
             deferred.reject();
             return deferred.promise;
@@ -964,7 +940,7 @@ $scope.scaleCenterIconCircle = function() {
 
             lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room, globalConfig.lang), function(message) {
                 var o = JSON.parse(message.body);
-                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!			");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!            ");
                 console.log(o);
                 $scope.participants = o["participants"];
             }));
@@ -1141,6 +1117,7 @@ $scope.scaleCenterIconCircle = function() {
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
+        msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var summarised = false;
         $scope.oldMessage = msg;
@@ -1149,7 +1126,7 @@ $scope.scaleCenterIconCircle = function() {
                 if (msg.attachedFiles.length == 0) {
                     summarised = true;
                     $scope.messages[0].message = msg.message + "\n\n" + $scope.messages[0].message;
-                    //	$scope.messages[0].date = msg.date;
+                    //  $scope.messages[0].date = msg.date;
                 }
                 msg.position = $scope.messages[0].position;
 
@@ -1167,6 +1144,7 @@ $scope.scaleCenterIconCircle = function() {
     function calcPositionPush(msg) {
         if (msg == null)
             return null;
+        msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var objDiv = document.getElementById("messagesScroll");
         var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 100;
@@ -1217,7 +1195,7 @@ $scope.scaleCenterIconCircle = function() {
 
         $scope.participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
-            //	$scope.message_busy = true;
+            //  $scope.message_busy = true;
             $scope.oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
@@ -1226,11 +1204,10 @@ $scope.scaleCenterIconCircle = function() {
             }
         }
         var bot_params = JSON.parse(message["bot_param"]);
-        if(bot_params.length > 0)
-        {
-            
-            for(var key in bot_params)
-                $scope.botParameters[bot_params[key].name] =  JSON.parse(bot_params[key].value);
+        if (bot_params.length > 0) {
+
+            for (var key in bot_params)
+                $scope.botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
         }
 
         $timeout(function() {
@@ -1367,19 +1344,19 @@ $scope.scaleCenterIconCircle = function() {
             subscription.abort();
         }
         /* var answer = confirm("Are you sure you want to leave this page?")
-	    if (!answer) {
-	        event.preventDefault();
-	    }*/
+        if (!answer) {
+            event.preventDefault();
+        }*/
     }
     $scope.$on('$locationChangeStart', unsubscribeCurrentRoom);
-    
-        
+
+
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
         var fileInput = $("#myfile").fileinput({ language: "uk", showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
-        
-       
+
+
     })
-    
+
 
 }]);
