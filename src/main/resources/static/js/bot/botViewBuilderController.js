@@ -1,6 +1,6 @@
 'use strict';
 
-springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
+springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams', '$rootScope', '$scope', '$window', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $window, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
 
     $scope.name = "ChatBotViewBuilderController";
     var chatControllerScope = Scopes.get('ChatController');
@@ -65,7 +65,6 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
     $scope.containerTemplate.childrens.push(temp);
 
     $scope.viewTabs = [];
-    $scope.htmlCodeForRender = [];
     $scope.langForRender = [];
 
     //create NULL dialogItem JS object
@@ -76,7 +75,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 "id": 1,
                 "name": null
             },
-            "discription" : "",
+            "discription": "",
             "testCase": "",
             "idObject": {
                 "id": null,
@@ -92,6 +91,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             console.log("ignore activeViewTab == 0");
             return;
         }
+        console.log("updateView");
         $scope.$root.elementsListForLink = [];
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
@@ -103,6 +103,9 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         for (var i = 0; i < $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens.length; i++)
             $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]].body += "\n" + $scope.viewTabs[$scope.activeViewTab - 1].objects[$scope.langForRender[$scope.activeViewTab - 1]].childrens[i].getHTML($scope.$root, true);
         //});
+        var nice = $(".editor-panel-right-scroll").niceScroll();
+        var nice = $("textarea").niceScroll();
+
     }
 
 
@@ -210,7 +213,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
             $scope.newDialogItem = botDialogItemClean();
         }).
         error(function(data, status, headers, config) {
-          //  $scope.newDialogItem = botDialogItemClean();
+            //  $scope.newDialogItem = botDialogItemClean();
         });
     }
 
@@ -266,7 +269,31 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         return getType(value) == type;
     }
 
-    $scope.loadBotDialogItem(1);
+    $scope.onExit = function() {
+        var obj_for_save = [];
+        for (var index in $scope.viewTabs) {
+            obj_for_save.push($scope.viewTabs[index].items);
+        }
+        $cookies.put('save_object', JSON.stringify(obj_for_save));
+        //  return "You have attempted to leave this page. Are you sure?";
+    };
+
+    $window.onbeforeunload = $scope.onExit;
+
+    // $scope.loadBotDialogItem(1);
+    /******************************
+     * LOAD FROM COOKIES
+     ******************************/
+    function loadFromCookise() {
+        var obj = JSON.parse($cookies.get('save_object'));
+        if (obj == null || obj == undefined)
+            return;
+        for (var index in obj) {
+            loadView(obj[index], null, null, null, null);
+        }
+    }
+
+    loadFromCookise();
     $scope.$$postDigest(function() {
         goToTools();
     });

@@ -814,6 +814,10 @@ position: absolute;
     background: #337AB7;
     /* color: white;*/
 }
+.editor-tools-propertys:hover {
+  opacity: 0.7;
+}
+
 .editor-propertys-input {
     color: black;
     background-color: green;
@@ -1083,6 +1087,7 @@ tags-input input {
     color: #262626;
     background-color: #ffff00;
 }
+
 ul[dnd-list],
 ul[dnd-list] > li {
     position: relative;
@@ -1098,7 +1103,7 @@ ul {
  * otherwise you can't drop to it once it's empty
  */
 ul[dnd-list] {
-    min-height: 12px;
+    min-height: 10px;
     z-index: 999;
     /* background-color: blue;*/
     /*margin: 0px;
@@ -1141,6 +1146,18 @@ li[dnd-draggable] {
 }
 .editor-panel-body-right .dndPlaceholder {
     display: none;
+}
+
+.editor-panel-body .selected{
+background-color: #eee;
+opacity: 0.5;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    color: gray;
 }
 .animate-properties.ng-enter {
     -webkit-animation: animate-properties-enter 600ms cubic-bezier(0.445,
@@ -1253,5 +1270,5 @@ li[dnd-draggable] {
     border-color: red;
 }
 .wrap {
-    padding: 10px;
+    padding: 0px;
 }

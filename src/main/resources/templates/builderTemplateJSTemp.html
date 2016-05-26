@@ -48,7 +48,10 @@
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
                                 <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="false" dnd-drop="$root.deleteCallback(event, index, item, external, type, $root.this)">
-                                    <div class="editor-tools-propertys animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy" dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}">
+                                    <div class="editor-tools-propertys animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy">
+                                    <!-- **select class disable**
+                                        dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}" 
+                                    -->
                                         <div class="atribute">{{tool.type}}</div>
                                         <span class="separator"></span>
                                         <dir class="value">#</dir>

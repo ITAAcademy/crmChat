@@ -134,7 +134,7 @@ public class BotController {
 		Map<String, BotDialogItem> array = new HashMap<>();
 		for(String lang : ChatLangEnum.LANGS)
 		{
-			BotDialogItem dialogItemTemplate = botItemContainerService.getByIdAndLang(dialogItemId, "ua");
+			BotDialogItem dialogItemTemplate = botItemContainerService.getByIdAndLang(dialogItemId, lang);
 			array.put(lang, dialogItemTemplate);
 		}
 		return objectMapper.writeValueAsString(array);
