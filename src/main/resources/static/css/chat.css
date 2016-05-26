@@ -800,6 +800,18 @@ input::-ms-clear {
     top: 45px;
     padding-top: 5px;
 }
+
+.editor-panel-left-scroll {
+    overflow-x: hidden;
+    overflow-y: scroll;    
+    position: absolute;
+    left: 10px;
+    right: 0;
+    bottom: 31%;
+    top: 45px;
+    padding-top: 25px;
+}
+
 .editor-tools-propertys {
     width: 93%;
     margin: 5px;
