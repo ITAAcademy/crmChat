@@ -51,7 +51,7 @@
                                                 Create
                                             </a>
                                         </li>
-                                        <li ng-click="loadBotDialogItem(1)">
+                                        <li ng-click="toggleLoadDialogItemModal()">
                                             <a>
                                                 <div class="glyphicon glyphicon-download-alt"></div>
                                                 Load
@@ -138,6 +138,7 @@
         </div>
     </div>
 </div>
+
 <script type="text/ng-template" id="close_tab.html">
     <div class="modal-header">
         <h3 class="modal-title">You have unsaved changes on this tab!</h3>
@@ -150,3 +151,6 @@
         <button class="btn btn-primary" type="button" ng-click="tryCloseTabDialogClose(false)">Cancel</button>
     </div>
 </script>
+
+<div id="dialog_item_modal_loader" class="modal fade" th:include="loadDialogItemModalWindow"/>
+

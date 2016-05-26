@@ -1,5 +1,7 @@
 package com.intita.wschat.services;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,5 +42,14 @@ public class BotItemContainerService {
 	}
 	public BotDialogItem update(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);
+	}
+	public ArrayList<Long> getAllIds(){
+		return botItemContainerRepository.getAllIds();
+	}
+//	public ArrayList<Long> getAllIdsFromCategory(BotCategory category){
+//		return botItemContainerRepository.getAllIdsFromCategory(category);
+//	}
+	public ArrayList<Long> getAllIdsFromCategory(Long categoryId){
+		return botItemContainerRepository.getAllIdsFromCategory(categoryId);
 	}
 }

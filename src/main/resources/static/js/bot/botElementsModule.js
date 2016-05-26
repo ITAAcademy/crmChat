@@ -8,10 +8,10 @@ var BOT_ELEMENTS_MODULE = function() {
         "bot-container": { "time": "00:00", "content": "", "callback": "" },
         "bot-list": { "callback": "" },
         "botlink": { "text": "empty_text", "ispost": true, "linkindex": 0, "href": "", "classes": "" },
-        "botinput": { "text": "empty_text", "name": "text" },
+        "botinput": { "text": "empty_text", "name": 0 },
         "botsubmit": { "text": "Submit" },
-        "botradiogroup": { "labels": [], "values": [], "legend": "","groupname":"noname"},
-        "botcheckgroup": { "labels": [], "values": [], "legend": "","groupname":"noname"},
+        "botradiogroup": { "itemscount":2,"labels": [], "values": [], "legend": "","groupname":"noname"},
+        "botcheckgroup": { "itemscount":2,"labels": [], "values": [], "legend": "","groupname":"noname"},
         "botClose": {},
         "inputListBox": {},
         "bottext": {"text":"some_text","textcolor":"black","textsize":18,"textalign":"left"}
