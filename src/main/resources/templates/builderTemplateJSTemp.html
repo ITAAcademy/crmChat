@@ -17,10 +17,10 @@
                                     </div>
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
+                                            <div class="glyphicon glyphicon-upload  code-edit-title-upload-icon" ng-click="upload some function"></div>
                                             <div class="code-edit-title" th:text="${lgPack.lables.formBuilder.codePromt}">
                                                 Here you see source code:
                                             </div>
-                                            <div class="btn btn-default" th:text="${lgPack.lables.formBuilder.addFormToDB}" ng-click="testElementModule()">Add botdialogitem</div>
                                             <textarea ng-model="view.items[langForRender[activeViewTab - 1]].body" class="code-edit-source">
                                             </textarea>
                                         </div>
@@ -29,29 +29,33 @@
                             </uib-tab>
                             <div class="editor-menu">
                                 <div class="glyphicon glyphicon-repeat editor-menu-icon" ng-click="updateView()"></div>
-                                <div class="glyphicon glyphicon-download-alt editor-menu-icon" ng-click="loadBotDialogItem(1)"    ></div>
+                                <div class="glyphicon glyphicon-download-alt editor-menu-icon" ng-click="loadBotDialogItem(1)"></div>
                                 <div class="dropdown editor-dropdown-wraper">
                                     <button class="btn btn-primary dropdown dropdown-toggle editor-dropdown" type="button" data-toggle="dropdown">Menu
                                         <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        <li ng-click="saveBotDialogItem()"><a>
-                                         <div class="glyphicon glyphicon-saved"></div>
-                                         Save
-                                         </a></li>
-                                        <li ng-click="createBotDialogItem()"><a>
-                                         <div class="glyphicon glyphicon-plus"></div>
-                                         Create
-                                         </a></li>
+                                        <li ng-click="saveBotDialogItem()">
+                                            <a>
+                                                <div class="glyphicon glyphicon-saved"></div>
+                                                Save
+                                            </a>
+                                        </li>
+                                        <li ng-click="createBotDialogItem()">
+                                            <a>
+                                                <div class="glyphicon glyphicon-plus"></div>
+                                                Create
+                                            </a>
+                                        </li>
                                         <li ng-click="loadBotDialogItem(1)">
                                             <a>
-                                            <div class="glyphicon glyphicon-download-alt"></div>
-                                            Load
+                                                <div class="glyphicon glyphicon-download-alt"></div>
+                                                Load
                                             </a>
                                         </li>
                                         <li ng-click="updateView()">
                                             <a>
-                                            <div class="glyphicon glyphicon-repeat"></div>
-                                            Refresh
+                                                <div class="glyphicon glyphicon-repeat"></div>
+                                                Refresh
                                             </a>
                                         </li>
                                     </ul>
@@ -102,19 +106,16 @@
                             </div>
                         </uib-tab>
                     </uib-tabset>
-                    <div class=" right-panel-bottom">
-                        <div class=" right-panel-lang">
-                            <div class="right-panel-lang-text" th:text="${lgPack.lables.formBuilder.lang}">Lang: </div>
-                            <div class="dropdown right-panel-lang-dropdown">
-                                <select class="form-control lang-dropdown" ng-change="updateView()" ng-model="langForRender[activeViewTab - 1]">
-                                    <option label="Ukranian" value="ua" selected="selected">Ukranian</option>
-                                    <option label="English" value="en" selected="selected">English</option>
-                                    <option label="Russian" value="ru" selected="selected">Russian</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class=" right-panel-bottom">                       
                         <div class="right-panel-description">
                             <div class="right-panel-description-title" th:text="${lgPack.lables.formBuilder.description}"> Descriprion: </div>
+                            <div class="dropdown right-panel-lang-dropdown">
+                                <select class=" lang-dropdown" ng-change="updateView()" ng-model="langForRender[activeViewTab - 1]">
+                                    <option label="UA" value="ua" selected="selected"></option>
+                                    <option label="EN" value="en" selected="selected"></option>
+                                    <option label="RU" value="ru" selected="selected"></option>
+                                </select>
+                            </div>
                             <textarea ng-model="viewTabs[activeViewTab - 1].items[langForRender[activeViewTab - 1]].description" class="right-panel-description-text"></textarea>
                         </div>
                     </div>
