@@ -22,8 +22,6 @@ var BOT_ELEMENTS_MODULE = function() {
 
 
 
-
-
     publicData.ElementInstance = function(type) {
         var object = new Object();
         object.childrens = [];

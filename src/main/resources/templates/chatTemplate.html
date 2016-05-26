@@ -104,7 +104,7 @@
 							<div class="name">{{message.username}}</div>
 							<div class="text">
 
-								<dir ng-if="message.chatUserId != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message).escapeHtml()" time="message.date"></dir>
+								<dir ng-if="message.chatUserId != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message.escapeHtml())" time="message.date"></dir>
 								<div ng-if="message.chatUserId == 0" bot-container = " "  style="margin: 0px; white-space: pre" content="message.message" time="message.date" ></div>
 
 
