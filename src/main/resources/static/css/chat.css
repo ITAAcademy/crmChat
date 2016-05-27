@@ -1004,7 +1004,7 @@ tags-input input {
 }
 .panel.with-nav-tabs .panel-heading {
     padding: 5px 5px 0px 5px;
-     min-height: 50px;
+         min-height: 45px;
 }
 .panel.with-nav-tabs .nav-tabs {
     border-bottom: none;
