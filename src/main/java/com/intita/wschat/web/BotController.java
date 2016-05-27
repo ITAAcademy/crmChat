@@ -282,7 +282,7 @@ public class BotController {
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
 		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
 
-		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), new ChatMessage(messageToSave), bot.getPrincipal());
+		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), messageToSave);
 		return objectMapper.writeValueAsString(botCategory);
 	}
 

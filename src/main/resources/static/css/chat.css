@@ -1319,16 +1319,13 @@ opacity: 0.7;
     border-width: 1px;
     border-color: red;
 }
+/*
 .render-element:hover ul {
     border-style: dashed;
     border-width: 1px;
     border-color: blue;
-}
-.render-element:parent {
-    border-style: dashed;
-    border-width: 3px;
-    border-color: red;
-}
+}*/
+
 .dndDragover {
     border-style: dashed;
     border-width: 1px;

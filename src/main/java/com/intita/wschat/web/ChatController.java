@@ -409,12 +409,11 @@ public class ChatController {
 		}
 	}
 
-	public void filterMessageBot( Long room,ChatMessage message, ChatMessage to_save, Principal principal) {
+	public void filterMessageBot( Long room,ChatMessage message, UserMessage to_save) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		UserMessage messageToSave = filterMessage(room, to_save, principal);		
-		if (messageToSave!=null)
+		if (to_save != null)
 		{
-			addMessageToBuffer(room, messageToSave);
+			addMessageToBuffer(room, to_save);
 			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
 		}
 	}

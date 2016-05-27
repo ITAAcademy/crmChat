@@ -289,7 +289,7 @@ function getType(value) {
 }
 
 function parseBoolean(value) {
-    if (value == true)
+    if (value == "true")
         return true;
     else
         return false;
