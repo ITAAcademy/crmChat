@@ -7,9 +7,28 @@
                 <h4 id="wndTitle" class="modal-title">Завантаження DialogItem</h4>
             </div>
             <div class="modal-body">
-            <input comparator="substringMatcher" typeahead="name for name in categoriesNamesList" data-animation="am-flip-x" type="text" ng-model="categoryNameToLoad" ng-keypress="reloadCategoriesNames()" placeholder="Назва Категорії"></input>
+            <input
+                                    ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
+                                    autocomplete="off" type="text" class="form-control display-block"
+                                    name="search" id="search"
+                                    ng-model="categoryNameToLoad"
+                                    ng-change="reloadCategoriesNames()" 
+                                    placeholder="Назва Категорії" 
+                                    typeahead-wait-ms = "1000" 
+                                    uib-typeahead="name for name in categoriesNamesList"     
+                                    typeahead-on-select = " categoryNameToLoad = $model;reloadCategoriesByName($model)"/>
             <select  id="categoryIdToLoad" type="text" ng-options="c for c in botCategoriesIdsForModal" ng-model="selectedBotCategoryForModal" placeholder="Room name"></select>
-             <input  type="text" ng-model="dialogItemDescriptionToLoad" ng-keypress="" placeholder="Опис елементу"></input> 
+              <input
+                                    ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
+                                    autocomplete="off" type="text" class="form-control display-block"
+                                    name="search" id="search"
+                                    ng-model="dialogItemDescriptionToLoad"
+                                    ng-change="reloadDialogItemsDescriptions()" 
+                                    placeholder="Опис елементу" 
+                                    typeahead-wait-ms = "1000" 
+                                    uib-typeahead="name for name in dialogItemsDescriptionsList"     
+                                    typeahead-on-select = " dialogItemDescriptionToLoad = $model;reloadDialogItemsByDescription(selectedBotCategoryForModal,$model)"/>
+
                 <select  id="dialogItemIdToLoad" type="text" ng-options="n for n in botDialogItemsIdsForModal" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
                 
             <div class="modal-footer">

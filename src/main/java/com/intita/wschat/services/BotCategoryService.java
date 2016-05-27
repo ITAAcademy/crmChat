@@ -42,6 +42,9 @@ public class BotCategoryService {
 	public ArrayList<String> getFirst5NamesLike(String name){
 		return getFirstNamesLike(name,5);
 	}
+	public ArrayList<Long> getIdsWhereNamesLike(String name){
+		return botCategoryRepository.getIdsWhereNameLike(name);
+	}
 	
 	
 }

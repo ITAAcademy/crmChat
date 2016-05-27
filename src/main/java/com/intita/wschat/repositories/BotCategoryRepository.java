@@ -15,4 +15,6 @@ public interface BotCategoryRepository extends CrudRepository<BotCategory, Long>
 	ArrayList<Long> getAllIds();
 	@Query("select c.name from BotCategory c where c.name like %?1%")
 	ArrayList<String> getNamesLike(String name,Pageable pageable);
+	@Query("select c.id from BotCategory c where c.name like %?1%")
+	ArrayList<Long> getIdsWhereNameLike(String name);
 }

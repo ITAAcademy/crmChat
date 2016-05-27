@@ -243,12 +243,51 @@ $scope.botDialogItemsIdsForModal = [];
         }).
         error(function(data, status, headers, config) {});
     }
+     var loadCategoriesIdsByName = function(name) {
+
+        var requestUrl = serverPrefix + "/bot_operations/get_categories_ids_where_names_like/"+name;
+
+        return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.botCategoriesIdsForModal = data;
+            console.log("get_dialog_items_ids:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+    }
+     var loadDialogItemsIdsByDescription = function(category,description) {
+
+        var requestUrl = serverPrefix + "/bot_operations/get_dialog_items_ids_where_description_like/"+category+'/'+description;
+
+        return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.botDialogItemsIdsForModal = data;
+            console.log("get_dialog_items_ids:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+    }
+    $scope.reloadCategoriesByName = function(name){
+        loadCategoriesIdsByName(name).success(function(){
+            if ( $scope.botCategoriesIdsForModal.length>0)
+            $scope.selectedBotCategoryForModal = $scope.botCategoriesIdsForModal[0];
+        });
+    }
+    $scope.reloadDialogItemsByDescription = function(category,description){
+        loadDialogItemsIdsByDescription(category,description).success(function(){
+            if ( $scope.botDialogItemsIdsForModal.length>0)
+            $scope.selectedBotDialogItemForModal = $scope.botDialogItemsIdsForModal[0];
+        });
+    }
 
     $scope.loadDialogItemsIds = function(categoryId) {
 
         var requestUrl = serverPrefix + "/bot_operations/get_dialog_items_ids/{0}".format(categoryId);
-
-       return $http.get(requestUrl, {}).
+  return $http({
+        method: 'GET',
+        url: requestUrl//,
+        //params: 'limit=10, sort_by=created:desc',
+        //headers: {'Authorization': 'Token token=xxxxYYYYZzzz'}
+     }).
+       //return $http.get(requestUrl, {}).
         success(function(data){
             $scope.botDialogItemsIdsForModal = data;
             console.log("get_dialog_items_ids:"+data);
@@ -264,6 +303,7 @@ $scope.botDialogItemsIdsForModal = [];
          });
   }
   $scope.categoriesNamesList = [];
+  $scope.dialogItemsDescriptionsList = [];
   $scope.reloadCategoriesNames = function(){
        $timeout.cancel($scope.reloadingCategoriesNamesPromise);
     $scope.reloadingCategoriesNamesPromise = $timeout(function(){
@@ -271,6 +311,14 @@ $scope.botDialogItemsIdsForModal = [];
     },200);
  
   }
+$scope.reloadDialogItemsDescriptions = function(){
+       $timeout.cancel($scope.reloadDialogItemsDescriptionsPromise);
+    $scope.reloadDialogItemsDescriptionsPromise = $timeout(function(){
+        loadFirst5DialogItemsDescriptions($scope.selectedBotCategoryForModal,$scope.dialogItemDescriptionToLoad);
+    },200);
+ 
+  }
+
   function loadFirst5CategoriesNames(name){
     var nameToCheck = name || "_";
       var requestUrl = serverPrefix + "/bot_operations/get_five_categories_names_like/{0}".format(nameToCheck);
@@ -278,6 +326,17 @@ $scope.botDialogItemsIdsForModal = [];
         success(function(data){
             $scope.categoriesNamesList = data;
             console.log("get_categories_by_name:"+data);
+        }).
+        error(function(data, status, headers, config) {});
+  }
+
+    function loadFirst5DialogItemsDescriptions(category,description){
+    var nameToCheck = name || "_";
+      var requestUrl = serverPrefix + "/bot_operations/get_five_dialog_items_description_where_description_like/{0}/{1}".format(category,description);
+       return $http.get(requestUrl, {}).
+        success(function(data){
+            $scope.dialogItemsDescriptionsList = data;
+            console.log("dialogItemsDescriptionsList:"+data);
         }).
         error(function(data, status, headers, config) {});
   }

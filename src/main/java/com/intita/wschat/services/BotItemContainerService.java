@@ -3,6 +3,7 @@ package com.intita.wschat.services;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,21 +22,16 @@ public class BotItemContainerService {
 	BotItemContainerRepository botItemContainerRepository;
 	
 	public BotDialogItem getByObjectId(LangId idObject){
-		return botItemContainerRepository.findByIdObject(idObject);
+		return botItemContainerRepository.findByIdAndLang(idObject.getId(), idObject.getLang());
 	}
 	public Long getNextId(){
-		for (int i = 0; i < ID_GENERATION_ATTEMPTION; i++){
-		Long nextLong = randomized.nextLong();
-		if (getById(nextLong)==null)
-		return nextLong;
-		}
-		return null;
+		return getLastId()+1L;
 	}
 	public BotDialogItem getById(Long id){
-		return botItemContainerRepository.findByIdObject(new LangId(id,ChatController.getCurrentLang()));
+		return botItemContainerRepository.findByIdAndLang(id,ChatController.getCurrentLang());
 	}
 	public BotDialogItem getByIdAndLang(Long id, String lang){
-		return botItemContainerRepository.findByIdObject(new LangId(id, lang));
+		return botItemContainerRepository.findByIdAndLang(id, lang);
 	}
 	public BotDialogItem add(BotDialogItem itemContainer){
 		return botItemContainerRepository.save(itemContainer);
@@ -52,4 +48,31 @@ public class BotItemContainerService {
 	public ArrayList<Long> getAllIdsFromCategory(Long categoryId){
 		return botItemContainerRepository.getAllIdsFromCategory(categoryId);
 	}
+	
+	public ArrayList<String> getFirstDescriptionsLike(String description,int limit){
+		return botItemContainerRepository.getDescriptionsLike(description,new PageRequest(0,limit));
+	}
+	public ArrayList<String> getFirst5DescriptionsLike(String description){
+		return getFirstDescriptionsLike(description,5);
+	}
+	public ArrayList<Long> getIdsWhereDescriptionsLike(String name){
+		return botItemContainerRepository.getIdsWhereDescriptionsLike(name);
+	}
+	
+	public ArrayList<String> getFirstDescriptionsLike(String description,Long categoryId,int limit){
+		return botItemContainerRepository.getDescriptionsLike(description,categoryId,new PageRequest(0,limit));
+	}
+	public ArrayList<String> getFirst5DescriptionsLike(String description,Long categoryId){
+		return getFirstDescriptionsLike(description,categoryId,5);
+	}
+	public ArrayList<Long> getIdsWhereDescriptionsLike(String description,Long categoryId){
+		return botItemContainerRepository.getIdsWhereDescriptionsLike(description,categoryId);
+	}
+	public Long getLastId(){
+		ArrayList<Long> ids = botItemContainerRepository.getLastIds(new PageRequest(0,1));
+		if (ids.size()<=0) return -1L;
+		return ids.get(0);
+	}
+	
+	
 }

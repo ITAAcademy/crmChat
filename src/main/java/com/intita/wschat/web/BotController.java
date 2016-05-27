@@ -135,7 +135,7 @@ public class BotController {
 		Map<String, BotDialogItem> array = new HashMap<>();
 		for(String lang : ChatLangEnum.LANGS)
 		{
-			BotDialogItem dialogItemTemplate = botItemContainerService.getByIdAndLang(dialogItemId, "ua");
+			BotDialogItem dialogItemTemplate = botItemContainerService.getByIdAndLang(dialogItemId, lang);
 			array.put(lang, dialogItemTemplate);
 		}
 		return objectMapper.writeValueAsString(array);
@@ -319,49 +319,60 @@ public class BotController {
 	@RequestMapping(value = "bot_operations/get_all_categories_ids", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getAllCategoriesIds() throws JsonProcessingException {
-		StringBuilder sb = new StringBuilder(100);
 		ArrayList<Long> categories = botCategoryService.getAllIds();
-		for (Long id : categories){
-			sb.append(id+" ");
-		}
-		log.info("categories ids aquired:"+sb.toString());
 		return categories;
 
 	}
 	@RequestMapping(value = "bot_operations/get_five_categories_names_like/{categoryName}", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<String> get5CategoriesNamesLike(@PathVariable String categoryName) throws JsonProcessingException {
-		StringBuilder sb = new StringBuilder(100);
 		ArrayList<String> categories = botCategoryService.getFirst5NamesLike(categoryName);
-		for (String id : categories){
-			sb.append(id+" ");
-		}
-		log.info("categories ids aquired:"+sb.toString());
 		return categories;
 
 	}
+	
+	@RequestMapping(value = "bot_operations/get_categories_ids_where_names_like/{categoryName}", method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<Long> getCategoriesIdsWhereNameLike(@PathVariable String categoryName) throws JsonProcessingException {
+		ArrayList<Long> categories = botCategoryService.getIdsWhereNamesLike(categoryName);
+		return categories;
 
+	}
+	///////
+	@RequestMapping(value = "bot_operations/get_five_dialog_items_description_where_description_like/{categoryId}/{description}", method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<String> get5DialogItemsDescriptionWhereDescriptionLike(@PathVariable Long categoryId,@PathVariable String description) throws JsonProcessingException {
+		ArrayList<String> categories = null;
+		if (categoryId==null)categories = botItemContainerService.getFirst5DescriptionsLike(description);
+		else
+		categories = botItemContainerService.getFirst5DescriptionsLike(description,categoryId);
+		return categories;
+
+	}
+	
+	@RequestMapping(value = "bot_operations/get_dialog_items_ids_where_description_like/{categoryId}/{description}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getDialogItemsIdsWhereDescriptionLike(@PathVariable Long categoryId,@PathVariable String description) throws JsonProcessingException {
+		ArrayList<Long> dialogItems = null;
+		if (categoryId==null)
+			dialogItems = botItemContainerService.getIdsWhereDescriptionsLike(description);
+		else
+			dialogItems = botItemContainerService.getIdsWhereDescriptionsLike(description,categoryId);
+		return objectMapper.writeValueAsString(dialogItems);
+
+	}
+/////////
 	@RequestMapping(value = "bot_operations/get_all_dialog_items_ids", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getAllDialogItemsIds() throws JsonProcessingException {
-		StringBuilder sb = new StringBuilder(100);
 		ArrayList<Long> dialogItems = botItemContainerService.getAllIds();
-		for (Long id : dialogItems){
-			sb.append(id+" ");
-		}
-		log.info("dialogItems ids aquired:"+sb.toString());
 		return dialogItems;
 
 	}
 	@RequestMapping(value = "bot_operations/get_dialog_items_ids/{categoryId}", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getDialogItemsIds(@PathVariable Long categoryId) throws JsonProcessingException {
-		StringBuilder sb = new StringBuilder(100);
 		ArrayList<Long> dialogItems = botItemContainerService.getAllIdsFromCategory(categoryId);
-		for (Long id : dialogItems){
-			sb.append(id+" ");
-		}
-		log.info("dialogItems ids aquired:"+sb.toString());
 		return dialogItems;
 
 	}
