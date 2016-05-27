@@ -1309,3 +1309,65 @@ li[dnd-draggable] {
     position: absolute;
     left: 120px;
 }
+
+
+.layout-ul-vertical {
+	        list-style: none;
+    display: block;
+    background-color: #CFE8F5;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    padding: 10px 20px 10px 20px;
+    position: relative;
+    height: auto;
+    width: auto;
+}
+
+
+ .layout-li-vertical {
+
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #DFDFDF;
+	background-color: white;
+}
+
+
+.layout-ul-horizontal {
+	        list-style: none;
+    display: block;
+    background-color: #CFE8F5;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    padding: 10px 20px 10px 20px;
+    position: relative;
+    height: auto;
+    width: auto;
+}
+
+ .layout-li-horizontal {
+	margin: 5px;
+    padding: 5px;
+      display: inline-block;
+    border: 1px solid #DFDFDF;
+    background-color: white;
+   /* float: left;*/
+    width: auto;
+    height: auto;
+}
+
+ .layout-ul-horizontal::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+
+
+
+
+
