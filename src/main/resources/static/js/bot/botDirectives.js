@@ -175,53 +175,45 @@ angular.module('springChat.directives').directive('botList', function($compile, 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.$watch('horizontal', function() {
+                function updateClasses()
+                {
                     var elements = element[0].children;
-                        element[0].classList.toggle("layout-ul-horizontal");
-                        element[0].classList.toggle("layout-ul-vertical");
+                          if (scope.horizontal) {
+                                element[0].classList.add("layout-ul-horizontal");
+                                element[0].classList.remove("layout-ul-vertical");
+                            } else {
+                                element[0].classList.remove("layout-ul-horizontal");
+                                element[0].classList.add("layout-ul-vertical");
+                            }
+                        //element[0].classList.toggle("layout-ul-vertical");
                         console.log("render List");
                         for (var i = 0; i < elements.length; i++) {
-                              elements[i].classList.toggle("layout-li-horizontal");
-                              elements[i].classList.toggle("layout-li-vertical");
+                            if (scope.horizontal) {
+                                elements[i].classList.add("layout-li-horizontal");
+                                elements[i].classList.remove("layout-li-vertical");
+                            } else {
+                                elements[i].classList.remove("layout-li-horizontal");
+                                elements[i].classList.add("layout-li-vertical");
+                            }
+
+                            // elements[i].classList.toggle("layout-li-vertical");
                         }
+                }
+                scope.$watch('horizontal', function() {
+                    updateClasses();
                 });
 
                 scope.listenContent = function() {
                     scope.unlistenContent = scope.$watch(element[0], function() {
-                        var elements = element[0].children;
-                        element[0].classList.toggle("layout-ul-horizontal");
-                        //element[0].classList.toggle("layout-ul-vertical");
-                        console.log("render List");
-                        for (var i = 0; i < elements.length; i++) {
-                              elements[i].classList.toggle("layout-li-horizontal");
-                             // elements[i].classList.toggle("layout-li-vertical");
-                        }
-
-/*                        var head = "<div class='list-group'>";
-                        var footer = "</div>";
-                        var result = head;
-
-                        for (var i = 0; i < elements.length; i++) {
-                            //result += "<div class=\"list-group-item\">" + elements[i].outerHTML + "</div>";//.toggle()
-                            //result += "<div class=\"list-group-item\">" + elements[i].outerHTML + "</div>";//.toggle()
-                        }
-                        result += footer;
-                        element.html(result);
-
-                        if (typeof attr.callback != 'undefined') {
-                            var callBackFunction = Function("return " + $parse(attr.callback))();
-                            if (typeof callBackFunction != 'undefined')
-                                callBackFunction(element);
-                        }*/
-                        //scope.content = $parse(attr.content)(scope);
-                        scope.unlistenContent();    
+                        updateClasses();
+                        scope.unlistenContent();
                         $compile(element.contents())(scope);
                         scope.init(scope, element, attr);
 
-                        scope.$$postDigest(function(){
-                       //    scope.listenContent();    
+                        scope.$$postDigest(function() {
+                            //    scope.listenContent();    
                         })
-                        
+
                     }, true);
                 };
                 scope.listenContent();
@@ -284,7 +276,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                     scope.onClick = function() {
                         debugger;
-                        scope.$eval(functionStr)(scope);
+                        scope.$eval(functionStr);
                     }
 
                     // });

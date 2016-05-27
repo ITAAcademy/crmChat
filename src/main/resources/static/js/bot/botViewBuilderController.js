@@ -212,6 +212,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
         $http.post(requestUrl, $scope.newDialogItem).
         success(function(data, status, headers, config) {
+            debugger;
             loadView(data, status, headers, config);
             $scope.newDialogItem = botDialogItemClean();
         }).
