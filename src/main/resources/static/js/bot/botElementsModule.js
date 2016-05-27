@@ -13,12 +13,17 @@ var BOT_ELEMENTS_MODULE = function() {
         "botradiogroup": { "itemscount": 2, "labels": [], "values": [], "legend": "", "groupname": "noname" },
         "botcheckgroup": { "itemscount": 2, "labels": [], "values": [], "legend": "", "groupname": "noname" },
         "botClose": {},
-        "inputListBox": {},
+        //"inputListBox": {},
         "bottext": { "text": "some_text", "textcolor": "black", "textsize": 18, "textalign": "left" }
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
     publicData.GlobalProperties = BotGlobalProperties;
+    publicData.isContainer = function(type){
+        if(type == "bot-container" || 'bot-list' == type)
+            return true;
+        return false;
+    };
 
 
 
@@ -76,7 +81,9 @@ var BOT_ELEMENTS_MODULE = function() {
             /*if((scope.elementsListForLink.length - 1) %2 == 0)
                 leftTooltip = "";*/
 
-            var addedPropertyFinal = this.addedProperty + ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';//dnd-horizontal-list="true" dnd-external-sources="true"
+            var addedPropertyFinal = this.addedProperty;
+            if(publicData.isContainer(this.type))
+                addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';//dnd-horizontal-list="true" dnd-external-sources="true"
             var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">';
 
             var addedFooterFinal = '</li>';

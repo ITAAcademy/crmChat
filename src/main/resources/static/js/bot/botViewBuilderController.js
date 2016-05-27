@@ -423,8 +423,10 @@ $scope.reloadDialogItemsDescriptions = function(){
      ******************************/
     function loadFromCookise() {
         var cookies = $cookies.get('save_object');
+        var obj;
         if(cookies != null && cookies != undefined)
-        var obj = JSON.parse($cookies.get('save_object'));
+            obj = JSON.parse($cookies.get('save_object'));
+        
         if (obj == null || obj == undefined)
             return;
         for (var index in obj) {
