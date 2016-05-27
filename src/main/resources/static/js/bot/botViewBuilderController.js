@@ -401,20 +401,6 @@ $scope.reloadDialogItemsDescriptions = function(){
         console.log("zigzag test:" + JSON.stringify(result));
     }
 
-
-
-
-
-    function getType(value) {
-        if (value === true || value === false)
-            return "bool";
-
-        if (Array.isArray(value))
-            return "array";
-
-        return "string";
-    }
-
     $scope.compareType = function(value, type) {
         return getType(value) == type;
     }
@@ -435,6 +421,8 @@ $scope.reloadDialogItemsDescriptions = function(){
      * LOAD FROM COOKIES
      ******************************/
     function loadFromCookise() {
+        var cookies = $cookies.get('save_object');
+        if(cookies != null && cookies != undefined)
         var obj = JSON.parse($cookies.get('save_object'));
         if (obj == null || obj == undefined)
             return;

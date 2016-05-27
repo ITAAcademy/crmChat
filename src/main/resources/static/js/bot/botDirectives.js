@@ -171,18 +171,30 @@ angular.module('springChat.directives').directive('botList', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-            content: '&',
-            callback: '&'
+            horizontal: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
+                scope.$watch('horizontal', function() {
+                    var elements = element[0].children;
+                        element[0].classList.toggle("layout-ul-horizontal");
+                        element[0].classList.toggle("layout-ul-vertical");
+                        console.log("render List");
+                        for (var i = 0; i < elements.length; i++) {
+                              elements[i].classList.toggle("layout-li-horizontal");
+                              elements[i].classList.toggle("layout-li-vertical");
+                        }
+                });
+
                 scope.listenContent = function() {
                     scope.unlistenContent = scope.$watch(element[0], function() {
                         var elements = element[0].children;
-                        element[0].classList.add("boberConteiner");
+                        element[0].classList.toggle("layout-ul-horizontal");
+                        //element[0].classList.toggle("layout-ul-vertical");
                         console.log("render List");
                         for (var i = 0; i < elements.length; i++) {
-                              elements[i].classList.add("bober");
+                              elements[i].classList.toggle("layout-li-horizontal");
+                             // elements[i].classList.toggle("layout-li-vertical");
                         }
 
 /*                        var head = "<div class='list-group'>";
@@ -272,7 +284,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                     scope.onClick = function() {
                         debugger;
-                        scope.$evalAsync(functionStr)(scope);
+                        scope.$eval(functionStr)(scope);
                     }
 
                     // });

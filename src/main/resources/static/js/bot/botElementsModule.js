@@ -2,19 +2,19 @@ var BOT_ELEMENTS_MODULE = function() {
     var publicData = {};
 
     //Help to prevent mistakes
-    var BotElementTypes = ["botinput", "botcheckgroup","botradiogroup", "bottext", "bot-list", "button", "bot-container", "botlink", "botsubmit", "bot-close"];
+    var BotElementTypes = ["botinput", "botcheckgroup", "botradiogroup", "bottext", "bot-list", "button", "bot-container", "botlink", "botsubmit", "bot-close"];
     var BotGlobalProperties = ["name", "value"];
     var BotElementProperties = {
         "bot-container": { "time": "00:00", "content": "", "callback": "" },
-        "bot-list": { "callback": "" },
+        "bot-list": { "horizontal": false },
         "botlink": { "text": "empty_text", "ispost": true, "linkindex": 0, "href": "", "classes": "" },
         "botinput": { "text": "empty_text", "name": 0 },
         "botsubmit": { "text": "Submit" },
-        "botradiogroup": { "itemscount":2,"labels": [], "values": [], "legend": "","groupname":"noname"},
-        "botcheckgroup": { "itemscount":2,"labels": [], "values": [], "legend": "","groupname":"noname"},
+        "botradiogroup": { "itemscount": 2, "labels": [], "values": [], "legend": "", "groupname": "noname" },
+        "botcheckgroup": { "itemscount": 2, "labels": [], "values": [], "legend": "", "groupname": "noname" },
         "botClose": {},
         "inputListBox": {},
-        "bottext": {"text":"some_text","textcolor":"black","textsize":18,"textalign":"left"}
+        "bottext": { "text": "some_text", "textcolor": "black", "textsize": 18, "textalign": "left" }
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
@@ -54,10 +54,15 @@ var BOT_ELEMENTS_MODULE = function() {
                 } else
                 if (typeof value != 'undefined') {
                     var escapedValue;
-                    if (typeof value === "string") escapedValue = value.escapeHtml();
-                    else escapedValue = value;
+                    if (typeof value === "string")
+                        escapedValue = value.escapeHtml();
+                    else if(getType(value) == "array")
+                         escapedValue = JSON.stringify(value).escapeQuotes().escapeHtml();
+                     else
+                        escapedValue = value;
                 }
 
+                if(typeof value != "object")
                 escapedValue = "'" + escapedValue + "'";
 
                 if (ignoreAddedProperties || key == "content") {
@@ -70,15 +75,17 @@ var BOT_ELEMENTS_MODULE = function() {
             var leftTooltip = "top-left";
             /*if((scope.elementsListForLink.length - 1) %2 == 0)
                 leftTooltip = "";*/
+
             var addedPropertyFinal = this.addedProperty + ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens" dnd-horizontal-list="true" dnd-external-sources="true"';
             var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">';
+
             var addedFooterFinal = '</li>';
             if (ignoreAddedProperties) {
                 addedClassesFinal = addedHeaderFinal = addedFooterFinal = addedPropertyFinal = "";
             }
             var template;
             if (!ignoreAddedProperties)
-                template = addedHeaderFinal + '<div class="wrap"><ul {0} = " " {1} {2}>{3}</ul></div>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
+                template = addedHeaderFinal + '<div class="wrap"><ul class="custom-ul" {0} = " " {1} {2}>{3}</ul></div>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
             else
                 template = addedHeaderFinal + '<{0} {1} {2}>{3}</{0}>'.format(this.type, addedClassesFinal, propertiesStr + " " + addedPropertyFinal, childrensStr) + addedFooterFinal;
 
@@ -104,8 +111,25 @@ var BOT_ELEMENTS_MODULE = function() {
         var elementInstance = BOT_ELEMENTS_MODULE.ElementInstance(elmType);
         for (var propertie in elementInstance.properties) {
             var attrValue = jElement.attr(propertie);
-            if (typeof(attrValue) != 'undefined')
-                elementInstance.properties[propertie] = jElement.attr(propertie).slice(1, -1); //set propertie and remove ' symbols on start and end
+            if (typeof(attrValue) != 'undefined') {
+                if(typeof elementInstance.properties[propertie] != "object")
+                var stringValue = jElement.attr(propertie).slice(1, -1);
+            else
+                var stringValue = jElement.attr(propertie);
+            
+                var type = getType(elementInstance.properties[propertie]);
+                if (type == "bool")
+                    elementInstance.properties[propertie] = parseBoolean(stringValue);
+                else
+                if (type == "array")
+                    elementInstance.properties[propertie] = JSON.parse(stringValue.unescapeQuotes());
+                else
+                if (type == "string")
+                    elementInstance.properties[propertie] = stringValue;
+            }
+            //elementInstance.properties[propertie] = jElement.attr(propertie).slice(1, -1)); //set propertie and remove ' symbols on start and end
+
+
         }
         for (var i = 0; i < jqueryChildrens.length; i++) {
             var pare = {};
