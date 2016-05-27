@@ -176,28 +176,43 @@ angular.module('springChat.directives').directive('botList', function($compile, 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.$watch(attr.content, function() {
-                    var elements = element[0].children;
+                scope.listenContent = function() {
+                    scope.unlistenContent = scope.$watch(element[0], function() {
+                        var elements = element[0].children;
+                        element[0].classList.add("boberConteiner");
+                        console.log("render List");
+                        for (var i = 0; i < elements.length; i++) {
+                              elements[i].classList.add("bober");
+                        }
 
-                    var head = "<ul class='list-group'>";
-                    var footer = "</ul>";
-                    var result = head;
+/*                        var head = "<div class='list-group'>";
+                        var footer = "</div>";
+                        var result = head;
 
-                    for (var i = 0; i < elements.length; i++) {
-                        result += "<div class=\"list-group-item toggle animation\">" + elements[i].innerHTML + "</div>";
-                    }
-                    result +=footer;
-                    element.html(result);
+                        for (var i = 0; i < elements.length; i++) {
+                            //result += "<div class=\"list-group-item\">" + elements[i].outerHTML + "</div>";//.toggle()
+                            //result += "<div class=\"list-group-item\">" + elements[i].outerHTML + "</div>";//.toggle()
+                        }
+                        result += footer;
+                        element.html(result);
 
-                    if (typeof attr.callback != 'undefined') {
-                        var callBackFunction = Function("return " + $parse(attr.callback))();
-                        if (typeof callBackFunction != 'undefined')
-                            callBackFunction(element);
-                    }
-                    //scope.content = $parse(attr.content)(scope);
-                    $compile(element.contents())(scope);
-                    scope.init(scope, element, attr);
-                }, true);
+                        if (typeof attr.callback != 'undefined') {
+                            var callBackFunction = Function("return " + $parse(attr.callback))();
+                            if (typeof callBackFunction != 'undefined')
+                                callBackFunction(element);
+                        }*/
+                        //scope.content = $parse(attr.content)(scope);
+                        scope.unlistenContent();    
+                        $compile(element.contents())(scope);
+                        scope.init(scope, element, attr);
+
+                        scope.$$postDigest(function(){
+                       //    scope.listenContent();    
+                        })
+                        
+                    }, true);
+                };
+                scope.listenContent();
             }
         }
     }
@@ -228,16 +243,16 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                 console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
                 if (usePost) {
-                        scope.href = "";
-                    }
+                    scope.href = "";
+                }
                 scope.$watch('ispost', function() {
                     if (scope.ispost) {
                         scope.href = "";
                     }
                 });
                 scope.$watch('href', function() {
-                    if (typeof scope.href!='undefined' && scope.href.length>0)
-                    scope.ispost = false;
+                    if (typeof scope.href != 'undefined' && scope.href.length > 0)
+                        scope.ispost = false;
                 });
                 scope.itemvalue = body;
                 if (usePost &&
@@ -287,7 +302,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
         controller: 'ChatViewItemController',
         scope: {
             text: '=',
-            name : '='
+            name: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -398,42 +413,42 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 var item_type = "checkbox";
                 scope.values = [];
 
-               // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
-               /* scope.$watch('labels', function() {
-                if (scope.labels.length > scope.values.length){
-                    scope.values.push('false');
-                }
-                else
-               scope.values.pop();
-                }, true);*/ // watching properties
+                // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
+                /* scope.$watch('labels', function() {
+                 if (scope.labels.length > scope.values.length){
+                     scope.values.push('false');
+                 }
+                 else
+                scope.values.pop();
+                 }, true);*/ // watching properties
 
 
-                function initElement(){
+                function initElement() {
                     body = "";
                     for (var i = 0; i < scope.itemscount; i++) {
-                    var name = "{{groupname}}_item";
-                    var value = "{{values[{0}].text}}".format(i);
-                    var label = "{{labels[{0}].text}}".format(i);
-                    var modelValue = "values[{0}]".format(i);
-                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
+                        var name = "{{groupname}}_item";
+                        var value = "{{values[{0}].text}}".format(i);
+                        var label = "{{labels[{0}].text}}".format(i);
+                        var modelValue = "values[{0}]".format(i);
+                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                    }
+
+                    var suffix = '</fieldset>';
+                    var elementValue = prefix + body + suffix;
+
+                    element.html(elementValue);
+
+                    scope.content = elementValue;
+                    $compile(element.contents())(scope);
+                    scope.init(scope, element, attr);
                 }
-
-                var suffix = '</fieldset>';
-                var elementValue = prefix + body + suffix;
-
-                element.html(elementValue);
-
-                scope.content = elementValue;
-                $compile(element.contents())(scope);
-                scope.init(scope, element, attr);
-            }
-              scope.$watch('itemscount', function() {
-                 initElement(); 
+                scope.$watch('itemscount', function() {
+                    initElement();
                 });
-                }
             }
         }
-    });
+    }
+});
 
 
 
@@ -459,42 +474,42 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 var item_type = "radio";
                 scope.values = [];
 
-               // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
-               /* scope.$watch('labels', function() {
-                if (scope.labels.length > scope.values.length){
-                    scope.values.push('false');
-                }
-                else
-               scope.values.pop();
-                }, true);*/ // watching properties
+                // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
+                /* scope.$watch('labels', function() {
+                 if (scope.labels.length > scope.values.length){
+                     scope.values.push('false');
+                 }
+                 else
+                scope.values.pop();
+                 }, true);*/ // watching properties
 
 
-                function initElement(){
+                function initElement() {
                     body = "";
                     for (var i = 0; i < scope.itemscount; i++) {
-                    var name = "{{groupname}}_item";
-                    var value = "{{values[{0}].text}}".format(i);
-                    var label = "{{labels[{0}].text}}".format(i);
-                    var modelValue = "values[{0}]".format(i);
-                    body += checkBoxTemplate.format(item_type, name, value, modelValue,label);
+                        var name = "{{groupname}}_item";
+                        var value = "{{values[{0}].text}}".format(i);
+                        var label = "{{labels[{0}].text}}".format(i);
+                        var modelValue = "values[{0}]".format(i);
+                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                    }
+
+                    var suffix = '</fieldset>';
+                    var elementValue = prefix + body + suffix;
+
+                    element.html(elementValue);
+
+                    scope.content = elementValue;
+                    $compile(element.contents())(scope);
+                    scope.init(scope, element, attr);
                 }
-
-                var suffix = '</fieldset>';
-                var elementValue = prefix + body + suffix;
-
-                element.html(elementValue);
-
-                scope.content = elementValue;
-                $compile(element.contents())(scope);
-                scope.init(scope, element, attr);
-            }
-              scope.$watch('itemscount', function() {
-                 initElement(); 
+                scope.$watch('itemscount', function() {
+                    initElement();
                 });
-                }
             }
         }
-    });
+    }
+});
 
 
 
@@ -616,17 +631,17 @@ angular.module('springChat.directives').directive('bottext', function($compile, 
     return {
         controller: 'ChatViewItemController',
         scope: {
-            text : "=",
-             textcolor : "=",
-             textsize: "=",
-             textalign : "="
+            text: "=",
+            textcolor: "=",
+            textsize: "=",
+            textalign: "="
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
                 var textItemTemplate = '<p style="color:{0};font-size:{1}px;text-align:{2};">{3}</p>';
                 var elementBody = "{{text}}";
-                var elementValue= textItemTemplate.format("{{textcolor}}","{{textsize}}","{{textalign}}","{{text}}");
+                var elementValue = textItemTemplate.format("{{textcolor}}", "{{textsize}}", "{{textalign}}", "{{text}}");
                 element.html(elementValue);
 
                 scope.content = elementValue;
@@ -636,4 +651,3 @@ angular.module('springChat.directives').directive('bottext', function($compile, 
         }
     }
 });
-

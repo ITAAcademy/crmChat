@@ -174,7 +174,7 @@ public class BotController {
 	@RequestMapping(value = "bot_operations/save_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
-		BotDialogItem dialogItem = botItemContainerService.update(payload);
+		botItemContainerService.update(payload);
 		return true;
 	}
 

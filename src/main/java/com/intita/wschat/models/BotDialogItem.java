@@ -54,7 +54,9 @@ public class BotDialogItem {
 	@EmbeddedId
 	private LangId idObject;
 
+	@Column(columnDefinition = "TEXT")
 	private String body;
+	
 	@ManyToOne
 	private BotCategory category;
 
