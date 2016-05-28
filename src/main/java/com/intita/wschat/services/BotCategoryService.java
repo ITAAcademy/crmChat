@@ -45,6 +45,9 @@ public class BotCategoryService {
 	public ArrayList<Long> getIdsWhereNamesLike(String name){
 		return botCategoryRepository.getIdsWhereNameLike(name);
 	}
+	public ArrayList<BotCategory> getBotCategoriesHavingName(String name,int limit){
+		return botCategoryRepository.getBotCategoriesHavingName(name,new PageRequest(0,limit));
+	}
 	
 	
 }

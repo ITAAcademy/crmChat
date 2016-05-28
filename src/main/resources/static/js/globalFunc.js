@@ -273,10 +273,17 @@ var substringMatcher = function(strs) {
                 matches.push(str);
             }
         });
-
-        cb(matches);
-    };
+    cb(matches);
+  };
 };
+function getKeyByValue( value,object ) {
+    for( var prop in object ) {
+        if( object.hasOwnProperty( prop ) ) {
+             if( object[ prop ] === value )
+                 return prop;
+        }
+    }
+}
 
 function getType(value) {
     if (value === true || value === false)
