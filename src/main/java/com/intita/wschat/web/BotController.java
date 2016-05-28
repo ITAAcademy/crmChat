@@ -267,9 +267,7 @@ public class BotController {
 		String containerStringToSave = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
-/*			if (nextContainerToSave != null)
-				containerStringToSave = objectMapper.writeValueAsString(nextContainerToSave);*/
-				containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
+			containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
 				
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
