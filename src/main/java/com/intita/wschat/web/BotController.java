@@ -280,9 +280,7 @@ public class BotController {
 		String containerStringToSave = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
-/*			if (nextContainerToSave != null)
-				containerStringToSave = objectMapper.writeValueAsString(nextContainerToSave);*/
-				containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
+			containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
 				
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -295,7 +293,7 @@ public class BotController {
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
 		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
 
-		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), new ChatMessage(messageToSave), bot.getPrincipal());
+		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), messageToSave);
 		return objectMapper.writeValueAsString(botCategory);
 	}
 

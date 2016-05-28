@@ -18,7 +18,9 @@
                                     </div>
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
-                                            <div class="glyphicon glyphicon-upload  code-edit-title-upload-icon" ng-click="upload some function"></div>
+                                            <div tooltip-append-to-body = "true" class="code-edit-title-upload-icon" tooltip-trigger="mouseenter" uib-tooltip="Convert code to view">
+                                                <a class="glyphicon glyphicon-upload icon" ng-click="updateViewByLang()"></a>
+                                            </div>
                                             <div class="code-edit-title" th:text="${lgPack.lables.formBuilder.codePromt}">
                                                 Here you see source code:
                                             </div>
@@ -77,7 +79,7 @@
                             </uib-tab-heading>
                             <div class="panel-body editor-panel-body-right">
                                 <div dnd-list="toolsList" class="tab-content editor-panel-right-scroll" dnd-disable-if="false" dnd-drop="$root.deleteCallback(event, index, item, external, type, $root.this)">
-                                    <div class="editor-tools-propertys animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy">
+                                    <div class="editor-tools animate-properties" ng-repeat="tool in toolsList" dnd-draggable="tool" dnd-effect-allowed="copy">
                                         <!-- **select class disable**
                                         dnd-selected="$root.models.selected = tool" ng-class="{'selected': models.selected === tool}" 
                                     -->

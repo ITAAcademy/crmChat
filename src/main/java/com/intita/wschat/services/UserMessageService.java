@@ -51,37 +51,37 @@ public class UserMessageService {
 	@Autowired
 	private BotItemContainerService botItemContainerService;
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
 		return (ArrayList<UserMessage>) IteratorUtils.toList(userMessageRepository.findAll().iterator());
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public UserMessage getUserMessage(Long id){
 		return userMessageRepository.findOne(id);
 	}
-	/*@Transactional
+	/*@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getChatUserMessagesByAuthor(String author) {
 
 		return userMessageRepository.findByAuthor(chatUserService.getChatUser(author));
 	}*/
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getChatUserMessagesById(Long id) {
 
 		return wrapBotMessages(userMessageRepository.findByAuthor(chatUserService.getChatUser(id)));
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
 		return wrapBotMessages(userMessageRepository.findByRoom(room));
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public UserMessage getLastUserMessageByRoom(Room room){
 		return userMessageRepository.findFirstByRoomOrderByDateDesc(room);
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 	}
@@ -91,7 +91,7 @@ public class UserMessageService {
 		return wrapBotMessages(userMessageRepository.findByRoom(new Room(roomId)));
 	}
 
-	@Transactional
+	@Transactional()
 	public boolean addMessage(ChatUser user, Room room,String body) {
 		if(user == null || room == null || body == null) return false;
 		//have premition?
@@ -99,20 +99,20 @@ public class UserMessageService {
 		userMessageRepository.save(userMessage);
 		return true;
 	}
-	@Transactional
+	@Transactional()
 	public boolean addMessage(UserMessage message) {
 		if (message==null) return false;
 		userMessageRepository.save(message);
 		return true;
 	}
-	@Transactional
+	@Transactional()
 	public boolean addMessages(Iterable<UserMessage> messages) {
 		if (messages==null) return false;
 		userMessageRepository.save(messages);
 		return true;
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByDate(Date date) {
 		return userMessageRepository.findAllByDateAfter(date);
 	}
@@ -223,42 +223,42 @@ public class UserMessageService {
 
 
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date)  {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
 		return  wrapBotMessages(messages);
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> get10MessagesByRoomDateAfter(Room room, Date date){
 		ArrayList<UserMessage> messages =  userMessageRepository.findFirst10ByRoomAndDateAfter(room, date);
 		return  wrapBotMessages(messages);
 	}
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> get10MessagesByRoomDateBefore(Room room, Date date){		
 		ArrayList<UserMessage> messages =  userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date);
 		return  wrapBotMessages(messages);
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
 		return  wrapBotMessages(messages);
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);
 		return  messages_count;
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<UserMessage> getMessagesByDateNotUser(Date date, ChatUser user) {
 		List<UserMessage> messages =  userMessageRepository.findAllByDateAfterAndAuthorNot( date, user);
 		ArrayList<UserMessage> result =  wrapBotMessages( new ArrayList<UserMessage>(messages));
 		return result;
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public Set<UserMessage> getMessagesByNotUser( ChatUser user) {
 		Set<UserMessage> messages = userMessageRepository.findAllByAuthorNot( user); 
 		ArrayList<UserMessage> result =  wrapBotMessages( new ArrayList<UserMessage>(messages));

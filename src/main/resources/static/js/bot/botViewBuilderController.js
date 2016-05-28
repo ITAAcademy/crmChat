@@ -204,7 +204,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.$$postDigest(function() {
             $scope.activeViewTab = $scope.viewTabs.length;
         });
+    }
 
+        $scope.updateViewByLang = function() {
+        console.log("Update view by lang: ");
+        var tab = $scope.viewTabs[$scope.activeViewTab - 1];
+        var lang = $scope.langForRender[$scope.activeViewTab - 1];
+
+        tab.objects[lang] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[lang].body);
+        $scope.updateView();
     }
 
     $scope.createBotDialogItem = function() {
@@ -212,6 +220,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 
         $http.post(requestUrl, $scope.newDialogItem).
         success(function(data, status, headers, config) {
+            debugger;
             loadView(data, status, headers, config);
             $scope.newDialogItem = botDialogItemClean();
         }).
@@ -401,20 +410,6 @@ $scope.selectedBotDialogItemForModalChanged();
         console.log("zigzag test:" + JSON.stringify(result));
     }
 
-
-
-
-
-    function getType(value) {
-        if (value === true || value === false)
-            return "bool";
-
-        if (Array.isArray(value))
-            return "array";
-
-        return "string";
-    }
-
     $scope.compareType = function(value, type) {
         return getType(value) == type;
     }
@@ -435,7 +430,11 @@ $scope.selectedBotDialogItemForModalChanged();
      * LOAD FROM COOKIES
      ******************************/
     function loadFromCookise() {
-        var obj = JSON.parse($cookies.get('save_object'));
+        var cookies = $cookies.get('save_object');
+        var obj;
+        if(cookies != null && cookies != undefined)
+            obj = JSON.parse($cookies.get('save_object'));
+        
         if (obj == null || obj == undefined)
             return;
         for (var index in obj) {

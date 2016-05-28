@@ -1,97 +1,99 @@
 var formatDateWithLast = function(date) {
 
-        var daysName = {},
-            hoursName = {},
-            minutesName = {};
-        var dayName = {},
-            hourName = {},
-            minuteName = {};
-        var endName = {};
-        daysName['ua'] = 'днів';
-        dayName['ua'] = 'день';
-        daysName['en'] = 'day';
-        dayName['en'] = 'days';
-        daysName['ru'] = 'дней';
-        dayName['ru'] = 'день';
+    var daysName = {},
+        hoursName = {},
+        minutesName = {};
+    var dayName = {},
+        hourName = {},
+        minuteName = {};
+    var endName = {};
+    daysName['ua'] = 'днів';
+    dayName['ua'] = 'день';
+    daysName['en'] = 'day';
+    dayName['en'] = 'days';
+    daysName['ru'] = 'дней';
+    dayName['ru'] = 'день';
 
-        hoursName['ua'] = 'годин';
-        hourName['ua'] = 'годину';
-        hoursName['en'] = 'hour';
-        hourName['en'] = 'hours';
-        hoursName['ru'] = 'часов';
-        hourName['ru'] = 'час';
+    hoursName['ua'] = 'годин';
+    hourName['ua'] = 'годину';
+    hoursName['en'] = 'hour';
+    hourName['en'] = 'hours';
+    hoursName['ru'] = 'часов';
+    hourName['ru'] = 'час';
 
-        minutesName['ua'] = ' хвилин ';
-        minuteName['ua'] = ' хвилину ';
-        minutesName['en'] = ' minutes ';
-        minuteName['en'] = ' minute ';
-        minutesName['ru'] = ' минут ';
-        minuteName['ru'] = ' минуту ';
+    minutesName['ua'] = ' хвилин ';
+    minuteName['ua'] = ' хвилину ';
+    minutesName['en'] = ' minutes ';
+    minuteName['en'] = ' minute ';
+    minutesName['ru'] = ' минут ';
+    minuteName['ru'] = ' минуту ';
 
-        endName['ua'] = "тому";
-        endName['en'] = "ago";
-        endName['ru'] = "спустя";
+    endName['ua'] = "тому";
+    endName['en'] = "ago";
+    endName['ru'] = "спустя";
 
-        // need translate and move to global to config map
-        var dateObj = new Date(date);
+    // need translate and move to global to config map
+    var dateObj = new Date(date);
 
-        var delta = new Date().getTime() - dateObj.getTime();
-        if (delta > 60000 * 59)
-            return formatDate(date);
-        else
-        if (Math.round(delta / 60000) == 0)
-            return null;
+    var delta = new Date().getTime() - dateObj.getTime();
+    if (delta > 60000 * 59)
+        return formatDate(date);
+    else
+    if (Math.round(delta / 60000) == 0)
+        return null;
 
-        var minutesStr = Math.round(delta / 60000);
-        if (minutesStr > 1)
-            return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
-        else
-            return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
-    }
-  var  formatDate = function(date) {
-        // need translate and move to global to config map
-        var monthNames = {};
-        monthNames['ua'] = [
-            "Січеня", "Лютого", "Березеня ",
-            "Квітня", "Травня ", "Червеня ", "Липеня",
-            "Серпня", "Вересеня", "Жовтеня",
-            "Листопада", "Груденя"
-        ];
-        monthNames['en'] = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December"
-        ];
-        monthNames['ru'] = [
-            "Января", "Февраля", "Марта",
-            "Апреля", "Мая", "Июня", "Июля",
-            "Августа", "Сентября", "Октября",
-            "Ноября", "Декабря"
-        ];
-        var dateObj = new Date(date);
-        var day = dateObj.getDate();
-        var monthIndex = dateObj.getMonth();
-        var year = dateObj.getFullYear();
-        var minutes = dateObj.getMinutes();
-        if (minutes < 10)
-            minutes = '0' + minutes;
+    var minutesStr = Math.round(delta / 60000);
+    if (minutesStr > 1)
+        return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
+    else
+        return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
+}
+var formatDate = function(date) {
+    // need translate and move to global to config map
+    var monthNames = {};
+    monthNames['ua'] = [
+        "Січеня", "Лютого", "Березеня ",
+        "Квітня", "Травня ", "Червеня ", "Липеня",
+        "Серпня", "Вересеня", "Жовтеня",
+        "Листопада", "Груденя"
+    ];
+    monthNames['en'] = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+    monthNames['ru'] = [
+        "Января", "Февраля", "Марта",
+        "Апреля", "Мая", "Июня", "Июля",
+        "Августа", "Сентября", "Октября",
+        "Ноября", "Декабря"
+    ];
+    var dateObj = new Date(date);
+    var day = dateObj.getDate();
+    var monthIndex = dateObj.getMonth();
+    var year = dateObj.getFullYear();
+    var minutes = dateObj.getMinutes();
+    if (minutes < 10)
+        minutes = '0' + minutes;
 
-        return day + " " + monthNames[globalConfig.lang][monthIndex] + " " + dateObj.getHours() + ":" + minutes;
-    }
-   function getCurrentTime(){
+    return day + " " + monthNames[globalConfig.lang][monthIndex] + " " + dateObj.getHours() + ":" + minutes;
+}
+
+function getCurrentTime() {
     var currentdate = new Date();
-     var h = currentdate.getHours() ;
-    var m =  currentdate.getMinutes();
-    var s =  currentdate.getSeconds();
-    return h+":"+m+":"+s;
-   }
-   function formatDateToTime(date){
-     var h = date.getHours() ;
-    var m =  date.getMinutes();
-    var s =  date.getSeconds();
-    return h+":"+m+":"+s;
-   }
+    var h = currentdate.getHours();
+    var m = currentdate.getMinutes();
+    var s = currentdate.getSeconds();
+    return h + ":" + m + ":" + s;
+}
+
+function formatDateToTime(date) {
+    var h = date.getHours();
+    var m = date.getMinutes();
+    var s = date.getSeconds();
+    return h + ":" + m + ":" + s;
+}
 
 
 
@@ -142,14 +144,14 @@ function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress) {
 
     var xhr = getXmlHttp();
 
-    //	обработчик для закачки
+    //  обработчик для закачки
     xhr.upload.onprogress = function(event) {
         //console.log(event.loaded + ' / ' + event.total);
         onProgress(event, xhr.upload.loaded);
     }
 
-    //	обработчики успеха и ошибки
-    //	если status == 200, то это успех, иначе ошибка
+    //  обработчики успеха и ошибки
+    //  если status == 200, то это успех, иначе ошибка
     xhr.onload = xhr.onerror = function() {
         if (this.status == 200) {
             console.log("SUCCESS:" + xhr.responseText);
@@ -162,7 +164,7 @@ function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress) {
 
     xhr.open("POST", urlpath);
     var boundary = String(Math.random()).slice(2);
-    //	xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+    //  xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
     var formData = new FormData();
 
     for (var i = 0; i < files.length; i++) {
@@ -207,11 +209,11 @@ function getXmlHttp() {
 }
 
 function replacer(str, offset, s) {
-  return "{{call(" + str.substring(2,str.length - 4) + ")}}";
+    return "{{call(" + str.substring(2, str.length - 4) + ")}}";
 }
 
 function call(str) {
-  return "{{" + str + "}}";
+    return "{{" + str + "}}";
 }
 
 /*function upload(file,urlpath) {
@@ -255,23 +257,22 @@ var serverPrefix = "/crmChat";
 var DEFAULT_FILE_PREFIX_LENGTH = 15;
 
 var substringMatcher = function(strs) {
-  return function findMatches(q, cb) {
-    var matches, substringRegex;
+    return function findMatches(q, cb) {
+        var matches, substringRegex;
 
-    // an array that will be populated with substring matches
-    matches = [];
+        // an array that will be populated with substring matches
+        matches = [];
 
-    // regex used to determine if a string contains the substring `q`
-    substrRegex = new RegExp(q, 'i');
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
 
-    // iterate through the pool of strings and for any string that
-    // contains the substring `q`, add it to the `matches` array
-    $.each(strs, function(i, str) {
-      if (substrRegex.test(str)) {
-        matches.push(str);
-      }
-    });
-
+        // iterate through the pool of strings and for any string that
+        // contains the substring `q`, add it to the `matches` array
+        $.each(strs, function(i, str) {
+            if (substrRegex.test(str)) {
+                matches.push(str);
+            }
+        });
     cb(matches);
   };
 };
@@ -282,4 +283,21 @@ function getKeyByValue( value,object ) {
                  return prop;
         }
     }
+}
+
+function getType(value) {
+    if (value === true || value === false)
+        return "bool";
+
+    if (Array.isArray(value))
+        return "array";
+
+    return "string";
+}
+
+function parseBoolean(value) {
+    if (value == "true")
+        return true;
+    else
+        return false;
 }
