@@ -1416,6 +1416,10 @@ opacity: 0.7;
     display: table;
     clear: both;
 }
+.form-inline{
+    display:inline-block;
+    width:80%;
+}
 
 
 
