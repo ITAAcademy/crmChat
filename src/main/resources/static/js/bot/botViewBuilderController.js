@@ -265,7 +265,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 $scope.categoryInputModel = [];
                 $scope.dialogElementInputModel = [];
             };
-            
+            $scope.initDialogItemModalLoader();
                 $scope.loadCategoriesIds = function() {
 
                     var requestUrl = serverPrefix + "/bot_operations/get_all_categories_ids";
