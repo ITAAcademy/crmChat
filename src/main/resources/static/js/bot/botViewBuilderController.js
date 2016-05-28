@@ -229,16 +229,16 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         success(loadView).
         error(function(data, status, headers, config) {});
     }
-    $scope.initDialogItemModalLoader =function(){
-
-    }
 
 
-$scope.botDialogItemsIdsForModal = [];
-    $scope.botCategoriesIdsForModal = [];
-    $scope.selectedBotDialogItemForModal;
-    $scope.selectedBotCategoryForModal;
-     $scope.loadCategoriesIds = function() {
+$scope.botDialogItemsForModal = [];
+    $scope.botCategoriesForModal = [];
+    $scope.selectedBotDialogItemForModal={};
+    $scope.selectedBotCategoryForModalId;
+
+    $scope.categoryInputModel = [];
+    $scope.dialogElementInputModel = [];
+    /* $scope.loadCategoriesIds = function() {
 
         var requestUrl = serverPrefix + "/bot_operations/get_all_categories_ids";
 
@@ -248,8 +248,8 @@ $scope.botDialogItemsIdsForModal = [];
             console.log("get_dialog_items_ids:"+data);
         }).
         error(function(data, status, headers, config) {});
-    }
-     var loadCategoriesIdsByName = function(name) {
+    }*/
+     /*var loadCategoriesIdsByName = function(name) {
 
         var requestUrl = serverPrefix + "/bot_operations/get_categories_ids_where_names_like/"+name;
 
@@ -259,100 +259,78 @@ $scope.botDialogItemsIdsForModal = [];
             console.log("get_dialog_items_ids:"+data);
         }).
         error(function(data, status, headers, config) {});
-    }
-     var loadDialogItemsIdsByDescription = function(category,description) {
-
-        var requestUrl = serverPrefix + "/bot_operations/get_dialog_items_ids_where_description_like/"+category+'/'+description;
+    }*/
+    $scope.loadCategoriesByName = function(name){
+        name = name || "_";
+    var requestUrl = serverPrefix + "/bot_operations/get_bot_category_names_having_string_first5/"+encodeURIComponent(name);
 
         return $http.get(requestUrl, {}).
         success(function(data){
-            $scope.botDialogItemsIdsForModal = data;
+            $scope.botCategoriesForModal = data;
             console.log("get_dialog_items_ids:"+data);
         }).
         error(function(data, status, headers, config) {});
     }
-    $scope.reloadCategoriesByName = function(name){
-        loadCategoriesIdsByName(name).success(function(){
-            if ( $scope.botCategoriesIdsForModal.length>0)
-            $scope.selectedBotCategoryForModal = $scope.botCategoriesIdsForModal[0];
-        });
-    }
-    $scope.reloadDialogItemsByDescription = function(category,description){
-        loadDialogItemsIdsByDescription(category,description).success(function(){
-            if ( $scope.botDialogItemsIdsForModal.length>0)
-            $scope.selectedBotDialogItemForModal = $scope.botDialogItemsIdsForModal[0];
-        });
-    }
+$scope.loadDialogItemsByDescription = function(categoryId,description){
+        description = description || "_";
+        categoryId = categoryId || "0";
+    var requestUrl = serverPrefix + 
+    "/bot_operations/get_bot_dialog_items_descriptions_having_string_first5/"+categoryId+"/"+encodeURIComponent(description);
 
-    $scope.loadDialogItemsIds = function(categoryId) {
-
-        var requestUrl = serverPrefix + "/bot_operations/get_dialog_items_ids/{0}".format(categoryId);
-  return $http({
-        method: 'GET',
-        url: requestUrl//,
-        //params: 'limit=10, sort_by=created:desc',
-        //headers: {'Authorization': 'Token token=xxxxYYYYZzzz'}
-     }).
-       //return $http.get(requestUrl, {}).
+        return $http.get(requestUrl, {}).
         success(function(data){
-            $scope.botDialogItemsIdsForModal = data;
+            $scope.botDialogItemsForModal = data;
             console.log("get_dialog_items_ids:"+data);
         }).
         error(function(data, status, headers, config) {});
     }
-      function initDialogItemsIds(categoryId){
-     $scope.loadDialogItemsIds(categoryId).success(function(){
-             if ( $scope.botDialogItemsIdsForModal.length>0){
-            var firstDialogItemId = $scope.botDialogItemsIdsForModal[0];
-             $scope.selectedBotDialogItemForModal = firstDialogItemId;
+
+      function initDialogItems(categoryId){
+     $scope.loadDialogItemsByDescription(categoryId).success(function(){
+             if ( $scope.botDialogItemsForModal.length>0){
+            var firstDialogItem = $scope.botDialogItemsForModal[0];
+             $scope.selectedBotDialogItemForModal = firstDialogItem;
          } 
          });
   }
-  $scope.categoriesNamesList = [];
-  $scope.dialogItemsDescriptionsList = [];
-  $scope.reloadCategoriesNames = function(){
-       $timeout.cancel($scope.reloadingCategoriesNamesPromise);
-    $scope.reloadingCategoriesNamesPromise = $timeout(function(){
-        loadFirst5CategoriesNames($scope.categoryNameToLoad);
+  $scope.reloadCategories = function(){
+       $timeout.cancel($scope.reloadingCategoriesPromise);
+    $scope.reloadingCategoriesPromise = $timeout(function(){
+        $scope.loadCategoriesByName($scope.categoryInputModel);
     },200);
  
   }
-$scope.reloadDialogItemsDescriptions = function(){
-       $timeout.cancel($scope.reloadDialogItemsDescriptionsPromise);
-    $scope.reloadDialogItemsDescriptionsPromise = $timeout(function(){
-        loadFirst5DialogItemsDescriptions($scope.selectedBotCategoryForModal,$scope.dialogItemDescriptionToLoad);
+$scope.reloadDialogItems = function(categoryId){
+    if (typeof categoryId == 'undefined') return ;
+       $timeout.cancel($scope.reloadDialogItemsPromise);
+    $scope.reloadDialogItemsPromise = $timeout(function(){
+        $scope.loadDialogItemsByDescription(categoryId,$scope.dialogElementInputModel);
     },200);
  
   }
-
-  function loadFirst5CategoriesNames(name){
-    var nameToCheck = name || "_";
-      var requestUrl = serverPrefix + "/bot_operations/get_five_categories_names_like/{0}".format(nameToCheck);
-       return $http.get(requestUrl, {}).
-        success(function(data){
-            $scope.categoriesNamesList = data;
-            console.log("get_categories_by_name:"+data);
-        }).
-        error(function(data, status, headers, config) {});
-  }
-
-    function loadFirst5DialogItemsDescriptions(category,description){
-    var nameToCheck = name || "_";
-      var requestUrl = serverPrefix + "/bot_operations/get_five_dialog_items_description_where_description_like/{0}/{1}".format(category,description);
-       return $http.get(requestUrl, {}).
-        success(function(data){
-            $scope.dialogItemsDescriptionsList = data;
-            console.log("dialogItemsDescriptionsList:"+data);
-        }).
-        error(function(data, status, headers, config) {});
-  }
+$scope.onCategoryInputChanged = function(modelValue){
+    $scope.categoryInputModel = modelValue;
+    var categoryNamesMap = $scope.botCategoriesForModal.reduce(function(map, obj) {
+    map[obj.id] = obj.name;
+    return map;
+}, {});
+    //$scope.selectedBotCategoryForModalId=getKeyByValue(modelValue,categoryNamesMap);
+    for (var i = 0; i < $scope.botCategoriesForModal.length; i++){
+        if ($scope.botCategoriesForModal.name == modelValue){
+   $scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[i];
+        }
+    }
+    //$scope.selectedBotCategoryForModal=getKeyByValue(modelValue,categoryNamesMap);
+    console.log(modelValue);
+}
 
      function initCategoriesAndDialogItems(){
-         $scope.loadCategoriesIds().success(function(){
-           if ($scope.botCategoriesIdsForModal.length>0){
-        var firsCategorytId = $scope.botCategoriesIdsForModal[0];
-           $scope.selectedBotCategoryForModal=firsCategorytId;
-        initDialogItemsIds(firsCategorytId );
+         $scope.loadCategoriesByName().success(function(){
+           if ($scope.botCategoriesForModal.length>0){
+        var firstCategory = $scope.botCategoriesForModal[0];
+           $scope.selectedBotCategoryForModalId=firstCategory.id;
+           $scope.categoryInputModel = firstCategory;
+        initDialogItems(firstCategory.id);
      }
      });
      }

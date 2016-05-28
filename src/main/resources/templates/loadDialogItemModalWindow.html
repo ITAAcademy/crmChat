@@ -11,25 +11,25 @@
                                     ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
                                     autocomplete="off" type="text" class="form-control display-block"
                                     name="search" id="search"
-                                    ng-model="categoryNameToLoad"
-                                    ng-change="reloadCategoriesNames()" 
+                                    ng-model="categoryInputModel"
+                                    ng-change="reloadCategories()" 
                                     placeholder="Назва Категорії" 
                                     typeahead-wait-ms = "1000" 
-                                    uib-typeahead="name for name in categoriesNamesList"     
-                                    typeahead-on-select = " categoryNameToLoad = $model;reloadCategoriesByName($model)"/>
-            <select  id="categoryIdToLoad" type="text" ng-options="c for c in botCategoriesIdsForModal" ng-model="selectedBotCategoryForModal" placeholder="Room name"></select>
+                                    uib-typeahead="item.name for item in botCategoriesForModal"     
+                                    typeahead-on-select = "onCategoryInputChanged($model)"/>
+            <select  id="categoryIdToLoad" type="text" ng-options="c.id for c in botCategoriesForModal" ng-model="selectedBotCategoryForModalId" placeholder="Room name"></select>
               <input
                                     ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
                                     autocomplete="off" type="text" class="form-control display-block"
                                     name="search" id="search"
-                                    ng-model="dialogItemDescriptionToLoad"
-                                    ng-change="reloadDialogItemsDescriptions()" 
+                                    ng-model="dialogElementInputModel"
+                                    ng-change="reloadDialogItems(categoryInputModel.id)" 
                                     placeholder="Опис елементу" 
                                     typeahead-wait-ms = "1000" 
-                                    uib-typeahead="name for name in dialogItemsDescriptionsList"     
-                                    typeahead-on-select = " dialogItemDescriptionToLoad = $model;reloadDialogItemsByDescription(selectedBotCategoryForModal,$model)"/>
+                                    uib-typeahead="item.description for item in botDialogItemsForModal"     
+                                    typeahead-on-select = " dialogElementInputModel = $model;"/>
 
-                <select  id="dialogItemIdToLoad" type="text" ng-options="n for n in botDialogItemsIdsForModal" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
+                <select  id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'n.idObject.id'" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
                 
             <div class="modal-footer">
                 <button id="closeDialogItemLoadModalButton" type="button" class="btn btn-default" ng-click="toggleLoadDialogItemModal()">Close</button>
