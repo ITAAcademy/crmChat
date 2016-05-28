@@ -10,42 +10,40 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     $scope.parse = function() {
 
     };
-     $scope.init = function(scope, element, attr)
- {
-    if (scope.chatRouteInterfaceScope == null || scope.chatRouteInterfaceScope == undefined) 
-        return null;
-        if (scope.$parent.mainScope  == null || scope.$parent.mainScope  == undefined) 
-        return null;
+    $scope.init = function(scope, element, attr) {
+        if (scope.chatRouteInterfaceScope == null || scope.chatRouteInterfaceScope == undefined)
+            return null;
+        if (scope.$parent.mainScope == null || scope.$parent.mainScope == undefined)
+            return null;
 
-    scope.mainScope = scope.$parent.mainScope;
-      //  scope.$parent.botChildrens[scope.$parent.botChildrens.length - 1].scope.disabled = true;
-      //if(scope.$parent.botChildrens.length > 0)
-                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
+        scope.mainScope = scope.$parent.mainScope;
+        //  scope.$parent.botChildrens[scope.$parent.botChildrens.length - 1].scope.disabled = true;
+        //if(scope.$parent.botChildrens.length > 0)
+        scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
         scope.botChildrens = new Array();
+        element[0].style.display = "block";
 
-      //  scope.enabledListener(scope, element);
-        if(element[0].attributes.name != undefined && scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined)
-        {
+        //  scope.enabledListener(scope, element);
+        if (element[0].attributes.name != undefined && scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined) {
             scope.itemvalue = scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value];
             scope.mainScope.disabled = true;
         }
-        
- }
+
+    }
 
     /*
     $scope.getChildNodes(){
-    	var element = $scope.botChildrens.element;
-    	var scope = $scope.botChildrens.scope;
-    	var Nodes = {'childrens':};
+        var element = $scope.botChildrens.element;
+        var scope = $scope.botChildrens.scope;
+        var Nodes = {'childrens':};
     }*/
 
 
-    $scope.getNewItem = function(answer, href)
-    {
-    	//generation here data
-    	///take message from parent scope
+    $scope.getNewItem = function(answer, href) {
+        //generation here data
+        ///take message from parent scope
         console.log('getNewItem func called');
-    	$scope.sendPostToUrl(href,answer);
+        $scope.sendPostToUrl(href, answer);
     }
     $scope.sendPostToUrl = function(href, linkData) {
         /*$http({
@@ -54,9 +52,9 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
             data: linkData,
             //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
         });*/
-        $http.post(serverPrefix +'\\'+ href, linkData). // + $scope.dialogName).
+        $http.post(serverPrefix + '\\' + href, linkData). // + $scope.dialogName).
         success(function(data, status, headers, config) {
-           // console.log('room with bot created: ' + $scope.dialogName)
+            // console.log('room with bot created: ' + $scope.dialogName)
         }).
         error(function(data, status, headers, config) {
             //console.log('creating room with bot failed ')

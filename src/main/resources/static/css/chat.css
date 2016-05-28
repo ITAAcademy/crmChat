@@ -839,6 +839,15 @@ input::-ms-clear {
     background: #337AB7;
     /* color: white;*/
 }
+.editor-tools {
+    width: 93%;
+    margin: 5px;
+    border-radius: 6px;
+    padding: 5px;
+    background: #337AB7;
+    /* color: white;*/
+}
+
 .editor-tools-propertys:hover {
   opacity: 0.7;
 }
@@ -847,7 +856,7 @@ input::-ms-clear {
     color: black;
     background-color: green;
 }
-.editor-tools-propertys .atribute {
+.editor-tools .atribute {
     display: inline-block;
     width: 44%;
     text-align: left;
@@ -884,9 +893,10 @@ tags-input input {
 .editor-right-bottom-console .code-edit-source {
     width: 100%;
     color: black;
-    height: calc(22vh);
+    height: 100%;
     margin-bottom: -17px;
     resize: none;
+    position: absolute;
 }
 .editor-right-bottom-console .status {
     width: 100%;
@@ -902,7 +912,7 @@ tags-input input {
     border-left: 2px solid white;
     padding-left: 15px;
 }
-.editor-tools-propertys .value {
+.editor-tools .value {
     display: inline-block;
     width: 44%;
     text-align: right;

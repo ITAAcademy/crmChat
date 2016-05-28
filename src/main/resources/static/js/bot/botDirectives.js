@@ -533,9 +533,6 @@ angular.module('springChat.directives').directive('botClose', function($compile,
                 element.html(elementValue);
                 scope.content = elementValue;
                 $compile(element.contents())(scope);
-
-                scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
-                scope.botChildrens = new Array();
                 scope.init(scope, element, attr);
             }
         }
