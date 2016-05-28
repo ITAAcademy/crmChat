@@ -234,7 +234,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
 $scope.botDialogItemsForModal = [];
     $scope.botCategoriesForModal = [];
     $scope.selectedBotDialogItemForModal={};
-    $scope.selectedBotCategoryForModalId;
+    $scope.selectedBotCategoryForModal={};
 
     $scope.categoryInputModel = [];
     $scope.dialogElementInputModel = [];
@@ -290,6 +290,7 @@ $scope.loadDialogItemsByDescription = function(categoryId,description){
              if ( $scope.botDialogItemsForModal.length>0){
             var firstDialogItem = $scope.botDialogItemsForModal[0];
              $scope.selectedBotDialogItemForModal = firstDialogItem;
+           $scope.dialogElementInputModel = firstDialogItem;
          } 
          });
   }
@@ -300,6 +301,15 @@ $scope.loadDialogItemsByDescription = function(categoryId,description){
     },200);
  
   }
+  $scope.isLoadButtonDisabled = true;
+  $scope.selectedBotDialogItemForModalChanged = function(){
+    if (typeof $scope.selectedBotDialogItemForModal !== 'undefined')
+    if ($scope.selectedBotDialogItemForModal.description.length>0){
+        $scope.isLoadButtonDisabled = false;
+    }
+    else $scope.isLoadButtonDisabled = true;
+  }
+
 $scope.reloadDialogItems = function(categoryId){
     if (typeof categoryId == 'undefined') return ;
        $timeout.cancel($scope.reloadDialogItemsPromise);
@@ -308,7 +318,7 @@ $scope.reloadDialogItems = function(categoryId){
     },200);
  
   }
-$scope.onCategoryInputChanged = function(modelValue){
+$scope.onCategoryInputSelect= function(modelValue){
     $scope.categoryInputModel = modelValue;
     var categoryNamesMap = $scope.botCategoriesForModal.reduce(function(map, obj) {
     map[obj.id] = obj.name;
@@ -316,19 +326,31 @@ $scope.onCategoryInputChanged = function(modelValue){
 }, {});
     //$scope.selectedBotCategoryForModalId=getKeyByValue(modelValue,categoryNamesMap);
     for (var i = 0; i < $scope.botCategoriesForModal.length; i++){
-        if ($scope.botCategoriesForModal.name == modelValue){
+        if ($scope.botCategoriesForModal[i].name == modelValue){
    $scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[i];
         }
     }
+   //$scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[0];
     //$scope.selectedBotCategoryForModal=getKeyByValue(modelValue,categoryNamesMap);
     console.log(modelValue);
 }
+$scope.onDialogItemInputSelect= function(modelValue){
+    $scope.dialogElementInputModel = modelValue;
+
+    for (var i = 0; i < $scope.botDialogItemsForModal.length; i++){
+        if ($scope.botDialogItemsForModal[i].description == modelValue){
+            $scope.selectedBotDialogItemForModal = $scope.botDialogItemsForModal[i];
+        }
+    }
+$scope.selectedBotDialogItemForModalChanged();
+}
+
 
      function initCategoriesAndDialogItems(){
          $scope.loadCategoriesByName().success(function(){
            if ($scope.botCategoriesForModal.length>0){
         var firstCategory = $scope.botCategoriesForModal[0];
-           $scope.selectedBotCategoryForModalId=firstCategory.id;
+           $scope.selectedBotCategoryForModal=firstCategory;
            $scope.categoryInputModel = firstCategory;
         initDialogItems(firstCategory.id);
      }
