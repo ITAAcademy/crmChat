@@ -293,13 +293,21 @@ $scope.loadDialogItemsByDescription = function(categoryId,description){
         }).
         error(function(data, status, headers, config) {});
     }
-
+function updateLoadButton(){
+                if (($scope.selectedBotDialogItemForModal != null)
+                 && (typeof $scope.selectedBotDialogItemForModal.description != null)
+                 && ($scope.selectedBotDialogItemForModal.description.length>0)){
+        $scope.isLoadButtonDisabled = false;
+    }
+    else $scope.isLoadButtonDisabled = true;
+}
       function initDialogItems(categoryId){
      $scope.loadDialogItemsByDescription(categoryId).success(function(){
              if ( $scope.botDialogItemsForModal.length>0){
             var firstDialogItem = $scope.botDialogItemsForModal[0];
              $scope.selectedBotDialogItemForModal = firstDialogItem;
            $scope.dialogElementInputModel = firstDialogItem;
+updateLoadButton();
          } 
          });
   }
@@ -312,11 +320,7 @@ $scope.loadDialogItemsByDescription = function(categoryId,description){
   }
   $scope.isLoadButtonDisabled = true;
   $scope.selectedBotDialogItemForModalChanged = function(){
-    if (typeof $scope.selectedBotDialogItemForModal !== 'undefined')
-    if ($scope.selectedBotDialogItemForModal.description.length>0){
-        $scope.isLoadButtonDisabled = false;
-    }
-    else $scope.isLoadButtonDisabled = true;
+    updateLoadButton();
   }
 
 $scope.reloadDialogItems = function(categoryId){
