@@ -76,7 +76,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                         "id": 1,
                         "name": null
                     },
-                    "discription": "",
+                    "description": "",
                     "testCase": "",
                     "idObject": {
                         "id": null,
@@ -215,10 +215,10 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 $scope.updateView();
             }
 
-            $scope.createBotDialogItem = function(discription, categoryId) {
+            $scope.createBotDialogItem = function(description, categoryId) {
                 var requestUrl = serverPrefix + "/bot_operations/create_bot_dialog_item"
                 debugger;
-                $scope.newDialogItem.discription = discription;
+                $scope.newDialogItem.description = description;
                 $scope.newDialogItem.category.id = categoryId;
                 $http.post(requestUrl, $scope.newDialogItem).
                 success(function(data, status, headers, config) {
