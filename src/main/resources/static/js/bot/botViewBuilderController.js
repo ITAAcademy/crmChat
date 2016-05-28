@@ -503,7 +503,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                 $scope.setBotDialogItemAsDefault = function(object) {
                     debugger;
                     var currentItemId = $scope.viewTabs[$scope.activeViewTab - 1].items["ua"].idObject.id;
-                    var currentCategoryId = $scope.viewTabs[$scope.activeViewTab - 1].items["ua"].idObject.id;
+                    var currentCategoryId = object.id;
                     var requestUrl = serverPrefix + "/bot_operations/set_item/{0}/as_default/{1}".format(currentItemId, currentCategoryId);
 
                     $http.get(requestUrl, object).
