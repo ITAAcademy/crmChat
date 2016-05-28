@@ -1340,9 +1340,17 @@ opacity: 0.7;
     width: 30px;
     height: 30px;
     /* background: red; */
-    font-size: 24px;
+    font-size: 20px;
     position: absolute;
     left: 120px;
+}
+.code-edit-title-upload-icon a{
+   color: white;
+   font-size: 18px;
+   top: 0px;
+}
+.code-edit-title-upload-icon a:hover{
+    cursor: hand;
 }
 
 

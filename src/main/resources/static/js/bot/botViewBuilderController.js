@@ -204,7 +204,15 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
         $scope.$$postDigest(function() {
             $scope.activeViewTab = $scope.viewTabs.length;
         });
+    }
 
+        $scope.updateViewByLang = function() {
+        console.log("Update view by lang: ");
+        var tab = $scope.viewTabs[$scope.activeViewTab - 1];
+        var lang = $scope.langForRender[$scope.activeViewTab - 1];
+
+        tab.objects[lang] = BOT_ELEMENTS_MODULE.convertTextToElementInstance(tab.items[lang].body);
+        $scope.updateView();
     }
 
     $scope.createBotDialogItem = function() {
