@@ -18,7 +18,7 @@
                                     </div>
                                     <div class="editor-right-bottom-console ">
                                         <div class="code-edit">
-                                            <div tooltip-append-to-body = "true" class="code-edit-title-upload-icon" tooltip-trigger="mouseenter" uib-tooltip="Convert code to view">
+                                            <div tooltip-append-to-body="true" class="code-edit-title-upload-icon" tooltip-trigger="mouseenter" uib-tooltip="Convert code to view">
                                                 <a class="glyphicon glyphicon-upload icon" ng-click="updateViewByLang()"></a>
                                             </div>
                                             <div class="code-edit-title" th:text="${lgPack.lables.formBuilder.codePromt}">
@@ -47,7 +47,7 @@
                                                 Save
                                             </a>
                                         </li>
-                                        <li ng-click="createBotDialogItem()">
+                                        <li ng-click="showCreateItemDialog()">
                                             <a>
                                                 <div class="glyphicon glyphicon-plus"></div>
                                                 Create
@@ -57,6 +57,12 @@
                                             <a>
                                                 <div class="glyphicon glyphicon-download-alt"></div>
                                                 Load
+                                            </a>
+                                        </li>
+                                        <li ng-click="showSetDefaultDialog()">
+                                            <a>
+                                                <div class="glyphicon glyphicon-plus"></div>
+                                                Set as default
                                             </a>
                                         </li>
                                         <li ng-click="updateView()">
@@ -140,7 +146,9 @@
         </div>
     </div>
 </div>
-
+<!--**************************
+ * TRY CLOSE TAB
+***************************-->
 <script type="text/ng-template" id="close_tab.html">
     <div class="modal-header">
         <h3 class="modal-title">You have unsaved changes on this tab!</h3>
@@ -153,6 +161,69 @@
         <button class="btn btn-primary" type="button" ng-click="tryCloseTabDialogClose(false)">Cancel</button>
     </div>
 </script>
-
-<div id="dialog_item_modal_loader" class="modal fade" th:include="loadDialogItemModalWindow"/>
-
+<!--**************************
+ * CREATE CATEGORY
+***************************-->
+<script type="text/ng-template" id="create_category.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Create new category</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            Name:
+        </div>
+        <input class="form-control" type="text" name="" ng-model="category_name_temp" />
+    </div>
+    <div class="modal-footer">
+        <button ng-if="category_name_temp != null" class="btn btn-warning" type="button" ng-click="createNewCategory(category_name_temp); createCategoryDialog.close();">Create</button>
+        <button class="btn btn-primary" type="button" ng-click="createCategoryDialog.close()">Cancel</button>
+    </div>
+</script>
+<!--**************************
+ * CREATE ITEM DIALOG
+***************************-->
+<script type="text/ng-template" id="create_item_dialog.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Create new dialog</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            Select category:
+        </div>
+        <div>
+            <select class="form-control lang-dropdown" ng-model="categoryTemp" ng-options="category.name for category in allCategories track by category.id">
+            </select>
+        </div>
+        <div>
+            Select discription:
+        </div>
+        <textarea class="form-control" ng-model="temp_dialog_name" type="text" name="" />
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" style="position: absolute; left: 30px;" type="button" ng-click="createItemDialog.close(); showCreateCategoryDialog()">Create category</button>
+        <button ng-if="categoryTemp != null" class="btn btn-warning" type="button" ng-click="createBotDialogItem(temp_dialog_name, categoryTemp.id);createItemDialog.close()">Create</button>
+        <button class="btn btn-primary" type="button" ng-click="createItemDialog.close()">Cancel</button>
+    </div>
+</script>
+<!--**************************
+ * SET DEFAULT
+***************************-->
+<script type="text/ng-template" id="set_default.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Set default</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            Select category fot atach:
+        </div>
+        <div>
+            <select class="form-control lang-dropdown" ng-model="categoryTemp" ng-options="category.name for category in allCategories track by category.id">
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-if="categoryTemp != null" class="btn btn-warning" type="button" ng-click="setBotDialogItemAsDefault(categoryTemp);setDefaultDialog.close()">Set</button>
+        <button class="btn btn-primary" type="button" ng-click="setDefaultDialog.close()">Cancel</button>
+    </div>
+</script>
+<div id="dialog_item_modal_loader" class="modal fade" th:include="loadDialogItemModalWindow" />

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -369,6 +370,40 @@ public class BotController {
 		return dialogItems;
 
 	}
+	
+	@RequestMapping(value = "bot_operations/get_all_category", method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<BotCategory> getAllCategory() {
+		return botCategoryService.getAll();
+	}
+	
+	@RequestMapping(value = "bot_operations/set_item/{item}/as_default/{category}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean setDialogItemAsDefault(@PathVariable("item") Long itemId, @PathVariable("category") Long categoryId) {
+		BotCategory category = botCategoryService.getById(categoryId);
+		if(category == null)
+			return false;
+		
+		BotDialogItem item = botItemContainerService.getById(itemId);
+		if(item == null)
+			return false;
+		
+		category.setMainElement(item);
+		botCategoryService.update(category);
+		return true;
+	}
+	@RequestMapping(value = "bot_operations/create_category/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean createCategory(@PathVariable("name") String categoryName) {
+		BotCategory category = new BotCategory(categoryName);
+		if(category == null)
+			return false;
+		
+		botCategoryService.update(category);
+		return true;
+	}
+	
+	
 	@RequestMapping(value = "bot_operations/get_dialog_items_ids/{categoryId}", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getDialogItemsIds(@PathVariable Long categoryId) throws JsonProcessingException {

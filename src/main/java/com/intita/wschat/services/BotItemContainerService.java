@@ -73,6 +73,4 @@ public class BotItemContainerService {
 		if (ids.size()<=0) return -1L;
 		return ids.get(0);
 	}
-	
-	
 }
