@@ -499,6 +499,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                     error(function(data, status, headers, config) {
 
                     });
+                    $scope.onExit();
                 };
                 $scope.setBotDialogItemAsDefault = function(object) {
                     debugger;
@@ -552,8 +553,11 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                     for (var index in $scope.viewTabs) {
                         obj_for_save.push($scope.viewTabs[index].items);
                     }
-                    $cookies.put('save_object', JSON.stringify(obj_for_save));
-                    //  return "You have attempted to leave this page. Are you sure?";
+                    var str = JSON.stringify(obj_for_save);
+                    $cookies.put('save_object', str);
+                    
+                    if(str > 4000)
+                     return "All your changes can not be stored in temporary storage. Some changes will be lost !!!?";
                 };
 
                 $window.onbeforeunload = $scope.onExit;

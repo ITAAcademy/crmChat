@@ -1212,16 +1212,7 @@ li[dnd-draggable] {
  * An element with .dndPlaceholder class will be added as child of the dnd-list
  * while the user is dragging over it.
  */
-.editor-panel-body .dndPlaceholder {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: -1px;
-    color: gray;
-}
+
 .editor-panel-body-right .dndPlaceholder {
     display: none;
 }
@@ -1409,6 +1400,30 @@ opacity: 0.7;
    /* float: left;*/
     width: auto;
     height: auto;
+}
+.editor-panel-body .layout-ul-horizontal .dndPlaceholder {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    color: gray;
+
+    display: inline-block;
+    width: auto;
+    height: 100%;
+}
+.editor-panel-body .dndPlaceholder {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    color: gray;
 }
 
  .layout-ul-horizontal::after {

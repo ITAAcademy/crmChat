@@ -82,8 +82,17 @@ var BOT_ELEMENTS_MODULE = function() {
                 leftTooltip = "";*/
 
             var addedPropertyFinal = this.addedProperty;
+            /*
+                kostul
+            */
+            scope.horizontalList = false;
+            if(this.type == "bot-list" && this.properties.horizontal == true)
+            {
+                scope.horizontalList = true;
+            }
+
             if(publicData.isContainer(this.type))
-                addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-list="$root.this.childrens"';//dnd-horizontal-list="true" dnd-external-sources="true"
+                addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-horizontal-list = "{{horizontalList}}" dnd-list="$root.this.childrens"';//dnd-horizontal-list="true" dnd-external-sources="true"
             var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">';
 
             var addedFooterFinal = '</li>';
