@@ -1358,7 +1358,7 @@ opacity: 0.7;
 .layout-ul-vertical {
 	        list-style: none;
     display: block;
-    background-color: #CFE8F5;
+    /*background-color: #CFE8F5;*/
     border: 1px solid transparent;
     border-radius: 10px;
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
@@ -1381,7 +1381,7 @@ opacity: 0.7;
 .layout-ul-horizontal {
 	        list-style: none;
     display: block;
-    background-color: #CFE8F5;
+   /* background-color: #CFE8F5;*/
     border: 1px solid transparent;
     border-radius: 10px;
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
@@ -1394,7 +1394,7 @@ opacity: 0.7;
  .layout-li-horizontal {
 	margin: 5px;
     padding: 5px;
-      display: inline-block;
+      display: inline-block !important;
     border: 1px solid #DFDFDF;
     background-color: white;
    /* float: left;*/
