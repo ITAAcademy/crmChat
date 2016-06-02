@@ -556,7 +556,7 @@ springChatControllers.controller('ChatBotViewBuilderController', ['$routeParams'
                     var str = JSON.stringify(obj_for_save);
                     $cookies.put('save_object', str);
                     
-                    if(str > 4000)
+                    if(str.length * 2 > 4000)
                      return "All your changes can not be stored in temporary storage. Some changes will be lost !!!?";
                 };
 

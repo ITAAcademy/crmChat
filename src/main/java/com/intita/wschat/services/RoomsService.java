@@ -3,6 +3,7 @@ package com.intita.wschat.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,11 +132,16 @@ public class RoomsService {
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
+	
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
-
-		Map<String, Object> sendedMap = new HashMap<>();
+		Set<ChatUser> users = new HashSet<>(room.getUsers());
+		users.add(room.getAuthor());
+		for (ChatUser chatUser : users) {
+			chatController.updateRoomByUser(chatUser, room);
+		}
+		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));
 
 		String subscriptionStr = "/topic/users/info";
@@ -148,7 +154,7 @@ public class RoomsService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		chatController.addFieldToInfoMap("updateRoom", sendedMap);
+		chatController.addFieldToInfoMap("updateRoom", sendedMap);*/
 		return true;
 	}
 

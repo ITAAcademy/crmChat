@@ -35,7 +35,10 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
         if ($rootScope.isInited == true) {
             $http.post(serverPrefix + "/chat/consultation/info/" + $routeParams.consultationId)
                 .success(function(data, status, headers, config) {
-                    debugger;
+                    $scope.$$postDigest(function() {
+                        var nice = $(".scroll").niceScroll();
+                        var fileInput = $("#myfile").fileinput({ language: "uk", showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+                    });
                     var status = data["status"];
                     $scope.status = status;
                     if (status < 0 || status == undefined) {
@@ -43,8 +46,10 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                         return; //access deny show MSG
                     }
 
+                    /* if (status == 1 || status == 0)
+                         $scope.isMyRoom = false;*/
                     if (status == 1 || status == 0)
-                        $scope.isMyRoom = false;
+                        chatControllerScope.currentRoom.active = false;
 
                     var roomId = data["roomId"];
                     $scope.consultant = data["consultant"];
@@ -52,7 +57,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                     if ($rootScope.socketSupport) {
                         $scope.goToDialog(roomId).then(function() {
                                 chatControllerScope.currentRoom.roomId = roomId;
-                                //   $scope.pageClass = 'page-about';
+                                $scope.pageClass = 'scale-fade-in';
                             }),
                             function() {
                                 chatControllerScope.changeLocation("/chatrooms");
@@ -60,7 +65,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                     } else {
                         $scope.goToDialog(roomId).then(function() {
                                 chatControllerScope.currentRoom.roomId = roomId;
-                                //$scope.pageClass = 'page-about';
+                                $scope.pageClass = 'scale-fade-in';
                             }),
                             function() {
                                 chatControllerScope.changeLocation("/chatrooms");

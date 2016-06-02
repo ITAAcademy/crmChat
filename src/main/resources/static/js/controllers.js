@@ -3,7 +3,7 @@
 
 
 /* Controllers */
-var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput','dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
+var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput', 'dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 springChatControllers.config(function($routeProvider) {
     $routeProvider.when("/chatrooms", {
         templateUrl: "dialogsTemplate.html",
@@ -57,6 +57,10 @@ springChatControllers.controller('TeachersListRouteController', ['$routeParams',
 springChatControllers.controller('AccessDeny', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes) {
     Scopes.store('AccessDeny', $scope);
     var chatControllerScope = Scopes.get('ChatController');
+    $timeout(function() {
+        //history.back(2);
+        $scope.changeLocation("/chatrooms");
+    }, 2000);
     //maybe add button
 }]);
 
@@ -89,21 +93,20 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
-    
+
     $scope.toggleNewRoomModal = function() {
-        $('#new_room_modal').modal('toggle');       
-        
+        $('#new_room_modal').modal('toggle');
+
         $timeout.cancel($scope.setFocusToRoomNameInput); //888
         isCreateDialogWndVisible = !isCreateDialogWndVisible;
-        
+
         $scope.setFocusToRoomNameInput = $timeout(function() {
-        	 if (isCreateDialogWndVisible == true)
-         	{
-         		$('#roomNameInput').focus();
-         	}
-        },300);       
+            if (isCreateDialogWndVisible == true) {
+                $('#roomNameInput').focus();
+            }
+        }, 300);
     };
-    
+
     var isCreateDialogWndVisible = false;
 
     $scope.addDialog = function() {};
@@ -351,10 +354,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     $scope.currentRoom.roomId = data["newGuestRoom"];
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }
-                if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
-                    debugger;
-                    $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
-                }
+                /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
+                     debugger;
+                     $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
+                 }*/
                 subscribeInfoUpdateLP();
             }).error(function errorHandler(data, status, headers, config) {
                 subscribeInfoUpdateLP();
@@ -438,28 +441,31 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     function updateRooms(message) {
-        var parseObj;
+            var parseObj;
 
-        if ($rootScope.socketSupport) {
-            parseObj = JSON.parse(message.body);
-        } else {
-            parseObj = message;
-        }
-        var needReplace = parseObj.replace;
-        var roomList = parseObj.list;
-        if (needReplace) {
-            $scope.rooms = roomList;
-        } else {
-            for (var i = 0; i < $scope.rooms.length; i++) {
-                for (var j = roomList.length - 1; j >= 0; j--) {
-                    if (roomList[j].roomId == $scope.rooms[i].roomId) {
-                        $scope.rooms[i] = roomList[j];
-                        roomList.splice(j, 1);
+            if ($rootScope.socketSupport) {
+                parseObj = JSON.parse(message.body);
+            } else {
+                parseObj = message;
+            }
+            var needReplace = parseObj.replace;
+            var roomList = parseObj.list;
+            if (needReplace) {
+                $scope.rooms = roomList;
+            } else {
+                for (var i = 0; i < $scope.rooms.length; i++) {
+                    for (var j = roomList.length - 1; j >= 0; j--) {
+                        if (roomList[j].roomId == $scope.rooms[i].roomId) {
+                            $scope.rooms[i] = roomList[j];
+                            roomList.splice(j, 1);
+                        }
                     }
                 }
             }
-        }
-        $scope.roomsCount = $scope.rooms.length;
+            $scope.roomsCount = $scope.rooms.length;
+            var room = $scope.currentRoom;
+            debugger;
+            $scope.currentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
     }
 
 

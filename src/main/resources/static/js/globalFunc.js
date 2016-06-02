@@ -1,39 +1,44 @@
+var daysName = {},
+    hoursName = {},
+    minutesName = {};
+var dayName = {},
+    hourName = {},
+    minuteName = {};
+var endName = {};
+daysName['ua'] = 'днів';
+dayName['ua'] = 'день';
+daysName['en'] = 'day';
+dayName['en'] = 'days';
+daysName['ru'] = 'дней';
+dayName['ru'] = 'день';
+
+hoursName['ua'] = 'годин';
+hourName['ua'] = 'годину';
+hoursName['en'] = 'hour';
+hourName['en'] = 'hours';
+hoursName['ru'] = 'часов';
+hourName['ru'] = 'час';
+
+minutesName['ua'] = ' хвилин ';
+minuteName['ua'] = ' хвилину ';
+minutesName['en'] = ' minutes ';
+minuteName['en'] = ' minute ';
+minutesName['ru'] = ' минут ';
+minuteName['ru'] = ' минуту ';
+
+endName['ua'] = "тому";
+endName['en'] = "ago";
+endName['ru'] = "спустя";
+
 var formatDateWithLast = function(date) {
-
-    var daysName = {},
-        hoursName = {},
-        minutesName = {};
-    var dayName = {},
-        hourName = {},
-        minuteName = {};
-    var endName = {};
-    daysName['ua'] = 'днів';
-    dayName['ua'] = 'день';
-    daysName['en'] = 'day';
-    dayName['en'] = 'days';
-    daysName['ru'] = 'дней';
-    dayName['ru'] = 'день';
-
-    hoursName['ua'] = 'годин';
-    hourName['ua'] = 'годину';
-    hoursName['en'] = 'hour';
-    hourName['en'] = 'hours';
-    hoursName['ru'] = 'часов';
-    hourName['ru'] = 'час';
-
-    minutesName['ua'] = ' хвилин ';
-    minuteName['ua'] = ' хвилину ';
-    minutesName['en'] = ' minutes ';
-    minuteName['en'] = ' minute ';
-    minutesName['ru'] = ' минут ';
-    minuteName['ru'] = ' минуту ';
-
-    endName['ua'] = "тому";
-    endName['en'] = "ago";
-    endName['ru'] = "спустя";
+    if (date == null || date == undefined || isNaN(date))
+        return "";
 
     // need translate and move to global to config map
     var dateObj = new Date(date);
+
+    if (dateObj == null || dateObj == undefined || isNaN(dateObj))
+        return "";
 
     var delta = new Date().getTime() - dateObj.getTime();
     if (delta > 60000 * 59)
@@ -47,6 +52,7 @@ var formatDateWithLast = function(date) {
         return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
     else
         return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
+
 }
 var formatDate = function(date) {
     // need translate and move to global to config map
@@ -273,14 +279,15 @@ var substringMatcher = function(strs) {
                 matches.push(str);
             }
         });
-    cb(matches);
-  };
+        cb(matches);
+    };
 };
-function getKeyByValue( value,object ) {
-    for( var prop in object ) {
-        if( object.hasOwnProperty( prop ) ) {
-             if( object[ prop ] === value )
-                 return prop;
+
+function getKeyByValue(value, object) {
+    for (var prop in object) {
+        if (object.hasOwnProperty(prop)) {
+            if (object[prop] === value)
+                return prop;
         }
     }
 }

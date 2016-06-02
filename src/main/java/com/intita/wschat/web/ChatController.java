@@ -583,7 +583,7 @@ public class ChatController {
 
 	}
 
-	private void updateRoomsByUser(ChatUser user, HashMap<String, Object> roomsId)
+	public void updateRoomsByUser(ChatUser user, HashMap<String, Object> roomsId)
 	{
 		ArrayList<Room> roomForUpdate = new ArrayList<>();
 
@@ -600,8 +600,18 @@ public class ChatController {
 				}	
 			}
 		}
+		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
+	}
+	public void sendMessageForUpdateRoomsByUser(ChatUser user, ArrayList<Room> roomForUpdate)
+	{
 		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUserAndList(user, roomForUpdate), false));
+	}
+	public void updateRoomByUser(ChatUser user, Room room)
+	{
+		ArrayList<Room> roomForUpdate = new ArrayList<>();
+		roomForUpdate.add(room);
+		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
 	}
 
 	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)

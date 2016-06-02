@@ -1179,7 +1179,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     function loadSubscribeAndMessage(message) {
         $scope.roomType = message["type"];
-        if ($scope.roomType == 2 && $route.current.scope.name != "ConsultationController") //redirect to consultation
+        if ($scope.roomType == 2 && $route.current.scope.controllerName != "ConsultationController") //redirect to consultation
         {
             $http.post(serverPrefix + "/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
                 .success(function(data, status, headers, config) {
