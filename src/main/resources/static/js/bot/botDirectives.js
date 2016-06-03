@@ -427,6 +427,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
                 function initElement() {
+                         if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
@@ -487,6 +488,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 
 
                 function initElement() {
+                     if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
@@ -572,7 +574,7 @@ angular.module('springChat.directives').directive('botarray', function($compile,
                 var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
                // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
                 var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
-                var elementValueContent = '<input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
+                var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
       
                 
                 var elementSuffix='</div><button ng-click="addNewItemFunction()">+</button>';
