@@ -2,6 +2,7 @@
 
 
 .avatar-container { 
+   /* visibility: hidden;*/
     width: 100px; 
     height: 100px; 
     border-radius: 255px;
@@ -18,7 +19,6 @@
     width: 38px;
     height: 38px;
 }
-
 
 .decor-default {
     background-color: #ffffff;
@@ -55,6 +55,7 @@
     padding: 0 40px;
     border:none;
 }
+
 
 .height-full {
 	height: 60px;
@@ -422,3 +423,93 @@ margin-bottom: 5px;
 .btn-arrow-left:after { /* hide arrow tails background */
     background-color: white;
 }
+
+
+.left-search-icon {
+position: absolute; 
+margin-top: 17px; 
+margin-left: 5px;
+    color: white;
+    font-size: 22px;
+    left: 20px;
+}
+
+
+  @media (max-width: 550px) {
+    .new_messages_counter {
+        margin-right: 0;
+    }
+    
+}
+
+ @media (max-width: 485px) { 
+.message_author_header {
+            width: 130px;
+    }
+ }
+
+ @media (max-width: 450px) { 
+    .avatar-container {
+            display: none;
+    }
+
+     .new_messages_counter {
+            top: 100%;
+    }
+
+     .avatar-group {
+            display: none;
+    }
+
+    .message_author_header {
+            width: 140px;
+    }
+
+    
+
+    .room_info {
+            padding-left: 0;
+    }
+
+    .message_container {
+        margin-left: 0;
+    }
+
+ }
+
+
+@media (max-width: 390px) {
+    .message_author_header {
+        width: 120px;
+    }
+    .contacts-list-search {
+        font-size: 16px;
+    }
+    .left-search-icon {
+        font-size: 18px;
+        left: 20px;
+        top: -10px;
+    }
+    .add-room-btn {
+        height: 30px;
+    }
+    .height-full {
+        height: 30px;
+    }
+    .dialog-filter-icon {
+        top: -6px;
+        font-size: 20px;
+        left: 15px;
+    }
+}
+
+@media (max-width: 340px) {
+    .message_author_header {
+        width: 100px;
+    }
+    .dialogs_room_user.wrapped {
+        width: 90px;
+    }
+}
+
+@media (max-width: 300px) {}
