@@ -539,6 +539,54 @@ angular.module('springChat.directives').directive('botClose', function($compile,
     }
 });
 
+angular.module('springChat.directives').directive('botarray', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            dataarray: '<'
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                scope.addNewItemFunction = function(){
+                    scope.dataarray.push('');
+                }
+                scope.removeItem = function(id) {
+                    scope.dataarray.splice(id,1);
+                }
+                scope.moveDown = function(id){
+                    if (id >= scope.dataarray.length-1 || id < 0 ) return;
+                    var topElm = scope.dataarray[id+1];
+                    var currentElm = scope.dataarray[id];
+                    scope.dataarray[id+1] = currentElm;
+                    scope.dataarray[id] = topElm;
+                }
+                scope.moveUp = function(id){
+                    if (id >= scope.dataarray.length || id < 1) return;
+                    var bottomElm = scope.dataarray[id-1];
+                    var currentElm = scope.dataarray[id];
+                    scope.dataarray[id-1] = currentElm;
+                    scope.dataarray[id] = bottomElm;
+                }
+
+                var elementValuePrefix = '<div ng-repeat="data in dataarray track by $index">';
+                var removeElementButton = '<button ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove"></button>';
+                var moveDownElementButton = '<button ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up"></span></button>';
+                var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down"></span></button>';
+                var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="dropdown-menu"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var elementValueContent = '<input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
+      
+                
+                var elementSuffix='</div><button ng-click="addNewItemFunction()">+</button>';
+                var elementHtml = elementValuePrefix + elementValueContent + elementSuffix;
+                element.html(elementHtml);
+                scope.content = elementHtml;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
 
 
 angular.module('springChat.directives').directive('inputListBox', function($compile, $parse) {

@@ -1435,6 +1435,13 @@ opacity: 0.7;
     display:inline-block;
     width:80%;
 }
+.property_array_edit_input{
+width:130px;
+display:inline-block;
+}
+.property_array_edit_menu{
+display:inline-block;
+}
 
 
 

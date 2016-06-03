@@ -105,7 +105,7 @@
                                     <div class="editor-tools-propertys animate-properties" ng-repeat="(key, item)  in $root.models.selected.properties">
                                         <div ng-if="compareType(item,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
-                                            <tags-input min-length="1" placeholder="Add new item" ng-model="$root.models.selected.properties[key]" />
+                                            <botarray min-length="1" dataarray="$root.models.selected.properties[key]" />
                                         </div>
                                         <div ng-if="compareType(item,'string')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
