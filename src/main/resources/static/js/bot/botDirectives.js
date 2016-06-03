@@ -401,20 +401,18 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            values: '=',
             groupname: '=',
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{3}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                scope.values = [];
 
                 // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                 /* scope.$watch('labels', function() {
@@ -431,10 +429,9 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}]}}".format(i);
+                        var value = i;
                         var label = "{{labels[{0}]}}".format(i);
-                        var modelValue = "values[{0}]".format(i);
-                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                        body += checkBoxTemplate.format(item_type, name, value, label);
                     }
 
                     var suffix = '</fieldset>';
@@ -462,20 +459,18 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            values: '=',
             groupname: '=',
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{3}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "radio";
-                scope.values = [];
 
                 // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                 /* scope.$watch('labels', function() {
@@ -492,10 +487,9 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}]}}".format(i);
+                        var value = i;
                         var label = "{{labels[{0}]}}".format(i);
-                        var modelValue = "values[{0}]".format(i);
-                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                        body += checkBoxTemplate.format(item_type, name, value, label);
                     }
 
                     var suffix = '</fieldset>';
