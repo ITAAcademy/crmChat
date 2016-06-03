@@ -403,7 +403,6 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
             labels: '=',
             values: '=',
             groupname: '=',
-            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -429,10 +428,10 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
                 function initElement() {
                     body = "";
-                    for (var i = 0; i < scope.itemscount; i++) {
+                    for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}].text}}".format(i);
-                        var label = "{{labels[{0}].text}}".format(i);
+                        var value = "{{values[{0}]}}".format(i);
+                        var label = "{{labels[{0}]}}".format(i);
                         var modelValue = "values[{0}]".format(i);
                         body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
                     }
@@ -446,9 +445,9 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     $compile(element.contents())(scope);
                     scope.init(scope, element, attr);
                 }
-                scope.$watch('itemscount', function() {
+                scope.$watch("labels.length", function() {
                     initElement();
-                });
+                },true);
             }
         }
     }
@@ -464,7 +463,6 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
             labels: '=',
             values: '=',
             groupname: '=',
-            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -490,10 +488,10 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 
                 function initElement() {
                     body = "";
-                    for (var i = 0; i < scope.itemscount; i++) {
+                    for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}].text}}".format(i);
-                        var label = "{{labels[{0}].text}}".format(i);
+                        var value = "{{values[{0}]}}".format(i);
+                        var label = "{{labels[{0}]}}".format(i);
                         var modelValue = "values[{0}]".format(i);
                         body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
                     }
@@ -507,9 +505,9 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                     $compile(element.contents())(scope);
                     scope.init(scope, element, attr);
                 }
-                scope.$watch('itemscount', function() {
+                scope.$watch("labels.length", function() {
                     initElement();
-                });
+                },true);
             }
         }
     }
@@ -543,7 +541,7 @@ angular.module('springChat.directives').directive('botarray', function($compile,
     return {
         controller: 'ChatViewItemController',
         scope: {
-            dataarray: '<'
+            dataarray: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -569,10 +567,11 @@ angular.module('springChat.directives').directive('botarray', function($compile,
                 }
 
                 var elementValuePrefix = '<div ng-repeat="data in dataarray track by $index">';
-                var removeElementButton = '<button ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove"></button>';
-                var moveDownElementButton = '<button ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up"></span></button>';
-                var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down"></span></button>';
-                var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="dropdown-menu"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var removeElementButton = '<button ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove "></button>';
+                var moveDownElementButton = '<button ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up "></span></button>';
+                var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
+               // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
                 var elementValueContent = '<input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
       
                 
