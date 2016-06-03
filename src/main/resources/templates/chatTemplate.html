@@ -20,10 +20,10 @@
 				>
 				<h4 class="chat-dialog name"></h4>
 			</a>
-			<div class="input-group chat-head chat-head-room vertical-align">
+  			<div class="input-group chat-head chat-head-room vertical-align col-xs-12 chat no-pading"> 
 				<div ng-show="showDialogListButton" type="button" class="back-btn">
 					<i ng-click="changeLocation('/chatrooms')"  class="glyphicon glyphicon-chevron-left"></i >
-					<span th:text="${lgPack.lables.chatView.goToRooms}">Menu</span></div>
+					<span class="dialog-left-top-button-tilte" th:text="${lgPack.lables.chatView.goToRooms}">Menu</span></div>
 					<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 				</div>
 				<div class="col-sm-3 col-xs-3 no-pading-left no-pading-right-5">
@@ -50,7 +50,7 @@
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 								</div>
 							</div>
-							<h6
+      							<h6 class="dialog-users-title"
 							th:text="${lgPack.lables.chatView.participants} + ' [{{participants.length}}]'">Participants
 							[{{participants.length}}]</h6>
 							<div ng-repeat="participant in participants | orderBy:'-username'"
