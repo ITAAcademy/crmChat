@@ -690,6 +690,13 @@ margin-left:230px;
     }
 }
 
+.msg-from-man span {
+    word-wrap: break-word;
+}
+.chat-body .answer.left {
+    width: 100%;
+}
+
 @media (max-width: 360px) {
     .search-form .form-group {
         width: 60px;
@@ -703,7 +710,7 @@ margin-left:230px;
         left: 60px;
         width: auto;
     }
-    .chat-body .answer.left .avatar {
+    .chat-white.no-pading.scroll .avatar {
         display: none;
     }
     .chat-body. answer.left .text {
@@ -717,6 +724,9 @@ margin-left:230px;
     }
     .text dir {
         font-size: 15px;
+    }
+    .chat-body .answer.right {
+        padding-right: 10px;
     }
 }
 
