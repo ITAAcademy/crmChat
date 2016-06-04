@@ -1322,6 +1322,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
 
+
+
     /*
      * close event
      */
