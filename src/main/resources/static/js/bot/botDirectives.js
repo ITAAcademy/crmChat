@@ -401,21 +401,18 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            values: '=',
             groupname: '=',
-            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{3}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "checkbox";
-                scope.values = [];
 
                 // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                 /* scope.$watch('labels', function() {
@@ -428,13 +425,13 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
                 function initElement() {
+                         if (typeof scope.labels == 'undefined') return;
                     body = "";
-                    for (var i = 0; i < scope.itemscount; i++) {
+                    for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}].text}}".format(i);
-                        var label = "{{labels[{0}].text}}".format(i);
-                        var modelValue = "values[{0}]".format(i);
-                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                        var value = i;
+                        var label = "{{labels[{0}]}}".format(i);
+                        body += checkBoxTemplate.format(item_type, name, value, label);
                     }
 
                     var suffix = '</fieldset>';
@@ -446,9 +443,9 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     $compile(element.contents())(scope);
                     scope.init(scope, element, attr);
                 }
-                scope.$watch('itemscount', function() {
+                scope.$watch("labels.length", function() {
                     initElement();
-                });
+                },true);
             }
         }
     }
@@ -462,21 +459,18 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            values: '=',
             groupname: '=',
-            itemscount: '='
         },
         link: {
             post: function(scope, element, attr, ctrl) {
                 //scope.itemvalue = [];
-                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{4}</div>';
+                var checkBoxTemplate = '<div><input type="{0}" name="{1}" value="{2}" />{3}</div>';
 
                 //var prefix = '<button name="{1}" ng-click="submitBot($event)">'.format(attr.itemIndex);
                 var index = 0;
                 var prefix = "<fieldset><legend>{{legend}}</legend>";
                 var body = "";
                 var item_type = "radio";
-                scope.values = [];
 
                 // var labels = scope.$root.elementsListForLink[3].properties.labels; //JSON.parse(attr.labels.replace('\'', '\"'));
                 /* scope.$watch('labels', function() {
@@ -489,13 +483,13 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 
 
                 function initElement() {
+                     if (typeof scope.labels == 'undefined') return;
                     body = "";
-                    for (var i = 0; i < scope.itemscount; i++) {
+                    for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
-                        var value = "{{values[{0}].text}}".format(i);
-                        var label = "{{labels[{0}].text}}".format(i);
-                        var modelValue = "values[{0}]".format(i);
-                        body += checkBoxTemplate.format(item_type, name, value, modelValue, label);
+                        var value = i;
+                        var label = "{{labels[{0}]}}".format(i);
+                        body += checkBoxTemplate.format(item_type, name, value, label);
                     }
 
                     var suffix = '</fieldset>';
@@ -507,9 +501,9 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                     $compile(element.contents())(scope);
                     scope.init(scope, element, attr);
                 }
-                scope.$watch('itemscount', function() {
+                scope.$watch("labels.length", function() {
                     initElement();
-                });
+                },true);
             }
         }
     }
@@ -532,6 +526,55 @@ angular.module('springChat.directives').directive('botClose', function($compile,
 
                 element.html(elementValue);
                 scope.content = elementValue;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
+angular.module('springChat.directives').directive('botarray', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            dataarray: '='
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                scope.addNewItemFunction = function(){
+                    scope.dataarray.push('');
+                }
+                scope.removeItem = function(id) {
+                    scope.dataarray.splice(id,1);
+                }
+                scope.moveDown = function(id){
+                    if (id >= scope.dataarray.length-1 || id < 0 ) return;
+                    var topElm = scope.dataarray[id+1];
+                    var currentElm = scope.dataarray[id];
+                    scope.dataarray[id+1] = currentElm;
+                    scope.dataarray[id] = topElm;
+                }
+                scope.moveUp = function(id){
+                    if (id >= scope.dataarray.length || id < 1) return;
+                    var bottomElm = scope.dataarray[id-1];
+                    var currentElm = scope.dataarray[id];
+                    scope.dataarray[id-1] = currentElm;
+                    scope.dataarray[id] = bottomElm;
+                }
+
+                var elementValuePrefix = '<div ng-repeat="data in dataarray track by $index">';
+                var removeElementButton = '<button ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove "></button>';
+                var moveDownElementButton = '<button ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up "></span></button>';
+                var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
+               // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
+      
+                
+                var elementSuffix='</div><button ng-click="addNewItemFunction()">+</button>';
+                var elementHtml = elementValuePrefix + elementValueContent + elementSuffix;
+                element.html(elementHtml);
+                scope.content = elementHtml;
                 $compile(element.contents())(scope);
                 scope.init(scope, element, attr);
             }
