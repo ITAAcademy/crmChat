@@ -345,6 +345,7 @@
     color: #ffffff;
     min-height: 80px;
     max-width: calc(100% - 90px);
+    max-height: 120px;
     resize: none;
 }
 
