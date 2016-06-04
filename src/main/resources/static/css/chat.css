@@ -1436,22 +1436,19 @@ opacity: 0.7;
     width:80%;
 }
 .property_array_edit_input{
-width:100px;
+width:60%;
 display:inline-block;
 }
-/*.property_array_edit_menu{
-display:inline-block;
-}
-.property_array_dropdown{
-width:80px;
-height:80px;    
-}
-*/
 .button-group-inline{
      display:inline-block;
+     width:30%;
 }
 .property_array_row_indexer{
     color: white;
+}
+.property_array_button{
+    padding:0px;
+    margin:0px;
 }
 
 
