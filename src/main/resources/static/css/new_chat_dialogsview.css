@@ -637,22 +637,86 @@ margin-left:230px;
     }
 }
 
+.left-users-list {}
+
+.form-control.ng-pristine.ng-valid.ng-empty.ng-touched::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 @media (max-width: 440px) {
+    .chat-body.testq h6 {
+        display: none;
+    }
+    .answer-btn.answer-btn-1.fix-btn-1 {
+        margin-top: -35px;
+        right: 5px;
+    }
+    .btn.answer-btn.answer-btn-2.fix-btn-2 {
+        top: 50px;
+        right: 5px;
+    }
+    .btn.btn-primary.load-btn {
+        right: 7px;
+        top: 100px;
+    }
+    #newMessageInput {
+        max-width: calc(100% - 30px);
+        font-size: 15px;
+    }
+    .user .name {
+        visibility: hidden;
+        ;
+    }
+    .left-users-list {
+        width: 70px;
+    }
+    .chat.chat-white.no-pading.scroll {
+        right: 0;
+        position: absolute;
+        left: 70px;
+        width: auto;
+    }
     .search-form .form-group {
-        width: 80px;
+        width: 70px;
     }
     .head-title.vcenter.ng-binding {
         font-size: 15px;
     }
     .chat-head.chat-head-room {
         line-height: 30px;
-    min-height: 10px;
-    }   
+        min-height: 10px;
+    }
 }
 
 @media (max-width: 360px) {
     .search-form .form-group {
         width: 60px;
+    }
+    .left-users-list {
+        width: 60px;
+    }
+    .chat.chat-white.no-pading.scroll {
+        right: 0;
+        position: absolute;
+        left: 60px;
+        width: auto;
+    }
+    .chat-body .answer.left .avatar {
+        display: none;
+    }
+    .chat-body. answer.left .text {
+        border-radius: 8px 8px 8px 0;
+        margin-left: -50px;
+        width: 300%;
+    }
+    .chat-body .answer.left {
+        padding-left: 0;
+        width: 100%;
+    }
+    .text dir {
+        font-size: 15px;
     }
 }
 
