@@ -1436,12 +1436,17 @@ opacity: 0.7;
     width:80%;
 }
 .property_array_edit_input{
-width:60%;
+width:calc(100%-70px);
+width: -moz-calc(100% - 70px);
+/* WebKit */
+width: -webkit-calc(100% - 70px);
+/* Opera */
+width: -o-calc(100% - 70px);
+/* Standard */
 display:inline-block;
 }
 .button-group-inline{
      display:inline-block;
-     width:30%;
 }
 .property_array_row_indexer{
     color: white;
