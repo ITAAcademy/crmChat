@@ -15,7 +15,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     $scope.addRoomButtonKeyPress = function(event) {
         if (event.keyCode == 13) {
             $scope.addDialog();
-            $scope.toggleNewRoomModal();
+           // $scope.toggleNewRoomModal();
         }
     }
 
