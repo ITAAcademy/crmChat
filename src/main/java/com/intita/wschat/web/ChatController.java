@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser.Feature;
@@ -73,6 +74,7 @@ import com.intita.wschat.exception.ChatUserNotFoundException;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
+import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
@@ -91,6 +93,7 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.LecturesRepository;
+import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -101,6 +104,7 @@ import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
+import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
@@ -142,6 +146,7 @@ public class ChatController {
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
 	@Autowired private LecturesService lecturesService;
+	@Autowired private BotItemContainerService dialogItemService;
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -984,6 +989,15 @@ public class ChatController {
 		addLocolization(model);
 
 		return page;
+	}
+	
+	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
+	public String  getTeachersTemplate(HttpRequest request, @PathVariable("id") Long id, Model model, RedirectAttributes redir) {
+		BotDialogItem item = dialogItemService.getById(id);
+		redir.addFlashAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
+	//	redir.addAttribute("item", item.getBody());
+		
+		return "redirect:/formView.html";
 	}
 
 	@MessageExceptionHandler

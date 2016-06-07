@@ -3,7 +3,6 @@
 
 
 /* Controllers */
-var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput', 'dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 springChatControllers.config(function($routeProvider) {
     $routeProvider.when("/chatrooms", {
         templateUrl: "dialogsTemplate.html",
@@ -17,6 +16,10 @@ springChatControllers.config(function($routeProvider) {
     $routeProvider.when("/builder", {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotViewBuilderController"
+    });
+        $routeProvider.when("/builderForm", {
+        templateUrl: "builderTemplateJSTemp.html",
+        controller: "ChatBotFormBuilderController"
     });
 
     $routeProvider.when("/teachers_list", {

@@ -18,7 +18,8 @@ public class HtmlUtility {
 	public static String escapeQuotes(String str){
 		String unescaped[] = {"'","\""};
 		  String escaped[] = {"\\'","\\\""};
-		 return StringUtils.replaceEach(str, escaped,unescaped);
+		  String strOut = StringUtils.replaceEach(str, unescaped, escaped); 
+		 return strOut;
 	}
 	public static String unescapeQuotes(String str){
 		String escaped[] = {"'","\""};

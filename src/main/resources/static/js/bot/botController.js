@@ -13,7 +13,7 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.disabled = false;
-    if (chatControllerScope.currentRoom != null)
+    if (chatControllerScope != null || chatControllerScope != undefined && chatControllerScope.currentRoom != null)
         $scope.currentRoom = chatControllerScope.currentRoom;
 
     if (chatRouteInterfaceScope != null || chatRouteInterfaceScope != undefined) 
