@@ -26,7 +26,7 @@
 					<span class="dialog-left-top-button-tilte" th:text="${lgPack.lables.chatView.goToRooms}">Menu</span></div>
 					<p class="col-sm-12 col-xs-12 text-center head-title vcenter">{{dialogName}}</p>
 				</div>
-				<div class="col-sm-3 col-xs-3 no-pading-left no-pading-right-5">
+				<div class="col-sm-3 col-xs-3 no-pading-left no-pading-right-5 left-users-list">
 					<div class="col-inside-lg decor-default chat chat-white scroll"
 						style="overflow: hidden; outline: none;" tabindex="5000">
 						<div class="chat-users">
@@ -104,8 +104,8 @@
 							<div class="name">{{message.username}}</div>
 							<div class="text">
 
-								<dir ng-if="message.chatUserId != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message.escapeHtml())" time="message.date"></dir>
-								<div ng-if="message.chatUserId == 0" bot-container = " "  style="margin: 0px; white-space: pre" content="message.message" time="message.date" ></div>
+ 								<dir class="msg-from-man" ng-if="message.chatUserId != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message.escapeHtml())" time="message.date"></dir>
+								<div class="msg-from-man" ng-if="message.chatUserId == 0" bot-container = " "  style="margin: 0px; white-space: pre-wrap" content="message.message" time="message.date" ></div>
 
 
 								<span ng-repeat="file in message.attachedFiles track by $index">
@@ -137,8 +137,8 @@
 						typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" 
 						typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
 					</div>
-					<span  th:title="${lgPack.lables.chatView.send}" class="btn answer-btn answer-btn-2" ng-click="sendMessage()"></span>
-					<div th:title="${lgPack.lables.chatView.phrases}" class="answer-btn answer-btn-1">
+					<span  th:title="${lgPack.lables.chatView.send}" class="btn answer-btn answer-btn-2 fix-btn-2" ng-click="sendMessage()"></span>
+  					<div th:title="${lgPack.lables.chatView.phrases}" class="answer-btn answer-btn-1 fix-btn-1">
 						<button class="btn glyphicon glyphicon-font answer-btn-1-icon" type="button"
 						style="width: 100%; height: 100%; z-index: 9999; position: relative; z-index: 10; background: none; border: none;"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
