@@ -724,6 +724,7 @@ angular.module('springChat.directives').directive('botrating', botrating);
 
 function botrating() {
     return {
+        controller: 'ChatViewItemController',
         restrict: 'EA',
         template: '<ul class="star-rating" ng-class="{readonly: readonly}">' + '<p>{{text}}</p>' +
             '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
@@ -785,16 +786,33 @@ angular.module('springChat.directives').directive('botcalendar', botcalendar);
 
 function botcalendar() {
     return {
+        controller: 'ChatViewItemController',
         restrict: 'EA',
-        template: '<div style="display:inline-block; min-height:290px;">'+
-      '<uib-datepicker ng-model="itemvalue" class="well well-sm"></uib-datepicker>'+
-    '</div>',
+        template: '<p class="input-group">'+
+          '<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="itemvalue" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />'+
+          '<span class="input-group-btn">'+
+            '<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>'+
+          '</span>'+
+        '</p>',
         scope: {
-            itemvalue: '=',//date
-            name: '='
+            itemvalue: '<',//date
+            name: '=',
         },
         link: function(scope, element, attributes) {
-
+            scope.popup1 = {
+            opened: false
+            };
+             scope.open1 = function() {
+            scope.popup1.opened = true;
+            };
+             scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  scope.format = scope.formats[2];
+  scope.altInputFormats = ['dd.MM.yyyy'];
+  scope.dateOptions = {
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(1900,1,1),
+    startingDay: 1
+  };
          
         }
     };
