@@ -563,9 +563,9 @@ angular.module('springChat.directives').directive('botarray', function($compile,
                 }
 
                 var elementValuePrefix = '<div ng-repeat="data in dataarray track by $index">';
-                var removeElementButton = '<button ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove "></button>';
-                var moveDownElementButton = '<button ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up "></span></button>';
-                var moveUpElementButton = '<button ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
+                var removeElementButton = '<button class="property_array_button" ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove "></button>';
+                var moveDownElementButton = '<button class="property_array_button" ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up "></span></button>';
+                var moveUpElementButton = '<button class="property_array_button" ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
                // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
                 var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
                 var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
@@ -581,6 +581,30 @@ angular.module('springChat.directives').directive('botarray', function($compile,
         }
     }
 });
+
+angular.module('springChat.directives').directive('botselect', function($compile, $parse, $http) {
+    return {
+        controller: 'ChatViewItemController',
+        scope: {
+            size: '=',
+            multiple: '=',
+            options: '=',
+            selected: '<'
+        },
+        link: {
+            post: function(scope, element, attr, ctrl) {
+                var elementPrefix = '<select data-ng-attr-size="{{size}}" ng-if="multiple==true" multiple ng-options="k as v for (k,v) in options" ng-model="selected"></select>';
+                var elementAlternativePrefix = '<select ng-if="multiple==false" ng-options="k as v for (k,v) in options" ng-model="selected"></select>';
+                var elementHtml = elementPrefix + elementAlternativePrefix;
+                element.html(elementHtml);
+                scope.content = elementHtml;
+                $compile(element.contents())(scope);
+                scope.init(scope, element, attr);
+            }
+        }
+    }
+});
+
 
 
 
