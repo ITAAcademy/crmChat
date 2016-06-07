@@ -780,3 +780,24 @@ function botrating() {
         }
     };
 };
+
+angular.module('springChat.directives').directive('botcalendar', botcalendar);
+
+function botcalendar() {
+    return {
+        restrict: 'EA',
+        template: '<div style="display:inline-block; min-height:290px;">'+
+      '<uib-datepicker ng-model="itemvalue" class="well well-sm"></uib-datepicker>'+
+    '</div>',
+        scope: {
+            itemvalue: '=',//date
+            name: '='
+        },
+        link: function(scope, element, attributes) {
+
+         
+        }
+    };
+};
+
+

@@ -48,6 +48,8 @@
 	<script src="lib/angular-resource/angular-resource.js"></script>
 	<script src="lib/angular-sanitize/angular-sanitize.js"></script>
 	<script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
+	<script th:src="'lib/angular/i18n/angular-locale_'+ ${config.get('currentLang')}+'.js'"></script>
+
 	<script src="lib/drag-drop/angular-drag-and-drop-lists.js"></script>
 	<script src="lib/tags_input/ng-tags-input.js"></script>
 	
@@ -69,7 +71,7 @@
 		type="text/javascript"></script>
 
 	<script src="lib/fileinputModule/fileinput.min.js"></script>
-	<script src="lib/fileinputModule/fileinput_locale_uk.js"></script>
+	<script th:src="'lib/fileinputModule/fileinput_locale_'+ ${config.get('currentLang')}+'.js'"></script>
 
 	<!-- App -->
 	<script src="js/app.js"></script>
