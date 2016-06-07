@@ -719,3 +719,62 @@ angular.module('springChat.directives').directive('bottext', function($compile, 
         }
     }
 });
+
+angular.module('springChat.directives').directive('botrating', botrating);
+
+function botrating() {
+    return {
+        restrict: 'EA',
+        template: '<ul class="star-rating" ng-class="{readonly: readonly}">' +
+            '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
+            '    <i class="fa fa-star"></i>' + // or &#9733
+            '  </li>' +
+            '</ul>',
+        scope: {
+            itemvalue: '=',
+            max: '=', // optional (default is 5)
+            onRatingSelect: '=',
+            readonly: '='
+        },
+        link: function(scope, element, attributes) {
+
+            if (typeof attributes.onratingselect == 'undefined' || attributes.onratingselect == "angular.noop")
+                attributes.onratingselect = function() {};
+
+            if (scope.max == undefined) {
+                scope.max = 5;
+            }
+
+            function updateStars() {
+                scope.stars = [];
+                for (var i = 0; i < scope.max; i++) {
+                    scope.stars.push({
+                        filled: i < scope.itemvalue
+                    });
+                }
+            };
+            scope.toggle = function(index) {
+                if (scope.readonly == undefined || scope.readonly === false) {
+                    scope.itemvalue = index + 1;
+                    debugger;
+                    attributes.onratingselect({
+                        rating: index + 1
+                    });
+                    updateStars();
+                }
+            };
+            scope.itemvalue = 1;
+            scope.$watch('max', function(oldValue, newValue) {
+              if (oldValue != newValue) {
+                updateStars();
+              }
+            });
+              scope.$watch('itemvalue', function(oldValue, newValue) {
+              if (oldValue != newValue) {
+                updateStars();
+              }
+            });
+            updateStars();
+        }
+    };
+};
