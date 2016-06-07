@@ -16,7 +16,7 @@ var BOT_ELEMENTS_MODULE = function() {
         //"inputListBox": {},
         "bottext": { "text": "some_text", "textcolor": "black", "textsize": 18, "textalign": "left" },
         "botselect":{"size":3,"multiple":false,"options":[]},
-        "botrating":{"itemvalue":0,"max":5,"readonly":false}
+        "botrating":{"name":"botrating","itemvalue":0,"max":5,"readonly":false,"text":""}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;

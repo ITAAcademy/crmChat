@@ -725,7 +725,7 @@ angular.module('springChat.directives').directive('botrating', botrating);
 function botrating() {
     return {
         restrict: 'EA',
-        template: '<ul class="star-rating" ng-class="{readonly: readonly}">' +
+        template: '<ul class="star-rating" ng-class="{readonly: readonly}">' + '<p>{{text}}</p>' +
             '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
             '    <i class="fa fa-star"></i>' + // or &#9733
             '  </li>' +
@@ -734,7 +734,9 @@ function botrating() {
             itemvalue: '=',
             max: '=', // optional (default is 5)
             onRatingSelect: '=',
-            readonly: '='
+            readonly: '=',
+            name: '=',
+            text: '='
         },
         link: function(scope, element, attributes) {
 
