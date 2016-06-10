@@ -225,6 +225,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
             debugger;
             loadView(data, status, headers, config);
             $scope.newDialogItem = botDialogItemClean();
+            toaster.pop('note', "Created", "dialogItem created", 2000);
         }).
         error(function(data, status, headers, config) {
             //  $scope.newDialogItem = botDialogItemClean();
@@ -234,7 +235,9 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         var requestUrl = serverPrefix + "/bot_operations/create_category/" + categoryName
 
         $http.get(requestUrl, {}).
-        success(function(data, status, headers, config) {}).
+        success(function(data, status, headers, config) {
+            toaster.pop('note', "Created", "category created", 2000);
+        }).
         error(function(data, status, headers, config) {
             //  $scope.newDialogItem = botDialogItemClean();
         });
@@ -491,13 +494,13 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         $scope.updateView();
         var object = $scope.viewTabs[$scope.activeViewTab - 1].items[$scope.langForRender[$scope.activeViewTab - 1]];
         var requestUrl = serverPrefix + "/bot_operations/save_dialog_item";
-
         $http.post(requestUrl, object).
         success(function(data, status, headers, config) {
             $scope.tabsChanges[$scope.viewTabs.length - 1] = false;
+            toaster.pop('note', "Save", "save complete", 2000);
         }).
         error(function(data, status, headers, config) {
-
+            toaster.pop('error', "Error", "cant save", 2000);
         });
         $scope.onExit();
     };
