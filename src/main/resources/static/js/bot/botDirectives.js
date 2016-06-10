@@ -175,29 +175,28 @@ angular.module('springChat.directives').directive('botList', function($compile, 
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                function updateClasses()
-                {
+                function updateClasses() {
                     var elements = element[0].children;
-                          if (scope.horizontal) {
-                                element[0].classList.add("layout-ul-horizontal");
-                                element[0].classList.remove("layout-ul-vertical");
-                            } else {
-                                element[0].classList.remove("layout-ul-horizontal");
-                                element[0].classList.add("layout-ul-vertical");
-                            }
-                        //element[0].classList.toggle("layout-ul-vertical");
-                        console.log("render List");
-                        for (var i = 0; i < elements.length; i++) {
-                            if (scope.horizontal) {
-                                elements[i].classList.add("layout-li-horizontal");
-                                elements[i].classList.remove("layout-li-vertical");
-                            } else {
-                                elements[i].classList.remove("layout-li-horizontal");
-                                elements[i].classList.add("layout-li-vertical");
-                            }
-
-                            // elements[i].classList.toggle("layout-li-vertical");
+                    if (scope.horizontal) {
+                        element[0].classList.add("layout-ul-horizontal");
+                        element[0].classList.remove("layout-ul-vertical");
+                    } else {
+                        element[0].classList.remove("layout-ul-horizontal");
+                        element[0].classList.add("layout-ul-vertical");
+                    }
+                    //element[0].classList.toggle("layout-ul-vertical");
+                    console.log("render List");
+                    for (var i = 0; i < elements.length; i++) {
+                        if (scope.horizontal) {
+                            elements[i].classList.add("layout-li-horizontal");
+                            elements[i].classList.remove("layout-li-vertical");
+                        } else {
+                            elements[i].classList.remove("layout-li-horizontal");
+                            elements[i].classList.add("layout-li-vertical");
                         }
+
+                        // elements[i].classList.toggle("layout-li-vertical");
+                    }
                 }
                 scope.$watch('horizontal', function() {
                     updateClasses();
@@ -425,7 +424,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
                 function initElement() {
-                         if (typeof scope.labels == 'undefined') return;
+                    if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
@@ -445,7 +444,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                 }
                 scope.$watch("labels.length", function() {
                     initElement();
-                },true);
+                }, true);
             }
         }
     }
@@ -483,7 +482,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 
 
                 function initElement() {
-                     if (typeof scope.labels == 'undefined') return;
+                    if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
                         var name = "{{groupname}}_item";
@@ -503,7 +502,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                 }
                 scope.$watch("labels.length", function() {
                     initElement();
-                },true);
+                }, true);
             }
         }
     }
@@ -541,24 +540,24 @@ angular.module('springChat.directives').directive('botarray', function($compile,
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                scope.addNewItemFunction = function(){
+                scope.addNewItemFunction = function() {
                     scope.dataarray.push('');
                 }
                 scope.removeItem = function(id) {
-                    scope.dataarray.splice(id,1);
+                    scope.dataarray.splice(id, 1);
                 }
-                scope.moveDown = function(id){
-                    if (id >= scope.dataarray.length-1 || id < 0 ) return;
-                    var topElm = scope.dataarray[id+1];
+                scope.moveDown = function(id) {
+                    if (id >= scope.dataarray.length - 1 || id < 0) return;
+                    var topElm = scope.dataarray[id + 1];
                     var currentElm = scope.dataarray[id];
-                    scope.dataarray[id+1] = currentElm;
+                    scope.dataarray[id + 1] = currentElm;
                     scope.dataarray[id] = topElm;
                 }
-                scope.moveUp = function(id){
+                scope.moveUp = function(id) {
                     if (id >= scope.dataarray.length || id < 1) return;
-                    var bottomElm = scope.dataarray[id-1];
+                    var bottomElm = scope.dataarray[id - 1];
                     var currentElm = scope.dataarray[id];
-                    scope.dataarray[id-1] = currentElm;
+                    scope.dataarray[id - 1] = currentElm;
                     scope.dataarray[id] = bottomElm;
                 }
 
@@ -566,12 +565,12 @@ angular.module('springChat.directives').directive('botarray', function($compile,
                 var removeElementButton = '<button class="property_array_button" ng-click="removeItem($index)"><span class="glyphicon glyphicon-remove "></button>';
                 var moveDownElementButton = '<button class="property_array_button" ng-click="moveUp($index)"><span class="glyphicon glyphicon-arrow-up "></span></button>';
                 var moveUpElementButton = '<button class="property_array_button" ng-click="moveDown($index)"><span class="glyphicon glyphicon-arrow-down "></span></button>';
-               // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
-                var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
-                var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">'+elementMenu;
-      
-                
-                var elementSuffix='</div><button ng-click="addNewItemFunction()">+</button>';
+                // var elementMenu = '<div class="dropdown property_array_edit_menu"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></button><ul class="property_array_dropdown dropdown-menu dropdown-menu-right"><li>{0}</li><li>{1}</li><li>{2}</li></ul></div>'.format(moveDownElementButton,moveUpElementButton,removeElementButton);
+                var elementMenu = '<div class="button-group-inline">{0}{1}{2}</div>'.format(moveDownElementButton, moveUpElementButton, removeElementButton);
+                var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">' + elementMenu;
+
+
+                var elementSuffix = '</div><button ng-click="addNewItemFunction()">+</button>';
                 var elementHtml = elementValuePrefix + elementValueContent + elementSuffix;
                 element.html(elementHtml);
                 scope.content = elementHtml;
@@ -734,7 +733,7 @@ function botrating() {
         scope: {
             itemvalue: '=',
             max: '=', // optional (default is 5)
-            onRatingSelect: '=',
+            onRatingSelect: '=?',
             readonly: '=',
             name: '=',
             text: '='
@@ -768,14 +767,14 @@ function botrating() {
             };
             scope.itemvalue = 1;
             scope.$watch('max', function(oldValue, newValue) {
-              if (oldValue != newValue) {
-                updateStars();
-              }
+                if (oldValue != newValue) {
+                    updateStars();
+                }
             });
-              scope.$watch('itemvalue', function(oldValue, newValue) {
-              if (oldValue != newValue) {
-                updateStars();
-              }
+            scope.$watch('itemvalue', function(oldValue, newValue) {
+                if (oldValue != newValue) {
+                    updateStars();
+                }
             });
             updateStars();
         }
@@ -784,7 +783,12 @@ function botrating() {
 
 angular.module('springChat.directives').directive('botcalendar', botcalendar);
 
-function botcalendar() {
+function isAssignable($parse, attrs, propertyName) {
+  var fn = $parse(attrs[propertyName]);
+  return angular.isFunction(fn.assign);
+}
+
+function botcalendar($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
         restrict: 'EA',
@@ -795,10 +799,12 @@ function botcalendar() {
           '</span>'+
         '</p>',
         scope: {
-            itemvalue: '<',//date
+            itemvalue: '=?',//date
             name: '=',
         },
-        link: function(scope, element, attributes) {
+        link:
+        {
+        post: function(scope, element, attributes) {
             scope.popup1 = {
             opened: false
             };
@@ -813,9 +819,15 @@ function botcalendar() {
     minDate: new Date(1900,1,1),
     startingDay: 1
   };
-         
+  if(isAssignable($parse, attributes, 'itemvalue')) {
+        
+      }
+
+  if(getType(scope.itemvalue) == "date")
+                scope.itemvalue = new Date(scope.itemvalue);       
         }
-    };
+    }
+};
 };
 
 

@@ -991,13 +991,14 @@ public class ChatController {
 		return page;
 	}
 	
-	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpRequest request, @PathVariable("id") Long id, Model model, RedirectAttributes redir) {
+	@RequestMapping(value="/getForm", method = RequestMethod.GET)
+	public String  getTeachersTemplate(HttpRequest request, @RequestParam("id") Long id, Model model, RedirectAttributes redir) {
+		getIndex(request, model);
 		BotDialogItem item = dialogItemService.getById(id);
-		redir.addFlashAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
+		model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
 	//	redir.addAttribute("item", item.getBody());
 		
-		return "redirect:/formView.html";
+		return "formView";
 	}
 
 	@MessageExceptionHandler

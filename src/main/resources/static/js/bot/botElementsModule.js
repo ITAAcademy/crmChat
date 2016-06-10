@@ -2,7 +2,7 @@ var BOT_ELEMENTS_MODULE = function() {
     var publicData = {};
 
     //Help to prevent mistakes
-    var BotElementTypes = ["botcalendar","botrating","botselect","botinput", "botcheckgroup", "botradiogroup", "bottext", "bot-list", "button", "botlink", "botsubmit", "bot-close"];
+    var BotElementTypes = ["botcalendar", "botrating", "botselect", "botinput", "botcheckgroup", "botradiogroup", "bottext", "bot-list", "button", "botlink", "botsubmit", "bot-close"];
     var BotGlobalProperties = ["name", "value"];
     var BotElementProperties = {
         "bot-container": { "time": "00:00", "content": "", "callback": "" },
@@ -10,20 +10,20 @@ var BOT_ELEMENTS_MODULE = function() {
         "botlink": { "text": "empty_text", "ispost": true, "linkindex": 0, "href": "", "classes": "" },
         "botinput": { "text": "empty_text", "name": 0 },
         "botsubmit": { "text": "Submit" },
-        "botradiogroup": {  "labels": [], "legend": "", "groupname": "noname" },
+        "botradiogroup": { "labels": [], "legend": "", "groupname": "noname" },
         "botcheckgroup": { "labels": [], "legend": "", "groupname": "noname" },
         "botClose": {},
         //"inputListBox": {},
         "bottext": { "text": "some_text", "textcolor": "#000000", "textsize": 18, "textalign": "left" },
-        "botselect":{"size":3,"multiple":false,"options":[]},
-        "botrating":{"name":"botrating","itemvalue":0,"max":5,"readonly":false,"text":""},
-        "botcalendar":{"name":"botcalendar","itemvalue": Date()}
+        "botselect": { "size": 3, "multiple": false, "options": [] },
+        "botrating": { "name": "botrating", "itemvalue": 0, "max": 5, "readonly": false, "text": "" },
+        "botcalendar": { "name": "botcalendar", "itemvalue": new Date() }
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
     publicData.GlobalProperties = BotGlobalProperties;
-    publicData.isContainer = function(type){
-        if(type == "bot-container" || 'bot-list' == type)
+    publicData.isContainer = function(type) {
+        if (type == "bot-container" || 'bot-list' == type)
             return true;
         return false;
     };
@@ -64,14 +64,14 @@ var BOT_ELEMENTS_MODULE = function() {
                     var escapedValue;
                     if (typeof value === "string")
                         escapedValue = value.escapeHtml();
-                    else if(getType(value) == "array")
-                         escapedValue = JSON.stringify(value).escapeHtml();
-                     else
+                    else if (getType(value) == "array")
+                        escapedValue = JSON.stringify(value).escapeHtml();
+                    else
                         escapedValue = value;
                 }
 
-                if(typeof value != "object")
-                escapedValue = "'" + escapedValue + "'";
+                if (typeof value != "object" || getType(value) == 'date')
+                    escapedValue = "'" + escapedValue + "'";
 
                 if (ignoreAddedProperties || key == "content") {
                     propertiesStr += key + '="{0}" '.format(escapedValue);
@@ -89,13 +89,12 @@ var BOT_ELEMENTS_MODULE = function() {
                 kostul
             */
             scope.horizontalList = false;
-            if(this.type == "bot-list" && this.properties.horizontal == true)
-            {
+            if (this.type == "bot-list" && this.properties.horizontal == true) {
                 scope.horizontalList = true;
             }
 
-            if(publicData.isContainer(this.type))
-                addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-horizontal-list = "{{horizontalList}}" dnd-list="$root.this.childrens"';//dnd-horizontal-list="true" dnd-external-sources="true"
+            if (publicData.isContainer(this.type))
+                addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-horizontal-list = "{{horizontalList}}" dnd-list="$root.this.childrens"'; //dnd-horizontal-list="true" dnd-external-sources="true"
             var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">';
 
             var addedFooterFinal = '</li>';
@@ -131,10 +130,10 @@ var BOT_ELEMENTS_MODULE = function() {
         for (var propertie in elementInstance.properties) {
             var attrValue = jElement.attr(propertie);
             if (typeof(attrValue) != 'undefined') {
-                if(typeof elementInstance.properties[propertie] != "object")
-                var stringValue = jElement.attr(propertie).slice(1, -1);
-            else
-                var stringValue = jElement.attr(propertie);
+                if (typeof elementInstance.properties[propertie] != "object")
+                    var stringValue = jElement.attr(propertie).slice(1, -1);
+                else
+                    var stringValue = jElement.attr(propertie);
 
                 var type = getType(elementInstance.properties[propertie]);
                 if (type == "bool")
@@ -142,6 +141,9 @@ var BOT_ELEMENTS_MODULE = function() {
                 else
                 if (type == "array")
                     elementInstance.properties[propertie] = JSON.parse(stringValue);
+                else
+                if (type == "date")
+                    elementInstance.properties[propertie] = new Date(stringValue);
                 else
                 if (type == "string")
                     elementInstance.properties[propertie] = stringValue;

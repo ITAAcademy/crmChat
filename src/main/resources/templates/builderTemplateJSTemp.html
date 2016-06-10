@@ -117,12 +117,17 @@
                                             <input ng-model = "$root.models.selected.properties[key]" type="checkbox" name="vehicle"/>
                                             </span>
                                         </div>
+
                                         <div ng-if="isColor(key)" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <span class="input-group-addon" id="basic-addon2">
                                             <input colorpicker="hex" ng-model = "$root.models.selected.properties[key]" type="text" name="color"/>
                                             </span>
                                         </div>
+
+                                        <div ng-if="compareType(item,'date')" botcalendar = "" itemvalue = "$root.models.selected.properties[key]">
+                                        </div>
+                                        
                                     </div>
                                     <div class="editor-tools-propertys animate-properties" ng-if="$root.models.selected.type == 'botsubmit'">
                                         <span class="input-group-addon" id="sizing-addon2">Code</span>

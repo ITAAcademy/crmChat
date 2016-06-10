@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html style="width: 100%; height: 100%" lang="en" ng-app="springChat">
+<html ng-app="springChat">
 <head>
 <meta charset="utf-8" />
-<title>Spring WebSocket Chat</title>
+<title>IntITA Quize</title>
 <link
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
 	rel="stylesheet" />
@@ -26,14 +26,27 @@
 <link href="lib/tags_input/ng-tags-input.bootstrap.css" rel="stylesheet" />
 
 </head>
-<body>
-
-	<div id="mainContainer"
-		class="content container-fluid bootstrap snippets container "
-		ng-controller="ChatFormViewController">
-<!--		Dialogs__ChatUser:{{chatUserId}}-->
-		<div th:attr="content='\'' + ${item} + '\''" class="page" bot-container = " "  style="margin: 0px; white-space: pre" time="" ></div>
-	</div>
+<body ng-controller="ChatFormViewController">
+	<div class="container">
+    <div class="row">
+        <!-- Card Projects -->
+        <div class="col-md-6 col-md-offset-3">
+            <div class="card">
+                <div class="card-image">
+                    <img class="img-responsive" src="http://material-design.storage.googleapis.com/publish/v_2/material_ext_publish/0Bx4BSt6jniD7TDlCYzRROE84YWM/materialdesign_introduction.png"/>
+                    <span class="card-title">Material Cards</span>
+                </div>
+                
+                <div class="card-content">
+                    		<div th:attr="content='\'' + ${item} + '\''" bot-container = " "  style="margin: 0px; white-space: pre" time="" ></div>
+                </div>
+                
+                <div class="card-action">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 	<!-- /.container -->
@@ -50,6 +63,7 @@
 	<script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
 	<script src="lib/drag-drop/angular-drag-and-drop-lists.js"></script>
 	<script src="lib/tags_input/ng-tags-input.js"></script>
+	<script th:src="'lib/angular/i18n/angular-locale_'+ ${config.get('currentLang')}+'.js'"></script>
 	
 
 	<script type='text/javascript'
@@ -69,7 +83,7 @@
 		type="text/javascript"></script>
 
 	<script src="lib/fileinputModule/fileinput.min.js"></script>
-	<script src="lib/fileinputModule/fileinput_locale_uk.js"></script>
+	<script th:src="'lib/fileinputModule/fileinput_locale_'+ ${config.get('currentLang')}+'.js'"></script>
 
 	<!-- App -->
 	<script src="js/app.js"></script>
@@ -81,6 +95,7 @@
 		var filters = [[${lgPack.lables.roomListView.filters}]];
 		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
 	</script>
+
 	<script src="js/globalFunc.js"></script>
 	<script src="js/bot/botElementsModule.js"></script>
 
