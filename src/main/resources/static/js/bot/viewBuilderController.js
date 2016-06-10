@@ -87,6 +87,11 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
 
             $scope.newDialogItem = botDialogItemClean();
 
+            $scope.isColor = function(str){
+                if (str=="textcolor") return true;
+                else false;
+            }
+
             $scope.updateView = function() {
                 if ($scope.activeViewTab == 0 || $scope.activeViewTab === null) {
                     console.log("ignore activeViewTab == 0");

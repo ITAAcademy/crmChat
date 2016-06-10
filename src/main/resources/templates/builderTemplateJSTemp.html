@@ -107,7 +107,7 @@
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <botarray min-length="1" dataarray="$root.models.selected.properties[key]" />
                                         </div>
-                                        <div ng-if="compareType(item,'string')" class="input-group">
+                                        <div ng-if="compareType(item,'string') &amp;&amp; !isColor(key)" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <input ng-model="$root.models.selected.properties[key]" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" />
                                         </div>
@@ -115,6 +115,12 @@
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <span class="input-group-addon" id="basic-addon2">
                                             <input ng-model = "$root.models.selected.properties[key]" type="checkbox" name="vehicle"/>
+                                            </span>
+                                        </div>
+                                        <div ng-if="isColor(key)" class="input-group">
+                                            <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
+                                            <span class="input-group-addon" id="basic-addon2">
+                                            <input colorpicker="hex" ng-model = "$root.models.selected.properties[key]" type="text" name="color"/>
                                             </span>
                                         </div>
                                     </div>

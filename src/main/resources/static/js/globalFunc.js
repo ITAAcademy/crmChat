@@ -308,3 +308,7 @@ function parseBoolean(value) {
     else
         return false;
 }
+
+function Color(val){
+    this.val = val;
+}
