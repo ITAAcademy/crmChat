@@ -1172,7 +1172,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         $scope.$$postDigest(function() {
             var objDiv = document.getElementById("messagesScroll");
             if (needScrollDown)
-                objDiv.scrollTop = objDiv.scrollHeight;
+                objDiv.scrollTop = 99999999999//objDiv.scrollHeight;
         });
 
     }
@@ -1322,8 +1322,6 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
 
-
-
     /*
      * close event
      */
@@ -1356,9 +1354,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
         var fileInput = $("#myfile").fileinput({ language: "uk", showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
-
-
-    })
+    });
 
 
 }]);
