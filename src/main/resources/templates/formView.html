@@ -32,13 +32,8 @@
         <!-- Card Projects -->
         <div class="col-md-6 col-md-offset-3">
             <div class="card">
-                <div class="card-image">
-                    <img class="img-responsive" src="http://material-design.storage.googleapis.com/publish/v_2/material_ext_publish/0Bx4BSt6jniD7TDlCYzRROE84YWM/materialdesign_introduction.png"/>
-                    <span class="card-title">Material Cards</span>
-                </div>
-                
                 <div class="card-content">
-                    		<div th:attr="content='\'' + ${item} + '\''" bot-container = " "  style="margin: 0px; white-space: pre" time="" ></div>
+                    		<div class="bcontainer" th:attr="content='\'' + ${item} + '\''" bot-container = " " time="" ></div>
                 </div>
                 
                 <div class="card-action">

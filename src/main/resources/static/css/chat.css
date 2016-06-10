@@ -1524,3 +1524,8 @@ display:inline-block;
   text-decoration: none;
 }
 
+.bcontainer > .ng-scope{
+  display: block;
+  margin-top: 10px;
+}
+
