@@ -733,7 +733,7 @@ function botrating() {
         scope: {
             itemvalue: '=',
             max: '=', // optional (default is 5)
-            onRatingSelect: '=',
+            onRatingSelect: '=?',
             readonly: '=',
             name: '=',
             text: '='
@@ -783,39 +783,51 @@ function botrating() {
 
 angular.module('springChat.directives').directive('botcalendar', botcalendar);
 
-function botcalendar() {
+function isAssignable($parse, attrs, propertyName) {
+  var fn = $parse(attrs[propertyName]);
+  return angular.isFunction(fn.assign);
+}
+
+function botcalendar($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
         restrict: 'EA',
-        template: '<p class="input-group">' +
-            '<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="itemvalue"/>' +
-            '<span class="input-group-btn">' +
-            '<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>' +
-            '</span>' +
-            '</p>',
+        template: '<p class="input-group">'+
+          '<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="itemvalue" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />'+
+          '<span class="input-group-btn">'+
+            '<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>'+
+          '</span>'+
+        '</p>',
         scope: {
-            itemvalue: '=', //date
+            itemvalue: '=?',//date
             name: '=',
         },
-        link: function(scope, element, attributes) {
+        link:
+        {
+        post: function(scope, element, attributes) {
             scope.popup1 = {
-                opened: false
+            opened: false
             };
-            scope.open1 = function() {
-                scope.popup1.opened = true;
+             scope.open1 = function() {
+            scope.popup1.opened = true;
             };
-            scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-            
-            scope.format = 'yyyy/MM/dd';
-            scope.itemvalue = new Date();
+             scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  scope.format = scope.formats[2];
+  scope.altInputFormats = ['dd.MM.yyyy'];
+  scope.dateOptions = {
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(1900,1,1),
+    startingDay: 1
+  };
+  if(isAssignable($parse, attributes, 'itemvalue')) {
+        
+      }
 
-            scope.altInputFormats = ['dd.MM.yyyy'];
-            scope.dateOptions = {
-                maxDate: new Date(2020, 5, 22),
-                minDate: new Date(1900, 1, 1),
-                startingDay: 1
-            };
-
+  if(getType(scope.itemvalue) == "date")
+                scope.itemvalue = new Date(scope.itemvalue);       
         }
-    };
+    }
 };
+};
+
+
