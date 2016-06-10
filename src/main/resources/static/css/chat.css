@@ -1456,6 +1456,12 @@ display:inline-block;
     margin:0px;
 }
 
+.ng-invalid-date
+{
+  border-color: red !important;
+  outline-color: red !important;
+}
+
 
 
 

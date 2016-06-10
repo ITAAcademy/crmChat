@@ -17,7 +17,7 @@ var BOT_ELEMENTS_MODULE = function() {
         "bottext": { "text": "some_text", "textcolor": "black", "textsize": 18, "textalign": "left" },
         "botselect":{"size":3,"multiple":false,"options":[]},
         "botrating":{"name":"botrating","itemvalue":0,"max":5,"readonly":false,"text":""},
-        "botcalendar":{"name":"botcalendar","itemvalue": Date()}
+        "botcalendar":{"name":"botcalendar","itemvalue": new Date()}
     };
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
