@@ -15,7 +15,7 @@ var BOT_ELEMENTS_MODULE = function() {
         "botClose": {},
         //"inputListBox": {},
         "bottext": { "text": "some_text", "textcolor": "#000000", "textsize": 18, "textalign": "left" },
-        "botselect": {"multiple": false, "options": [] },
+        "botselect": {"name": "botselect", "multiple": false, "options": [] },
         "botrating": { "name": "botrating", "itemvalue": 0, "max": 5, "readonly": false, "text": "","starcolor":"#ffff00" },
         "botcalendar": { "name": "botcalendar", "itemvalue": new Date() }
     };

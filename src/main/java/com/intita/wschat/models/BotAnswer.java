@@ -42,8 +42,11 @@ public class BotAnswer {
 	
 	@ManyToOne
 	@JsonIgnore
-	@Null
 	private Room room;
+	
+	@ManyToOne
+	@JsonIgnore
+	private ChatUser user;
 	
 	@Column(columnDefinition = "TEXT")
 	@NotNull
@@ -54,11 +57,12 @@ public class BotAnswer {
 	public BotAnswer() {
 		// TODO Auto-generated constructor stub
 	}
-	public BotAnswer(String name, BotDialogItem item, Room room, String value){
+	public BotAnswer(String name, BotDialogItem item, ChatUser user, Room room, String value){
 		this.name= name;
 		this.item = item;
 		this.room = room;
 		this.value = value;
+		this.user = user;
 	}
 	public Long getId() {
 		return id;

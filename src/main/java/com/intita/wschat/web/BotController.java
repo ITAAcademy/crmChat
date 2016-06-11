@@ -220,11 +220,12 @@ public class BotController {
 		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
 
 		Room room = roomService.getRoom(roomId);
+		ChatUser user = chatUsersService.getChatUser(principal);
 		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,ChatController.getCurrentLang()));
 
 		for(int i = 0; i < keys.size(); i++)
 		{
-			botAnswerService.add(new BotAnswer(keys.get(i), item, room, obj.get(keys.get(i))));
+			botAnswerService.add(new BotAnswer(keys.get(i), item,user, room, obj.get(keys.get(i))));
 		}
 		if(nextContainerId == -1)
 			return "quize save";
