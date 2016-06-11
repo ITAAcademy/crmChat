@@ -1,5 +1,6 @@
 package com.intita.wschat.services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -190,10 +192,23 @@ public class RoomsService {
 		roomRepo.save(room);
 		return true;
 	}
-	@Transactional
+	@Transactional(readOnly = true)
 	public ArrayList<Phrase> getPhrases(){
 		return phrasesRepo.findAll(); 
-
+	}
+	
+	@Transactional(readOnly = true)
+	public ArrayList<Phrase> getEvaluatedPhrases(){
+		
+		String[] searchList = {"$date"};
+		String[] replacementList = {new SimpleDateFormat("dd-MM-yyyy").format(new Date())};
+		ArrayList<Phrase> phrases = getPhrases();
+		for (Phrase phrase : phrases){
+			String phraseText = phrase.getText();
+			phraseText = StringUtils.replaceEach(phraseText, searchList, replacementList);
+			phrase.setText(phraseText);
+		}
+		return phrases;	
 	}
 
 

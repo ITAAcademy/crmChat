@@ -735,7 +735,7 @@ function botrating() {
         controller: 'ChatViewItemController',
         restrict: 'EA',
         template: '<ul class="star-rating" ng-class="{readonly: readonly}">' + '<p>{{text}}</p>' +
-            '  <li ng-repeat="star in stars" style="color:{{starcolor}};" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
+            '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-style="star.filled && {\'color\' : starcolor}" ng-click="toggle($index)">' +
             '    <i class="fa fa-star"></i>' + // or &#9733
             '  </li>' +
             '</ul>',
@@ -756,7 +756,9 @@ function botrating() {
             if (scope.max == undefined) {
                 scope.max = 5;
             }
-
+            scope.fillesStarStyle = {
+                "color":scope.starcolor
+            }
             function updateStars() {
                 scope.stars = [];
                 for (var i = 0; i < scope.max; i++) {
