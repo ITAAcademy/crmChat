@@ -35,7 +35,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                 try {
                     parsedData = JSON.parse(receivedData);
                 } catch (err) {
-                    console.log("JSON NOT VALID TRY CREATE");
+                    console.info("JSON NOT VALID TRY CREATE");
                     parsedData = { "id": -1, body: receivedData };
                 }
 
@@ -343,7 +343,11 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     alert("NO JS FUNCTION");
                     return;
                 }
-                var urlPrefix = "bot_operations/{0}/submit_dialog_item/{1}".format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
+                var urlPrefix = "bot_operations/{0}/submit_dialog_item/{1}";
+                if (scope.mainScope.currentRoom != undefined)
+                    urlPrefix = urlPrefix.format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
+                else
+                    urlPrefix = urlPrefix.format(0, scope.mainScope.currentMessage.idObject.id); //send from quize
                 var url = urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
                 // var dataToSend = JSON.stringify(formElm.serializeArray());
                 var formData = {};
@@ -364,7 +368,11 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     url: url,
                     data: dataToSend, // serializes the form's elements.
                     success: function(data) {
-                        // alert(data); // show response from the php script.
+                        if (data == "quize save")
+                            alert("Ваша відповідь прийнята. Дякуємо за потрачений час"); // show response from the php script.
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Вибачте за незручності, наразі відповідь не може бути прийнята");
                     }
                 });
 
@@ -802,13 +810,13 @@ function botcalendar($compile, $parse) {
             name: '=',
         },
         link: {
-            pre: function(scope, element, attributes){
-             scope.popup1 = {
+            pre: function(scope, element, attributes) {
+                scope.popup1 = {
                     opened: false
                 };
             },
             post: function(scope, element, attributes) {
-               
+
                 scope.open1 = function() {
                     console.log('open1');
                     scope.popup1.opened = true;
@@ -821,11 +829,10 @@ function botcalendar($compile, $parse) {
                     minDate: new Date(1900, 1, 1),
                     startingDay: 1
                 };
-               // if (isAssignable($parse, attributes, 'itemvalue')) {
-                    if (getType(scope.itemvalue) == "date")
-                    {
-                        scope.itemvalue = new Date(scope.itemvalue);
-                    }
+                // if (isAssignable($parse, attributes, 'itemvalue')) {
+                if (getType(scope.itemvalue) == "date") {
+                    scope.itemvalue = new Date(scope.itemvalue);
+                }
                 //}
 
             }

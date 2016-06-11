@@ -501,7 +501,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         $http.post(requestUrl, object).
         success(function(data, status, headers, config) {
             $scope.tabsChanges[$scope.viewTabs.length - 1] = false;
-            toaster.pop('note', "Save", "save complete", 2000);
+            toaster.pop('note', "Save " + $scope.langForRender[$scope.activeViewTab - 1], "save complete", 2000);
         }).
         error(function(data, status, headers, config) {
             toaster.pop('error', "Error", "cant save", 2000);

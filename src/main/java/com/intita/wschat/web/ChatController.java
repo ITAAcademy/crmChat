@@ -995,7 +995,13 @@ public class ChatController {
 	public String  getTeachersTemplate(HttpRequest request, @RequestParam("id") Long id, Model model, RedirectAttributes redir) {
 		getIndex(request, model);
 		BotDialogItem item = dialogItemService.getById(id);
-		model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
+		//model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
+		try {
+			model.addAttribute("item", HtmlUtility.escapeQuotes(mapper.writeValueAsString(item)));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		model.addAttribute("description", HtmlUtility.escapeQuotes(item.getDescription()));
 	//	redir.addAttribute("item", item.getBody());
 		
