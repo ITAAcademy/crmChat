@@ -1479,10 +1479,9 @@ li[dnd-draggable] {
     box-sizing: border-box;
     border-radius: 2px;
     background-clip: padding-box;
+    background-color: white;
 }
 .card span.card-title {
-    color: #000;
-    font-size: 24px;
     font-weight: 300;
     text-transform: uppercase;
 }
@@ -1538,9 +1537,11 @@ li[dnd-draggable] {
     margin-top: 10px;
 }
 
-.view-title{
+.card-title.view-title{
     color: #000;
-    font-size: 24px;
+    font-size: 14px;
     font-weight: 300;
     text-transform: uppercase;
+    padding: 20px;
+    border-bottom: 1px solid rgba(160, 160, 160, 0.2);
 }
