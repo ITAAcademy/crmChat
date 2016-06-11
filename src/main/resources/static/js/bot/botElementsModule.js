@@ -16,14 +16,16 @@ var BOT_ELEMENTS_MODULE = function() {
         //"inputListBox": {},
         "bottext": { "text": "some_text", "textcolor": "#000000", "textsize": 18, "textalign": "left" },
         "botselect": {"multiple": false, "options": [] },
-        "botrating": { "name": "botrating", "itemvalue": 0, "max": 5, "readonly": false, "text": "" },
+        "botrating": { "name": "botrating", "itemvalue": 0, "max": 5, "readonly": false, "text": "","starcolor":"#ffff00" },
         "botcalendar": { "name": "botcalendar", "itemvalue": new Date() }
     };
     var BotElementPropertiesTypes={
         "botcalendar":
         {"itemvalue":"date"},
         "bottext":
-        {"textcolor":"color"}
+        {"textcolor":"color"},
+        "botrating":
+        {"starcolor":"color"}
         }
    publicData.getBotElementPropertyType = function (botelement,propertyName){
         var botElementType = BotElementPropertiesTypes[botelement];
