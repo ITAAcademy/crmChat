@@ -59,6 +59,7 @@ import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
@@ -225,7 +226,10 @@ public class RoomController {
 				/*
 				 * ADD BOT TO CHAT
 				 */
-				boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				boolean botEnable = true;
+				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
+				if(s_botEnable != null)
+					botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
 				if (botEnable){
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				}

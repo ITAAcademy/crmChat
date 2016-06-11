@@ -996,6 +996,7 @@ public class ChatController {
 		getIndex(request, model);
 		BotDialogItem item = dialogItemService.getById(id);
 		model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
+		model.addAttribute("description", HtmlUtility.escapeQuotes(item.getDescription()));
 	//	redir.addAttribute("item", item.getBody());
 		
 		return "formView";

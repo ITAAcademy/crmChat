@@ -32,6 +32,7 @@
         <!-- Card Projects -->
         <div class="col-md-6 col-md-offset-3">
             <div class="card">
+            <span th:text = "${description}" class="card-title" ></span>
                 <div class="card-content">
                     		<div class="bcontainer" th:attr="content='\'' + ${item} + '\''" bot-container = " " time="" ></div>
                 </div>
@@ -70,6 +71,7 @@
 	<script src="lib/elastic.js"></script>
 	<script src="lib/ui-bootstrap.js"></script>
 	<script src="lib/nice_scroll.js"></script>
+	<script src="lib/bootstrap-colorpicker-module.min.js"></script>
 	
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"

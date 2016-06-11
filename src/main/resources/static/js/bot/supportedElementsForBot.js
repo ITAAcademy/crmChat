@@ -1,1 +1,0 @@
-var BotElementTypes = ["botarray","botinput", "botcheckgroup", "botradiogroup", "bottext", "bot-list", "button", "bot-container", "botlink", "botsubmit", "bot-close"];

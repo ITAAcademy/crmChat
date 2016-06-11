@@ -570,7 +570,7 @@ angular.module('springChat.directives').directive('botarray', function($compile,
                 var elementValueContent = '<span class="property_array_row_indexer">{{$index}}</span><input class="property_array_edit_input" type="text" ng-model="dataarray[$index]">' + elementMenu;
 
 
-                var elementSuffix = '</div><button ng-click="addNewItemFunction()">+</button>';
+                var elementSuffix = '</div><div class = "btn btn-default add-item-btn" ng-click="addNewItemFunction()">+</div>';
                 var elementHtml = elementValuePrefix + elementValueContent + elementSuffix;
                 element.html(elementHtml);
                 scope.content = elementHtml;
