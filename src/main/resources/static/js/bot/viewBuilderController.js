@@ -551,8 +551,8 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         console.log("zigzag test:" + JSON.stringify(result));
     }
 
-    $scope.compareType = function(value, type) {
-        return getType(value) == type;
+    $scope.compareType = function(elm,propertyName, type) {
+        return BOT_ELEMENTS_MODULE.getBotElementPropertyType(elm,propertyName) == type;
     }
 
     /* $scope.saveToCoockies = function(){
