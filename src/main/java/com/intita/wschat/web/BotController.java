@@ -307,14 +307,9 @@ public class BotController {
 		if(room_o == null)
 			return;			
 
-		ArrayList<ChatTenant> countTenant = chatTenantService.getTenants();
-		if(countTenant.isEmpty())
-		{
-			return;
-		}
-		int k = new Random().nextInt(countTenant.size());
 
-		ChatTenant t_user = countTenant.get(k);//choose method
+
+		ChatTenant t_user = chatTenantService.getRandomTenant();//choose method
 		ChatUser c_user = t_user.getChatUser();
 		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
 

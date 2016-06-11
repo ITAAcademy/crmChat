@@ -71,6 +71,7 @@ import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.LecturesService;
 //import com.intita.wschat.services.IntitaConsultationsService;
@@ -110,7 +111,7 @@ public class RoomController {
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	//@Autowired private IntitaConsultationsService chatIntitaConsultationService;
-
+	@Autowired private ConfigParamService configService; 
 	@Autowired private ChatController chatController;
 
 	@Autowired private BotCategoryService botCategoryService;
@@ -149,14 +150,14 @@ public class RoomController {
 		ChatUser bot = chatUserServise.getChatUser(BotParam.BOT_ID);
 
 		Room room = roomService.register(roomName, bot);
-		ChatUser author = chatUserServise.getChatUser(principal);
-		roomService.addUserToRoom(author, room);
+		ChatUser guest = chatUserServise.getChatUser(principal);
+		roomService.addUserToRoom(guest, room);
 		
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
 		//this said ti author that he nust update room`s list
-		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));
 		
 		String containerString = "Good day. Please choose the category that interests you:\n";
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
@@ -171,6 +172,24 @@ public class RoomController {
 		UserMessage msg = new UserMessage(bot, room, containerString);
 		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotPrincipal());
 
+
+		return room;
+	}
+	public Room createRoomWithTenant(Principal principal) {
+		
+		//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+		ChatUser roomAuthor = chatTenantService.getRandomTenant().getChatUser();
+		ChatUser guest = chatUserServise.getChatUser(principal);
+		String roomName = roomAuthor.getNickName() + " " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
+		Room room = roomService.register(roomName, roomAuthor);
+		
+		roomService.addUserToRoom(guest, room);
+		
+		//send to user about room apearenced
+		Long chatUserId = Long.parseLong(principal.getName());		
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
+		//this said ti author that he nust update room`s list
+		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));		
 
 		return room;
 	}
@@ -206,8 +225,12 @@ public class RoomController {
 				/*
 				 * ADD BOT TO CHAT
 				 */
-
-				room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
+				boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				if (botEnable){
+					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
+				}
+				else 
+				room = createRoomWithTenant(principal);
 				chatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));

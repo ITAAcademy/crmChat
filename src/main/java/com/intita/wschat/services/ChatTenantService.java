@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -57,6 +58,18 @@ public class ChatTenantService {
 		}
 		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator());
 		return tenantsList;
+	}
+	@Transactional
+	public ChatTenant getRandomTenant(){
+		ArrayList<ChatTenant> countTenant = getTenants();
+		if(countTenant.isEmpty())
+		{
+			return null;
+		}
+		int k = new Random().nextInt(countTenant.size());
+
+		ChatTenant t_user = countTenant.get(k);//choose method
+		return t_user;
 	}
 	@Transactional
 	public ChatTenant getChatTenant(Long id){
