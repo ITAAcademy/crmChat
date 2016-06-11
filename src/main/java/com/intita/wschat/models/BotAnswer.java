@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -40,8 +41,8 @@ public class BotAnswer {
 	private BotDialogItem item;
 	
 	@ManyToOne
-	@NotNull
 	@JsonIgnore
+	@Null
 	private Room room;
 	
 	@Column(columnDefinition = "TEXT")

@@ -1,7 +1,7 @@
 'use strict';
 angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
     return {
-        controller: 'ChatViewItemController',
+        controller: 'ChatBotController',
         scope: {
             content: '&'
         },
@@ -356,6 +356,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined') {
 
                         formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
+                        if(scope.chatRouteInterfaceScope != null && scope.chatRouteInterfaceScope != undefined)
                         scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
                     }
                 }
@@ -786,6 +787,7 @@ function botrating() {
                 }
             });
             updateStars();
+            scope.init(scope, element, attributes);
         }
     };
 };
@@ -817,7 +819,7 @@ function botcalendar($compile, $parse) {
                 };
             },
             post: function(scope, element, attributes) {
-
+                scope.popup1 = {};
                 scope.open1 = function() {
                     console.log('open1');
                     scope.popup1.opened = true;
@@ -834,6 +836,7 @@ function botcalendar($compile, $parse) {
                 if (getType(scope.itemvalue) == "date") {
                     scope.itemvalue = new Date(scope.itemvalue);
                 }
+                scope.init(scope, element, attributes);
                 //}
 
             }
