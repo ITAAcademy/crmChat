@@ -597,13 +597,14 @@ angular.module('springChat.directives').directive('botselect', function($compile
             size: '=',
             multiple: '=',
             options: '=',
-            selected: '<'
+            itemvalue: '<'
         },
         link: {
             post: function(scope, element, attr, ctrl) {
-                var elementPrefix = '<select data-ng-attr-size="{{size}}" ng-if="multiple==true" multiple ng-options="k as v for (k,v) in options" ng-model="selected"></select>';
-                var elementAlternativePrefix = '<select ng-if="multiple==false" ng-options="k as v for (k,v) in options" ng-model="selected"></select>';
-                var elementHtml = elementPrefix + elementAlternativePrefix;
+              //  scope.itemvalue = "QQQQQQQQQQQQ";
+                var elementPrefix = '<select data-ng-attr-size="{{size}}" multiple ng-options="k as v for (k,v) in options" ng-model="itemvalue"></select>';
+                var elementAlternativePrefix = '<select ng-options="k as v for (k,v) in options" ng-model="itemvalue"></select>';
+                var elementHtml =  elementAlternativePrefix;
                 element.html(elementHtml);
                 scope.content = elementHtml;
                 $compile(element.contents())(scope);
