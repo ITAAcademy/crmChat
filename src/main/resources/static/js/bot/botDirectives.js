@@ -791,7 +791,6 @@ function isAssignable($parse, attrs, propertyName) {
 function botcalendar($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
-        restrict: 'EA',
         template: '<span class="input-group">' +
             '<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="itemvalue" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />' +
             '<span class="input-group-btn">' +
@@ -803,11 +802,15 @@ function botcalendar($compile, $parse) {
             name: '=',
         },
         link: {
-            post: function(scope, element, attributes) {
-                scope.popup1 = {
+            pre: function(scope, element, attributes){
+             scope.popup1 = {
                     opened: false
                 };
+            },
+            post: function(scope, element, attributes) {
+               
                 scope.open1 = function() {
+                    console.log('open1');
                     scope.popup1.opened = true;
                 };
                 scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];

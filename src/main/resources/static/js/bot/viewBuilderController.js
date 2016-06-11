@@ -663,9 +663,9 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
 
     };
 
-    $scope.open1 = function() {
-        scope.popup1.opened = true;
-    };
+    /*$scope.open1 = function() {
+        $scope.popup1.opened = true;
+    };*/
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[2];
     $scope.altInputFormats = ['dd.MM.yyyy'];

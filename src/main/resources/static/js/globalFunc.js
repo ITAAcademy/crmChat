@@ -293,7 +293,7 @@ function getKeyByValue(value, object) {
 }
 
 var isDate = function(date) {
-    return  !Number.isInteger(parseInt(date)) && ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
+    return  date instanceof Date && (!Number.isInteger(parseInt(date)) && ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) )));
 }
 
 function getType(value) {
