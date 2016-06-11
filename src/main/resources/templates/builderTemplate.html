@@ -73,15 +73,15 @@
                             <div class="panel-body editor-panel-body-right">
                                 <div class="tab-content editor-panel-right-scroll ">
                                     <div class="editor-tools-propertys" ng-repeat="(key, item)  in selected.properties">
-                                        <div ng-if="compareType(item,'array')" class="input-group">
+                                        <div ng-if="compareType(selected.type,key,'array')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <tags-input min-length="1" placeholder="Add new item" ng-model="selected.properties[key]" />
                                         </div>
-                                        <div ng-if="compareType(item,'string')" class="input-group">
+                                        <div ng-if="compareType(selected.type,key,'string')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <input ng-model="selected.properties[key]" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" />
                                         </div>
-                                        <div ng-if="compareType(item,'bool')" class="input-group">
+                                        <div ng-if="compareType(selected.type,key,'bool')" class="input-group">
                                             <span class="input-group-addon" id="sizing-addon2">{{key}}</span>
                                             <span class="input-group-addon" id="basic-addon2">
                                             <input ng-model = "selected.properties[key]" type="checkbox" name="vehicle"/>

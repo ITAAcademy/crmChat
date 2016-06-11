@@ -19,6 +19,25 @@ var BOT_ELEMENTS_MODULE = function() {
         "botrating": { "name": "botrating", "itemvalue": 0, "max": 5, "readonly": false, "text": "" },
         "botcalendar": { "name": "botcalendar", "itemvalue": new Date() }
     };
+    var BotElementPropertiesTypes={
+        "botcalendar":
+        {"itemvalue":"date"},
+        "bottext":
+        {"textcolor":"color"}
+        }
+   publicData.getBotElementPropertyType = function (botelement,propertyName){
+        var botElementType = BotElementPropertiesTypes[botelement];
+        if (typeof botElementType != 'undefined'){
+            if (botElementType.hasOwnProperty(propertyName))
+                return botElementType[propertyName];
+        }
+        var botElement = BotElementProperties[botelement];
+        if (typeof botElement == 'undefined') return 'string';
+        var botElementProperty = botElement[propertyName];
+        if (typeof botElementProperty == 'undefined') return 'string';
+        return getType(botElementProperty);
+    }
+
     publicData.ElementProperties = BotElementProperties;
     publicData.ElementTypes = BotElementTypes;
     publicData.GlobalProperties = BotGlobalProperties;
