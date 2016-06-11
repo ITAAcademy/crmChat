@@ -957,7 +957,7 @@ public class ChatController {
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
 		configMap.put("currentLang", lang);
 		model.addAttribute("config", configMap);
-		model.addAttribute("phrasesPack", roomService.getPhrases());
+		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases());
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)

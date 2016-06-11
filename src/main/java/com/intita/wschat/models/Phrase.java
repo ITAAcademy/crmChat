@@ -19,6 +19,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.intita.wschat.web.ChatController;
+
 /**
  * 
  * @author Nicolas Haiduchok
@@ -32,7 +34,9 @@ public class Phrase implements Serializable,Comparable<ChatUser> {
 
 	@NotBlank
 	@Column(unique = false)
-	private String text;
+	private String text_ua;
+	private String text_ru;
+	private String text_en;
 
 	public Long getId() {
 		return id;
@@ -42,12 +46,36 @@ public class Phrase implements Serializable,Comparable<ChatUser> {
 		this.id = id;
 	}
 
+	public String getText(String lang) {
+		switch(lang){
+		case "en":
+			return text_en;
+		case "ru":
+			return text_ru;
+		case "ua":
+				return text_ua;
+		default:
+			return text_ua;
+		}		
+	}
 	public String getText() {
-		return text;
+		return getText(ChatController.getCurrentLang());
 	}
 
+	public void setText(String text,String lang) {
+		switch(lang){
+		case "en":
+			text_en=text;
+		case "ru":
+			text_ru = text;
+		case "ua":
+			text_ua = text;
+		default:
+			text_ua = text;
+		}	
+	}
 	public void setText(String text) {
-		this.text = text;
+		setText(text,ChatController.getCurrentLang());
 	}
 
 	@Override
