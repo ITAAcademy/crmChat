@@ -226,9 +226,12 @@ public class BotController {
 		{
 			botAnswerService.add(new BotAnswer(keys.get(i), item, room, obj.get(keys.get(i))));
 		}
+		if(nextContainerId == -1)
+			return "quize save";
+		
 		Map<String,Object> param = new HashMap<String, Object>();
 		param.put("nextNode", nextContainerId.toString());//@BAD
-
+		
 		sendNextContainer(roomId, containerId, param, principal);
 
 		return "good";
