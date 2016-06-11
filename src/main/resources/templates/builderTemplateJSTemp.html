@@ -32,10 +32,10 @@
                             </uib-tab>
                             <div class="editor-menu">
                                 <div class="editor-menu-icon">
-                                    <a tooltip-append-to-body="true" tooltip-placement = "bottom" uib-tooltip="Force render" class="glyphicon glyphicon-repeat icon" ng-click="updateView()"></a>
+                                    <a tooltip-append-to-body="true" tooltip-placement="bottom" uib-tooltip="Force render" class="glyphicon glyphicon-repeat icon" ng-click="updateView()"></a>
                                 </div>
                                 <div class="editor-menu-icon">
-                                    <a tooltip-append-to-body="true" tooltip-placement = "bottom" uib-tooltip="Save current lang" class="glyphicon glyphicon-saved icon" ng-click="saveBotDialogItem()"></a>
+                                    <a tooltip-append-to-body="true" tooltip-placement="bottom" uib-tooltip="Save current lang" class="glyphicon glyphicon-saved icon" ng-click="saveBotDialogItem()"></a>
                                 </div>
                                 <div class="dropdown editor-dropdown-wraper">
                                     <button class="btn btn-primary dropdown dropdown-toggle editor-dropdown" type="button" data-toggle="dropdown">Menu
@@ -125,9 +125,12 @@
                                             </span>
                                         </div>
 
-                                        <div ng-if="compareType(item,'date')" botcalendar = "" itemvalue = "$root.models.selected.properties[key]">
-                                        </div>
-                                        
+
+                                        <span ng-if="compareType(item,'date')" class="input-group">
+                                            <input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="$root.models.selected.properties[key]" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" required="required"/>
+                                            <div uib-datepicker-popup-wrap="" ng-model="$root.models.selected.properties[key]">
+                                            </div><span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button></span></span>
+
                                     </div>
                                     <div class="editor-tools-propertys animate-properties" ng-if="$root.models.selected.type == 'botsubmit'">
                                         <span class="input-group-addon" id="sizing-addon2">Code</span>

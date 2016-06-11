@@ -293,16 +293,16 @@ function getKeyByValue(value, object) {
 }
 
 var isDate = function(date) {
-    return ( (new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
+    return  !Number.isInteger(parseInt(date)) && ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
 }
 
 function getType(value) {
-    if (value === true || value === false)
+    if (value === true || value === false || value == 'true' || value == 'false')
         return "bool";
 
     if (Array.isArray(value))
         return "array";
-    
+
     if(isDate(value))
         return "date";
 

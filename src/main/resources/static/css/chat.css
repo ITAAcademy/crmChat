@@ -848,7 +848,7 @@ input::-ms-clear {
     /* color: white;*/
 }
 
-.editor-tools-propertys:hover {
+.editor-tools:hover {
   opacity: 0.7;
 }
 
@@ -1522,5 +1522,10 @@ display:inline-block;
 .card .card-action a:hover {
   color: #ffd8a6;
   text-decoration: none;
+}
+
+.bcontainer > .ng-scope{
+  display: block;
+  margin-top: 10px;
 }
 

@@ -22,6 +22,12 @@
     .head-title {
         padding-left: 50%;
     }
+   
+}
+@media (min-width: 600px) {
+    .chat .answer-add {
+        position: relative;
+    }
 }
 
 .chat {}
@@ -304,7 +310,7 @@
 
 .chat .answer-add {
     clear: both;
-    position: relative;
+   /* position: relative;*/
     margin: 5px 5px 5px;
     padding: 10px;
     background: #4b70a3;

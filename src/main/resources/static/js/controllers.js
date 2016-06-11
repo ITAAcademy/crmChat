@@ -479,7 +479,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
             if (room.roomId == roomId) {
                 $rootScope.roomForUpdate[room.roomId] = true;
-                if ($scope.currentRoom.roomId != room.roomId) {
+                if ($scope.currentRoom == undefined || $scope.currentRoom.roomId != room.roomId) {
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     room.date = curentDateInJavaFromat();

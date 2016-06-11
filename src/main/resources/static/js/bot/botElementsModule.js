@@ -66,11 +66,13 @@ var BOT_ELEMENTS_MODULE = function() {
                         escapedValue = value.escapeHtml();
                     else if (getType(value) == "array")
                         escapedValue = JSON.stringify(value).escapeHtml();
+                     else if (getType(value) == "bool")
+                        escapedValue = value;
                     else
                         escapedValue = value;
                 }
 
-                if (typeof value != "object" || getType(value) == 'date')
+                if ((typeof value != "object" || getType(value) == 'date') && getType(value) != 'bool')
                     escapedValue = "'" + escapedValue + "'";
 
                 if (ignoreAddedProperties || key == "content") {
