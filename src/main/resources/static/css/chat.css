@@ -6,6 +6,7 @@ body {
 .container {
     background: #eee;
     position: relative;
+    height:1000px;
 }
 
 .chat-head {
@@ -1545,3 +1546,20 @@ li[dnd-draggable] {
     padding: 20px;
     border-bottom: 1px solid rgba(160, 160, 160, 0.2);
 }
+/*Bot Elements */
+.tab-content>.bot_container{
+    height:620px;
+    width: 100%;
+}
+.tab-content>.bot_container>.wrap {
+    padding: 0px;
+    height:100%;
+    width:100%;
+}
+.tab-content>.bot_container>.wrap>ul {
+    padding: 0px;
+    height:100%;
+    width:100%;
+}
+
+

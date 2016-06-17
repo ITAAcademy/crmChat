@@ -28,7 +28,7 @@
                                     ng-change="reloadDialogItems(selectedBotCategoryForModal.id)" 
                                     placeholder="Опис елементу" 
                                     typeahead-wait-ms = "1000" 
-                                    uib-typeahead="item.description for item in botDialogItemsForModal"     
+                                    uib-typeahead="item.description for item in botDialogItemsForModal | unique:'item.idObject.id'"     
                                     typeahead-on-select = "onDialogItemInputSelect($model)"/>
 
                 <select id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'n.idObject.id'" ng-model="selectedBotDialogItemForModal" ng-change="selectedBotDialogItemForModalChanged()" placeholder="Room name"></select>

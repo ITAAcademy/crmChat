@@ -49,7 +49,26 @@ var BOT_ELEMENTS_MODULE = function() {
         return false;
     };
 
-
+     function getClassByElementType(type){
+        var asociation = {
+          "botselect":"bot_select",
+          "botcalendar":"bot_calendar",
+          "botrating":"bot_rating",
+          "botarray":"bot_array",
+          "botinput":"bot_input",
+          "botcheckgroup":"bot_checkgroup",
+          "botradiogroup":"bot_radiogroup",
+          "bottext":"bot_text",
+          "bot-list":"bot_list",
+          "button":"bot_button",
+          "botlink":"bot_link",
+          "botsubmit":"bot_submit",
+          "bot-close":"bot_close",
+          "bot-container":"bot_container"
+        }
+        return asociation[type];
+    }
+    publicData.getClassByElementType = getClassByElementType;
 
     publicData.ElementInstance = function(type) {
         var object = new Object();
@@ -118,7 +137,9 @@ var BOT_ELEMENTS_MODULE = function() {
 
             if (publicData.isContainer(this.type))
                 addedPropertyFinal += ' dnd-placeholder-body = "' + this.type + '" dnd-dragover="$root.dragoverCallback(event, index, external, type, $root.this)" dnd-drop="$root.dropCallback(event, index, item, external, type, $root.this)" dnd-horizontal-list = "{{horizontalList}}" dnd-list="$root.this.childrens"'; //dnd-horizontal-list="true" dnd-external-sources="true"
-            var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}"'.format(this.type, leftTooltip) + 'class = "render-element" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">';
+            var specificElementClass = "";
+           specificElementClass = getClassByElementType(this.type);
+            var addedHeaderFinal = '<li  ' + 'tooltip-placement="{1}" tooltip-trigger="mouseenter" uib-tooltip="{0}" class = "render-element {2}" dnd-dragstart = "$root.dragStart($root.this)" dnd-draggable="$root.this" dnd-effect-allowed="move" dnd-selected="$root.models.selected = $root.this" ng-class="{&#39;selected&#39;: $root.models.selected == $root.this}">'.format(this.type, leftTooltip,specificElementClass);
 
             var addedFooterFinal = '</li>';
             if (ignoreAddedProperties) {
