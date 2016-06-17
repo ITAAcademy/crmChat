@@ -75,6 +75,7 @@ public class BotCategory implements java.io.Serializable {
 	}
 
 	@ManyToMany(mappedBy = "botCategories", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	Set<ChatTenant> chatUsers  = new HashSet<>();
 
 	public Set<ChatTenant> getChatUsers() {
