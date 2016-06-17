@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
@@ -26,10 +27,13 @@ public class ChatTenantService {
 	@Autowired
 	private ChatTenantRepository chatTenantRepo;
 
+
+	private List<Long> tenantsBusy;	 
+
 	@PostConstruct
 	@Transactional
 	public void createAdminUser() {
-		System.out.println("admin user created");
+		System.out.println("admin user created");		
 		//register("user", "user", "user");
 
 	}
@@ -46,7 +50,7 @@ public class ChatTenantService {
 		}
 		return chatTenantPage; 
 	}
-	
+
 	@Transactional
 	public ArrayList<ChatTenant> getTenants(){
 		Iterable<ChatTenant> chatTenantsIterable = null;
@@ -58,7 +62,44 @@ public class ChatTenantService {
 		}
 		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator());
 		return tenantsList;
+	}	
+
+	
+	public ChatTenant getFreeTenant() {
+		List<ChatTenant> tenants = getTenants();
+		for (ChatTenant tenant : tenants)
+		{
+			Long id = tenant.getId();
+			if (isTenantBusy(id) == false)
+				return tenant;
+		}
+		return null;
 	}
+
+	
+	public void setTenantBusy(Long id) {
+		if ( !isTenantBusy(id))
+			tenantsBusy.add(id);
+	}
+	public void setTenantFree(Long id) {
+		for (int i = 0; i < tenantsBusy.size(); i++)
+		{
+			if (tenantsBusy.get(i) == id)
+				tenantsBusy.remove(i);
+		}
+	}
+	
+	boolean isTenantBusy(Long id) {
+		for (Long tenant_id : tenantsBusy)
+		{
+			if (tenant_id == id )
+				return true;
+		}
+		return false;
+	}
+
+
+
 	@Transactional
 	public ChatTenant getRandomTenant(){
 		ArrayList<ChatTenant> countTenant = getTenants();
@@ -74,9 +115,9 @@ public class ChatTenantService {
 	@Transactional
 	public ChatTenant getChatTenant(Long id){
 		ChatTenant chatTenant =null;
-	
+
 		try{
-		chatTenant = chatTenantRepo.findOne(id);
+			chatTenant = chatTenantRepo.findOne(id);
 		}
 		catch(EntityNotFoundException e){
 			log.info("tenant Id not found:"+id);

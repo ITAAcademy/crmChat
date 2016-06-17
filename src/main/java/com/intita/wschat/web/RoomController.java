@@ -178,7 +178,8 @@ public class RoomController {
 	public Room createRoomWithTenant(Principal principal) {
 		
 		//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
-		ChatUser roomAuthor = chatTenantService.getRandomTenant().getChatUser();
+		ChatUser roomAuthor = chatTenantService.getFreeTenant().getChatUser();
+				//getRandomTenant().getChatUser();
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		String roomName = roomAuthor.getNickName() + " " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
 		Room room = roomService.register(roomName, roomAuthor);
