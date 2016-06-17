@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.Session;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.MessagingException;
@@ -961,9 +963,14 @@ public class ChatController {
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String  getIndex(HttpRequest request, Model model) {
+	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model) {
 		authenticationProvider.autorization(authenticationProvider);
 		updateLangMap();
+		if(before != null)
+		{
+			 return "redirect:"+ before;
+		}
+		
 		addLocolization(model);
 		return "index";
 	}
@@ -992,8 +999,8 @@ public class ChatController {
 	}
 	
 	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir) {
-		getIndex(request, model);
+	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir) {
+		getIndex(request, null, model);
 		BotDialogItem item;
 		if(lang != null)
 			item = dialogItemService.getByIdAndLang(id, lang);

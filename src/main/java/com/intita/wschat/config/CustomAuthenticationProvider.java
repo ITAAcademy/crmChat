@@ -140,7 +140,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		return autorization(this);
 	}
 
-	public static boolean autorization(AuthenticationProvider authenticationProvider)
+	public boolean autorization(AuthenticationProvider authenticationProvider)
 	{
 		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
 		{
