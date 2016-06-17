@@ -207,8 +207,6 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                         updateClasses();
                         scope.unlistenContent();
                         $compile(element.contents())(scope);
-                        scope.init(scope, element, attr);
-
                         scope.$$postDigest(function() {
                             //    scope.listenContent();    
                         })
@@ -216,6 +214,7 @@ angular.module('springChat.directives').directive('botList', function($compile, 
                     }, true);
                 };
                 scope.listenContent();
+                scope.init(scope, element, attr);
             }
         }
     }

@@ -991,10 +991,14 @@ public class ChatController {
 		return page;
 	}
 	
-	@RequestMapping(value="/getForm", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpRequest request, @RequestParam("id") Long id, Model model, RedirectAttributes redir) {
+	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
+	public String  getTeachersTemplate(HttpRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir) {
 		getIndex(request, model);
-		BotDialogItem item = dialogItemService.getById(id);
+		BotDialogItem item;
+		if(lang != null)
+			item = dialogItemService.getByIdAndLang(id, lang);
+		else
+			item = dialogItemService.getById(id);
 		//model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
 		try {
 			model.addAttribute("item", HtmlUtility.escapeQuotes(mapper.writeValueAsString(item)));
