@@ -81,6 +81,12 @@ public class ChatTenantService {
 		if ( !isTenantBusy(id))
 			tenantsBusy.add(id);
 	}
+	
+	public void setTenantBusy(ChatTenant tenant) {
+		if ( !isTenantBusy(tenant))
+			tenantsBusy.add(tenant.getId());
+	}
+	
 	public void setTenantFree(Long id) {
 		for (int i = 0; i < tenantsBusy.size(); i++)
 		{
@@ -97,8 +103,10 @@ public class ChatTenantService {
 		}
 		return false;
 	}
-
-
+	
+	boolean isTenantBusy(ChatTenant tenant) {
+		return isTenantBusy(tenant.getId());
+	}
 
 	@Transactional
 	public ChatTenant getRandomTenant(){

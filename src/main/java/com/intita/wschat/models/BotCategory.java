@@ -76,20 +76,7 @@ public class BotCategory implements java.io.Serializable {
 
 	@ManyToMany(mappedBy = "botCategories", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	Set<ChatTenant> chatUsers  = new HashSet<>();
-/*
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_tenant_categories", 
-			joinColumns = @JoinColumn
-					(
-						name = "bot_category_id", 
-						referencedColumnName = "id"
-					),
-			inverseJoinColumns = @JoinColumn
-					(
-						name = "user_tenant_id",
-						referencedColumnName = "id"
-					)
-			)*/
+
 	public Set<ChatTenant> getChatUsers() {
 		return chatUsers;
 	}

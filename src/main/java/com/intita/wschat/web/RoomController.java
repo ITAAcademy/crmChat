@@ -152,13 +152,13 @@ public class RoomController {
 		Room room = roomService.register(roomName, bot);
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		roomService.addUserToRoom(guest, room);
-		
+
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
 		//this said ti author that he nust update room`s list
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));
-		
+
 		String containerString = "Good day. Please choose the category that interests you:\n";
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
 		BotDialogItem mainContainer = BotDialogItem.createFromCategories(allCategories);
@@ -176,16 +176,23 @@ public class RoomController {
 		return room;
 	}
 	public Room createRoomWithTenant(Principal principal) {
-		
+
 		//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
-		ChatUser roomAuthor = chatTenantService.getFreeTenant().getChatUser();
-				//getRandomTenant().getChatUser();
+		ChatTenant greeTenante = chatTenantService.getFreeTenant();
+		if (greeTenante == null)
+			return null;
+
+		ChatUser roomAuthor = greeTenante.getChatUser();			
+
+		chatTenantService.setTenantBusy(greeTenante);
+
+		//getRandomTenant().getChatUser();
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		String roomName = roomAuthor.getNickName() + " " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
 		Room room = roomService.register(roomName, roomAuthor);
-		
+
 		roomService.addUserToRoom(guest, room);
-		
+
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
@@ -231,13 +238,16 @@ public class RoomController {
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				}
 				else 
-				room = createRoomWithTenant(principal);
-				chatController.addFieldToInfoMap("newGuestRoom", room.getId());
+					room = createRoomWithTenant(principal);
+				if (room != null)
+					chatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
-
-			result.put("nextWindow", room.getId().toString());
+			if (room != null)
+				result.put("nextWindow", room.getId().toString());
+			else
+				result.put("nextWindow", "-1");
 		}
 		else
 		{
