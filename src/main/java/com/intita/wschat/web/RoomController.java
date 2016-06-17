@@ -2,10 +2,6 @@ package com.intita.wschat.web;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,17 +28,14 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,8 +51,7 @@ import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.IntitaConsultation;
-import com.intita.wschat.models.Lectures;
+import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
@@ -78,7 +69,6 @@ import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -233,12 +223,20 @@ public class RoomController {
 				/*
 				 * ADD BOT TO CHAT
 				 */
-				boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				boolean botEnable = true;
+				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
+				if(s_botEnable != null)
+					botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
 				if (botEnable){
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				}
 				else 
 					room = createRoomWithTenant(principal);
+				
+				//test - no free tenant
+				//room = null;
+				
 				if (room != null)
 					chatController.addFieldToInfoMap("newGuestRoom", room.getId());
 			}
