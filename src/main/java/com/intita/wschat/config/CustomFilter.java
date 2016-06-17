@@ -31,7 +31,7 @@ public class CustomFilter extends GenericFilterBean{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws java.io.IOException,  ServletException
 	{
-		authenticationProvider.autorization(authenticationProvider);
+		//authenticationProvider.autorization(authenticationProvider);
 		chain.doFilter(request, response);
 	}
 	public CustomFilter() {
