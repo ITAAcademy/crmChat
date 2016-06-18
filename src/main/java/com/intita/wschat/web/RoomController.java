@@ -140,9 +140,6 @@ public class RoomController {
 		createDialogWithBot(roomName,principal);
 	}
 
-
-
-
 	public Room createDialogWithBot(String roomName, Principal principal)
 	{
 		if(roomName.isEmpty())
