@@ -255,6 +255,16 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         success(loadView).
         error(function(data, status, headers, config) {});
     }
+    $scope.selectedBotCategoryForModalChanged = function(categoryId){
+        if (typeof categoryId=="undefined")return;
+        var categoryNamesMap = $scope.botCategoriesForModal.reduce(function(map, obj) {
+            map[obj.id] = obj.name;
+            return map;
+        }, {});
+        initDialogItems(categoryId);
+        console.log('selectedBotCategoryForModalChanged:'+categoryId);
+        $scope.categoryInputModel = categoryNamesMap[categoryId];
+    }
 
     $scope.initDialogItemModalLoader = function() {
 
@@ -403,7 +413,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         error(function(data, status, headers, config) {});
     }
     $scope.loadDialogItemsByDescription = function(categoryId, description) {
-        description = description || "_";
+        description = description || " ";
         categoryId = categoryId || "0";
         var requestUrl = serverPrefix +
             "/bot_operations/get_bot_dialog_items_descriptions_having_string_first5/" + categoryId + "/" + encodeURIComponent(description);
@@ -440,8 +450,16 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
 
     }
     $scope.isLoadButtonDisabled = true;
-    $scope.selectedBotDialogItemForModalChanged = function() {
+    $scope.selectedBotDialogItemForModalChanged = function(dialogItemId) {
+
+        if (typeof dialogItemId=="undefined")return;
+        var dialogItemsDescriptionsMap = $scope.botDialogItemsForModal.reduce(function(map, obj) {
+            map[obj.idObject.id] = obj.description;
+            return map;
+        }, {});
+        $scope.dialogElementInputModel = dialogItemsDescriptionsMap[dialogItemId];
         updateLoadButton();
+
     }
 
     $scope.reloadDialogItems = function(categoryId) {
@@ -462,6 +480,8 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         for (var i = 0; i < $scope.botCategoriesForModal.length; i++) {
             if ($scope.botCategoriesForModal[i].name == modelValue) {
                 $scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[i];
+                initDialogItems($scope.botCategoriesForModal[i].id);
+                break;
             }
         }
         //$scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[0];
@@ -474,6 +494,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         for (var i = 0; i < $scope.botDialogItemsForModal.length; i++) {
             if ($scope.botDialogItemsForModal[i].description == modelValue) {
                 $scope.selectedBotDialogItemForModal = $scope.botDialogItemsForModal[i];
+                break;
             }
         }
         $scope.selectedBotDialogItemForModalChanged();

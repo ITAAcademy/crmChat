@@ -11,18 +11,44 @@ var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', '
 ]);
 var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput', 'dndLists', 'monospaced.elastic', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize','colorpicker.module']);
 
-springChat.filter('unique', function() {
-    return function(input, key) {
-        var unique = {};
-        var uniqueList = [];
-        for(var i = 0; i < input.length; i++){
-            if(typeof unique[input[i][key]] == "undefined"){
-                unique[input[i][key]] = "";
-                uniqueList.push(input[i]);
-            }
+springChat.filter('unique', function ($parse) {
+    return function (collection, property) {
+
+      collection = angular.isObject(collection) ? toArray(collection) : collection;
+
+      if (!angular.isArray(collection)) {
+        return collection;
+      }
+
+      //store all unique identifiers
+      var uniqueItems = [],
+          get = $parse(property);
+
+      return (angular.isUndefined(property))
+        //if it's kind of primitive array
+        ? collection.filter(function (elm, pos, self) {
+          return self.indexOf(elm) === pos;
+        })
+        //else compare with equals
+        : collection.filter(function (elm) {
+          var prop = get(elm);
+          if(some(uniqueItems, prop)) {
+            return false;
+          }
+          uniqueItems.push(prop);
+          return true;
+      });
+
+      //checked if the unique identifier is already exist
+      function some(array, member) {
+        if(angular.isUndefined(member)) {
+          return false;
         }
-        return uniqueList;
-    };
+        return array.some(function(el) {
+          return angular.equals(el, member);
+        });
+      }
+    }
 });
 if (!String.prototype.format) {
 	  String.prototype.format = function() {
