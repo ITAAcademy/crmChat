@@ -523,7 +523,6 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         });
     };
 
-
     $scope.loadDlgItemModalVisible = false;
 
     $scope.toggleLoadDialogItemModal = function() {

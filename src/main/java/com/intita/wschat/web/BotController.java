@@ -5,9 +5,8 @@ import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,6 +62,9 @@ public class BotController {
 	@Autowired
 	BotItemContainerService botItemContainerService;
 
+	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
+	private List<Long> askConsultationUsers = new ArrayList<Long>();
+
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
 	@Autowired private RoomsService roomService;
@@ -76,6 +77,9 @@ public class BotController {
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
 	@Autowired private BotAnswersService botAnswerService;
+	
+	@Value("${times.tenantRefuseConsultationTakeFreeTime}")
+	 int tenantFreeTime;
 
 
 	@Autowired private RoomController roomControler;
@@ -300,19 +304,27 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
+	public boolean giveTenant(@PathVariable Long roomId, Principal principal) throws JsonProcessingException {
 
-		Room room_o = roomService.getRoom(roomId);
-		if(room_o == null)
-			return false;	
+		Room room_0 = roomService.getRoom(roomId);
+		if(room_0 == null)
+			return false;
+
+		tempRoomAskTenant.add(room_0);
+
+		String userIdStr = principal.getName();
+		Long userId =  Long.parseLong(userIdStr, 10);
+		askConsultationUsers.add(userId);
 
 		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
 		if (t_user == null)
 			return false;
-		
+
+		chatTenantService.setTenantBusy(t_user);
+
 		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", t_user.getChatUser().getId());
 		return true;
-/*
+		/*
 		ChatUser c_user = t_user.getChatUser();
 		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
 
@@ -323,24 +335,48 @@ public class BotController {
 
 		return true;*/
 	}
-	
-	@RequestMapping(value = "bot_operations/tenant/free/{tenantId}/{roomId}", method = RequestMethod.POST)
+
+	@RequestMapping(value = "bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendFree(@PathVariable Long tenantId, @PathVariable Long roomId) throws JsonProcessingException {
-		Room room_o = roomService.getRoom(roomId);
+	public void tenantSendBecomeFree(Principal principal) {
+		chatTenantService.setTenantFree(principal);
+	}
+
+	@RequestMapping(value = "bot_operations/tenant/refused",  method = RequestMethod.POST)
+	@ResponseBody
+	public void tenantSendRefused(Principal principal) {
+		new java.util.Timer().schedule( 
+				new java.util.TimerTask() {
+					@Override
+					public void run() {
+						chatTenantService.setTenantFree(principal);
+					}
+				}, 
+				tenantFreeTime 
+				);
+	}
+
+	@RequestMapping(value = "bot_operations/tenant/free/{tenantId}", method = RequestMethod.POST)
+	@ResponseBody
+	public void tenantSendFree(@PathVariable Long tenantId) throws JsonProcessingException {
 		ChatTenant t_user = chatTenantService.getChatTenant(tenantId);
 		ChatUser c_user = t_user.getChatUser();
 		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
-		room_o.setAuthor(c_user);
-		roomService.update(room_o);
-		roomControler.addUserToRoom(b_user, room_o, b_user.getPrincipal(), true);
-		
-		
-		chatController.addFieldToInfoMap("newConsultationWithTenant", true);
+
+		Room room_ = tempRoomAskTenant.get(0);
+		tempRoomAskTenant.remove(0);
+		room_.setAuthor(c_user);
+		roomService.update(room_);
+		roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);
+
+		Long userId = askConsultationUsers.get(0);
+		askConsultationUsers.remove(0);
+
+		chatController.addFieldToInfoMap("newConsultationWithTenant", userId);
 	}
-	
-	
-	
+
+
+
 
 	@RequestMapping(value = "bot_operations/get_all_categories_ids", method = RequestMethod.GET)
 	@ResponseBody

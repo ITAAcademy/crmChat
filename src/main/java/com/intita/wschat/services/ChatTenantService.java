@@ -1,5 +1,6 @@
 package com.intita.wschat.services;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ChatTenantService {
 	private ChatTenantRepository chatTenantRepo;
 
 
-	private List<Long> tenantsBusy = new ArrayList<Long>();	 
+	private List<Long> tenantsBusy = new ArrayList<Long>();	 	 
 
 	@PostConstruct
 	@Transactional
@@ -68,21 +69,20 @@ public class ChatTenantService {
 	}	
 
 
-	public ChatTenant getFreeTenant() {
+	public ChatTenant getFreeTenant() {		
 		List<ChatTenant> tenants = getTenants();
 		for (ChatTenant tenant : tenants)
 		{
 			Long id = tenant.getId();
 			if (isTenantBusy(id) == false)
 			{
-				String chatUserId = tenant.getChatUser().getPrincipal().getName();
+				Long chatUserId = tenant.getChatUser().getId() - 1;//   .getPrincipal().getName();
 				if (participantRepository.isOnline("" + chatUserId)) //989
 					return tenant;
 			}
 		}
 		return null;
 	}
-
 
 	public void setTenantBusy(Long id) {
 		if ( !isTenantBusy(id))
@@ -100,6 +100,10 @@ public class ChatTenantService {
 			if (tenantsBusy.get(i) == id)
 				tenantsBusy.remove(i);
 		}
+	}
+	
+	public void setTenantFree(Principal principal) {
+		Long id = Long.parseLong(principal.getName());
 	}
 
 	boolean isTenantBusy(Long id) {

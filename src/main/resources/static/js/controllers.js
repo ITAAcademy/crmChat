@@ -99,32 +99,37 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     
     var isAskTenantToTakeConsultationVisible = false;
     
-    function askTenantToTakeConsultationTogle () {
+    $scope.askTenantToTakeConsultationTogle = function() {
 		$('#askTenantToTakeConsultation').modal('toggle');
 		isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
-    };
+    };    
     
-    function showAskTenantToTakeConsultation() {
-    	alert(1);
+    $scope.showAskTenantToTakeConsultation = function() {
     	if (isAskTenantToTakeConsultationVisible == false)
-    		askTenantToTakeConsultationTogle();    	
+    		$scope.askTenantToTakeConsultationTogle();    	
     }
     
-    function hideAskTenantToTakeConsultation() {
+    $scope.hideAskTenantToTakeConsultation = function() {
     	if (isAskTenantToTakeConsultationVisible == true)
-    		askTenantToTakeConsultationTogle();    	
-    }
+    		$scope.askTenantToTakeConsultationTogle();    	
+    }   
+   
     
-    function answerToTakeConsultation(value) {
-    	askTenantToTakeConsultationTogle ();
-    	if (value )
-		{
-    		//answer true
-		}
-    	else
-    	{
-    		//answer false
-		}
+    $scope.answerToTakeConsultation = function(value) {
+    	
+    	$scope.askTenantToTakeConsultationTogle(); 
+    	if (value) {
+    	 $http.post(serverPrefix + "bot_operations/tenant/free/", $scope.chatUserId).
+    	   success(function(data, status, headers, config) {
+    	   });
+    	}
+    	else {
+    		 $http.post(serverPrefix + "bot_operations/tenant/refused").
+    	  	   success(function(data, status, headers, config) {
+    	  	   });
+    	}
+    	
+    	
     };    
 
     $scope.toggleNewRoomModal = function() {
@@ -387,14 +392,24 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         newMessageEvent(data["newMessage"][i]);
                 }
                 if (data["newGuestRoom"] != null) {
-                    $scope.currentRoom.roomId = data["newGuestRoom"];
+                	if ($scope.currentRoom == undefined)
+                		$scope.currentRoom = { roomId: data["newGuestRoom"] };
+                	else
+                		$scope.currentRoom.roomId = data["newGuestRoom"];
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }
                 if (data["newAskConsultation_ToChatUserId"] != null)
             	{
-                	if (data["newAskConsultation_ToChatUserId"] == $scope.chatUserId)
-                		showAskTenantToTakeConsultation();
+                    var sendedId = data["newAskConsultation_ToChatUserId"][0];
+                	if ( sendedId == $scope.chatUserId)
+                		$scope.showAskTenantToTakeConsultation();
             	}
+                if (data["newConsultationWithTenant"] != null) {
+                	var sendedId = data["newConsultationWithTenant"][0];
+                	if ( sendedId == $scope.chatUserId) {
+                		chatControllerScope.userAddedToRoom = true;                		
+                	}
+                }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
                      $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
@@ -457,6 +472,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         if (mess_obj.nextWindow == 0) {
             $rootScope.authorize = true;
 
+// if ($scope.currentRoom.roomId != undefined)
+            if ($scope.currentRoom != undefined) 
             if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
                 //mess_obj.nextWindow=$scope.currentRoom.roomId;
                 //  goToDialogEvn($scope.currentRoom.roomId);
@@ -533,6 +550,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
         var updateDialogListTimeout = null;
         //Update if user see rooms
+        if ($scope.currentRoom != undefined )
         if ($scope.currentRoom.roomId == "" && $rootScope.roomForUpdate.keys().next() != undefined) {
             if (updateDialogListTimeout != null)
                 updateDialogListTimeout.cancel();

@@ -37,7 +37,7 @@ public class ParticipantRepository {
 		Integer getId = activeSessions.get(chatId);
 		
 		boolean online = containsKey &&  getId > 0;
-		System.out.println("isOnline "+chatId+" ? "+ online);
+		//System.out.println("isOnline "+chatId+" ? "+ online);
 		return online;
 	}
 
