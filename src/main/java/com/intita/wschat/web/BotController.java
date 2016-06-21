@@ -308,17 +308,17 @@ public class BotController {
 
 		Room room_0 = roomService.getRoom(roomId);
 		if(room_0 == null)
-			return false;
+			return false;		
 
+		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
+		if (t_user == null)
+			return false;
+		
 		tempRoomAskTenant.add(room_0);
 
 		String userIdStr = principal.getName();
 		Long userId =  Long.parseLong(userIdStr, 10);
 		askConsultationUsers.add(userId);
-
-		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
-		if (t_user == null)
-			return false;
 
 		chatTenantService.setTenantBusy(t_user);
 
