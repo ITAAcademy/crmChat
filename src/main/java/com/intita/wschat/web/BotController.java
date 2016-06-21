@@ -78,7 +78,6 @@ public class BotController {
 	@Autowired private BotAnswersService botAnswerService;
 
 
-
 	@Autowired private RoomController roomControler;
 	@Autowired private ChatController chatController;
 
@@ -164,17 +163,17 @@ public class BotController {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return "Send params (object) faild!";
 		}
-		
+
 		BotCategory category = payload.getCategory();
 		if (category == null || category.getId() == null){
 			log.error("Category is NULL !");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return "Category is NULL !";//@LANG@
 		}
-		
+
 		Map<String, BotDialogItem> array = new HashMap<>();
 		Long nextId = botItemContainerService.getNextId();
-		
+
 		for(String lang : ChatLangEnum.LANGS)
 		{
 			BotDialogItem dialogItemTemplate = new BotDialogItem(payload);
@@ -276,13 +275,13 @@ public class BotController {
 
 		/*nextContainerToSave = new BotDialogItem(nextContainer);
 		nextContainerToSave.setBody(nextContainer.getIdObject().getId().toString());
-*/
+		 */
 		String containerString = "";
 		String containerStringToSave = "";
 		try {
 			containerString = objectMapper.writeValueAsString(nextContainer);
 			containerStringToSave = objectMapper.writeValueAsString(nextContainer.getIdObject());
-				
+
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -301,30 +300,48 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
+	public boolean giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
 
 		Room room_o = roomService.getRoom(roomId);
 		if(room_o == null)
-			return;			
+			return false;	
 
-
-
-		ChatTenant t_user = chatTenantService.getRandomTenant();//choose method
+		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
+		if (t_user == null)
+			return false;
+		
+		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", t_user.getChatUser().getId());
+		return true;
+/*
 		ChatUser c_user = t_user.getChatUser();
 		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
-
-		/*
-		 * Tenant author of room && can add new user
-		 */
 
 		room_o.setAuthor(c_user);
 		roomService.update(room_o);
 
 		roomControler.addUserToRoom(b_user, room_o, b_user.getPrincipal(), true);
 
-
+		return true;*/
 	}
 	
+	@RequestMapping(value = "bot_operations/tenant/free/{tenantId}/{roomId}", method = RequestMethod.POST)
+	@ResponseBody
+	public void tenantSendFree(@PathVariable Long tenantId, @PathVariable Long roomId) throws JsonProcessingException {
+		Room room_o = roomService.getRoom(roomId);
+		ChatTenant t_user = chatTenantService.getChatTenant(tenantId);
+		ChatUser c_user = t_user.getChatUser();
+		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
+		room_o.setAuthor(c_user);
+		roomService.update(room_o);
+		roomControler.addUserToRoom(b_user, room_o, b_user.getPrincipal(), true);
+		
+		
+		chatController.addFieldToInfoMap("newConsultationWithTenant", true);
+	}
+	
+	
+	
+
 	@RequestMapping(value = "bot_operations/get_all_categories_ids", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getAllCategoriesIds() throws JsonProcessingException {
@@ -339,7 +356,7 @@ public class BotController {
 		return categories;
 
 	}
-	
+
 	@RequestMapping(value = "bot_operations/get_categories_ids_where_names_like/{categoryName}", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getCategoriesIdsWhereNameLike(@PathVariable String categoryName) throws JsonProcessingException {
@@ -354,11 +371,11 @@ public class BotController {
 		ArrayList<String> categories = null;
 		if (categoryId==null)categories = botItemContainerService.getFirst5DescriptionsLike(description);
 		else
-		categories = botItemContainerService.getFirst5DescriptionsLike(description,categoryId);
+			categories = botItemContainerService.getFirst5DescriptionsLike(description,categoryId);
 		return categories;
 
 	}
-	
+
 	@RequestMapping(value = "bot_operations/get_dialog_items_ids_where_description_like/{categoryId}/{description}", method = RequestMethod.GET)
 	@ResponseBody
 	public String getDialogItemsIdsWhereDescriptionLike(@PathVariable Long categoryId,@PathVariable String description) throws JsonProcessingException {
@@ -370,7 +387,7 @@ public class BotController {
 		return objectMapper.writeValueAsString(dialogItems);
 
 	}
-/////////
+	/////////
 	@RequestMapping(value = "bot_operations/get_all_dialog_items_ids", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getAllDialogItemsIds() throws JsonProcessingException {
@@ -378,24 +395,24 @@ public class BotController {
 		return dialogItems;
 
 	}
-	
+
 	@RequestMapping(value = "bot_operations/get_all_category", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<BotCategory> getAllCategory() {
 		return botCategoryService.getAll();
 	}
-	
+
 	@RequestMapping(value = "bot_operations/set_item/{item}/as_default/{category}", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean setDialogItemAsDefault(@PathVariable("item") Long itemId, @PathVariable("category") Long categoryId) {
 		BotCategory category = botCategoryService.getById(categoryId);
 		if(category == null)
 			return false;
-		
+
 		BotDialogItem item = botItemContainerService.getById(itemId);
 		if(item == null)
 			return false;
-		
+
 		category.setMainElement(item);
 		botCategoryService.update(category);
 		return true;
@@ -406,12 +423,12 @@ public class BotController {
 		BotCategory category = new BotCategory(categoryName);
 		if(category == null)
 			return false;
-		
+
 		botCategoryService.update(category);
 		return true;
 	}
-	
-	
+
+
 	@RequestMapping(value = "bot_operations/get_dialog_items_ids/{categoryId}", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Long> getDialogItemsIds(@PathVariable Long categoryId) throws JsonProcessingException {

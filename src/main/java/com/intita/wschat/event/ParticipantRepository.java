@@ -33,7 +33,10 @@ public class ParticipantRepository {
 	}
 
 	public boolean isOnline(String chatId) {
-		boolean online = activeSessions.containsKey(chatId) &&  activeSessions.get(chatId)>0;
+		boolean containsKey = activeSessions.containsKey(chatId);
+		Integer getId = activeSessions.get(chatId);
+		
+		boolean online = containsKey &&  getId > 0;
 		System.out.println("isOnline "+chatId+" ? "+ online);
 		return online;
 	}

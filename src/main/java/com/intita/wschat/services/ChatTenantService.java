@@ -18,17 +18,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.repositories.ChatTenantRepository;
 
 @Service
 public class ChatTenantService {
+	@Autowired private ParticipantRepository participantRepository;
+
 	private final static Logger log = LoggerFactory.getLogger(ChatTenantService.class);
 	@Autowired
 	private ChatTenantRepository chatTenantRepo;
 
 
-	private List<Long> tenantsBusy;	 
+	private List<Long> tenantsBusy = new ArrayList<Long>();	 
 
 	@PostConstruct
 	@Transactional
@@ -64,29 +67,33 @@ public class ChatTenantService {
 		return tenantsList;
 	}	
 
-	
+
 	public ChatTenant getFreeTenant() {
 		List<ChatTenant> tenants = getTenants();
 		for (ChatTenant tenant : tenants)
 		{
 			Long id = tenant.getId();
 			if (isTenantBusy(id) == false)
-				return tenant;
+			{
+				String chatUserId = tenant.getChatUser().getPrincipal().getName();
+				if (participantRepository.isOnline("" + chatUserId)) //989
+					return tenant;
+			}
 		}
 		return null;
 	}
 
-	
+
 	public void setTenantBusy(Long id) {
 		if ( !isTenantBusy(id))
 			tenantsBusy.add(id);
 	}
-	
+
 	public void setTenantBusy(ChatTenant tenant) {
 		if ( !isTenantBusy(tenant))
 			tenantsBusy.add(tenant.getId());
 	}
-	
+
 	public void setTenantFree(Long id) {
 		for (int i = 0; i < tenantsBusy.size(); i++)
 		{
@@ -94,7 +101,7 @@ public class ChatTenantService {
 				tenantsBusy.remove(i);
 		}
 	}
-	
+
 	boolean isTenantBusy(Long id) {
 		for (Long tenant_id : tenantsBusy)
 		{
@@ -103,7 +110,7 @@ public class ChatTenantService {
 		}
 		return false;
 	}
-	
+
 	boolean isTenantBusy(ChatTenant tenant) {
 		return isTenantBusy(tenant.getId());
 	}

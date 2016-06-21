@@ -96,6 +96,36 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
+    
+    var isAskTenantToTakeConsultationVisible = false;
+    
+    function askTenantToTakeConsultationTogle () {
+		$('#askTenantToTakeConsultation').modal('toggle');
+		isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
+    };
+    
+    function showAskTenantToTakeConsultation() {
+    	alert(1);
+    	if (isAskTenantToTakeConsultationVisible == false)
+    		askTenantToTakeConsultationTogle();    	
+    }
+    
+    function hideAskTenantToTakeConsultation() {
+    	if (isAskTenantToTakeConsultationVisible == true)
+    		askTenantToTakeConsultationTogle();    	
+    }
+    
+    function answerToTakeConsultation(value) {
+    	askTenantToTakeConsultationTogle ();
+    	if (value )
+		{
+    		//answer true
+		}
+    	else
+    	{
+    		//answer false
+		}
+    };    
 
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
@@ -343,11 +373,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             changeLocation("/chatrooms");
         });
     }
+    
+
 
     function subscribeInfoUpdateLP() {
+        //alert("subscribeInfoUpdateLP()");
         $http.post(serverPrefix + "/chat/global/lp/info")
             .success(function(data, status, headers, config) {
-                //console.log("infoUpdateLP data:"+data);
+                console.log("infoUpdateLP data:"+data);
                 if (data["newMessage"] != null) //new message in room
                 {
                     for (var i in data["newMessage"])
@@ -357,6 +390,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     $scope.currentRoom.roomId = data["newGuestRoom"];
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }
+                if (data["newAskConsultation_ToChatUserId"] != null)
+            	{
+                	if (data["newAskConsultation_ToChatUserId"] == $scope.chatUserId)
+                		showAskTenantToTakeConsultation();
+            	}
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
                      $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
@@ -418,6 +456,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         if (mess_obj.nextWindow == 0) {
             $rootScope.authorize = true;
+
             if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
                 //mess_obj.nextWindow=$scope.currentRoom.roomId;
                 //  goToDialogEvn($scope.currentRoom.roomId);
@@ -468,7 +507,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.roomsCount = $scope.rooms.length;
             var room = $scope.currentRoom;
             debugger;
-            $scope.currentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
+            var newCurrentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
+             if ($scope.currentRoom != undefined )
+                $scope.currentRoom = newCurrentRoom;
+            var ii = 0;
     }
 
 
@@ -634,22 +676,24 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         console.log("initStompClient");
 
-        chatSocket.init(serverPrefix + "/ws"); //9999
+        chatSocket.init(serverPrefix + "/wss"); //9999
 
 
         chatSocket.connect(onConnect, function(error) {
             /***************************************
              * TRY LONG POLING LOGIN
              **************************************/
-            //$scope.chatUserId = frame.headers['user-name'];
+            //$scope.chatUserId = frame.headers['user-name'];          
             if ($rootScope.isInited == false) {
                 $rootScope.socketSupport = false;
 
                 $http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, { message: $scope.newMessage }).
                 success(function(data, status, headers, config) {
+
                     console.log("LOGIN OK " + data);
                     login(data);
                     subscribeRoomsUpdateLP();
+
                     subscribeInfoUpdateLP();
                     $scope.realChatUserId = $scope.chatUserId;
                 }).
