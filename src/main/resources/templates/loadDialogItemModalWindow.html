@@ -15,7 +15,7 @@
                                     ng-change="reloadCategories()" 
                                     placeholder="Назва Категорії" 
                                     typeahead-wait-ms = "1000" 
-                                    uib-typeahead="item.name for item in botCategoriesForModal" ng-click="selectedBotCategoryForModalChanged('')"     
+                                    uib-typeahead="item.name for item in botCategoriesForModal"
                                     typeahead-on-select = "onCategoryInputSelect($model)"/>
             <select  id="categoryIdToLoad" type="text" ng-options="c.id for c in botCategoriesForModal" ng-model="selectedBotCategoryForModal" placeholder="Room name" ng-change="selectedBotCategoryForModalChanged(selectedBotCategoryForModal.id);"></select>
             </div>
@@ -23,7 +23,7 @@
               <input 
                                     ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
                                     autocomplete="off" type="text" class="form-control form-inline"
-                                    name="search" id="search"
+                                    name="search" id="dialogItemTypehead"
                                     ng-model="dialogElementInputModel"
                                     ng-change="reloadDialogItems(selectedBotCategoryForModal.id)" 
                                     placeholder="Опис елементу" 
@@ -31,7 +31,7 @@
                                     uib-typeahead="item.description for item in botDialogItemsForModal | unique:'idObject.id'"     
                                     typeahead-on-select = "onDialogItemInputSelect($model)"/>
 
-                <select id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'idObject.id'" ng-model="selectedBotDialogItemForModal" ng-change="selectedBotDialogItemForModalChanged(selectedBotDialogItemForModal.idObject.id)" placeholder="Room name"></select>
+                <select id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'idObject.id'" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
                 </div>
                 
             <div class="modal-footer">
