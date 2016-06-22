@@ -39,6 +39,15 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
         });
     }
 
+    $scope.getParamsInJSON = function(formData) {
+        //concat(arrayB);
+        if ($scope.itemvalue != undefined)
+            formData[$scope.name] = JSON.stringify($scope.itemvalue) || "";
+        for (var scopeAndElementKey in $scope.botChildrens) {
+            $scope.botChildrens[scopeAndElementKey].scope.getParamsInJSON(formData);
+        }
+    }
+
     $rootScope.$watch('isInited', function() {
 
     });

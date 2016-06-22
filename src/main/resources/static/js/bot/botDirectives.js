@@ -350,22 +350,15 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 var url = urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
                 // var dataToSend = JSON.stringify(formElm.serializeArray());
                 var formData = {};
-                for (var scopeAndElementKey in scope.$parent.botChildrens) {
-                    var scopeAndElement = scope.$parent.botChildrens[scopeAndElementKey];
-                    if (typeof scopeAndElement.element != 'undefined' && typeof scopeAndElement.element[0].attributes.name != 'undefined') {
-
-                        formData[scopeAndElement.element[0].attributes.name.value] = JSON.stringify(scopeAndElement.scope.itemvalue) || "";
-                        if(scope.chatRouteInterfaceScope != null && scope.chatRouteInterfaceScope != undefined)
-                        scope.chatRouteInterfaceScope.botParameters[scopeAndElement.element[0].attributes.name.value] = scopeAndElement.scope.itemvalue;
-                    }
-                }
+                //concat(arrayB);
+                scope.mainScope.getParamsInJSON(formData);
                 // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
                 var dataToSend = JSON.stringify(formData);
                 console.log('dataToSend:' + dataToSend);
                 $.ajax({
                     type: "POST",
                     contentType: "binary/octet-stream",
-                    url: url,
+                    url: document.location.origin + globalConfig.baseUrl + url,
                     data: dataToSend, // serializes the form's elements.
                     success: function(data) {
                         if (data == "quize save")
@@ -408,7 +401,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            groupname: '=',
+            name: '=',
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -435,7 +428,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
                     if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
-                        var name = "{{groupname}}_item";
+                        var name = "{{name}}_item";
                         var value = i;
                         var label = "{{labels[{0}]}}".format(i);
                         body += checkBoxTemplate.format(item_type, name, value, label);
@@ -466,7 +459,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
         scope: {
             legend: '=',
             labels: '=',
-            groupname: '=',
+            name: '=',
         },
         link: {
             post: function(scope, element, attr, ctrl) {
@@ -493,7 +486,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
                     if (typeof scope.labels == 'undefined') return;
                     body = "";
                     for (var i = 0; i < scope.labels.length; i++) {
-                        var name = "{{groupname}}_item";
+                        var name = "{{name}}_item";
                         var value = i;
                         var label = "{{labels[{0}]}}".format(i);
                         body += checkBoxTemplate.format(item_type, name, value, label);
@@ -596,7 +589,8 @@ angular.module('springChat.directives').directive('botselect', function($compile
             size: '=',
             multiple: '=',
             options: '=',
-            itemvalue: '<'
+            itemvalue: '<',
+            name : '<'
         },
         link: {
             post: function(scope, element, attr, ctrl) {
