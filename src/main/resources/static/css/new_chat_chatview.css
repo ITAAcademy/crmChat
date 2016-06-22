@@ -22,8 +22,8 @@
     .head-title {
         padding-left: 50%;
     }
-   
 }
+
 @media (min-width: 600px) {
     .chat .answer-add {
         position: relative;
@@ -87,6 +87,7 @@
     height: 100%;
     overflow: hidden;
     border-radius: 200px;
+    position: relative;
     box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
@@ -95,8 +96,10 @@
 .chat .avatar-contaiter img {
     display: block;
     height: 100%;
-    align-items: center;
-    justify-content: center //	margin-left: calc(25%/-2);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
 }
 
 .chat .avatar .status.off {
@@ -225,7 +228,7 @@
 .chat-body .answer .text {
     padding: 12px;
     /*padding-bottom: 2px;
-	padding-top:2px;*/
+    padding-top:2px;*/
     margin: 0px;
     font-size: 16px;
     line-height: 26px;
@@ -310,7 +313,7 @@
 
 .chat .answer-add {
     clear: both;
-   /* position: relative;*/
+    /* position: relative;*/
     margin: 5px 5px 5px;
     padding: 10px;
     background: #4b70a3;

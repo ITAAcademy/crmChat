@@ -36,10 +36,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
             return obj;
         if (count == 2) {
             obj["clip"] = clip;
-            if (index % 2) {
-                obj[k] = size / 4;
-            } else
-                obj[k] = size / 4;
+            obj[k] = "calc(50% - " + size / 4 + "px)";
+
             return obj;
         }
         return { 'width': size / 2, 'height': size / 2 };
