@@ -51,11 +51,11 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
 
     function messageError() {
-        toaster.pop('error', "Error", "server request timeout", 1000);
+        toaster.pop('error', "Error", "server request timeout", 0);
     }
 
     function messageError(mess) {
-        toaster.pop('error', "Error", mess, 1000);
+        toaster.pop('error', "Error", mess, 0);
     }
 
     function getCaretPosition(oField) {
@@ -1159,7 +1159,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
 
         if ($scope.messages.length > 0) {
-            if ($scope.messages[$scope.messages.length - 1].username == msg.username && msg.attachedFiles.length == 0) {
+            if ($scope.messages[$scope.messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && $scope.messages[$scope.messages.length - 1].attachedFiles.length == 0) {
                 $scope.messages[$scope.messages.length - 1].date = msg.date;
                 $scope.messages[$scope.messages.length - 1].message += "\n\n" + msg.message;
             } else {
