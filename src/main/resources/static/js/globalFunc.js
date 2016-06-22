@@ -5,6 +5,7 @@ function toArray(object) {
       return object[key];
     });
 }
+MAX_UPLOAD_FILE_SIZE_BYTES = 100 * 1000 * 1024;
 var daysName = {},
     hoursName = {},
     minutesName = {};

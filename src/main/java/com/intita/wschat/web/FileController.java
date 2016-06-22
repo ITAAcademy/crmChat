@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -25,11 +28,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.util.Transliterator;
 
 import utils.RandomString;
@@ -42,12 +47,30 @@ public class FileController {
 	static final private ObjectMapper mapper = new ObjectMapper();
 	@Value("${crmchat.upload_dir}")
 	private String uploadDir;
+	@Value("${multipart.max-file-size}")
+	private String MaxFileSizeString;
+	
+	//File Size string looks like 100Mb, so wee need check ending, remove last two symbols and convert to bytes count
+	private int convertFileSizeStringToBytes(String size){
+		int maxFileLength = Integer.parseInt(size.substring(0, size.length()-2));//Remove 'Mb' at end
+		String ending = size.substring(size.length()-2,size.length()).toLowerCase();
+		switch(ending){
+		case "mb": maxFileLength *= 1000000;
+		break;
+		case "kb": maxFileLength *= 1000;
+		break;
+		}
+		return maxFileLength;
+	}
+	@Autowired ChatLangService chatLangService;
 	@RequestMapping(method = RequestMethod.POST, value = "/upload_file/{roomId}")
 	@ResponseBody
 	public void saveFile(MultipartHttpServletRequest request,
 			HttpServletResponse response,Principal principal,@PathVariable("roomId") Long roomId) {
 		//0. notice, we have used MultipartHttpServletRequest
-
+		int maxFileLength = convertFileSizeStringToBytes(MaxFileSizeString);
+		//String contentLengthStr = request.getHeader("content-length");
+		//int fileSize = Integer.parseInt(contentLengthStr);
 		//1. get the files from the request object
 		Iterator<String> itr =  request.getFileNames();
 		ArrayList<String> downloadLinks = new ArrayList<String>();
@@ -56,7 +79,7 @@ public class FileController {
 		if(!itr.hasNext())
 		{
 			try {
-				response.getWriter().write("Error, file is empty !");
+				response.getWriter().write("Error,"+((HashMap<String,String>)chatLangService.getLocalization().get("fileOperations")).get("fileEmpty"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -67,19 +90,26 @@ public class FileController {
 		{
 			MultipartFile mpf = request.getFile(itr.next());
 			boolean fileIsEmpty = mpf.getSize() == 0;
-			if (fileIsEmpty)
-			{
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			
+			boolean fileIsTooBig= mpf.getSize() > maxFileLength;
+			if(fileIsTooBig){
 				try {
-					response.getWriter().write("Error, file is empty !");
+					response.sendError(HttpServletResponse.SC_FORBIDDEN,((HashMap<String,String>)chatLangService.getLocalization().get("fileOperations")).get("fileSizeOverflowLimit"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return;
 			}
-			System.out.println(mpf.getOriginalFilename() +" uploaded!");
+			if (fileIsEmpty)
+			{
+				try {
+					response.sendError(HttpServletResponse.SC_FORBIDDEN,((HashMap<String,String>)chatLangService.getLocalization().get("fileOperations")).get("fileEmpty"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return;
+			}
 			String mainDir = ""+roomId;
 			String subDir = principal.getName();
 			String realPathtoUploads =  uploadDir+File.separator+mainDir+File.separator+subDir+File.separator;
@@ -194,7 +224,7 @@ public class FileController {
 	public ModelAndView handleException(FileNotFoundException e) {
 		ModelAndView mav = new ModelAndView();
 	    mav.setViewName("errorpage");
-	    mav.addObject("errorName", "File not found");
+	    mav.addObject("errorName", ((HashMap<String,String>)chatLangService.getLocalization().get("fileOperations")).get("fileNotFound"));
 	    mav.addObject("errorMessage", e.getMessage());
 	    return mav;
 	}
@@ -207,4 +237,5 @@ public class FileController {
 	private String deRandomizeFileName(String randomizedFileName){
 		return randomizedFileName.substring(0,randomizedFileName.length()-DEFAULT_FILE_PREFIX_LENGTH);
 	}
+
 }

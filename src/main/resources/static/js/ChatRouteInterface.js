@@ -781,7 +781,12 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.fileDropped = function() {
         //Get the file
         var files = $scope.uploadedFiles;
-
+        for (var i = 0; i < files.length; i++){
+            if (files[i].size>MAX_UPLOAD_FILE_SIZE_BYTES){
+                alert(fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(files[i].size/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb");
+                return;
+            }
+        }
         //Upload the image
         //(Uploader is a service in my application, you will need to create your own)
         if (files) {
@@ -794,7 +799,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 function(xhr) {
                     $scope.uploadProgress = 0;
                     $scope.$apply();
-                    alert("SEND FAILD:" + xhr.response);
+                    alert("SEND FAILED:" + JSON.parse(xhr.response).message);
                 },
                 function(event, loaded) {
                     console.log(event.loaded + ' / ' + event.totalSize);
@@ -1309,7 +1314,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 function(xhr) {
                     $scope.uploadProgress = 0;
                     $scope.$apply();
-                    alert("SEND FAILD:" + xhr);
+                    alert("SEND FAILED:" + JSON.parse(xhr.response).message);
                 },
                 function(event, loaded) {
                     console.log(event.loaded + ' / ' + event.totalSize);
@@ -1353,7 +1358,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
-        var fileInput = $("#myfile").fileinput({ language: "uk", showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+        var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
     });
 
 

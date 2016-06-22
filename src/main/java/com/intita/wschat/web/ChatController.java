@@ -96,6 +96,7 @@ import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.LecturesRepository;
 import com.intita.wschat.services.BotItemContainerService;
+import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -149,6 +150,7 @@ public class ChatController {
 	@Autowired private CourseService courseService;
 	@Autowired private LecturesService lecturesService;
 	@Autowired private BotItemContainerService dialogItemService;
+	@Autowired private ChatLangService chatLangService;
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -161,7 +163,7 @@ public class ChatController {
 	}
 
 	private final static ObjectMapper mapper = new ObjectMapper();
-	private Map<String,Map<String,Object>> langMap = new HashMap<>();
+	
 
 	private volatile Map<String,Queue<UserMessage>> messagesBuffer =  Collections.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key => roomId
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
@@ -182,7 +184,12 @@ public class ChatController {
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
 		return messagesBuffer;
 	}
-
+	@SuppressWarnings("unchecked")
+	@PostConstruct
+	public void onCreate()
+	{
+		chatLangService.updateDataFromDatabase();
+	}
 
 	public static class CurrentStatusUserRoomStruct{
 		private Room room;
@@ -231,38 +238,6 @@ public class ChatController {
 	private final Long timeOutMessage;
 	 */
 
-	@SuppressWarnings("unchecked")
-	@PostConstruct
-	public void onCreate()
-	{
-		updateLangMap();
-	}
-
-	private void updateLangMap()
-	{
-		Iterable<Lang> it = chatLangRepository.findAll();
-		for(Lang lg:it)
-		{
-			HashMap<String, Object> result = null;
-			JsonFactory factory = new JsonFactory(); 
-			ObjectMapper mapper = new ObjectMapper(factory); 
-			mapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
-
-			TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
-
-			try {
-				result = mapper.readValue(lg.getMap(), typeRef);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Lang " + lg.getLang() + " is wrong!!!");
-				e.printStackTrace();
-			}
-			langMap.put(lg.getLang(), result);
-			log.info("Current lang pack" + langMap.toString());
-
-		}
-		return;
-	}
 	/********************
 	 * GET CHAT USERS LIST FOR TEST
 	 *******************/
@@ -830,10 +805,6 @@ public class ChatController {
 		return 2;
 	}
 
-	public Map<String, Object> getLocolization()
-	{
-		return langMap.get(getCurrentLang());
-	}
 
 	private static java.sql.Date getSqlDate(String date_str)
 	{	  
@@ -954,7 +925,7 @@ public class ChatController {
 	public void addLocolization(Model model)
 	{
 		String lang = getCurrentLang();
-		model.addAttribute("lgPack", langMap.get(lang));
+		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
 		List<ConfigParam> config =  configParamService.getParams();
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
 		configMap.put("currentLang", lang);
@@ -965,7 +936,7 @@ public class ChatController {
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model) {
 		authenticationProvider.autorization(authenticationProvider);
-		updateLangMap();
+		chatLangService.updateDataFromDatabase();
 		if(before != null)
 		{
 			 return "redirect:"+ before;
@@ -978,7 +949,7 @@ public class ChatController {
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
 	public String  getConsultationTemplate(HttpRequest request, Model model) {
 		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
-		Map<String, Object> ratingLang = (Map<String, Object>) getLocolization().get("ratings");
+		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
 			ConsultationRatings consultationRatingsCopy = new ConsultationRatings(consultationRatings);
 			String translate_rating_name = (String)ratingLang.get(consultationRatingsCopy.getName());
