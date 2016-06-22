@@ -171,15 +171,18 @@ var BOT_ELEMENTS_MODULE = function() {
         //var elmProperties = BotElementProperties[nodeName];
         // var attrName = jElement.attr();
         var elementInstance = BOT_ELEMENTS_MODULE.ElementInstance(elmType);
+        var stringValue;
         for (var propertie in elementInstance.properties) {
             var attrValue = jElement.attr(propertie);
+            var type = getType(elementInstance.properties[propertie]);
+            
             if (typeof(attrValue) != 'undefined') {
-                if (typeof elementInstance.properties[propertie] != "object")
-                    var stringValue = jElement.attr(propertie).slice(1, -1);
+                if (typeof elementInstance.properties[propertie] != "object" && type != "bool")
+                    stringValue = jElement.attr(propertie).slice(1, -1);
                 else
-                    var stringValue = jElement.attr(propertie);
+                    stringValue = attrValue;
 
-                var type = getType(elementInstance.properties[propertie]);
+                
                 if (type == "bool")
                     elementInstance.properties[propertie] = parseBoolean(stringValue);
                 else
