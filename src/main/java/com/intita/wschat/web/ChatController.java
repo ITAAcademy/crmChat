@@ -1006,6 +1006,9 @@ public class ChatController {
 			item = dialogItemService.getByIdAndLang(id, lang);
 		else
 			item = dialogItemService.getById(id);
+		
+		if(item == null)
+			return "quize_err";
 		//model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
 		try {
 			model.addAttribute("item", HtmlUtility.escapeQuotes(mapper.writeValueAsString(item)));
