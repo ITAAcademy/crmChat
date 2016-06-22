@@ -781,12 +781,14 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.fileDropped = function() {
         //Get the file
         var files = $scope.uploadedFiles;
+        var totalSize = 0;
         for (var i = 0; i < files.length; i++){
-            if (files[i].size>MAX_UPLOAD_FILE_SIZE_BYTES){
-                alert(fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(files[i].size/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb");
+            totalSize += files[i].size; 
+        }
+          if (totalSize>MAX_UPLOAD_FILE_SIZE_BYTES){
+                alert(fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(totalSize/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb");
                 return;
             }
-        }
         //Upload the image
         //(Uploader is a service in my application, you will need to create your own)
         if (files) {
