@@ -17,7 +17,7 @@ springChatControllers.config(function($routeProvider) {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotViewBuilderController"
     });
-        $routeProvider.when("/builderForm", {
+    $routeProvider.when("/builderForm", {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotFormBuilderController"
     });
@@ -328,20 +328,28 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.seachersTeachers = [];
         });
     }
+    var goToPrivateDialogErr = function (data, status, headers, config)
+    {
+                toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
+                console.log("PRIVATE ROOM CREATE FAILD ");
+                changeLocation("/chatrooms");
+    }
     $scope.goToPrivateDialog = function(intitaUserId) {
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
         success(function(data, status, headers, config) {
             console.log("PRIVATE ROOM CREATE OK ");
 
             //$scope.goToDialogById(data);
-            $scope.currentRoom.roomId = data;
-            changeLocation("/dialog_view/" + data);
+            if (data != null && data != undefined) {
+                $scope.currentRoom.roomId = data;
+                changeLocation("/dialog_view/" + data);
+            } else {
+                goToPrivateDialogErr();
+            }
+
 
         }).
-        error(function(data, status, headers, config) {
-            console.log("PRIVATE ROOM CREATE FAILD ");
-            changeLocation("/chatrooms");
-        });
+        error(goToPrivateDialogErr);
     }
 
     function subscribeInfoUpdateLP() {
@@ -444,31 +452,31 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     function updateRooms(message) {
-            var parseObj;
+        var parseObj;
 
-            if ($rootScope.socketSupport) {
-                parseObj = JSON.parse(message.body);
-            } else {
-                parseObj = message;
-            }
-            var needReplace = parseObj.replace;
-            var roomList = parseObj.list;
-            if (needReplace) {
-                $scope.rooms = roomList;
-            } else {
-                for (var i = 0; i < $scope.rooms.length; i++) {
-                    for (var j = roomList.length - 1; j >= 0; j--) {
-                        if (roomList[j].roomId == $scope.rooms[i].roomId) {
-                            $scope.rooms[i] = roomList[j];
-                            roomList.splice(j, 1);
-                        }
+        if ($rootScope.socketSupport) {
+            parseObj = JSON.parse(message.body);
+        } else {
+            parseObj = message;
+        }
+        var needReplace = parseObj.replace;
+        var roomList = parseObj.list;
+        if (needReplace) {
+            $scope.rooms = roomList;
+        } else {
+            for (var i = 0; i < $scope.rooms.length; i++) {
+                for (var j = roomList.length - 1; j >= 0; j--) {
+                    if (roomList[j].roomId == $scope.rooms[i].roomId) {
+                        $scope.rooms[i] = roomList[j];
+                        roomList.splice(j, 1);
                     }
                 }
             }
-            $scope.roomsCount = $scope.rooms.length;
-            var room = $scope.currentRoom;
-            debugger;
-            $scope.currentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
+        }
+        $scope.roomsCount = $scope.rooms.length;
+        var room = $scope.currentRoom;
+        debugger;
+        $scope.currentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
     }
 
 
@@ -484,7 +492,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     room.date = curentDateInJavaFromat();
                     new Audio('data/new_mess.mp3').play();
-                    toaster.pop('note', "NewMessage in " + room.string, "", 1000);
+                    toaster.pop('note', "NewMessage in " + room.string, "", 2000);
                     break; // stop loop
                 }
             }
