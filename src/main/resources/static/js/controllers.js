@@ -474,8 +474,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             }
         }
         $scope.roomsCount = $scope.rooms.length;
-        var room = $scope.currentRoom;
-        debugger;
+        if (typeof $scope.currentRoom != 'undefined')
         $scope.currentRoom = getRoomById($scope.rooms, $scope.currentRoom.roomId);
     }
 

@@ -57,15 +57,15 @@
 								class="user">
 								<div class="avatar">
 									<a target="_blank" ng-if="participant.intitaUserId" 
-										th:href="${config.get('baseUrl')+'/profile/{{participant.intitaUserId}}'}">
+										ng-href="{{baseurl}}/profile/{{participant.intitaUserId}}">
 										<div class="avatar-contaiter centered"  >
 										<!--ng-init="scaleCenterIconCircle()" -->
 											<img											
-											th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
+											ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}"
 											alt="{{participant.username}}" />
 										</div>
 									</a> <a target="_blank" ng-if="!participant.intitaUserId"> <img
-									th:src="${config.get('baseUrl')+'/images/avatars/{{participant.avatar}}'}"
+									ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}"
 									alt="{{participant.username}}" />
 								</a>
 								<div
@@ -94,8 +94,7 @@
 							<div class="avatar">
 								<div class="avatar-contaiter centered">
 									<img
-									th:src="${config.get('baseUrl')+'/images/avatars/{{findParticipant(message.username).avatar}}'}"
-									alt="User name" />
+									ng-src="{{baseurl}}/images/avatars/{{findParticipant(message.username).avatar}}"/>
 								</div>
 								<div
 									ng-class="!findParticipant(message.username).online ? 'status offline' : 'status online'"
