@@ -339,8 +339,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             console.log("PRIVATE ROOM CREATE OK ");
 
             //$scope.goToDialogById(data);
+            if($scope.currentRoom == null)
+                $scope.currentRoom = {};
             if (data != null && data != undefined) {
-                $scope.currentRoom.roomId = data;
+            //    $scope.currentRoom.roomId = data;
                 changeLocation("/dialog_view/" + data);
             } else {
                 goToPrivateDialogErr();
