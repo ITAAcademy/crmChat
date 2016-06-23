@@ -165,6 +165,8 @@ public class ChatController {
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
+	
+	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
 	public void addFieldToInfoMap(String key, Object value)
@@ -177,6 +179,25 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
+	
+	public void addFieldToUserInfoMap(ChatUser user, String key, Object value)
+	{
+		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(user.getId());
+		if(t_infoMap == null)
+		{
+			t_infoMap = new ConcurrentHashMap<>();
+			infoMapForUser.put(user.getId(), t_infoMap);
+		}
+		
+		ArrayList<Object> listElm = t_infoMap.get(user.getId());
+		if(listElm == null)
+		{
+			listElm = new ArrayList<>();
+			t_infoMap.put(key, listElm);
+		}
+		listElm.add(value);
+	}
+	
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
 		return messagesBuffer;
 	}
@@ -474,7 +495,7 @@ public class ChatController {
 	@ResponseBody
 	public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
 
-		Long timeOut = 10000L;
+		Long timeOut = 15000L;
 		participantRepository.add(principal.getName());
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
@@ -486,9 +507,10 @@ public class ChatController {
 		return result;
 	}
 
-	@Scheduled(fixedDelay=5000L)
+	@Scheduled(fixedDelay=10000L)
 	public void processGlobalInfo(){
 		String result;
+		addFieldToUserInfoMap(chatUsersService.getChatUser((long)427), "test", "only for 427");
 		try {
 			result = mapper.writeValueAsString(infoMap);
 		} catch (JsonProcessingException e) {
@@ -496,20 +518,38 @@ public class ChatController {
 			e.printStackTrace();
 			result = "{}";
 		}
-		infoMap.clear();
+
 		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
 
 			//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
-			participantRepository.removeParticipant((globalInfoResult.get(nextUser)));
+			String chatId = globalInfoResult.get(nextUser);
+			participantRepository.removeParticipant(chatId);
 
-			LoginEvent loginEvent = new LoginEvent(Long.parseLong(globalInfoResult.get(nextUser)), globalInfoResult.get(nextUser),participantRepository.isOnline(globalInfoResult.get(nextUser)));
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId, participantRepository.isOnline(chatId));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 
-			if(!nextUser.isSetOrExpired())
+			ConcurrentHashMap<String, ArrayList<Object>> map = infoMapForUser.get(Long.parseLong(chatId));
+			if(map != null)
+			{
+				map.putAll(infoMap);
+				try {
+					result = mapper.writeValueAsString(map);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					result = "{}";
+				}
+			}
+			
+			if(!nextUser.isSetOrExpired() && result != "{}")//@BAD@
 				nextUser.setResult(result);		
 		}
+		
+		infoMap.clear();
 		globalInfoResult.clear();
+		infoMapForUser.clear();
+		
 
 	}
 	//NOT TEST!!!
