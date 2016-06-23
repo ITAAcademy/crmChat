@@ -131,19 +131,19 @@ public class ConsultationsService {
 		if(result == null)
 		{
 			User consultant_user =  iCons.getConsultant();
-			ChatUser consultant = consultant_user.getChatUser();
-			ChatUser author = iCons.getAuthor().getChatUser();
+			ChatUser consultant = chatUsersService.getChatUserFromIntitaUser(consultant_user, false);
+			ChatUser author = chatUsersService.getChatUserFromIntitaUser(iCons.getAuthor(), false);			
 
 			Room consultationRoom = new Room();
 			consultationRoom.setType((short) RoomType.CONSULTATION);
-			consultationRoom.setAuthor(iCons.getConsultant().getChatUser());
+			consultationRoom.setAuthor(consultant);
 			consultationRoom.setName("Consultation_" + new Date().toString());
 			consultationRoom.setActive(false);
-			chatRoomsService.addUserToRoom(iCons.getAuthor().getChatUser(), consultationRoom);
+			chatRoomsService.addUserToRoom(author, consultationRoom);
 			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
 
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsModelByChatUser(consultant)));
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(iCons.getAuthor().getChatUser())));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(author)));
 			//LP
 			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
 			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));

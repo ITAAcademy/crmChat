@@ -18,6 +18,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         COMMAND_MODE: 3
     };
 
+    var errorMsgTitleNotFound = "Сталася помилка";
+    var errorMsgContentNotFound = "Кімната не існує або Ви не є її учасником";
+
 
     $scope.BOT_ID = 0; // need read from config
 
@@ -782,14 +785,20 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         //Get the file
         var files = $scope.uploadedFiles;
         var totalSize = 0;
-        for (var i = 0; i < files.length; i++){
-            totalSize += files[i].size; 
+        for (var i = 0; i < files.length; i++) {
+            totalSize += files[i].size;
         }
+        if (totalSize > MAX_UPLOAD_FILE_SIZE_BYTES) {
+            alert(fileUploadLocal.fileSizeOverflowLimit + ":" + Math.round(totalSize / 1024) + "/" + MAX_UPLOAD_FILE_SIZE_BYTES / 1024 + "Kb");
+            return;
+        }
+
           if (totalSize>MAX_UPLOAD_FILE_SIZE_BYTES){
                 var noteStr = fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(totalSize/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb";
           toaster.pop('error', "Failed", noteStr, 0);
                 return;
             }
+
         //Upload the image
         //(Uploader is a service in my application, you will need to create your own)
         if (files) {
@@ -1037,6 +1046,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                     }
                     if (xhr.status === 404 || xhr.status === 405) {
                         chatControllerScope.changeLocation("/chatrooms");
+                        toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                     }
                     subscribeMessageLP();
                 }
@@ -1062,6 +1072,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
                         chatControllerScope.changeLocation("/chatrooms");
+                        toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
+                        toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
                     }
                     subscribeParticipantsLP();
 
@@ -1125,7 +1137,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
-   //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
+        //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var summarised = false;
         $scope.oldMessage = msg;
@@ -1152,7 +1164,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     function calcPositionPush(msg) {
         if (msg == null)
             return null;
-       // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
+        // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var objDiv = document.getElementById("messagesScroll");
         var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 100;
@@ -1180,26 +1192,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         $scope.$$postDigest(function() {
             var objDiv = document.getElementById("messagesScroll");
             if (needScrollDown)
-                objDiv.scrollTop = 99999999999//objDiv.scrollHeight;
+                objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
 
     }
 
     function loadSubscribeAndMessage(message) {
         $scope.roomType = message["type"];
-        if ($scope.roomType == 2 && $route.current.scope.controllerName != "ConsultationController") //redirect to consultation
-        {
-            $http.post(serverPrefix + "/chat/consultation/fromRoom/" + chatControllerScope.currentRoom.roomId)
-                .success(function(data, status, headers, config) {
-                    if (data == "" || data == undefined)
-                        $rootScope.goToAuthorize(); //not found => go out
-                    else
-                        $location.path("consultation_view/" + data);
-                }).error(function errorHandler(data, status, headers, config) {
-                    $rootScope.goToAuthorize(); //not found => go out
-                });
-            return;
-        }
 
         $scope.participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
@@ -1361,7 +1360,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
-        var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+
+        var fileInput = $("#myfile").fileinput({ language: "ua", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
         $('#myfile').on('change', function(event, numFiles, label) {
             var totalFilesLength = 0;
     for (var i = 0; i < this.files.length; i++){
@@ -1377,6 +1377,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
           $('#myfile').on('fileclear', function(event, numFiles, label) {
              $('#myfile').fileinput('unlock');
     });
+
     });
 
 
