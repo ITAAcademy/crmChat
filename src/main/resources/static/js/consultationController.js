@@ -37,7 +37,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                 .success(function(data, status, headers, config) {
                     $scope.$$postDigest(function() {
                         var nice = $(".scroll").niceScroll();
-                        var fileInput = $("#myfile").fileinput({ language: "ua", maxFileSize:100000, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+                        var fileInput =  $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
                     });
                     var status = data["status"];
                     $scope.status = status;

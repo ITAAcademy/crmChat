@@ -786,7 +786,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             totalSize += files[i].size; 
         }
           if (totalSize>MAX_UPLOAD_FILE_SIZE_BYTES){
-                alert(fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(totalSize/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb");
+                var noteStr = fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(totalSize/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb";
+          toaster.pop('error', "Failed", noteStr, 0);
                 return;
             }
         //Upload the image
@@ -1361,6 +1362,21 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
         var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+        $('#myfile').on('change', function(event, numFiles, label) {
+            var totalFilesLength = 0;
+    for (var i = 0; i < this.files.length; i++){
+    totalFilesLength += this.files[i].size;
+    }
+    if (totalFilesLength > MAX_UPLOAD_FILE_SIZE_BYTES) {
+          $('#myfile').fileinput('lock');
+          var noteStr = fileUploadLocal.fileSizeOverflowLimit+":"+Math.round(totalFilesLength/1024)+"/"+ MAX_UPLOAD_FILE_SIZE_BYTES/1024 +"Kb";
+          //toaster.pop('note', "Created", noteStr, 0);
+          alert(noteStr);
+    }
+    });
+          $('#myfile').on('fileclear', function(event, numFiles, label) {
+             $('#myfile').fileinput('unlock');
+    });
     });
 
 
