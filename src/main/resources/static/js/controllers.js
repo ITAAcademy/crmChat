@@ -328,11 +328,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.seachersTeachers = [];
         });
     }
-    var goToPrivateDialogErr = function (data, status, headers, config)
-    {
-                toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
-                console.log("PRIVATE ROOM CREATE FAILD ");
-                changeLocation("/chatrooms");
+    var goToPrivateDialogErr = function(data, status, headers, config) {
+        toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
+        console.log("PRIVATE ROOM CREATE FAILD ");
+        changeLocation("/chatrooms");
     }
     $scope.goToPrivateDialog = function(intitaUserId) {
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
@@ -407,7 +406,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     function login(mess_obj) {
-        $rootScope.isInited = true;
         $scope.chatUserId = mess_obj.chat_id;
         $scope.chatUserNickname = mess_obj.chat_user_nickname;
         $scope.chatUserRole = mess_obj.chat_user_role;
@@ -423,6 +421,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.rooms = JSON.parse(mess_obj.chat_rooms).list;
             $scope.roomsCount = $scope.rooms.length;
         }
+
+        $rootScope.isInited = true;
 
         if (mess_obj.nextWindow == 0) {
             $rootScope.authorize = true;
@@ -440,12 +440,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 changeLocation("/chatrooms");
         } else {
             $rootScope.authorize = false;
-            /*
+            
             if ($location.path() != "/") {
                 $rootScope.goToAuthorize();
                 return;
             }
-            */
+            
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
             toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
         }

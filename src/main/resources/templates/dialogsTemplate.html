@@ -5,7 +5,7 @@
                 <div class="input-group chat-head">
                     <div class="row">
                         <div class="col-xs-12 col-sm-10 height-full">
-                            <span  class="glyphicon glyphicon-search left-search-icon"/>
+                            <span class="glyphicon glyphicon-search left-search-icon" />
                             <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search" />
                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper">
                                 <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
@@ -50,11 +50,11 @@
                                     <div class="message_author_header">{{room.lastMessageAuthor}}
                                     </div>
                                     <div class="message_body_item">
-                                        <dir  ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
+                                        <dir ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
           var elm = roomElement.context;
           $clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
           }"></dir>
-                                                  <div ng-if="room.lastMessageAuthorId == 0" class="message_body_text">Interactive msg</div>
+                                        <div ng-if="room.lastMessageAuthorId == 0" class="message_body_text">Interactive msg</div>
                                         <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
                                     </div>
                                 </div>
@@ -68,6 +68,4 @@
         </div>
     </div>
 </div>
-
-
-	<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow"/>
+<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow" />
