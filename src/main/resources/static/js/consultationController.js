@@ -35,11 +35,11 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
         if ($rootScope.isInited == true) {
             $http.post(serverPrefix + "/chat/consultation/info/" + $routeParams.consultationId)
                 .success(function(data, status, headers, config) {
-                    $scope.$$postDigest(function() {
+/*                    $scope.$$postDigest(function() {
                         var nice = $(".scroll").niceScroll();
                         var fileInput =  $("#myfile").fileinput({ language: "ua", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES/1000,minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
 
-                    });
+                    });*/
                     var status = data["status"];
                     $scope.status = status;
                     if (status < 0 || status == undefined) {
