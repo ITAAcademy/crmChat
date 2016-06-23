@@ -922,7 +922,7 @@ public class ChatController {
 		//777
 	}
 
-	public void addLocolization(Model model)
+	public void addLocolization(Model model,ChatUser currentUser)
 	{
 		String lang = getCurrentLang();
 		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
@@ -930,11 +930,11 @@ public class ChatController {
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
 		configMap.put("currentLang", lang);
 		model.addAttribute("config", configMap);
-		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases());
+		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases(currentUser));
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model) {
+	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		authenticationProvider.autorization(authenticationProvider);
 		chatLangService.updateDataFromDatabase();
 		if(before != null)
@@ -942,12 +942,12 @@ public class ChatController {
 			 return "redirect:"+ before;
 		}
 		
-		addLocolization(model);
+		addLocolization(model,chatUsersService.getChatUser(principal));
 		return "index";
 	}
 
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
-	public String  getConsultationTemplate(HttpRequest request, Model model) {
+	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {
 		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
 		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
@@ -957,21 +957,21 @@ public class ChatController {
 			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
-		addLocolization(model);
-		return getTeachersTemplate(request, "consultationTemplate", model);
+		addLocolization(model,chatUsersService.getChatUser((principal)));
+		return getTeachersTemplate(request, "consultationTemplate", model,principal);
 	}	
 
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model) {
+	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Principal principal) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
-		addLocolization(model);
+		addLocolization(model,chatUsersService.getChatUser(principal));
 
 		return page;
 	}
 	
 	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir) {
-		getIndex(request, null, model);
+	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir,Principal principal) {
+		getIndex(request, null, model,principal);
 		BotDialogItem item;
 		if(lang != null)
 			item = dialogItemService.getByIdAndLang(id, lang);

@@ -198,10 +198,16 @@ public class RoomsService {
 	}
 	
 	@Transactional(readOnly = true)
-	public ArrayList<Phrase> getEvaluatedPhrases(){
+	public ArrayList<Phrase> getEvaluatedPhrases(ChatUser currentUser){
 		
-		String[] searchList = {"$date"};
-		String[] replacementList = {new SimpleDateFormat("dd-MM-yyyy").format(new Date())};
+		String[] searchList = {"$date","$username"};
+		String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+		User intitaUser = null;
+		if (currentUser!=null)currentUser.getIntitaUser();
+		String currentUserName = "";
+		if(intitaUser!=null) currentUserName = intitaUser.getFullName();
+		else currentUserName = currentUser.getNickName();
+		String[] replacementList = {currentDate,currentUserName};
 		ArrayList<Phrase> phrases = getPhrases();
 		for (Phrase phrase : phrases){
 			String phraseText = phrase.getText();

@@ -227,6 +227,9 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 	public String getFirstName() {
 		return firstName;
 	}
+	public String getFullName(){
+		return firstName + secondName;
+	}
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
