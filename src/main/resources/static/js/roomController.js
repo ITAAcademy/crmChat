@@ -55,7 +55,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     }
 
     function doGoToRoom(roomId) {
-        debugger;
+        //debugger;
         if ($scope.mouseBusy == false)
             chatControllerScope.changeLocation('/dialog_view/' + roomId);
     }
@@ -111,6 +111,9 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
 			if ($rootScope.socketSupport) {
             chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({"roomForUpdate" : $rootScope.roomForUpdate}));
         } else {
+        	if (chatControllerScope.currentRoom == undefined)
+        		chatControllerScope.currentRoom = { roomId: '' };
+        		
             $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {"roomForUpdate" : $rootScope.roomForUpdate});
 		}
 

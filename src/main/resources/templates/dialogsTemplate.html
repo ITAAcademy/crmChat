@@ -1,3 +1,7 @@
+<button id="mmmbutton" style="width: 100px; height: 40px;
+background: red;" ng-click=" answerToFinishConsultation()"
+>  </button>
+
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
@@ -28,7 +32,7 @@
                 <ul ng-repeat="room in rooms | orderBy: ['-nums', '-date'] | filter:filterDialogsByType
                | filter:{string:(roomsearchquery||'')} " class="list-group list-group-dialogs">
                     <li class="list-group-item list-group-item-dialogs">
-                        <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event,room.roomId)">
+                        <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event, room.roomId)">
                             <div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
                                 <div class=" avatar_group avatar-container">
                                     <img ng-style="calcImage(room.avatars.length, $index)" ng-repeat="avatar in room.avatars track by $index" ng-src="{{baseurl}}/images/avatars/{{avatar}}" alt="image" class="avatar" />

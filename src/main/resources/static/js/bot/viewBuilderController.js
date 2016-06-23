@@ -221,12 +221,12 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
 
     $scope.createBotDialogItem = function(description, categoryId) {
         var requestUrl = serverPrefix + "/bot_operations/create_bot_dialog_item"
-        debugger;
+       // debugger;
         $scope.newDialogItem.description = description;
         $scope.newDialogItem.category.id = categoryId;
         $http.post(requestUrl, $scope.newDialogItem).
         success(function(data, status, headers, config) {
-            debugger;
+            //debugger;
             loadView(data, status, headers, config);
             $scope.newDialogItem = botDialogItemClean();
             toaster.pop('note', "Created", "dialogItem created", 2000);

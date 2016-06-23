@@ -219,7 +219,7 @@ public class ChatController {
 			return null;
 
 		long timeSpend = System.currentTimeMillis() - startTime;
-		log.info("isMyRoom time:" + timeSpend );
+		//log.info("isMyRoom time:" + timeSpend );
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
 	}
 
@@ -482,7 +482,7 @@ public class ChatController {
 		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
 		simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
 
-		System.out.println("globalInfoResult.add:"+principal.getName());
+		//System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
 	}
 

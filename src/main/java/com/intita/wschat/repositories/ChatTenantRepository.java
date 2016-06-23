@@ -10,13 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import com.intita.wschat.models.ChatTenant;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 
 @Qualifier("IntitaConf") 
 public interface ChatTenantRepository extends CrudRepository<ChatTenant, Long> {
 	   Page<ChatTenant> findById(Long id, Pageable pageable);
 	   ChatTenant findById(Long id);
+	   ChatTenant findByChatUser(ChatUser user);
+	   Long findIdByChatUser(ChatUser user);
 	   Page<ChatTenant> findAll(Pageable pageable);
+	   List<ChatTenant> findAll();
 	   ArrayList<ChatTenant> findAllByEndDateAfterOrEndDateIsNull(Date date);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);

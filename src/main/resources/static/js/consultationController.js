@@ -60,14 +60,17 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                                 $scope.pageClass = 'scale-fade-in';
                             }),
                             function() {
+                        	alert(15)
                                 chatControllerScope.changeLocation("/chatrooms");
                             };
                     } else {
+                    	alert(23)
                         $scope.goToDialog(roomId).then(function() {
                                 chatControllerScope.currentRoom.roomId = roomId;
                                 $scope.pageClass = 'scale-fade-in';
                             }),
                             function() {
+                        	alert(16)
                                 chatControllerScope.changeLocation("/chatrooms");
                             };
                     }

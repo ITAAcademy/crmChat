@@ -314,15 +314,17 @@ public class BotController {
 		if (t_user == null)
 			return false;
 		
+		chatTenantService.setTenantBusy(t_user);
+		  
 		tempRoomAskTenant.add(room_0);
 
 		String userIdStr = principal.getName();
 		Long userId =  Long.parseLong(userIdStr, 10);
-		askConsultationUsers.add(userId);
+		askConsultationUsers.add(userId);		
 
-		chatTenantService.setTenantBusy(t_user);
-
-		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", t_user.getChatUser().getId());
+		Object[] obj = new Object[] {  t_user.getChatUser().getId(), room_0.getId() };
+		
+		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
 		return true;
 		/*
 		ChatUser c_user = t_user.getChatUser();
@@ -335,44 +337,79 @@ public class BotController {
 
 		return true;*/
 	}
+	
+	public boolean giveTenant(Long roomId) {
+		
+		List<Long> ff = chatTenantService.getTenantsBusy();
 
-	@RequestMapping(value = "bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
+		Room room_0 = roomService.getRoom(roomId);
+		if(room_0 == null)
+			return false;	
+
+		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
+		if (t_user == null)
+			return false;
+
+		chatTenantService.setTenantBusy(t_user);
+
+		Object[] obj = new Object[] {  t_user.getChatUser().getId(), room_0.getId() };
+		
+		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
+		return true;
+	}
+
+	@RequestMapping(value = "/bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
 		chatTenantService.setTenantFree(principal);
 	}
 
-	@RequestMapping(value = "bot_operations/tenant/refused",  method = RequestMethod.POST)
+	@RequestMapping(value = "/bot_operations/tenant/refused222/",  method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendRefused(Principal principal) {
-		new java.util.Timer().schedule( 
+	public boolean tenantSendRefused(@PathVariable Long roomId, Principal principal) {	
+		
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
+		Long id = chatTenantService.getChatTenantId(chatUser);
+		chatTenantService.setTenantBusy(id);
+		/*new java.util.Timer().schedule( 
 				new java.util.TimerTask() {
 					@Override
 					public void run() {
 						chatTenantService.setTenantFree(principal);
 					}
 				}, 
-				tenantFreeTime 
-				);
+				15000//tenantFreeTime 
+				);*/
+		return giveTenant(roomId);
 	}
 
-	@RequestMapping(value = "bot_operations/tenant/free/{tenantId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/bot/operations/tenant/free", method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendFree(@PathVariable Long tenantId) throws JsonProcessingException {
-		ChatTenant t_user = chatTenantService.getChatTenant(tenantId);
-		ChatUser c_user = t_user.getChatUser();
-		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
+	public void tenantSendFree(Principal principal) {
+		Long chatUserId = Long.parseLong(principal.getName());
+		
+		ChatUser c_user = chatUsersService.getChatUser(chatUserId);
+		if (c_user == null)
+			return;
+		
+		//ChatTenant t_user = chatTenantService.getChatTenant(tenantChatUser);
+		//ChatUser c_user = t_user.getChatUser();
+		//ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
 
 		Room room_ = tempRoomAskTenant.get(0);
 		tempRoomAskTenant.remove(0);
-		room_.setAuthor(c_user);
+		//room_.setAuthor(c_user);
 		roomService.update(room_);
-		roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);
-
+		//roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);
+		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
+		
+		
 		Long userId = askConsultationUsers.get(0);
 		askConsultationUsers.remove(0);
+		
+		Object[] obj = new Object[] {userId, chatUserId};
 
-		chatController.addFieldToInfoMap("newConsultationWithTenant", userId);
+		chatController.addFieldToInfoMap("newConsultationWithTenant", obj);
 	}
 
 

@@ -6,7 +6,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	 
 	$scope.controllerName = "ChatRouteController";
 	var chatControllerScope = Scopes.get('ChatController');
-	$rootScope.$watch('isInited',function(){
+	$rootScope.$watch('isInited',function() {
 			console.log("try " + chatControllerScope.currentRoom);
 			if($rootScope.isInited == true)
 			{
@@ -26,9 +26,14 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 						chatControllerScope.currentRoom.roomId = $routeParams.roomId;
 						$scope.pageClass = 'scale-fade-in';
 					}, function(){
+						if ($scope.needReloadPage != undefined)
+							if ($scope.needReloadPage ) 
+								return;
+
 						chatControllerScope.changeLocation("/");
 						location.reload();
-						//alert("ERR");
+						//alert("ERR");							
+						scope.needReloadPage = true;
 					});
 				}
 			}

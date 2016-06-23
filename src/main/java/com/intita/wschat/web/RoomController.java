@@ -227,7 +227,7 @@ public class RoomController {
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
 				if(s_botEnable != null)
-					botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+					botEnable = Boolean.parseBoolean(s_botEnable.getValue());
 				if (botEnable){
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				}
@@ -699,6 +699,11 @@ public class RoomController {
 		System.out.println(Boolean.toString(roomService.removeUserFromRoom(user_o, room_o)));
 		return true;
 	}
+	
+	public boolean removeUserFromRoom(ChatUser user, Room room) {		
+		return roomService.removeUserFromRoom(user.getIntitaUser(), room);
+	}
+	
 	public static void addFieldToSubscribedtoRoomsUsersBuffer(SubscribedtoRoomsUsersBufferModal modal)
 	{
 		subscribedtoRoomsUsersBuffer.add(modal);

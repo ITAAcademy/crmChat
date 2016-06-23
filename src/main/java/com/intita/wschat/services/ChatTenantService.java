@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatTenant;
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.repositories.ChatTenantRepository;
 
 @Service
@@ -32,7 +33,7 @@ public class ChatTenantService {
 	private ChatTenantRepository chatTenantRepo;
 
 
-	private List<Long> tenantsBusy = new ArrayList<Long>();	 	 
+	private List<Long> tenantsBusy =  new ArrayList<Long>();	 	 
 
 	@PostConstruct
 	@Transactional
@@ -67,16 +68,23 @@ public class ChatTenantService {
 		ArrayList<ChatTenant> tenantsList = (ArrayList<ChatTenant>) IteratorUtils.toList(chatTenantsIterable.iterator());
 		return tenantsList;
 	}	
+	
+	@Transactional
+	public List<ChatTenant> getAllTenants(){
+		return chatTenantRepo.findAll();
+	}
 
 
-	public ChatTenant getFreeTenant() {		
-		List<ChatTenant> tenants = getTenants();
+	public ChatTenant getFreeTenant() {			
+		List<ChatTenant> tenants = getTenants();		
+		
 		for (ChatTenant tenant : tenants)
 		{
-			Long id = tenant.getId();
+			Long id = tenant.getChatUser().getId();
 			if (isTenantBusy(id) == false)
 			{
-				Long chatUserId = tenant.getChatUser().getId() - 1;//   .getPrincipal().getName();
+				Long chatUserId = tenant.getChatUser().getId() ;//   .getPrincipal().getName();
+				//if (chatUserId > 0)
 				if (participantRepository.isOnline("" + chatUserId)) //989
 					return tenant;
 			}
@@ -90,6 +98,8 @@ public class ChatTenantService {
 	}
 
 	public void setTenantBusy(ChatTenant tenant) {
+		if (tenant == null)
+			return;
 		if ( !isTenantBusy(tenant))
 			tenantsBusy.add(tenant.getId());
 	}
@@ -104,9 +114,10 @@ public class ChatTenantService {
 	
 	public void setTenantFree(Principal principal) {
 		Long id = Long.parseLong(principal.getName());
+		setTenantFree(id);
 	}
 
-	boolean isTenantBusy(Long id) {
+	public boolean isTenantBusy(Long id) {
 		for (Long tenant_id : tenantsBusy)
 		{
 			if (tenant_id == id )
@@ -114,8 +125,12 @@ public class ChatTenantService {
 		}
 		return false;
 	}
+	
+	public List<Long> getTenantsBusy() {
+		return tenantsBusy;
+	}
 
-	boolean isTenantBusy(ChatTenant tenant) {
+	public boolean isTenantBusy(ChatTenant tenant) {
 		return isTenantBusy(tenant.getId());
 	}
 
@@ -131,6 +146,17 @@ public class ChatTenantService {
 		ChatTenant t_user = countTenant.get(k);//choose method
 		return t_user;
 	}
+	
+	@Transactional
+	public ChatTenant getChatTenant(ChatUser  chatUser){
+		return chatTenantRepo.findByChatUser(chatUser);
+	}
+	
+	@Transactional
+	public Long getChatTenantId(ChatUser  chatUser){
+		return chatTenantRepo.findIdByChatUser(chatUser);
+	}
+	
 	@Transactional
 	public ChatTenant getChatTenant(Long id){
 		ChatTenant chatTenant =null;

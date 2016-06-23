@@ -156,7 +156,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         if (event.keyCode === 9) { // tab was pressed
 
             // get caret position/selection
-            debugger;
+           // debugger;
             var val = event.target.value,
                 start = event.target.selectionStart,
                 end = event.target.selectionEnd;
@@ -863,7 +863,6 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         //console.log("roomName:"+roomName);
         if (chatControllerScope.currentRoom !== undefined && getRoomById($scope.rooms, chatControllerScope.currentRoom) !== undefined)
             getRoomById($scope.rooms, chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
-
         return goToDialogEvn(roomId);
     };
 
@@ -918,6 +917,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
      * CHANGE ROOM
      *************************************/
     $scope.changeRoom = function() {
+    	//alert(16);
         $scope.messages = [];
         console.log("roomId:" + chatControllerScope.currentRoom.roomId);
         room = chatControllerScope.currentRoom.roomId + '/';
@@ -1028,6 +1028,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                         return;
                     }
                     if (xhr.status === 404 || xhr.status === 405) {
+                    	//alert("13")
                         chatControllerScope.changeLocation("/chatrooms");
                     }
                     subscribeMessageLP();
@@ -1053,6 +1054,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 error: function(xhr, text_status, error_thrown) {
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
+                    	//alert(14)
                         chatControllerScope.changeLocation("/chatrooms");
                     }
                     subscribeParticipantsLP();

@@ -21,6 +21,10 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
             if (chatRouteInterfaceScope.participants.length > 2) {
                 $scope.disabled = true;
                 chatControllerScope.currentRoom.active = true;
+
+                // if ($scope.toasterWaitFreeTenant != undefined)
+                     //   $scope.toasterWaitFreeTenant.close;
+                     toaster.clear();
             } else
                 chatControllerScope.currentRoom.active = false;
 
@@ -45,8 +49,7 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
 
         		$timeout.cancel(askIsFreeTenant);
         		if (!isWaiFreeTenatn) {
-
-                    toaster.pop({
+        			toaster.pop({
                                     type: 'wait',
                                     body: 'Wait for free consultant',
                                     timeout: 0,
@@ -55,11 +58,14 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
                                         $timeout.cancel(askIsFreeTenant);                        
                                     }
                         });
+                   
+
+           		//$scope.toasterWaitFreeTenant.close();
 
 	        		isWaiFreeTenatn = true;
         		}
-        		askIsFreeTenant = $timeout(function() 
-        				{	$scope.giveTenant(); },   waitTime );  
+        		/*askIsFreeTenant = $timeout(function() 
+        				{	$scope.giveTenant(); },   waitTime ); */ 
         	
         			     		
         		}            		
