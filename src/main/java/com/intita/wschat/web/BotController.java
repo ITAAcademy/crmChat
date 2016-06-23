@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.mapper.Mapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,9 +192,12 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/save_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
-		botItemContainerService.update(payload);
-		return true;
+	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws Exception {
+			if(payload == null || payload.getCategory() == null || botCategoryService.getById(payload.getCategory().getId()) == null)
+				throw (new Exception(objectMapper.writeValueAsString(payload) +  "	payload not valid"));
+
+			botItemContainerService.update(payload);
+			return true;
 	}
 
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
