@@ -134,7 +134,7 @@ public class RoomsService {
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
@@ -196,17 +196,22 @@ public class RoomsService {
 	public ArrayList<Phrase> getPhrases(){
 		return phrasesRepo.findAll(); 
 	}
-	
+
 	@Transactional(readOnly = true)
 	public ArrayList<Phrase> getEvaluatedPhrases(ChatUser currentUser){
-		
+
 		String[] searchList = {"$date","$username"};
 		String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 		User intitaUser = null;
-		if (currentUser!=null)currentUser.getIntitaUser();
+		if (currentUser!=null) 
+			intitaUser = currentUser.getIntitaUser();
 		String currentUserName = "";
-		if(intitaUser!=null) currentUserName = intitaUser.getFullName();
-		else currentUserName = currentUser.getNickName();
+		
+		if(intitaUser!=null) 
+			currentUserName = intitaUser.getFullName();
+		else 
+			currentUserName = currentUser.getNickName();
+		
 		String[] replacementList = {currentDate,currentUserName};
 		ArrayList<Phrase> phrases = getPhrases();
 		for (Phrase phrase : phrases){
@@ -247,7 +252,7 @@ public class RoomsService {
 			ChatUserLastRoomDate entry = rooms_lastd.get(i);
 			Date date = entry.getLastLogout();
 			int messages_cnt =  userMessageService.getMessagesCountByRoomDateNotUser(entry.getRoom(), date, entry.getChatUser()).intValue();
-			
+
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
 			RoomModelSimple sb = new RoomModelSimple(messages_cnt , date.toString(),

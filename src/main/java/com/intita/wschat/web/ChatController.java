@@ -944,7 +944,7 @@ public class ChatController {
 			 return "redirect:"+ before;
 		}
 		if(auth != null)
-					addLocolization(model, chatUsersService.getChatUser(auth));
+			addLocolization(model, chatUsersService.getChatUser(auth));
 		return "index";
 	}
 
