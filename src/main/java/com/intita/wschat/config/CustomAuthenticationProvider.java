@@ -135,22 +135,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
 	}
 
-	public boolean autorization()
+	public Authentication autorization()
 	{
 		return autorization(this);
 	}
 
-	public boolean autorization(AuthenticationProvider authenticationProvider)
+	public Authentication autorization(AuthenticationProvider authenticationProvider)
 	{
 		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
 		{
 			System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
 			//if(!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-			SecurityContextHolder.getContext().setAuthentication(authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication()));
-			return true;
+			Authentication auth = authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication());
+			SecurityContextHolder.getContext().setAuthentication(auth);
+			
+			return auth;
 		}
 		else
-			return false;
+			return null;
 
 	}
 

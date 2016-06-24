@@ -47,6 +47,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -935,14 +936,15 @@ public class ChatController {
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
-		authenticationProvider.autorization(authenticationProvider);
+		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
+		
 		chatLangService.updateDataFromDatabase();
 		if(before != null)
 		{
 			 return "redirect:"+ before;
 		}
-		
-		addLocolization(model,chatUsersService.getChatUser(principal));
+		if(auth != null)
+					addLocolization(model, chatUsersService.getChatUser(auth));
 		return "index";
 	}
 
