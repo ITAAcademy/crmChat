@@ -1087,7 +1087,11 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             var textOfMessage;
             if (message === undefined) textOfMessage = $scope.newMessage;
             else textOfMessage = message;
-
+            if (textOfMessage.length < 1) {
+                $scope.newMessage = '';
+                $("#newMessageInput")[0].value  = '';
+                return;
+            }
             var destination = "/app/{0}/chat.message".format(chatControllerScope.currentRoom.roomId);
             chatControllerScope.messageSended = false;
             if ($rootScope.socketSupport == true) {
