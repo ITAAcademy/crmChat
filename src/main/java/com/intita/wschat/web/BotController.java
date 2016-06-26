@@ -438,9 +438,29 @@ public class BotController {
 	
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean tenantSendRefused(Principal principal) {	
+	public boolean isUserWaitTenant(Principal principal) {	
 		ChatUser user = chatUsersService.getChatUser(principal);		
-		return isChatUserWaitTenant(user);
+		boolean isUserWaitForTenant =  isChatUserWaitTenant(user);
+		
+		return isUserWaitForTenant;
+	}
+	
+	@RequestMapping(value = "/bot_operations/tenant/did_am_busy_tenant",  method = RequestMethod.POST)
+	@ResponseBody
+	public Object[]  isTenantBusy(Principal principal) {	
+		ChatUser user = chatUsersService.getChatUser(principal);		
+	
+		boolean isTenant = false;
+		boolean isTenantBusy = false;
+		ChatTenant tenant = chatTenantService.getChatTenant(user);
+		if (tenant != null)
+		{
+			isTenant = true;
+			isTenantBusy = chatTenantService.isTenantBusy(tenant);
+		}		
+		
+		Object[] obj = new Object[] {isTenant, isTenantBusy};
+		return obj;
 	}
 	
 	public boolean isChatUserWaitTenant(ChatUser user) {

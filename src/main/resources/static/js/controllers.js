@@ -100,7 +100,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
     
    $scope.isTenantFree = true;
-   
+   $scope.isUserTenant = false;
+   $scope.isUserTenantInited = false;
 
    
    $scope.clickSetTenantFree = function() {

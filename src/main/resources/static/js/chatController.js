@@ -58,8 +58,6 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 					});
 				}
 				
-				//444
-				//alert(444);
 				$http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant").
 		        success(function(data, status, headers, config) {
 		        	if (data == true)
@@ -68,6 +66,7 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 		        error(function(data, status, headers, config) {
 		            alert("did_am_wait_tenant: server error")
 		        });
+				
 			}
 
 	});
