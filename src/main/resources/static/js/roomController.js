@@ -96,9 +96,26 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         }
         $scope.dialogName = '';
     };
+    
+    
+    $scope.initIsUserTenant = function () {    	
+		if ($scope.isUserTenantInited == false) {
+		        	
+			        $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
+			        success(function(data, status, headers, config) {	
+			        	$scope.isUserTenant = data[0];
+			        	if (data[0])
+			        		$scope.isTenantFree = !data[1];
+			        	$scope.isUserTenantInited = true;
+			        }).
+			        error(function(data, status, headers, config) {
+			            alert("did_am_wait_tenant: server error")
+			        });
+		        }
+    };
 
     $scope.goToDialogList = function() {
-
+    	
         if (chatControllerScope.currentRoom !== undefined && getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.date) !== undefined)
             getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
 
@@ -120,18 +137,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         $rootScope.roomForUpdate = new Map();//clear list
         chatControllerScope.currentRoom = { roomId: '' };
         
-        if ($scope.isUserTenantInited == false) {
-	        $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
-	        success(function(data, status, headers, config) {	
-	        	$scope.isUserTenant = data[0];
-	        	if (data[0])
-	        		$scope.isTenantFree = !data[1];
-	        	$scope.isUserTenantInited = true;
-	        }).
-	        error(function(data, status, headers, config) {
-	            alert("did_am_wait_tenant: server error")
-	        });
-        }
+        $scope.initIsUserTenant();
     }
     $scope.mouseBusy = false;
 
