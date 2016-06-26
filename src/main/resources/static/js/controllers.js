@@ -99,6 +99,36 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         return false;
     }
     
+   $scope.isTenantFree = true;
+   
+
+   
+   $scope.clickSetTenantFree = function() {
+	   $scope.isTenantFree = !$scope.isTenantFree;
+	   /*console.log("$scope.isTenantFree = " + $scope.isTenantFree)
+	   return;*/
+	   if ($scope.isTenantFree)
+	   {
+		   $http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)    	
+	 	   success(function(data, status, headers, config) {
+	 		   
+	 	   }).
+	 	   error(function(data, status, headers, config) {
+	 		   alert("error")
+	 	   });		   
+	   }
+	   else
+	   {	   
+		   $http.post(serverPrefix + "/bot_operations/tenant/becomeBusy"). //$scope.chatUserId)    	
+	 	   success(function(data, status, headers, config) {
+
+	 	   }).
+	 	   error(function(data, status, headers, config) {
+	 		  alert("error")
+	 	   });
+	   }
+   }
+    
     var isAskTenantToTakeConsultationVisible = false;
     
     $scope.needReloadPage = true;
@@ -109,18 +139,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     };    
     
     $scope.showAskTenantToTakeConsultation = function() {
-    	if (isAskTenantToTakeConsultationVisible == false)
-    		$scope.askTenantToTakeConsultationTogle();    	
+    	if (isAskTenantToTakeConsultationVisible == false) {
+
+        	$scope.isTenantFree = false;
+    		$scope.askTenantToTakeConsultationTogle();  
+    	}
     }
     
     $scope.hideAskTenantToTakeConsultation = function() {
-    	if (isAskTenantToTakeConsultationVisible == true)
-    		$scope.askTenantToTakeConsultationTogle();    	
+    	if (isAskTenantToTakeConsultationVisible == true) {
+	    		$scope.askTenantToTakeConsultationTogle(); 
+    	}   	
     }   
    
     $scope.answerToFinishConsultation = function() {
-    	$http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)
     	$scope.needReloadPage = false;
+    	$http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)    	
  	   success(function(data, status, headers, config) {
  		   alert("ok")
  	   }).
@@ -129,35 +163,26 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
  	   });
     }
     
-    $scope.answerToTakeConsultation = function(value) {
-    	toaster.pop({
-            type: 'wait',
-            body: 'Wait for ',
-            timeout: 0
-});
-    	
-    	
+    $scope.answerToTakeConsultation = function(value) {  
     	if (value) {
     	 $http.post(serverPrefix + "/bot/operations/tenant/free"). //$scope.chatUserId)
     	   success(function(data, status, headers, config) {
-    		  
-    		   //alert("ok")
-    		   /*if (chatControllerScope == undefined)
-    			   chatControllerScope = Scopes.get('ChatController');
-    		   $timeout(function() {
-                   		   chatControllerScope.changeLocation('/dialog_view/' + askConsultation_roomId);
-    		   }, 2000);*/
+    		   toaster.pop({
+    	            type: 'wait',
+    	            body: 'Wait for ',
+    	            timeout: 0
+    	});
+    		   
     	   }).
     	   error(function(data, status, headers, config) {
     		   alert("error : " + status)
     	   });
     	}
     	else {
-    		 $http.post(serverPrefix + "/bot_operations/tenant/refused222/", askConsultation_roomId).
+    		$scope.hideAskTenantToTakeConsultation();
+    		 $http.post(serverPrefix + "/{0}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId)).
     	  	   success(function(data, status, headers, config) {
-    	  		  // alert("ok")
-    	  		/* toaster.clear();
-    	     	$scope.askTenantToTakeConsultationTogle(); */
+    	  		
     	  	   }).
         	   error(function(data, status, headers, config) {
         		   alert("error : " + status)
@@ -414,7 +439,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
     }
     
-    var askConsultation_roomId;
+   
 
 
     function subscribeInfoUpdateLP() {
@@ -438,7 +463,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             	{
                     var sendedId = data["newAskConsultation_ToChatUserId"][0][0];
                 	if ( sendedId == $scope.chatUserId) {
-                		askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
+                		$scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
                 		$scope.showAskTenantToTakeConsultation();
                 	}
             	}
@@ -459,7 +484,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                          toaster.clear();
                          $scope.hideAskTenantToTakeConsultation(); 	
-   	            		chatControllerScope.changeLocation('/dialog_view/' + askConsultation_roomId);
+   	            		chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
             		}
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
@@ -689,6 +714,45 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         console.log("SERVER MESSAGE OPERATION STATUS:" + operationStatus.success + operationStatus.description);
                     });
 
+                    chatSocket.subscribe("/topic/users/{0}/info".format($scope.chatUserId), function(message) {
+                    	
+                    	var body = JSON.parse(message.body);
+                    	//alert(body)
+                    	var sendedId = body[0];
+                    	if ( sendedId == $scope.chatUserId) {
+                    		$scope.askConsultation_roomId = body[1];
+                    		$scope.showAskTenantToTakeConsultation();
+                    	}
+                    });
+                    
+                    chatSocket.subscribe("/topic/users/{0}/submitConsultation".format($scope.chatUserId), function(message) {
+                    	var body = JSON.parse(message.body);
+                    	var sendedId = body[0]; 
+                    	
+                    	if ( sendedId == $scope.chatUserId) {
+                            if (chatControllerScope == undefined)
+                              chatControllerScope = Scopes.get('ChatController');
+                    		chatControllerScope.userAddedToRoom = true;
+                    	}
+                    	var sendedConsultantId = body[1]; 
+                    	if (sendedConsultantId == $scope.chatUserId)
+                		{
+                    		$scope.hideAskTenantToTakeConsultation(); 	
+                    		
+    	            		if (chatControllerScope == undefined)
+    	         			   chatControllerScope = Scopes.get('ChatController');
+    	            		 
+                             
+                             $timeout(function() {
+                            	 toaster.clear();
+       	            		chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
+                             }, 1000);
+                		}                      	
+                    });
+                    
+                    
+                    
+                    
                     chatSocket.subscribe("/topic/users/info", function(message) {
                         var operationStatus = JSON.parse(message.body);
                         //operationStatus = JSON.parse(operationStatus);
@@ -745,7 +809,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         console.log("initStompClient");
 
-        chatSocket.init(serverPrefix + "/wss"); //9999
+        chatSocket.init(serverPrefix + "/ws"); //9999
 
 
         chatSocket.connect(onConnect, function(error) {

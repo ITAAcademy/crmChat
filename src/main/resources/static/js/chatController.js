@@ -3,6 +3,26 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	/*
 	 * 
 	 */
+	$rootScope.isWaiFreeTenatn = false;
+	
+	$rootScope.showToasterWaitFreeTenant = function () {
+		if (!$rootScope.isWaiFreeTenatn) {
+	    	toaster.pop({
+	            type: 'wait',
+	            body: 'Wait for free consultant',
+	            timeout: 0,
+	            onHideCallback: function () { 
+	            	/*isWaiFreeTenatn = false;
+	                $timeout.cancel(askIsFreeTenant);*/   
+	            	$rootScope.isWaiFreeTenatn = false;
+	            	$rootScope.showToasterWaitFreeTenant();
+	            },
+	            showCloseButton: false
+			});
+	    	$rootScope.isWaiFreeTenatn = true;
+		}
+}
+	
 	 
 	$scope.controllerName = "ChatRouteController";
 	var chatControllerScope = Scopes.get('ChatController');
@@ -36,6 +56,17 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 						scope.needReloadPage = true;
 					});
 				}
+				
+				//444
+				//alert(444);
+				$http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant").
+		        success(function(data, status, headers, config) {
+		        	if (data == true)
+		        		$scope.showToasterWaitFreeTenant();
+		        }).
+		        error(function(data, status, headers, config) {
+		            alert("did_am_wait_tenant: server error")
+		        });
 			}
 
 	});

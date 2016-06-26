@@ -31,43 +31,40 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
         });
 
     var askIsFreeTenant;
-    var isWaiFreeTenatn = false;
+  //  $scope.isWaiFreeTenatn = false;
+    
+   /* $scope.showToasterWaitFreeTenant = function () {
+	    	toaster.pop({
+	            type: 'wait',
+	            body: 'Wait for free consultant',
+	            timeout: 0,
+	            onHideCallback: function () { 
+	            	isWaiFreeTenatn = false;
+	                $timeout.cancel(askIsFreeTenant);                        
+	            }
+    		});
+    }*/
 
     $scope.giveTenant = function() {
         $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
         success(function(data, status, headers, config) {
-        	if (data == false) {
-	          //  console.log("ADD USER OK " + data);
-	           //chatControllerScope.userAddedToRoom = true;
+        	/*if (data == false) {
 	           toaster.pop({
                    type: 'error',
                    body: 'No free tenant'});
         	}
-        	else
+        	else*/
         		{      		      
                 var waitTime = globalConfig["timeWaitFreeTenant"];
-
-        		$timeout.cancel(askIsFreeTenant);
-        		if (!isWaiFreeTenatn) {
-        			toaster.pop({
-                                    type: 'wait',
-                                    body: 'Wait for free consultant',
-                                    timeout: 0,
-                                    onHideCallback: function () { 
-                                    	isWaiFreeTenatn = false;
-                                        $timeout.cancel(askIsFreeTenant);                        
-                                    }
-                        });
-                   
-
-           		//$scope.toasterWaitFreeTenant.close();
-
+        		///$timeout.cancel(askIsFreeTenant);
+        		/*if (!$scope.isWaiFreeTenatn) {
+        			$scope.showToasterWaitFreeTenant();
 	        		isWaiFreeTenatn = true;
-        		}
+        		}*/
+        		
+                $rootScope.showToasterWaitFreeTenant();
         		/*askIsFreeTenant = $timeout(function() 
-        				{	$scope.giveTenant(); },   waitTime ); */ 
-        	
-        			     		
+        				{	$scope.giveTenant(); },   waitTime ); */   
         		}            		
         }).
         error(function(data, status, headers, config) {

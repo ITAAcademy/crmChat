@@ -1,5 +1,6 @@
 package com.intita.wschat.web;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Principal;
@@ -7,13 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.mapper.Mapper;
+import java.awt.event.ActionListener;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,8 @@ public class BotController {
 
 	@Autowired private RoomController roomControler;
 	@Autowired private ChatController chatController;
+	
+	private Timer timer;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private final static Logger log = LoggerFactory.getLogger(BotController.class);
@@ -305,12 +308,45 @@ public class BotController {
 		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), messageToSave);
 		return objectMapper.writeValueAsString(botCategory);
 	}
+	
+	public void askTenantToSpendConsultationWS(Long chatUserId, Long roomId) {
+		Object[] obj = new Object[] {chatUserId, roomId};
+		
+		String subscriptionStr = "/topic/users/" + chatUserId + "/info";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, obj);
+	}	
+	
+	public void tenantSubmitToSpendConsultationWS(Long chatUserId, Long tenantChatUserId) {
+		Object[] obj = new Object[] {chatUserId, tenantChatUserId};
+		
+		String subscriptionStr = "/topic/users/" + chatUserId + "/submitConsultation";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, obj);
+		
+		subscriptionStr = "/topic/users/" + tenantChatUserId + "/submitConsultation";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, obj);
+	}
 
 
-	@RequestMapping(value = "bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/bot_operations/close/roomId/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean giveTenant(@PathVariable Long roomId, Principal principal) throws JsonProcessingException {
 
+		Room room_0 = roomService.getRoom(roomId);
+		if(room_0 == null)
+			return false;	
+		
+		if (tempRoomAskTenant.contains(room_0))
+			return false;
+		
+		tempRoomAskTenant.add(room_0);
+
+		String userIdStr = principal.getName();
+		Long userId =  Long.parseLong(userIdStr, 10);
+		askConsultationUsers.add(userId);
+		
+		
+		/*
 		Room room_0 = roomService.getRoom(roomId);
 		if(room_0 == null)
 			return false;		
@@ -321,16 +357,18 @@ public class BotController {
 		
 		chatTenantService.setTenantBusy(t_user);
 		  
-		tempRoomAskTenant.add(room_0);
+			
+		
+		Long tenantChatUserId = t_user.getChatUser().getId();	
+		
 
-		String userIdStr = principal.getName();
-		Long userId =  Long.parseLong(userIdStr, 10);
-		askConsultationUsers.add(userId);		
-
-		Object[] obj = new Object[] {  t_user.getChatUser().getId(), room_0.getId() };
+		Object[] obj = new Object[] {  tenantChatUserId, roomId };
 		
 		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
-		return true;
+		
+		askTenantToSpendConsultationWS(tenantChatUserId, roomId );
+		*/
+		return giveTenant(roomId);
 		/*
 		ChatUser c_user = t_user.getChatUser();
 		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
@@ -353,13 +391,30 @@ public class BotController {
 
 		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
 		if (t_user == null)
+		{
+			new java.util.Timer().schedule( 
+			        new java.util.TimerTask() {
+			            @Override
+			            public void run() {
+			            	giveTenant(roomId);
+			            }
+			        }, 
+			        30000 
+			);
+			
 			return false;
+		}
+		
+		Long tenantChatUserId = t_user.getChatUser().getId();	
 
-		chatTenantService.setTenantBusy(t_user);
+		boolean gg = chatTenantService.setTenantBusy(t_user);
 
-		Object[] obj = new Object[] {  t_user.getChatUser().getId(), room_0.getId() };
+		Object[] obj = new Object[] {  tenantChatUserId, roomId };
 		
 		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
+		
+		askTenantToSpendConsultationWS(tenantChatUserId, roomId );
+		
 		return true;
 	}
 
@@ -367,33 +422,42 @@ public class BotController {
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
 		chatTenantService.setTenantFree(principal);
-	}
-
-	@RequestMapping(value = "/bot_operations/tenant/refused222/",  method = RequestMethod.POST)
+	}	
+	
+	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean tenantSendRefused(@PathVariable Long roomId, Principal principal) {	
+	public void tenantSendBecomeBusy(Principal principal) {
+		chatTenantService.setTenantBusy(principal);
+	}
 		
-		ChatUser chatUser = chatUsersService.getChatUser(principal);
-		Long id = chatTenantService.getChatTenantId(chatUser);
-		chatTenantService.setTenantBusy(id);
-		/*new java.util.Timer().schedule( 
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						chatTenantService.setTenantFree(principal);
-					}
-				}, 
-				15000//tenantFreeTime 
-				);*/
+	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
+	@ResponseBody
+	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, Principal principal) {			
 		return giveTenant(roomId);
+	}
+	
+	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant",  method = RequestMethod.POST)
+	@ResponseBody
+	public boolean tenantSendRefused(Principal principal) {	
+		ChatUser user = chatUsersService.getChatUser(principal);		
+		return isChatUserWaitTenant(user);
+	}
+	
+	public boolean isChatUserWaitTenant(ChatUser user) {
+		Long user_id = user.getId();
+		for (Long id : askConsultationUsers) {
+			if (id.equals(user_id))
+				return true;
+		}
+		return false;
 	}
 
 	@RequestMapping(value = "/bot/operations/tenant/free", method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendFree(Principal principal) {
-		Long chatUserId = Long.parseLong(principal.getName());
+		Long tenantChatUserId = Long.parseLong(principal.getName());
 		
-		ChatUser c_user = chatUsersService.getChatUser(chatUserId);
+		ChatUser c_user = chatUsersService.getChatUser(tenantChatUserId);
 		if (c_user == null)
 			return;
 		
@@ -406,15 +470,17 @@ public class BotController {
 		//room_.setAuthor(c_user);
 		roomService.update(room_);
 		//roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);
-		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
-		
+		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);		
 		
 		Long userId = askConsultationUsers.get(0);
 		askConsultationUsers.remove(0);
 		
-		Object[] obj = new Object[] {userId, chatUserId};
+		Object[] obj = new Object[] {userId, tenantChatUserId};
 
 		chatController.addFieldToInfoMap("newConsultationWithTenant", obj);
+		
+		tenantSubmitToSpendConsultationWS(userId, tenantChatUserId);
+		
 	}
 
 
