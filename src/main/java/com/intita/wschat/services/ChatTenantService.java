@@ -96,14 +96,7 @@ public class ChatTenantService {
 		else {
 			i_0  = lastAskedtenantCnt + 1;
 			i_1  = lastAskedtenantCnt;
-		}			
-		
-		
-		
-		/*if (i_1 < 0) {
-			i_1 = tenantsLastIndex;
-			secondCircle = true;
-		}*/			
+		}		
 
 		int i = i_0;
 		
