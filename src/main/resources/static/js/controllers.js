@@ -516,6 +516,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             return true;
         return false;
     }
+    
+    $rootScope.initIsUserTenant = function () {    	
+		if ($scope.isUserTenantInited == false) {
+		        	
+			        $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
+			        success(function(data, status, headers, config) {	
+			        	$scope.isUserTenant = data[0];
+			        	if (data[0])
+			        		$scope.isTenantFree = !data[1];
+			        	$scope.isUserTenantInited = true;
+			        }).
+			        error(function(data, status, headers, config) {
+			            alert("did_am_wait_tenant: server error")
+			        });
+		        }
+    };
 
     function login(mess_obj) {
         $rootScope.isInited = true;
@@ -531,6 +547,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         if ($rootScope.socketSupport == false) {
             updateRooms(JSON.parse(mess_obj.chat_rooms));
         } else {
+        	$rootScope.initIsUserTenant();
             $scope.rooms = JSON.parse(mess_obj.chat_rooms).list;
             $scope.roomsCount = $scope.rooms.length;
         }

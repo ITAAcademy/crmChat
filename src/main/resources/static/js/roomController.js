@@ -98,7 +98,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     };
     
     
-    $scope.initIsUserTenant = function () {    	
+    $rootScope.initIsUserTenant = function () {    	
 		if ($scope.isUserTenantInited == false) {
 		        	
 			        $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
@@ -137,7 +137,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         $rootScope.roomForUpdate = new Map();//clear list
         chatControllerScope.currentRoom = { roomId: '' };
         
-        $scope.initIsUserTenant();
+        $rootScope.initIsUserTenant();
     }
     $scope.mouseBusy = false;
 
