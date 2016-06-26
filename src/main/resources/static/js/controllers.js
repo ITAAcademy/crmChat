@@ -437,10 +437,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             console.log("PRIVATE ROOM CREATE FAILD ");
             changeLocation("/chatrooms");
         });
-    }
-    
+    }    
    
-
+	$rootScope.isConectedWithFreeTenant = false;
 
     function subscribeInfoUpdateLP() {
         //alert("subscribeInfoUpdateLP()");
@@ -468,24 +467,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 	}
             	}
                 if (data["newConsultationWithTenant"] != null) {
-                	var sendedId = data["newConsultationWithTenant"][0][0];
-                	if ( sendedId == $scope.chatUserId) {
-
-                        if (chatControllerScope == undefined)
-                          chatControllerScope = Scopes.get('ChatController');
-
-                		chatControllerScope.userAddedToRoom = true;
-                	}
-                	var sendedConsultantId = data["newConsultationWithTenant"][0][1];
-                	if (sendedConsultantId == $scope.chatUserId)
-            		{
-	            		if (chatControllerScope == undefined)
-	         			   chatControllerScope = Scopes.get('ChatController');
-
-                         toaster.clear();
-                         $scope.hideAskTenantToTakeConsultation(); 	
-   	            		chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
-            		}
+                	var sendedId = data["newConsultationWithTenant"][0][0];                	
+               
+                	$rootScope.submitConsultation_processUser(sendedId);
+                	
+                	var sendedConsultantId = data["newConsultationWithTenant"][0][1];                	
+                            	
+                	$rootScope.submitConsultation_processTenant(sendedConsultantId);
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
@@ -729,25 +717,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     	var body = JSON.parse(message.body);
                     	var sendedId = body[0]; 
                     	
-                    	if ( sendedId == $scope.chatUserId) {
-                            if (chatControllerScope == undefined)
-                              chatControllerScope = Scopes.get('ChatController');
-                    		chatControllerScope.userAddedToRoom = true;
-                    	}
-                    	var sendedConsultantId = body[1]; 
-                    	if (sendedConsultantId == $scope.chatUserId)
-                		{
-                    		$scope.hideAskTenantToTakeConsultation(); 	
-                    		
-    	            		if (chatControllerScope == undefined)
-    	         			   chatControllerScope = Scopes.get('ChatController');
-    	            		 
-                             
-                             $timeout(function() {
-                            	 toaster.clear();
-       	            		chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
-                             }, 1000);
-                		}                      	
+                    	$rootScope.submitConsultation_processUser(sendedId);                    	
+                    	
+                    	var sendedConsultantId = body[1];                     	
+                    	$rootScope.submitConsultation_processTenant(sendedConsultantId);                    	
+                                      	
                     });
                     
                     
@@ -783,6 +757,36 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             updateRooms(message);
         });
     }
+    
+    $rootScope.submitConsultation_processUser = function (userId) {
+	    	if ( userId == $scope.chatUserId) {
+	        if (chatControllerScope == undefined)
+	          chatControllerScope = Scopes.get('ChatController');
+			chatControllerScope.userAddedToRoom = true;    	                    		
+			$rootScope.isConectedWithFreeTenant = true;
+			//alert($rootScope.isConectedWithFreeTenant);
+	        toaster.clear();
+	        $rootScope.isConectedWithFreeTenant = false;
+		}
+
+    	};
+
+    	$rootScope.submitConsultation_processTenant = function (tenantId) {
+    	if (tenantId == $scope.chatUserId)
+		{    		
+    		$scope.hideAskTenantToTakeConsultation();
+    		
+    		if (chatControllerScope == undefined)
+ 			   chatControllerScope = Scopes.get('ChatController');
+    		
+    		 $timeout(function() {
+                	 toaster.clear();
+                	 chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
+                 }, 1000);	
+    		//chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
+		}
+
+    	};
 
     function reInitForLP() {
         $http.post(serverPrefix + "/chat/login/" + $scope.chatUserId, { message: $scope.newMessage }).

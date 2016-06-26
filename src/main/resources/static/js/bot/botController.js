@@ -31,40 +31,14 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
         });
 
     var askIsFreeTenant;
-  //  $scope.isWaiFreeTenatn = false;
-    
-   /* $scope.showToasterWaitFreeTenant = function () {
-	    	toaster.pop({
-	            type: 'wait',
-	            body: 'Wait for free consultant',
-	            timeout: 0,
-	            onHideCallback: function () { 
-	            	isWaiFreeTenatn = false;
-	                $timeout.cancel(askIsFreeTenant);                        
-	            }
-    		});
-    }*/
 
     $scope.giveTenant = function() {
         $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
         success(function(data, status, headers, config) {
-        	/*if (data == false) {
-	           toaster.pop({
-                   type: 'error',
-                   body: 'No free tenant'});
-        	}
-        	else*/
         		{      		      
                 var waitTime = globalConfig["timeWaitFreeTenant"];
-        		///$timeout.cancel(askIsFreeTenant);
-        		/*if (!$scope.isWaiFreeTenatn) {
-        			$scope.showToasterWaitFreeTenant();
-	        		isWaiFreeTenatn = true;
-        		}*/
         		
                 $rootScope.showToasterWaitFreeTenant();
-        		/*askIsFreeTenant = $timeout(function() 
-        				{	$scope.giveTenant(); },   waitTime ); */   
         		}            		
         }).
         error(function(data, status, headers, config) {
