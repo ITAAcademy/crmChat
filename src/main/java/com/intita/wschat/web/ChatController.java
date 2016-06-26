@@ -510,7 +510,7 @@ public class ChatController {
 	@Scheduled(fixedDelay=10000L)
 	public void processGlobalInfo(){
 		String result;
-		addFieldToUserInfoMap(chatUsersService.getChatUser((long)427), "test", "only for 427");
+		//addFieldToUserInfoMap(chatUsersService.getChatUser((long)427), "test", "only for 427");
 		try {
 			result = mapper.writeValueAsString(infoMap);
 		} catch (JsonProcessingException e) {

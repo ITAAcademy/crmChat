@@ -452,13 +452,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     for (var i in data["newMessage"])
                         newMessageEvent(data["newMessage"][i]);
                 }
-                if (data["newGuestRoom"] != null) {
+                /*if (data["newGuestRoom"] != null) {
                 	if ($scope.currentRoom == undefined)
                 		$scope.currentRoom = { roomId: data["newGuestRoom"] };
                 	else
                 		$scope.currentRoom.roomId = data["newGuestRoom"];
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
-                }
+                }*/
                 if (data["newAskConsultation_ToChatUserId"] != null)
             	{
                     var sendedId = data["newAskConsultation_ToChatUserId"][0][0];

@@ -237,8 +237,9 @@ public class RoomController {
 				//test - no free tenant
 				//room = null;
 				
-				if (room != null)
-					chatController.addFieldToInfoMap("newGuestRoom", room.getId());
+				//send msg about go to guest room if you is tenant with current Id
+				/*if (room != null)
+					chatController.addFieldToInfoMap("newGuestRoom", room.getId());*/
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
