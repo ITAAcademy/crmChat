@@ -1359,8 +1359,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
-
-        var fileInput = $("#myfile").fileinput({ language: "ua", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+        var lang = globalConfig.lang;
+        if (lang=="ua")lang="uk";
+        var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
         $('#myfile').on('change', function(event, numFiles, label) {
             var totalFilesLength = 0;
             for (var i = 0; i < this.files.length; i++) {
