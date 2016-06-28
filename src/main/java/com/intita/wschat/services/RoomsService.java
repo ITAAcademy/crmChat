@@ -192,12 +192,12 @@ public class RoomsService {
 		roomRepo.save(room);
 		return true;
 	}
-	@Transactional(readOnly = true)
+	//@Transactional(readOnly = true)
 	public ArrayList<Phrase> getPhrases(){
 		return phrasesRepo.findAll(); 
 	}
 
-	@Transactional(readOnly = true)
+	//@Transactional(readOnly = true)
 	public ArrayList<Phrase> getEvaluatedPhrases(ChatUser currentUser){
 
 		String[] searchList = {"$date","$username"};
