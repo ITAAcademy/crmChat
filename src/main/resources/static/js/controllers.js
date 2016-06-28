@@ -179,11 +179,19 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.authorize = false;
     $rootScope.roomForUpdate = new Map();
 
-    $rootScope.goToAuthorize = function() {
-        if ($rootScope.authorize)
-            $location.path("/access_deny");
+    $rootScope.redirectzToAuthorizePage = function(){
+        window.top.location.href = globalConfig["baseUrl"] + '/site/authorize';
+    }
+    $rootScope.goToAuthorize = function(func) {
+        if ($rootScope.authorize || $rootScope.isInited == false)
+        {
+            if(func == null || func == undefined)
+                $location.path("/access_deny");
+            else
+                func();
+        }
         else
-            window.top.location.href = globalConfig["baseUrl"] + '/site/authorize';
+            $rootScope.redirectzToAuthorizePage();
         //window.top.location.href = 'http://localhost/IntITA/site/authorize';
     }
 
@@ -331,7 +339,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     var goToPrivateDialogErr = function(data, status, headers, config) {
         toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
         console.log("PRIVATE ROOM CREATE FAILD ");
-        changeLocation("/chatrooms");
+        $rootScope.goToAuthorize(function() {changeLocation("/chatrooms");});
     }
     $scope.goToPrivateDialog = function(intitaUserId) {
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
@@ -444,7 +452,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $rootScope.authorize = false;
             
             if ($location.path() != "/") {
-                $rootScope.goToAuthorize();
+            //    $rootScope.goToAuthorize();
                 return;
             }
             
