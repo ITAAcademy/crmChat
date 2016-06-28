@@ -273,7 +273,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
                     var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                     scope.onClick = function() {
-                        debugger;
+                       // debugger;
                         scope.$eval(functionStr);
                     }
 
@@ -347,7 +347,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     urlPrefix = urlPrefix.format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
                 else
                     urlPrefix = urlPrefix.format(0, scope.mainScope.currentMessage.idObject.id); //send from quize
-                var url = urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
+                var url = "/crmChat/" + urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
                 // var dataToSend = JSON.stringify(formElm.serializeArray());
                 var formData = {};
                 //concat(arrayB);
@@ -358,7 +358,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 $.ajax({
                     type: "POST",
                     contentType: "binary/octet-stream",
-                    url: document.location.origin + globalConfig.baseUrl + url,
+                    url: /*document.location.origin + globalConfig.baseUrl + */url,
                     data: dataToSend, // serializes the form's elements.
                     success: function(data) {
                         if (data == "quize save")
@@ -764,7 +764,7 @@ function botrating() {
             scope.toggle = function(index) {
                 if (scope.readonly == undefined || scope.readonly == false) {
                     scope.itemvalue = index + 1;
-                    debugger;
+                    //debugger;
                     attributes.onratingselect({
                         rating: index + 1
                     });

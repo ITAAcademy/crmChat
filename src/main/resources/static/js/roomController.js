@@ -15,7 +15,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     $scope.addRoomButtonKeyPress = function(event) {
         if (event.keyCode == 13) {
             $scope.addDialog();
-           // $scope.toggleNewRoomModal();
+            // $scope.toggleNewRoomModal();
         }
     }
 
@@ -53,15 +53,15 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     }
 
     function doGoToRoom(roomId) {
-        debugger;
+        //debugger;
         if ($scope.mouseBusy == false)
             chatControllerScope.changeLocation('/dialog_view/' + roomId);
     }
-    
-   
-    
+
+
+
     $scope.addDialog = function() {
-    	 $scope.toggleNewRoomModal();
+        $scope.toggleNewRoomModal();
         if ($rootScope.socketSupport) {
             chatControllerScope.roomAdded = false;
             chatSocket.send("/app/chat/rooms/add." + "{0}".format($scope.dialogName), {}, JSON.stringify({}));
@@ -71,8 +71,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
                     $timeout.cancel(addingRoom);
                     addingRoom = undefined;
                 }
-                if ($scope.roomAdded) 
-                	return;
+                if ($scope.roomAdded)
+                    return;
                 toaster.pop('error', "Error", "server request timeout", 1000);
                 $scope.roomAdded = true;
                 console.log("!!!!!!!!!!!!!!!!!!!!!Room added");
@@ -93,27 +93,30 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
             });
         }
         $scope.dialogName = '';
-    };
+    };   
+    
 
     $scope.goToDialogList = function() {
-
+    	
         if (chatControllerScope.currentRoom !== undefined && getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.date) !== undefined)
             getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
 
         //$scope.templateName = 'dialogsTemplate.html';
         //changeLocation("/chatrooms")
         $scope.dialogName = '';
-        if($rootScope.roomForUpdate == undefined)
-        	$rootScope.roomForUpdate = new Map();
-
-			if ($rootScope.socketSupport) {
-            chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({"roomForUpdate" : $rootScope.roomForUpdate}));
-        } else {
-            $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {"roomForUpdate" : $rootScope.roomForUpdate});
-		}
-
-        $rootScope.roomForUpdate = new Map();//clear list
+        if ($rootScope.roomForUpdate == undefined)
+            $rootScope.roomForUpdate = new Map();
+        if (chatControllerScope.currentRoom !== undefined && chatControllerScope.currentRoom != null) {
+            if ($rootScope.socketSupport) {
+                chatSocket.send("/app/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({ "roomForUpdate": $rootScope.roomForUpdate }));
+            } else {
+                $http.post(serverPrefix + "/chat.go.to.dialog.list/{0}".format(chatControllerScope.currentRoom.roomId), { "roomForUpdate": $rootScope.roomForUpdate });
+            }
+        }
+        $rootScope.roomForUpdate = new Map(); //clear list
         chatControllerScope.currentRoom = { roomId: '' };
+        
+        $rootScope.initIsUserTenant();
     }
     $scope.mouseBusy = false;
 
@@ -132,7 +135,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         $('.multiple-select-wrapper .list').slideUp();
     });
 
-	/* need rename */
+    /* need rename */
     $scope.Airlines = [
         { selected: true, name: filters['anonim'], img: 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png' },
         { selected: true, name: filters['private'], img: 'http://megaicons.net/static/img/icons_title/40/110/title/lock-icon.png' },
@@ -161,7 +164,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     console.log("initing:" + chatControllerScope.socketSupport);
     $scope.pageClass = 'scale-fade';
     $scope.$$postDigest(function() {
-     //   var nice = $(".chat-box").niceScroll();
+        //   var nice = $(".chat-box").niceScroll();
 
     })
 

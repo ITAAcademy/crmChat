@@ -70,6 +70,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                                 $scope.pageClass = 'scale-fade-in';
                             }),
                             function() {
+                        	alert(16)
                                 chatControllerScope.changeLocation("/chatrooms");
                             };
                     }*/

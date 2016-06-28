@@ -2,10 +2,6 @@ package com.intita.wschat.web;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,17 +28,14 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,8 +52,6 @@ import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConfigParam;
-import com.intita.wschat.models.IntitaConsultation;
-import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
@@ -75,11 +65,9 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.LecturesService;
-//import com.intita.wschat.services.IntitaConsultationsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -150,13 +138,13 @@ public class RoomController {
 		Room room = roomService.register(roomName, bot);
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		roomService.addUserToRoom(guest, room);
-		
+
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
 		//this said ti author that he nust update room`s list
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));
-		
+
 		String containerString = "Good day. Please choose the category that interests you:\n";
 		ArrayList<BotCategory> allCategories = botCategoryService.getAll();
 		BotDialogItem mainContainer = BotDialogItem.createFromCategories(allCategories);
@@ -174,15 +162,23 @@ public class RoomController {
 		return room;
 	}
 	public Room createRoomWithTenant(Principal principal) {
-		
+
 		//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
-		ChatUser roomAuthor = chatTenantService.getRandomTenant().getChatUser();
+		ChatTenant greeTenante = chatTenantService.getFreeTenant();
+		if (greeTenante == null)
+			return null;
+
+		ChatUser roomAuthor = greeTenante.getChatUser();			
+
+		chatTenantService.setTenantBusy(greeTenante);
+
+		//getRandomTenant().getChatUser();
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		String roomName = roomAuthor.getNickName() + " " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
 		Room room = roomService.register(roomName, roomAuthor);
-		
+
 		roomService.addUserToRoom(guest, room);
-		
+
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
@@ -223,21 +219,30 @@ public class RoomController {
 				/*
 				 * ADD BOT TO CHAT
 				 */
+				//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
 				if(s_botEnable != null)
-					botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+					botEnable = Boolean.parseBoolean(s_botEnable.getValue());
 				if (botEnable){
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
 				}
 				else 
-				room = createRoomWithTenant(principal);
-				chatController.addFieldToInfoMap("newGuestRoom", room.getId());
+					room = createRoomWithTenant(principal);
+				
+				//test - no free tenant
+				//room = null;
+				
+				//send msg about go to guest room if you is tenant with current Id
+				/*if (room != null)
+					chatController.addFieldToInfoMap("newGuestRoom", room.getId());*/
 			}
 			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
-
-			result.put("nextWindow", room.getId().toString());
+			if (room != null)
+				result.put("nextWindow", room.getId().toString());
+			else
+				result.put("nextWindow", "-1");
 		}
 		else
 		{
@@ -406,7 +411,7 @@ public class RoomController {
 	/*
 	 * call only if is need
 	 */
-	@Scheduled(fixedDelay=3000L)
+	@Scheduled(fixedDelay=15000L)
 	public void updateParticipants() {
 		for(String key : responseBodyQueueForParticipents.keySet())
 		{
@@ -691,6 +696,11 @@ public class RoomController {
 		System.out.println(Boolean.toString(roomService.removeUserFromRoom(user_o, room_o)));
 		return true;
 	}
+	
+	public boolean removeUserFromRoom(ChatUser user, Room room) {		
+		return roomService.removeUserFromRoom(user.getIntitaUser(), room);
+	}
+	
 	public static void addFieldToSubscribedtoRoomsUsersBuffer(SubscribedtoRoomsUsersBufferModal modal)
 	{
 		subscribedtoRoomsUsersBuffer.add(modal);

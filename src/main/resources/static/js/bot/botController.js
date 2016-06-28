@@ -21,17 +21,25 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
             if (chatRouteInterfaceScope.participants.length > 2) {
                 $scope.disabled = true;
                 chatControllerScope.currentRoom.active = true;
+
+                // if ($scope.toasterWaitFreeTenant != undefined)
+                     //   $scope.toasterWaitFreeTenant.close;
+                     toaster.clear();
             } else
                 chatControllerScope.currentRoom.active = false;
 
         });
 
+    var askIsFreeTenant;
 
     $scope.giveTenant = function() {
         $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
         success(function(data, status, headers, config) {
-            console.log("ADD USER OK " + data);
-            chatControllerScope.userAddedToRoom = true;
+        		{      		      
+                var waitTime = globalConfig["timeWaitFreeTenant"];
+        		
+                $rootScope.showToasterWaitFreeTenant();
+        		}            		
         }).
         error(function(data, status, headers, config) {
             chatControllerScope.userAddedToRoom = true;

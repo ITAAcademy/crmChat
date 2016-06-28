@@ -85,6 +85,17 @@ public class ChatTenant implements Serializable,Comparable<ChatTenant> {
 		if (o==null)return -1;
 		return this.getId().compareTo(o.getId());
 	}
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	 private Set<BotCategory> botCategories = new HashSet<>();
+
+	 
+	public Set<BotCategory> getBotCategories() {
+		return botCategories;
+	}
+	public void setBotCategories(Set<BotCategory> botCategories) {
+		this.botCategories = botCategories;
+	};
 
 
 }
