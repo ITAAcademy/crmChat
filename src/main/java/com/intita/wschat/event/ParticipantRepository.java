@@ -23,7 +23,7 @@ public class ParticipantRepository {
 		if (activeSessions.containsKey(chatId)){
 			int presenceIndex = activeSessions.get(chatId);
 			activeSessions.put(chatId, presenceIndex+1);
-			System.out.println("presence increased to:"+(presenceIndex+1));
+			//System.out.println("presence increased to:"+(presenceIndex+1));
 		}
 		else{
 	activeSessions.put(chatId,1);
@@ -33,8 +33,11 @@ public class ParticipantRepository {
 	}
 
 	public boolean isOnline(String chatId) {
-		boolean online = activeSessions.containsKey(chatId) &&  activeSessions.get(chatId)>0;
-		System.out.println("isOnline "+chatId+" ? "+ online);
+		boolean containsKey = activeSessions.containsKey(chatId);
+		Integer getId = activeSessions.get(chatId);
+		
+		boolean online = containsKey &&  getId > 0;
+		//System.out.println("isOnline "+chatId+" ? "+ online);
 		return online;
 	}
 
@@ -49,7 +52,7 @@ public class ParticipantRepository {
 			else
 			{
 			activeSessions.put(chatId, presenceIndex-1);
-			System.out.println("presence decreased to:"+(presenceIndex-1));
+			//System.out.println("presence decreased to:"+(presenceIndex-1));
 			}
 		}
 	}

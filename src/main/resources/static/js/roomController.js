@@ -53,7 +53,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     }
 
     function doGoToRoom(roomId) {
-        debugger;
+        //debugger;
         if ($scope.mouseBusy == false)
             chatControllerScope.changeLocation('/dialog_view/' + roomId);
     }
@@ -93,10 +93,11 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
             });
         }
         $scope.dialogName = '';
-    };
+    };   
+    
 
     $scope.goToDialogList = function() {
-
+    	
         if (chatControllerScope.currentRoom !== undefined && getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.date) !== undefined)
             getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
 
@@ -114,6 +115,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         }
         $rootScope.roomForUpdate = new Map(); //clear list
         chatControllerScope.currentRoom = { roomId: '' };
+        
+        $rootScope.initIsUserTenant();
     }
     $scope.mouseBusy = false;
 

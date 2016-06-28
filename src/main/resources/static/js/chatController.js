@@ -3,14 +3,33 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
     /*
      * 
      */
-
     $scope.controllerName = "ChatRouteController";
     var chatControllerScope = Scopes.get('ChatController');
+
+    $rootScope.isWaiFreeTenatn = false;
+
+    $rootScope.showToasterWaitFreeTenant = function() {
+        if (!$rootScope.isWaiFreeTenatn) {
+            toaster.pop({
+                type: 'wait',
+                body: 'Wait for free consultant',
+                timeout: 0,
+                onHideCallback: function() {
+                    if (!$rootScope.isConectedWithFreeTenant) {
+                        $rootScope.isWaiFreeTenatn = false;
+                        $rootScope.showToasterWaitFreeTenant();
+                    }
+                },
+                showCloseButton: false
+            });
+            $rootScope.isWaiFreeTenatn = true;
+        }
+    }
 
     $rootScope.$watch('isInited', function() {
         console.log("try " + chatControllerScope.currentRoom);
         if ($rootScope.isInited == true) {
-   
+
             var room = getRoomById($scope.rooms, $routeParams.roomId);
 
             if (room != null && room.type == 2 && $scope.controllerName != "ConsultationController") //redirect to consultation
@@ -34,19 +53,28 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
                 }, function() {
                     $rootScope.goToAuthorize();
                     toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
-                   // location.reload();
+                    // location.reload();
                 });
             } else {
                 $scope.goToDialog($routeParams.roomId).then(function() {
                     chatControllerScope.currentRoom.roomId = $routeParams.roomId;
                     $scope.pageClass = 'scale-fade-in';
                 }, function() {
-                    $rootScope.goToAuthorize(); 
+                    $rootScope.goToAuthorize();
                     toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                     //location.reload();
                     //alert("ERR");
                 });
             }
+
+            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant").
+            success(function(data, status, headers, config) {
+                if (data == true)
+                    $scope.showToasterWaitFreeTenant();
+            }).
+            error(function(data, status, headers, config) {
+                alert("did_am_wait_tenant: server error")
+            });
         }
 
     });
