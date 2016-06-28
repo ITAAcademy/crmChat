@@ -99,7 +99,11 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    -webkit-transform: translateY(-50%) translateX(-50%);
+    transform:translateY(-50%) translateX(-50%);
+-ms-transform:translateY(-50%) translateX(-50%); /* IE 9 */
+-moz-transform:translateY(-50%) translateX(-50%); /* Firefox */
+-webkit-transform:translateY(-50%) translateX(-50%); /* Safari and Chrome */
+-o-transform:translateY(-50%) translateX(-50%); /* Opera */
 }
 
 .chat .avatar .status.off {
