@@ -347,7 +347,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                     urlPrefix = urlPrefix.format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
                 else
                     urlPrefix = urlPrefix.format(0, scope.mainScope.currentMessage.idObject.id); //send from quize
-                var url = urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
+                var url = "/crmChat/" + urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;
                 // var dataToSend = JSON.stringify(formElm.serializeArray());
                 var formData = {};
                 //concat(arrayB);
@@ -358,7 +358,7 @@ angular.module('springChat.directives').directive('botsubmit', function($compile
                 $.ajax({
                     type: "POST",
                     contentType: "binary/octet-stream",
-                    url: document.location.origin + globalConfig.baseUrl + url,
+                    url: /*document.location.origin + globalConfig.baseUrl + */url,
                     data: dataToSend, // serializes the form's elements.
                     success: function(data) {
                         if (data == "quize save")
