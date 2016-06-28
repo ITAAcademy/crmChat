@@ -66,6 +66,7 @@ public class BotController {
 	BotItemContainerService botItemContainerService;
 
 	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
+
 	private List<Long> askConsultationUsers = new ArrayList<Long>();
 
 	private boolean  usersAskTenantsTimerRunning = false;
@@ -94,6 +95,14 @@ public class BotController {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private final static Logger log = LoggerFactory.getLogger(BotController.class);
+
+	public Room getRommInTempRoomAskTenantByChatUser(ChatUser user) {
+		for (Room room : tempRoomAskTenant) {
+			if (room.getChatUsers().contains(user))
+				return room;
+		}
+		return null;
+	}	
 
 	@PostConstruct
 	public void postConstructor(){
@@ -341,7 +350,7 @@ public class BotController {
 		if (tempRoomAskTenant.contains(room_0))
 			return false;
 
-		tempRoomAskTenant.add(room_0);		
+		tempRoomAskTenant.add(room_0);	
 
 		/*
 		Room room_0 = roomService.getRoom(roomId);
@@ -370,14 +379,8 @@ public class BotController {
 		String userIdStr = principal.getName();
 		Long userId =  Long.parseLong(userIdStr, 10);
 
-		boolean isFindedFreeTenant = giveTenant(roomId, userId);
+		boolean isFindedFreeTenant = giveTenant(roomId, userId, true);
 
-		if (isFindedFreeTenant) {
-
-		}
-		else {
-
-		}
 		return isFindedFreeTenant;
 		/*
 		ChatUser c_user = t_user.getChatUser();
@@ -390,8 +393,8 @@ public class BotController {
 
 		return true;*/
 	}
-	
-	public void runUsersAskTenantsTimer(Long roomId) {
+
+	public void runUsersAskTenantsTimer(Long roomId, Long chatUserId) {
 		if (usersAskTenantsTimerRunning == false)
 		{
 			usersAskTenantsTimerRunning = true;
@@ -401,7 +404,9 @@ public class BotController {
 						public void run() {
 							usersAskTenantsTimerRunning = false;
 							if (askConsultationUsers.size() > 0)
-								giveTenant(roomId, askConsultationUsers.get(0));
+							{								
+								giveTenant(roomId, chatUserId, true);
+							}
 						}
 					}, 
 					30000 
@@ -409,7 +414,7 @@ public class BotController {
 		}
 	}
 
-	public boolean giveTenant(Long roomId, Long chatUserId) {
+	public boolean giveTenant(Long roomId, Long chatUserId, boolean needRunTimer) {
 
 		//List<Long> ff = chatTenantService.getTenantsBusy();
 
@@ -423,30 +428,43 @@ public class BotController {
 			if (askConsultationUsers.contains(chatUserId) == false) 
 			{
 				askConsultationUsers.add(chatUserId);
-				runUsersAskTenantsTimer(roomId);				//789				
+				runUsersAskTenantsTimer(roomId, chatUserId);				//789				
 			}
 			return false;
 		}		
 
 		Long tenantChatUserId = t_user.getChatUser().getId();	
 
-		boolean gg = chatTenantService.setTenantBusy(t_user);
+		chatTenantService.setTenantBusy(t_user);
 
 		Object[] obj = new Object[] {  tenantChatUserId, roomId, chatUserId };
 
 		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
 
 		askTenantToSpendConsultationWS(tenantChatUserId, roomId, chatUserId );
-		
+
 		for (int i = 0; i < askConsultationUsers.size(); i++)
 		{
 			if (askConsultationUsers.get(i).equals(chatUserId))
 				askConsultationUsers.remove(i);
 		}
-		
-				
-		if (askConsultationUsers.size() > 0)
-			runUsersAskTenantsTimer(roomId);
+
+		if (askConsultationUsers.size() > 0 && tempRoomAskTenant.size() > 0)
+		{			
+			Long nextUserId = askConsultationUsers.get(0);
+
+			ChatUser user =  chatUsersService.getChatUser(nextUserId);
+
+			Room nextRoom = getRommInTempRoomAskTenantByChatUser(user);
+
+			if (nextRoom != null)
+			{
+				Long nextRoomId = nextRoom.getId(); 
+				if ( giveTenant(nextRoomId, nextUserId,  false) == false)
+					if (needRunTimer)
+						runUsersAskTenantsTimer(nextRoomId, nextUserId);
+			}
+		}
 
 		return true;
 	}
@@ -466,9 +484,9 @@ public class BotController {
 	@RequestMapping(value = "/{roomId}/{userId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, @PathVariable("userId") Long chatUserId, Principal principal) {	
-		
+
 		askConsultationUsers.add(chatUserId); //789
-		return giveTenant(roomId, chatUserId);
+		return giveTenant(roomId, chatUserId, true);
 	}
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant",  method = RequestMethod.POST)
@@ -507,9 +525,9 @@ public class BotController {
 		return askConsultationUsers.contains(user_id);				
 	}
 
-	@RequestMapping(value = "/bot/operations/tenant/{userId}/free", method = RequestMethod.POST)
+	@RequestMapping(value = "/bot/operations/tenant/{userId}/{roomId}/free", method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendFree(@PathVariable Long userId, Principal principal) {
+	public void tenantSendFree(@PathVariable Long userId, @PathVariable Long roomId, Principal principal) {
 		Long tenantChatUserId = Long.parseLong(principal.getName());
 
 		ChatUser c_user = chatUsersService.getChatUser(tenantChatUserId);
@@ -519,17 +537,38 @@ public class BotController {
 		//ChatTenant t_user = chatTenantService.getChatTenant(tenantChatUser);
 		//ChatUser c_user = t_user.getChatUser();
 		//ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
+		if (tempRoomAskTenant.size() == 0)
+			return;
 
-		Room room_ = tempRoomAskTenant.get(0);
-		tempRoomAskTenant.remove(0);
+		Room room_ = null;
+
+		for (int i = 0; i < tempRoomAskTenant.size(); i++)
+			if (tempRoomAskTenant.get(i).getId().equals(roomId))
+			{
+				room_ = tempRoomAskTenant.get(i);
+			}
+
+		if (room_ == null)
+			return;
+
+		//Room room_ = tempRoomAskTenant.get(0);
+
+
+		for (int i = 0; i < tempRoomAskTenant.size(); i++)
+			if (tempRoomAskTenant.get(i).equals(userId))
+			{
+				tempRoomAskTenant.remove(i);
+			}
+
+		//tempRoomAskTenant.remove(0);
 		//room_.setAuthor(c_user);
-		roomService.update(room_);
-		//roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);
-		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);		
+		//roomService.update(room_);
+		//roomControler.addUserToRoom(b_user, room_, b_user.getPrincipal(), true);		
+		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
 		/*Long userId = askConsultationUsers.get(0);
 		askConsultationUsers.remove(0);*/
-		
+
 		//789
 
 		Object[] obj = new Object[] {userId, tenantChatUserId};

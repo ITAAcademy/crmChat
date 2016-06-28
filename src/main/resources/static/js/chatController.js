@@ -6,7 +6,6 @@ springChatControllers.controller('ChatRouteController',['$routeParams','$rootSco
 	$rootScope.isWaiFreeTenatn = false;
 	
 	$rootScope.showToasterWaitFreeTenant = function () {
-		//alert($rootScope.isConectedWithFreeTenant);
 		if (!$rootScope.isWaiFreeTenatn) {
 	    	toaster.pop({
 	            type: 'wait',

@@ -166,7 +166,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     
     $scope.answerToTakeConsultation = function(value) {  
     	if (value) {
-    	 $http.post(serverPrefix + "/bot/operations/tenant/{0}/free".format($rootScope.sendedId)). //$scope.chatUserId)
+    	 $http.post(serverPrefix + "/bot/operations/tenant/free"). //$scope.chatUserId)
     	   success(function(data, status, headers, config) {
     		   toaster.pop({
     	            type: 'wait',
@@ -181,8 +181,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     	}
     	else {
     		$scope.hideAskTenantToTakeConsultation();
-    		//alert($rootScope.sendedId)
-    		 $http.post(serverPrefix + "/{0}/{1}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId, $rootScope.sendedId)).
+    		 $http.post(serverPrefix + "/{0}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId)).
     	  	   success(function(data, status, headers, config) {
     	  		
     	  	   }).
@@ -462,24 +461,20 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 }*/
                 if (data["newAskConsultation_ToChatUserId"] != null)
             	{
-                    var tenantId = data["newAskConsultation_ToChatUserId"][0][0];
-                	if ( tenantId == $scope.chatUserId) {               		
-                		
+                    var sendedId = data["newAskConsultation_ToChatUserId"][0][0];
+                	if ( sendedId == $scope.chatUserId) {
                 		$scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
-                		alert($scope.askConsultation_roomId)
                 		$scope.showAskTenantToTakeConsultation();
-                		
-                		$rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][2];
                 	}
             	}
                 if (data["newConsultationWithTenant"] != null) {
-                	$rootScope.sendedId = data["newConsultationWithTenant"][0][0];                 	
+                	var sendedId = data["newConsultationWithTenant"][0][0];                	
                
-                	$rootScope.submitConsultation_processUser($rootScope.sendedId);
+                	$rootScope.submitConsultation_processUser(sendedId);
                 	
                 	var sendedConsultantId = data["newConsultationWithTenant"][0][1];                	
                             	
-                	$rootScope.submitConsultation_processTenant(sendedConsultantId);
+                   	$rootScope.submitConsultation_processTenant(sendedConsultantId);
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
@@ -731,21 +726,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     	//alert(body)
                     	var sendedId = body[0];
                     	if ( sendedId == $scope.chatUserId) {
-                    		$rootScope.sendedId = body[2]                    		
-                    		
                     		$scope.askConsultation_roomId = body[1];
-                    		$scope.showAskTenantToTakeConsultation();                 		
-                    		
+                    		$scope.showAskTenantToTakeConsultation();
                     	}
                     });
                     
                     chatSocket.subscribe("/topic/users/{0}/submitConsultation".format($scope.chatUserId), function(message) {
                     	var body = JSON.parse(message.body);
-                    	$rootScope.sendedId = body[0]; 
+                    	var sendedId = body[0]; 
                     	
-                    	//alert("$rootScope.sendedId : " + $rootScope.sendedId);
-                    	
-                    	$rootScope.submitConsultation_processUser($rootScope.sendedId);                    	
+                    	$rootScope.submitConsultation_processUser(sendedId);                    	
                     	
                     	var sendedConsultantId = body[1];                     	
                     	$rootScope.submitConsultation_processTenant(sendedConsultantId);                    	
@@ -806,9 +796,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     		
     		if (chatControllerScope == undefined)
  			   chatControllerScope = Scopes.get('ChatController');
+    		
     		 $timeout(function() {
                 	 toaster.clear();
-                	 alert("$scope.askConsultation_roomId : " + $scope.askConsultation_roomId)
                 	 chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
                  }, 1000);	
     		//chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
@@ -840,7 +830,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     var initStompClient = function() {
 
         console.log("initStompClient");
-
         chatSocket.init(serverPrefix + "/ws"); //9999
 
 
