@@ -33,6 +33,7 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     var askIsFreeTenant;
 
     $scope.giveTenant = function() {
+    	alert("chatControllerScope.currentRoom.roomId : " + chatControllerScope.currentRoom.roomId)
         $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
         success(function(data, status, headers, config) {
         		{      		      
