@@ -531,6 +531,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
             success(function(data, status, headers, config) {
+                debugger;
                 $scope.isUserTenant = data[0];
                 if (data[0])
                     $scope.isTenantFree = !data[1];

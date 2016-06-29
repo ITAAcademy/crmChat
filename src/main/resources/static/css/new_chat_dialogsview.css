@@ -290,7 +290,8 @@ margin-left:230px;
 
 .dialog-icon.free_tenant {
     top: 0px;
-    right: 90px;
+    /*right: 90px;*/
+    right: 35px;
     padding: 0px;
     z-index: 999;
     height: 60px;
