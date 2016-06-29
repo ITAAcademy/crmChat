@@ -163,7 +163,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.answerToTakeConsultation = function(value) {  
     	if (value) {
-    		alert($rootScope.sendedId + " " + $scope.askConsultation_roomId)
+    		//alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
     	 $http.post(serverPrefix + "/bot/operations/tenant/free/{0}/{1}".format($rootScope.sendedId, $scope.askConsultation_roomId)). //$scope.chatUserId)
     	   success(function(data, status, headers, config) {
     		   toaster.pop({
@@ -179,7 +179,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     	}
     	else {
     		$scope.hideAskTenantToTakeConsultation();
-    		//alert($rootScope.sendedId)
     		 $http.post(serverPrefix + "/{0}/{1}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId, $rootScope.sendedId)).
     	  	   success(function(data, status, headers, config) {
     	  		
@@ -731,8 +730,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                         var body = JSON.parse(message.body);
                         //alert(body)
-                        $rootScope.sendedId = body[0];
-                        if ($rootScope.sendedId == $scope.chatUserId) {
+                        $rootScope.sendedId = body[2];
+                        var tenantId = body[0]; //987
+                        if (tenantId == $scope.chatUserId) {
                             $scope.askConsultation_roomId = body[1];
                             $scope.showAskTenantToTakeConsultation();
                         }
@@ -745,7 +745,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         $rootScope.submitConsultation_processUser($rootScope.sendedId);
 
                         var sendedConsultantId = body[1];
-                        $rootScope.submitConsultation_processTenant(sendedConsultantId);
+                        $rootScope.submitConsultation_processTenant(sendedConsultantId);                        
+                       // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
 
                     });
 
@@ -784,12 +785,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $rootScope.submitConsultation_processUser = function(userId) {
+    	//alert(userId + " " +  $scope.chatUserId)
         if (userId == $scope.chatUserId) {
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
             chatControllerScope.userAddedToRoom = true;
             $rootScope.isConectedWithFreeTenant = true;
-            //alert($rootScope.isConectedWithFreeTenant);
+
             toaster.clear();
             $rootScope.isConectedWithFreeTenant = false;
         }

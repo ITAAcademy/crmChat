@@ -426,14 +426,14 @@ public class BotController {
 		if(room_0 == null)
 			return false;	
 
-		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method
+		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method   789
 		if (t_user == null)
 		{
 			if (askConsultationUsers.contains(chatUserId) == false) 
 			{
-				askConsultationUsers.add(chatUserId);
-				runUsersAskTenantsTimer(roomId, chatUserId);				//789				
+				askConsultationUsers.add(chatUserId);							//789				
 			}
+			runUsersAskTenantsTimer(roomId, chatUserId);	
 			return false;
 		}		
 
