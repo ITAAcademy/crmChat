@@ -1630,6 +1630,11 @@ input.cmn-toggle-yes-no + label:before {
   -o-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+/*
+input.cmn-toggle-yes-no:hover + label:before {
+  background-color: #4B70A3;
+}
+*/
 input.cmn-toggle-yes-no + label:after {
   background-color: #4B70A3;
   content: attr(data-on);
@@ -1648,6 +1653,11 @@ input.cmn-toggle-yes-no + label:after {
   -o-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+/*
+input.cmn-toggle-yes-no:hover + label:after {
+  background-color: #7C97BC;
+}
+*/
 input.cmn-toggle-yes-no:checked + label:before {
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);

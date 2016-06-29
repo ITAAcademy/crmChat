@@ -470,11 +470,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }*/
                 if (data["newAskConsultation_ToChatUserId"] != null) {
-                	//alert(data["newAskConsultation_ToChatUserId"][0])
-                	var sendedId = data["newAskConsultation_ToChatUserId"][0][0];
-                	 if (sendedId == $scope.chatUserId) {
+                	$rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][0];
+                    if ($rootScope.sendedId == $scope.chatUserId) {
                         $scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
-                        $rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][2];
                         $scope.showAskTenantToTakeConsultation();
                     }
                 }
@@ -787,9 +785,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $rootScope.submitConsultation_processUser = function(userId) {
+    	//alert(userId + " " +  $scope.chatUserId)
         if (userId == $scope.chatUserId) {
-        	
-        	
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
             chatControllerScope.userAddedToRoom = true;
@@ -841,7 +838,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     var initStompClient = function() {
 
         console.log("initStompClient");
-        chatSocket.init(serverPrefix + "/wss"); //9999
+        chatSocket.init(serverPrefix + "/ws"); //9999
 
 
         chatSocket.connect(onConnect, function(error) {

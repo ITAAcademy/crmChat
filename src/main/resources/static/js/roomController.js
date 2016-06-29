@@ -123,7 +123,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     $('.multiple-select-wrapper').bind('click', function(e) {
         $scope.mouseBusy = true;
         e.stopPropagation();
-        $('.multiple-select-wrapper .list').toggle('10');
+        $( e.currentTarget).find('div.list').toggle('10');
     });
 
     $('.multiple-select-wrapper .list').bind('click', function(e) {

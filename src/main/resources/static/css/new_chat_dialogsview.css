@@ -243,8 +243,7 @@ margin-left:230px;
     height: 100%;
 }
 
-.multiple-select-wrapper.config
-{
+.multiple-select-wrapper.config {
     right: 40px;
 }
 
@@ -268,7 +267,7 @@ margin-left:230px;
 
 @media(min-width:1200px) {}
 
-.dialog-icon{
+.dialog-icon {
     position: absolute;
     display: inline-block;
     font-family: 'Glyphicons Halflings';
@@ -279,10 +278,11 @@ margin-left:230px;
     -moz-osx-font-smoothing: grayscale;
 }
 
-.dialog-icon.filter{
+.dialog-icon.filter {
     top: 13px;
     left: 10px;
 }
+
 .dialog-icon.config {
     top: 13px;
     right: 10px;
@@ -292,7 +292,8 @@ margin-left:230px;
     top: 0px;
     right: 90px;
     padding: 0px;
-    z-index: 999
+    z-index: 999;
+    height: 60px;
 }
 
 .multiple-select-wrapper .selected-items-box {
@@ -713,6 +714,7 @@ margin-left:230px;
 .msg-from-man span {
     word-wrap: break-word;
 }
+
 .chat-body .answer.left {
     width: 100%;
 }
