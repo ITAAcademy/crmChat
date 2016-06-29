@@ -68,6 +68,12 @@ public class BotController {
 	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
 
 	private List<Long> askConsultationUsers = new ArrayList<Long>();
+	
+	public void register(Room room, Long userId)
+	{
+		tempRoomAskTenant.add(room);
+		askConsultationUsers.add(userId);
+	}
 
 	private boolean  usersAskTenantsTimerRunning = false;
 

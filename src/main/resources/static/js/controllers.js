@@ -161,33 +161,32 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
     }
 
-    $scope.answerToTakeConsultation = function(value) {  
-    	if (value) {
-    		//alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
-    	 $http.post(serverPrefix + "/bot/operations/tenant/free/{0}/{1}".format($rootScope.sendedId, $scope.askConsultation_roomId)). //$scope.chatUserId)
-    	   success(function(data, status, headers, config) {
-    		   toaster.pop({
-    	            type: 'wait',
-    	            body: 'Wait for ',
-    	            timeout: 0
-    	});
-    		   
-    	   }).
-    	   error(function(data, status, headers, config) {
-    		   alert("error : " + status)
-    	   });
-    	}
-    	else {
-    		$scope.hideAskTenantToTakeConsultation();
-    		 $http.post(serverPrefix + "/{0}/{1}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId, $rootScope.sendedId)).
-    	  	   success(function(data, status, headers, config) {
-    	  		
-    	  	   }).
-        	   error(function(data, status, headers, config) {
-        		   alert("error : " + status)
-        	   });
-    	}      	
-    }; 
+    $scope.answerToTakeConsultation = function(value) {
+        if (value) {
+            //alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
+            $http.post(serverPrefix + "/bot/operations/tenant/free/{0}/{1}".format($rootScope.sendedId, $scope.askConsultation_roomId)). //$scope.chatUserId)
+            success(function(data, status, headers, config) {
+                toaster.pop({
+                    type: 'wait',
+                    body: 'Wait for ',
+                    timeout: 0
+                });
+
+            }).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
+        } else {
+            $scope.hideAskTenantToTakeConsultation();
+            $http.post(serverPrefix + "/{0}/{1}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId, $rootScope.sendedId)).
+            success(function(data, status, headers, config) {
+
+            }).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
+        }
+    };
 
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
@@ -470,14 +469,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }*/
                 if (data["newAskConsultation_ToChatUserId"] != null) {
-                	$rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][0];
+                    $rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][0];
                     if ($rootScope.sendedId == $scope.chatUserId) {
                         $scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
                         $scope.showAskTenantToTakeConsultation();
                     }
                 }
                 if (data["newConsultationWithTenant"] != null) {
-                	$rootScope.sendedId = data["newConsultationWithTenant"][0][0];
+                    $rootScope.sendedId = data["newConsultationWithTenant"][0][0];
 
                     $rootScope.submitConsultation_processUser($rootScope.sendedId);
 
@@ -542,6 +541,25 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             });
         }
     };
+    $rootScope.isWaiFreeTenatn = false;
+
+    $rootScope.showToasterWaitFreeTenant = function() {
+        if (!$rootScope.isWaiFreeTenatn) {
+            toaster.pop({
+                type: 'wait',
+                body: 'Wait for free consultant',
+                timeout: 0,
+                onHideCallback: function() {
+                    if (!$rootScope.isConectedWithFreeTenant) {
+                        $rootScope.isWaiFreeTenatn = false;
+                        $rootScope.showToasterWaitFreeTenant();
+                    }
+                },
+                showCloseButton: false
+            });
+            $rootScope.isWaiFreeTenatn = true;
+        }
+    }
 
     function login(mess_obj) {
         $scope.chatUserId = mess_obj.chat_id;
@@ -589,7 +607,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             }
 
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
-            toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
+            // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
+            $rootScope.showToasterWaitFreeTenant();
         }
     }
 
@@ -746,8 +765,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         $rootScope.submitConsultation_processUser($rootScope.sendedId);
 
                         var sendedConsultantId = body[1];
-                        $rootScope.submitConsultation_processTenant(sendedConsultantId);                        
-                       // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
+                        $rootScope.submitConsultation_processTenant(sendedConsultantId);
+                        // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
 
                     });
 
@@ -786,7 +805,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $rootScope.submitConsultation_processUser = function(userId) {
-    	//alert(userId + " " +  $scope.chatUserId)
+        //alert(userId + " " +  $scope.chatUserId)
         if (userId == $scope.chatUserId) {
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
