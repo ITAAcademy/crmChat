@@ -254,7 +254,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             $scope.show_search_list_in_message_input = true;
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=false", //'/get_users_emails_like',
+                url: serverPrefix + "/get_users_emails_like?login=" + email + "&room=" + chatControllerScope.currentRoom.roomId + "&eliminate_users_of_current_room=false", //'/get_users_emails_like',
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
@@ -797,7 +797,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         //Upload the image
         //(Uploader is a service in my application, you will need to create your own)
         if (files) {
-            uploadXhr(files, "upload_file/" + $scope.currentRoom.roomId,
+            uploadXhr(files, "upload_file/" + chatControllerScope.currentRoom.roomId,
                 function successCallback(data) {
                     $scope.uploadProgress = 0;
                     $scope.sendMessage("я отправил вам файл", JSON.parse(data));
@@ -901,7 +901,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             room.nums = 0;
             $scope.dialogName = room.string;
         } else {
-            /*  $http.post(serverPrefix + "/chat/rooms/roomInfo/" + $scope.currentRoom.roomId)).
+            /*  $http.post(serverPrefix + "/chat/rooms/roomInfo/" + chatControllerScope.currentRoom.roomId)).
             success(function(data, status, headers, config) {
 
                 $scope.goToDialog();
@@ -984,9 +984,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     $scope.addUserToRoom = function() {
             chatControllerScope.userAddedToRoom = false;
-            room = $scope.currentRoom.roomId + '/';
+            room = chatControllerScope.currentRoom.roomId + '/';
             if ($rootScope.socketSupport === true) {
-                chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId, $scope.searchInputValue.email), {}, JSON.stringify({}));
+                chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}, JSON.stringify({}));
                 var myFunc = function() {
                     if (angular.isDefined(addingUserToRoom)) {
                         $timeout.cancel(addingUserToRoom);
@@ -1000,7 +1000,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 addingUserToRoom = $timeout(myFunc, 6000);
             } else {
                 console.log("$scope.searchInputValue:" + $scope.searchInputValue);
-                $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format($scope.currentRoom.roomId, $scope.searchInputValue.email), {}).
+                $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}).
                 success(function(data, status, headers, config) {
                     console.log("ADD USER OK " + data);
                     chatControllerScope.userAddedToRoom = true;
@@ -1015,7 +1015,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
          * UPDATE MESSAGE LP
          *************************************/
     function subscribeMessageLP() {
-        var currentUrl = serverPrefix + "/{0}/chat/message/update".format($scope.currentRoom.roomId);
+        var currentUrl = serverPrefix + "/{0}/chat/message/update".format(chatControllerScope.currentRoom.roomId);
         console.log("subscribeMessageLP()");
         $scope.ajaxRequestsForRoomLP.push(
             $.ajax({
@@ -1050,7 +1050,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
     function subscribeParticipantsLP() {
-        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format($scope.currentRoom.roomId)
+        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(chatControllerScope.currentRoom.roomId)
         $scope.ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
@@ -1307,7 +1307,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         var files = [];
         for (var i = 0; i < input.files.length; i++) files.push(input.files[i]);
         if (files) {
-            uploadXhr(files, "upload_file/" + $scope.currentRoom.roomId,
+            uploadXhr(files, "upload_file/" + chatControllerScope.currentRoom.roomId,
                 function successCallback(data) {
                     $scope.uploadProgress = 0;
                     $scope.sendMessage("я отправил вам файл", JSON.parse(data));

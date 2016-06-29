@@ -12,12 +12,12 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     };
     $scope.$on('$destroy', function() {
         console.log("destroy");
-        if (scope.$parent.mainScope == null || scope.$parent.mainScope == undefined)
+        if ($scope.$parent.mainScope == null || $scope.$parent.mainScope == undefined)
             return null;
 
-        for (var index = 0; index < scope.$parent.botChildrens.length; index++) {
-            if (scope.$parent.botChildrens[index].scope == scope) {
-                scope.$parent.botChildrens.splice(index, 1);
+        for (var index = 0; index < $scope.$parent.botChildrens.length; index++) {
+            if ($scope.$parent.botChildrens[index].scope == $scope) {
+                $scope.$parent.botChildrens.splice(index, 1);
                 debugger;
                 break;
             }
