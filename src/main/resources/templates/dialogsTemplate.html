@@ -1,11 +1,3 @@
-
-          <div class="switch">
-            <input id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no" type="checkbox" ng-visible="isUserTenant"
-            ng-checked="isTenantFree"  ng-click="clickSetTenantFree()"/>
-            <label for="cmn-toggle-7" data-on="Вільний" data-off="Зайнятий"></label>
-          </div>
-        
-
 <div class="content container-fluid bootstrap snippets container">
     <div class="decor-default">
         <div class="contacts-list">
@@ -15,8 +7,24 @@
                         <div class="col-xs-12 col-sm-10 height-full">
                             <span class="glyphicon glyphicon-search left-search-icon" />
                             <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search" />
+                            <div class="switch dialog-icon free_tenant">
+                                <input id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no" type="checkbox" ng-visible="isUserTenant" ng-checked="isTenantFree" ng-click="clickSetTenantFree()" />
+                                <label for="cmn-toggle-7" data-on="Вільний" data-off="Зайнятий"></label>
+                            </div>
+                            <div class="multiple-select-wrapper config noveredmark dialog-filter-wraper">
+                                <span class="dialog-icon config glyphicon-align-left"></span>
+                                <div class="list">
+                                    <ul class="items-list">
+                                        <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
+                                            <input type="checkbox" ng-model="airline.selected" />
+                                            <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
+                                            <span>{{airline.name}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper">
-                                <span class="dialog-filter-icon glyphicon-align-left dialog-filter-icon"></span>
+                                <span class="dialog-icon filter glyphicon-align-left"></span>
                                 <div class="list">
                                     <ul class="items-list">
                                         <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
@@ -76,6 +84,5 @@
         </div>
     </div>
 </div>
-	<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow"/>
-	<div id="askTenantToTakeConsultation" class="modal fade" th:include="askTenantToTakeConsultationWindow"/>
-
+<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow" />
+<div id="askTenantToTakeConsultation" class="modal fade" th:include="askTenantToTakeConsultationWindow" />
