@@ -527,9 +527,9 @@ public class BotController {
 				return true;
 		}*/
 		return askConsultationUsers.contains(user_id);				
-	}
+	}	
 
-	@RequestMapping(value = "/bot/operations/tenant/{userId}/{roomId}/free", method = RequestMethod.POST)
+	@RequestMapping(value = "/bot/operations/tenant/free/{userId}/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendFree(@PathVariable Long userId, @PathVariable Long roomId, Principal principal) {
 		Long tenantChatUserId = Long.parseLong(principal.getName());

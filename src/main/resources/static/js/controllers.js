@@ -161,32 +161,34 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
     }
 
-    $scope.answerToTakeConsultation = function(value) {
-        if (value) {
-            $http.post(serverPrefix + "/bot/operations/tenant/free"). //$scope.chatUserId)
-            success(function(data, status, headers, config) {
-                toaster.pop({
-                    type: 'wait',
-                    body: 'Wait for ',
-                    timeout: 0
-                });
-
-            }).
-            error(function(data, status, headers, config) {
-                alert("error : " + status)
-            });
-        } else {
-            $scope.hideAskTenantToTakeConsultation();
-            $http.post(serverPrefix + "/{0}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId)).
-            success(function(data, status, headers, config) {
-
-            }).
-            error(function(data, status, headers, config) {
-                alert("error : " + status)
-            });
-        }
-
-    };
+    $scope.answerToTakeConsultation = function(value) {  
+    	if (value) {
+    		alert($rootScope.sendedId + " " + $scope.askConsultation_roomId)
+    	 $http.post(serverPrefix + "/bot/operations/tenant/free/{0}/{1}".format($rootScope.sendedId, $scope.askConsultation_roomId)). //$scope.chatUserId)
+    	   success(function(data, status, headers, config) {
+    		   toaster.pop({
+    	            type: 'wait',
+    	            body: 'Wait for ',
+    	            timeout: 0
+    	});
+    		   
+    	   }).
+    	   error(function(data, status, headers, config) {
+    		   alert("error : " + status)
+    	   });
+    	}
+    	else {
+    		$scope.hideAskTenantToTakeConsultation();
+    		//alert($rootScope.sendedId)
+    		 $http.post(serverPrefix + "/{0}/{1}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId, $rootScope.sendedId)).
+    	  	   success(function(data, status, headers, config) {
+    	  		
+    	  	   }).
+        	   error(function(data, status, headers, config) {
+        		   alert("error : " + status)
+        	   });
+    	}      	
+    }; 
 
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
