@@ -84,9 +84,6 @@ public class BotController {
 	@Autowired private CourseService courseService;
 	@Autowired private BotAnswersService botAnswerService;
 
-	@Value("${times.tenantRefuseConsultationTakeFreeTime}")
-	int tenantFreeTime;
-
 
 	@Autowired private RoomController roomControler;
 	@Autowired private ChatController chatController;
