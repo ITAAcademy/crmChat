@@ -36,7 +36,6 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
         $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
         success(function(data, status, headers, config) {
         		{      		      
-                var waitTime = globalConfig["timeWaitFreeTenant"];
         		
                 $rootScope.showToasterWaitFreeTenant();
         		}            		
