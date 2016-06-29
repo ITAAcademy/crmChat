@@ -413,7 +413,7 @@ public class BotController {
 							}
 						}
 					}, 
-					30000 
+					10000 
 					);			
 		}
 	}

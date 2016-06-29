@@ -471,16 +471,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }*/
                 if (data["newAskConsultation_ToChatUserId"] != null) {
-                    var sendedId = data["newAskConsultation_ToChatUserId"][0][0];
-                    if (sendedId == $scope.chatUserId) {
+                	$rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][0];
+                    if ($rootScope.sendedId == $scope.chatUserId) {
                         $scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
                         $scope.showAskTenantToTakeConsultation();
                     }
                 }
                 if (data["newConsultationWithTenant"] != null) {
-                    var sendedId = data["newConsultationWithTenant"][0][0];
+                	$rootScope.sendedId = data["newConsultationWithTenant"][0][0];
 
-                    $rootScope.submitConsultation_processUser(sendedId);
+                    $rootScope.submitConsultation_processUser($rootScope.sendedId);
 
                     var sendedConsultantId = data["newConsultationWithTenant"][0][1];
 
@@ -731,8 +731,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                         var body = JSON.parse(message.body);
                         //alert(body)
-                        var sendedId = body[0];
-                        if (sendedId == $scope.chatUserId) {
+                        $rootScope.sendedId = body[0];
+                        if ($rootScope.sendedId == $scope.chatUserId) {
                             $scope.askConsultation_roomId = body[1];
                             $scope.showAskTenantToTakeConsultation();
                         }
@@ -740,9 +740,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                     chatSocket.subscribe("/topic/users/{0}/submitConsultation".format($scope.chatUserId), function(message) {
                         var body = JSON.parse(message.body);
-                        var sendedId = body[0];
+                        $rootScope.sendedId = body[0];
 
-                        $rootScope.submitConsultation_processUser(sendedId);
+                        $rootScope.submitConsultation_processUser($rootScope.sendedId);
 
                         var sendedConsultantId = body[1];
                         $rootScope.submitConsultation_processTenant(sendedConsultantId);
