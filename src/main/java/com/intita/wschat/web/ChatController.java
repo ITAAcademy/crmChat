@@ -450,7 +450,7 @@ public class ChatController {
 			{
 				String str = "";
 				try {
-					str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(array));
+					str = mapper.writeValueAsString(ChatMessage.getAllfromUserMessages(userMessageService.wrapBotMessages(new ArrayList<>(array), "ua")));//@BAG@//dont save user lang for bot
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}	

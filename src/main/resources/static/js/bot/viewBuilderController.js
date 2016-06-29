@@ -419,7 +419,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         error(function(data, status, headers, config) {});
     }
     $scope.loadDialogItemsByDescription = function(categoryId, description) {
-        description = description || " ";
+        description = description || "";
         categoryId = categoryId || "0";
         var requestUrl = serverPrefix +
             "/bot_operations/get_bot_dialog_items_descriptions_having_string_first5/" + categoryId + "/" + encodeURIComponent(description);

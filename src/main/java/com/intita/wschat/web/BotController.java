@@ -58,7 +58,7 @@ import com.intita.wschat.web.ChatController.ChatLangEnum;
 @Service
 @Controller
 public class BotController {
-	final int TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT = 5;
+	final int TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT = 15;
 	@Autowired
 	BotCategoryService botCategoryService;
 
@@ -172,6 +172,12 @@ public class BotController {
 	public String getBotDialogItemNamesHavingString(@PathVariable Long categoryId,@PathVariable String description,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
 		//TODO
 		return objectMapper.writeValueAsString(botItemContainerService.getBotDialogItemsHavingDescription(description,categoryId,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT));
+	}
+	@RequestMapping(value = "bot_operations/get_bot_dialog_items_descriptions_having_string_first5/{categoryId}/", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBotDialogItems(@PathVariable Long categoryId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+		//TODO
+		return objectMapper.writeValueAsString(botItemContainerService.getBotDialogItems(categoryId,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT));
 	}
 
 	@RequestMapping(value = "bot_operations/create_bot_dialog_item", method = RequestMethod.POST)

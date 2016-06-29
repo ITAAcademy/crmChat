@@ -76,4 +76,7 @@ public class BotItemContainerService {
 	public ArrayList<BotDialogItem> getBotDialogItemsHavingDescription(String name,Long categoryId,int limit){
 		return botItemContainerRepository.getBotDialogItemsHavingDescription(name,categoryId,new PageRequest(0,limit));
 	}
+	public ArrayList<BotDialogItem> getBotDialogItems(Long categoryId,int limit){
+		return botItemContainerRepository.findByCategoryId(categoryId,new PageRequest(0,limit));
+	}
 }
