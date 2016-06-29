@@ -608,7 +608,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
-            $rootScope.showToasterWaitFreeTenant();
+          //  $rootScope.showToasterWaitFreeTenant();
         }
     }
 
