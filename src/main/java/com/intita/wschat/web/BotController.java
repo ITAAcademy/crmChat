@@ -68,6 +68,8 @@ public class BotController {
 	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
 
 	private List<Long> askConsultationUsers = new ArrayList<Long>();
+	
+	private Map <Long, Timer> waitConsultationUsersTimers = new HashMap<Long, Timer>();
 
 	private boolean  usersAskTenantsTimerRunning = false;
 
@@ -400,6 +402,33 @@ public class BotController {
 
 		return true;*/
 	}
+	
+	public void waitConsultationUser(Room room, Long chatUserId) {
+		java.util.Timer timer = new java.util.Timer();
+		timer.schedule( 
+				new java.util.TimerTask() {
+					@Override
+					public void run() {
+						Long roomId = room.getId();
+						if (tempRoomAskTenant.size() > 0 )
+						{		
+							/*
+							for(Room i_room : tempRoomAskTenant)
+								if (i_room.getId() == roomId)
+									return;*/
+							for (Long id : askConsultationUsers)
+								if (id.equals(chatUserId))
+									return;							
+						}						
+						tempRoomAskTenant.add(room);
+						askConsultationUsers.add(chatUserId);
+						runUsersAskTenantsTimer(roomId, chatUserId);
+					}
+				}, 
+				30000 
+				);	
+			waitConsultationUsersTimers.put(chatUserId, timer);
+	}
 
 	public void runUsersAskTenantsTimer(Long roomId, Long chatUserId) {
 		if (usersAskTenantsTimerRunning == false)
@@ -449,6 +478,8 @@ public class BotController {
 		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
 
 		askTenantToSpendConsultationWS(tenantChatUserId, roomId, chatUserId );
+		
+		waitConsultationUser(room_0, chatUserId);
 
 		for (int i = 0; i < askConsultationUsers.size(); i++)
 		{
@@ -492,6 +523,10 @@ public class BotController {
 	@ResponseBody
 	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, @PathVariable("userId") Long chatUserId, Principal principal) {	
 
+		Timer timer = waitConsultationUsersTimers.get(chatUserId);
+		timer.cancel();
+		timer.purge();
+		
 		askConsultationUsers.add(chatUserId); //789
 		return giveTenant(roomId, chatUserId, true);
 	}
@@ -536,6 +571,10 @@ public class BotController {
 	@ResponseBody
 	public void tenantSendFree(@PathVariable Long userId, @PathVariable Long roomId, Principal principal) {
 		Long tenantChatUserId = Long.parseLong(principal.getName());
+		
+		Timer timer = waitConsultationUsersTimers.get(userId);
+		timer.cancel();
+		timer.purge();
 
 		ChatUser c_user = chatUsersService.getChatUser(tenantChatUserId);
 		if (c_user == null)

@@ -136,11 +136,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
     };
 
-    $scope.showAskTenantToTakeConsultation = function() {
+    $scope.showAskTenantToTakeConsultation = function() {    	
         if (isAskTenantToTakeConsultationVisible == false) {
 
             $scope.isTenantFree = false;
             $scope.askTenantToTakeConsultationTogle();
+            
+            $scope.hideAskTenantToTakeConsultation_tenantNotRespond = 
+            	$timeout(function () {
+            		$scope.hideAskTenantToTakeConsultation();
+            	},30000);
         }
     }
 
@@ -154,7 +159,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.needReloadPage = false;
         $http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)        
         success(function(data, status, headers, config) {
-            alert("ok")
+
         }).
         error(function(data, status, headers, config) {
             alert("error : " + status)
@@ -162,6 +167,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $scope.answerToTakeConsultation = function(value) {  
+    	$timeout.calncel($scope.hideAskTenantToTakeConsultation_tenantNotRespond);
     	if (value) {
     		//alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
     	 $http.post(serverPrefix + "/bot/operations/tenant/free/{0}/{1}".format($rootScope.sendedId, $scope.askConsultation_roomId)). //$scope.chatUserId)
