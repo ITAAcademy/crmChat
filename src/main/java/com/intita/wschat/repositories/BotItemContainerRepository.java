@@ -35,6 +35,9 @@ ArrayList<Long> getLastIds(Pageable pageable);
 
 @Query("select item from BotDialogItem item where item.description like %?1% and item.category.id = ?2")
 ArrayList<BotDialogItem> getBotDialogItemsHavingDescription(String description,Long categoryId,Pageable pageable);
+
+ArrayList<BotDialogItem> findByCategoryId(Long categoryId,Pageable pageable);
+
 }
 
 
