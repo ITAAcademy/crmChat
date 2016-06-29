@@ -9,7 +9,7 @@
             <div class="modal-body">
             <div>
             <input ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
-                                    autocomplete="off" type="text" class="form-control form-inline"
+                                    autocomplete="off" type="text" class="dialog_item_loader_input form-control form-inline"
                                     name="search" id="search"
                                     ng-model="categoryInputModel"
                                     ng-change="reloadCategories()" 
@@ -20,9 +20,9 @@
             <select  id="categoryIdToLoad" type="text" ng-options="c.id for c in botCategoriesForModal" ng-model="selectedBotCategoryForModal" placeholder="Room name" ng-change="selectedBotCategoryForModalChanged(selectedBotCategoryForModal.id);"></select>
             </div>
             <div>
-              <input 
+              <input ng-disabled="DialogItemInputMode==&quot;manual&quot;"
                                     ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
-                                    autocomplete="off" type="text" class="form-control form-inline"
+                                    autocomplete="off" type="text" class="dialog_item_loader_input form-control form-inline"
                                     name="search" id="dialogItemTypehead"
                                     ng-model="dialogElementInputModel"
                                     ng-change="reloadDialogItems(selectedBotCategoryForModal.id)" 
@@ -31,7 +31,11 @@
                                     uib-typeahead="item.description for item in botDialogItemsForModal | unique:'idObject.id'"     
                                     typeahead-on-select = "onDialogItemInputSelect($model)"/>
 
-                <select id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'idObject.id'" ng-model="selectedBotDialogItemForModal" placeholder="Room name"></select>
+                <select  id="dialogItemIdToLoad" type="text" ng-options="n.idObject.id for n in botDialogItemsForModal | unique:'idObject.id'" ng-model="selectedBotDialogItemForModal" placeholder="Room name" ng-disabled="DialogItemInputMode==&quot;manual&quot;"></select >
+                <input type="radio" ng-change="updateLoadButton();" name="dialog_id_input_type" value="auto" ng-model="DialogItemInputMode" />
+                <input type="number" class="dialog_item_loader_input form-control form-inline" placeholder="Задати id вручну"  ng-model="selectedBotDialogItemForModalIdManually" ng-disabled="DialogItemInputMode==&quot;auto&quot;" ng-change="updateLoadButton();" />
+                <!-- input type selection -->
+                <input type="radio" ng-change="updateLoadButton();" name="dialog_id_input_type" value="manual" ng-model="DialogItemInputMode" />
                 </div>
                 
             <div class="modal-footer">
