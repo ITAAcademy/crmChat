@@ -13,8 +13,9 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.disabled = false;
-    if (chatControllerScope != null || chatControllerScope != undefined && chatControllerScope.currentRoom != null)
+    if (chatControllerScope != null || chatControllerScope != undefined && chatControllerScope.currentRoom != null) {
         $scope.currentRoom = chatControllerScope.currentRoom;
+    }
 
     if (chatRouteInterfaceScope != null || chatRouteInterfaceScope != undefined) 
         chatRouteInterfaceScope.$watch('participants', function() {
@@ -33,7 +34,7 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     var askIsFreeTenant;
 
     $scope.giveTenant = function() {
-        $http.post(serverPrefix + "/bot_operations/close/roomId/" + chatControllerScope.currentRoom.roomId).
+        $http.post(serverPrefix + "/bot_operations/close/{0}".format(chatControllerScope.currentRoom.roomId)).
         success(function(data, status, headers, config) {
         		{      		      
         		

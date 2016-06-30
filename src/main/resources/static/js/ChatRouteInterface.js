@@ -892,6 +892,9 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     function goToDialogEvn(id) {
         console.log("goToDialogEvn(" + id + ")");
         chatControllerScope.currentRoom = { roomId: id };
+        
+        $rootScope.currentRoomId = id;
+        
         $scope.changeRoom();
         var deferred = $q.defer();
         var room = getRoomById($scope.rooms, id);

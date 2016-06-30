@@ -55,7 +55,7 @@ springChatControllers.controller('ConsultationController', ['$routeParams', '$ro
                     $scope.consultant = data["consultant"];
 
                     //if ($rootScope.socketSupport) {
-                    $scope.goToDialog(roomId).then(function() {
+                    $scope.goToDialog(roomId).then(function() {                    	
                             chatControllerScope.currentRoom.roomId = roomId;
                             if (status == 1 || status == 0)
                                 chatControllerScope.currentRoom.active = false;

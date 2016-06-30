@@ -29,7 +29,7 @@ public class ChatTenantService {
 	@Autowired private ParticipantRepository participantRepository;
 	@Autowired private ChatUsersService chatUsersService;
 
-	 private int lastAskedtenantCnt = 0;
+	private int lastAskedtenantCnt = 0;
 
 	private final static Logger log = LoggerFactory.getLogger(ChatTenantService.class);
 	@Autowired
@@ -80,14 +80,14 @@ public class ChatTenantService {
 
 	public ChatTenant getFreeTenant() {			
 		List<ChatTenant> tenants = getTenants();	
-		
+
 		int i_0; //  = lastAskedtenantCnt + 1;
 		int i_1;  // = lastAskedtenantCnt;
-		
+
 		int tenantsLastIndex = tenants.size() - 1;
-				
+
 		boolean secondCircle = false;		
-		
+
 		if (lastAskedtenantCnt == tenantsLastIndex) {
 			i_0 = 0;
 			i_1 = tenantsLastIndex;
@@ -99,23 +99,37 @@ public class ChatTenantService {
 		}		
 
 		int i = i_0;
-		
+
+		List<Long> isAskedBefore = new  ArrayList<>();
+
 		boolean zaklepka = true;
 		while (zaklepka) 				
 		{
-			ChatTenant tenant =  tenants.get(i);			
-			
-			Long id = tenant.getId(); //999
-			if (isTenantBusy(id) == false)
-			{
-				Long chatUserId = tenant.getChatUser().getId() ;//   .getPrincipal().getName();
-				//if (chatUserId > 0)
-				if (participantRepository.isOnline("" + chatUserId)) //989
+			ChatTenant tenant =  tenants.get(i);	
+
+			Long chatUserId = tenant.getChatUser().getId();
+
+			boolean askedBefore = false;			
+
+			for (Long a_id : isAskedBefore) {
+				if (a_id == chatUserId) {
+					askedBefore = true;
+					break;
+				}
+			}
+			isAskedBefore.add(chatUserId);
+
+			if (!askedBefore) {
+				//Long id = tenant.getId(); //999
+				if (isTenantBusy(chatUserId) == false)
 				{
-					lastAskedtenantCnt = i;
-					return tenant;
-				}					
-			}			
+					if (participantRepository.isOnline("" + chatUserId)) //989
+					{
+						lastAskedtenantCnt = i;
+						return tenant;
+					}					
+				}		
+			}
 
 			i++;
 			if ( !secondCircle ) {
@@ -132,9 +146,9 @@ public class ChatTenantService {
 		return null;
 	}
 
-	public void setTenantBusy(Long id) {
-		if ( !isTenantBusy(id)) {
-			tenantsBusy.add(id);
+	public void setTenantBusy(Long chatUserid) {
+		if ( !isTenantBusy(chatUserid)) {
+			tenantsBusy.add(chatUserid);
 		}
 	}
 
@@ -142,16 +156,16 @@ public class ChatTenantService {
 		if (tenant == null)
 			return false;
 		if ( !isTenantBusy(tenant)) {
-			tenantsBusy.add(tenant.getId());
+			tenantsBusy.add(tenant.getChatUser().getId());
 			return true;
 		}
 		return false;
 	}
 
-	public void setTenantFree(Long id) {
+	public void setTenantFree(Long chatUserid) {
 		for (int i = 0; i < tenantsBusy.size(); i++)
 		{
-			if (tenantsBusy.get(i) == id) {
+			if (tenantsBusy.get(i) == chatUserid) {
 				tenantsBusy.remove(i);
 			}
 		}
@@ -173,31 +187,41 @@ public class ChatTenantService {
 
 	public void setTenantFree(Principal principal) {
 		Long chatUserId = Long.parseLong(principal.getName());
-		Long chatTenantId = getChatTenantId(chatUserId);
-		setTenantFree(chatTenantId);
+		setTenantFree(chatUserId);
 	}
 
 	public void setTenantBusy(Principal principal) {
 		Long chatUserId = Long.parseLong(principal.getName());
-		Long chatTenantId = getChatTenantId(chatUserId);
-		setTenantBusy(chatTenantId);
+		setTenantBusy(chatUserId);
 	}
 
-	public boolean isTenantBusy(Long id) {
+	public boolean isTenantBusy(Long chatUserid) {
 		for (Long tenant_id : tenantsBusy)
 		{
-			if (tenant_id == id )
+			if (tenant_id == chatUserid )
 				return true;
 		}
 		return false;
 	}
+	
+	public boolean isTenant(Long chatUserId) {
+		ArrayList<ChatTenant> countTenant = getTenants();
+		for (ChatTenant tenant : countTenant)
+			if (tenant.getChatUser().getId() == chatUserId)
+				return true;
+		return false;
+	}
+	
+	public boolean isTenant(ChatTenant chatTenant) {
+		return isTenant(chatTenant.getChatUser().getId());
+	}
+	
+	public boolean isTenantBusy(ChatTenant tenant) {
+		return isTenantBusy(tenant.getChatUser().getId());
+	}
 
 	public List<Long> getTenantsBusy() {
 		return tenantsBusy;
-	}
-
-	public boolean isTenantBusy(ChatTenant tenant) {
-		return isTenantBusy(tenant.getId());
 	}
 
 	@Transactional

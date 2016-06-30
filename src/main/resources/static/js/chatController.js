@@ -67,7 +67,7 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
                 });
             }
 
-            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant").
+            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format($rootScope.currentRoomId)).
             success(function(data, status, headers, config) {
                 if (data == true)
                     $scope.showToasterWaitFreeTenant();
