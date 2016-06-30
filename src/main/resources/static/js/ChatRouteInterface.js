@@ -1020,6 +1020,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         $scope.ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
+                 mimeType:"text/html; charset=UTF-8",
                 url: currentUrl,
                 success: function(data) {
                     var parsedData = JSON.parse(data);
@@ -1055,6 +1056,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             $.ajax({
                 type: "POST",
                 url: currentUrl,
+                mimeType:"text/html; charset=UTF-8",
                 success: function(data) {
                     console.log("subscribeParticipantsLP:" + data)
                     subscribeParticipantsLP();
