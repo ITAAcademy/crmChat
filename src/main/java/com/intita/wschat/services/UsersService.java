@@ -146,6 +146,12 @@ public class UsersService {
 			return true;
 		return false;
 	}
+	@Transactional
+	public boolean isTenant(String id){
+		if(usersRepo.findInTenantTable(id) != null)
+			return true;
+		return false;
+	}
 
 }
 

@@ -26,5 +26,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
   //
   @Query(value = "SELECT * FROM user_admin WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
   Object findInAdminTable(String userId);
+  
+  @Query(value = "SELECT * FROM user_tenant WHERE chat_user_id = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
+  Object findInTenantTable(String userId);
  
 }

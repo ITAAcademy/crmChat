@@ -235,7 +235,6 @@ public class ChatController {
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, Principal principal, UsersService user_service, ChatUsersService chat_user_service, RoomsService chat_room_service)
 	{
 		long startTime = System.currentTimeMillis();
-
 		Room o_room = chat_room_service.getRoom(roomId);
 		if(o_room == null)
 			return null;
