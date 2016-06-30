@@ -159,7 +159,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         if (event.keyCode === 9) { // tab was pressed
 
             // get caret position/selection
-           // debugger;
+            // debugger;
             var val = event.target.value,
                 start = event.target.selectionStart,
                 end = event.target.selectionEnd;
@@ -929,7 +929,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
      * CHANGE ROOM
      *************************************/
     $scope.changeRoom = function() {
-    	//alert(16);
+        //alert(16);
         $scope.messages = [];
         console.log("roomId:" + chatControllerScope.currentRoom.roomId);
         room = chatControllerScope.currentRoom.roomId + '/';
@@ -1040,7 +1040,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                         return;
                     }
                     if (xhr.status === 404 || xhr.status === 405) {
-                    	//alert("13")
+                        //alert("13")
                         chatControllerScope.changeLocation("/chatrooms");
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                     }
@@ -1067,7 +1067,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 error: function(xhr, text_status, error_thrown) {
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
-                    	//alert(14)
+                        //alert(14)
                         chatControllerScope.changeLocation("/chatrooms");
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                         toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
@@ -1091,7 +1091,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             else textOfMessage = message;
             if (textOfMessage.length < 1) {
                 $scope.newMessage = '';
-                $("#newMessageInput")[0].value  = '';
+                $("#newMessageInput")[0].value = '';
                 return;
             }
             var destination = "/app/{0}/chat.message".format(chatControllerScope.currentRoom.roomId);
@@ -1351,6 +1351,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             console.log("cancel ajaxRequestsForRoomLP:" + subscription);
             subscription.abort();
         }
+
+        $rootScope.isConectedWithFreeTenant = true;
+
+        toaster.clear();
+        $rootScope.isConectedWithFreeTenant = false;
+        $rootScope.isWaitFreeTenatn = false;
+
         /* var answer = confirm("Are you sure you want to leave this page?")
         if (!answer) {
             event.preventDefault();
@@ -1362,7 +1369,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     $scope.$$postDigest(function() {
         var nice = $(".scroll").niceScroll();
         var lang = globalConfig.lang;
-        if (lang=="ua")lang="uk";
+        if (lang == "ua") lang = "uk";
         var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
         $('#myfile').on('change', function(event, numFiles, label) {
             var totalFilesLength = 0;

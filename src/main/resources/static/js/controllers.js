@@ -541,23 +541,23 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             });
         }
     };
-    $rootScope.isWaiFreeTenatn = false;
+    $rootScope.isWaitFreeTenatn = false;
 
     $rootScope.showToasterWaitFreeTenant = function() {
-        if (!$rootScope.isWaiFreeTenatn) {
+        if (!$rootScope.isWaitFreeTenatn) {
             toaster.pop({
                 type: 'wait',
                 body: 'Wait for free consultant',
                 timeout: 0,
                 onHideCallback: function() {
                     if (!$rootScope.isConectedWithFreeTenant) {
-                        $rootScope.isWaiFreeTenatn = false;
+                        $rootScope.isWaitFreeTenatn = false;
                         $rootScope.showToasterWaitFreeTenant();
                     }
                 },
                 showCloseButton: false
             });
-            $rootScope.isWaiFreeTenatn = true;
+            $rootScope.isWaitFreeTenatn = true;
         }
     }
 

@@ -502,11 +502,11 @@ public class BotController {
 		return giveTenant(roomId, chatUserId, true);
 	}
 
-	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant",  method = RequestMethod.POST)
+	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean isUserWaitTenant(Principal principal) {	
+	public boolean isUserWaitTenant(Principal principal, @PathVariable("roomId") Long roomId) {	
 		ChatUser user = chatUsersService.getChatUser(principal);		
-		boolean isUserWaitForTenant =  isChatUserWaitTenant(user);
+		boolean isUserWaitForTenant =  tempRoomAskTenant.contains(new Room(roomId));
 
 		return isUserWaitForTenant;
 	}
@@ -560,18 +560,19 @@ public class BotController {
 			{
 				room_ = tempRoomAskTenant.get(i);
 			}
-
+		
 		if (room_ == null)
 			return;
-
+		tempRoomAskTenant.remove(room_);
 		//Room room_ = tempRoomAskTenant.get(0);
 
 
-		for (int i = 0; i < tempRoomAskTenant.size(); i++)
-			if (tempRoomAskTenant.get(i).equals(userId))
+		/*for (int i = 0; i < askConsultationUsers.size(); i++)
+			if (askConsultationUsers.get(i).equals(userId))
 			{
-				tempRoomAskTenant.remove(i);
+				askConsultationUsers.remove(i);
 			}
+		*/
 
 		//tempRoomAskTenant.remove(0);
 		//room_.setAuthor(c_user);
