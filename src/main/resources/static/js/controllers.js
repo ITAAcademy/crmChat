@@ -477,9 +477,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     changeLocation("/dialog_view/" + data["newGuestRoom"]);
                 }*/
                 if (data["newAskConsultation_ToChatUserId"] != null) {
-                	//alert(data["newAskConsultation_ToChatUserId"][0])
-                	var sendedId = data["newAskConsultation_ToChatUserId"][0][0];
-                	 if (sendedId == $scope.chatUserId) {
+                    $rootScope.sendedId = data["newAskConsultation_ToChatUserId"][0][0];
+                    if ($rootScope.sendedId == $scope.chatUserId) {
                         $scope.askConsultation_roomId = data["newAskConsultation_ToChatUserId"][0][1];
                         $scope.showAskTenantToTakeConsultation();
                     }
@@ -539,6 +538,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
             success(function(data, status, headers, config) {
+                debugger;
                 $scope.isUserTenant = data[0];
                 if (data[0])
                     $scope.isTenantFree = !data[1];
@@ -549,6 +549,25 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             });
         }
     };
+    $rootScope.isWaiFreeTenatn = false;
+
+    $rootScope.showToasterWaitFreeTenant = function() {
+        if (!$rootScope.isWaiFreeTenatn) {
+            toaster.pop({
+                type: 'wait',
+                body: 'Wait for free consultant',
+                timeout: 0,
+                onHideCallback: function() {
+                    if (!$rootScope.isConectedWithFreeTenant) {
+                        $rootScope.isWaiFreeTenatn = false;
+                        $rootScope.showToasterWaitFreeTenant();
+                    }
+                },
+                showCloseButton: false
+            });
+            $rootScope.isWaiFreeTenatn = true;
+        }
+    }
 
     function login(mess_obj) {
         $scope.chatUserId = mess_obj.chat_id;
@@ -596,7 +615,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             }
 
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
-            toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
+            // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
+          //  $rootScope.showToasterWaitFreeTenant();
         }
     }
 
@@ -753,8 +773,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         $rootScope.submitConsultation_processUser($rootScope.sendedRoomId);
 
                         var sendedConsultantId = body[1];
-                        $rootScope.submitConsultation_processTenant(sendedConsultantId);                        
-                       // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
+                        $rootScope.submitConsultation_processTenant(sendedConsultantId);
+                        // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
 
                     });
 
@@ -794,7 +814,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $rootScope.submitConsultation_processUser = function(roomId) {
-        if (roomId == $rootScope.currentRoomId) {    
+        if (roomId == $rootScope.currentRoomId) {  
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
             chatControllerScope.userAddedToRoom = true;

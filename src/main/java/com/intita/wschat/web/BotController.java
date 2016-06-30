@@ -67,8 +67,13 @@ public class BotController {
 
 	private List<Room> tempRoomAskTenant_wait = new ArrayList<Room>();
 
-
 	private Map <Long, Timer> waitConsultationUsersTimers = new HashMap<Long, Timer>();
+	
+	public void register(Room room, Long userId)
+	{
+		tempRoomAskTenant.add(room);
+		tempRoomAskTenant_wait.add(room);
+	}
 
 	private boolean  usersAskTenantsTimerRunning = false;
 

@@ -104,6 +104,7 @@ public class RoomController {
 	@Autowired private ChatController chatController;
 
 	@Autowired private BotCategoryService botCategoryService;
+	@Autowired private BotController botController;
 
 
 	public static class ROLE
@@ -120,6 +121,11 @@ public class RoomController {
 
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueueForParticipents =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
+	@PostConstruct
+	private void postFunction()
+	{
+		//configService.getParam("chatBotEnable");
+	}
 
 	@RequestMapping(value = "/chat/rooms/create/with_bot/", method = RequestMethod.POST)
 	@ResponseBody
@@ -164,27 +170,28 @@ public class RoomController {
 	public Room createRoomWithTenant(Principal principal) {
 
 		//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
-		ChatTenant greeTenante = chatTenantService.getFreeTenant();
+		/*ChatTenant greeTenante = chatTenantService.getFreeTenant();
 		if (greeTenante == null)
 			return null;
 
 		ChatUser roomAuthor = greeTenante.getChatUser();			
 
 		chatTenantService.setTenantBusy(greeTenante);
-
+*/
 		//getRandomTenant().getChatUser();
 		ChatUser guest = chatUserServise.getChatUser(principal);
-		String roomName = roomAuthor.getNickName() + " " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
-		Room room = roomService.register(roomName, roomAuthor);
+		String roomName =" " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
+		Room room = roomService.register(roomName, guest);
 
-		roomService.addUserToRoom(guest, room);
+		//roomService.addUserToRoom(guest, room);
 
 		//send to user about room apearenced
 		Long chatUserId = Long.parseLong(principal.getName());		
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
 		//this said ti author that he nust update room`s list
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));		
-
+		botController.register(room, chatUserId);
+		botController.runUsersAskTenantsTimer(room);
 		return room;
 	}
 

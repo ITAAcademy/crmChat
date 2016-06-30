@@ -6,26 +6,6 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
     $scope.controllerName = "ChatRouteController";
     var chatControllerScope = Scopes.get('ChatController');
 
-    $rootScope.isWaiFreeTenatn = false;
-
-    $rootScope.showToasterWaitFreeTenant = function() {
-        if (!$rootScope.isWaiFreeTenatn) {
-            toaster.pop({
-                type: 'wait',
-                body: 'Wait for free consultant',
-                timeout: 0,
-                onHideCallback: function() {
-                    if (!$rootScope.isConectedWithFreeTenant) {
-                        $rootScope.isWaiFreeTenatn = false;
-                        $rootScope.showToasterWaitFreeTenant();
-                    }
-                },
-                showCloseButton: false
-            });
-            $rootScope.isWaiFreeTenatn = true;
-        }
-    }
-
     $rootScope.$watch('isInited', function() {
         console.log("try " + chatControllerScope.currentRoom);
         if ($rootScope.isInited == true) {

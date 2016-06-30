@@ -67,6 +67,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
     $scope.viewTabs = [];
     $scope.langForRender = [];
     $scope.tabsChanges = [];
+    $scope.DialogItemInputMode = "auto";
 
     //create NULL dialogItem JS object
     var botDialogItemClean = function() {
@@ -83,6 +84,17 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
                 "lang": null
             }
         }
+    }
+    $scope.updateLoadButton = function() {
+        if ($scope.DialogItemInputMode==="auto" &&
+            ($scope.selectedBotDialogItemForModal != null)) {
+            $scope.isLoadButtonDisabled = false;
+        } else $scope.isLoadButtonDisabled = true;
+    if ($scope.DialogItemInputMode==="manual"){
+        if ($scope.selectedBotDialogItemForModalIdManually!=null)
+        $scope.isLoadButtonDisabled = false
+    else  $scope.isLoadButtonDisabled = true;
+    }
     }
 
     $scope.newDialogItem = botDialogItemClean();
@@ -247,7 +259,11 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         });
     }
 
-    $scope.loadBotDialogItem = function(id) {
+    $scope.loadBotDialogItem = function() {
+        var id;
+        if ($scope.DialogItemInputMode == 'auto' && $scope.selectedBotDialogItemForModal !=null )id = $scope.selectedBotDialogItemForModal.idObject.id;
+        else
+        if ($scope.DialogItemInputMode == 'manual') id = $scope.selectedBotDialogItemForModalIdManually;
         var botDialogItem = {};
         var requestUrl = serverPrefix + "/bot_operations/get_bot_dialog_item/{0}".format(id);
 
@@ -432,13 +448,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         error(function(data, status, headers, config) {});
     }
 
-    function updateLoadButton() {
-        if (($scope.selectedBotDialogItemForModal != null) && 
-            (typeof $scope.selectedBotDialogItemForModal.description != 'undefined') &&
-             ($scope.selectedBotDialogItemForModal.description.length > 0)) {
-            $scope.isLoadButtonDisabled = false;
-        } else $scope.isLoadButtonDisabled = true;
-    }
+    
 
     function initDialogItems(categoryId) {
         $scope.loadDialogItemsByDescription(categoryId).success(function() {
@@ -465,7 +475,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
             return map;
         }, {});
         $scope.dialogElementInputModel = dialogItemsDescriptionsMap[dialogItemId];
-        updateLoadButton();
+        $scope.updateLoadButton();
     }
 
     $scope.reloadDialogItems = function(categoryId) {
