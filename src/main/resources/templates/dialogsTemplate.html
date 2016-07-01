@@ -39,7 +39,8 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-2">
-                            <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                              <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn"
+                              ng-disabled="disableAddDlgButton" ng-click="toggleNewRoomModal()">ADD ROOM</button>
                         </div>
                     </div>
                 </div>

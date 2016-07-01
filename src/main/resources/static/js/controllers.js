@@ -277,6 +277,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     //$scope.templateName = null;
     $rootScope.socketSupport = true;
     $rootScope.authorize = false;
+    
+    
+    $scope.disableAddDlgButton = false;
+    
+    $rootScope.$watch('authorize', function() {
+    	$scope.disableAddDlgButton = !$rootScope.authorize;
+    });
+    
     $rootScope.roomForUpdate = new Map();
 
     $rootScope.redirectzToAuthorizePage = function() {
