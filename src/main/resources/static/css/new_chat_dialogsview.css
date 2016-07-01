@@ -614,6 +614,12 @@ margin-left:230px;
 	}
 }
 
+@media (max-width: 767px) {
+	.free_tenant {
+		margin-right: 35px;
+	} 
+}
+
 @media (max-width: 750px) {
     .head-title {
         padding-left: 150px;
