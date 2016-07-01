@@ -393,7 +393,7 @@ public class RoomController {
 		return participantsAndMessages;
 	}
 
-	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST,produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public DeferredResult<String> retrieveParticipantsUpdateLP(@PathVariable("room") Long room, Principal principal) throws JsonProcessingException {
 

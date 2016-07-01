@@ -423,7 +423,7 @@ public class ChatController {
 
 
 
-	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST,produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") Long room) throws JsonProcessingException {
 		Long timeOut = 60000L;
