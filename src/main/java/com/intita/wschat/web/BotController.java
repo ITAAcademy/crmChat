@@ -361,7 +361,7 @@ public class BotController {
 		if (tempRoomAskTenant.contains(room_0))
 			return false;
 
-		tempRoomAskTenant.add(room_0);	
+		tempRoomAskTenant.add(room_0);
 
 		boolean isFindedFreeTenant = giveTenant(roomId, true);
 
@@ -426,7 +426,7 @@ public class BotController {
 		if(room_0 == null)
 			return false;	
 
-		ChatTenant t_user = chatTenantService.getFreeTenant();//       getRandomTenant();//choose method   789
+		ChatTenant t_user = chatTenantService.getFreeTenantNotFromRoom(room_0);//       getRandomTenant();//choose method   789
 		if (t_user == null)
 		{
 			if (tempRoomAskTenant_wait.contains(room_0) == false) 

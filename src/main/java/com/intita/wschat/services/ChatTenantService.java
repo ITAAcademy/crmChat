@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.repositories.ChatTenantRepository;
 
 @Service
@@ -76,10 +78,41 @@ public class ChatTenantService {
 	public List<ChatTenant> getAllTenants(){
 		return chatTenantRepo.findAll();
 	}
+	
+	public ChatTenant getFreeTenantNotFromRoom(Room room) {
+		Set<ChatUser> users = room.getUsers();
+		List<Long> usersId = new ArrayList<Long>();
+		
+		for (ChatUser user : users)
+			usersId.add(user.getId());
+		
+		
+		List<ChatTenant> tenants = getTenants();
+		
+		List<ChatTenant> tenantsNotFromRoom = new ArrayList<ChatTenant>();
+		
+		for( ChatTenant tenant : tenants) {
+			Long id = tenant.getChatUser().getId();
+			boolean equal = false;
+			for (Long userId : usersId)
+				if (id == userId) {
+					equal = true;
+					break;
+				}
+			if (equal == false)
+				tenantsNotFromRoom.add(tenant);
+		}
+		return getFreeTenant(tenantsNotFromRoom);		
+	}
+	
+	public ChatTenant getFreeTenant() {
+		List<ChatTenant> tenants = getTenants();
+		return getFreeTenant(tenants);
+	}
 
 
-	public ChatTenant getFreeTenant() {			
-		List<ChatTenant> tenants = getTenants();	
+	public ChatTenant getFreeTenant(List<ChatTenant> tenants) {			
+		
 
 		int i_0; //  = lastAskedtenantCnt + 1;
 		int i_1;  // = lastAskedtenantCnt;
