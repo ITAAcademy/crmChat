@@ -65,8 +65,8 @@
                                     <img ng-if="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>
                                 </div>
                                 <div class="message_container">
-                                    <div class="message_author_header">{{room.lastMessageAuthor}}
-                                    </div>
+                                  	  <div class="message_author_header text_ellipsis">{{room.lastMessageAuthor}}
+                                 	   </div>
                                     <div class="message_body_item">
                                         <dir ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
           var elm = roomElement.context;

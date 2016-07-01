@@ -1675,3 +1675,11 @@ input.cmn-toggle-yes-no:checked + label:after {
 .dialog_item_loader_input{
     width:30%;
 }
+
+
+.text_ellipsis {
+	    text-overflow: ellipsis;
+	     width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
