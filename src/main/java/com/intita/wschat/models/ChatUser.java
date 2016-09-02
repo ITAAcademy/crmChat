@@ -81,6 +81,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 		this.chatUserLastRoomDate = chatUserLastRoomDate;
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -88,6 +89,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -104,7 +106,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 			return false;
 		return true;
 	}
-	
+
 	public ChatUser(){
 
 	}
@@ -154,6 +156,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 		if (o==null)return -1;
 		return this.getId().compareTo(o.getId());
 	}
+	
 
 
 

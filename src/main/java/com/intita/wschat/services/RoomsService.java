@@ -181,7 +181,7 @@ public class RoomsService {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean removeUserFromRoom(User user, Room room) {
+	public boolean removeUserFromRoom(ChatUser user, Room room) {
 		if(room == null)
 			return false;
 		if(user == null)

@@ -41,19 +41,19 @@ public class ChatUserLastRoomDateService {
 	public List<ChatUserLastRoomDate> getLastRoomDates(){
 		return chatUserLastRoomDateRepo.findAll();
 	}
-	
+
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user){
 		return chatUserLastRoomDateRepo.findByChatUser(user);
-		
+
 	}
-	
+
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDatesInList(ChatUser user, ArrayList<Room> rooms){
 		return chatUserLastRoomDateRepo.findByChatUserAndRoomIn(user, rooms);
-		 
+
 	}
-	
+
 	@Transactional
 	public ChatUserLastRoomDate getUserLastRoomDate(Room room, ChatUser chatUser) {
 		ChatUserLastRoomDate obj = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, chatUser);
@@ -70,7 +70,7 @@ public class ChatUserLastRoomDateService {
 	public void updateUserLastRoomDateInfo(ChatUserLastRoomDate u){
 		chatUserLastRoomDateRepo.save(u);
 	}
-	
+
 	@Transactional
 	public ChatUserLastRoomDate addUserLastRoomDateInfo(ChatUser user, Room room){
 		ChatUserLastRoomDate date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
@@ -80,8 +80,12 @@ public class ChatUserLastRoomDateService {
 	}
 
 	@Transactional
-	public void removeUserLastRoomDate(Long id){
-		chatUserLastRoomDateRepo.delete(id);
+	public boolean removeUserLastRoomDate(ChatUser user, Room room){
+		ChatUserLastRoomDate last = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, user);
+		if(last == null)
+			return false;
+		chatUserLastRoomDateRepo.delete(last.getId());
+		return true;
 	}
 
 

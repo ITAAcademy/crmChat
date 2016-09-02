@@ -63,12 +63,55 @@
     margin: 0 0 20px;
 }
 
+.user {
+   /* opacity: 1;
+    -webkit-transition: opacity 0.5s, transform 0.5s ease-out;
+    -moz-transition: opacity 0.5s, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s, transform 0.5s ease-out;
+    transition: opacity 0.5s, transform 0.5s ease-out;*/
+}
+/*
+.user..ng-leave-active {
+    opacity: 0;
+}*/
+
 .chat-users .user {
     position: relative;
     padding: 0 0 0 50px;
     display: block;
     cursor: pointer;
     margin: 0 0 20px;
+}
+
+.user .delete-user-icon {
+    color: red;
+    background: white;
+    position: absolute;
+    /*border: 1px solid #000;*/
+    border-radius: 100%;
+    width: 25px;
+    height: 25px;
+    top: calc(50% - 10px);
+    /* left: 4px; */
+    right: 10px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 25px;
+    opacity: .3;
+    pointer-events: none;
+    -webkit-transition: opacity 0.5s, transform 0.5s ease-out;
+    -moz-transition: opacity 0.5s, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s, transform 0.5s ease-out;
+    transition: opacity 0.5s, transform 0.5s ease-out;
+}
+
+.user:hover .delete-user-icon {
+    opacity: 1;
+    pointer-events: initial;
+}
+
+.user .delete-user-icon:hover {
+    transform: scale(1.2);
 }
 
 .chat-users .user .avatar {
@@ -99,11 +142,15 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform:translateY(-50%) translateX(-50%);
--ms-transform:translateY(-50%) translateX(-50%); /* IE 9 */
--moz-transform:translateY(-50%) translateX(-50%); /* Firefox */
--webkit-transform:translateY(-50%) translateX(-50%); /* Safari and Chrome */
--o-transform:translateY(-50%) translateX(-50%); /* Opera */
+    transform: translateY(-50%) translateX(-50%);
+    -ms-transform: translateY(-50%) translateX(-50%);
+    /* IE 9 */
+    -moz-transform: translateY(-50%) translateX(-50%);
+    /* Firefox */
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    /* Safari and Chrome */
+    -o-transform: translateY(-50%) translateX(-50%);
+    /* Opera */
 }
 
 .chat .avatar .status.off {

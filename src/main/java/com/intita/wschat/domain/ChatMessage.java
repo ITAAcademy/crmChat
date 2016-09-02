@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Queue;
 
+import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 
 /**
@@ -17,6 +18,7 @@ public class ChatMessage {
 	private String message;
 	private Long chatUserId;
 	private Date date;
+	private String chatUserAvatar = "noname.png";
 	private ArrayList<String> attachedFiles = new ArrayList<String>();
 	public ChatMessage(){
 		date = new Date();
@@ -26,6 +28,9 @@ public class ChatMessage {
 		this.message = usrMsg.getBody();
 		this.attachedFiles = usrMsg.getAttachedFiles();
 		this.chatUserId = usrMsg.getAuthor().getId();
+		User iUser = usrMsg.getAuthor().getIntitaUser();
+		if(iUser != null)
+			this.chatUserAvatar = iUser.getAvatar();
 		date = usrMsg.getDate();
 	}
 	
@@ -70,6 +75,12 @@ public class ChatMessage {
 	}
 	public void setAttachedFiles(ArrayList<String> attachedFiles) {
 		this.attachedFiles = attachedFiles;
+	}
+	public String getChatUserAvatar() {
+		return chatUserAvatar;
+	}
+	public void setChatUserAvatar(String chatUserAvatar) {
+		this.chatUserAvatar = chatUserAvatar;
 	}
 	
 }

@@ -1014,6 +1014,22 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             }
             $scope.searchInputValue.email = '';
         }
+        
+        $scope.removeUserFromRoom = function(userId) {
+            debugger;
+            $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(chatControllerScope.currentRoom.roomId, userId), {}).
+                success(function(data, status, headers, config) {
+                    if(data == false)
+                    {
+                        toaster.pop('error', "Error", "Cant remove user from the room", 1000);
+                        return;    
+                    }
+                    console.log("REMOVE USER OK " + data);
+                }).
+                error(function(data, status, headers, config) {
+                    toaster.pop('error', "Error", "Cant remove user from the room", 1000);
+                });
+        }
         /*************************************
          * UPDATE MESSAGE LP
          *************************************/

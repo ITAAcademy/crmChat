@@ -625,13 +625,31 @@ public class RoomController {
 	 * REMOVE/ADD USERS FROM ROOMS
 	 ***************************/
 
+	boolean removeUserFromRoomFully( ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor)
+	{
+		Long chatUserAuthorId = Long.parseLong(principal.getName());
+		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
+		if(room_o == null || user_o == null || user_o.getId().longValue() == room_o.getAuthor().getId().longValue() || (authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
+		{
+			return false;
+		}
+		roomService.removeUserFromRoom(user_o, room_o);
+		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
+		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
+		updateParticipants();
+
+		simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants", retrieveParticipantsMessage(room_o.getId()));
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
+		return true;
+	}
+	
 	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ignoreAuthor)
 	{
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
-		if((room_o == null || user_o == null || authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
+		if(room_o == null || user_o == null || (authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
 		}
@@ -685,27 +703,13 @@ public class RoomController {
 		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomId, principal,false));
 	}
 
-	/*****************
-	 * dont use at now
-	 ****************/
-	@MessageMapping("/chat/rooms.{room}/user.remove.{login}")
-	public boolean removeUserFromRoom( @DestinationVariable("login") String login, @DestinationVariable("room") Long room, Principal principal) {
-		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkDeleteUser");//@LOG@
-
+	@RequestMapping(value="/chat/rooms.{room}/user.remove/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean removeUserFromRoomRequest( @PathVariable("id") Long id, @PathVariable("room") Long room, Principal principal) {
 		Room room_o = roomService.getRoom(room);
-		User user_o = userService.getUser(login);
+		ChatUser user_o = chatUserServise.getChatUser(id);
 
-		User user = userService.getUser(principal.getName());
-
-		if(user.getId() != room_o.getAuthor().getId())
-			return false;
-
-		System.out.println(Boolean.toString(roomService.removeUserFromRoom(user_o, room_o)));
-		return true;
-	}
-	
-	public boolean removeUserFromRoom(ChatUser user, Room room) {		
-		return roomService.removeUserFromRoom(user.getIntitaUser(), room);
+		return removeUserFromRoomFully(user_o, room_o, principal, false);
 	}
 	
 	public static void addFieldToSubscribedtoRoomsUsersBuffer(SubscribedtoRoomsUsersBufferModal modal)
