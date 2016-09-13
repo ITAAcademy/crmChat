@@ -73,9 +73,13 @@ public class ChatUserLastRoomDateService {
 
 	@Transactional
 	public ChatUserLastRoomDate addUserLastRoomDateInfo(ChatUser user, Room room){
-		ChatUserLastRoomDate date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
-		date.setChatUser(user);
-		updateUserLastRoomDateInfo(date);
+		ChatUserLastRoomDate date = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, user);
+		if(date == null)
+		{
+			date = new ChatUserLastRoomDate(new Date(), room);//@OOO@
+			date.setChatUser(user);
+			updateUserLastRoomDateInfo(date);
+		}
 		return date;
 	}
 

@@ -106,6 +106,9 @@ public class Room implements Serializable,Comparable<Room> {
 	public boolean removeUser(ChatUser user) {
 		return users.remove(user);
 	}
+	public void clearUser() {
+		users.clear();
+	}
 	public Room()
 	{
 

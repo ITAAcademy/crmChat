@@ -102,9 +102,9 @@ public class RoomsService {
 		r.setAuthor(author);
 		r.setName(name);
 		r.setType((short) 0);
-		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		//r.addUser(author);//@BAG@
 		roomRepo.save(r);
+		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		return r;
 	}
 	@Transactional(readOnly = false)
@@ -128,13 +128,19 @@ public class RoomsService {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
 	public boolean addUserToRoom(Long id, User user) {
 		Room room = roomRepo.findOne(id);
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
 
+	public void setAuthor(ChatUser user, Room room)
+	{
+		room.setAuthor(user);
+		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);	
+	}
+	
+	
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
@@ -206,12 +212,12 @@ public class RoomsService {
 		if (currentUser!=null) 
 			intitaUser = currentUser.getIntitaUser();
 		String currentUserName = "";
-		
+
 		if(intitaUser!=null) 
 			currentUserName = intitaUser.getFullName();
 		else 
 			currentUserName = currentUser.getNickName();
-		
+
 		String[] replacementList = {currentDate,currentUserName};
 		ArrayList<Phrase> phrases = getPhrases();
 		for (Phrase phrase : phrases){
@@ -262,7 +268,6 @@ public class RoomsService {
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
 	}
-
 
 }
 

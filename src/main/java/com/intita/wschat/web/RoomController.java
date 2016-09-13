@@ -30,6 +30,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -642,6 +643,38 @@ public class RoomController {
 		simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants", retrieveParticipantsMessage(room_o.getId()));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
 		return true;
+	}
+	
+	@Transactional
+	public boolean changeAuthor(ChatUser newAuthor, Room room, Principal principal,boolean ignoreAuthor) {
+		if(room == null || newAuthor == null)
+			return false;
+		ChatUser author = room.getAuthor(); 
+		if(author.equals(newAuthor))
+			return true;
+		
+		boolean contain = false;
+		if(room.getUsers().contains(newAuthor))
+		{
+			//delete from LIST of add users && check for remove from update
+			room.removeUser(newAuthor);
+			contain = true;
+		}
+		roomService.setAuthor(newAuthor, room);
+		roomService.update(room);
+		
+		addUserToRoom( author, room, principal, true);
+		if(!contain)
+		{
+			addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(newAuthor));
+			updateParticipants();
+
+			simpMessagingTemplate.convertAndSend("/topic/" + newAuthor.getId().toString() + "/chat.participants", retrieveParticipantsMessage(room.getId()));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + newAuthor.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
+
+		}
+		return true;	
+
 	}
 	
 	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ignoreAuthor)

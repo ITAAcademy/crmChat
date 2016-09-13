@@ -570,8 +570,11 @@ public class BotController {
 			{
 				tempRoomAskTenant_wait.remove(i);
 			}
+		
+		roomControler.changeAuthor(c_user, room_, principal, true);
+	//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
+		
 
-		roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
 		Object[] obj = new Object[] {roomId, tenantChatUserId};
 
