@@ -218,8 +218,8 @@ public class RoomController {
 		if(user.getIntitaUser() == null)
 		{
 			Room room;
-			if(user.getRoomsFromUsers().iterator().hasNext()){
-				room = user.getRoomsFromUsers().iterator().next();
+			if(user.getChatUserLastRoomDate().iterator().hasNext()){
+				room = user.getChatUserLastRoomDate().iterator().next().getLastRoom();
 			}
 			else
 			{

@@ -195,13 +195,9 @@ public class ChatTenantService {
 		return false;
 	}
 
-	public void setTenantFree(Long chatUserid) {
-		for (int i = 0; i < tenantsBusy.size(); i++)
-		{
-			if (tenantsBusy.get(i) == chatUserid) {
-				tenantsBusy.remove(i);
-			}
-		}
+	public boolean setTenantFree(Long chatUserid) {
+				boolean res = tenantsBusy.remove(chatUserid);
+				return res;
 	}
 
 	public Long getChatTenantId(Long chatUserId) {
@@ -231,7 +227,7 @@ public class ChatTenantService {
 	public boolean isTenantBusy(Long chatUserid) {
 		for (Long tenant_id : tenantsBusy)
 		{
-			if (tenant_id == chatUserid )
+			if (tenant_id.longValue() == chatUserid.longValue() )
 				return true;
 		}
 		return false;
@@ -240,7 +236,7 @@ public class ChatTenantService {
 	public boolean isTenant(Long chatUserId) {
 		ArrayList<ChatTenant> countTenant = getTenants();
 		for (ChatTenant tenant : countTenant)
-			if (tenant.getChatUser().getId() == chatUserId)
+			if (tenant.getChatUser().getId().equals(chatUserId))
 				return true;
 		return false;
 	}

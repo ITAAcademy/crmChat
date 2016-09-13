@@ -4,7 +4,7 @@
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
                 <div class="input-group chat-head">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-10 height-full">
+                        <div class="col-xs-12 height-full"  ng-class="!disableAddDlgButton ? 'col-sm-10' : 'col-sm-12'">
                             <span class="glyphicon glyphicon-search left-search-icon" />
                             <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search" />
                             <div ng-if="isUserTenant" class="switch dialog-icon dialog-filter-wraper free_tenant">
@@ -38,9 +38,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-2">
+                        <div ng-if="!disableAddDlgButton" class="col-xs-12 col-sm-2" >
                               <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn"
-                              ng-disabled="disableAddDlgButton" ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                               ng-click="toggleNewRoomModal()">ADD ROOM</button>
                         </div>
                     </div>
                 </div>

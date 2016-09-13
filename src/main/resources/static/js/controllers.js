@@ -136,16 +136,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
     };
 
-    $scope.showAskTenantToTakeConsultation = function() {    	
+    $scope.showAskTenantToTakeConsultation = function() {
         if (isAskTenantToTakeConsultationVisible == false) {
 
             $scope.isTenantFree = false;
             $scope.askTenantToTakeConsultationTogle();
-            
-            $scope.hideAskTenantToTakeConsultation_tenantNotRespond = 
-            	$timeout(function () {
-            		$scope.hideAskTenantToTakeConsultation();
-            	},30000);
+
+            $scope.hideAskTenantToTakeConsultation_tenantNotRespond =
+                $timeout(function() {
+                    $scope.hideAskTenantToTakeConsultation();
+                }, 30000);
         }
     }
 
@@ -166,35 +166,34 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
     }
 
-    $scope.answerToTakeConsultation = function(value) {  
-    	$timeout.cancel($scope.hideAskTenantToTakeConsultation_tenantNotRespond);
-    	if (value) {
-    		//alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
-    		//alert($scope.askConsultation_roomId);
-    	 $http.post(serverPrefix + "/bot/operations/tenant/free/{0}".format($scope.askConsultation_roomId)). //$scope.chatUserId)
-    	   success(function(data, status, headers, config) {
-    		   toaster.pop({
-    	            type: 'wait',
-    	            body: 'Wait for ',
-    	            timeout: 0
-    	});
-    		   
-    	   }).
-    	   error(function(data, status, headers, config) {
-    		   alert("error : " + status)
-    	   });
-    	}
-    	else {
-    		$scope.hideAskTenantToTakeConsultation();
-    		 $http.post(serverPrefix + "/{0}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId)).
-    	  	   success(function(data, status, headers, config) {
-    	  		
-    	  	   }).
-        	   error(function(data, status, headers, config) {
-        		   alert("error : " + status)
-        	   });
-    	}      	
-    }; 
+    $scope.answerToTakeConsultation = function(value) {
+        $timeout.cancel($scope.hideAskTenantToTakeConsultation_tenantNotRespond);
+        if (value) {
+            //alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
+            //alert($scope.askConsultation_roomId);
+            $http.post(serverPrefix + "/bot/operations/tenant/free/{0}".format($scope.askConsultation_roomId)). //$scope.chatUserId)
+            success(function(data, status, headers, config) {
+                toaster.pop({
+                    type: 'wait',
+                    body: 'Wait for ',
+                    timeout: 0
+                });
+
+            }).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
+        } else {
+            $scope.hideAskTenantToTakeConsultation();
+            $http.post(serverPrefix + "/{0}/bot_operations/tenant/refuse/".format($scope.askConsultation_roomId)).
+            success(function(data, status, headers, config) {
+
+            }).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
+        }
+    };
 
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
@@ -264,6 +263,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.changeLocation = function changeLocation(url) {
         //alert(url);
+                    toaster.clear();
         $location.path(url);
         console.log("Change location:" + $location.path());
         // $scope.$apply();
@@ -277,14 +277,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     //$scope.templateName = null;
     $rootScope.socketSupport = true;
     $rootScope.authorize = false;
-    
-    
+
+
     $scope.disableAddDlgButton = false;
-    
+
     $rootScope.$watch('authorize', function() {
-    	$scope.disableAddDlgButton = !$rootScope.authorize;
+        $scope.disableAddDlgButton = !$rootScope.authorize;
     });
-    
+
     $rootScope.roomForUpdate = new Map();
 
     $rootScope.redirectzToAuthorizePage = function() {
@@ -292,9 +292,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
     $rootScope.goToAuthorize = function(func) {
         if ($rootScope.authorize || $rootScope.isInited == false) {
-            if (func == null || func == undefined)
+            if (func == null || func == undefined) {
                 $location.path("/access_deny");
-            else
+            } else
                 func();
         } else
             $rootScope.redirectzToAuthorizePage();
@@ -492,7 +492,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     }
                 }
                 if (data["newConsultationWithTenant"] != null) {
-                	var roomId = data["newConsultationWithTenant"][0][0];
+                    var roomId = data["newConsultationWithTenant"][0][0];
 
                     $rootScope.submitConsultation_processUser(roomId);
 
@@ -566,7 +566,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 body: 'Wait for free consultant',
                 timeout: 0,
                 onHideCallback: function() {
-                    if (!$rootScope.isConectedWithFreeTenant) {
+                    if (!$rootScope.isConectedWithFreeTenant && !$rootScope.authorize) {
                         $rootScope.isWaiFreeTenatn = false;
                         $rootScope.showToasterWaitFreeTenant();
                     }
@@ -599,7 +599,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         if (mess_obj.nextWindow == 0) {
             $rootScope.authorize = true;
-
             // if ($scope.currentRoom.roomId != undefined)
             if ($scope.currentRoom != undefined)
                 if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
@@ -624,7 +623,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
             changeLocation("/dialog_view/" + mess_obj.nextWindow);
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
-          //  $rootScope.showToasterWaitFreeTenant();
+            //  $rootScope.showToasterWaitFreeTenant();
         }
     }
 
@@ -822,7 +821,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
 
     $rootScope.submitConsultation_processUser = function(roomId) {
-        if (roomId == $rootScope.currentRoomId) {  
+        if (roomId == $rootScope.currentRoomId) {
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
             chatControllerScope.userAddedToRoom = true;
