@@ -195,6 +195,28 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     };
 
+    $scope.toggleAskForDeleteMe = function(event, room) {
+        if (event != undefined && event != null)
+            event.stopPropagation();
+        if (room != undefined && room != null)
+            $rootScope.askForDeleteMe = { "room": room, isAuthor: $scope.chatUserId == room.roomAuthorId }
+        $('#askForDeleteMe').modal('toggle');
+    }
+
+    $scope.deleteMeFromRoom = function() {
+        var showERR = function() { $rootScope.askForDeleteMe.error = "Не вдалося видалити Вас з розмови!!!"; }
+        $http.post(serverPrefix + "/chat/rooms/{0}/remove".format($rootScope.askForDeleteMe.room.roomId)).
+        success(function(data, status, headers, config) {
+            if (data == true)
+                $scope.toggleAskForDeleteMe();
+            else
+                showERR();
+        }).
+        error(function(data, status, headers, config) {
+            showERR();
+        });
+    };
+
     $scope.toggleNewRoomModal = function() {
         $('#new_room_modal').modal('toggle');
 
@@ -263,7 +285,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.changeLocation = function changeLocation(url) {
         //alert(url);
-                    toaster.clear();
+        toaster.clear();
         $location.path(url);
         console.log("Change location:" + $location.path());
         // $scope.$apply();

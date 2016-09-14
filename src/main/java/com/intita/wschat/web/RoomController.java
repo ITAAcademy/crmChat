@@ -178,7 +178,7 @@ public class RoomController {
 		ChatUser roomAuthor = greeTenante.getChatUser();			
 
 		chatTenantService.setTenantBusy(greeTenante);
-*/
+		 */
 		//getRandomTenant().getChatUser();
 		ChatUser guest = chatUserServise.getChatUser(principal);
 		String roomName =" " + guest.getNickName().substring(0,16)+" "+ new Date().toString();
@@ -237,10 +237,10 @@ public class RoomController {
 				}
 				else 
 					room = createRoomWithTenant(principal);
-				
+
 				//test - no free tenant
 				//room = null;
-				
+
 				//send msg about go to guest room if you is tenant with current Id
 				/*if (room != null)
 					chatController.addFieldToInfoMap("newGuestRoom", room.getId());*/
@@ -634,6 +634,10 @@ public class RoomController {
 		{
 			return false;
 		}
+		return removeUserFromRoomFullyWithoutCheck(user_o, room_o);
+	}
+
+	boolean removeUserFromRoomFullyWithoutCheck( ChatUser user_o, Room room_o){
 		roomService.removeUserFromRoom(user_o, room_o);
 		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
@@ -644,7 +648,7 @@ public class RoomController {
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
 		return true;
 	}
-	
+
 	@Transactional
 	public boolean changeAuthor(ChatUser newAuthor, Room room, Principal principal,boolean ignoreAuthor) {
 		if(room == null || newAuthor == null)
@@ -652,7 +656,7 @@ public class RoomController {
 		ChatUser author = room.getAuthor(); 
 		if(author.equals(newAuthor))
 			return true;
-		
+
 		boolean contain = false;
 		if(room.getUsers().contains(newAuthor))
 		{
@@ -662,7 +666,7 @@ public class RoomController {
 		}
 		roomService.setAuthor(newAuthor, room);
 		roomService.update(room);
-		
+
 		addUserToRoom( author, room, principal, true);
 		if(!contain)
 		{
@@ -676,7 +680,7 @@ public class RoomController {
 		return true;	
 
 	}
-	
+
 	boolean addUserToRoom( ChatUser user_o, Room room_o, Principal principal,boolean ignoreAuthor)
 	{
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
@@ -736,6 +740,27 @@ public class RoomController {
 		return mapper.writeValueAsString(addUserToRoomFn(nickName, roomId, principal,false));
 	}
 
+	@RequestMapping(value="/chat/rooms/{room}/remove", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean removeRoomFromList(@PathVariable("room") Long room, Principal principal) {
+		Room room_o = roomService.getRoom(room);
+		ChatUser user_o = chatUserServise.getChatUser(principal);
+		if(room_o == null || user_o == null)
+			return false;
+		if(room_o.getAuthor().getId().equals(user_o.getId()))
+		{
+			room_o.setActive(true);
+			for(ChatUser user : room_o.getChatUsers())
+			{
+				removeUserFromRoomFully(user, room_o, principal, false);
+			}
+			room_o.setActive(false);
+			roomService.update(room_o);
+		}
+		return removeUserFromRoomFullyWithoutCheck(user_o, room_o);
+
+	}
+
 	@RequestMapping(value="/chat/rooms.{room}/user.remove/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean removeUserFromRoomRequest( @PathVariable("id") Long id, @PathVariable("room") Long room, Principal principal) {
@@ -744,7 +769,7 @@ public class RoomController {
 
 		return removeUserFromRoomFully(user_o, room_o, principal, false);
 	}
-	
+
 	public static void addFieldToSubscribedtoRoomsUsersBuffer(SubscribedtoRoomsUsersBufferModal modal)
 	{
 		subscribedtoRoomsUsersBuffer.add(modal);

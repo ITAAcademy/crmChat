@@ -4,7 +4,7 @@
             <form class="ac-custom ac-checkbox ac-checkmark" autocomplete="off">
                 <div class="input-group chat-head">
                     <div class="row">
-                        <div class="col-xs-12 height-full"  ng-class="!disableAddDlgButton ? 'col-sm-10' : 'col-sm-12'">
+                        <div class="col-xs-12 height-full" ng-class="!disableAddDlgButton ? 'col-sm-10' : 'col-sm-12'">
                             <span class="glyphicon glyphicon-search left-search-icon" />
                             <input type="text" ng-model="roomsearchquery" class="contacts-list-search height-full" th:placeholder="${lgPack.lables.roomListView.search_placeholder}" placeholder="Search" />
                             <div ng-if="isUserTenant" class="switch dialog-icon dialog-filter-wraper free_tenant">
@@ -38,15 +38,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-if="!disableAddDlgButton" class="col-xs-12 col-sm-2" >
-                              <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn"
-                               ng-click="toggleNewRoomModal()">ADD ROOM</button>
+                        <div ng-if="!disableAddDlgButton" class="col-xs-12 col-sm-2">
+                            <button th:text="${lgPack.lables.roomListView.newRoom}" type="button" class="btn btn-default add-room-btn" ng-click="toggleNewRoomModal()">ADD ROOM</button>
                         </div>
                     </div>
                 </div>
-                <ul ng-repeat="room in rooms | orderBy: ['-nums', '-date'] | filter:filterDialogsByType
-               | filter:{string:(roomsearchquery||'')} " class="list-group list-group-dialogs">
-                    <li class="list-group-item list-group-item-dialogs">
+                <ul class="list-group list-group-dialogs">
+                    <li class="list-group-item list-group-item-dialogs" ng-repeat="room in rooms | orderBy: ['-nums', '-date'] | filter:filterDialogsByType
+               | filter:{string:(roomsearchquery||'')} ">
                         <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event, room.roomId)">
                             <div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
                                 <div class=" avatar_group avatar-container">
@@ -66,8 +65,8 @@
                                     <img ng-if="room.lastMessageAuthorAvatar.length>0" class="new_message_author_avatar" ng-src="{{baseurl}}/images/avatars/{{room.lastMessageAuthorAvatar}}"> </img>
                                 </div>
                                 <div class="message_container">
-                                  	  <div class="message_author_header text_ellipsis">{{room.lastMessageAuthor}}
-                                 	   </div>
+                                    <div class="message_author_header text_ellipsis">{{room.lastMessageAuthor}}
+                                    </div>
                                     <div class="message_body_item">
                                         <dir ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
           var elm = roomElement.context;
@@ -77,10 +76,12 @@
                                         <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
                                     </div>
                                 </div>
-                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span>
+                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
                                 <!-- {{room.lastMessage}} -->
                             </div>
+                            <div ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" class="delete-user-icon"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></div>
                         </div>
+                        
                     </li>
                 </ul>
             </form>
@@ -89,3 +90,4 @@
 </div>
 <div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow" />
 <div id="askTenantToTakeConsultation" class="modal fade" th:include="askTenantToTakeConsultationWindow" />
+<div id="askForDeleteMe" class="modal fade" th:include="askForDeleteMe" />

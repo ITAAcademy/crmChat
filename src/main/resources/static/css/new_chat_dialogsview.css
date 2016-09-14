@@ -129,8 +129,8 @@
 .new_messages_counter {
     position: absolute;
     right: 0px;
-    margin-right: 20px;
-    top: 50%;
+    margin-right: 26px;
+    top: calc(50% - 8px);
 }
 
 .center_flex_vertical {
@@ -177,6 +177,15 @@ max-height: 100px;*/
     background: #9EE7FF;
 }
 
+.room_item:hover .delete-user-icon {
+    opacity: 1;
+    pointer-events: initial;
+}
+
+.room_item .delete-user-icon:hover {
+    
+}
+
 .message_body_item {
     word-break: break-all;
     padding: 0px 0px;
@@ -194,7 +203,7 @@ max-height: 100px;*/
     /*height:70px;*/
     overflow: hidden;
     /*text-overflow:ellipsis;*/
-    width: 90%;
+    width: 80%;
 }
 
 .new_message_author_avatar {

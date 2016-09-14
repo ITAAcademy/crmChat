@@ -28,7 +28,7 @@
 
 /*room highlight color */
 .room_item:hover{
-     background: #9EE7FF;
+     background: rgba(75, 112, 163, 0.56);
 }
 
 /*dialog filter button color */

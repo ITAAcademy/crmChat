@@ -83,28 +83,6 @@
     margin: 0 0 20px;
 }
 
-.user .delete-user-icon {
-    color: red;
-    background: white;
-    position: absolute;
-    /*border: 1px solid #000;*/
-    border-radius: 100%;
-    width: 25px;
-    height: 25px;
-    top: calc(50% - 10px);
-    /* left: 4px; */
-    right: 10px;
-    text-align: center;
-    font-size: 16px;
-    line-height: 25px;
-    opacity: .3;
-    pointer-events: none;
-    -webkit-transition: opacity 0.5s, transform 0.5s ease-out;
-    -moz-transition: opacity 0.5s, transform 0.5s ease-out;
-    -o-transition: opacity 0.5s, transform 0.5s ease-out;
-    transition: opacity 0.5s, transform 0.5s ease-out;
-}
-
 .user:hover .delete-user-icon {
     opacity: 1;
     pointer-events: initial;
