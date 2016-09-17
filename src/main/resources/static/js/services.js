@@ -9,13 +9,15 @@ angular.module('springChat.services', [])
 			var wrappedSocket = {
 					
 					init: function(url) {
-						stompClient = Stomp.over(new SockJS(url, null, {
+						var cock = new SockJS(url, null, {
 						    'transports': ['websocket', 'xdr-streaming', 'xhr-streaming',
 						                            'iframe-eventsource', 'iframe-htmlfile',
 						                            'xdr-polling', 'xhr-polling', 'iframe-xhr-polling',
 						                            'jsonp-polling'
 						                          ]
-						                        }));
+						                        });
+						debugger;
+						stompClient = Stomp.over(cock);
 						//stompClient.debug = null
 					},
 					disconnect: function (){
