@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class UsersService {
 
 	@Autowired
 	private UserRepository usersRepo;
-	
+
 	@Autowired
 	private ChatUsersService chatUsersService;
 
@@ -47,12 +48,12 @@ public class UsersService {
 	public User getUser(Principal principal){
 		String chatUserIdStr = principal.getName();
 		Long chatUserId = 0L;
-				try{
-					chatUserId = Long.parseLong(chatUserIdStr);
-				}
+		try{
+			chatUserId = Long.parseLong(chatUserIdStr);
+		}
 		catch(NumberFormatException e){
-		System.out.println(e);
-		return null;
+			System.out.println(e);
+			return null;
 		}
 		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
 		return user;
@@ -71,7 +72,7 @@ public class UsersService {
 		return emails;
 
 	}
-	
+
 	@Transactional
 	public List<User> getUsersFist5(String login){
 		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%");
@@ -86,8 +87,8 @@ public class UsersService {
 		return emails;
 
 	}
-	
-	
+
+
 	@Transactional
 	public ArrayList<User> getUsers(){
 		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); 
@@ -101,7 +102,7 @@ public class UsersService {
 		ChatUser chatUser= chatUsersService.getChatUser(chatUserId);
 		if (chatUser==null) return null;
 		return chatUser.getIntitaUser();
-		
+
 	}
 
 	@Transactional
@@ -149,16 +150,39 @@ public class UsersService {
 		return usersRepo.findFisrtById(id);
 	}
 	@Transactional
-	public boolean isAdmin(String id){
+	public boolean isAdmin(Long id){
 		if(usersRepo.findInAdminTable(id) != null)
 			return true;
 		return false;
 	}
 	@Transactional
-	public boolean isTenant(String id){
+	public boolean isTenant(Long id){
 		if(usersRepo.findInTenantTable(id) != null)
 			return true;
 		return false;
+	}
+	@Transactional
+	public boolean isTrainer(Long id){
+		if(usersRepo.findInTrainerTable(id) != null)
+			return true;
+		return false;
+	}
+	/*
+	@Transactional
+	public boolean getAllTrainer(){
+		ArrayList<Long> all = usersRepo.findAllTrainers(); 
+		if(all != null)
+			return true;
+		return false;
+	}
+	*/
+	@Transactional
+	public ArrayList<ChatUser> getAllTenants(){
+		ArrayList<ChatUser> result = new ArrayList<>();
+		ArrayList<Long> all = new ArrayList<Long>(Arrays.asList(usersRepo.findAllTenants()));//WTF
+		if(all == null)
+			return result;
+		return new ArrayList<>(chatUsersService.getUsers(all));
 	}
 
 }

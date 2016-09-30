@@ -78,7 +78,10 @@ public class ChatUsersService {
 	public List<ChatUser> getUsersFist5(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		return users;
-
+	}
+	@Transactional
+	public ArrayList<ChatUser> getUsers(List<Long> ids){
+		return chatUsersRepo.findByIdIn(ids);
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(){

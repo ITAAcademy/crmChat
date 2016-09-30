@@ -137,7 +137,7 @@ public class ChatController {
 	@Autowired private ConsultationsService chatIntitaConsultationService;
 
 	@Autowired private CustomAuthenticationProvider authenticationProvider;
-	
+
 	@Autowired private RoomsService chatRoomsService;
 
 	@Autowired private RoomsService roomService;
@@ -164,13 +164,13 @@ public class ChatController {
 	}
 
 	private final static ObjectMapper mapper = new ObjectMapper();
-	
+
 
 	private volatile Map<String,Queue<UserMessage>> messagesBuffer =  Collections.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key => roomId
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
-	
+
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
@@ -184,7 +184,7 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-	
+
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value)
 	{
 		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(user.getId());
@@ -193,7 +193,7 @@ public class ChatController {
 			t_infoMap = new ConcurrentHashMap<>();
 			infoMapForUser.put(user.getId(), t_infoMap);
 		}
-		
+
 		ArrayList<Object> listElm = t_infoMap.get(user.getId());
 		if(listElm == null)
 		{
@@ -202,7 +202,7 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-	
+
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
 		return messagesBuffer;
 	}
@@ -518,15 +518,15 @@ public class ChatController {
 					result = "{}";
 				}
 			}
-			
+
 			if(!nextUser.isSetOrExpired() && result != "{}")//@BAD@
 				nextUser.setResult(result);		
 		}
-		
+
 		infoMap.clear();
 		globalInfoResult.clear();
 		infoMapForUser.clear();
-		
+
 
 	}
 	//NOT TEST!!!
@@ -722,7 +722,7 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}
-	
+
 	@RequestMapping(value="/get_users_like", method = RequestMethod.GET)
 	@ResponseBody
 	public String getUsersLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
@@ -753,7 +753,7 @@ public class ChatController {
 		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(usersResult);
 		return jsonInString;
 	}
-	
+
 
 
 	@RequestMapping(value="/get_all_users_emails_like", method = RequestMethod.GET)
@@ -851,8 +851,8 @@ public class ChatController {
 		public static final String EN = "en";
 		public static final String RU = "ru";
 		public static final ArrayList<String> LANGS = new ArrayList<String>(
-			    Arrays.asList(UA, EN, RU));
-		
+				Arrays.asList(UA, EN, RU));
+
 	}
 	public static String getCurrentLang()
 	{
@@ -983,12 +983,12 @@ public class ChatController {
 		//Room room_consultation = chatConsultation.getRoom();		
 
 		Long chatUserId = Long.parseLong(principal.getName());	
-		
+
 		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
-		
+
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,
 				new RoomController.UpdateRoomsPacketModal (list,false));
-		
+
 		//this said ti author that he nust update room`s list
 		ChatUser author = chatUsersService.getChatUser(principal);
 		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
@@ -1009,11 +1009,11 @@ public class ChatController {
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
-		
+
 		chatLangService.updateDataFromDatabase();
 		if(before != null)
 		{
-			 return "redirect:"+ before;
+			return "redirect:"+ before;
 		}
 		if(auth != null)
 			addLocolization(model, chatUsersService.getChatUser(auth));
@@ -1034,15 +1034,27 @@ public class ChatController {
 		addLocolization(model,chatUsersService.getChatUser((principal)));
 		return getTeachersTemplate(request, "consultationTemplate", model,principal);
 	}	
-
+	@RequestMapping(value="/chatTemplate.html", method = RequestMethod.GET)
+	public String  getChatTemplate(HttpRequest request, Model model,Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		User iUser = user.getIntitaUser();
+		if(iUser != null)
+		{
+			if(userService.isTrainer(user.getIntitaUser().getId()))
+			{
+				model.addAttribute("tenants",  userService.getAllTenants());
+			}
+		}
+		return getTeachersTemplate(request, "chatTemplate", model, principal);
+	}
+	
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Principal principal) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		addLocolization(model,chatUsersService.getChatUser(principal));
-
 		return page;
 	}
-	
+
 	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir,Principal principal) {
 		getIndex(request, null, model,principal);
@@ -1051,7 +1063,7 @@ public class ChatController {
 			item = dialogItemService.getByIdAndLang(id, lang);
 		else
 			item = dialogItemService.getById(id);
-		
+
 		if(item == null)
 			return "quize_err";
 		//model.addAttribute("item", HtmlUtility.escapeQuotes(item.getBody()));
@@ -1062,8 +1074,8 @@ public class ChatController {
 			e.printStackTrace();
 		}
 		model.addAttribute("description", HtmlUtility.escapeQuotes(item.getDescription()));
-	//	redir.addAttribute("item", item.getBody());
-		
+		//	redir.addAttribute("item", item.getBody());
+
 		return "formView";
 	}
 
@@ -1077,7 +1089,7 @@ public class ChatController {
 	@ResponseBody
 	public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
 		mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-		boolean isAdmin = userService.isAdmin(principal.getName());
+		boolean isAdmin = userService.isAdmin(Long.parseLong(principal.getName()));
 		if(!isAdmin)
 			return null;
 		return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));

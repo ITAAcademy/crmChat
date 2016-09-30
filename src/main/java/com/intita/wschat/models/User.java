@@ -190,6 +190,7 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 		// do nothing because anonimus user is considered authorized too
 		return "anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
+	
 
 	public User(String login, String email, String password) {
 		this.login = login;

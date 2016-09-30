@@ -208,14 +208,14 @@ public class RoomController {
 			userId = Long.parseLong(principal.getName());
 
 		ChatUser user = chatUserServise.getChatUser(userId);
-
+		
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
 		{
 			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
-			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId().toString()))
+			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
 				return null;
 		}
-
+		
 		if(user.getIntitaUser() == null)
 		{
 			Room room;
@@ -262,7 +262,7 @@ public class RoomController {
 		result.put("chat_user_nickname", user.getNickName());
 
 		Integer role = 0;
-		if(user.getIntitaUser() != null && userService.isAdmin(user.getIntitaUser().getId().toString()))
+		if(user.getIntitaUser() != null && userService.isAdmin(user.getIntitaUser().getId()))
 		{
 			role |= ROLE.ADMIN;
 		}
@@ -276,7 +276,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("chat_rooms", rooms);
-
+		
 		return result;
 	}
 
@@ -361,7 +361,7 @@ public class RoomController {
 			{
 				User iUser = o_object.getIntitaUser();
 
-				if( iUser == null || !userService.isAdmin(iUser.getId().toString()))
+				if( iUser == null || !userService.isAdmin(iUser.getId()))
 				{
 					return new HashMap<String, Object>();
 				}
@@ -516,7 +516,7 @@ public class RoomController {
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
 		{
 			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
-			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId().toString()))
+			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
 				return null;
 		}
 

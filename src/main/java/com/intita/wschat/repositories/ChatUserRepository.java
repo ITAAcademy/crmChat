@@ -1,6 +1,7 @@
 package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,9 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	//User findByEmail(String email);
 	Page<ChatUser> findById(Long id, Pageable pageable);
 	ChatUser findById(Long id);
+	
+	ArrayList<ChatUser> findByIdIn(List<Long> users);
+	
 	Page<ChatUser> findAll(Pageable pageable);
 	ChatUser findOneByIntitaUser(User user);
 	List<ChatUser> findFirst10ByIdNotIn(List<Long> users);

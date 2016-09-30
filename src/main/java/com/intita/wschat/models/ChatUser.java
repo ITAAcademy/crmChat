@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.intita.wschat.event.ParticipantRepository;
 
 import jsonview.Views;
 
@@ -34,6 +35,7 @@ import jsonview.Views;
  */
 @Entity(name="chat_user")
 public class ChatUser implements Serializable,Comparable<ChatUser> {
+
 	@Autowired
 	@Transient
     private SessionFactory factory;
@@ -80,8 +82,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
 		this.chatUserLastRoomDate = chatUserLastRoomDate;
 	}
-
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
