@@ -57,10 +57,14 @@ public class UsersService {
 		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
 		return user;
 	}
+	@Transactional
+	public List<User> getUsersFist5(String login, List<Long> logins){
+		return  usersRepo.findFirst5ByLoginLikeCustom(login + "%", logins, new PageRequest(0, 5));
+	}
 
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login, List<Long> logins){
-		List<User> users = usersRepo.findFirst5ByIdNotInAndLoginLike( logins, login + "%");
+		List<User> users = getUsersFist5(login, logins);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)
 			emails.add(users.get(i).getEmail());
@@ -69,8 +73,12 @@ public class UsersService {
 	}
 	
 	@Transactional
+	public List<User> getUsersFist5(String login){
+		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%");
+	}
+	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
-		List<User> users = usersRepo.findFirst5ByLoginLike(login + "%");
+		List<User> users = getUsersFist5(login);
 		//System.out.println("FFFFFFFFFFFFFFFFFFF  " + login + " " + users);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)

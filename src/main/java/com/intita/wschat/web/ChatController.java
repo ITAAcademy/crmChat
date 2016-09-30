@@ -722,6 +722,39 @@ public class ChatController {
 		String jsonInString = mapper.writeValueAsString(emails);
 		return jsonInString;
 	}
+	
+	@RequestMapping(value="/get_users_like", method = RequestMethod.GET)
+	@ResponseBody
+	public String getUsersLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
+		ArrayList<User> usersResult = null;
+
+		if(eliminate_users_of_current_room)
+		{
+			List<ChatUser> users = new  ArrayList<ChatUser>();
+			Set<ChatUser>  users_set = null;
+			users_set = roomService.getRoom(room).getUsers();
+			users.addAll(users_set);
+			users.add(roomService.getRoom(room).getAuthor());
+
+			List<Long> room_emails = new  ArrayList<>();
+			for(int i = 0; i <  users.size(); i++)
+			{
+				User i_user = users.get(i).getIntitaUser();
+				if(i_user != null)
+					room_emails.add(i_user.getId());
+			}
+			usersResult = new ArrayList(userService.getUsersFist5(login, room_emails));
+		}
+		else
+			usersResult = new ArrayList(userService.getUsersFist5(login));
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(usersResult);
+		return jsonInString;
+	}
+	
+
 
 	@RequestMapping(value="/get_all_users_emails_like", method = RequestMethod.GET)
 	@ResponseBody

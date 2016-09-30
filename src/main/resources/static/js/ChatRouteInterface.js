@@ -265,6 +265,16 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         }, 500); //for click event
     };
 
+    $scope.getUserSearchIndetify = function(item, searchInputValue){
+        if(item == '')
+            return item;
+        var name = item.firstName + ' ' + item.secondName;
+        if(searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1 || name == null)
+            return item.email;
+        else
+            return name;
+    }
+
     $scope.showCoursesListInMessageInput = function(coursePrefix, courseLang) {
 
         $scope.show_search_list_in_message_input = true;

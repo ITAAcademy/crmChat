@@ -366,7 +366,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             // debugger;
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_users_emails_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=true", //'/get_users_emails_like',
+                url: serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=true", //'//get_users_like',
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });

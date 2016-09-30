@@ -41,9 +41,9 @@
 									ng-model="$parent.searchInputValue.email"
 									ng-change="showSearchList()" 
 									placeholder="search" 
-									typeahead-wait-ms = "1000" 
-									uib-typeahead="item for item in $parent.emails" 	
-									typeahead-on-select = " $parent.searchInputValue.email = $model; addUserToRoom()"/>
+									typeahead-wait-ms = "1000"
+									uib-typeahead="getUserSearchIndetify(item, $parent.searchInputValue.email) for item in $parent.emails" 	
+									typeahead-on-select = " debugger; $parent.searchInputValue.email = $item.email; addUserToRoom()"/>
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 								</div>
 							</div>

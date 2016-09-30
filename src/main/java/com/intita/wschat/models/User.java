@@ -27,7 +27,12 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import jsonview.Views;
 
 /**
  * 
@@ -40,19 +45,23 @@ public class User implements UserDetails, Serializable,Comparable<User>{
 
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 
 	@NotBlank
 	@Size(min = 1, max = 255)
 	@Column(unique = false,name="email")
+	@JsonView(Views.Public.class)
 	private String login;
 
 	//@NotNull
 	@OneToOne(mappedBy = "intitaUser",fetch = FetchType.LAZY)
+	@JsonBackReference
 	private ChatUser chatUser;
 
 	@NotBlank
 	@Size(min = 1, max = 100)
+	@JsonView(Views.Public.class)
 	private String password;
 
 	@Column(name="avatar")

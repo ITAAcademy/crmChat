@@ -690,6 +690,11 @@ public class RoomController {
 		{
 			return false;
 		}
+		Set<Room> all = user_o.getRoomsFromUsers();
+		all.addAll(user_o.getRootRooms());
+		if(all.contains(room_o))
+			return false;
+		
 		roomService.addUserToRoom(user_o, room_o);
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
@@ -709,17 +714,17 @@ public class RoomController {
 	}
 
 
-	@MessageMapping("/chat/rooms.{room}/user.add.{nickName}")
-	public void addUserToRoom( @DestinationVariable("nickName") String nickName, @DestinationVariable("room") Long room, Principal principal) {
+	@MessageMapping("/chat/rooms.{room}/user.add.{email}")
+	public void addUserToRoom( @DestinationVariable("email") String email, @DestinationVariable("room") Long room, Principal principal) {
 		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
 
 		//System.out.println(login);//@LOG@
 		System.out.println(room);//@LOG@
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
-		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);// @BAG@
+		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(email, false);// @BAG@
 
-		if(!addUserToRoomFn(nickName, room, principal,true))
+		if(!addUserToRoomFn(email, room, principal,true))
 		{
 			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
 			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
