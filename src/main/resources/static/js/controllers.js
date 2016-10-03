@@ -275,7 +275,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         trimRight = trimRight || 0;
         var expr = new RegExp(reg, 'g');
         msg = msg.replace(expr, function(str) {
-            return ' <a ng-click="' + callback.replace(new RegExp('#', 'g'), "'" + str.substr(trimLeft, str.length - trimRight) + "'") + '">' + str.substr(trimLeft, str.length - trimRight) + "</a>";
+            return ' <a ng-click="' + callback.replace(new RegExp('#', 'g'), "'" + str.substr(trimLeft, str.length - trimRight).escapeHtml() + "'") + '">' + str.substr(trimLeft, str.length - trimRight) + "</a>";
         })
 
         //$interval($route.reload(), 200);

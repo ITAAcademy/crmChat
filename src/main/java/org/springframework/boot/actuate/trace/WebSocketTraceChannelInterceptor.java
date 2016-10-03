@@ -154,7 +154,7 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 				result.correct=true;
 			else
 			{
-				if(chatUser.getIntitaUser() != null && userService.isAdmin(chatUser.getIntitaUser().getId().toString()))
+				if(chatUser.getIntitaUser() != null && userService.isAdmin(chatUser.getIntitaUser().getId()))
 				{
 					result.correct=true;
 				}
