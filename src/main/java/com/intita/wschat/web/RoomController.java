@@ -208,14 +208,14 @@ public class RoomController {
 			userId = Long.parseLong(principal.getName());
 
 		ChatUser user = chatUserServise.getChatUser(userId);
-		
+
 		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
 		{
 			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
 				return null;
 		}
-		
+
 		if(user.getIntitaUser() == null)
 		{
 			Room room;
@@ -276,7 +276,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("chat_rooms", rooms);
-		
+
 		return result;
 	}
 
@@ -465,6 +465,7 @@ public class RoomController {
 	 * GET/ADD ROOMS
 	 * @throws JsonProcessingException 
 	 ***************************/
+	
 	@RequestMapping(value="/chat/rooms/roomInfo/{roomID}", method=RequestMethod.POST)
 	@ResponseBody
 	public String getRoomInfo( @PathVariable("roomID") Long roomId, Principal principal) throws JsonProcessingException {
@@ -634,10 +635,17 @@ public class RoomController {
 		{
 			return false;
 		}
-		return removeUserFromRoomFullyWithoutCheck(user_o, room_o);
+		return removeUserFromRoomFullyWithoutCheckAuthorization(user_o, room_o);
 	}
 
-	boolean removeUserFromRoomFullyWithoutCheck( ChatUser user_o, Room room_o){
+	/*
+	 * Only for remove self from room
+	 */
+	boolean removeUserFromRoomFullyWithoutCheckAuthorization( ChatUser user_o, Room room_o){
+		//check for BOT
+		if(user_o.getId() == BotParam.BOT_ID)
+			return false;
+		
 		roomService.removeUserFromRoom(user_o, room_o);
 		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
@@ -665,7 +673,10 @@ public class RoomController {
 			contain = true;
 		}
 		roomService.setAuthor(newAuthor, room);
-		roomService.update(room);
+		if(!roomService.update(room))
+			return false;
+		//remove room from cache author object
+		author.getRootRooms().remove(room);
 
 		addUserToRoom( author, room, principal, true);
 		if(!contain)
@@ -694,7 +705,7 @@ public class RoomController {
 		all.addAll(user_o.getRootRooms());
 		if(all.contains(room_o))
 			return false;
-		
+
 		roomService.addUserToRoom(user_o, room_o);
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
@@ -762,7 +773,7 @@ public class RoomController {
 			room_o.setActive(false);
 			roomService.update(room_o);
 		}
-		return removeUserFromRoomFullyWithoutCheck(user_o, room_o);
+		return removeUserFromRoomFullyWithoutCheckAuthorization(user_o, room_o);
 
 	}
 
