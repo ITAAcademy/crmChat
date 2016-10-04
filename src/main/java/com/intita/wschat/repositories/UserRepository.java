@@ -39,6 +39,15 @@ public interface UserRepository extends CrudRepository<User, Long> {
   @Query(value = "SELECT * FROM user_trainer WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
   Object findInTrainerTable(Long userId);
   
+  @Query(value = "SELECT * FROM user_student WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
+  Object findInStudentTable(Long userId);
+  
+  @Query(value = "SELECT trainer FROM trainer_student WHERE student = ?1 AND ((start_time <= NOW() AND end_time >= NOW()) OR end_time IS NULL) LIMIT 1", nativeQuery = true)
+  Long getTrainerByUserId(Long userId);
+  
+  @Query(value = "SELECT trainer FROM trainer_student WHERE student = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
+  ArrayList<Long> getStudentsByTeacherId(Long userId);
+  
   @Query(value = "SELECT id_user FROM user_trainer WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
   Long[] findAllTrainers();
   

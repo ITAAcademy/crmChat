@@ -55,7 +55,9 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
+import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
@@ -476,38 +478,75 @@ public class RoomController {
 		return mapper.writeValueAsString(sb);
 	}
 
-
-	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
-	@ResponseBody
-	public String getPrivateRoom( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
-		log.info("getPrivateRoom");
-		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
+	/*********************
+	 * Generation/return of new special room for two users 
+	 * Tenatn/Trainer more prefered as authoror
+	 * @return id of room
+	 * @exception RoomNotFoundException (users not founded)
+	 ********************/
+	public Room getPrivateRoom(ChatUser chatUser, ChatUser privateCharUser)
+	{
 		if(privateCharUser == null)
 			throw new RoomNotFoundException("privateChatUser is null");
-		ChatUser chatUser = chatUserServise.getChatUser(principal);
+		
 		if(chatUser.getIntitaUser() == null)
 			throw new RoomNotFoundException("Intita use is null");
-
+		
 		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
-		if(room == null)
-			room  = roomService.getPrivateRoom(privateCharUser, chatUser);
-
+	
+		ChatUser author = chatUser;
+		ChatUser other = privateCharUser;
+		User iPrivateUser = privateCharUser.getIntitaUser(); 
+		if(userService.isTenant(iPrivateUser.getId()) || userService.isTrainer(iPrivateUser.getId()))
+		{
+			author = privateCharUser;
+			other = chatUser;
+		}
+	
 		if(room == null)
 		{
-			room = roomService.register(chatUser.getNickName() + "_" + privateCharUser.getNickName(), chatUser, (short) 1);// private room type => 1
-			if (chatUser.getId()!= privateCharUser.getId())
-				roomService.addUserToRoom(privateCharUser, room);
+			room = roomService.registerPrivate(author, other);// private room type => 1
+
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
 			if (chatUser.getId()!= privateCharUser.getId())
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(privateCharUser)));	
 
-			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_FROM_TENANT,true,""+room.getId());
-			String subscriptionStr = "/topic/users/" + userId + "/status";
+			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_FROM_TENANT, true, ""+room.getId());
+			String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 		}
-
+		return room;
+	}
+	
+	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
+	@ResponseBody
+	public String getPrivateRoomRequest( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
+		log.info("getPrivateRoom");
+		ChatUser privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
+		ChatUser chatUser = chatUserServise.getChatUser(principal);
+		Room room = getPrivateRoom(chatUser, privateCharUser);
 		return mapper.writeValueAsString(room.getId());//@BAG@
-
+	}
+	
+	@RequestMapping(value="/chat/go/rooms/private/trainer", method=RequestMethod.GET)
+	public String goPrivateRoomWithTrainer(Principal principal) throws JsonProcessingException {
+		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
+		
+		User iPrincipalUser = principalChatUser.getIntitaUser();
+		ChatUser trainer = null;
+		try{
+			if(iPrincipalUser == null)
+				throw new RoomNotFoundException("is west!!!");
+			User iTrainer = userService.getTrainer(iPrincipalUser.getId());
+			if(iTrainer == null)
+				throw new RoomNotFoundException("user dont have trainer!!!");
+			trainer = chatUserServise.getChatUserFromIntitaUser(iTrainer, false);
+			return "redirect:/#/dialog_view/" + getPrivateRoom(trainer, principalChatUser).getId();
+		}
+		catch (RoomNotFoundException ex){
+			log.info("goPrivateRoomWithTrainer ::: " + ex.getMessage());
+			return "redirect:/";
+		}
 	}
 
 	// @SubscribeMapping("/chat/rooms/user.{userId}")
@@ -645,6 +684,13 @@ public class RoomController {
 		//check for BOT
 		if(user_o.getId() == BotParam.BOT_ID)
 			return false;
+		//check for private room
+		if(room_o.getType() == RoomType.PRIVATE)
+		{
+			PrivateRoomInfo info = roomService.getPrivateRoomInfo(room_o);
+			if(user_o == info.getFirtsUser() || user_o == info.getSecondUser())
+				return false;
+		}
 		
 		roomService.removeUserFromRoom(user_o, room_o);
 		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);

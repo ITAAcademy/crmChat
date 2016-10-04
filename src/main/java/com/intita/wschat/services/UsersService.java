@@ -167,6 +167,38 @@ public class UsersService {
 			return true;
 		return false;
 	}
+	@Transactional
+	public boolean isStudent(Long id){
+		if(usersRepo.findInStudentTable(id) != null)
+			return true;
+		return false;
+	}
+	@Transactional
+	public User getTrainer(Long id){
+		Long trainerId = usersRepo.getTrainerByUserId(id);
+		if(trainerId != null)
+			return usersRepo.findFisrtById(trainerId);
+		return null;
+	}
+	@Transactional
+	public ArrayList<User> getStudents(Long id){
+		ArrayList<Long> studentsIdList = usersRepo.getStudentsByTeacherId(id);
+		if(studentsIdList != null)
+		{
+			ArrayList<User> studentsList = new ArrayList<>();
+			for (Long studentId : studentsIdList) {
+				User student = usersRepo.findFisrtById(studentId);
+				if(student == null)
+				{
+					System.out.println("NULL studen!!! Id = " + studentId);
+					continue;
+				}
+				studentsList.add(student);
+			}
+			return studentsList;
+		}
+		return null;
+	}
 	/*
 	@Transactional
 	public boolean getAllTrainer(){

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -65,6 +66,10 @@ public class Room implements Serializable,Comparable<Room> {
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
+	
+	@JsonIgnore
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "room")
+	PrivateRoomInfo privateInfo;
 
 	public static class RoomType
 	{
