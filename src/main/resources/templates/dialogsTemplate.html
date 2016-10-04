@@ -79,7 +79,7 @@
                                 <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
                                 <!-- {{room.lastMessage}} -->
                             </div>
-                            <div ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" class="delete-user-icon"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></div>
+                            <div ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" class="delete-user-icon"><span class="glyphicon" ng-class="chatUserId == room.roomAuthorId ? 'glyphicon-trash' : 'glyphicon-log-out' " aria-hidden="true"></span></div>
                         </div>
                         
                     </li>

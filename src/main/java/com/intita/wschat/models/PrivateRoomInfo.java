@@ -52,12 +52,15 @@ public class PrivateRoomInfo implements Serializable,Comparable<PrivateRoomInfo>
 	@JsonView(Views.Public.class)
 	private Long id;
 
+	@NotNull
 	@OneToOne(fetch = FetchType.LAZY)
 	Room room;
 
+	@NotNull
 	@ManyToOne( fetch = FetchType.LAZY)
 	private ChatUser firtsUser;
 
+	@NotNull
 	@ManyToOne( fetch = FetchType.LAZY)
 	private ChatUser secondUser;
 	
