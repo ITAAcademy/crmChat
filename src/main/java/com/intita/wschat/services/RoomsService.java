@@ -24,11 +24,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Phrase;
+import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
+import com.intita.wschat.repositories.PrivateRoomInfoRepository;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
@@ -36,6 +39,7 @@ import com.intita.wschat.web.ChatController;
 public class RoomsService {
 
 	@Autowired private RoomRepository roomRepo;
+	@Autowired private PrivateRoomInfoRepository privateRoomInfoRepo;
 	@Autowired private ChatPhrasesRepository phrasesRepo;
 	@Autowired private UsersService userService;
 	@Autowired private ChatUsersService chatUserService;
@@ -80,9 +84,22 @@ public class RoomsService {
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}
+	
+	@Transactional
+	public PrivateRoomInfo getPrivateRoomInfo(ChatUser author, ChatUser privateUser) {
+		return privateRoomInfoRepo.getByUsers(author, privateUser);
+	}
+	@Transactional
+	public PrivateRoomInfo getPrivateRoomInfo(Room room) {
+		return privateRoomInfoRepo.findByRoom(room);
+	}
+	
 	@Transactional
 	public Room getPrivateRoom(ChatUser author, ChatUser privateUser) {
-		return roomRepo.findByAuthorAndTypeAndUsersContaining(author, (short) 1, privateUser);
+		PrivateRoomInfo info = getPrivateRoomInfo(author, privateUser); 
+		if(info == null)
+			return null;
+		return info.getRoom();
 	}
 	@Transactional
 	public ArrayList<Room> getRoomByAuthor(String author) {
@@ -109,15 +126,33 @@ public class RoomsService {
 	}
 	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author, short type) {
+		if(type == RoomType.PRIVATE)
+		{
+			throw new IllegalArgumentException("use register private function for Room with type ==" + RoomType.PRIVATE);
+		}
 		Room r = new Room();
 		r.setAuthor(author);
 		r.setName(name);
 		r.setType(type);
+		r = roomRepo.save(r);
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
-		//r.addUser(author);//@BAG@
-		roomRepo.save(r);
 		return r;
 	}
+	
+	@Transactional(readOnly = false)
+	public Room registerPrivate(ChatUser first, ChatUser second) {
+		Room r = new Room();
+		r.setAuthor(first);
+		r.setName(first.getNickName() + "_" + second.getNickName());
+		r.setType(RoomType.PRIVATE);
+		r = roomRepo.save(r);
+		chatLastRoomDateService.addUserLastRoomDateInfo(first, r);
+		if (first.getId()!= second.getId())
+			addUserToRoom(second, r);
+		PrivateRoomInfo info = privateRoomInfoRepo.save(new PrivateRoomInfo(r, first, second));
+		return r;
+	}
+	
 	@Transactional(readOnly = false)
 	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);
@@ -139,8 +174,8 @@ public class RoomsService {
 		room.setAuthor(user);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);	
 	}
-	
-	
+
+
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);

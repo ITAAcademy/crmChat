@@ -136,8 +136,7 @@ public class ChatUsersService {
 	@Transactional(readOnly = false)
 	public ChatUser register(String nickName, User intitaUser) {
 		ChatUser u = new ChatUser(nickName,intitaUser);
-		chatUsersRepo.save(u);
-		return u;
+		return chatUsersRepo.save(u);
 	}
 
 	@Transactional
