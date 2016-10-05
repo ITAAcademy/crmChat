@@ -1,6 +1,6 @@
 package com.intita.wschat.event;
 
-import java.util.Optional;
+import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -8,6 +8,10 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+
+import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.services.ChatTenantService;
+import com.intita.wschat.services.ChatUsersService;
 
 /**
  * Listener to track user presence. 
@@ -20,6 +24,10 @@ public class PresenceEventListener {
 	
 	@Autowired
 	private ParticipantRepository participantRepository;
+	@Autowired 
+	private ChatUsersService chatUsersService;
+	@Autowired
+	private ChatTenantService chatTenantService;
 	
 	private SimpMessagingTemplate messagingTemplate;
 	
@@ -40,8 +48,11 @@ public class PresenceEventListener {
 		messagingTemplate.convertAndSend(loginDestination, loginEvent);
 		
 		// We store the session as we need to be idempotent in the disconnect event processing
+		Principal principal = headers.getUser();
 		participantRepository.add(chatId);
-		
+		ChatUser user = chatUsersService.getChatUser(principal);
+		if (chatTenantService.isTenant(user.getId()))
+			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user,user.getIntitaUser(),true));
 	}
 	
 	@EventListener
@@ -53,12 +64,17 @@ public class PresenceEventListener {
 					participantRepository.removeParticipant(event.getSessionId());
 				});*/
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
-		String chatId = headers.getUser().getName();
+		Principal principal = headers.getUser();
+		String chatId = principal.getName();
+		ChatUser user = chatUsersService.getChatUser(principal);
 		participantRepository.removeParticipant(chatId);
 		if(!participantRepository.isOnline(chatId)){
 		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
+		//remove user from tenant list if tenant
+		if (chatTenantService.isTenant(user.getId()))
+		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user,user.getIntitaUser(),false));
+		//TODO
 		}
-		
 		
 				
 	}

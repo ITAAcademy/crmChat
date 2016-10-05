@@ -838,6 +838,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     });
     $scope.messages = [];
     $scope.participants = [];
+    $scope.tenants = [];
     $scope.roomType = -1;
     $scope.ajaxRequestsForRoomLP = [];
     $scope.newMessage = '';
@@ -986,13 +987,86 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
                     if (participant.chatUserId == parsed.username) {
                         $scope.participants[index].typing = parsed.typing;
-                        //break;
+                        //break;  
                     }
                 }
             }));
-
+          lastRoomBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
+                var o = JSON.parse(message.body);
+                updateTenants(o);
+            }));
+          lastRoomBindings.push(chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
+                var tenant = JSON.parse(message.body);
+                var alreadyExcist = false;
+                  for (var i = 0; i < $scope.tenants.length; i++){
+                    if (tenant.chatUserId==$scope.tenants[i].chatUserId){
+                       alreadyExcist = true;
+                       break;
+                    }   
+                }
+                if (!alreadyExcist) $scope.tenants.push(tenant);
+               // updateTenants(o);
+            }));
+           lastRoomBindings.push(chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
+                var tenant = JSON.parse(message.body);
+                for (var i = 0; i < $scope.tenants.length; i++){
+                    if (tenant.chatUserId==$scope.tenants[i].chatUserId){
+                       $scope.tenants.splice(i,1); 
+                       break;
+                    }
+                   
+                }
+                //updateTenants(o);
+            }));
 
         //chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
+    }
+    function updateTenants(tenants){
+        $scope.tenants = tenants;
+        var itemsToRemove = [];
+       for (var i = 0; i <  $scope.tenants.length; i++){
+       if($scope.chatUserId== $scope.tenants[i].chatUserId){
+        itemsToRemove.push(i);
+        continue;
+       }
+       //Uncomment if you wan't to hide tenants, which present in room
+       /*for (var j = 0; j <  $scope.participants.length; j++){
+        if ($scope.tenants[i].chatUserId==$scope.participants[j].chatUserId){
+        itemsToRemove.push(i);
+        continue;
+        }
+       }
+       */
+    }
+    for (var k = itemsToRemove.length -1; k >= 0; k--)
+   $scope.tenants.splice(itemsToRemove[k],1);
+    }
+    function addTenantToRoom(id){
+        //TODO ZIGAG
+       /*if ($rootScope.socketSupport === true) {
+                chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}, JSON.stringify({}));
+                var myFunc = function() {
+                    if (angular.isDefined(addingUserToRoom)) {
+                        $timeout.cancel(addingUserToRoom);
+                        addingUserToRoom = undefined;
+                    }
+                    if (chatControllerScope.userAddedToRoom) return;
+                    toaster.pop('error', "Error", "server request timeout", 1000);
+                    chatControllerScope.userAddedToRoom = true;
+
+                };
+                addingUserToRoom = $timeout(myFunc, 6000);
+            } else {
+                console.log("$scope.searchInputValue:" + $scope.searchInputValue);
+                $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}).
+                success(function(data, status, headers, config) {
+                    console.log("ADD USER OK " + data);
+                    chatControllerScope.userAddedToRoom = true;
+                }).
+                error(function(data, status, headers, config) {
+                    chatControllerScope.userAddedToRoom = true;
+                });
+            } */
     }
 
     $scope.addUserToRoom = function() {

@@ -382,6 +382,18 @@ public class RoomController {
 			map.put("participants", GetParticipants(room_o));
 		return map;
 	}
+	@SubscribeMapping("/chat.tenants")
+	public ArrayList<LoginEvent> retrieveTenants(Principal principal) {
+		ChatUser currentChatUser = chatUserServise.getChatUser(principal);
+		ArrayList<LoginEvent> loginEvents = userService.getAllFreeTenantsLoginEvent();
+		return loginEvents;
+	}
+	@MessageMapping("/chat.tenants")
+	public ArrayList<LoginEvent> retrieveTenantsMesageMapping(Principal principal) {
+		ChatUser currentChatUser = chatUserServise.getChatUser(principal);
+		ArrayList<LoginEvent> loginEvents = userService.getAllFreeTenantsLoginEvent();
+		return loginEvents;
+	}
 
 	@RequestMapping(value = "/{room}/chat/participants_and_messages", method = RequestMethod.POST)
 	@ResponseBody

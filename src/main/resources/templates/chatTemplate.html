@@ -74,26 +74,30 @@
 							<div ng-if="checkUserAdditionPermission() &amp;&amp; currentRoom.roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon" ><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></div>
 						</div>
 						<!--<th:block th:if="${tenants != null}">-->
-						<th:block th:if="false">
 						<hr/>
-						<div  th:each="tenant : ${tenants}" class="user">
-								<div class="avatar">
-									<a target="_blank" th:if="${tenant.intitaUser.id}" 
-										th:href="'__${config.get('baseUrl')}__/profile/__${tenant.intitaUser.id}__'">
+						Tenants:
+						<div  ng-repeat="tenant in tenants" class="user" ng-click="addTenantToRoom(tenant.chatUserId)">
+									<div class="avatar">
+									<a target="_blank" ng-if="tenant.intitaUserId" 
+										ng-href="{{baseurl}}/profile/{{tenant.intitaUserId}}">
 										<div class="avatar-contaiter centered"  >
 										<!--ng-init="scaleCenterIconCircle()" -->
 											<img											
-											th:src="'__${config.get('baseUrl')}__/images/avatars/__${tenant.intitaUser.avatar}__'"
+											ng-src="{{baseurl}}/images/avatars/{{tenant.avatar}}"
 											alt="{{tenant.username}}" />
 										</div>
-									</a>
-								<div th:classappend="${!@participantRepository.isOnline(tenant.id)}? 'status offline' : 'status online'"
+									</a> <a target="_blank" ng-if="!tenant.intitaUserId"> <img
+									ng-src="{{baseurl}}/images/avatars/{{tenant.avatar}}"
+									alt="{{tenant.username}}" />
+								</a>
+								<div
+									ng-class="!tenant.online ? 'status offline' : 'status online'"
 								class=""></div>
 							</div>
-							<div class="name" th:text="${tenant.nickName}"></div>
+							<div class="name">{{tenant.username}}</div>
 							<div class="mood">&nbsp;</div>
 						</div>
-						</th:block>
+
 					</div>
 				</div>
 			</div>

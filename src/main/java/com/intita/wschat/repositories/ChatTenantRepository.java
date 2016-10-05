@@ -7,11 +7,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.User;
 
 @Qualifier("IntitaConf") 
 public interface ChatTenantRepository extends CrudRepository<ChatTenant, Long> {
@@ -21,6 +22,8 @@ public interface ChatTenantRepository extends CrudRepository<ChatTenant, Long> {
 	   Long findIdByChatUser(ChatUser user);
 	   Page<ChatTenant> findAll(Pageable pageable);
 	   List<ChatTenant> findAll();
+	   @Query(value="select t from user_tenant t where t.chatUser.id in :usersIds")
+	   List<ChatTenant> findWhereChatUserIdInList(@Param("usersIds") ArrayList usersIds);
 	   ArrayList<ChatTenant> findAllByEndDateAfterOrEndDateIsNull(Date date);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
@@ -78,6 +79,10 @@ public class ChatUsersService {
 	public List<ChatUser> getUsersFist5(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		return users;
+	}
+	@Transactional
+	public LoginEvent getLoginEvent(ChatUser chatUser,boolean isOnline){
+		return new LoginEvent(chatUser,chatUser.getIntitaUser(),isOnline);
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(List<Long> ids){
