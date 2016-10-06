@@ -1004,7 +1004,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                        break;
                     }   
                 }
-                if (!alreadyExcist) $scope.tenants.push(tenant);
+                if (!alreadyExcist && tenant.chatUserId!=$scope.chatUserId) $scope.tenants.push(tenant);
                // updateTenants(o);
             }));
            lastRoomBindings.push(chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
@@ -1067,7 +1067,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                     chatControllerScope.userAddedToRoom = true;
                 });
             } */
-    }
+            }
 
     $scope.addUserToRoom = function() {
             chatControllerScope.userAddedToRoom = false;
@@ -1078,7 +1078,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                     if (angular.isDefined(addingUserToRoom)) {
                         $timeout.cancel(addingUserToRoom);
                         addingUserToRoom = undefined;
-                    }
+        }
                     if (chatControllerScope.userAddedToRoom) return;
                     toaster.pop('error', "Error", "server request timeout", 1000);
                     chatControllerScope.userAddedToRoom = true;
@@ -1088,14 +1088,14 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             } else {
                 console.log("$scope.searchInputValue:" + $scope.searchInputValue);
                 $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}).
-                success(function(data, status, headers, config) {
+        success(function(data, status, headers, config) {
                     console.log("ADD USER OK " + data);
                     chatControllerScope.userAddedToRoom = true;
-                }).
-                error(function(data, status, headers, config) {
-                    chatControllerScope.userAddedToRoom = true;
-                });
-            }
+        }).
+        error(function(data, status, headers, config) {
+            chatControllerScope.userAddedToRoom = true;
+        });
+    }
             $scope.searchInputValue.email = '';
         }
         
