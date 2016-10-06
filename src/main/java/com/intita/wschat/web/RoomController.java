@@ -663,7 +663,7 @@ public class RoomController {
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 	}
 	/***************************
-	 * REMOVE/ADD USERS FROM ROOMS
+	 * REMOVE/ADD USERS FROM/TO ROOMS
 	 ***************************/
 
 	boolean removeUserFromRoomFully( ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor)
@@ -915,6 +915,6 @@ public class RoomController {
 	@PostConstruct
 	private void PostConstructor()
 	{
-		participantRepository.add("0");
+		participantRepository.add("" + BotParam.BOT_ID);//BOT online OK
 	}
 }
