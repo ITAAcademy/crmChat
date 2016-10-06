@@ -464,7 +464,7 @@ public class ChatController {
 			}
 
 			boolean ok = userMessageService.addMessages(array);
-			messagesBuffer.remove(roomId);
+			messagesBuffer.remove(roomId); 
 		}
 	}
 
@@ -1040,9 +1040,10 @@ public class ChatController {
 		User iUser = user.getIntitaUser();
 		if(iUser != null)
 		{
-			if(userService.isTrainer(user.getIntitaUser().getId()))
+			Long intitaUserId = user.getIntitaUser().getId();
+			if(userService.isTrainer(intitaUserId))
 			{
-				model.addAttribute("tenants",  userService.getAllTenants());
+				model.addAttribute("tenants",  userService.getAllFreeTenants(user.getId()));
 			}
 		}
 		return getTeachersTemplate(request, "chatTemplate", model, principal);
