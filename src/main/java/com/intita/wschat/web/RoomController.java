@@ -486,10 +486,10 @@ public class RoomController {
 	 ********************/
 	public Room getPrivateRoom(ChatUser chatUser, ChatUser privateCharUser)
 	{
-		if(privateCharUser == null)
-			throw new RoomNotFoundException("privateChatUser is null");
+		if(privateCharUser == null || chatUser == null)
+			throw new RoomNotFoundException("privateChatUser or chatUser is null");
 		
-		if(chatUser.getIntitaUser() == null)
+		if(chatUser.getIntitaUser() == null || privateCharUser.getIntitaUser() == null)
 			throw new RoomNotFoundException("Intita use is null");
 		
 		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
@@ -545,6 +545,23 @@ public class RoomController {
 		}
 		catch (RoomNotFoundException ex){
 			log.info("goPrivateRoomWithTrainer ::: " + ex.getMessage());
+			return "redirect:/";
+		}
+	}
+	
+	@RequestMapping(value="/chat/go/rooms/private/{userId}", method=RequestMethod.GET)
+	public String goPrivateRoom(@PathVariable Long userId, Principal principal) throws JsonProcessingException {
+		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
+		User iTargetUser = userService.getById(userId);
+		try{
+			if(iTargetUser == null)
+			{
+				throw new RoomNotFoundException("target user not registered!!!");
+			}
+			return "redirect:/#/dialog_view/" + getPrivateRoom(chatUserServise.getChatUserFromIntitaUser(iTargetUser, false), principalChatUser).getId();
+		}
+		catch (RoomNotFoundException ex){
+			log.info("goPrivateRoomWithUser ::: " + ex.getMessage());
 			return "redirect:/";
 		}
 	}
