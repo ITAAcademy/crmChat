@@ -80,7 +80,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 							value = cook.getValue();
 							session.setAttribute("id", value);
 							String phpSession = redisService.getKeyValue(value);
-
+							System.out.println("cook value: " + phpSession);
 
 
 							if(phpSession != null)
@@ -90,6 +90,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 									serializedPhpParser = new SerializedPhpParser(phpSession);
 									IntitaId = (String)serializedPhpParser.findPatern(redisId);
 									IntitaLg = (String)serializedPhpParser.find("lg");
+									System.out.println("cook intitaID: " + IntitaId);
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

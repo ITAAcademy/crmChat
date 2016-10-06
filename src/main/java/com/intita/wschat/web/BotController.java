@@ -559,6 +559,7 @@ public class BotController {
 			{
 				room_ = tempRoomAskTenant.get(i);
 				tempRoomAskTenant.remove(i);
+				break;
 			}
 
 		if (room_ == null)
@@ -569,6 +570,7 @@ public class BotController {
 			if (tempRoomAskTenant_wait.get(i).getId().equals(roomId))
 			{
 				tempRoomAskTenant_wait.remove(i);
+				break;
 			}
 		
 		roomControler.changeAuthor(c_user, room_, principal, true);

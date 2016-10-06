@@ -266,8 +266,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     };
 
     $scope.getUserSearchIndetify = function(item, searchInputValue){
-        if(item == '')
-            return item;
+        if(item == undefined || item == '')
+            return '';
         var name = item.firstName + ' ' + item.secondName;
         if(searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1 || name == null)
             return item.email;
