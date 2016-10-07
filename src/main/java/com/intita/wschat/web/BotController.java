@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.domain.ChatMessage;
+import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.BotAnswer;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
@@ -482,14 +483,32 @@ public class BotController {
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
 		chatTenantService.setTenantFree(principal);
+		groupCastAddTenantToList(chatUsersService.getChatUser(principal));
 	}	
 
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeBusy(Principal principal) {
 		chatTenantService.setTenantBusy(principal);
+		groupCastRemoveTenantFromList(chatUsersService.getChatUser(principal));
 	}
-
+	/*private void updateTenants(){
+		String subscriptionStr = "/topic/chat.tenants.add";
+		//ArrayList<LoginEvent> loginEvents = userService.getAllFreeTenantsLoginEvent(chatUser.getId());
+		ArrayList<LoginEvent> loginEvents = userService.getAllFreeTenantsLoginEvent();
+		simpMessagingTemplate.convertAndSend(subscriptionStr, loginEvents);
+	}*/
+	public void groupCastAddTenantToList(ChatUser tenant){
+		String subscriptionStr = "/topic/chat.tenants.add";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),true));
+	}
+	public void groupCastRemoveTenantFromList(ChatUser tenant){
+		String subscriptionStr = "/topic/chat.tenants.remove";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),false));
+	}
+private void groupCastRemoveTenantFromList(){
+		
+	}
 	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, Principal principal) {	

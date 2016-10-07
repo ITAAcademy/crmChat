@@ -2,6 +2,9 @@ package com.intita.wschat.event;
 
 import java.util.Date;
 
+import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.User;
+
 /**
  * 
  * @author Nicolas
@@ -63,6 +66,15 @@ public class LoginEvent {
 		typing = false;
 		online = isOnline;
 		this.avatar = avatar;
+	}
+	public LoginEvent(ChatUser u,User intitaUser,boolean isOnline){
+		this.intitaUserId = intitaUser.getId();
+		this.chatUserId=u.getId();
+		this.username = intitaUser.getEmail();
+		time = new Date();
+		typing = false;
+		online = isOnline;
+		this.avatar = intitaUser.getAvatar();	
 	}
 
 	public LoginEvent(Long chatUserId,String username, String avatar,boolean isOnline) {

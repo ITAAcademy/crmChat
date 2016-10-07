@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
@@ -30,6 +31,9 @@ public class UsersService {
 
 	@Autowired
 	private ChatUsersService chatUsersService;
+	
+	@Autowired
+	private ChatTenantService chatTenantService;
 
 	@PostConstruct
 	@Transactional
@@ -215,6 +219,32 @@ public class UsersService {
 		if(all == null)
 			return result;
 		return new ArrayList<>(chatUsersService.getUsers(all));
+	}
+	/**
+	 * Returns all online & free tenants, ignoring users from argument ArrayList
+	 * @param ignoreUsersList
+	 * @return
+	 */
+	@Transactional
+	public ArrayList<ChatUser> getAllFreeTenants(Long... ignoreUsers){
+		ArrayList<ChatUser> result = new ArrayList<>();
+		ArrayList<Long> all = new ArrayList<Long>(Arrays.asList(usersRepo.findAllTenants()));//WTF
+		ArrayList<Long> free = new ArrayList<Long>();
+		List<Long> ignoreList = Arrays.asList(ignoreUsers);
+		for (Long userId : all ){
+			if(!ignoreList.contains(userId) && chatTenantService.isTenantAvailable(userId))
+			free.add(userId);
+		}
+		if(free == null)
+			return result;
+		return new ArrayList<>(chatUsersService.getUsers(free));
+	}
+	
+	public ArrayList<LoginEvent> getAllFreeTenantsLoginEvent(Long... ignoreUsers){
+		ArrayList<ChatUser> tenants = getAllFreeTenants(ignoreUsers);
+		ArrayList<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
+		for(ChatUser user : tenants) loginEvents.add(chatUsersService.getLoginEvent(user, true));
+		return loginEvents;
 	}
 
 }

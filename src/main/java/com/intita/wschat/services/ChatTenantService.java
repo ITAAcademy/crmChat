@@ -78,6 +78,10 @@ public class ChatTenantService {
 	public List<ChatTenant> getAllTenants(){
 		return chatTenantRepo.findAll();
 	}
+	@Transactional
+	public List<ChatTenant> getAllTenantsWhereChatUserIdInList(ArrayList<Long> usersIds){
+		return chatTenantRepo.findWhereChatUserIdInList(usersIds);
+	}
 	
 	public ChatTenant getFreeTenantNotFromRoom(Room room) {
 		Set<ChatUser> users = room.getUsers();
@@ -188,11 +192,8 @@ public class ChatTenantService {
 	public boolean setTenantBusy(ChatTenant tenant) {
 		if (tenant == null)
 			return false;
-		if ( !isTenantBusy(tenant)) {
-			tenantsBusy.add(tenant.getChatUser().getId());
-			return true;
-		}
-		return false;
+		setTenantBusy(tenant.getChatUser().getId());
+		return true;
 	}
 
 	public boolean setTenantFree(Long chatUserid) {
@@ -231,6 +232,11 @@ public class ChatTenantService {
 				return true;
 		}
 		return false;
+	}
+	public boolean isTenantAvailable(Long chatUserid){
+		if (!participantRepository.isOnline("" + chatUserid))return false;
+		if (isTenantBusy(chatUserid)) return false;
+		return true;
 	}
 	
 	public boolean isTenant(Long chatUserId) {
