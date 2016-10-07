@@ -325,13 +325,6 @@ public class BotController {
 		return objectMapper.writeValueAsString(botCategory);
 	}
 
-	public void askTenantToSpendConsultationWS(Long tenantChatUserId, Long roomId) {
-		Object[] obj = new Object[] {tenantChatUserId, roomId};
-
-		String subscriptionStr = "/topic/users/" + tenantChatUserId + "/info";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, obj);
-	}	
-
 	public void tenantSubmitToSpendConsultationWS(Room room, Long tenantChatUserId) {
 		Long roomId = room.getId();
 
@@ -419,6 +412,19 @@ public class BotController {
 		Room room_0 = roomService.getRoom(roomId);
 		return giveTenant(room_0, needRunTimer);
 	}
+	
+	public void askUser(ChatUser chatUser, String msg, String yesLink, String noLink)
+	{
+		
+		Map<String, Object> question = new HashMap<>();
+		question.put("yesLink", yesLink);
+		question.put("noLink", noLink);
+		question.put("msg", msg);
+		question.put("type", "ask");
+		chatController.addFieldToInfoMap("newAsk_ToChatUserId", question);
+		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/info";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, question);
+	}
 
 	public boolean giveTenant(Room room_0, boolean needRunTimer) {
 
@@ -444,9 +450,7 @@ public class BotController {
 
 		Object[] obj = new Object[] {  tenantChatUserId, roomId };
 
-		chatController.addFieldToInfoMap("newAskConsultation_ToChatUserId", obj);
-
-		askTenantToSpendConsultationWS(tenantChatUserId, roomId );
+		askUser(t_user.getChatUser(),"Ви згодні на консультацію?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
 
 		waitConsultationUser(room_0);
 

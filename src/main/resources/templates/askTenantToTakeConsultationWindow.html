@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
-                <h4 id="wndTitle"  class="modal-title">З Вами хочуть провести консультацію. Згодні?</h4>
+                <h4 id="wndTitle"  class="modal-title">{{askObject.msg}}</h4>
             </div>
             <div class="modal-footer">
                 <button id="closeButton"  type="button" class="btn btn-default modal-btn-left" ng-click="answerToTakeConsultation (true)">Так</button>
