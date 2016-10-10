@@ -516,7 +516,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                     var sendedConsultantId = data["newConsultationWithTenant"][0][1];
 
-                    $rootScope.submitConsultation_processTenant(sendedConsultantId);
+                    $rootScope.submitConsultation_processTenant(sendedConsultantId, roomId);
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
@@ -794,7 +794,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                         $rootScope.submitConsultation_processUser($rootScope.sendedRoomId);
 
                         var sendedConsultantId = body[1];
-                        $rootScope.submitConsultation_processTenant(sendedConsultantId);
+                        $rootScope.submitConsultation_processTenant(sendedConsultantId, $rootScope.sendedRoomId);
                         // alert("sendedId = " + $rootScope.sendedId + "\n  sendedConsultantId = " + sendedConsultantId)
 
                     });
@@ -847,18 +847,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     };
 
-    $rootScope.submitConsultation_processTenant = function(tenantId) {
+    $rootScope.submitConsultation_processTenant = function(tenantId, roomId) {
         if (tenantId == $scope.chatUserId) {
             $scope.hideAskTenantToTakeConsultation();
 
             if (chatControllerScope == undefined)
                 chatControllerScope = Scopes.get('ChatController');
-
-            $timeout(function() {
-                toaster.clear();
-                chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
-            }, 1000);
-            //chatControllerScope.changeLocation('/dialog_view/' + $scope.askConsultation_roomId);
+                chatControllerScope.changeLocation('/dialog_view/' + roomId);
         }
 
     };

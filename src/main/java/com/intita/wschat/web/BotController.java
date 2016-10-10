@@ -422,7 +422,7 @@ public class BotController {
 		question.put("noLink", noLink);
 		question.put("msg", msg);
 		question.put("type", "ask");
-		chatController.addFieldToInfoMap("newAsk_ToChatUserId", question);
+		chatController.addFieldToUserInfoMap(chatUser, "newAsk_ToChatUserId", question);
 		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/info";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, question);
 	}
@@ -598,15 +598,10 @@ private void groupCastRemoveTenantFromList(){
 		
 		roomControler.changeAuthor(c_user, room_, principal, true);
 	//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
-		
-
 
 		Object[] obj = new Object[] {roomId, tenantChatUserId};
-
-		chatController.addFieldToInfoMap("newConsultationWithTenant", obj);
-
+		chatController.addFieldToUserInfoMap(c_user, "newConsultationWithTenant", obj);
 		tenantSubmitToSpendConsultationWS(room_, tenantChatUserId);
-
 	}
 
 
