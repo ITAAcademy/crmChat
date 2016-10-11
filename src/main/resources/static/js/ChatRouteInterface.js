@@ -1041,7 +1041,15 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     for (var k = itemsToRemove.length -1; k >= 0; k--)
    $scope.tenants.splice(itemsToRemove[k],1);
     }
-    function addTenantToRoom(id){
+    $scope.addTenantToRoom = function(id){
+     $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, chatControllerScope.currentRoom.roomId), {}).
+                success(function(data, status, headers, config) {
+                    console.log("ADD USER OK " + data);
+                    chatControllerScope.userAddedToRoom = true;
+                }).
+                error(function(data, status, headers, config) {
+                    chatControllerScope.userAddedToRoom = true;
+                });
         //TODO ZIGAG
        /*if ($rootScope.socketSupport === true) {
                 chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId, $scope.searchInputValue.email), {}, JSON.stringify({}));

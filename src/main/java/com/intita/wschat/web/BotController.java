@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,7 +70,7 @@ public class BotController {
 	private List<Room> tempRoomAskTenant_wait = new ArrayList<Room>();
 
 	private Map <Long, Timer> waitConsultationUsersTimers = new HashMap<Long, Timer>();
-	
+
 	public void register(Room room, Long userId)
 	{
 		tempRoomAskTenant.add(room);
@@ -408,15 +409,15 @@ public class BotController {
 					);			
 		}
 	}
-	
+
 	public boolean giveTenant(Long roomId, boolean needRunTimer) {
 		Room room_0 = roomService.getRoom(roomId);
 		return giveTenant(room_0, needRunTimer);
 	}
-	
+
 	public void askUser(ChatUser chatUser, String msg, String yesLink, String noLink)
 	{
-		
+
 		Map<String, Object> question = new HashMap<>();
 		question.put("yesLink", yesLink);
 		question.put("noLink", noLink);
@@ -479,6 +480,35 @@ public class BotController {
 		return true;
 	}
 
+	/**********************
+	 * TRAINER SYSTEM
+	 *********************/
+	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
+	@ResponseBody void answerToAdd(@RequestParam(value="agree") boolean agree,@PathVariable Long roomId, Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		Room room = roomService.getRoom(roomId);
+		if(agree)
+		{
+			roomControler.addUserToRoom(user, room, principal, true);
+			Object[] obj = new Object[] {roomId, user};
+			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
+			tenantSubmitToSpendConsultationWS(room, user.getId());
+		}
+	}
+
+	@RequestMapping(value = "/bot_operations/tenant/{tenantId}/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
+	@ResponseBody
+	public void askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatUser tenant = chatUsersService.getChatUser(tenantId);
+		Room room = roomService.getRoom(roomId);
+
+		askUser(tenant, user.getNickName() + " запрошує Вас приїднатися до співбесіди " + room.getName() + ".\n Ви погоджуєтеся?",
+				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
+	}
+	/**********************
+	 * TRAINER SYSTEM
+	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
@@ -506,8 +536,8 @@ public class BotController {
 		String subscriptionStr = "/topic/chat.tenants.remove";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),false));
 	}
-private void groupCastRemoveTenantFromList(){
-		
+	private void groupCastRemoveTenantFromList(){
+
 	}
 	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
 	@ResponseBody
@@ -595,9 +625,9 @@ private void groupCastRemoveTenantFromList(){
 				tempRoomAskTenant_wait.remove(i);
 				break;
 			}
-		
+
 		roomControler.changeAuthor(c_user, room_, principal, true);
-	//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
+		//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
 		Object[] obj = new Object[] {roomId, tenantChatUserId};
 		chatController.addFieldToUserInfoMap(c_user, "newConsultationWithTenant", obj);
