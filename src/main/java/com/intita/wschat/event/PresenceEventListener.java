@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.User;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.web.ChatController;
 
 /**
  * Listener to track user presence. 
@@ -28,6 +32,8 @@ public class PresenceEventListener {
 	private ChatUsersService chatUsersService;
 	@Autowired
 	private ChatTenantService chatTenantService;
+	@Autowired
+	private ChatController chatController;
 	
 	private SimpMessagingTemplate messagingTemplate;
 	
@@ -39,6 +45,19 @@ public class PresenceEventListener {
 		this.messagingTemplate = messagingTemplate;
 	}
 		
+/*	void afterConnectionClosed(WebSocketSession session,
+            CloseStatus closeStatus)
+     throws Exception{
+		ChatUser user =chatUsersService.getChatUser(User.getCurrentUserId());
+		String chatId = user.getId().toString();
+		participantRepository.removeParticipant(chatId);
+		if(!participantRepository.isOnline(chatId)){
+		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
+		//remove user from tenant list if tenant
+		if (chatTenantService.isTenant(user.getId()))
+		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user,user.getIntitaUser(),false));
+	}
+	}*/
 	@EventListener
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
@@ -51,8 +70,10 @@ public class PresenceEventListener {
 		Principal principal = headers.getUser();
 		participantRepository.add(chatId);
 		ChatUser user = chatUsersService.getChatUser(principal);
-		if (chatTenantService.isTenant(user.getId()))
+		if (chatTenantService.isTenant(user.getId())){
 			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user,user.getIntitaUser(),true));
+			chatController.addTenantInListToTrainerLP(user);
+		}
 	}
 	
 	@EventListener
@@ -73,7 +94,7 @@ public class PresenceEventListener {
 		//remove user from tenant list if tenant
 		if (chatTenantService.isTenant(user.getId()))
 		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user,user.getIntitaUser(),false));
-		//TODO
+		chatController.removeTenantFromListToTrainerLP(user);
 		}
 		
 				

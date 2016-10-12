@@ -518,6 +518,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                     $rootScope.submitConsultation_processTenant(sendedConsultantId);
                 }
+                 if (data["tenants.add"] != null){
+                    //TODO tenant addition to list
+                    var tenantObj = JSON.parse(data["tenants.add"]);
+                    $scope.tenants.push(tenantObj);
+                }
+                if (data["tenants.remove"] != null){
+                    //TODO renant removing from list
+                     var tenantObj = JSON.parse(data["tenants.remove"]);
+                    $scope.tenants.push(tenantObj);
+                }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      debugger;
                      $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
@@ -607,6 +617,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         if ($rootScope.socketSupport == false) {
             updateRooms(JSON.parse(mess_obj.chat_rooms));
+            $scope.tenants =  typeof mess_obj["tenants"]=="undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
+         
         } else {
             $rootScope.initIsUserTenant();
             $scope.rooms = JSON.parse(mess_obj.chat_rooms).list;
@@ -888,7 +900,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         console.log("serverPrefix");
 
-        chatSocket.init(serverPrefix + "/wss"); //9999
+        chatSocket.init(serverPrefix + "/wss_DEBUG"); //9999
 
 
         chatSocket.connect(onConnect, function(error) {

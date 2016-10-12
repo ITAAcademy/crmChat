@@ -79,6 +79,7 @@ import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatConsultation;
+import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
@@ -152,6 +153,7 @@ public class ChatController {
 	@Autowired private LecturesService lecturesService;
 	@Autowired private BotItemContainerService dialogItemService;
 	@Autowired private ChatLangService chatLangService;
+	@Autowired private ChatTenantService chatTenantService;
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -184,17 +186,46 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-
-	public void addFieldToUserInfoMap(ChatUser user, String key, Object value)
+	public void addTenantInListToTrainerLP(ChatUser user){
+		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
+		users.add(user);
+		addTenantInListToTrainersLP(users);
+	}
+	public void removeTenantFromListToTrainerLP(ChatUser user){
+		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
+		users.add(user);
+		removeTenantFromListToTrainersLP(users);
+	}
+	public void addTenantInListToTrainersLP(ArrayList<ChatUser> usersIds){
+		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
+		//ArrayList<ChatUser> tenants =  userService.getAllFreeTenants();
+		if (usersIds.size()<=0)return;
+		for (ChatUser trainerUser : chatUsers){
+			for (ChatUser tenantUser : usersIds)
+				addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));	
+		}	
+	}
+	public void removeTenantFromListToTrainersLP(ArrayList<ChatUser> usersIds){
+		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
+		if (usersIds.size()<=0)return;
+		for (ChatUser trainerUser : chatUsers){
+			for (ChatUser tenantUser : usersIds)
+			addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));	
+		}	
+	}
+	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
+		addFieldToUserInfoMap(user.getId(),key,value);
+	}
+	public void addFieldToUserInfoMap(Long userId, String key, Object value)
 	{
-		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(user.getId());
+		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(userId);
 		if(t_infoMap == null)
 		{
 			t_infoMap = new ConcurrentHashMap<>();
-			infoMapForUser.put(user.getId(), t_infoMap);
+			infoMapForUser.put(userId, t_infoMap);
 		}
 
-		ArrayList<Object> listElm = t_infoMap.get(user.getId());
+		ArrayList<Object> listElm = t_infoMap.get(userId);
 		if(listElm == null)
 		{
 			listElm = new ArrayList<>();
@@ -495,13 +526,19 @@ public class ChatController {
 			e.printStackTrace();
 			result = "{}";
 		}
-
+		ArrayList<ChatUser> tenantsToRemove = new ArrayList();
+		
 		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
 
 			//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			String chatId = globalInfoResult.get(nextUser);
-			participantRepository.removeParticipant(chatId);
+			boolean isParticipantRemoved = participantRepository.removeParticipant(chatId);
+			if(isParticipantRemoved){
+				Long chatUserId = Long.parseLong(chatId);
+				if (chatTenantService.isTenant(chatUserId))
+				tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
+			}
 
 			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId, participantRepository.isOnline(chatId));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
@@ -522,6 +559,8 @@ public class ChatController {
 			if(!nextUser.isSetOrExpired() && result != "{}")//@BAD@
 				nextUser.setResult(result);		
 		}
+		if (tenantsToRemove.size()>0)
+		removeTenantFromListToTrainersLP(tenantsToRemove);
 
 		infoMap.clear();
 		globalInfoResult.clear();
@@ -1044,7 +1083,7 @@ public class ChatController {
 			if(userService.isTrainer(intitaUserId))
 			{
 				model.addAttribute("tenants",  userService.getAllFreeTenants(user.getId()));
-			}
+		}
 		}
 		return getTeachersTemplate(request, "chatTemplate", model, principal);
 	}

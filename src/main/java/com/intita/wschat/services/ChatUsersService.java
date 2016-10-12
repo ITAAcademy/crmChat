@@ -3,6 +3,7 @@ package com.intita.wschat.services;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -21,9 +22,7 @@ import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
-import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.ChatUserRepository;
-import com.intita.wschat.repositories.UserRepository;
 
 @Service
 public class ChatUsersService {
@@ -65,7 +64,17 @@ public class ChatUsersService {
 		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
-
+	@Transactional
+	public ArrayList<ChatUser> getAllTrainers(){
+		HashSet<Integer> trainersIds =  userService.getAllTrainersIds();
+		ArrayList<ChatUser> trainers = new ArrayList<ChatUser>();
+		for (Integer userIdOfTrainer : trainersIds){
+			User user = userService.getUser((long)userIdOfTrainer);
+			ChatUser chatUser = user.getChatUser();
+			trainers.add(chatUser);
+		}
+		return trainers;
+	}
 	@Transactional
 	public List<String> getUsersNickNameFist5(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
