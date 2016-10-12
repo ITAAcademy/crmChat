@@ -214,8 +214,9 @@ public class ChatController {
 		}	
 	}
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
-		addFieldToUserInfoMap(user.getId(),key,value);
-	}
+		if(user != null && !key.isEmpty())
+			addFieldToUserInfoMap(user.getId(), key, value);
+	} 
 	public void addFieldToUserInfoMap(Long userId, String key, Object value)
 	{
 		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(userId);
