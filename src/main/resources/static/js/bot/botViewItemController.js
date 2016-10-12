@@ -19,7 +19,7 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
         for (var index = 0; index <  $scope.$parent.botChildrens.length; index++) {
             if ( $scope.$parent.botChildrens[index].scope ==  $scope) {
                  $scope.$parent.botChildrens.splice(index, 1);
-                debugger;
+                
                 break;
             }
         }
@@ -32,7 +32,7 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
              for (var index = 0; index < scope.preventParent.botChildrens.length; index++) {
                  if (scope.preventParent.botChildrens[index].scope == preventScope) {
                      scope.preventParent.botChildrens.splice(index, 1);
-                     debugger;
+                     
                      break;
                  }
              }

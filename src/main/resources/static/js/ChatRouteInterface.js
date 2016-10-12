@@ -159,7 +159,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         if (event.keyCode === 9) { // tab was pressed
 
             // get caret position/selection
-           // debugger;
+           // 
             var val = event.target.value,
                 start = event.target.selectionStart,
                 end = event.target.selectionEnd;
@@ -914,27 +914,17 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             //$scope.$apply();
             room.nums = 0;
             $scope.dialogName = room.string;
-        } else {
-            /*  $http.post(serverPrefix + "/chat/rooms/roomInfo/" + chatControllerScope.currentRoom.roomId)).
-            success(function(data, status, headers, config) {
-
-                $scope.goToDialog();
-                chatControllerScope.rooms.push("");
-            }).
-            error(function(data, status, headers, config) {
-                $rootScope.goToAuthorize();//not found => go out
-            });*/
+        } /*else {
             deferred.reject();
             return deferred.promise;
-        }
+        }*/
 
         if ($rootScope.socketSupport) {
             chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
-            deferred.resolve(true);
+            deferred.resolve();
             return deferred.promise;
         } else {
-            deferred = $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));
-            return deferred;
+            return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));         
         }
 
     }
@@ -1108,7 +1098,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         }
         
         $scope.removeUserFromRoom = function(userId) {
-            debugger;
+            
             $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(chatControllerScope.currentRoom.roomId, userId), {}).
                 success(function(data, status, headers, config) {
                     if(data == false)
@@ -1162,6 +1152,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
     function subscribeParticipantsLP() {
+        
         var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(chatControllerScope.currentRoom.roomId)
         $scope.ajaxRequestsForRoomLP.push(
             $.ajax({

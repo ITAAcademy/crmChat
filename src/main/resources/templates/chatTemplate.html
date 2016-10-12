@@ -43,7 +43,7 @@
 									placeholder="search" 
 									typeahead-wait-ms = "1000"
 									uib-typeahead="getUserSearchIndetify(item, $parent.searchInputValue.email) for item in $parent.emails" 	
-									typeahead-on-select = " debugger; $parent.searchInputValue.email = $item.email; addUserToRoom()"/>
+									typeahead-on-select = "  $parent.searchInputValue.email = $item.email; addUserToRoom()"/>
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 								</div>
 							</div>

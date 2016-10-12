@@ -484,9 +484,11 @@ public class BotController {
 	 * TRAINER SYSTEM
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
-	@ResponseBody void answerToAdd(@RequestParam(value="agree") boolean agree,@PathVariable Long roomId, Principal principal) {
+	@ResponseBody boolean answerToAdd(@RequestParam(value="agree") boolean agree,@PathVariable Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
 		Room room = roomService.getRoom(roomId);
+		if(room == null)
+			return false;
 		if(agree)
 		{
 			roomControler.addUserToRoom(user, room, principal, true);
@@ -494,17 +496,25 @@ public class BotController {
 			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
 			tenantSubmitToSpendConsultationWS(room, user.getId());
 		}
+		return true;
 	}
 
 	@RequestMapping(value = "/bot_operations/tenant/{tenantId}/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
-	public void askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
+	public boolean askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
+		
 		ChatUser tenant = chatUsersService.getChatUser(tenantId);
+		if(tenant == null)
+			return false;
 		Room room = roomService.getRoom(roomId);
-
+		if(room == null)
+			return false;
+		
+		chatTenantService.setTenantBusy(tenant);
 		askUser(tenant, user.getNickName() + " запрошує Вас приїднатися до співбесіди " + room.getName() + ".\n Ви погоджуєтеся?",
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
+		return true;
 	}
 	/**********************
 	 * TRAINER SYSTEM
@@ -539,22 +549,6 @@ public class BotController {
 	private void groupCastRemoveTenantFromList(){
 
 	}
-	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
-	@ResponseBody
-	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, Principal principal) {	
-
-		Timer timer = waitConsultationUsersTimers.get(roomId);
-		timer.cancel();
-		timer.purge();
-		Room room = roomService.getRoom(roomId);
-
-		if (room == null)
-			return false;
-
-		tempRoomAskTenant_wait.add(room);
-
-		return giveTenant(roomId, true);
-	}
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
@@ -588,7 +582,23 @@ public class BotController {
 		}
 		return false;			
 	}	
+	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
+	@ResponseBody
+	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, Principal principal) {	
 
+		Timer timer = waitConsultationUsersTimers.get(roomId);
+		timer.cancel();
+		timer.purge();
+		Room room = roomService.getRoom(roomId);
+
+		if (room == null)
+			return false;
+
+		tempRoomAskTenant_wait.add(room);
+
+		return giveTenant(roomId, true);
+	}
+	
 	@RequestMapping(value = "/bot/operations/tenant/free/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendFree( @PathVariable Long roomId, Principal principal) {

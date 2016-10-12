@@ -233,12 +233,12 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
 
     $scope.createBotDialogItem = function(description, categoryId) {
         var requestUrl = serverPrefix + "/bot_operations/create_bot_dialog_item"
-       // debugger;
+       // 
         $scope.newDialogItem.description = description;
         $scope.newDialogItem.category.id = categoryId;
         $http.post(requestUrl, $scope.newDialogItem).
         success(function(data, status, headers, config) {
-            //debugger;
+            //
             loadView(data, status, headers, config);
             $scope.newDialogItem = botDialogItemClean();
             toaster.pop('note', "Created", "dialogItem created", 5000);
@@ -546,7 +546,7 @@ springChatControllers.controller('ChatViewBuilderController', ['$routeParams', '
         $scope.onExit();
     };
     $scope.setBotDialogItemAsDefault = function(object) {
-        debugger;
+        
         var currentItemId = $scope.viewTabs[$scope.activeViewTab - 1].items["ua"].idObject.id;
         var currentCategoryId = object.id;
         var requestUrl = serverPrefix + "/bot_operations/set_item/{0}/as_default/{1}".format(currentItemId, currentCategoryId);

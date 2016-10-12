@@ -53,7 +53,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     }
 
     function doGoToRoom(roomId) {
-        //debugger;
+        //
         if ($scope.mouseBusy == false)
             chatControllerScope.changeLocation('/dialog_view/' + roomId);
     }

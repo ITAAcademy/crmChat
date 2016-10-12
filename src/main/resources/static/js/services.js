@@ -16,7 +16,7 @@ angular.module('springChat.services', [])
 						                            'jsonp-polling'
 						                          ]
 						                        });
-						debugger;
+						
 						stompClient = Stomp.over(cock);
 						//stompClient.debug = null
 					},

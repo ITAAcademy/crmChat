@@ -1,11 +1,10 @@
 function toArray(object) {
-  return angular.isArray(object) 
-    ? object 
-    : Object.keys(object).map(function(key) {
-      return object[key];
+    return angular.isArray(object) ? object : Object.keys(object).map(function(key) {
+        return object[key];
     });
 }
 MAX_UPLOAD_FILE_SIZE_BYTES = 100 * 1000 * 1024;
+TIME_FOR_WAITING_ANSWER_FROM_TENANT = 30000;
 var daysName = {},
     hoursName = {},
     minutesName = {};
@@ -301,7 +300,7 @@ function getKeyByValue(value, object) {
 }
 
 var isDate = function(date) {
-    return  (date instanceof Date) ;//&& (!Number.isInteger(parseInt(date)) && ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) )));
+    return (date instanceof Date); //&& (!Number.isInteger(parseInt(date)) && ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) )));
 }
 
 function getType(value) {
@@ -311,7 +310,7 @@ function getType(value) {
     if (Array.isArray(value))
         return "array";
 
-    if(isDate(value))
+    if (isDate(value))
         return "date";
 
     return "string";
@@ -324,6 +323,6 @@ function parseBoolean(value) {
         return false;
 }
 
-function Color(val){
+function Color(val) {
     this.val = val;
 }

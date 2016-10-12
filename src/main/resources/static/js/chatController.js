@@ -26,26 +26,18 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
                 return;
             }
 
-            if ($rootScope.socketSupport) {
-                $scope.goToDialog($routeParams.roomId).then(function() {
-                    chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-                    $scope.pageClass = 'scale-fade-in';
-                }, function() {
-                    $rootScope.goToAuthorize();
-                    toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
-                    // location.reload();
-                });
-            } else {
-                $scope.goToDialog($routeParams.roomId).then(function() {
-                    chatControllerScope.currentRoom.roomId = $routeParams.roomId;
-                    $scope.pageClass = 'scale-fade-in';
-                }, function() {
-                    $rootScope.goToAuthorize();
-                    toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
-                    //location.reload();
-                    //alert("ERR");
-                });
-            }
+            $scope.goToDialog($routeParams.roomId).then(function(data) {
+                if (data != undefined && data != null) {
+                    chatControllerScope.currentRoom = data.data;
+                    $scope.dialogName = chatControllerScope.currentRoom.string;
+                }
+                $scope.pageClass = 'scale-fade-in';
+            }, function() {
+                $rootScope.goToAuthorize();
+                toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
+                // location.reload();
+            });
+
 
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(chatControllerScope.currentRoom.roomId)).
             success(function(data, status, headers, config) {

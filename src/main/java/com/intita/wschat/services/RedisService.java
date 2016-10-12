@@ -10,6 +10,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 @Service
 public class RedisService {
@@ -44,10 +45,25 @@ public class RedisService {
 
 
 	public String getKeyValue(String key) {
+		if(!jedis.isConnected())
+		{
+			//jedis.close();
+			jedis.connect();
+			return new String();
+		}
+		try{
 		if(jedis != null)
 			return  jedis.get(key);
 		else
 			return new String();
+		}
+		catch(JedisConnectionException ex)
+		{
+			/*jedis.close();
+			jedis.connect();*/
+			jedis = pool.getResource();
+			return new String();
+		}
 	}
 	
 	public void setValueByKey(String key, String value) {

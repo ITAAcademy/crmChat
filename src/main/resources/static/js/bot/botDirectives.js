@@ -138,7 +138,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
                     function() {
                         return element[0].children.length; },
                     function(newValue, oldValue) {
-                        debugger;
+                        
                         if (element[0].children[element[0].children.length - 1].classList.length > 0) {
                             
                             var elements = element[0].children;
@@ -273,7 +273,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
                     var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
                     var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                     scope.onClick = function() {
-                       // debugger;
+                       // 
                         scope.$eval(functionStr);
                     }
 
@@ -764,7 +764,7 @@ function botrating() {
             scope.toggle = function(index) {
                 if (scope.readonly == undefined || scope.readonly == false) {
                     scope.itemvalue = index + 1;
-                    //debugger;
+                    //
                     attributes.onratingselect({
                         rating: index + 1
                     });

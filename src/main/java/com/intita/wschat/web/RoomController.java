@@ -673,9 +673,10 @@ public class RoomController {
 					response.setResult(str);
 			}
 			responseRoomBodyQueue.remove(modal.chatUser.getId());
+;			subscribedtoRoomsUsersBuffer.remove(modal);
 		}
 		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
-		subscribedtoRoomsUsersBuffer.clear();//!!!
+		//subscribedtoRoomsUsersBuffer.clear();//!!!
 
 	}
 
@@ -725,7 +726,13 @@ public class RoomController {
 		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
-		updateParticipants();
+		updateParticipants();//force update
+		try {
+			processRoomsQueues();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants", retrieveParticipantsMessage(room_o.getId()));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));

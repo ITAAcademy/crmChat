@@ -142,7 +142,7 @@ function starRating() {
             scope.toggle = function(index) {
                 if (scope.readonly == undefined || scope.readonly === false) {
                     scope.ratingValue = index + 1;
-                    //debugger;
+                    //
                     attributes.onratingselect({
                         rating: index + 1
                     });

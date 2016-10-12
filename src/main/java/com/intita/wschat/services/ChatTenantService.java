@@ -183,6 +183,12 @@ public class ChatTenantService {
 		return null;
 	}
 
+	public void setTenantBusy(ChatUser chatUser) {
+		if (chatUser != null && !isTenantBusy(chatUser.getId())) {
+			tenantsBusy.add(chatUser.getId());
+		}
+	}
+	
 	public void setTenantBusy(Long chatUserid) {
 		if ( !isTenantBusy(chatUserid)) {
 			tenantsBusy.add(chatUserid);
