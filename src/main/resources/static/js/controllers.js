@@ -135,6 +135,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $('#askTenantToTakeConsultation').modal('toggle');
         isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
     };
+    $scope.askTenantToTakeConsultationHide = function() {
+        $('#askTenantToTakeConsultation').modal('hide');
+        isAskTenantToTakeConsultationVisible = false;
+    };
 
     $scope.showAskWindow = function() {
         if (isAskTenantToTakeConsultationVisible == false) {
@@ -151,7 +155,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.hideAskTenantToTakeConsultation = function() {
         if (isAskTenantToTakeConsultationVisible == true) {
-            $scope.askTenantToTakeConsultationTogle();
+            $scope.askTenantToTakeConsultationHide();
         }
     }
 
@@ -168,6 +172,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.answerToTakeConsultation = function(value) {
         $timeout.cancel($scope.hideAskTenantToTakeConsultation_tenantNotRespond);
+        $scope.hideAskTenantToTakeConsultation();
 
         if (value) {
             //alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
@@ -178,7 +183,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 alert("error : " + status)
             });
         } else {
-            $scope.hideAskTenantToTakeConsultation();
             $http.post(serverPrefix + $scope.askObject.noLink).
             success(function(data, status, headers, config) {
 
@@ -846,11 +850,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.submitConsultation_processTenant = function(tenantId, roomId) {
         if (tenantId == $scope.chatUserId) {
             $scope.hideAskTenantToTakeConsultation();
-            $scope.$$postDigest(function() {
+            $timeout(function() {;
                 if (chatControllerScope == undefined)
                     chatControllerScope = Scopes.get('ChatController');
                 chatControllerScope.changeLocation('/dialog_view/' + roomId);
-            });
+            }, 100);
         }
     };
 
@@ -879,7 +883,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         console.log("serverPrefix");
 
-        chatSocket.init(serverPrefix + "/wss2"); //9999
+        chatSocket.init(serverPrefix + "/wss"); //9999
 
 
         chatSocket.connect(onConnect, function(error) {

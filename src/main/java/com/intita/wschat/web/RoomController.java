@@ -673,7 +673,7 @@ public class RoomController {
 					response.setResult(str);
 			}
 			responseRoomBodyQueue.remove(modal.chatUser.getId());
-;			subscribedtoRoomsUsersBuffer.remove(modal);
+			subscribedtoRoomsUsersBuffer.remove(modal);
 		}
 		//System.out.println("responseRoomBodyQueue queue_count:"+responseRoomBodyQueue.size());
 		//subscribedtoRoomsUsersBuffer.clear();//!!!
