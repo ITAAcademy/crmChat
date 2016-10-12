@@ -22,4 +22,9 @@ public interface PrivateRoomInfoRepository extends CrudRepository<PrivateRoomInf
 	@Query("select info from chat_private_rooms info where (info.firtsUser = ?1 and info.secondUser = ?2) or (info.firtsUser = ?2 and info.secondUser = ?1)")
 	PrivateRoomInfo getByUsers(ChatUser first, ChatUser last);
 	PrivateRoomInfo findByRoom(Room room);
+	
+	@Query("select info from chat_private_rooms info where (info.firtsUser = ?1 or info.secondUser = ?1)")
+	ArrayList<PrivateRoomInfo> getByUser(ChatUser user);
+	@Query("select info.room from chat_private_rooms info where (info.firtsUser = ?1 or info.secondUser = ?1)")
+	ArrayList<Room> getRoomsByUser(ChatUser user);
 }

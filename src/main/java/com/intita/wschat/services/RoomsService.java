@@ -101,6 +101,30 @@ public class RoomsService {
 			return null;
 		return info.getRoom();
 	}
+	
+	@Transactional
+	public ArrayList<PrivateRoomInfo> getPrivateRoomsInfoByUser(ChatUser user) {
+		return privateRoomInfoRepo.getByUser(user);
+	}
+	
+	@Transactional
+	public ArrayList<Room> getPrivateRooms(ChatUser user) {
+		return privateRoomInfoRepo.getRoomsByUser(user);
+	}
+	
+	@Transactional
+	public ArrayList<ChatUser> getPrivateChatUsers(ChatUser user) {
+		ArrayList<ChatUser> users = new ArrayList<>();
+		ArrayList<PrivateRoomInfo> infoList = getPrivateRoomsInfoByUser(user);
+		for (PrivateRoomInfo privateRoomInfo : infoList) {
+			if(privateRoomInfo.getFirtsUser() == user)
+				users.add(privateRoomInfo.getSecondUser());
+			else
+				users.add(privateRoomInfo.getFirtsUser());
+		}
+		return users;
+	}
+	
 	@Transactional
 	public ArrayList<Room> getRoomByAuthor(String author) {
 
