@@ -278,6 +278,19 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("chat_rooms", rooms);
+		Long intitaUserId = null==user.getIntitaUser() ? null : user.getIntitaUser().getId();
+		
+		if(userService.isTrainer(intitaUserId))
+		{
+			ArrayList<LoginEvent> tenantsObjects =  userService.getAllFreeTenantsLoginEvent(user.getId());
+			String tenantsJson = null;
+			try {
+				tenantsJson = mapper.writeValueAsString(tenantsObjects);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			result.put("tenants",tenantsJson );
+		}
 
 		return result;
 	}

@@ -1,6 +1,7 @@
 package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,7 +50,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
   ArrayList<Long> getStudentsByTeacherId(Long userId);
   
   @Query(value = "SELECT id_user FROM user_trainer WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
-  Long[] findAllTrainers();
+  HashSet<Integer> findAllTrainers();
   
   @Query(value = "SELECT chat_user_id FROM user_tenant WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
   Long[] findAllTenants();

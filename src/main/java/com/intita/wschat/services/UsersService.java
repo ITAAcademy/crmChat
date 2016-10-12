@@ -3,7 +3,7 @@ package com.intita.wschat.services;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -220,6 +220,11 @@ public class UsersService {
 			return result;
 		return new ArrayList<>(chatUsersService.getUsers(all));
 	}
+	@Transactional
+	public HashSet<Integer> getAllTrainersIds(){
+		return usersRepo.findAllTrainers();
+	}
+
 	/**
 	 * Returns all online & free tenants, ignoring users from argument ArrayList
 	 * @param ignoreUsersList
