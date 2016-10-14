@@ -964,6 +964,6 @@ public class RoomController {
 	@PostConstruct
 	private void PostConstructor()
 	{
-		participantRepository.add("" + BotParam.BOT_ID);//BOT online OK
+		participantRepository.addParticipantPresenceByLastConnectionTime("" + BotParam.BOT_ID);//BOT online OK
 	}
 }

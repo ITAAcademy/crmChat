@@ -68,13 +68,18 @@ public class LoginEvent {
 		this.avatar = avatar;
 	}
 	public LoginEvent(ChatUser u,User intitaUser,boolean isOnline){
-		this.intitaUserId = intitaUser.getId();
-		this.chatUserId=u.getId();
-		this.username = intitaUser.getEmail();
+		if (u!=null){
+			this.chatUserId=u.getId();
+			if (intitaUser!=null){
+				this.username = intitaUser.getEmail();
+				this.avatar = intitaUser.getAvatar();
+				this.intitaUserId = intitaUser.getId();
+			}
+		}
 		time = new Date();
 		typing = false;
 		online = isOnline;
-		this.avatar = intitaUser.getAvatar();	
+		
 	}
 
 	public LoginEvent(Long chatUserId,String username, String avatar,boolean isOnline) {

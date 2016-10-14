@@ -523,14 +523,14 @@ public class BotController {
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
 		chatTenantService.setTenantFree(principal);
-		groupCastAddTenantToList(chatUsersService.getChatUser(principal));
+		chatController.groupCastAddTenantToList(chatUsersService.getChatUser(principal));
 	}	
 
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeBusy(Principal principal) {
 		chatTenantService.setTenantBusy(principal);
-		groupCastRemoveTenantFromList(chatUsersService.getChatUser(principal));
+		chatController.groupCastRemoveTenantFromList(chatUsersService.getChatUser(principal));
 	}
 	/*private void updateTenants(){
 		String subscriptionStr = "/topic/chat.tenants.add";
@@ -538,17 +538,7 @@ public class BotController {
 		ArrayList<LoginEvent> loginEvents = userService.getAllFreeTenantsLoginEvent();
 		simpMessagingTemplate.convertAndSend(subscriptionStr, loginEvents);
 	}*/
-	public void groupCastAddTenantToList(ChatUser tenant){
-		String subscriptionStr = "/topic/chat.tenants.add";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),true));
-	}
-	public void groupCastRemoveTenantFromList(ChatUser tenant){
-		String subscriptionStr = "/topic/chat.tenants.remove";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),false));
-	}
-	private void groupCastRemoveTenantFromList(){
 
-	}
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody

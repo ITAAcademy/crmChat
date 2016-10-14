@@ -2,6 +2,8 @@ package com.intita.wschat.event;
 
 import java.security.Principal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -45,6 +47,7 @@ public class PresenceEventListener {
 		this.messagingTemplate = messagingTemplate;
 	}
 		
+	private final static Logger log = LoggerFactory.getLogger(PresenceEventListener.class);
 /*	void afterConnectionClosed(WebSocketSession session,
             CloseStatus closeStatus)
      throws Exception{
@@ -68,11 +71,12 @@ public class PresenceEventListener {
 		
 		// We store the session as we need to be idempotent in the disconnect event processing
 		Principal principal = headers.getUser();
-		participantRepository.add(chatId);
+		participantRepository.addParticipantPresenceByConnections(chatId);
 		ChatUser user = chatUsersService.getChatUser(principal);
 		if (chatTenantService.isTenant(user.getId())){
+			log.info(String.format("propagation of new tenant '%s' for trainers by ws and lp...", chatId));
 			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user,user.getIntitaUser(),true));
-			chatController.addTenantInListToTrainerLP(user);
+			chatController.tryAddTenantInListToTrainerLP(user.getId().toString());
 		}
 	}
 	
@@ -88,13 +92,13 @@ public class PresenceEventListener {
 		Principal principal = headers.getUser();
 		String chatId = principal.getName();
 		ChatUser user = chatUsersService.getChatUser(principal);
-		participantRepository.removeParticipant(chatId);
+		participantRepository.invalidateParticipantPresence(chatId,true);
 		if(!participantRepository.isOnline(chatId)){
 		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
 		//remove user from tenant list if tenant
 		if (chatTenantService.isTenant(user.getId()))
 		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user,user.getIntitaUser(),false));
-		chatController.removeTenantFromListToTrainerLP(user);
+		chatController.propagateRemovingTenantFromListToTrainer(user);
 		}
 		
 				

@@ -487,6 +487,17 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         error(goToPrivateDialogErr);
     }
 
+    function addTenantToList(tenantObj){
+        for (var i = 0; i < $scope.tenants.length; i++){
+            if (tenantObj!=null && $scope.tenants[i]!=null && tenantObj.id == $scope.tenants[i].id) return; //tenant is already excist in list
+        }
+      $scope.tenants.push(tenantObj);
+    }
+        function removeTenantFromList(tenantObj){
+               for (var i = 0; i < $scope.tenants.length; i++){
+            if (tenantObj!=null && $scope.tenants[i]!=null && tenantObj.id == $scope.tenants[i].id) $scope.tenants.splice(i,1); //tenant is already excist in list
+        }
+        }
     function subscribeInfoUpdateLP() {
         // alert("subscribeInfoUpdateLP()");
         $http.post(serverPrefix + "/chat/global/lp/info")
@@ -520,13 +531,20 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 }
                  if (data["tenants.add"] != null){
                     //TODO tenant addition to list
-                    var tenantObj = JSON.parse(data["tenants.add"]);
-                    $scope.tenants.push(tenantObj);
+                     var tenantObjs = data["tenants.add"];
+                    for (var i = 0; i < tenantObjs.length;i++ ){
+                      addTenantToList(tenantObjs[i]);  
+                    }
+                   
+                    
                 }
                 if (data["tenants.remove"] != null){
                     //TODO renant removing from list
-                     var tenantObj = JSON.parse(data["tenants.remove"]);
-                    $scope.tenants.push(tenantObj);
+                    var tenantObjs = data["tenants.remove"];
+                      for (var i = 0; i < tenantObjs.length;i++ ){
+                           removeTenantFromList((tenantObjs[i]))
+                    }
+              
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      
@@ -617,14 +635,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         if ($rootScope.socketSupport == false) {
             updateRooms(JSON.parse(mess_obj.chat_rooms));
-            $scope.tenants =  typeof mess_obj["tenants"]=="undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
          
         } else {
             $rootScope.initIsUserTenant();
             $scope.rooms = JSON.parse(mess_obj.chat_rooms).list;
             $scope.roomsCount = $scope.rooms.length;
         }
-
+        $scope.tenants =  typeof mess_obj["tenants"]=="undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
         $rootScope.isInited = true;
 
         if (mess_obj.nextWindow == 0) {

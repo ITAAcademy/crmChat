@@ -45,15 +45,15 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
                 }
                 //updateTenants(o);
             }));
-                subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
+            /*   subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
                 var o = JSON.parse(message.body);
-                $updateTenants(o);
-            }));
+                updateTenants(o);
+            }));*/
           subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
                 var tenant = JSON.parse(message.body);
                 var alreadyExcist = false;
                   for (var i = 0; i < $scope.tenants.length; i++){
-                    if (tenant.chatUserId==$scope.tenants[i].chatUserId){
+                    if (tenant.chatUserId==$scope.tenants[i].chatUserId || $scope.chatUserId == tenant.chatUserId){
                        alreadyExcist = true;
                        break;
                     }   

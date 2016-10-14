@@ -71,6 +71,7 @@ public class ChatUsersService {
 		for (Integer userIdOfTrainer : trainersIds){
 			User user = userService.getUser((long)userIdOfTrainer);
 			ChatUser chatUser = user.getChatUser();
+			if (chatUser != null)
 			trainers.add(chatUser);
 		}
 		return trainers;
@@ -91,6 +92,7 @@ public class ChatUsersService {
 	}
 	@Transactional
 	public LoginEvent getLoginEvent(ChatUser chatUser,boolean isOnline){
+		if (chatUser==null) return null;
 		return new LoginEvent(chatUser,chatUser.getIntitaUser(),isOnline);
 	}
 	@Transactional

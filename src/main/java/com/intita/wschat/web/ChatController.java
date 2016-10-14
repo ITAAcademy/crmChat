@@ -1,7 +1,5 @@
 package com.intita.wschat.web;
 
-import java.io.Console;
-import java.io.IOException;
 import java.security.Principal;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -13,7 +11,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -21,8 +18,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -35,17 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
-import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -62,15 +54,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
+import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotFoundException;
@@ -79,14 +69,12 @@ import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatConsultation;
-import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.Course;
 import com.intita.wschat.models.IntitaConsultation;
-import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
@@ -95,8 +83,6 @@ import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
-import com.intita.wschat.repositories.ChatUserRepository;
-import com.intita.wschat.repositories.LecturesRepository;
 import com.intita.wschat.services.BotItemContainerService;
 import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.services.ChatTenantService;
@@ -186,34 +172,79 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-	public void addTenantInListToTrainerLP(ChatUser user){
+	public boolean tryAddTenantInListToTrainerLP(String chatId){
+		Long id = Long.parseLong(chatId);
+		return tryAddTenantInListToTrainerLP(id);		
+	}
+	public boolean tryAddTenantInListToTrainerLP(Long userId){
+		if(!chatTenantService.isTenant(userId)){
+			return false;
+		}
+		ChatUser user = chatUsersService.getChatUser(userId);
 		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
 		users.add(user);
-		addTenantInListToTrainersLP(users);
+		propagateAdditionTenantsToList(users);
+		return true;
 	}
-	public void removeTenantFromListToTrainerLP(ChatUser user){
+	public void groupCastAddTenantToList(ChatUser tenant){
+		String subscriptionStr = "/topic/chat.tenants.add";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),true));
+	}
+	public void groupCastRemoveTenantFromList(ChatUser tenant){
+		String subscriptionStr = "/topic/chat.tenants.remove";
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),false));
+	}
+	public void propagateRemovingTenantFromListToTrainer(ChatUser user){
+		if (user==null)
+			return;
 		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
 		users.add(user);
-		removeTenantFromListToTrainersLP(users);
+		propagateRemovingTenantsFromList(users);
 	}
-	public void addTenantInListToTrainersLP(ArrayList<ChatUser> usersIds){
-		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
-		//ArrayList<ChatUser> tenants =  userService.getAllFreeTenants();
-		if (usersIds.size()<=0)return;
-		for (ChatUser trainerUser : chatUsers){
-			for (ChatUser tenantUser : usersIds)
-				addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));	
-		}	
-	}
-	public void removeTenantFromListToTrainersLP(ArrayList<ChatUser> usersIds){
+	
+	public void propagateAdditionTenantsToList(ArrayList<ChatUser> usersIds){
 		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
 		if (usersIds.size()<=0)return;
-		for (ChatUser trainerUser : chatUsers){
-			for (ChatUser tenantUser : usersIds)
-			addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));	
+		
+			for (ChatUser tenantUser : usersIds){
+			for (ChatUser trainerUser : chatUsers){
+				if (trainerUser==null) continue;
+				Long trainerChatId = trainerUser.getId();
+				String trainerChatIdStr = trainerChatId.toString();
+				if (participantRepository.isOnline(trainerChatIdStr)){
+					ConcurrentHashMap<String,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
+					if (activeSessions.get(trainerChatIdStr).isTimeBased())
+			addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));
+					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
+						//Do nothing now, but may be usable in future	
+						}		
+				}
+			}
+			groupCastAddTenantToList(tenantUser);
+		}		
+	}
+	public void propagateRemovingTenantsFromList(ArrayList<ChatUser> usersIds){
+		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
+		if (usersIds.size()<=0)return;
+		ConcurrentHashMap<String,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
+		for (ChatUser tenantUser : usersIds){
+			for (ChatUser trainerUser : chatUsers){	
+				if (trainerUser==null || !activeSessions.containsKey(trainerUser.getId().toString())) continue;
+				Long trainerChatId = trainerUser.getId();
+				String trainerChatIdStr = trainerChatId.toString();
+				if (!participantRepository.isOnline(trainerChatIdStr)){
+					if (activeSessions.get(trainerChatIdStr).isTimeBased())
+			addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));
+					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
+						//Do nothing now, but may be usable in future	
+						}		
+				}
+			}
+			groupCastRemoveTenantFromList(tenantUser);
 		}	
 	}
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
+		if (user!=null)
 		addFieldToUserInfoMap(user.getId(),key,value);
 	}
 	public void addFieldToUserInfoMap(Long userId, String key, Object value)
@@ -232,6 +263,7 @@ public class ChatController {
 			t_infoMap.put(key, listElm);
 		}
 		listElm.add(value);
+		log.info(String.format("field '%s' with value '%s' added to infomap for user '%s'", key,value,userId));
 	}
 
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
@@ -502,23 +534,38 @@ public class ChatController {
 	@RequestMapping(value = "/chat/global/lp/info", method = RequestMethod.POST)
 	@ResponseBody
 	public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
-
+		int presenceIndexGrowth = 3;
 		Long timeOut = 15000L;
-		participantRepository.add(principal.getName());
+		String chatId = principal.getName();
+		participantRepository.addParticipantPresenceByLastConnectionTime(chatId);
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
 
-		LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
-		simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
+	//	LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
+	//	simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
 
 		//System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
 	}
 
+	public void processUsersPresence(){
+		for (String chatId : participantRepository.getActiveSessions().keySet()){
+			boolean isParticipantRemoved = participantRepository.invalidateParticipantPresence(chatId,false);
+			ArrayList<ChatUser> tenantsToRemove = new ArrayList();
+			if(isParticipantRemoved){
+				Long chatUserId = Long.parseLong(chatId);
+				if (chatTenantService.isTenant(chatUserId))
+				tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
+			}
+			if (tenantsToRemove.size()>0)
+			propagateRemovingTenantsFromList(tenantsToRemove);
+		}
+	}
 	@Scheduled(fixedDelay=10000L)
 	public void processGlobalInfo(){
 		String result;
 		//addFieldToUserInfoMap(chatUsersService.getChatUser((long)427), "test", "only for 427");
+		processUsersPresence();
 		try {
 			result = mapper.writeValueAsString(infoMap);
 		} catch (JsonProcessingException e) {
@@ -526,22 +573,10 @@ public class ChatController {
 			e.printStackTrace();
 			result = "{}";
 		}
-		ArrayList<ChatUser> tenantsToRemove = new ArrayList();
-		
 		for(DeferredResult<String> nextUser : globalInfoResult.keySet())
 		{
-
 			//	System.out.println("globalInfoResult.remove:"+globalInfoResult.get(nextUser));
 			String chatId = globalInfoResult.get(nextUser);
-			boolean isParticipantRemoved = participantRepository.removeParticipant(chatId);
-			if(isParticipantRemoved){
-				Long chatUserId = Long.parseLong(chatId);
-				if (chatTenantService.isTenant(chatUserId))
-				tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
-			}
-
-			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId, participantRepository.isOnline(chatId));
-			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 
 			ConcurrentHashMap<String, ArrayList<Object>> map = infoMapForUser.get(Long.parseLong(chatId));
 			if(map != null)
@@ -555,12 +590,11 @@ public class ChatController {
 					result = "{}";
 				}
 			}
-
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId, participantRepository.isOnline(chatId));
+			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 			if(!nextUser.isSetOrExpired() && result != "{}")//@BAD@
 				nextUser.setResult(result);		
 		}
-		if (tenantsToRemove.size()>0)
-		removeTenantFromListToTrainersLP(tenantsToRemove);
 
 		infoMap.clear();
 		globalInfoResult.clear();
@@ -1082,10 +1116,6 @@ public class ChatController {
 		if(iUser != null)
 		{
 			Long intitaUserId = user.getIntitaUser().getId();
-			if(userService.isTrainer(intitaUserId))
-			{
-				model.addAttribute("tenants",  userService.getAllFreeTenants(user.getId()));
-		}
 		}
 		return getTeachersTemplate(request, "chatTemplate", model, principal);
 	}
