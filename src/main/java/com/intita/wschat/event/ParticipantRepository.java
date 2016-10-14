@@ -48,14 +48,14 @@ public class ParticipantRepository {
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum presence = activeSessions.get(chatId);
 			presence.setLastPresenceTime(new Date());
-			log.info(String.format("Participant %s presence time updated ",chatId));
+			//log.info(String.format("Participant %s presence time updated ",chatId));
 		}
 		else{
 			activeSessions.put(chatId, new LongpollPresence());
 			chatController.tryAddTenantInListToTrainerLP(chatId);
-			log.info(String.format("Participant %s presence added first time ",chatId));
+			//log.info(String.format("Participant %s presence added first time ",chatId));
 		}
-			System.out.println("user "+chatId+" enter chat");
+			//System.out.println("user "+chatId+" enter chat");
 	}
 
 	public boolean isOnline(String chatId) {
@@ -70,7 +70,7 @@ public class ParticipantRepository {
 	 * @return "true" if participant is removed, "false" if not removed or only presence index decreased
 	 */
 	public boolean invalidateParticipantPresence(String chatId,boolean invalidateWS) {
-		log.info(String.format("Participant %s presence invalidating...",chatId));
+		//log.info(String.format("Participant %s presence invalidating...",chatId));
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum userPresent = activeSessions.get(chatId);
 			if (invalidateWS && userPresent.isConnectionBased())
@@ -80,7 +80,7 @@ public class ParticipantRepository {
 				ChatUser chatUser = chatUsersService.getChatUser(Long.parseLong(chatId));
 				chatController.propagateRemovingTenantFromListToTrainer(chatUser);
 				activeSessions.remove(chatId);
-				log.info(String.format("Participant %s presence removed",chatId));
+				//log.info(String.format("Participant %s presence removed",chatId));
 				return true;
 			}
 			else

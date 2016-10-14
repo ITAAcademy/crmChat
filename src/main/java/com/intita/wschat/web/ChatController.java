@@ -244,9 +244,10 @@ public class ChatController {
 		}	
 	}
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
-		if (user!=null)
-		addFieldToUserInfoMap(user.getId(),key,value);
-	}
+		if(user != null && !key.isEmpty())
+			addFieldToUserInfoMap(user.getId(), key, value);
+	} 
+
 	public void addFieldToUserInfoMap(Long userId, String key, Object value)
 	{
 		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(userId);
@@ -263,7 +264,7 @@ public class ChatController {
 			t_infoMap.put(key, listElm);
 		}
 		listElm.add(value);
-		log.info(String.format("field '%s' with value '%s' added to infomap for user '%s'", key,value,userId));
+		//log.info(String.format("field '%s' with value '%s' added to infomap for user '%s'", key,value,userId));
 	}
 
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {

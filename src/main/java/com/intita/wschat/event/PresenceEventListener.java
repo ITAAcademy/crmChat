@@ -74,7 +74,7 @@ public class PresenceEventListener {
 		participantRepository.addParticipantPresenceByConnections(chatId);
 		ChatUser user = chatUsersService.getChatUser(principal);
 		if (chatTenantService.isTenant(user.getId())){
-			log.info(String.format("propagation of new tenant '%s' for trainers by ws and lp...", chatId));
+			//log.info(String.format("propagation of new tenant '%s' for trainers by ws and lp...", chatId));
 			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user,user.getIntitaUser(),true));
 			chatController.tryAddTenantInListToTrainerLP(user.getId().toString());
 		}
