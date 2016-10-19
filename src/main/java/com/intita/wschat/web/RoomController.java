@@ -280,14 +280,14 @@ public class RoomController {
 		}
 		result.put("chat_rooms", rooms);
 		Long intitaUserId = null==user.getIntitaUser() ? null : user.getIntitaUser().getId();
-		
+
 		try {
 			result.put("friends", mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
 		} catch (JsonProcessingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		if(userService.isTrainer(intitaUserId))
 		{
 			ArrayList<LoginEvent> tenantsObjects =  userService.getAllFreeTenantsLoginEvent(user.getId());
@@ -500,7 +500,7 @@ public class RoomController {
 	 * GET/ADD ROOMS
 	 * @throws JsonProcessingException 
 	 ***************************/
-	
+
 	@RequestMapping(value="/chat/rooms/roomInfo/{roomID}", method=RequestMethod.POST)
 	@ResponseBody
 	public String getRoomInfo( @PathVariable("roomID") Long roomId, Principal principal) throws JsonProcessingException {
@@ -521,12 +521,12 @@ public class RoomController {
 	{
 		if(privateCharUser == null || chatUser == null)
 			throw new RoomNotFoundException("privateChatUser or chatUser is null");
-		
+
 		if(chatUser.getIntitaUser() == null || privateCharUser.getIntitaUser() == null)
 			throw new RoomNotFoundException("Intita use is null");
-		
+
 		Room room  = roomService.getPrivateRoom(chatUser, privateCharUser);
-	
+
 		ChatUser author = chatUser;
 		ChatUser other = privateCharUser;
 		User iPrivateUser = privateCharUser.getIntitaUser(); 
@@ -535,7 +535,7 @@ public class RoomController {
 			author = privateCharUser;
 			other = chatUser;
 		}
-	
+
 		if(room == null)
 		{
 			room = roomService.registerPrivate(author, other);// private room type => 1
@@ -550,7 +550,7 @@ public class RoomController {
 		}
 		return room;
 	}
-	
+
 	@RequestMapping(value="/chat/rooms/private/{userID}", method=RequestMethod.POST)
 	@ResponseBody
 	public String getPrivateRoomRequest( @PathVariable("userID") Long userId, Principal principal) throws JsonProcessingException {
@@ -560,11 +560,11 @@ public class RoomController {
 		Room room = getPrivateRoom(chatUser, privateCharUser);
 		return mapper.writeValueAsString(room.getId());//@BAG@
 	}
-	
+
 	@RequestMapping(value="/chat/go/rooms/private/trainer", method=RequestMethod.GET)
 	public String goPrivateRoomWithTrainer(Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
-		
+
 		User iPrincipalUser = principalChatUser.getIntitaUser();
 		ChatUser trainer = null;
 		try{
@@ -581,11 +581,11 @@ public class RoomController {
 			return "redirect:/";
 		}
 	}
-	
+
 	@RequestMapping(value="/chat/go/rooms/private/{userId}", method=RequestMethod.GET)
 	public String goPrivateRoom(@PathVariable Long userId, @RequestParam(required = false, name = "isChatId") Boolean isChatId,   Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
-		
+
 		ChatUser cUser = null;
 		if(isChatId != null && isChatId == true)
 		{
@@ -595,7 +595,7 @@ public class RoomController {
 			User iTargetUser = userService.getById(userId);
 			cUser = chatUserServise.getChatUserFromIntitaUser(iTargetUser, false);
 		}
-			
+
 		try{
 			if(cUser == null)
 			{
@@ -752,7 +752,7 @@ public class RoomController {
 			if(user_o == info.getFirtsUser() || user_o == info.getSecondUser())
 				return false;
 		}
-		
+
 		roomService.removeUserFromRoom(user_o, room_o);
 		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
@@ -889,6 +889,19 @@ public class RoomController {
 		return removeUserFromRoomFullyWithoutCheckAuthorization(user_o, room_o);
 
 	}
+	@RequestMapping(value="/chat/user/friends", method = RequestMethod.POST)
+	@ResponseBody
+	public String userFriends(Principal principal) {
+		ChatUser user = chatUserServise.getChatUser(principal);
+		try {
+			return mapper.writeValueAsString(roomService.getPrivateLoginEvent(user));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return "{}";
+	}
+
 
 	@RequestMapping(value="/chat/rooms.{room}/user.remove/{id}", method = RequestMethod.POST)
 	@ResponseBody

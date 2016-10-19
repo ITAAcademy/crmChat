@@ -44,8 +44,14 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
 
 
     }
-    $scope.updateFriends = function() {
-        debugger;
+    $scope.updateFriends = function() { 
+        $http.post(serverPrefix + "/chat/user/friends").
+            success(function(data, status, headers, config) {
+                $scope.friends = data;
+            }).
+            error(function(data, status, headers, config) {
+                toaster.pop('error', "Error", "server request timeout", 1000);
+            });
     }
     $scope.onFriendClick = function(user) {
         debugger;
