@@ -182,9 +182,7 @@ max-height: 100px;*/
     pointer-events: initial;
 }
 
-.room_item .delete-user-icon:hover {
-    
-}
+.room_item .delete-user-icon:hover {}
 
 .message_body_item {
     word-break: break-all;
@@ -257,6 +255,16 @@ margin-left:230px;
     right: 40px;
 }
 
+.multiple-select-wrapper.friend {
+    right: 40px;
+}
+
+.multiple-select-wrapper.filter {
+    right: -15px;
+}
+
+
+/*
 @media(max-width:767px) {
     .multiple-select-wrapper {
         right: 15px;
@@ -276,7 +284,7 @@ margin-left:230px;
     .col-sm-12 .multiple-select-wrapper {
         right: 15px;
     }
-}
+}*/
 
 @media(min-width:1200px) {}
 
@@ -296,6 +304,11 @@ margin-left:230px;
     left: 10px;
 }
 
+.dialog-icon.friends {
+    top: 13px;
+    left: 10px;
+}
+
 .dialog-icon.config {
     top: 13px;
     right: 10px;
@@ -304,7 +317,7 @@ margin-left:230px;
 .dialog-icon.free_tenant {
     top: 0px;
     /*right: 90px;*/
-    right: 35px;
+    right: 90px;
     padding: 0px;
     z-index: 999;
     height: 60px;
@@ -386,7 +399,7 @@ margin-left:230px;
     padding-left: 10px;
 }
 
-.list .items-list li img {
+.list .items-list li .icon {
     padding-left: 10px;
     padding-right: 6px;
     height: 18px;
@@ -733,7 +746,6 @@ margin-left:230px;
     }
     .user .name {
         visibility: hidden;
-        ;
     }
     .left-users-list {
         width: 70px;

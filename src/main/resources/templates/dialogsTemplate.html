@@ -25,14 +25,37 @@
                                 </div>
                             </div>
                             -->
-                            <div class="multiple-select-wrapper noveredmark dialog-filter-wraper">
+                            <div class="multiple-select-wrapper noveredmark dialog-filter-wraper filter">
                                 <span class="dialog-icon filter glyphicon-align-left"></span>
                                 <div class="list">
                                     <ul class="items-list">
                                         <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
                                             <input type="checkbox" ng-model="airline.selected" />
-                                            <img ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
+                                            <img class= "icon" ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
                                             <span>{{airline.name}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="multiple-select-wrapper noveredmark dialog-filter-wraper friend">
+                                <span class="dialog-icon filter glyphicon glyphicon-user" ng-click="updateFriends()"></span>
+                                <div class="list">
+                                    <ul class="items-list">
+                                        <li class="dlg-filter-li chat chat-users"  ng-repeat="participant in friends | orderBy:'-username'" >
+                                            <div class="user dialog">
+                                                <div class="avatar">
+                                                    <a target="_blank" ng-if="participant.intitaUserId" ng-href="{{baseurl}}/profile/{{participant.intitaUserId}}">
+                                                        <div class="avatar-contaiter centered">
+                                                            <!--ng-init="scaleCenterIconCircle()" -->
+                                                            <img ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}" alt="{{participant.username}}" />
+                                                        </div>
+                                                    </a>
+                                                    <a target="_blank" ng-if="!participant.intitaUserId"> <img ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}" alt="{{participant.username}}" />
+                                                    </a>
+                                                    <div ng-class="!participant.online ? 'status offline' : 'status online'" class=""></div>
+                                                </div>
+                                                <div ng-click="onFriendClick(participant)" class="name dialog">{{participant.username}}</div>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -76,12 +99,11 @@
                                         <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
                                     </div>
                                 </div>
-                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span> 
+                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span>
                                 <!-- {{room.lastMessage}} -->
                             </div>
                             <div ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" class="delete-user-icon"><span class="glyphicon" ng-class="chatUserId == room.roomAuthorId ? 'glyphicon-trash' : 'glyphicon-log-out' " aria-hidden="true"></span></div>
                         </div>
-                        
                     </li>
                 </ul>
             </form>

@@ -188,11 +188,11 @@ public class ChatController {
 	}
 	public void groupCastAddTenantToList(ChatUser tenant){
 		String subscriptionStr = "/topic/chat.tenants.add";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),true));
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, true));
 	}
 	public void groupCastRemoveTenantFromList(ChatUser tenant){
 		String subscriptionStr = "/topic/chat.tenants.remove";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant,tenant.getIntitaUser(),false));
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, false));
 	}
 	public void propagateRemovingTenantFromListToTrainer(ChatUser user){
 		if (user==null)

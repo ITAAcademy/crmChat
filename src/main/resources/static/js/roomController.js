@@ -44,6 +44,14 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
 
 
     }
+    $scope.updateFriends = function() {
+        debugger;
+    }
+    $scope.onFriendClick = function(user) {
+        debugger;
+        window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+    }
+
     $scope.onRoomItemClick = function(e, roomId) {
         var isLink = e.target.id == "roomItemLink";
         if (!isLink) { //skip redirection to chatroom from block onclick event
@@ -93,11 +101,11 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
             });
         }
         $scope.dialogName = '';
-    };   
-    
+    };
+
 
     $scope.goToDialogList = function() {
-    	
+
         if (chatControllerScope.currentRoom !== undefined && getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.date) !== undefined)
             getRoomById(chatControllerScope.rooms, chatControllerScope.currentRoom.roomId).date = curentDateInJavaFromat();
 
@@ -115,7 +123,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
         }
         $rootScope.roomForUpdate = new Map(); //clear list
         chatControllerScope.currentRoom = { roomId: '' };
-        
+
         $rootScope.initIsUserTenant();
     }
     $scope.mouseBusy = false;
@@ -123,7 +131,8 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     $('.multiple-select-wrapper').bind('click', function(e) {
         $scope.mouseBusy = true;
         e.stopPropagation();
-        $( e.currentTarget).find('div.list').toggle('10');
+        $('.multiple-select-wrapper .list').slideUp();
+        $(e.currentTarget).find('div.list').toggle('10');
     });
 
     $('.multiple-select-wrapper .list').bind('click', function(e) {

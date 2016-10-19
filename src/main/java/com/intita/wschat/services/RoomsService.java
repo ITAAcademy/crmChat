@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.event.LoginEvent;
+import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Phrase;
@@ -46,6 +48,7 @@ public class RoomsService {
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired private ParticipantRepository participantRepository;
 
 	@Autowired private ChatController chatController;
 
@@ -84,7 +87,7 @@ public class RoomsService {
 	public Room getRoom(String name) {
 		return roomRepo.findByName(name);
 	}
-	
+
 	@Transactional
 	public PrivateRoomInfo getPrivateRoomInfo(ChatUser author, ChatUser privateUser) {
 		return privateRoomInfoRepo.getByUsers(author, privateUser);
@@ -93,7 +96,7 @@ public class RoomsService {
 	public PrivateRoomInfo getPrivateRoomInfo(Room room) {
 		return privateRoomInfoRepo.findByRoom(room);
 	}
-	
+
 	@Transactional
 	public Room getPrivateRoom(ChatUser author, ChatUser privateUser) {
 		PrivateRoomInfo info = getPrivateRoomInfo(author, privateUser); 
@@ -101,17 +104,17 @@ public class RoomsService {
 			return null;
 		return info.getRoom();
 	}
-	
+
 	@Transactional
 	public ArrayList<PrivateRoomInfo> getPrivateRoomsInfoByUser(ChatUser user) {
 		return privateRoomInfoRepo.getByUser(user);
 	}
-	
+
 	@Transactional
 	public ArrayList<Room> getPrivateRooms(ChatUser user) {
 		return privateRoomInfoRepo.getRoomsByUser(user);
 	}
-	
+
 	@Transactional
 	public ArrayList<ChatUser> getPrivateChatUsers(ChatUser user) {
 		ArrayList<ChatUser> users = new ArrayList<>();
@@ -124,7 +127,21 @@ public class RoomsService {
 		}
 		return users;
 	}
-	
+	@Transactional
+	public ArrayList<LoginEvent> getPrivateLoginEvent(ChatUser user) {
+		ArrayList<LoginEvent> users = new ArrayList<>();
+		ArrayList<PrivateRoomInfo> infoList = getPrivateRoomsInfoByUser(user);
+		for (PrivateRoomInfo privateRoomInfo : infoList) {
+			ChatUser uTemp = null;
+			if(privateRoomInfo.getFirtsUser() == user)
+				uTemp = privateRoomInfo.getSecondUser();
+			else
+				uTemp = privateRoomInfo.getFirtsUser();
+			users.add(new LoginEvent(uTemp, participantRepository.isOnline(uTemp.getId().toString())));
+		}
+		return users;
+	}
+
 	@Transactional
 	public ArrayList<Room> getRoomByAuthor(String author) {
 
@@ -162,7 +179,7 @@ public class RoomsService {
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		return r;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public Room registerPrivate(ChatUser first, ChatUser second) {
 		Room r = new Room();
@@ -176,7 +193,7 @@ public class RoomsService {
 		PrivateRoomInfo info = privateRoomInfoRepo.save(new PrivateRoomInfo(r, first, second));
 		return r;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);

@@ -67,11 +67,12 @@ public class LoginEvent {
 		online = isOnline;
 		this.avatar = avatar;
 	}
-	public LoginEvent(ChatUser u,User intitaUser,boolean isOnline){
+	public LoginEvent(ChatUser u, boolean isOnline){
 		if (u!=null){
 			this.chatUserId=u.getId();
+			User intitaUser = u.getIntitaUser();
+			this.username = u.getNickName();
 			if (intitaUser!=null){
-				this.username = intitaUser.getEmail();
 				this.avatar = intitaUser.getAvatar();
 				this.intitaUserId = intitaUser.getId();
 			}

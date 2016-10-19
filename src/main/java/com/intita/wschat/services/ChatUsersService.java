@@ -93,7 +93,7 @@ public class ChatUsersService {
 	@Transactional
 	public LoginEvent getLoginEvent(ChatUser chatUser,boolean isOnline){
 		if (chatUser==null) return null;
-		return new LoginEvent(chatUser,chatUser.getIntitaUser(),isOnline);
+		return new LoginEvent(chatUser, isOnline);
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(List<Long> ids){

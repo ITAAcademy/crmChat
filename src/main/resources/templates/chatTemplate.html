@@ -50,8 +50,7 @@
       							<h6 class="dialog-users-title"
 							th:text="${lgPack.lables.chatView.participants} + ' [{{participants.length}}]'">Participants
 							[{{participants.length}}]</h6>
-							<div ng-repeat="participant in participants | orderBy:'-username'"
-								class="user">
+							<div ng-repeat="participant in participants | orderBy:'-username'" class="user">
 								<div class="avatar">
 									<a target="_blank" ng-if="participant.intitaUserId" 
 										ng-href="{{baseurl}}/profile/{{participant.intitaUserId}}">

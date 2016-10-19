@@ -642,6 +642,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             $scope.roomsCount = $scope.rooms.length;
         }
         $scope.tenants =  typeof mess_obj["tenants"]=="undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
+        $scope.friends =  typeof mess_obj["friends"]=="undefined" ? undefined : JSON.parse(mess_obj["friends"]);
         $rootScope.isInited = true;
 
         if (mess_obj.nextWindow == 0) {

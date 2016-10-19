@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -279,6 +280,13 @@ public class RoomController {
 		}
 		result.put("chat_rooms", rooms);
 		Long intitaUserId = null==user.getIntitaUser() ? null : user.getIntitaUser().getId();
+		
+		try {
+			result.put("friends", mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		if(userService.isTrainer(intitaUserId))
 		{
@@ -575,15 +583,25 @@ public class RoomController {
 	}
 	
 	@RequestMapping(value="/chat/go/rooms/private/{userId}", method=RequestMethod.GET)
-	public String goPrivateRoom(@PathVariable Long userId, Principal principal) throws JsonProcessingException {
+	public String goPrivateRoom(@PathVariable Long userId, @RequestParam(required = false, name = "isChatId") Boolean isChatId,   Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
-		User iTargetUser = userService.getById(userId);
+		
+		ChatUser cUser = null;
+		if(isChatId != null && isChatId == true)
+		{
+			cUser = chatUserServise.getChatUser(userId);
+		}
+		else{
+			User iTargetUser = userService.getById(userId);
+			cUser = chatUserServise.getChatUserFromIntitaUser(iTargetUser, false);
+		}
+			
 		try{
-			if(iTargetUser == null)
+			if(cUser == null)
 			{
 				throw new RoomNotFoundException("target user not registered!!!");
 			}
-			return "redirect:/#/dialog_view/" + getPrivateRoom(chatUserServise.getChatUserFromIntitaUser(iTargetUser, false), principalChatUser).getId();
+			return "redirect:/#/dialog_view/" + getPrivateRoom(cUser, principalChatUser).getId();
 		}
 		catch (RoomNotFoundException ex){
 			log.info("goPrivateRoomWithUser ::: " + ex.getMessage());
