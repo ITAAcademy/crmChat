@@ -76,7 +76,7 @@
 						<!--<th:block th:if="${tenants != null}">-->
 						<hr/>
 						<div ng-if="tenants!=null &#38;&#38; tenants.length>0">Tenants:</div>
-						<div  ng-repeat="tenant in tenants" class="user">
+						<div  ng-repeat="tenant in tenants" class="user" ng-click="addTenantToRoom(tenant.chatUserId)">
 									<div class="avatar">
 									<a target="_blank" ng-if="tenant.intitaUserId" 
 										ng-href="{{baseurl}}/profile/{{tenant.intitaUserId}}">

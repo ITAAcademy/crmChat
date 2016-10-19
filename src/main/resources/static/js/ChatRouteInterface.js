@@ -1328,7 +1328,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
 
     $scope.checkUserAdditionPermission = function() {
         if (typeof chatControllerScope.currentRoom === "undefined") return false;
-        var resultOfChecking = chatControllerScope.currentRoom.active && ($scope.roomType != 1) && (chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId) && chatControllerScope.isMyRoom && $rootScope.authorize;
+        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && (chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId) && chatControllerScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
 
