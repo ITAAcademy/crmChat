@@ -824,7 +824,7 @@ public class ChatController {
 
 	@RequestMapping(value="/get_users_like", method = RequestMethod.GET)
 	@ResponseBody
-	public String getUsersLike(@RequestParam String login, @RequestParam Long room, boolean eliminate_users_of_current_room) throws JsonProcessingException {
+	public String getUsersLike(@RequestParam String login, @RequestParam(required = false) Long room, @RequestParam(required = false) boolean eliminate_users_of_current_room) throws JsonProcessingException {
 		ArrayList<User> usersResult = null;
 
 		if(eliminate_users_of_current_room)

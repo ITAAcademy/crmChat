@@ -37,10 +37,9 @@
 }
 
 /*dialog filter list item hover color */
-.dlg-filter-li:HOVER   {
+.dlg-filter-li:HOVER, .search-form .dropdown-menu li:HOVER   {
 	background-color: #819abe !important;
 }
-
 
 /*user status online mark color */
 .chat .avatar .status.online {

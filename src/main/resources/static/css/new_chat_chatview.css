@@ -187,7 +187,11 @@
 }
 
 .user.dialog {
-    margin: 0px;
+    margin: 5px;
+}
+
+.user.dialog:hover {
+    background-color: #819abe;
 }
 
 .chat-users .user .mood {
