@@ -623,8 +623,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
 
+
     function login(mess_obj) {
         $scope.chatUserId = mess_obj.chat_id;
+        $scope.isTenant = Boolean(mess_obj.isTenant);
+        $scope.isTrainer = Boolean(mess_obj.isTrainer);
         $scope.chatUserNickname = mess_obj.chat_user_nickname;
         $scope.chatUserRole = mess_obj.chat_user_role;
 
@@ -746,6 +749,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             console.log(i + ") " + keys[i] + " = " + value);
         }
     }
+    $scope.getLength = function(obj) {
+    return Object.keys(obj).length;
+}
+$scope.roomsRequiredTenants = new Map();
+$scope.$watch('roomsRequiredTenants', function(value) {
+$scope.roomsRequiredTenantsLength = $scope.getLength($scope.roomsRequiredTenants);
+});   
 
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId), function(message) {
@@ -829,7 +839,19 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                     });
 
-
+                     chatSocket.subscribe("/app/chat/room.private/room_require_tenant".format($scope.chatUserId), function(message) {
+                        var body = JSON.parse(message.body);
+                        $scope.roomsRequiredTenants = body;
+                    });
+                     chatSocket.subscribe("/topic/chat/room.private/room_require_tenant.add".format($scope.chatUserId), function(message) {
+                        var roomsMap = JSON.parse(message.body);
+                       for (var key in roomsMap) {
+                      if (roomsMap.hasOwnProperty(key)) {
+                        $scope.roomsRequiredTenants[key]=roomsMap[key];
+                      }
+                    }
+                        
+                    });
 
 
                     chatSocket.subscribe("/topic/users/info", function(message) {

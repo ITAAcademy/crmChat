@@ -3,10 +3,8 @@ package com.intita.wschat.services;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -15,12 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatUser;
@@ -31,7 +27,6 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
 import com.intita.wschat.repositories.PrivateRoomInfoRepository;
 import com.intita.wschat.repositories.RoomRepository;
@@ -103,6 +98,67 @@ public class RoomsService {
 		if(info == null)
 			return null;
 		return info.getRoom();
+	}
+	/*
+	 * Check if room is private room where student online and trainer is not. Return trainer, which is
+	 * one of users. Return null if it doesn't match criteria.
+	 */
+	@Transactional
+	public ChatUser isRoomHasStudentWaitingForTrainer(Long roomId,ChatUser currentUser){
+		Room room = getRoom(roomId);
+	return isRoomHasStudentWaitingForTrainer(room,currentUser);
+	}
+	@Transactional
+	public ChatUser isRoomHasStudentWaitingForTrainer(Room room,ChatUser currentUser){
+		if (room.getType() == RoomType.PRIVATE){
+			PrivateRoomInfo privateRoomInfo = getPrivateRoomInfo(room);
+			ChatUser user1 = privateRoomInfo.getFirtsUser();
+			ChatUser user2 = privateRoomInfo.getSecondUser();
+			ChatUser tenantUser = null;
+			boolean isTrainerUser1 = false;
+			boolean isTrainerUser2 = false;
+			boolean isStudentUser1 = false;
+			boolean isStudentUser2 = false;
+			
+			boolean isCurrentUserIs1= false;
+			boolean isCurrentUserIs2 = false;
+			
+			User intitaUser1 = user1.getIntitaUser();
+			
+			if(userService.isTrainer(intitaUser1.getId())){
+				isTrainerUser1 = true;
+			}
+			if(userService.isStudent(intitaUser1.getId()) && !isTrainerUser1){
+				isStudentUser1 = true;
+			}
+			User intitaUser2 = user2.getIntitaUser();
+			if(userService.isTrainer(intitaUser2.getId())){
+				isTrainerUser2 = true;
+			}
+			if(userService.isStudent(intitaUser2.getId()) && !isTrainerUser2){
+				isStudentUser2 = true;
+			}
+			
+			if (currentUser.getId()==user1.getId()){
+				isCurrentUserIs1 = true;
+			}
+			if (currentUser.getId().equals(user2.getId())){
+				isCurrentUserIs2 = true;
+			}
+			ChatUser hasStudentAndTenant = null;
+			if ((isCurrentUserIs1 && isStudentUser1) || (isCurrentUserIs2 && isStudentUser2)){
+				if(isCurrentUserIs1){
+					hasStudentAndTenant =  isTrainerUser2 ? user2: null;
+				}
+				else if (isCurrentUserIs2){
+					hasStudentAndTenant = isTrainerUser1 ? user1 : null;
+				}
+			}
+			if(hasStudentAndTenant==null)return null;
+			if (isTrainerUser1 && !participantRepository.isOnline(user1.getId().toString())) return user1;
+			if (isTrainerUser2 && !participantRepository.isOnline(user2.getId().toString())) return user2;
+		}
+		return null;
 	}
 
 	@Transactional

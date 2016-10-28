@@ -38,6 +38,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -77,7 +78,9 @@ import com.intita.wschat.models.Course;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
+import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.OperationStatus.OperationType;
+import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
@@ -162,6 +165,7 @@ public class ChatController {
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
+	private HashMap<Long,Long> privateRoomsRequiredTenants = new HashMap<Long,Long>();//RoomId,ChatUserId of tenatn
 	public void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -436,13 +440,23 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
 		addFieldToInfoMap("newMessage", room);
 	}
-
+	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId){
+		privateRoomsRequiredTenants.put(roomId, chatUserTenantId);
+		HashMap<Long,Long> roomRequiredTenant = new HashMap<Long,Long>();
+		roomRequiredTenant.put(roomId,chatUserTenantId);
+		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_tenant.add", roomRequiredTenant);
+		log.info("added room ("+roomId+") required tenant "+chatUserTenantId);
+	}
+	@SubscribeMapping("/chat/room.private/room_require_tenant")
+	public HashMap<Long,Long> retrievePrivateRoomsRequiredTenantsSubscribeMapping(Principal principal) {
+		return privateRoomsRequiredTenants;
+	}
 
 	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessageWS(@DestinationVariable("room") Long room, @Payload ChatMessage message, Principal principal) {
+	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message, Principal principal) {
 		//System.out.println("ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG ZIGZAG");
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService, roomService);//Control room from LP
 		if(struct == null)
 			return null;
 
@@ -454,7 +468,11 @@ public class ChatController {
 		UserMessage messageToSave = filterMessageWithoutFakeObj(r, message, o_room);//filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
 		{
-			addMessageToBuffer(room, messageToSave);
+			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
+			if (tenantIsWaitedByCurrentUser!=null){
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId()); 
+			}
+			addMessageToBuffer(roomId, messageToSave);
 
 			OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
 			String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
@@ -464,15 +482,20 @@ public class ChatController {
 		return null;
 	}
 
-	@RequestMapping(value = "/{room}/chat/message", method = RequestMethod.POST)
+	@RequestMapping(value = "/{roomId}/chat/message", method = RequestMethod.POST)
 	@ResponseBody
-	public void filterMessageLP(@PathVariable("room") Long room,@RequestBody ChatMessage message, Principal principal) {
+	public void filterMessageLP(@PathVariable("roomId") Long roomId,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		UserMessage messageToSave = filterMessage(room, message, principal);
+		UserMessage messageToSave = filterMessage(roomId, message, principal);
+		
 		if (messageToSave!=null)
 		{
-			addMessageToBuffer(room, messageToSave);
-			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
+			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
+			if (tenantIsWaitedByCurrentUser!=null){
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId()); 
+			}
+			addMessageToBuffer(roomId, messageToSave);
+			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);
 		}
 	}
 
