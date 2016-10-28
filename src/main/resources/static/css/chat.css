@@ -1706,7 +1706,12 @@ input.cmn-toggle-yes-no:checked + label:after {
     line-height: 25px;
     opacity: .3;
     pointer-events: none;
-    -webkit-transition: opacity 0.5s,
+
+    -webkit-transition: opacity 0.5s, transform 0.5s ease-out;
+    -moz-transition: opacity 0.5s, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s, transform 0.5s ease-out;
+    transition: opacity 0.5s, transform 0.5s ease-out;
+     -webkit-transition: opacity 0.5s,
     transform 0.5s ease-out;
     -moz-transition: opacity 0.5s,
     transform 0.5s ease-out;
@@ -1714,4 +1719,12 @@ input.cmn-toggle-yes-no:checked + label:after {
     transform 0.5s ease-out;
     transition: opacity 0.5s,
     transform 0.5s ease-out;
+}
+.room_counter{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    text-align:center;
+    color:white;
 }

@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -263,11 +264,23 @@ public class RoomController {
 
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
+		
 
 		Integer role = 0;
-		if(user.getIntitaUser() != null && userService.isAdmin(user.getIntitaUser().getId()))
+		if(user.getIntitaUser() != null )
 		{
+			if (userService.isAdmin(user.getIntitaUser().getId()))
 			role |= ROLE.ADMIN;
+			//check if tenant
+			if (userService.isTenant(user.getIntitaUser().getId()))
+			result.put("isTenant", "true");
+			else 
+			result.put("isTenant", "false");
+			//check if trainer
+			if (userService.isTrainer(user.getIntitaUser().getId()))
+				result.put("isTrainer", "true");
+				else 
+				result.put("isTrainer", "false");
 		}
 		result.put("chat_user_role", role.toString());
 

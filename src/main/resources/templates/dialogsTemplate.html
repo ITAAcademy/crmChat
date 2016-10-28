@@ -10,7 +10,9 @@
                             <div ng-if="isUserTenant" class="switch dialog-icon dialog-filter-wraper free_tenant">
                                 <input id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no" type="checkbox" ng-checked="isTenantFree" ng-click="clickSetTenantFree()" />
                                 <label for="cmn-toggle-7" data-on="Вільний" data-off="Зайнятий"></label>
+                                   <span class="room_counter" ng-bind="roomsRequiredTenantsLength">rooms_required_tenants</span>
                             </div>
+
                             <!--
                             <div id="multiple1" class="multiple-select-wrapper config noveredmark dialog-filter-wraper">
                                 <span class="dialog-icon config glyphicon glyphicon-wrench"></span>
