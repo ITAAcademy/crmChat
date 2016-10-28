@@ -31,7 +31,7 @@
                                     <ul class="items-list">
                                         <li class="dlg-filter-li" ng-repeat="airline in Airlines" ng-click="airline.selected = !airline.selected">
                                             <input type="checkbox" ng-model="airline.selected" />
-                                            <img class= "icon" ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
+                                            <img class="icon" ng-src="{{airline.img}}" title="{{airline.name}}" alt="{{airline.name}}" />
                                             <span>{{airline.name}}</span>
                                         </li>
                                     </ul>
@@ -41,7 +41,13 @@
                                 <span class="dialog-icon filter glyphicon glyphicon-user" ng-click="updateFriends()"></span>
                                 <div class="list">
                                     <ul class="items-list">
-                                        <li class="dlg-filter-li chat chat-users"  ng-repeat="participant in friends | orderBy:'-username'" >
+                                        <li class="dlg-filter-li chat chat-users">
+                                            <div action="" class="search-form">
+                                                <label for="search" class="sr-only ">Search</label>
+                                                <input autocomplete="off" type="text" class="form-control display-block" name="search" id="search" ng-model="$parent.searchInputValue.email" ng-change="showSearchList(true)" placeholder="search" typeahead-wait-ms="1000" uib-typeahead="item for item in $parent.emails" typeahead-on-select="  onFriendClick($item)" typeahead-template-url="customSearch.html" />
+                                            </div>
+                                        </li>
+                                        <li class="dlg-filter-li chat chat-users" ng-repeat="participant in friends | orderBy:'-username'">
                                             <div class="user dialog">
                                                 <div class="avatar">
                                                     <a target="_blank" ng-if="participant.intitaUserId" ng-href="{{baseurl}}/profile/{{participant.intitaUserId}}">

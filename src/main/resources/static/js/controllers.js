@@ -353,18 +353,35 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.show_search_list_admin = false;
     }
 
-    $scope.showSearchList = function() {
+    $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
+        if (item == undefined || item == '')
+            return '';
+        var name = item.firstName + ' ' + item.secondName;
+        if (searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1 || name == null)
+            return item.email;
+        else
+            return name;
+    }
+
+
+    $scope.showSearchList = function(ignore) {
 
         $scope.show_search_list = true;
         $scope.emails = [];
         $timeout.cancel(getEmailsTimer);
+        var url;
+        if (ignore == true) {
+            url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
+        } else {
+            url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
+        }
 
         getEmailsTimer = $timeout(function() {
             $scope.show_search_list = true;
             // 
             var request = $http({
                 method: "get",
-                url: serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + $scope.currentRoom.roomId + "&eliminate_users_of_current_room=true", //'//get_users_like',
+                url: url,
                 data: null,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
@@ -487,17 +504,19 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         error(goToPrivateDialogErr);
     }
 
-    function addTenantToList(tenantObj){
-        for (var i = 0; i < $scope.tenants.length; i++){
-            if (tenantObj!=null && $scope.tenants[i]!=null && tenantObj.id == $scope.tenants[i].id) return; //tenant is already excist in list
+    function addTenantToList(tenantObj) {
+        for (var i = 0; i < $scope.tenants.length; i++) {
+            if (tenantObj != null && $scope.tenants[i] != null && tenantObj.id == $scope.tenants[i].id) return; //tenant is already excist in list
         }
-      $scope.tenants.push(tenantObj);
+        $scope.tenants.push(tenantObj);
     }
-        function removeTenantFromList(tenantObj){
-               for (var i = 0; i < $scope.tenants.length; i++){
-            if (tenantObj!=null && $scope.tenants[i]!=null && tenantObj.id == $scope.tenants[i].id) $scope.tenants.splice(i,1); //tenant is already excist in list
+
+    function removeTenantFromList(tenantObj) {
+        for (var i = 0; i < $scope.tenants.length; i++) {
+            if (tenantObj != null && $scope.tenants[i] != null && tenantObj.id == $scope.tenants[i].id) $scope.tenants.splice(i, 1); //tenant is already excist in list
         }
-        }
+    }
+
     function subscribeInfoUpdateLP() {
         // alert("subscribeInfoUpdateLP()");
         $http.post(serverPrefix + "/chat/global/lp/info")
@@ -529,22 +548,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
                     $rootScope.submitConsultation_processTenant(sendedConsultantId, roomId);
                 }
-                 if (data["tenants.add"] != null){
+                if (data["tenants.add"] != null) {
                     //TODO tenant addition to list
-                     var tenantObjs = data["tenants.add"];
-                    for (var i = 0; i < tenantObjs.length;i++ ){
-                      addTenantToList(tenantObjs[i]);  
+                    var tenantObjs = data["tenants.add"];
+                    for (var i = 0; i < tenantObjs.length; i++) {
+                        addTenantToList(tenantObjs[i]);
                     }
-                   
-                    
+
+
                 }
-                if (data["tenants.remove"] != null){
+                if (data["tenants.remove"] != null) {
                     //TODO renant removing from list
                     var tenantObjs = data["tenants.remove"];
-                      for (var i = 0; i < tenantObjs.length;i++ ){
-                           removeTenantFromList((tenantObjs[i]))
+                    for (var i = 0; i < tenantObjs.length; i++) {
+                        removeTenantFromList((tenantObjs[i]))
                     }
-              
+
                 }
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      
@@ -635,14 +654,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         if ($rootScope.socketSupport == false) {
             updateRooms(JSON.parse(mess_obj.chat_rooms));
-         
+
         } else {
             $rootScope.initIsUserTenant();
             $scope.rooms = JSON.parse(mess_obj.chat_rooms).list;
             $scope.roomsCount = $scope.rooms.length;
         }
-        $scope.tenants =  typeof mess_obj["tenants"]=="undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
-        $scope.friends =  typeof mess_obj["friends"]=="undefined" ? undefined : JSON.parse(mess_obj["friends"]);
+        $scope.tenants = typeof mess_obj["tenants"] == "undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
+        $scope.friends = typeof mess_obj["friends"] == "undefined" ? undefined : JSON.parse(mess_obj["friends"]);
         $rootScope.isInited = true;
 
         if (mess_obj.nextWindow == 0) {

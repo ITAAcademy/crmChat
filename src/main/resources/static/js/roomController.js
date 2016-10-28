@@ -54,8 +54,10 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
             });
     }
     $scope.onFriendClick = function(user) {
-        debugger;
-        window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+        if(user.chatUserId != undefined && user.chatUserId != null)
+            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+        else
+            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.id + '?isChatId=false');
     }
 
     $scope.onRoomItemClick = function(e, roomId) {
