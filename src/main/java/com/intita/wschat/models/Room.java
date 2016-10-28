@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -37,6 +38,10 @@ public class Room implements Serializable,Comparable<Room> {
 	@GeneratedValue
 	@JsonView(Views.Public.class)
 	private Long id;
+	
+	enum Capabilities{
+		SEE, WRITE, ADDREMOVE
+	}
 
 	@OneToMany(mappedBy = "room",fetch = FetchType.LAZY)
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
@@ -63,6 +68,9 @@ public class Room implements Serializable,Comparable<Room> {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
 
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "users", targetEntity = Room.class)
+	private Map<Capabilities, ChatUser> capabilities ;
+	
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();

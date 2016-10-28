@@ -397,7 +397,7 @@ margin-left:230px;
     position: relative;
 }
 
-.list .items-list li input {
+.list .items-list li input.search {
     padding-left: 10px;
     position: absolute;
     width: 100%;

@@ -40,7 +40,6 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@Transient
     private SessionFactory factory;
 	
-	
 	@OneToMany(mappedBy = "chatUser", fetch = FetchType.EAGER)
 	List<ChatUserLastRoomDate> chatUserLastRoomDate;
 
