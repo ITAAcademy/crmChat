@@ -771,9 +771,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.getLength = function(obj) {
     return Object.keys(obj).length;
 }
-$scope.roomsRequiredTenants = new Map();
-$scope.$watch('roomsRequiredTenants', function(value) {
-$scope.roomsRequiredTenantsLength = $scope.getLength($scope.roomsRequiredTenants);
+$scope.roomsRequiredTrainers = new Map();
+$scope.$watch('roomsRequiredTrainers', function(value) {
+$scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTrainers);
 });   
 
     function initForWS(reInit) {
@@ -858,17 +858,22 @@ $scope.roomsRequiredTenantsLength = $scope.getLength($scope.roomsRequiredTenants
 
                     });
 
-                     chatSocket.subscribe("/app/chat/room.private/room_require_tenant".format($scope.chatUserId), function(message) {
+                     chatSocket.subscribe("/app/chat/room.private/room_require_trainer".format($scope.chatUserId), function(message) {
                         var body = JSON.parse(message.body);
-                        $scope.roomsRequiredTenants = body;
+                        $scope.roomsRequiredTrainers = body;
                     });
-                     chatSocket.subscribe("/topic/chat/room.private/room_require_tenant.add".format($scope.chatUserId), function(message) {
+                     chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.add".format($scope.chatUserId), function(message) {
                         var roomsMap = JSON.parse(message.body);
                        for (var key in roomsMap) {
                       if (roomsMap.hasOwnProperty(key)) {
-                        $scope.roomsRequiredTenants[key]=roomsMap[key];
+                        $scope.roomsRequiredTrainers[key]=roomsMap[key];
                       }
                     }
+                        
+                    });
+                      chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.remove", function(message) {
+                        var idToRemove = JSON.parse(message.body);
+                        $scope.roomsRequiredTrainers.delete(idToRemove);
                         
                     });
 

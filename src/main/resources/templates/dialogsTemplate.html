@@ -10,7 +10,7 @@
                             <div ng-if="isUserTenant" class="switch dialog-icon dialog-filter-wraper free_tenant">
                                 <input id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no" type="checkbox" ng-checked="isTenantFree" ng-click="clickSetTenantFree()" />
                                 <label for="cmn-toggle-7" data-on="Вільний" data-off="Зайнятий"></label>
-                                   <span class="room_counter" ng-bind="roomsRequiredTenantsLength">rooms_required_tenants</span>
+                                   <span class="room_counter" ng-bind="roomsRequiredTrainersLength">rooms_required_tenants</span>
                             </div>
 
                             <!--
@@ -44,10 +44,10 @@
                                 <span class="dialog-icon glyphicon glyphicon-time" style="top:15px"></span>
                                 <div class="list">
                                     <ul class="items-list">
-                                       <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTenants">
+                                       <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTrainers">
                                        <b>{{key}}</b><!-- room id -->
                                        <span>Last message:{{value.lastMessage}}</span>
-                                       <span>Trainer:{{value.tenantChatId}}</span>
+                                       <span>Trainer:{{value.trainerChatId}}</span>
                                         </li>
                                     </ul>
                                 </div>

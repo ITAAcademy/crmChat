@@ -99,6 +99,7 @@ public class PresenceEventListener {
 		if (chatTenantService.isTenant(user.getId()))
 		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user, false));
 		chatController.propagateRemovingTenantFromListToTrainer(user);
+		chatController.tryRemoveChatUserRequiredTrainer(user.getId());
 		}
 		
 				
