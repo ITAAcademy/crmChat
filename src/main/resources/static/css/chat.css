@@ -1728,3 +1728,10 @@ input.cmn-toggle-yes-no:checked + label:after {
     text-align:center;
     color:white;
 }
+.rooms_demanded_trainer{
+    left:400px;
+    top: 15px;
+}
+.forum_controls{
+    display:inline-block;
+}
