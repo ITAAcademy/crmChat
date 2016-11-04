@@ -649,6 +649,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.isTrainer = Boolean(mess_obj.isTrainer);
         $scope.chatUserNickname = mess_obj.chat_user_nickname;
         $scope.chatUserRole = mess_obj.chat_user_role;
+        $scope.chatUserAvatar = mess_obj.chat_user_avatar
+        
 
         if (mess_obj.nextWindow == -1) {
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });

@@ -219,8 +219,8 @@ public class RoomController {
 			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
 				return null;
 		}
-
-		if(user.getIntitaUser() == null)
+		User iUser = user.getIntitaUser();
+		if(iUser == null)
 		{
 			Room room;
 			if(user.getChatUserLastRoomDate().iterator().hasNext()){
@@ -260,10 +260,12 @@ public class RoomController {
 		{
 			//subscribedtoRoomsUsersBuffer.add(user);
 			result.put("nextWindow", "0");
+			result.put("chat_user_avatar", iUser.getAvatar());
 		}
 
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
+		
 		
 
 		Integer role = 0;
@@ -520,7 +522,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
-		RoomModelSimple sb = new RoomModelSimple(0 , new Date().toString(), struct.getRoom(),userMessageService.getLastUserMessageByRoom(struct.getRoom()));
+		RoomModelSimple sb = new RoomModelSimple(struct.getUser(), 0 , new Date().toString(), struct.getRoom(),userMessageService.getLastUserMessageByRoom(struct.getRoom()));
 		return mapper.writeValueAsString(sb);
 	}
 
@@ -742,9 +744,12 @@ public class RoomController {
 
 	boolean removeUserFromRoomFully( ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor)
 	{
-		Long chatUserAuthorId = Long.parseLong(principal.getName());
-		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
-		if(room_o == null || user_o == null || user_o.getId().longValue() == room_o.getAuthor().getId().longValue() || (authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
+		ChatUser authorUser = chatUserServise.getChatUser(principal);
+		boolean haveNullObj = room_o == null || user_o == null;
+		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
+		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
+		boolean permitions = (room_o.getPermissions(authorUser) & Room.Permissions.REMOVE) == Room.Permissions.REMOVE;
+		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
 		}
@@ -823,10 +828,15 @@ public class RoomController {
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
-		if(room_o == null || user_o == null || (authorUser.getId().longValue() != room_o.getAuthor().getId().longValue() || !room_o.isActive()) && !ignoreAuthor)
+		boolean haveNullObj = room_o == null || user_o == null;
+		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
+		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
+		boolean permitions = (room_o.getPermissions(authorUser) & Room.Permissions.ADD) == Room.Permissions.ADD;
+		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
 		}
+
 		Set<Room> all = user_o.getRoomsFromUsers();
 		all.addAll(user_o.getRootRooms());
 		if(all.contains(room_o))

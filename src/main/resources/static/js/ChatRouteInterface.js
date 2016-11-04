@@ -1117,14 +1117,13 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             }
             var destination = "/app/{0}/chat.message".format(chatControllerScope.currentRoom.roomId);
             chatControllerScope.messageSended = false;
+            if(attaches == null)
+                attaches = [];
+
+            var msgObj = { message: textOfMessage, username: chatControllerScope.chatUserNickname, attachedFiles: attaches, chatUserAvatar: chatControllerScope.chatUserAvatar };
             if ($rootScope.socketSupport == true) {
-                if ($scope.sendTo != "everyone") {
-                    destination = "/app/{0}chat.private.".format(chatControllerScope.currentRoom.roomId) + $scope.sendTo;
-                    calcPositionPush({ message: textOfMessage, username: 'you', priv: true, to: $scope.sendTo }); //POP
-                }
-                chatSocket.send(destination, {}, JSON.stringify({ message: textOfMessage, username: chatControllerScope.chatUserNickname, attachedFiles: attaches }));
-
-
+                
+                chatSocket.send(destination, {}, JSON.stringify(msgObj));
                 var myFunc = function() {
                     if (angular.isDefined(sendingMessage)) {
                         $timeout.cancel(sendingMessage);
@@ -1138,7 +1137,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 sendingMessage = $timeout(myFunc, 2000);
             } else {
 
-                $http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), { message: textOfMessage, username: chatControllerScope.chatUserNickname, attachedFiles: attaches }).
+                $http.post(serverPrefix + "/{0}/chat/message".format(chatControllerScope.currentRoom.roomId), msgObj).
                 success(function(data, status, headers, config) {
                     console.log("MESSAGE SEND OK " + data);
                     chatControllerScope.messageSended = true;
@@ -1317,8 +1316,12 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
     $scope.checkUserAdditionPermission = function() {
+        var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;
+      //  console.log("TEST" + (chatControllerScope.currentRoom.userPermissions & needPrivilege) == needPrivilege);
+      var havePermitions = chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId;
+      havePermitions = havePermitions || (chatControllerScope.currentRoom.userPermissions & needPrivilege) == needPrivilege
         if (typeof chatControllerScope.currentRoom === "undefined") return false;
-        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && (chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId) && chatControllerScope.isMyRoom && $rootScope.authorize;
+        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && chatControllerScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
 

@@ -44,20 +44,22 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
 
 
     }
-    $scope.updateFriends = function() { 
-        $http.post(serverPrefix + "/chat/user/friends").
-            success(function(data, status, headers, config) {
-                $scope.friends = data;
-            }).
-            error(function(data, status, headers, config) {
-                toaster.pop('error', "Error", "server request timeout", 1000);
-            });
+    $scope.updateFriends = function() {
+        $http({
+            method: 'POST',
+            url: serverPrefix + "/chat/user/friends"
+        }).
+        then(function(data, status, headers, config) {
+            $scope.friends = data.data;
+        }, function(data, status, headers, config) {
+            toaster.pop('error', "Error", "server request timeout", 1000);
+        });
     }
     $scope.onFriendClick = function(user) {
-        if(user.chatUserId != undefined && user.chatUserId != null)
-            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+        if (user.chatUserId != undefined && user.chatUserId != null)
+            window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
         else
-            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.id + '?isChatId=false');
+            window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.id + '?isChatId=false');
     }
 
     $scope.onRoomItemClick = function(e, roomId) {
