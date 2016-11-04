@@ -165,7 +165,7 @@ public class ChatController {
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
-	private HashMap<Long,Long> privateRoomsRequiredTenants = new HashMap<Long,Long>();//RoomId,ChatUserId of tenatn
+	private HashMap<Long,HashMap<String,String>> privateRoomsRequiredTenants = new HashMap<>();//RoomId,ChatUserId of tenatn
 	public void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -440,15 +440,18 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
 		addFieldToInfoMap("newMessage", room);
 	}
-	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId){
-		privateRoomsRequiredTenants.put(roomId, chatUserTenantId);
-		HashMap<Long,Long> roomRequiredTenant = new HashMap<Long,Long>();
-		roomRequiredTenant.put(roomId,chatUserTenantId);
+	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId,String lastMessage){
+		HashMap<String,String> demandedRoomExtraData = new HashMap<String,String>();
+		demandedRoomExtraData.put("tenantChatId", chatUserTenantId.toString());
+		demandedRoomExtraData.put("lastMessage", lastMessage);
+		privateRoomsRequiredTenants.put(roomId, demandedRoomExtraData);
+		HashMap<Long,HashMap<String,String>> roomRequiredTenant = new HashMap<>();
+		roomRequiredTenant.put(roomId,demandedRoomExtraData);
 		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_tenant.add", roomRequiredTenant);
 		log.info("added room ("+roomId+") required tenant "+chatUserTenantId);
 	}
 	@SubscribeMapping("/chat/room.private/room_require_tenant")
-	public HashMap<Long,Long> retrievePrivateRoomsRequiredTenantsSubscribeMapping(Principal principal) {
+	public HashMap<Long,HashMap<String,String>> retrievePrivateRoomsRequiredTenantsSubscribeMapping(Principal principal) {
 		return privateRoomsRequiredTenants;
 	}
 
@@ -470,7 +473,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
@@ -491,7 +494,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);

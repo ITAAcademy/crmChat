@@ -39,6 +39,21 @@
                                     </ul>
                                 </div>
                             </div>
+                            <!-- ROOMS REMANDED TRAINER -->
+                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper rooms_demanded_trainer">
+                                <span class="dialog-icon glyphicon glyphicon-time" style="top:15px"></span>
+                                <div class="list">
+                                    <ul class="items-list">
+                                       <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTenants">
+                                       <b>{{key}}</b><!-- room id -->
+                                       <span>Last message:{{value.lastMessage}}</span>
+                                       <span>Trainer:{{value.tenantChatId}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- /ROOMS REMANDED TRAINER -->
+
                             <div class="multiple-select-wrapper noveredmark dialog-filter-wraper friend">
                                 <span class="dialog-icon filter glyphicon glyphicon-user" ng-click="updateFriends()"></span>
                                 <div class="list">
