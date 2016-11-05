@@ -594,7 +594,7 @@ public class RoomController {
 			return "redirect:/";
 		}
 	}
-
+	
 	@RequestMapping(value="/chat/go/rooms/private/{userId}", method=RequestMethod.GET)
 	public String goPrivateRoom(@PathVariable Long userId, @RequestParam(required = false, name = "isChatId") Boolean isChatId,   Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);

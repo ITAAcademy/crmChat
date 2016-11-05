@@ -1,5 +1,6 @@
 package com.intita.wschat.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
@@ -23,4 +24,5 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 		//disable CSRF for websockets for now...
 		return true;
 	}
+
 }

@@ -112,8 +112,11 @@ public class RoomsService {
 	public ChatUser isRoomHasStudentWaitingForTrainer(Room room,ChatUser currentUser){
 		if (room.getType() == RoomType.PRIVATE){
 			PrivateRoomInfo privateRoomInfo = getPrivateRoomInfo(room);
-			ChatUser user1 = privateRoomInfo.getFirtsUser();
-			ChatUser user2 = privateRoomInfo.getSecondUser();
+			ChatUser chatUser1 = privateRoomInfo.getFirtsUser();
+			ChatUser chatUser2 = privateRoomInfo.getSecondUser();
+			User user1 = chatUser1.getIntitaUser();
+			User user2 = chatUser2.getIntitaUser();
+			
 			ChatUser tenantUser = null;
 			boolean isTrainerUser1 = false;
 			boolean isTrainerUser2 = false;
@@ -122,41 +125,40 @@ public class RoomsService {
 			
 			boolean isCurrentUserIs1= false;
 			boolean isCurrentUserIs2 = false;
-			
-			User intitaUser1 = user1.getIntitaUser();
-			
-			if(userService.isTrainer(intitaUser1.getId())){
+
+			User trainerOfUser1 =(user1==null)? null : userService.getTrainer(user1.getId());
+			User trainerOfUser2 =(user2==null)? null : userService.getTrainer(user2.getId());
+			if(user1.equals(trainerOfUser2)){
 				isTrainerUser1 = true;
 			}
-			if(userService.isStudent(intitaUser1.getId()) && !isTrainerUser1){
-				isStudentUser1 = true;
-			}
-			User intitaUser2 = user2.getIntitaUser();
-			if(userService.isTrainer(intitaUser2.getId())){
+			if(user2.equals(trainerOfUser1)){
 				isTrainerUser2 = true;
 			}
-			if(userService.isStudent(intitaUser2.getId()) && !isTrainerUser2){
+			if(userService.isStudent(user1.getId()) && !isTrainerUser1){
+				isStudentUser1 = true;
+			}
+			if(userService.isStudent(user2.getId()) && !isTrainerUser2){
 				isStudentUser2 = true;
 			}
 			
-			if (currentUser.getId()==user1.getId()){
+			if (currentUser.getId()==chatUser1.getId()){
 				isCurrentUserIs1 = true;
 			}
-			if (currentUser.getId().equals(user2.getId())){
+			if (currentUser.getId().equals(chatUser2.getId())){
 				isCurrentUserIs2 = true;
 			}
 			ChatUser hasStudentAndTenant = null;
 			if ((isCurrentUserIs1 && isStudentUser1) || (isCurrentUserIs2 && isStudentUser2)){
 				if(isCurrentUserIs1){
-					hasStudentAndTenant =  isTrainerUser2 ? user2: null;
+					hasStudentAndTenant =  isTrainerUser2 ? chatUser2: null;
 				}
 				else if (isCurrentUserIs2){
-					hasStudentAndTenant = isTrainerUser1 ? user1 : null;
+					hasStudentAndTenant = isTrainerUser1 ? chatUser1 : null;
 				}
 			}
 			if(hasStudentAndTenant==null)return null;
-			if (isTrainerUser1 && !participantRepository.isOnline(user1.getId().toString())) return user1;
-			if (isTrainerUser2 && !participantRepository.isOnline(user2.getId().toString())) return user2;
+			if (isTrainerUser1 && !participantRepository.isOnline(chatUser1.getId().toString())) return chatUser1;
+			if (isTrainerUser2 && !participantRepository.isOnline(chatUser2.getId().toString())) return chatUser2;
 		}
 		return null;
 	}

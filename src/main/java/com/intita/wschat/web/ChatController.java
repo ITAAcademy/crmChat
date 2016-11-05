@@ -164,9 +164,9 @@ public class ChatController {
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
-	private HashMap<Long,HashMap<String,String>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
-	public  void tryRemoveChatUserRequiredTrainer(Long chatUserId){
-		Long roomId = getRoomOfChatUserRequiredTrainer(chatUserId);
+	private HashMap<Long,HashMap<String,Object>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
+	public  void tryRemoveChatUserRequiredTrainer(ChatUser chatUser){
+		Long roomId = getRoomOfChatUserRequiredTrainer(chatUser);
 		if (roomId != null){
 			removePrivateRoomRequiredTrainerFromList(roomId);
 		}
@@ -178,12 +178,12 @@ public class ChatController {
 	public void removePrivateRoomRequiredTrainerFromList(Long roomId){
 		privateRoomsRequiredTrainers.remove(roomId);
 	}
-	public Long getRoomOfChatUserRequiredTrainer(Long chatUserId){
+	public Long getRoomOfChatUserRequiredTrainer(ChatUser chatUser){
 		Iterator it = privateRoomsRequiredTrainers.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
-	        HashMap<String,String> extraData = (HashMap<String, String>) pair.getValue();
-	        if (extraData.get("chatUserId").equals(chatUserId.toString()))
+	        HashMap<String,Object> extraData = (HashMap<String, Object>) pair.getValue();
+	        if (((LoginEvent)extraData.get("student")).getChatUserId().equals(chatUser.getId()))
 	        	return (Long) pair.getKey();
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
@@ -199,17 +199,18 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
-	public boolean tryAddTenantInListToTrainerLP(String chatId){
-		Long id = Long.parseLong(chatId);
-		return tryAddTenantInListToTrainerLP(id);		
+	public boolean tryAddTenantInListToTrainerLP(Long chatUserId){
+	ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
+	return tryAddTenantInListToTrainerLP(chatUser);
 	}
-	public boolean tryAddTenantInListToTrainerLP(Long userId){
-		if(!chatTenantService.isTenant(userId)){
+	public boolean tryAddTenantInListToTrainerLP(ChatUser chatUser){
+		User user = chatUser.getIntitaUser();
+		if (user==null) return false;
+		if(!chatTenantService.isTenant(user.getId())){
 			return false;
 		}
-		ChatUser user = chatUsersService.getChatUser(userId);
 		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
-		users.add(user);
+		users.add(chatUser);
 		propagateAdditionTenantsToList(users);
 		return true;
 	}
@@ -463,19 +464,20 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
 		addFieldToInfoMap("newMessage", room);
 	}
-	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId,Long chatUserId,String lastMessage){
-		HashMap<String,String> demandedRoomExtraData = new HashMap<String,String>();
-		demandedRoomExtraData.put("trainerChatId", chatUserTenantId.toString());
-		demandedRoomExtraData.put("studentChatId", chatUserId.toString());
+	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
+		HashMap<String,Object> demandedRoomExtraData = new HashMap<String,Object>();
+		demandedRoomExtraData.put("trainer", new LoginEvent(chatUserTrainer,false));
+		LoginEvent studentLE = new LoginEvent(chatUser,false);
+		demandedRoomExtraData.put("student", studentLE);
 		demandedRoomExtraData.put("lastMessage", lastMessage);
 		privateRoomsRequiredTrainers.put(roomId, demandedRoomExtraData);
-		HashMap<Long,HashMap<String,String>> roomRequiredTenant = new HashMap<>();
+		HashMap<Long,HashMap<String,Object>> roomRequiredTenant = new HashMap<>();
 		roomRequiredTenant.put(roomId,demandedRoomExtraData);
 		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", roomRequiredTenant);
-		log.info("added room ("+roomId+") required trainer "+chatUserTenantId);
+		log.info("added room ("+roomId+") required trainer "+chatUserTrainer.getId());
 	}
 	@SubscribeMapping("/chat/room.private/room_require_trainer")
-	public HashMap<Long,HashMap<String,String>> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
+	public HashMap<Long,HashMap<String,Object>> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
 		return privateRoomsRequiredTrainers;
 	}
 
@@ -486,8 +488,8 @@ public class ChatController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService, roomService);//Control room from LP
 		if(struct == null)
 			return null;
-
-		ChatUser r = new ChatUser(Long.parseLong(principal.getName()));//chatUsersService.isMyRoom(roomStr, principal.getName());
+		Long currentChatUserId = Long.parseLong(principal.getName());
+		ChatUser r = chatUsersService.getChatUser(currentChatUserId); //chatUsersService.isMyRoom(roomStr, principal.getName());
 		if(r == null)
 			return null;
 
@@ -497,7 +499,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),r.getId(),message.getMessage()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,r,message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
@@ -519,7 +521,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),chatUser.getId(),message.getMessage()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,chatUser,message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);

@@ -52,7 +52,7 @@ public class ParticipantRepository {
 		}
 		else{
 			activeSessions.put(chatId, new LongpollPresence());
-			chatController.tryAddTenantInListToTrainerLP(chatId);
+			chatController.tryAddTenantInListToTrainerLP(Long.parseLong(chatId));
 			//log.info(String.format("Participant %s presence added first time ",chatId));
 		}
 			//System.out.println("user "+chatId+" enter chat");

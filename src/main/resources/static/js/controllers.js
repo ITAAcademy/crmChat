@@ -774,7 +774,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 $scope.roomsRequiredTrainers = new Map();
 $scope.$watch('roomsRequiredTrainers', function(value) {
 $scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTrainers);
-});   
+},true);   
 
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId), function(message) {
@@ -873,7 +873,7 @@ $scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTraine
                     });
                       chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.remove", function(message) {
                         var idToRemove = JSON.parse(message.body);
-                        $scope.roomsRequiredTrainers.delete(idToRemove);
+                        delete $scope.roomsRequiredTrainers[idToRemove];
                         
                     });
 

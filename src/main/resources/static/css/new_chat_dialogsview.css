@@ -384,6 +384,7 @@ margin-left:230px;
     width: 100%;
     padding: 0;
     margin: 0;
+    overflow:hidden;
 }
 
 .list .items-list li {
