@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -78,9 +79,7 @@ import com.intita.wschat.models.Course;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.OperationStatus;
-import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.OperationStatus.OperationType;
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
@@ -165,7 +164,31 @@ public class ChatController {
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
-	private HashMap<Long,HashMap<String,String>> privateRoomsRequiredTenants = new HashMap<>();//RoomId,ChatUserId of tenatn
+	private HashMap<Long,HashMap<String,String>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
+	public  void tryRemoveChatUserRequiredTrainer(Long chatUserId){
+		Long roomId = getRoomOfChatUserRequiredTrainer(chatUserId);
+		if (roomId != null){
+			removePrivateRoomRequiredTrainerFromList(roomId);
+		}
+		if (roomId!=null){
+			String subscriptionStr = "/topic/chat/room.private/room_require_trainer.remove";
+			simpMessagingTemplate.convertAndSend(subscriptionStr,roomId);
+		}
+	}
+	public void removePrivateRoomRequiredTrainerFromList(Long roomId){
+		privateRoomsRequiredTrainers.remove(roomId);
+	}
+	public Long getRoomOfChatUserRequiredTrainer(Long chatUserId){
+		Iterator it = privateRoomsRequiredTrainers.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        HashMap<String,String> extraData = (HashMap<String, String>) pair.getValue();
+	        if (extraData.get("chatUserId").equals(chatUserId.toString()))
+	        	return (Long) pair.getKey();
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    return null;
+	}
 	public void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -440,19 +463,20 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
 		addFieldToInfoMap("newMessage", room);
 	}
-	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId,String lastMessage){
+	private void addRoomRequiredTenant(Long roomId,Long chatUserTenantId,Long chatUserId,String lastMessage){
 		HashMap<String,String> demandedRoomExtraData = new HashMap<String,String>();
-		demandedRoomExtraData.put("tenantChatId", chatUserTenantId.toString());
+		demandedRoomExtraData.put("trainerChatId", chatUserTenantId.toString());
+		demandedRoomExtraData.put("studentChatId", chatUserId.toString());
 		demandedRoomExtraData.put("lastMessage", lastMessage);
-		privateRoomsRequiredTenants.put(roomId, demandedRoomExtraData);
+		privateRoomsRequiredTrainers.put(roomId, demandedRoomExtraData);
 		HashMap<Long,HashMap<String,String>> roomRequiredTenant = new HashMap<>();
 		roomRequiredTenant.put(roomId,demandedRoomExtraData);
-		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_tenant.add", roomRequiredTenant);
-		log.info("added room ("+roomId+") required tenant "+chatUserTenantId);
+		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", roomRequiredTenant);
+		log.info("added room ("+roomId+") required trainer "+chatUserTenantId);
 	}
-	@SubscribeMapping("/chat/room.private/room_require_tenant")
-	public HashMap<Long,HashMap<String,String>> retrievePrivateRoomsRequiredTenantsSubscribeMapping(Principal principal) {
-		return privateRoomsRequiredTenants;
+	@SubscribeMapping("/chat/room.private/room_require_trainer")
+	public HashMap<Long,HashMap<String,String>> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
+		return privateRoomsRequiredTrainers;
 	}
 
 	@MessageMapping("/{room}/chat.message")
@@ -473,7 +497,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),message.getMessage()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),user.getId(),message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
@@ -490,11 +514,12 @@ public class ChatController {
 	public void filterMessageLP(@PathVariable("roomId") Long roomId,@RequestBody ChatMessage message, Principal principal) {
 		//checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		UserMessage messageToSave = filterMessage(roomId, message, principal);
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
 		if (messageToSave!=null)
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),message.getMessage()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser.getId(),chatUser.getId(),message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);
