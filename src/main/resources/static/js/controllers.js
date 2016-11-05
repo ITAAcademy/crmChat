@@ -356,8 +356,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
         if (item == undefined || item == '')
             return '';
-        var name = item.firstName + ' ' + item.secondName;
-        if (searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1 || name == null)
+        var name = '';// = item.firstName + ' ' + item.secondName;
+        if(item.firstName != null)
+            name += item.firstName + ' ';
+        if(item.secondName != null)
+            name += item.secondName;
+
+        if ((searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1) || name == null || name == ' ')
             return item.email;
         else
             return name;
@@ -649,6 +654,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.isTrainer = Boolean(mess_obj.isTrainer);
         $scope.chatUserNickname = mess_obj.chat_user_nickname;
         $scope.chatUserRole = mess_obj.chat_user_role;
+        $scope.chatUserAvatar = mess_obj.chat_user_avatar
+        
 
         if (mess_obj.nextWindow == -1) {
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });

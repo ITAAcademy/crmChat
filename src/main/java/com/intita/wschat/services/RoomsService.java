@@ -50,7 +50,6 @@ public class RoomsService {
 	@PostConstruct
 	@Transactional
 	public void createDefRoom() {
-
 	}
 
 	@Transactional
@@ -89,7 +88,10 @@ public class RoomsService {
 	}
 	@Transactional
 	public PrivateRoomInfo getPrivateRoomInfo(Room room) {
-		return privateRoomInfoRepo.findByRoom(room);
+		PrivateRoomInfo info = privateRoomInfoRepo.findByRoom(room);
+		if(info == null && room.getType() == Room.RoomType.PRIVATE)
+			throw(new NullPointerException());
+		return info;
 	}
 
 	@Transactional
@@ -106,7 +108,7 @@ public class RoomsService {
 	@Transactional
 	public ChatUser isRoomHasStudentWaitingForTrainer(Long roomId,ChatUser currentUser){
 		Room room = getRoom(roomId);
-	return isRoomHasStudentWaitingForTrainer(room,currentUser);
+		return isRoomHasStudentWaitingForTrainer(room,currentUser);
 	}
 	@Transactional
 	public ChatUser isRoomHasStudentWaitingForTrainer(Room room,ChatUser currentUser){
@@ -122,7 +124,7 @@ public class RoomsService {
 			boolean isTrainerUser2 = false;
 			boolean isStudentUser1 = false;
 			boolean isStudentUser2 = false;
-			
+
 			boolean isCurrentUserIs1= false;
 			boolean isCurrentUserIs2 = false;
 
@@ -140,8 +142,9 @@ public class RoomsService {
 			if(userService.isStudent(user2.getId()) && !isTrainerUser2){
 				isStudentUser2 = true;
 			}
-			
+
 			if (currentUser.getId()==chatUser1.getId()){
+
 				isCurrentUserIs1 = true;
 			}
 			if (currentUser.getId().equals(chatUser2.getId())){
@@ -395,7 +398,7 @@ public class RoomsService {
 
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
-			RoomModelSimple sb = new RoomModelSimple(messages_cnt , date.toString(),
+			RoomModelSimple sb = new RoomModelSimple(currentUser, messages_cnt , date.toString(),
 					entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
 			result.add(sb);
 		}

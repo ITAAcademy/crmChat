@@ -2,23 +2,32 @@ package com.intita.wschat.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -34,13 +43,27 @@ import jsonview.Views;
  */
 @Entity(name="ChatRoom")
 public class Room implements Serializable,Comparable<Room> {
+	
+	@PrePersist
+	public void prePersist(){
+	    this.permissions = new HashMap<ChatUser, Integer>(); //after changing lastName to int.
+	}
+	
 	@Id
 	@GeneratedValue
 	@JsonView(Views.Public.class)
 	private Long id;
-	
-	enum Capabilities{
-		SEE, WRITE, ADDREMOVE
+
+	public static class Permissions{
+		
+		public static final int ADD = 1;
+		public static final int REMOVE = 2;
+		public static Map<String, Integer> getSupported(){
+			Map<String, Integer> aMap = new HashMap<>();
+			aMap.put("ADD", ADD);
+			aMap.put("REMOVE", REMOVE);
+			return aMap;
+		}
 	}
 
 	@OneToMany(mappedBy = "room",fetch = FetchType.LAZY)
@@ -68,13 +91,16 @@ public class Room implements Serializable,Comparable<Room> {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "users", targetEntity = Room.class)
-	private Map<Capabilities, ChatUser> capabilities ;
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy="users", targetEntity = Room.class, cascade = CascadeType.ALL)
+	private Map<ChatUser, Integer> permissions ;
 	
+	//@JoinColumn(name="permissions_key", referencedColumnName="permissions", columnDefinition = "int default 0", table = "chat_room_users")
+	
+
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
 	List<BotAnswer> botAnswers = new ArrayList<BotAnswer>();
-	
+
 	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "room")
 	PrivateRoomInfo privateInfo;
@@ -89,6 +115,27 @@ public class Room implements Serializable,Comparable<Room> {
 	/*
 	 * GET/SET
 	 */
+
+	public Integer getPermissions(ChatUser user)
+	{
+		if(user == null || permissions == null || permissions.get(user) == null)
+			return 0;
+		return permissions.get(user);
+	}
+
+	public Integer addPermissions(ChatUser user, int allow)
+	{
+		Integer res =  permissions.get(user) + allow;
+		permissions.put(user, res);
+		return res;
+
+	}
+	public Integer removeCapabilities(ChatUser user, int deny)
+	{
+		Integer res =  permissions.get(user) - deny;
+		permissions.put(user, res);
+		return res;
+	}
 
 	public int getParticipantsCount(){
 		return users.size()+1; //+1 because author is also participants;

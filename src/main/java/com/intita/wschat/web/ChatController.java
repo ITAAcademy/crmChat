@@ -488,18 +488,20 @@ public class ChatController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService, roomService);//Control room from LP
 		if(struct == null)
 			return null;
+
 		Long currentChatUserId = Long.parseLong(principal.getName());
-		ChatUser r = chatUsersService.getChatUser(currentChatUserId); //chatUsersService.isMyRoom(roomStr, principal.getName());
-		if(r == null)
+		ChatUser user = chatUsersService.getChatUser(currentChatUserId); //chatUsersService.isMyRoom(roomStr, principal.getName());
+		if(user == null)
+
 			return null;
 
 		Room o_room = struct.getRoom();
-		UserMessage messageToSave = filterMessageWithoutFakeObj(r, message, o_room);//filterMessage(roomStr, message, principal);
+		UserMessage messageToSave = filterMessageWithoutFakeObj(user, message, o_room);//filterMessage(roomStr, message, principal);
 		if (messageToSave!=null)
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,r,message.getMessage()); 
+				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,user,message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
@@ -691,7 +693,7 @@ public class ChatController {
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 		
-		return new RoomModelSimple(0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
+		return new RoomModelSimple(struct.user, 0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
 	}
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
@@ -1123,7 +1125,7 @@ public class ChatController {
 		//777
 	}
 
-	public void addLocolization(Model model,ChatUser currentUser)
+	public void addLocolizationAndConfigParam(Model model,ChatUser currentUser)
 	{
 		String lang = getCurrentLang();
 		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
@@ -1132,6 +1134,7 @@ public class ChatController {
 		configMap.put("currentLang", lang);
 		model.addAttribute("config", configMap);
 		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases(currentUser));
+		model.addAttribute("user_copabilities_supported", Room.Permissions.getSupported());
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
@@ -1144,7 +1147,7 @@ public class ChatController {
 			return "redirect:"+ before;
 		}
 		if(auth != null)
-			addLocolization(model, chatUsersService.getChatUser(auth));
+			addLocolizationAndConfigParam(model, chatUsersService.getChatUser(auth));
 		return "index";
 	}
 
@@ -1159,7 +1162,7 @@ public class ChatController {
 			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
-		addLocolization(model,chatUsersService.getChatUser((principal)));
+		addLocolizationAndConfigParam(model,chatUsersService.getChatUser((principal)));
 		return getTeachersTemplate(request, "consultationTemplate", model,principal);
 	}	
 	@RequestMapping(value="/chatTemplate.html", method = RequestMethod.GET)
@@ -1176,7 +1179,7 @@ public class ChatController {
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Principal principal) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
-		addLocolization(model,chatUsersService.getChatUser(principal));
+		addLocolizationAndConfigParam(model,chatUsersService.getChatUser(principal));
 		return page;
 	}
 

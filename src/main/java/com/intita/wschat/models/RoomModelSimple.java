@@ -46,6 +46,7 @@ public class RoomModelSimple {
 	public Date lastMessageDate;
 	public int participantsCount;
 	public String avatars[];
+	Integer userCapabilities;
 
 	public short getType() {
 		return type;
@@ -78,7 +79,15 @@ public class RoomModelSimple {
 		avatars = new String[4];
 	}
 
-	public RoomModelSimple(Integer nums, String date,Room room,UserMessage lastMessage) {
+	public Integer getUserCapabilities() {
+		return userCapabilities;
+	}
+
+	public void setUserCapabilities(int userCapabilities) {
+		this.userCapabilities = userCapabilities;
+	}
+
+	public RoomModelSimple(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
 		this.string = room.getName();
 		this.nums = nums;
 		this.date = date;
@@ -99,7 +108,7 @@ public class RoomModelSimple {
 		}
 		this.participantsCount = room.getParticipantsCount();
 		this.avatars = generateMultiImageLinks(room);
-
+		this.userCapabilities = room.getPermissions(user);
 	}
 	public String[]	generateMultiImageLinks(Room room){
 		Set<ChatUser> roomUsers = room.getUsers();

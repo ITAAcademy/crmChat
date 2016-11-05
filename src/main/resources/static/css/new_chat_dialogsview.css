@@ -249,6 +249,7 @@ margin-left:230px;
     color: white;
     width: 50px;
     height: 100%;
+    text-align: center;
 }
 
 .multiple-select-wrapper.config {
@@ -289,7 +290,7 @@ margin-left:230px;
 @media(min-width:1200px) {}
 
 .dialog-icon {
-    position: absolute;
+    position: relative;
     display: inline-block;
     font-family: 'Glyphicons Halflings';
     font-style: normal;
@@ -301,7 +302,7 @@ margin-left:230px;
 
 .dialog-icon.filter {
     top: 13px;
-    left: 10px;
+    /* left: 10px; */
 }
 
 .dialog-icon.friends {
@@ -315,6 +316,7 @@ margin-left:230px;
 }
 
 .dialog-icon.free_tenant {
+    position: absolute;
     top: 0px;
     /*right: 90px;*/
     right: 90px;
@@ -396,6 +398,7 @@ margin-left:230px;
     min-height: 45px;
     background-color: #fff;
     position: relative;
+    text-align: justify;
 }
 
 .list .items-list li input.search {
