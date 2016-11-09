@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
@@ -110,6 +112,7 @@ public class RoomController {
 
 	@Autowired private BotCategoryService botCategoryService;
 	@Autowired private BotController botController;
+	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
 
 
 	public static class ROLE
@@ -129,6 +132,7 @@ public class RoomController {
 	@PostConstruct
 	private void postFunction()
 	{
+		flyWayStategy.getFlyway().migrate();
 		//configService.getParam("chatBotEnable");
 	}
 

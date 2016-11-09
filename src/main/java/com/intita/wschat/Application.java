@@ -4,16 +4,20 @@ import java.util.concurrent.Executor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.sql.DataSource;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
+import org.flywaydb.core.Flyway;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.trace.WebSocketTraceChannelInterceptor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -21,7 +25,9 @@ import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomize
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestContextListener;
@@ -30,6 +36,7 @@ import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 
 @SpringBootApplication
 @EnableAutoConfiguration
+@Configuration
 @Import({WebSocketTraceChannelInterceptor.class, WebSocketTraceChannelInterceptorAutoConfiguration.class})
 //@ComponentScan("org.springframework.boot.actuate.trace")
 public class Application extends SpringBootServletInitializer  implements AsyncConfigurer  {
@@ -54,6 +61,7 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
     @Override public void onStartup( ServletContext servletContext ) throws ServletException {
         super.onStartup( servletContext );
         servletContext.addListener( new RequestContextListener() ); 
+
     }
     
 	@Override
@@ -69,6 +77,7 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return new SimpleAsyncUncaughtExceptionHandler();
     }
+    
     @Value("${ssl.path}")
     String keystoreFile;
     @Value("${ssl.pass}")
