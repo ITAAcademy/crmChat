@@ -44,7 +44,7 @@
                                 <span class="dialog-icon glyphicon glyphicon-time" style="top:15px"></span>
                                 <div class="list">
                                     <ul class="items-list">
-                                       <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTrainers">
+                                       <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTrainers" ng-click="confirmToHelp(key)">
                                        <span><b>{{value.student.username}}</b>:{{value.lastMessage}}</span>
                                         </li>
                                     </ul>

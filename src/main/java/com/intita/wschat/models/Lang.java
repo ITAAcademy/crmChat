@@ -36,7 +36,7 @@ public class Lang implements Serializable,Comparable<ChatUser> {
 	private String lang;
 
 	@NotBlank
-	@Column(unique = false)
+	@Column(unique = false, columnDefinition="TEXT")
 	private String map;
 
 	@Override

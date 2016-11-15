@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.web.ChatController;
 @Component
@@ -15,7 +16,10 @@ public class RoomModelSimple {
 	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
 	final int MULTI_IMAGE_MAX_IMAGE_COUNT = 4;
 	final String NO_AVATAR_IMAGE_NAME = "noname.png";
+	
 	@Autowired UserMessageService userMessageService;
+	@Autowired RoomsService roomService;
+	
 	public Long getRoomAuthorId() {
 		return roomAuthorId;
 	}
@@ -108,7 +112,7 @@ public class RoomModelSimple {
 		}
 		this.participantsCount = room.getParticipantsCount();
 		this.avatars = generateMultiImageLinks(room);
-		this.userCapabilities = room.getPermissions(user);
+		this.userCapabilities = roomService.getPermissions(room, user);
 	}
 	public String[]	generateMultiImageLinks(Room room){
 		Set<ChatUser> roomUsers = room.getUsers();

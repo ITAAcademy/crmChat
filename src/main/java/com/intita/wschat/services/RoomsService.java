@@ -3,6 +3,7 @@ package com.intita.wschat.services;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +27,11 @@ import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
+import com.intita.wschat.models.RoomPermitions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
 import com.intita.wschat.repositories.PrivateRoomInfoRepository;
+import com.intita.wschat.repositories.RoomPermitiionsRepository;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
@@ -44,6 +47,7 @@ public class RoomsService {
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ParticipantRepository participantRepository;
+	@Autowired private RoomPermitiionsRepository roomPermitiionsRepository;
 
 	@Autowired private ChatController chatController;
 
@@ -278,6 +282,35 @@ public class RoomsService {
 	}
 
 
+	
+	public Integer getPermissions(Room room, ChatUser user)
+	{
+		List<RoomPermitions> userPermitionsList = roomPermitiionsRepository.getAllByRoomAndUser(room, user);
+		return 1;
+	}
+
+	public Integer addPermissions(Room room, ChatUser user, int allow)
+	{
+		/*Integer res =  allow;
+		
+		if(permissions == null)
+			permissions = new HashMap<>();
+		
+		Integer currnet =  permissions.get(user);
+		if(currnet != null)
+			res |= currnet;
+		
+		permissions.put(user, res);
+		return res;*/
+
+	}
+	public Integer removeCapabilities(Room room, ChatUser user, int deny)
+	{
+		/*Integer res =  permissions.get(user) - deny;
+		permissions.put(user, res);
+		return res;*/
+	}
+	
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);

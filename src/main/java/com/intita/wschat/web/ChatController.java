@@ -165,6 +165,7 @@ public class ChatController {
 	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
 	private HashMap<Long,HashMap<String,Object>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
+
 	public  void tryRemoveChatUserRequiredTrainer(ChatUser chatUser){
 		Long roomId = getRoomOfChatUserRequiredTrainer(chatUser);
 		if (roomId != null){
@@ -175,20 +176,23 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend(subscriptionStr,roomId);
 		}
 	}
+
 	public void removePrivateRoomRequiredTrainerFromList(Long roomId){
 		privateRoomsRequiredTrainers.remove(roomId);
 	}
+
 	public Long getRoomOfChatUserRequiredTrainer(ChatUser chatUser){
 		Iterator it = privateRoomsRequiredTrainers.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        HashMap<String,Object> extraData = (HashMap<String, Object>) pair.getValue();
-	        if (((LoginEvent)extraData.get("student")).getChatUserId().equals(chatUser.getId()))
-	        	return (Long) pair.getKey();
-	        it.remove(); // avoids a ConcurrentModificationException
-	    }
-	    return null;
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			HashMap<String,Object> extraData = (HashMap<String, Object>) pair.getValue();
+			if (((LoginEvent)extraData.get("student")).getChatUserId().equals(chatUser.getId()))
+				return (Long) pair.getKey();
+			it.remove(); // avoids a ConcurrentModificationException
+		}
+		return null;
 	}
+
 	public void addFieldToInfoMap(String key, Object value)
 	{
 		ArrayList<Object> listElm = infoMap.get(key);
@@ -199,10 +203,12 @@ public class ChatController {
 		}
 		listElm.add(value);
 	}
+
 	public boolean tryAddTenantInListToTrainerLP(Long chatUserId){
-	ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
-	return tryAddTenantInListToTrainerLP(chatUser);
+		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
+		return tryAddTenantInListToTrainerLP(chatUser);
 	}
+
 	public boolean tryAddTenantInListToTrainerLP(ChatUser chatUser){
 		User user = chatUser.getIntitaUser();
 		if (user==null) return false;
@@ -214,6 +220,7 @@ public class ChatController {
 		propagateAdditionTenantsToList(users);
 		return true;
 	}
+
 	public void groupCastAddTenantToList(ChatUser tenant){
 		String subscriptionStr = "/topic/chat.tenants.add";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, true));
@@ -222,6 +229,7 @@ public class ChatController {
 		String subscriptionStr = "/topic/chat.tenants.remove";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, false));
 	}
+
 	public void propagateRemovingTenantFromListToTrainer(ChatUser user){
 		if (user==null)
 			return;
@@ -229,12 +237,12 @@ public class ChatController {
 		users.add(user);
 		propagateRemovingTenantsFromList(users);
 	}
-	
+
 	public void propagateAdditionTenantsToList(ArrayList<ChatUser> usersIds){
 		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
 		if (usersIds.size()<=0)return;
-		
-			for (ChatUser tenantUser : usersIds){
+
+		for (ChatUser tenantUser : usersIds){
 			for (ChatUser trainerUser : chatUsers){
 				if (trainerUser==null) continue;
 				Long trainerChatId = trainerUser.getId();
@@ -242,15 +250,16 @@ public class ChatController {
 				if (participantRepository.isOnline(trainerChatIdStr)){
 					ConcurrentHashMap<String,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
 					if (activeSessions.get(trainerChatIdStr).isTimeBased())
-			addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));
+						addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));
 					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
-						}		
+					}		
 				}
 			}
 			groupCastAddTenantToList(tenantUser);
 		}		
 	}
+	
 	public void propagateRemovingTenantsFromList(ArrayList<ChatUser> usersIds){
 		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
 		if (usersIds.size()<=0)return;
@@ -262,15 +271,16 @@ public class ChatController {
 				String trainerChatIdStr = trainerChatId.toString();
 				if (!participantRepository.isOnline(trainerChatIdStr)){
 					if (activeSessions.get(trainerChatIdStr).isTimeBased())
-			addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));
+						addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));
 					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
-						}		
+					}		
 				}
 			}
 			groupCastRemoveTenantFromList(tenantUser);
 		}	
 	}
+	
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
 		if(user != null && !key.isEmpty())
 			addFieldToUserInfoMap(user.getId(), key, value);
@@ -467,15 +477,19 @@ public class ChatController {
 	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
 		HashMap<String,Object> demandedRoomExtraData = new HashMap<String,Object>();
 		demandedRoomExtraData.put("trainer", new LoginEvent(chatUserTrainer,false));
+
 		LoginEvent studentLE = new LoginEvent(chatUser,false);
 		demandedRoomExtraData.put("student", studentLE);
 		demandedRoomExtraData.put("lastMessage", lastMessage);
+
 		privateRoomsRequiredTrainers.put(roomId, demandedRoomExtraData);
+
 		HashMap<Long,HashMap<String,Object>> roomRequiredTenant = new HashMap<>();
 		roomRequiredTenant.put(roomId,demandedRoomExtraData);
 		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", roomRequiredTenant);
 		log.info("added room ("+roomId+") required trainer "+chatUserTrainer.getId());
 	}
+
 	@SubscribeMapping("/chat/room.private/room_require_trainer")
 	public HashMap<Long,HashMap<String,Object>> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
 		return privateRoomsRequiredTrainers;
@@ -596,8 +610,8 @@ public class ChatController {
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
 
-	//	LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
-	//	simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
+		//	LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
+		//	simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
 
 		//System.out.println("globalInfoResult.add:"+principal.getName());
 		return result;
@@ -610,10 +624,10 @@ public class ChatController {
 			if(isParticipantRemoved){
 				Long chatUserId = Long.parseLong(chatId);
 				if (chatTenantService.isTenant(chatUserId))
-				tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
+					tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
 			}
 			if (tenantsToRemove.size()>0)
-			propagateRemovingTenantsFromList(tenantsToRemove);
+				propagateRemovingTenantsFromList(tenantsToRemove);
 		}
 	}
 	@Scheduled(fixedDelay=10000L)
@@ -692,7 +706,7 @@ public class ChatController {
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room , user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
-		
+
 		return new RoomModelSimple(struct.user, 0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
 	}
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
@@ -1175,7 +1189,7 @@ public class ChatController {
 		}
 		return getTeachersTemplate(request, "chatTemplate", model, principal);
 	}
-	
+
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Principal principal) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);

@@ -18,6 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.Room.Permissions;
+import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.BotAnswersService;
@@ -499,25 +503,45 @@ public class BotController {
 		return true;
 	}
 
+	@RequestMapping(value = "/bot_operations/triner/confirmToHelp/{roomId}",  method = RequestMethod.POST)
+	public ResponseEntity<String> confirmToHelp(@PathVariable(value="roomId") Long roomId, Principal principal) {
+		ChatUser trainer = chatUsersService.getChatUser(principal);
+		User iTrainer = trainer.getIntitaUser();
+		if(userService.isTrainer(iTrainer.getId()))
+		{
+			Room room = roomService.getRoom(roomId);
+			if(room == null)
+				return new ResponseEntity<>("user is not trainer!!!", HttpStatus.BAD_REQUEST);
+			roomControler.addUserToRoom(trainer, room, principal, true);
+		
+			room.addPermissions(trainer, Permissions.ADD);
+			room.addPermissions(trainer, Permissions.REMOVE);
+			roomService.update(room);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+
+	}
+
 	@RequestMapping(value = "/bot_operations/tenant/{tenantId}/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
-		
+
 		ChatUser tenant = chatUsersService.getChatUser(tenantId);
 		if(tenant == null)
 			return false;
 		Room room = roomService.getRoom(roomId);
 		if(room == null)
 			return false;
-		
+
 		chatTenantService.setTenantBusy(tenant);
 		askUser(tenant, user.getNickName() + " запрошує Вас приїднатися до співбесіди " + room.getName() + ".\n Ви погоджуєтеся?",
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
 		return true;
 	}
+
 	/**********************
-	 * TRAINER SYSTEM
+	 * TENANT SYSTEM
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
@@ -588,7 +612,7 @@ public class BotController {
 
 		return giveTenant(roomId, true);
 	}
-	
+
 	@RequestMapping(value = "/bot/operations/tenant/free/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendFree( @PathVariable Long roomId, Principal principal) {

@@ -752,7 +752,7 @@ public class RoomController {
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
-		boolean permitions = (room_o.getPermissions(authorUser) & Room.Permissions.REMOVE) == Room.Permissions.REMOVE;
+		boolean permitions = (roomService.getPermissions(room_o, authorUser) & Room.Permissions.REMOVE) == Room.Permissions.REMOVE;
 		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
@@ -835,7 +835,7 @@ public class RoomController {
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
-		boolean permitions = (room_o.getPermissions(authorUser) & Room.Permissions.ADD) == Room.Permissions.ADD;
+		boolean permitions = (roomService.getPermissions(room_o, authorUser) & Room.Permissions.ADD) == Room.Permissions.ADD;
 		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;

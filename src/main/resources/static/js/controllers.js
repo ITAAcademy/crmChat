@@ -356,10 +356,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
         if (item == undefined || item == '')
             return '';
-        var name = '';// = item.firstName + ' ' + item.secondName;
-        if(item.firstName != null)
+        var name = ''; // = item.firstName + ' ' + item.secondName;
+        if (item.firstName != null)
             name += item.firstName + ' ';
-        if(item.secondName != null)
+        if (item.secondName != null)
             name += item.secondName;
 
         if ((searchInputValue != null && item.email != null && item.email.indexOf(searchInputValue) != -1) || name == null || name == ' ')
@@ -655,7 +655,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.chatUserNickname = mess_obj.chat_user_nickname;
         $scope.chatUserRole = mess_obj.chat_user_role;
         $scope.chatUserAvatar = mess_obj.chat_user_avatar
-        
+
 
         if (mess_obj.nextWindow == -1) {
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
@@ -776,12 +776,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
     $scope.getLength = function(obj) {
-    return Object.keys(obj).length;
-}
-$scope.roomsRequiredTrainers = new Map();
-$scope.$watch('roomsRequiredTrainers', function(value) {
-$scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTrainers);
-},true);   
+        return Object.keys(obj).length;
+    }
+    $scope.roomsRequiredTrainers = new Map();
+    $scope.$watch('roomsRequiredTrainers', function(value) {
+        $scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTrainers);
+    }, true);
+
+    $scope.confirmToHelp = function(roomId) {
+         $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
+        success(function(data, status, headers, config) {
+            changeLocation("/dialog_view/" + roomId);            
+        }).
+        error(function(data, status, headers, config) {
+
+        });
+    }
 
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format($scope.chatUserId), function(message) {
@@ -865,23 +875,23 @@ $scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTraine
 
                     });
 
-                     chatSocket.subscribe("/app/chat/room.private/room_require_trainer".format($scope.chatUserId), function(message) {
+                    chatSocket.subscribe("/app/chat/room.private/room_require_trainer".format($scope.chatUserId), function(message) {
                         var body = JSON.parse(message.body);
                         $scope.roomsRequiredTrainers = body;
                     });
-                     chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.add".format($scope.chatUserId), function(message) {
+                    chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.add".format($scope.chatUserId), function(message) {
                         var roomsMap = JSON.parse(message.body);
-                       for (var key in roomsMap) {
-                      if (roomsMap.hasOwnProperty(key)) {
-                        $scope.roomsRequiredTrainers[key]=roomsMap[key];
-                      }
-                    }
-                        
+                        for (var key in roomsMap) {
+                            if (roomsMap.hasOwnProperty(key)) {
+                                $scope.roomsRequiredTrainers[key] = roomsMap[key];
+                            }
+                        }
+
                     });
-                      chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.remove", function(message) {
+                    chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.remove", function(message) {
                         var idToRemove = JSON.parse(message.body);
                         delete $scope.roomsRequiredTrainers[idToRemove];
-                        
+
                     });
 
 

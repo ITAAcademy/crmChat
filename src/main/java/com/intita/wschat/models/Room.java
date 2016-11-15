@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -20,6 +22,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -46,7 +50,7 @@ public class Room implements Serializable,Comparable<Room> {
 	
 	@PrePersist
 	public void prePersist(){
-	    this.permissions = new HashMap<ChatUser, Integer>(); //after changing lastName to int.
+	    
 	}
 	
 	@Id
@@ -91,11 +95,16 @@ public class Room implements Serializable,Comparable<Room> {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ChatUser> users = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy="users", targetEntity = Room.class, cascade = CascadeType.ALL)
-	private Map<ChatUser, Integer> permissions ;
-	
-	//@JoinColumn(name="permissions_key", referencedColumnName="permissions", columnDefinition = "int default 0", table = "chat_room_users")
-	
+	/*
+	@ManyToMany(mappedBy="users", targetEntity = Room.class)
+	private Map<ChatUser, Integer> permissions = new HashMap<>();
+	*/
+	 @ElementCollection
+     @CollectionTable(name="chat_room_users",
+                      joinColumns=@JoinColumn(table = "ChatRoom", name="rooms_from_users_id"))
+	 @Column(name="permissions")
+    @MapKeyJoinColumn( referencedColumnName="id", name = "users_id")
+
 
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
@@ -115,27 +124,6 @@ public class Room implements Serializable,Comparable<Room> {
 	/*
 	 * GET/SET
 	 */
-
-	public Integer getPermissions(ChatUser user)
-	{
-		if(user == null || permissions == null || permissions.get(user) == null)
-			return 0;
-		return permissions.get(user);
-	}
-
-	public Integer addPermissions(ChatUser user, int allow)
-	{
-		Integer res =  permissions.get(user) + allow;
-		permissions.put(user, res);
-		return res;
-
-	}
-	public Integer removeCapabilities(ChatUser user, int deny)
-	{
-		Integer res =  permissions.get(user) - deny;
-		permissions.put(user, res);
-		return res;
-	}
 
 	public int getParticipantsCount(){
 		return users.size()+1; //+1 because author is also participants;
