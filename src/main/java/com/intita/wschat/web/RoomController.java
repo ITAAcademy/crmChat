@@ -16,11 +16,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -54,7 +52,6 @@ import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.OperationStatus;
@@ -63,6 +60,7 @@ import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.BotCategoryService;
@@ -72,6 +70,7 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.LecturesService;
+import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -113,6 +112,7 @@ public class RoomController {
 	@Autowired private BotCategoryService botCategoryService;
 	@Autowired private BotController botController;
 	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
+	@Autowired private RoomPermissionsService roomPermissionsService;
 
 
 	public static class ROLE
@@ -526,7 +526,7 @@ public class RoomController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
-		RoomModelSimple sb = new RoomModelSimple(struct.getUser(), 0 , new Date().toString(), struct.getRoom(),userMessageService.getLastUserMessageByRoom(struct.getRoom()));
+		RoomModelSimple sb = roomService.getSimpleModelByUserPermissionsForRoom(struct.getUser(), 0 , new Date().toString(), struct.getRoom(),userMessageService.getLastUserMessageByRoom(struct.getRoom()));
 		return mapper.writeValueAsString(sb);
 	}
 
@@ -752,7 +752,7 @@ public class RoomController {
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
-		boolean permitions = (roomService.getPermissions(room_o, authorUser) & Room.Permissions.REMOVE) == Room.Permissions.REMOVE;
+		boolean permitions = (roomPermissionsService.getPermissionsOfUser(room_o, authorUser) & RoomPermissions.Permission.REMOVE_USER.getValue()) == RoomPermissions.Permission.REMOVE_USER.getValue();
 		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
@@ -835,8 +835,9 @@ public class RoomController {
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
-		boolean permitions = (roomService.getPermissions(room_o, authorUser) & Room.Permissions.ADD) == Room.Permissions.ADD;
-		if( haveNullObj || isAuthor || (!( permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
+		Integer permissionBitSetPrimitive = roomPermissionsService.getPermissionsOfUser(room_o, authorUser);
+		boolean operationPermitted =  RoomPermissions.Permission.ADD_USER.checkNumberForThisPermission(permissionBitSetPrimitive); 
+		if( haveNullObj || isAuthor || (!( operationPermitted || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor)
 		{
 			return false;
 		}
@@ -867,25 +868,17 @@ public class RoomController {
 
 	@MessageMapping("/chat/rooms.{room}/user.add.{email}")
 	public void addUserToRoom( @DestinationVariable("email") String email, @DestinationVariable("room") Long room, Principal principal) {
-		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAddUser");//@LOG@
-
-		//System.out.println(login);//@LOG@
-		System.out.println(room);//@LOG@
 		Long chatUserId = 0L;
 		chatUserId = Long.parseLong(principal.getName());
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(email, false);// @BAG@
-
+		boolean status;
 		if(!addUserToRoomFn(email, room, principal,true))
 		{
-			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,false,"ADD USER TO ROOM");
-			String subscriptionStr = "/topic/users/"+chatUserId+"/status";
-			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-			return;
+			status = false;
 		}
-
-
-
-		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,true,"ADD USER TO ROOM");
+		else status = true;
+		 
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,status,"ADD USER TO ROOM");
 		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 

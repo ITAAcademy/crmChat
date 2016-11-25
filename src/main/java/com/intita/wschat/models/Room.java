@@ -2,41 +2,32 @@ package com.intita.wschat.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import jsonview.Views;
@@ -57,18 +48,6 @@ public class Room implements Serializable,Comparable<Room> {
 	@GeneratedValue
 	@JsonView(Views.Public.class)
 	private Long id;
-
-	public static class Permissions{
-		
-		public static final int ADD = 1;
-		public static final int REMOVE = 2;
-		public static Map<String, Integer> getSupported(){
-			Map<String, Integer> aMap = new HashMap<>();
-			aMap.put("ADD", ADD);
-			aMap.put("REMOVE", REMOVE);
-			return aMap;
-		}
-	}
 
 	@OneToMany(mappedBy = "room",fetch = FetchType.LAZY)
 	List< ChatUserLastRoomDate> chatUserLastRoomDate;
@@ -93,18 +72,7 @@ public class Room implements Serializable,Comparable<Room> {
 	private List<UserMessage> messages = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	private Set<ChatUser> users = new HashSet<>();
-
-	/*
-	@ManyToMany(mappedBy="users", targetEntity = Room.class)
-	private Map<ChatUser, Integer> permissions = new HashMap<>();
-	*/
-	 @ElementCollection
-     @CollectionTable(name="chat_room_users",
-                      joinColumns=@JoinColumn(table = "ChatRoom", name="rooms_from_users_id"))
-	 @Column(name="permissions")
-    @MapKeyJoinColumn( referencedColumnName="id", name = "users_id")
-
+	private Set<ChatUser> users = new HashSet<>();	
 
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room")

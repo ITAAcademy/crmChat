@@ -34,7 +34,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.domain.ChatMessage;
-import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.BotAnswer;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
@@ -42,7 +41,7 @@ import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.Room.Permissions;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -513,9 +512,9 @@ public class BotController {
 			if(room == null)
 				return new ResponseEntity<>("user is not trainer!!!", HttpStatus.BAD_REQUEST);
 			roomControler.addUserToRoom(trainer, room, principal, true);
-		
-			room.addPermissions(trainer, Permissions.ADD);
-			room.addPermissions(trainer, Permissions.REMOVE);
+			//TODO
+			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.ADD);
+			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.REMOVE);
 			roomService.update(room);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);

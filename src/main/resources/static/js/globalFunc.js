@@ -37,6 +37,11 @@ endName['ua'] = "тому";
 endName['en'] = "ago";
 endName['ru'] = "спустя";
 
+var ROOM_PERMISSIONS = {
+ADD_USER : 1,
+REMOVE_USER : 2
+};
+
 var formatDateWithLast = function(date) {
     if (date == null || date == undefined || isNaN(date))
         return "";

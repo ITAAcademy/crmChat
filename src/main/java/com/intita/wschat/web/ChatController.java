@@ -82,6 +82,7 @@ import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -707,7 +708,7 @@ public class ChatController {
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 
-		return new RoomModelSimple(struct.user, 0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
+		return roomService.getSimpleModelByUserPermissionsForRoom(struct.user, 0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
 	}
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
@@ -1148,7 +1149,7 @@ public class ChatController {
 		configMap.put("currentLang", lang);
 		model.addAttribute("config", configMap);
 		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases(currentUser));
-		model.addAttribute("user_copabilities_supported", Room.Permissions.getSupported());
+		model.addAttribute("user_copabilities_supported", RoomPermissions.Permission.getSupported());
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)

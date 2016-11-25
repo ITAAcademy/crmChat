@@ -3,7 +3,6 @@ package com.intita.wschat.services;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,11 +26,12 @@ import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermitions;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
+import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
 import com.intita.wschat.repositories.PrivateRoomInfoRepository;
-import com.intita.wschat.repositories.RoomPermitiionsRepository;
+import com.intita.wschat.repositories.RoomPermissionsRepository;
 import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
@@ -47,9 +47,10 @@ public class RoomsService {
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ParticipantRepository participantRepository;
-	@Autowired private RoomPermitiionsRepository roomPermitiionsRepository;
+	@Autowired private RoomPermissionsRepository roomPermitiionsRepository;
 
 	@Autowired private ChatController chatController;
+	@Autowired private RoomPermissionsService roomPermissionsServcie;
 
 	@PostConstruct
 	@Transactional
@@ -280,36 +281,6 @@ public class RoomsService {
 		room.setAuthor(user);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);	
 	}
-
-
-	
-	public Integer getPermissions(Room room, ChatUser user)
-	{
-		List<RoomPermitions> userPermitionsList = roomPermitiionsRepository.getAllByRoomAndUser(room, user);
-		return 1;
-	}
-
-	public Integer addPermissions(Room room, ChatUser user, int allow)
-	{
-		/*Integer res =  allow;
-		
-		if(permissions == null)
-			permissions = new HashMap<>();
-		
-		Integer currnet =  permissions.get(user);
-		if(currnet != null)
-			res |= currnet;
-		
-		permissions.put(user, res);
-		return res;*/
-
-	}
-	public Integer removeCapabilities(Room room, ChatUser user, int deny)
-	{
-		/*Integer res =  permissions.get(user) - deny;
-		permissions.put(user, res);
-		return res;*/
-	}
 	
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
@@ -431,13 +402,26 @@ public class RoomsService {
 
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
-			RoomModelSimple sb = new RoomModelSimple(currentUser, messages_cnt , date.toString(),
-					entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
+			RoomModelSimple sb = RoomModelSimple.buildSimpleModelForRoom(currentUser, messages_cnt , date.toString(),
+			entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
+			sb = extendSimpleModelByUserPermissionsForRoom(sb, currentUser, entry.getLastRoom());
 			result.add(sb);
 		}
 		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
 	}
+	@Transactional
+	public RoomModelSimple getSimpleModelByUserPermissionsForRoom(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage){
+		RoomModelSimple model = RoomModelSimple.buildSimpleModelForRoom(user, nums, date, room, lastMessage);
+		model = extendSimpleModelByUserPermissionsForRoom(model,user,room);
+		return model;
+	}
+	public RoomModelSimple extendSimpleModelByUserPermissionsForRoom(RoomModelSimple model,ChatUser user,Room room){
+		Integer userPermissions = roomPermissionsServcie.getPermissionsOfUser(room, user);
+		model.setUserPermissions(userPermissions);
+		return model;
+	}
+	
 
 }
 

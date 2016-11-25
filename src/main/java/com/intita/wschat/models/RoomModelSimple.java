@@ -14,11 +14,10 @@ import com.intita.wschat.web.ChatController;
 @Component
 public class RoomModelSimple {
 	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
-	final int MULTI_IMAGE_MAX_IMAGE_COUNT = 4;
-	final String NO_AVATAR_IMAGE_NAME = "noname.png";
+	final static int MULTI_IMAGE_MAX_IMAGE_COUNT = 4;
+	final static String NO_AVATAR_IMAGE_NAME = "noname.png";
 	
 	@Autowired UserMessageService userMessageService;
-	@Autowired RoomsService roomService;
 	
 	public Long getRoomAuthorId() {
 		return roomAuthorId;
@@ -36,21 +35,21 @@ public class RoomModelSimple {
 		this.roomId = roomId;
 	}
 
-	public String string;
-	public Integer nums;
-	public String date;
-	public Long roomId;
-	public Long roomAuthorId;
-	public boolean active;
-	public short type;
-	public String lastMessage;
-	public String lastMessageAuthor;
-	public Long lastMessageAuthorId;
-	public String lastMessageAuthorAvatar;
-	public Date lastMessageDate;
-	public int participantsCount;
-	public String avatars[];
-	Integer userCapabilities;
+	private String string;
+	private Integer nums;
+	private String date;
+	private Long roomId;
+	private Long roomAuthorId;
+	private boolean active;
+	private short type;
+	private String lastMessage;
+	private String lastMessageAuthor;
+	private Long lastMessageAuthorId;
+	private String lastMessageAuthorAvatar;
+	private Date lastMessageDate;
+	private int participantsCount;
+	private String avatars[];
+	Integer userPermissions;
 
 	public short getType() {
 		return type;
@@ -83,38 +82,40 @@ public class RoomModelSimple {
 		avatars = new String[4];
 	}
 
-	public Integer getUserCapabilities() {
-		return userCapabilities;
+	public Integer getUserPermissions() {
+		return userPermissions;
 	}
 
-	public void setUserCapabilities(int userCapabilities) {
-		this.userCapabilities = userCapabilities;
+	public void setUserPermissions(int userPermissions) {
+		this.userPermissions = userPermissions;
 	}
 
-	public RoomModelSimple(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
-		this.string = room.getName();
-		this.nums = nums;
-		this.date = date;
-		this.roomId=room.getId();
-		this.roomAuthorId=room.getAuthor().getId();
-		this.active = room.isActive();
-		this.type = room.getType();
+	public static RoomModelSimple buildSimpleModelForRoom(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
+		RoomModelSimple simpleModel = new RoomModelSimple();
+		simpleModel.string = room.getName();
+		simpleModel.nums = nums;
+		simpleModel.date = date;
+		simpleModel.roomId=room.getId();
+		simpleModel.roomAuthorId=room.getAuthor().getId();
+		simpleModel.active = room.isActive();
+		simpleModel.type = room.getType();
 		if (lastMessage!=null){
-			this.lastMessage =  lastMessage.getBody();
-			this.lastMessageAuthor = lastMessage.getAuthor().getNickName();
-			this.lastMessageAuthorId = lastMessage.getAuthor().getId();
-			this.lastMessageDate = lastMessage.getDate();
+			simpleModel.lastMessage =  lastMessage.getBody();
+			simpleModel.lastMessageAuthor = lastMessage.getAuthor().getNickName();
+			simpleModel.lastMessageAuthorId = lastMessage.getAuthor().getId();
+			simpleModel.lastMessageDate = lastMessage.getDate();
 			User lastMessageIntitaUser = lastMessage.getAuthor().getIntitaUser();
 			if (lastMessageIntitaUser!=null)
-				this.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
+				simpleModel.lastMessageAuthorAvatar = lastMessageIntitaUser.getAvatar();
 			else
-				this.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
+				simpleModel.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
 		}
-		this.participantsCount = room.getParticipantsCount();
-		this.avatars = generateMultiImageLinks(room);
-		this.userCapabilities = roomService.getPermissions(room, user);
+		simpleModel.participantsCount = room.getParticipantsCount();
+		simpleModel.avatars = generateMultiImageLinks(room);
+		return simpleModel;
+		//this.userCapabilities = roomService.getPermissions(room, user);
 	}
-	public String[]	generateMultiImageLinks(Room room){
+	public static String[]	generateMultiImageLinks(Room room){
 		Set<ChatUser> roomUsers = room.getUsers();
 		int usersCount = roomUsers.size()+1;
 		if (usersCount<=0){
@@ -185,5 +186,25 @@ public class RoomModelSimple {
 
 	public void setLastMessageAuthorAvatar(String lastMessageAuthorAvatar) {
 		this.lastMessageAuthorAvatar = lastMessageAuthorAvatar;
+	}
+
+	public String getString() {
+		return string;
+	}
+
+	public void setString(String string) {
+		this.string = string;
+	}
+
+	public Integer getNums() {
+		return nums;
+	}
+
+	public void setNums(Integer nums) {
+		this.nums = nums;
+	}
+
+	public void setUserPermissions(Integer userPermissions) {
+		this.userPermissions = userPermissions;
 	}
 }
