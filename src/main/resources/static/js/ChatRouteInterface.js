@@ -1325,6 +1325,14 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
         var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && canAdd && chatControllerScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
+    $scope.checkUserRemovingPermission = function() {
+     var isAuthor = chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId;
+      var havePermissions = $scope.userPermissionsForRoom & ROOM_PERMISSIONS.REMOVE_USER;
+      var canRemove = isAuthor || havePermissions;
+        if (typeof chatControllerScope.currentRoom === "undefined") return false;
+        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && canRemove && chatControllerScope.isMyRoom && $rootScope.authorize;
+        return resultOfChecking;
+    }
 
     // file upload button click reaction
     angular.element(document.querySelector('#upload_file_form')).context.onsubmit = function() {
