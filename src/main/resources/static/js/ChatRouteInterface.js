@@ -1326,7 +1326,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
     // file upload button click reaction
-    angular.element(document.querySelector('#upload_file_form')).context.onsubmit = function() {
+    /*angular.element(document.querySelector('#upload_file_form')).context.onsubmit = function() {
         var input = this.elements.myfile;
         var files = [];
         for (var i = 0; i < input.files.length; i++) files.push(input.files[i]);
@@ -1351,7 +1351,7 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
                 });
         }
         return false;
-    }
+    }*/
 
 
     /*

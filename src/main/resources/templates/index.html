@@ -45,27 +45,17 @@
             <div class="chevron_wrapper" onclick="unfoldLeftPanelItemsListBlockFirst()">
                 <div class="chevron"></div>
             </div>
-            <div class="items_list_block middle_block">
-                <div class="block_name">Тенанти</div>
+            <div class="items_list_block middle_block" ng-controller="ChatRouteController">
+                <div class="block_name" >Учасники</div>
                 <div class="block_content">
-                    <div class="block_item">
+                    <div class="block_item" ng-repeat="participant in participants | orderBy:'-username'">
                         <div class="avatar">
-                            <img class="user_image" alt="" />
+                            <img class="user_image" ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}" alt="{{participant.username}}"/>
                             <img class="user_presence_icon" alt="" />
                         </div>
                         <div class="text_info">
-                            <div class="user_name">Василь Пупкін</div>
+                            <div class="user_name">{{participant.username}}</div>
                             <div class="user_presence">Онлайн</div>
-                        </div>
-                        <div class="block_item">
-                            <div class="avatar">
-                                <img class="user_image" alt="" />
-                                <img class="user_presence_icon" alt="" />
-                            </div>
-                            <div class="text_info">
-                                <div class="user_name">Микола Петряк</div>
-                                <div class="user_presence">Онлайн</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +95,7 @@
                 <img src="images\intita95x30.png" alt="" />
             </div>
         </div>
-        <div class="right_panel">
+        <div class="right_panel" ng-view="">
             <div class="tools_area">
                 <ul id="tools_dropdown" class="popup_dropdown">
                     <li class="show_attaches_item"><a href="#">Показати додатки</a></li>
@@ -119,7 +109,7 @@
                 <img class="search_icon" src="images\search17x17.png" alt="" />
             </div>
             <hr/>
-            <div class="messages_output_area" ng-view="">
+            <div class="messages_output_area">
                 <!-- Вчорашні повідомлення -->
                 <div class="message_date_separator">
                     <div class="line"></div>
