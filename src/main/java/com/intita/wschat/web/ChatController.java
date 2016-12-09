@@ -1133,7 +1133,8 @@ public class ChatController {
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
 		configMap.put("currentLang", lang);
 		model.addAttribute("config", configMap);
-		model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases(currentUser));
+		if(currentUser != null)
+			model.addAttribute("phrasesPack", roomService.getEvaluatedPhrases(currentUser));
 		model.addAttribute("user_copabilities_supported", Room.Permissions.getSupported());
 	}
 
@@ -1146,8 +1147,7 @@ public class ChatController {
 		{
 			return "redirect:"+ before;
 		}
-		if(auth != null)
-			addLocolizationAndConfigParam(model, chatUsersService.getChatUser(auth));
+		addLocolizationAndConfigParam(model, chatUsersService.getChatUser(auth));
 		return "index";
 	}
 
