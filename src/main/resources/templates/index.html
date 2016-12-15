@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html style="width: 100%; height: 100%" lang="en" ng-app="springChat">
+<head>
+<meta charset="utf-8" />
+<title>IntITA Chat</title>
+<link rel="icon" href="favicon.ico"/>
+<link href="css/style.css" rel="stylesheet" />
+<script src="lib/jquery.min.js"></script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-animate/angular-animate.js"></script>
+<script src="lib/angularjs-toaster/toaster.js"></script>
+<script src="lib/angular-route/angular-route.js"></script>
+<script src="lib/angular-cooks/angular-cookies.js"></script>
+<script src="lib/angular-resource/angular-resource.js"></script>
+<script src="lib/angular-sanitize/angular-sanitize.js"></script>
+<script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
+<script th:src="'lib/angular/i18n/angular-locale_'+ ${config.get('currentLang')}+'.js'"></script>
+<script src="lib/ui-bootstrap.js"></script>
+<script src="lib/tags_input/ng-tags-input.js"></script>
+
+	<script type='text/javascript' src='lib/infinite-scroll/ng-infinite-scroll.min.js'></script>
+	<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+	<script src="lib/stomp/lib/stomp.js"></script>
+<script src="js/globalFunc.js"></script>
+<script src="js/app.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/mainController.js"></script>
+<script src="js/services.js"></script>
+<script src="js/ui.js"></script>
+
+	<script th:inline="javascript">
+		var globalConfig = {  
+					 baseUrl:[[${config.get('baseUrl')}]], 
+					 lang: [[${config.get('currentLang')}]]
+		};;
+		
+		var USER_COPABILITIES_BY_ROOM = [[${user_copabilities_supported}]];
+		
+		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
+		var fileUploadLocal = [[${lgPack.fileOperations}]];
+	</script>
+</head>
+<body>
+
+	<body>
+	<div class="consultant_wrapper" ng-controller="ChatController">
+		<div class="left_panel">
+			<div class="items_list_block top_block">
+
+				<div class="block_name">{{blocksNames[0]}}</div>
+				<div class="block_content">
+					<div class="block_item"> 
+						<div class="avatar">
+							<img class="user_image"  alt=""/>
+							<img class="user_presence_icon" alt=""/>
+						</div>
+						<div class="text_info">
+							<div class="user_name">Людмила Журавская</div>
+							<div class="user_presence">Онлайн</div>
+						</div>
+					</div>
+
+						<div class="block_item"> 
+						<div class="avatar">
+							<img class="user_image"  alt=""/>
+							<img class="user_presence_icon" alt=""/>
+						</div>
+						<div class="text_info">
+							<div class="user_name">Людмила Журавская</div>
+							<div class="user_presence">Онлайн</div>
+						</div>
+					</div>
+
+				</div>				
+			</div>
+			<div class="chevron_wrapper" onclick="unfoldLeftPanelItemsListBlockFirst()">
+			<div class="chevron"></div>
+			</div>
+
+			<div class="items_list_block middle_block">
+				<div class="block_name">{{blocksNames[1]}}</div>
+				<div class="block_content">
+					<div class="block_item"> 
+						<div class="avatar">
+							<img class="user_image"  alt=""/>
+							<img class="user_presence_icon"  alt=""/>
+						</div>
+						<div class="text_info">
+							<div class="user_name">Василь Пупкін</div>
+							<div class="user_presence">Онлайн</div>
+						</div>
+						<div class="block_item"> 
+							<div class="avatar">
+								<img class="user_image" alt=""/>
+								<img class="user_presence_icon" alt=""/>
+							</div>
+							<div class="text_info">
+								<div class="user_name">Микола Петряк</div>
+								<div class="user_presence">Онлайн</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<div class="chevron_wrapper" onclick="unfoldLeftPanelItemsListBlockSecond()">
+			<div class="chevron"></div>
+			</div>
+			<div class="contacts_menu_strip">
+				<img class="search_icon" src="images\search17x17.png" alt=""/>
+				<div class="contacts_menu_item">КОНТАКТИ</div>
+				<div class="last_contacts_menu_item">ОСТАННІ</div>
+				<img class="group_icon" src="images\group23x16.png" alt=""/>
+			</div>
+
+			<div class="items_list_block bottom_block" ng-repeat="(sectionKey, sectionValue) in contacts">
+				<div class="section" ng-repeat="itemValue in sectionValue">
+					<div class="section_name" >{{sectionKey}}</div>
+					<div class="section_content" >
+						<div class="block_item"> 
+							<div class="avatar">
+								<img class="user_image" ngSrc="{{itemValue.avatar}}" alt=""/>
+								<img class="user_presence_icon" alt=""/>
+							</div>
+							<div class="text_info">	
+								<div class="user_name">{{itemValue.name}}</div>
+							</div>
+							<div class="contact_control">
+								<img src="images\cross13x15.png" alt=""/>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="bottom_logo">
+				<img src="images\intita95x30.png" alt=""/>
+			</div>
+
+		</div>
+		<div class="right_panel">
+			<div class="tools_area">
+				<ul id="tools_dropdown" class="popup_dropdown">
+					<li class="show_attaches_item"><a href="#">Показати додатки</a></li>
+					<li class="sound_off_item"><a href="#">Вимкнути звук</a></li>
+					<li class="remove_history_item"><a href="#">Видалити історію</a></li>
+				</ul>
+				<button class="open_dropdown_button" onclick="tools_dropdown_click()">
+					<img src="images\triple_dots26x8.png" alt=""/>
+				</button>
+				<input type="text" class="transparent_input search_input" placeholder="Пошук..."/>
+				<img class="search_icon" src="images\search17x17.png" alt=""/>
+			</div>
+			<hr/>
+			<div class="messages_output_area">
+
+
+
+				<!-- Вчорашні повідомлення -->
+				<div class="message_date_separator">
+					<div class="line"></div>
+					<div class="big_dot"></div>
+					<span class="date_indicator">Вчора</span>
+					<div class="big_dot"></div>
+					<div class="line"></div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Петя</span>
+							<span class="message_date">19:16</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
+					</div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Петя</span>
+							<span class="message_date">19:16</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
+					</div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Петя</span>
+							<span class="message_date">19:16</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tev</span>
+					</div>
+				</div>
+				<!-- //Вчорашні повідомлення -->
+
+				<!-- Сьогоднішні повідомлення -->
+				<div class="message_date_separator">
+					<div class="line"></div>
+					<div class="big_dot"></div>
+					<span class="date_indicator">Сьогодні</span>
+					<div class="big_dot"></div>
+					<div class="line"></div>
+				</div>
+
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Людмила</span>
+							<span class="message_date">10:04</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span>
+					</div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Людмила</span>
+							<span class="message_date">10:04</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum</span>
+					</div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Петя</span>
+							<span class="message_date">19:16</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
+					</div>
+				</div>
+				<div class="user_message">
+					<div class="message_author_avatar">
+						<img alt=""/>
+					</div>
+					<div class="message_details">
+						<div class="top_details">
+							<span class="messag_author_name">Людмила</span>
+							<span class="message_date">10:04</span>
+						</div>
+						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </span>
+					</div>
+				</div>
+				<!-- //Сьогоднішні повідомлення -->
+
+			</div>
+			<hr/>
+			<div class="messages_input_area">
+				<input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..."/>
+				<div class="controls_area">
+					<div class="multimedia_conversation_controls">
+						<button class="skype"><img src="images\skype24x23.png" alt=""/></button>
+						<button class="microphone"><img src="images\mic18x23.png" alt=""/></button>
+					</div>
+					<div class="attaches_area">
+						<ul id="attaches_dropdown" class="popup_dropdown">
+							<li class="attaches_item"><a href="#">Документ</a></li>
+							<li class="video_item"><a href="#">Відео</a></li>
+							<li class="audio_item"><a href="#">Аудіо</a></li>
+						</ul>
+						<button class="smiles"><img src="images\smile23x23.png" alt=""/></button>
+						<button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt=""/></button>
+						<div class="send_button">ВІДПРАВИТИ&#47;&#62;</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+	</div>
+</body>
+
+
+
+</body>
+</html>

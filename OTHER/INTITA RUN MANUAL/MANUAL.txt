@@ -1,0 +1,46 @@
+1. Установи stunnel (коли спитає 2симв. країни - введеш UA, далі Vinnytsa в кожному пункті
+2. Розпакуй sendmail.zip в папку ..wamp\bin\
+3. запусти Stunnel. вибери пункт меню Configuration -> Edit. Добав\заміни (якшо змінна є) наступне:
+
+cert = stunnel.pem
+key = stunnel.pem
+[ssmtp]
+accept  = 465
+connect = 25
+[gmail-smtp]
+client = yes
+accept = 127.0.0.1:25
+connect = smtp.gmail.com:465
+; To check logs you can enable logging using following lines
+debug = 7
+output = stunnel.log
+
+4. Збережи. вибери пункт меню Configuration -> Reload. Gui закрий, але в треї хай висить.
+5. Wamp -> Apach -> Apach modules -> rewrite_module (тикнеш по ньому, галочка поставиться і сервіс перезапуститься).
+6. Забери з гіта з мастера Інтіту. Скопіюй в wampa\www\ . 
+Створи папку wamp\www\IntITA\protected\runtime і wamp\www\IntITA\assets
+
+7. Імпортни базу qa_intita.
+8. В wamp\www\IntITA\protected\config\local.php відредагуй
+
+return array(
+    'db' => array(
+        'class' => 'CDbConnection',
+        'connectionString' => 'mysql:host=localhost;dbname=НАЗВА_БАЗИ',
+        'emulatePrepare' => true,
+        'username' => 'ЛОГІН',
+        'password' => 'ПАРОЛЬ',
+        'charset' => 'utf8',
+        'enableProfiling' => true,
+    ),
+
+збережи.
+
+Розпакуй crmChat\OTHER\redis.zip в папку якусь( хай там і лежить). Запусти install i start.
+
+9. Скопіпасть файл crmChat\OTHER\configuration\php.ini в папку wamp\bin\php\php5.5.12 (заміни).
+9.1 папку ext в папку з bin/php5.***
+10. Розпакуй IntITA в корень.
+11. Wamp -> Restart all services.
+12. запускай сайт localhost/IntITA/ ( в вампі в localhost є інтіта як проект, но там не відкриється - то наїбалово)
+От і все.
