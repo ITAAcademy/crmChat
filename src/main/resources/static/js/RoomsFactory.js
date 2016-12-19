@@ -1,8 +1,6 @@
+springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', '$q', '$sce', '$rootScope', 'ChannelFactory', function($injector, $route, $routeParams, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, $q, $sce, $rootScope, ChannelFactory) {
 
-
-springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', '$q', '$sce', function($route, $routeParams, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, $q, $sce) {
-
-   var addRoomWithBot = function(roomName) {
+    var addRoomWithBot = function(roomName) {
         $http.post(serverPrefix + "/chat/rooms/create/with_bot/", roomName)
         success(function(data, status, headers, config) {
             console.log('room with bot created: ' + roomName)
@@ -14,22 +12,27 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
     };
 
     var lastRoomBindings = [];
-   var currentRoom = null;
-   var messages = [];
-   var participants = [];
-   var roomType = -1;
-   var ajaxRequestsForRoomLP = [];
-   var message_busy = true;
-   var rooms = [];
+    var currentRoom = null;
+    var messages = [];
+    var participants = [];
+    var roomType = -1;
+    var ajaxRequestsForRoomLP = [];
+    var message_busy = true;
+    var rooms = [];
+    /*    $rootScope.$on('$locationChangeStart', function(p1, p2, p3) {
+            var t = $location.hash();
+            debugger;
+        });
+    */
 
-   var findParticipant = function(nickname) {
+    var findParticipant = function(nickname) {
         for (var c_index in participants)
             if (participants[c_index].username == nickname)
                 return participants[c_index];
         return null;
     }
 
-  var setParticipantOnline = function(chatUserId) {//$rootScope.$on("login", function(event, chatUserId)
+    var setParticipantOnline = function(chatUserId) { //$rootScope.$on("login", function(event, chatUserId)
         for (var index in participants) {
             if (participants[index].chatUserId == chatUserId) {
                 participants[index].online = true;
@@ -38,7 +41,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
         }
     };
 
-    var setParticipantOffline = function(chatUserId)  {
+    var setParticipantOffline = function(chatUserId) {
         for (var index in participants) {
             if (participants[index].chatUserId == chatUserId) {
                 participants[index].online = false;
@@ -46,15 +49,31 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
             }
         }
     };
+    var unsubscribeWatch = null;
 
-  var goToRoom = function(roomId) {
+    var goToRoom = function(roomId) {
         //console.log("roomName:"+roomName);
+        if (!$rootScope.isInited) {
+            unsubscribeWatch = $rootScope.$watch('isInited', function(newValue, oldValue) {
+                if(newValue == true)
+                {
+                    debugger;
+                    goToRoom(roomId);
+                }
+            });
+            return;
+        }
+        else {
+            if(unsubscribeWatch != undefined)
+                unsubscribeWatch();
+        }
+
         if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
             getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
         return goToRoomEvn(roomId);
     };
 
-   var goToRoomById = function(roomId) {
+    var goToRoomById = function(roomId) {
         console.log("roomId:" + roomId);
         return goToRoomEvn(roomId).then(function() {
             if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
@@ -63,30 +82,32 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
 
     };
 
-     function goToRoomEvn(id) {
+    function goToRoomEvn(id) {
         console.log("goToRoomEvn(" + id + ")");
-        currentRoom = { roomId: id };  
+        currentRoom = { roomId: id };
         changeRoom();
         var deferred = $q.defer();
         var room = getRoomById(rooms, id);
         if (room != undefined) {
             currentRoom = room;
             room.nums = 0;
-        } /*else {
-            deferred.reject();
-            return deferred.promise;
-        }*/
-        if (socketSupport) {
-            chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
+        }
+        /*else {
+                   deferred.reject();
+                   return deferred.promise;
+               }*/
+        var ChannelFactory = $injector.get('ChannelFactory');
+        if (ChannelFactory.isSocketSupport === true) {
+            chatSocket.send("/app/chat.go.to.dialog/{0}".format(currentRoom.roomId), {}, JSON.stringify({}));
             deferred.resolve();
             return deferred.promise;
         } else {
-            return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId));         
+            return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
         }
 
     }
 
-     function calcPositionPush(msg) {
+    function calcPositionPush(msg) {
         if (msg == null)
             return null;
         // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
@@ -119,12 +140,13 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
     /*************************************
      * CHANGE ROOM
      *************************************/
-     var changeRoom = function() {
+    var changeRoom = function() {
         //alert(16);
         messages = [];
-        console.log("roomId:" + chatControllerScope.currentRoom.roomId);
+        console.log("roomId:" + currentRoom.roomId);
 
-        if (socketSupport) {
+        var ChannelFactory = $injector.get('ChannelFactory');
+        if (ChannelFactory.isSocketSupport === true) {
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
                     calcPositionPush(JSON.parse(message.body)); //POP
@@ -151,7 +173,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
         }
 
         lastRoomBindings.push(
-            chatSocket.subscribe("/topic/{0}chat.typing".format(room), function(message) {
+            chatSocket.subscribe("/topic/{0}/chat.typing".format(currentRoom.roomId), function(message) {
                 var parsed = JSON.parse(message.body);
                 if (parsed.username == UserFactory.chatUserId) return;
 
@@ -159,62 +181,62 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
                     var participant = participants[index];
 
                     if (participant.chatUserId == parsed.username) {
-                        participants[index].typing = parsed.typing; 
+                        participants[index].typing = parsed.typing;
                     }
                 }
             }));
         //chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
     }
-   var addTenantToRoom = function(id){
-     $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, chatControllerScope.currentRoom.roomId), {}).
-                success(function(data, status, headers, config) {
-                   userAddedToRoom = true;
-                }).
-                error(function(data, status, headers, config) {
-                   userAddedToRoom = true;
-                });
-            }
+    var addTenantToRoom = function(id) {
+        $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).
+        success(function(data, status, headers, config) {
+            userAddedToRoom = true;
+        }).
+        error(function(data, status, headers, config) {
+            userAddedToRoom = true;
+        });
+    }
 
 
     var addUserToRoom = function(email) {
-            userAddedToRoom = false;
-            if (socketSupport === true) {
-                chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(chatControllerScope.currentRoom.roomId,email), {}, JSON.stringify({}));
-                var myFunc = function() {
-                    if (angular.isDefined(addingUserToRoom)) {
-                        $timeout.cancel(addingUserToRoom);
-                        addingUserToRoom = undefined;
-        }
-                    if (chatControllerScope.userAddedToRoom) return;
-                    toaster.pop('error', "Error", "server request timeout", 1000);
-                    chatControllerScope.userAddedToRoom = true;
+        userAddedToRoom = false;
+        var ChannelFactory = $injector.get('ChannelFactory');
+        if (ChannelFactory.isSocketSupport === true) {
+            chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(currentRoom.roomId, email), {}, JSON.stringify({}));
+            var myFunc = function() {
+                if (angular.isDefined(addingUserToRoom)) {
+                    $timeout.cancel(addingUserToRoom);
+                    addingUserToRoom = undefined;
+                }
+                if (chatControllerScope.userAddedToRoom) return;
+                toaster.pop('error', "Error", "server request timeout", 1000);
+                chatControllerScope.userAddedToRoom = true;
 
-                };
-                addingUserToRoom = $timeout(myFunc, 6000);
-            } else {
-                $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format(currentRoom.roomId, email), {}).
-        success(function(data, status, headers, config) {
-                    chatControllerScope.userAddedToRoom = true;
-        }).
-        error(function(data, status, headers, config) {
-            chatControllerScope.userAddedToRoom = true;
-        });
-    }
+            };
+            addingUserToRoom = $timeout(myFunc, 6000);
+        } else {
+            $http.post(serverPrefix + "/chat/rooms.{0}/user.add.{1}".format(currentRoom.roomId, email), {}).
+            success(function(data, status, headers, config) {
+                chatControllerScope.userAddedToRoom = true;
+            }).
+            error(function(data, status, headers, config) {
+                chatControllerScope.userAddedToRoom = true;
+            });
         }
-        
-       var removeUserFromRoom = function(userId) {
-            
+    }
+
+    var removeUserFromRoom = function(userId) {
+
             $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
-                success(function(data, status, headers, config) {
-                    if(data == false)
-                    {
-                        toaster.pop('error', "Error", "Cant remove user from the room", 1000);
-                        return;    
-                    }
-                }).
-                error(function(data, status, headers, config) {
+            success(function(data, status, headers, config) {
+                if (data == false) {
                     toaster.pop('error', "Error", "Cant remove user from the room", 1000);
-                });
+                    return;
+                }
+            }).
+            error(function(data, status, headers, config) {
+                toaster.pop('error', "Error", "Cant remove user from the room", 1000);
+            });
         }
         /*************************************
          * UPDATE MESSAGE LP
@@ -224,7 +246,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
-                 mimeType:"text/html; charset=UTF-8",
+                mimeType: "text/html; charset=UTF-8",
                 url: currentUrl,
                 success: function(data) {
                     var parsedData = JSON.parse(data);
@@ -244,7 +266,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
                     }
                     if (xhr.status === 404 || xhr.status === 405) {
                         //alert("13")
-                        chatControllerScope.changeLocation("/chatrooms");
+                        ChannelFactory.changeLocation("/chatrooms");
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                     }
                     subscribeMessageLP();
@@ -252,13 +274,13 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
             }));
     }
 
-    var subscribeParticipantsLP = function () {
+    var subscribeParticipantsLP = function() {
         var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
                 url: currentUrl,
-                mimeType:"text/html; charset=UTF-8",
+                mimeType: "text/html; charset=UTF-8",
                 success: function(data) {
                     subscribeParticipantsLP();
                     var parsedData = JSON.parse(data);
@@ -269,7 +291,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
                         //alert(14)
-                        changeLocation("/chatrooms");
+                        ChannelFactory.changeLocation("/chatrooms");
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                         toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
                     }
@@ -284,10 +306,10 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
     /*************************************
      * SEND MESSAGE
      *************************************/
-   
-        /*************************************
-         * LOAD MESSAGE LP
-         *************************************/
+
+    /*************************************
+     * LOAD MESSAGE LP
+     *************************************/
 
     function loadSubscribesOnly(message) {
         participants = message["participants"];
@@ -315,7 +337,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
         if (message_busy)
             return;
         message_busy = true;
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(chatControllerScope.currentRoom.roomId), oldMessage). //  messages[0]). //
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(currentRoom.roomId), oldMessage). //  messages[0]). //
         success(function(data, status, headers, config) {
             var objDiv = document.getElementById("messagesScroll");
             var lastHeight = objDiv.scrollHeight;
@@ -330,21 +352,21 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
             //restore scrole
         }).
         error(function(data, status, headers, config) {
-            if (status == "404" || status == "405") chatControllerScope.changeLocation("/chatrooms");
+            if (status == "404" || status == "405") chatControllerScope.ChannelFactory.changeLocation("/chatrooms");
             //messageError("no other message");
         });
     }
 
     var checkUserAdditionPermission = function() {
         var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;
-      var havePermitions = UserFactory.chatUserId == currentRoom.roomAuthorId;
-      havePermitions = havePermitions || (chatControllerScope.currentRoom.userPermissions & needPrivilege) == needPrivilege
-        if (typeof chatControllerScope.currentRoom === "undefined") return false;
-        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && chatControllerScope.isMyRoom && authorize;
+        var havePermitions = UserFactory.chatUserId == currentRoom.roomAuthorId;
+        havePermitions = havePermitions || (currentRoom.userPermissions & needPrivilege) == needPrivilege
+        if (typeof currentRoom === "undefined") return false;
+        var resultOfChecking = currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && chatControllerScope.isMyRoom && authorize;
         return resultOfChecking;
     }
 
-   var unsubscribeCurrentRoom = function (event) {
+    var unsubscribeCurrentRoom = function(event) {
         var isLastRoomBindingsEmpty = lastRoomBindings == undefined || lastRoomBindings.length == 0;
         if (!isLastRoomBindingsEmpty) {
             while (lastRoomBindings.length > 0) {
@@ -365,54 +387,54 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
     tenants = [];
     var subscribeBindings = [];
 
-   function updateTenants(tenants){
+    function updateTenants(tenants) {
         this.tenants = tenants;
         var itemsToRemove = [];
-        if (tenants!=null){
-       for (var i = 0; i <  tenants.length; i++){
-       if(UserFactory.chatUserId==tenants[i].chatUserId){
-        itemsToRemove.push(i);
-        continue;
-       }
-    }
-    for (var k = itemsToRemove.length -1; k >= 0; k--)
-   tenants.splice(itemsToRemove[k],1);
-    }
+        if (tenants != null) {
+            for (var i = 0; i < tenants.length; i++) {
+                if (UserFactory.chatUserId == tenants[i].chatUserId) {
+                    itemsToRemove.push(i);
+                    continue;
+                }
+            }
+            for (var k = itemsToRemove.length - 1; k >= 0; k--)
+                tenants.splice(itemsToRemove[k], 1);
+        }
     }
 
-   function initSocketsSubscribes(){
+    function initSocketsSubscribes() {
         console.log('initSocketsSubscribes');
-               subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
-                var tenant = JSON.parse(message.body);
-                for (var i = 0; i < tenants.length; i++){
-                    if (tenant.chatUserId==tenants[i].chatUserId){
-                       tenants.splice(i,1); 
-                       break;
-                    }    
+        subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
+            var tenant = JSON.parse(message.body);
+            for (var i = 0; i < tenants.length; i++) {
+                if (tenant.chatUserId == tenants[i].chatUserId) {
+                    tenants.splice(i, 1);
+                    break;
                 }
-                //updateTenants(o);
-            }));
-            /*   subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
-                var o = JSON.parse(message.body);
-                updateTenants(o);
-            }));*/
-          subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
-                var tenant = JSON.parse(message.body);
-                var alreadyExcist = false;
-                  for (var i = 0; i < tenants.length; i++){
-                    if (tenant.chatUserId==tenants[i].chatUserId || UserFactory.chatUserId == tenant.chatUserId){
-                       alreadyExcist = true;
-                       break;
-                    }   
+            }
+            //updateTenants(o);
+        }));
+        /*   subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
+            var o = JSON.parse(message.body);
+            updateTenants(o);
+        }));*/
+        subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
+            var tenant = JSON.parse(message.body);
+            var alreadyExcist = false;
+            for (var i = 0; i < tenants.length; i++) {
+                if (tenant.chatUserId == tenants[i].chatUserId || UserFactory.chatUserId == tenant.chatUserId) {
+                    alreadyExcist = true;
+                    break;
                 }
-                if (!alreadyExcist && tenant.chatUserId!=UserFactory.chatUserId) tenants.push(tenant);
-               // updateTenants(o);
-            }));
+            }
+            if (!alreadyExcist && tenant.chatUserId != UserFactory.chatUserId) tenants.push(tenant);
+            // updateTenants(o);
+        }));
     }
 
-   // $watch('isInited', function() {
-    function afterIsInited(){
-        console.log("try " + chatControllerScope.currentRoom);
+    // $watch('isInited', function() {
+    function afterIsInited() {
+        console.log("try " + currentRoom);
         if (isInited == true) {
             updateTenants(chatControllerScope.tenants);
             var room = getRoomById(rooms, $routeParams.roomId);
@@ -432,12 +454,13 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
             }
 
             goToDialog($routeParams.roomId).then(function(data) {
-                if (socketSupport) {
-                        initSocketsSubscribes();
+                var ChannelFactory = $injector.get('ChannelFactory');
+                if (ChannelFactory.isSocketSupport === true) {
+                    initSocketsSubscribes();
                 }
                 if (data != undefined && data != null) {
-                    chatControllerScope.currentRoom = data.data;
-                    dialogName = chatControllerScope.currentRoom.string;
+                    currentRoom = data.data;
+                    dialogName = currentRoom.string;
                 }
                 pageClass = 'scale-fade-in';
             }, function() {
@@ -446,10 +469,10 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
                 // location.reload();
             });
 
-            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(chatControllerScope.currentRoom.roomId)).
+            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(currentRoom.roomId)).
             success(function(data, status, headers, config) {
                 if (data == true)
-                   showToasterWaitFreeTenant();
+                    showToasterWaitFreeTenant();
             }).
             error(function(data, status, headers, config) {
                 alert("did_am_wait_tenant: server error")
@@ -459,7 +482,7 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
 
     }
 
-        function subscribeRoomsUpdateLP() {
+    function subscribeRoomsUpdateLP() {
         console.log("roomsUpdateLP()");
         $http.post(serverPrefix + "/chat/rooms/user/login")
             .success(function(data, status, headers, config) {
@@ -476,10 +499,11 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
 
     }
 
-     var updateRooms = function(message) {
+    var updateRooms = function(message) {
         var parseObj;
 
-        if (socketSupport) {
+        var ChannelFactory = $injector.get('ChannelFactory');
+        if (ChannelFactory.isSocketSupport === true) {
             parseObj = JSON.parse(message.body);
         } else {
             parseObj = message;
@@ -504,15 +528,38 @@ springChatServices.factory('RoomsFactory', ['$route', '$routeParams', '$http', '
     }
 
 
-    return{
-goToRoom : goToRoom,
-unsubscribeCurrentRoom: unsubscribeCurrentRoom,
-updateRooms:updateRooms,
-getCurrentRoom: function(){return currentRoom;},
-setRooms: function(roomsArg){rooms = rooms;}
+    return {
+        goToRoom: goToRoom,
+        unsubscribeCurrentRoom: unsubscribeCurrentRoom,
+        updateRooms: updateRooms,
+        getCurrentRoom: function() {
+            return currentRoom;
+        },
+        setRooms: function(roomsArg) { rooms = rooms; }
 
     };
-    
 
 
-}]);
+
+}]).config(function($routeProvider) {
+    $routeProvider.when("/chatrooms", {
+        templateUrl: "dialogsTemplate.html",
+        controller: "DialogsRouteController"
+    });
+    $routeProvider.when("/dialog_view/:roomId/", {
+        resolve: {
+            load: function($route, RoomsFactory, $routeParams) {
+                debugger;
+                RoomsFactory.goToRoom($route.current.params.roomId);
+            }
+        }
+    });
+    $routeProvider.when("/access_deny", {
+        templateUrl: "accessDeny.html",
+        controller: "AccessDeny"
+    });
+
+    $routeProvider.otherwise({ redirectTo: '/' });
+    console.log("scope test");
+
+});

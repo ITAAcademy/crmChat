@@ -12,13 +12,15 @@ springChatControllers.config(function($routeProvider) {
 
 var chatControllerScope;
 
-springChatControllers.controller('AccessDeny', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', , function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
+springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', , function($locationProvider, $routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
     //maybe add button
 }]);
 
-var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore','RoomsFactory','ChannelFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory,ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
+
+
     $rootScope.goToUserPage = function(username) {
         var request = $http({
             method: "get",
@@ -35,15 +37,19 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
         return false;
     }
-    $scope.$on('$locationChangeStart', RoomsFactory.unsubscribeCurrentRoom());
+    //$scope.$on('$locationChangeStart', RoomsFactory.unsubscribeCurrentRoom());
+
     $scope.isTenantFree = true;
     $scope.isUserTenant = false;
     $scope.isUserTenantInited = false;
-    $scope.blocksNames=['first','second'];
-    $scope.blocksItems=[[new BlockItem("","Людмила Журавская",true)],[new BlockItem("","Василій Пупкін",true),new BlockItem("","Микола Петряк",true)]];
-  
+    $scope.blocksNames = ['first', 'second'];
+    $scope.blocksItems = [
+        [new BlockItem("", "Людмила Журавская", true)],
+        [new BlockItem("", "Василій Пупкін", true), new BlockItem("", "Микола Петряк", true)]
+    ];
 
-    function BlockItem (avatar,name,online){
+
+    function BlockItem(avatar, name, online) {
         this.avatar = avatar;
         this.name = name;
         this.online = online;
@@ -75,14 +81,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.needReloadPage = true;
 
-   /* $scope.askTenantToTakeConsultationTogle = function() {
-        $('#askTenantToTakeConsultation').modal('toggle');
-        isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
-    };
-    $scope.askTenantToTakeConsultationHide = function() {
-        $('#askTenantToTakeConsultation').modal('hide');
-        isAskTenantToTakeConsultationVisible = false;
-    };*/
+    /* $scope.askTenantToTakeConsultationTogle = function() {
+         $('#askTenantToTakeConsultation').modal('toggle');
+         isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
+     };
+     $scope.askTenantToTakeConsultationHide = function() {
+         $('#askTenantToTakeConsultation').modal('hide');
+         isAskTenantToTakeConsultationVisible = false;
+     };*/
 
     $scope.showAskWindow = function() {
         if (isAskTenantToTakeConsultationVisible == false) {
@@ -228,16 +234,14 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.changeLocation = function changeLocation(url) {
         //alert(url);
         toaster.clear();
+        debugger;
         $location.path(url);
+
         console.log("Change location:" + $location.path());
         // $scope.$apply();
     };
 
-    function changeLocation(url) {
-        $location.path(url);
-        console.log("Change location:" + $location.path());
-        // $scope.$apply();
-    };
+    var changeLocation = $scope.changeLocation;
     //$scope.templateName = null;
     $rootScope.socketSupport = true;
     $rootScope.authorize = false;
@@ -545,7 +549,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
     };
 
-    
+
     var isWaiFreeTenatn = false;
 
     $rootScope.showToasterWaitFreeTenant = function() {
@@ -566,10 +570,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
 
-    function updateStudents(){
-       
+    function updateStudents() {
+
     }
-    function updateTenants(){
+
+    function updateTenants() {
 
     }
 
@@ -624,16 +629,16 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }, true);
 
     $scope.confirmToHelp = function(roomId) {
-         $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
+        $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
         success(function(data, status, headers, config) {
-            changeLocation("/dialog_view/" + roomId);            
+            changeLocation("/dialog_view/" + roomId);
         }).
         error(function(data, status, headers, config) {
 
         });
     }
 
-   
+
 
     $rootScope.submitConsultation_processUser = function(roomId) {
         if (roomId == RoomsFactory.getCurrentRoom().roomId) {
@@ -656,8 +661,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     };
 
-    
-   
+
+
 
 
 

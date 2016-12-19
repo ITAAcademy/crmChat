@@ -5,6 +5,49 @@ var springChat = angular.module('springChat', ['springChat.controllers', //'spri
     'springChat.services',
     'springChat.directives'
 ]);
+/*
+springChat.config(function($routeProvider) {
+    $routeProvider.when("/chatrooms", {
+        templateUrl: "dialogsTemplate.html",
+        controller: "DialogsRouteController"
+    });
+    $routeProvider.when("/dialog_view/:roomId/", {
+        controller: function(){}
+    });
+
+    $routeProvider.when("/builder", {
+        templateUrl: "builderTemplateJSTemp.html",
+        controller: "ChatBotViewBuilderController"
+    });
+    $routeProvider.when("/builderForm", {
+        templateUrl: "builderTemplateJSTemp.html",
+        controller: "ChatBotFormBuilderController"
+    });
+
+    $routeProvider.when("/teachers_list", {
+        templateUrl: "teachersTemplate.html",
+        controller: "TeachersListRouteController"
+    });
+    $routeProvider.when("/private_dialog_view/:chatUserId", {
+        templateUrl: "redirectPage.html",
+        controller: "StrictedDialogRouteController"
+    });
+    $routeProvider.when("/access_deny", {
+        templateUrl: "accessDeny.html",
+        controller: "AccessDeny"
+    });
+
+    $routeProvider.when("/consultation_view/:consultationId", {
+        templateUrl: "consultationTemplate.html",
+        controller: "ConsultationController"
+    });
+
+
+
+    $routeProvider.otherwise({ redirectTo: '/' });
+    console.log("scope test");
+
+});*/
 
 var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services',
     'springChat.directives'
