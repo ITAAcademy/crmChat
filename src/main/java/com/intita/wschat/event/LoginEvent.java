@@ -12,6 +12,7 @@ import com.intita.wschat.models.User;
 public class LoginEvent {
 
 	private String username;
+	private String nickName;
 	private Long chatUserId;
 	private Long intitaUserId;
 	private Date time;
@@ -71,10 +72,11 @@ public class LoginEvent {
 		if (u!=null){
 			this.chatUserId=u.getId();
 			User intitaUser = u.getIntitaUser();
-			this.username = u.getNickName();
+			this.nickName = u.getNickName();
 			if (intitaUser!=null){
 				this.avatar = intitaUser.getAvatar();
 				this.intitaUserId = intitaUser.getId();
+				this.username = intitaUser.getFullName();
 			}
 		}
 		time = new Date();
@@ -122,5 +124,13 @@ public class LoginEvent {
 
 	public void setChatUserId(Long chatUserId) {
 		this.chatUserId = chatUserId;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 }

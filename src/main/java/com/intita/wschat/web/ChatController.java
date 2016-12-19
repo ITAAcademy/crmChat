@@ -715,6 +715,29 @@ public class ChatController {
 	public RoomModelSimple userGoToDialogListenerLP(@PathVariable("roomId") Long roomid, Principal principal) {
 		return userGoToDialogListener(roomid, principal);
 	}
+	@RequestMapping(value = "/chat/get_students/", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent> userGoToDialogListenerLP(Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		ArrayList<User> users=null;
+		User iUser = user.getIntitaUser();
+		
+		if(iUser != null)
+		{
+			Long intitaUserId = user.getIntitaUser().getId();
+			users = userService.getStudents(intitaUserId);
+		}
+		else return new  HashSet<LoginEvent>();
+
+		Set<LoginEvent> userList = new HashSet<>();
+		for(User u : users)
+		{
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
+			userList.add(new LoginEvent(u.getId(),u.getFullName(), u.getAvatar(),participantRepository.isOnline(""+chat_user.getId())));
+		}
+		return  userList;
+	
+	}
 
 	/*
 	 * Out from room

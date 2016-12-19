@@ -6,6 +6,17 @@
 <title>IntITA Chat</title>
 <link rel="icon" href="favicon.ico"/>
 <link href="css/style.css" rel="stylesheet" />
+	<script th:inline="javascript">
+		var globalConfig = {  
+					 baseUrl:[[${config.get('baseUrl')}]], 
+					 lang: [[${config.get('currentLang')}]]
+		};;
+		
+		var USER_COPABILITIES_BY_ROOM = [[${user_copabilities_supported}]];
+		
+		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
+		var fileUploadLocal = [[${lgPack.fileOperations}]];
+	</script>
 <script src="lib/jquery.min.js"></script>
 <script src="lib/angular/angular.js"></script>
 <script src="lib/angular-animate/angular-animate.js"></script>
@@ -27,86 +38,22 @@
 <script src="js/directives.js"></script>
 <script src="js/mainController.js"></script>
 <script src="js/services.js"></script>
+<script src="js/RoomsFactory.js"></script>
+<script src="js/ChannelFactory.js"></script>
+<script src="js/UserFactory.js"></script>
 <script src="js/ui.js"></script>
 
-	<script th:inline="javascript">
-		var globalConfig = {  
-					 baseUrl:[[${config.get('baseUrl')}]], 
-					 lang: [[${config.get('currentLang')}]]
-		};;
-		
-		var USER_COPABILITIES_BY_ROOM = [[${user_copabilities_supported}]];
-		
-		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
-		var fileUploadLocal = [[${lgPack.fileOperations}]];
-	</script>
+
 </head>
 <body>
 
 	<body>
 	<div class="consultant_wrapper" ng-controller="ChatController">
 		<div class="left_panel">
-			<div class="items_list_block top_block">
-
-				<div class="block_name">{{blocksNames[0]}}</div>
-				<div class="block_content">
-					<div class="block_item"> 
-						<div class="avatar">
-							<img class="user_image"  alt=""/>
-							<img class="user_presence_icon" alt=""/>
-						</div>
-						<div class="text_info">
-							<div class="user_name">Людмила Журавская</div>
-							<div class="user_presence">Онлайн</div>
-						</div>
-					</div>
-
-						<div class="block_item"> 
-						<div class="avatar">
-							<img class="user_image"  alt=""/>
-							<img class="user_presence_icon" alt=""/>
-						</div>
-						<div class="text_info">
-							<div class="user_name">Людмила Журавская</div>
-							<div class="user_presence">Онлайн</div>
-						</div>
-					</div>
-
-				</div>				
-			</div>
-			<div class="chevron_wrapper" onclick="unfoldLeftPanelItemsListBlockFirst()">
-			<div class="chevron"></div>
-			</div>
-
-			<div class="items_list_block middle_block">
-				<div class="block_name">{{blocksNames[1]}}</div>
-				<div class="block_content">
-					<div class="block_item"> 
-						<div class="avatar">
-							<img class="user_image"  alt=""/>
-							<img class="user_presence_icon"  alt=""/>
-						</div>
-						<div class="text_info">
-							<div class="user_name">Василь Пупкін</div>
-							<div class="user_presence">Онлайн</div>
-						</div>
-						<div class="block_item"> 
-							<div class="avatar">
-								<img class="user_image" alt=""/>
-								<img class="user_presence_icon" alt=""/>
-							</div>
-							<div class="text_info">
-								<div class="user_name">Микола Петряк</div>
-								<div class="user_presence">Онлайн</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-			</div>
-			<div class="chevron_wrapper" onclick="unfoldLeftPanelItemsListBlockSecond()">
-			<div class="chevron"></div>
-			</div>
+			<div students-block="true"></div>
+			<div participants-block="true"></div>
+			
+			
 			<div class="contacts_menu_strip">
 				<img class="search_icon" src="images\search17x17.png" alt=""/>
 				<div class="contacts_menu_item">КОНТАКТИ</div>
@@ -114,27 +61,10 @@
 				<img class="group_icon" src="images\group23x16.png" alt=""/>
 			</div>
 
-			<div class="items_list_block bottom_block" >
-				<div class="section" ng-repeat="(sectionKey, sectionValue) in contacts" >
-					<div class="section_name" >{{sectionKey}}</div>
-					<div class="section_content" ng-repeat="itemValue in sectionValue" >
-						<div class="block_item"> 
-							<div class="avatar">
-								<img class="user_image" ngSrc="{{itemValue.avatar}}" alt=""/>
-								<img class="user_presence_icon" alt=""/>
-							</div>
-							<div class="text_info">	
-								<div class="user_name">{{itemValue.name}}</div>
-							</div>
-							<div class="contact_control">
-								<img src="images\cross13x15.png" alt=""/>
-							</div>
-						</div>
-					</div>
+		<!--  ROOMS BLOCK -->
+		<div roomsBlock="true"></div>
 
-				</div>
 
-			</div>
 			<div class="bottom_logo">
 				<img src="images\intita95x30.png" alt=""/>
 			</div>
@@ -154,116 +84,9 @@
 				<img class="search_icon" src="images\search17x17.png" alt=""/>
 			</div>
 			<hr/>
-			<div class="messages_output_area">
 
+			<div class="messages_output_area" messages-block="true"></div><!--It's message displayer-->
 
-
-				<!-- Вчорашні повідомлення -->
-				<div class="message_date_separator">
-					<div class="line"></div>
-					<div class="big_dot"></div>
-					<span class="date_indicator">Вчора</span>
-					<div class="big_dot"></div>
-					<div class="line"></div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Петя</span>
-							<span class="message_date">19:16</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
-					</div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Петя</span>
-							<span class="message_date">19:16</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
-					</div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Петя</span>
-							<span class="message_date">19:16</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tev</span>
-					</div>
-				</div>
-				<!-- //Вчорашні повідомлення -->
-
-				<!-- Сьогоднішні повідомлення -->
-				<div class="message_date_separator">
-					<div class="line"></div>
-					<div class="big_dot"></div>
-					<span class="date_indicator">Сьогодні</span>
-					<div class="big_dot"></div>
-					<div class="line"></div>
-				</div>
-
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Людмила</span>
-							<span class="message_date">10:04</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span>
-					</div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Людмила</span>
-							<span class="message_date">10:04</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum</span>
-					</div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Петя</span>
-							<span class="message_date">19:16</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod te</span>
-					</div>
-				</div>
-				<div class="user_message">
-					<div class="message_author_avatar">
-						<img alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">Людмила</span>
-							<span class="message_date">10:04</span>
-						</div>
-						<span class="bottom_details">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </span>
-					</div>
-				</div>
-				<!-- //Сьогоднішні повідомлення -->
-
-			</div>
 			<hr/>
 			<div class="messages_input_area">
 				<input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..."/>

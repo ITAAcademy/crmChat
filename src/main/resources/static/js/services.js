@@ -2,8 +2,8 @@
 
 /* Services */
 
-angular.module('springChat.services', [])
-	.factory('ChatSocket', ['$rootScope', function($rootScope) {
+var springChatServices = angular.module('springChat.services', []);
+springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
 			var stompClient;
 
 			var wrappedSocket = {

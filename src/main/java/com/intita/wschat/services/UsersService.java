@@ -186,12 +186,12 @@ public class UsersService {
 	}
 	@Transactional
 	public ArrayList<User> getStudents(Long id){
-		ArrayList<Long> studentsIdList = usersRepo.getStudentsByTeacherId(id);
+		ArrayList<Integer> studentsIdList = usersRepo.getStudentsByTeacherId(id);
 		if(studentsIdList != null)
 		{
 			ArrayList<User> studentsList = new ArrayList<>();
-			for (Long studentId : studentsIdList) {
-				User student = usersRepo.findFisrtById(studentId);
+			for (Integer studentId : studentsIdList) {
+				User student = usersRepo.findFisrtById(new Long(studentId));
 				if(student == null)
 				{
 					System.out.println("NULL studen!!! Id = " + studentId);

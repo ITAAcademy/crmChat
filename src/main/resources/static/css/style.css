@@ -116,9 +116,14 @@ display:inline-block;
 	width:16px;
 	height:16px;
 	border-radius: 50%;
-	background-color:green;
 	display:inline-block;
 	margin-left:-18px;
+}
+.user_online_background{
+background-color:green;
+}
+.user_offline_background{
+background-color:red;
 }
 .items_list_block  .text_info {
 display:inline-block;

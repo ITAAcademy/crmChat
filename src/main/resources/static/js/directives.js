@@ -1,13 +1,16 @@
 /* Directives */
 
-angular.module('springChat.directives', [])
-    .directive('printMessage', function() {
-        return {
-            restrict: 'A',
-            template: '<span ng-show="message.priv">[private] </span><strong>{{message.username}}<span ng-show="message.to"> -> {{message.to}}</span>:</strong> {{message.message}}<br/>'
+var directivesModule = angular.module('springChat.directives', []);
+directivesModule.directive('printMessage', function() {
+    return {
+        restrict: 'A',
+        template: '<span ng-show="message.priv">[private] </span><strong>{{message.username}}<span ng-show="message.to"> -> {{message.to}}</span>:</strong> {{message.message}}<br/>'
 
-        };
-    });
+    };
+});
+directivesModule.constant('mySettings',{
+    baseUrl:globalConfig.baseUrl
+});
 angular.module('springChat.directives').directive("imagedrop", function($parse, $document) {
     return {
         restrict: "A",
@@ -37,10 +40,10 @@ angular.module('springChat.directives').directive("imagedrop", function($parse, 
 
             //Dragging ends on the overlay, which takes the whole window
             element.bind("dragleave", onDragEnd)
-                .bind("drop", function(e) {
-                    onDragEnd(e);
-                    loadFile(e.originalEvent.dataTransfer.files);
-                });
+            .bind("drop", function(e) {
+                onDragEnd(e);
+                loadFile(e.originalEvent.dataTransfer.files);
+            });
         }
     };
 });
@@ -48,8 +51,8 @@ angular.module('springChat.directives').directive("imagedrop", function($parse, 
 angular.module('springChat.directives').directive('autoGrow', function() {
     return function(scope, element, attr) {
         var minHeight = element[0].offsetHeight,
-            paddingLeft = element.css('paddingLeft'),
-            paddingRight = element.css('paddingRight');
+        paddingLeft = element.css('paddingLeft'),
+        paddingRight = element.css('paddingRight');
 
         var $shadow = angular.element('<div></div>').css({
             position: 'absolute',
@@ -72,12 +75,12 @@ angular.module('springChat.directives').directive('autoGrow', function() {
             }
 
             var val = element.val().replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/&/g, '&amp;')
-                .replace(/\n$/, '<br/>&nbsp;')
-                .replace(/\n/g, '<br/>')
-                .replace(/\s{2,}/g, function(space) {
-                    return times('&nbsp;', space.length - 1) + ' ' });
+            .replace(/>/g, '&gt;')
+            .replace(/&/g, '&amp;')
+            .replace(/\n$/, '<br/>&nbsp;')
+            .replace(/\n/g, '<br/>')
+            .replace(/\s{2,}/g, function(space) {
+                return times('&nbsp;', space.length - 1) + ' ' });
             $shadow.html(val);
 
             element.css('height', Math.max($shadow[0].offsetHeight + 10 /* the "threshold" */ , minHeight) + 'px');
@@ -112,12 +115,12 @@ function starRating() {
     return {
         restrict: 'EA',
         template: '<ul class="star-rating" ng-class="{readonly: readonly}">' +
-            '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
+        '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
             '    <i class="fa fa-star"></i>' + // or &#9733
             '  </li>' +
             '</ul>',
-        scope: {
-            ratingValue: '=ngModel',
+            scope: {
+                ratingValue: '=ngModel',
             max: '=?', // optional (default is 5)
             onRatingSelect: '&?',
             readonly: '=?'
@@ -154,8 +157,122 @@ function starRating() {
               if (newValue) {
                 updateStars();
               }
-            });*/
-            updateStars();
+          });*/
+          updateStars();
+      }
+  };
+};
+
+        function updateModelGet(http,requestUrl,callback){
+        http({
+          method: 'GET',
+          url: requestUrl
+      }).then(callback, function errorCallback(response) {
+        console.log('updateModelGet():requestUrl:'+requestUrl+" failed");
+});
+  };
+
+
+angular.module('springChat.directives').directive('studentsBlock',studentsBlock);
+
+function studentsBlock($http,mySettings) {
+    return {
+        restrict: 'EA',
+        scope:{
+
+        },
+        templateUrl:'static_templates/users_list_block.html',
+        link: function(scope, element, attributes) {
+            function updateModelForStudents(){
+        updateModelGet($http,"chat/get_students/",function(responseObj){
+          scope.items = responseObj.data;
+        });
+         };
+       scope.blockName="Студенти";
+       scope.folded=true;
+       scope.toggleFolded = function(){
+        scope.folded = !scope.folded;
+       }
+updateModelForStudents();
+       
+    }
+
+};
+};
+
+angular.module('springChat.directives').directive('participantsBlock',participantsBlock);
+
+function participantsBlock($http,mySettings) {
+    return {
+        restrict: 'EA',
+         scope:{
+
+        },
+        templateUrl:'static_templates/users_list_block.html',
+        link: function(scope, element, attributes) {
+            function updateModelForParticipants(){
+
+         };
+
+     scope.blockName="Учасники розмови";
+
+       
+    }
+
+};
+};
+
+
+
+  angular.module('springChat.directives').directive('messagesBlock',messagesBlock);
+
+function messagesBlock($http) {
+    return {
+        restrict: 'EA',
+         scope:{
+
+        },
+        templateUrl:'static_templates/messages_block.html',
+        link: function(scope, element, attributes) {
+            function updateModelForMessages(){
+
+         };
+       
+    }
+
+};
+};
+
+  angular.module('springChat.directives').directive('roomsBlock',roomsBlock);
+
+function roomsBlock($http) {
+    return {
+        restrict: 'EA',
+         scope:{
+
+        },
+        templateUrl:'static_templates/rooms_block.html',
+        link: function(scope, element, attributes) {
+            function updateModelForMessages(){
+                  $scope.contacts = new Object();
+
+    scope.updateContactsFromArray = function (contactsList){
+        for (var key in Object.keys($scope.contacts))
+      delete scope.contacts[key];
+        for (var i = 0; i < contactsList.length; i++){
+         var contact = contactsList[i];
+         var characterForGroup = contact.name.charAt(0);
+         if (scope.contacts[characterForGroup]==null){
+             scope.contacts[characterForGroup]=[];
+         }
+         scope.contacts[characterForGroup].push(contact);
         }
-    };
+    }
+
+
+         };
+       
+    }
+
+};
 };

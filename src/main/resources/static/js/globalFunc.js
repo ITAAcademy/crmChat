@@ -155,6 +155,7 @@ function getRoomById(rooms, id) {
     return undefined;
 }
 
+
 /*
  * FILE UPLOAD
  */
@@ -331,3 +332,15 @@ function parseBoolean(value) {
 function Color(val) {
     this.val = val;
 }
+    function send(destination, data, ok_funk, err_funk) {
+        var xhr = getXmlHttp();
+        xhr.open("POST", serverPrefix + destination, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 || xhr.readyState == "complete") {
+                ok_funk();
+            } else
+                err_funk();
+
+        }
+        xhr.send(data);
+    }

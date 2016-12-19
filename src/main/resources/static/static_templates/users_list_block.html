@@ -1,0 +1,22 @@
+<div class="items_list_block top_block ng-class:{unfolded:!folded}">
+
+				<div class="block_name">{{blockName}}</div>
+				<div class="block_content" ng-repeat="item in items">
+					<div class="block_item"> 
+						<div class="avatar">
+							<img class="user_image" ng-src="{{baseurl}}/images/avatars/{{item.avatar}}" alt=""/>
+							<img class="user_presence_icon user_online_background" ng-show="item.online" alt=""/>
+							<img class="user_presence_icon user_offline_background" ng-show="!item.online" alt=""/>
+						</div>
+						<div class="text_info">
+							<div class="user_name">{{item.username}}</div>
+							<div class="user_presence" ng-show="item.online">Онлайн</div>
+							<div class="user_presence" ng-show="!item.online">Оффлайн</div>
+						</div>
+					</div>
+
+				</div>				
+			</div>
+			<div class="chevron_wrapper" ng-click="toggleFolded()">
+			<div class="chevron"></div>
+			</div>
