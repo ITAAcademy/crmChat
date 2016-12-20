@@ -246,7 +246,7 @@ function messagesBlock($http) {
 
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
 
-function roomsBlock($http) {
+function roomsBlock($http,RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -254,24 +254,8 @@ function roomsBlock($http) {
         },
         templateUrl: 'static_templates/rooms_block.html',
         link: function(scope, element, attributes) {
-            function updateModelForMessages() {
-                $scope.contacts = new Object();
+             rooms = RoomsFactory.getRooms;
 
-                scope.updateContactsFromArray = function(contactsList) {
-                    for (var key in Object.keys($scope.contacts))
-                        delete scope.contacts[key];
-                    for (var i = 0; i < contactsList.length; i++) {
-                        var contact = contactsList[i];
-                        var characterForGroup = contact.name.charAt(0);
-                        if (scope.contacts[characterForGroup] == null) {
-                            scope.contacts[characterForGroup] = [];
-                        }
-                        scope.contacts[characterForGroup].push(contact);
-                    }
-                }
-
-
-            };
 
         }
 

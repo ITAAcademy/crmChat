@@ -19,11 +19,31 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var ajaxRequestsForRoomLP = [];
     var message_busy = true;
     var rooms = [];
+    var roomsMap = new Object();
+
+     $rootScope.$watch(function(){return rooms}, function() {
+            updateContactsMapFromArray(rooms);
+        },true);
+
     /*    $rootScope.$on('$locationChangeStart', function(p1, p2, p3) {
             var t = $location.hash();
             debugger;
         });
     */
+
+
+ var updateContactsMapFromArray = function(contactsList) {
+                    for (var key in Object.keys(roomsMap))
+                        delete roomsMap[key];
+                    for (var i = 0; i < contactsList.length; i++) {
+                        var contact = contactsList[i];
+                        var characterForGroup = contact.name.charAt(0);
+                        if (roomsMap[characterForGroup] == null) {
+                            roomsMap[characterForGroup] = [];
+                        }
+                        roomsMap[characterForGroup].push(contact);
+                    }
+                }
 
     var findParticipant = function(nickname) {
         for (var c_index in participants)
@@ -535,17 +555,19 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getCurrentRoom: function() {
             return currentRoom;
         },
-        setRooms: function(roomsArg) { rooms = rooms; }
+        setRooms: function(roomsArg) { rooms = rooms; },
+        getRooms: function() {return rooms;},
+        getRoomsMap: function(){return roomsMap;}
 
     };
 
 
 
 }]).config(function($routeProvider) {
-    $routeProvider.when("/chatrooms", {
+   /* $routeProvider.when("/chatrooms", {
         templateUrl: "dialogsTemplate.html",
         controller: "DialogsRouteController"
-    });
+    });*/
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
             load: function($route, RoomsFactory, $routeParams) {
