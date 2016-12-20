@@ -10,7 +10,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
 
     };
-
+    var errorMsgTitleNotFound = "Сталася помилка";
+    var errorMsgContentNotFound = "Кімната не існує або Ви не є її учасником";
     var lastRoomBindings = [];
     var currentRoom = null;
     var messages = [];
@@ -295,7 +296,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var subscribeParticipantsLP = function() {
-        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
+          var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
@@ -315,7 +316,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                         toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
                     }
-                    subscribeParticipantsLP();
+                    //subscribeParticipantsLP();
 
                 }
 
@@ -342,6 +343,37 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             calcPositionPush(message["messages"][i]); //POP
             //calcPositionUnshift(JSON.parse(o["messages"][i].text));
         }
+    }
+
+    function loadSubscribeAndMessage(message) {
+        roomType = message["type"];
+
+       participants = message["participants"];
+        if (typeof message["messages"] != 'undefined') {
+            //  $scope.message_busy = true;
+            oldMessage = message["messages"][message["messages"].length - 1];
+
+            for (var i = 0; i < message["messages"].length; i++) {
+                calcPositionUnshift(message["messages"][i]);
+                //calcPositionUnshift(JSON.parse(o["messages"][i].text));
+            }
+        }
+        var bot_params = JSON.parse(message["bot_param"]);
+        if (bot_params.length > 0) {
+
+            for (var key in bot_params)
+               botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
+        }
+
+        /*Unconvenient code, maybe be restored
+        $timeout(function() {
+            var objDiv = document.getElementById("messagesScroll");
+            var count = 5;
+            objDiv.scrollTop = objDiv.scrollHeight;
+            $scope.message_busy = false;
+        }, 100);*/
+
+
     }
 
     function loadSubscribeAndMessageLP() {
