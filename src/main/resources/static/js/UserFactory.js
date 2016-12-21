@@ -264,7 +264,6 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             return;
         }
-        debugger;
         if (ChannelFactory.isSocketSupport() == false) {
             RoomsFactory.updateRooms(JSON.parse(mess_obj.chat_rooms));
         } else {

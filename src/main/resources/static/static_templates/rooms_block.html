@@ -1,14 +1,14 @@
 <div class="items_list_block bottom_block">
-    <div class="section" ng-repeat="(sectionKey, sectionValue) in rooms()">
-        <div class="section_name">{{sectionKey}}</div>
-        <div class="section_content" ng-repeat="itemValue in sectionValue">
+    <div class="section" ng-repeat="room in rooms() | orderBy : 'string'">
+        <div class="section_name" ng-bind="firstLetter(room.string)" ng-if="firstLetter(room.string) != firstLetter(room[$index-1].string)"></div>
+        <div class="section_content" >
             <div class="block_item">
                 <div class="avatar">
-                    <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{itemValue.avatars[0]}}" alt="" />
+                    <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{room.avatars[0]}}" alt="" />
                     <img class="user_presence_icon" alt="" />
                 </div>
                 <div class="text_info">
-                    <div class="user_name">{{itemValue.string}}</div>
+                    <div class="user_name">{{room.string}}</div>
                 </div>
                 <div class="contact_control">
                     <img src="images\cross13x15.png" alt="" />

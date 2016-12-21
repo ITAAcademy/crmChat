@@ -29,7 +29,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
     var updateContactsMapFromArray = function(contactsList) {
-        debugger;
         for (var key in Object.keys(roomsMap))
             delete roomsMap[key];
         for (var i = 0; i < contactsList.length; i++) {
@@ -73,7 +72,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (!$rootScope.isInited) {
             unsubscribeWatch = $rootScope.$watch('isInited', function(newValue, oldValue) {
                 if (newValue == true) {
-                    debugger;
                     goToRoom(roomId);
                 }
             });
@@ -124,7 +122,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (msg == null)
             return null;
         //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
-
         var summarised = false;
         oldMessage = msg;
         if (messages.length > 0) {
@@ -204,7 +201,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             lastRoomBindings.push(chatSocket.subscribe("/topic/{0}/chat.participants".format(currentRoom.roomId, globalConfig.lang), function(message) {
                 var o = JSON.parse(message.body);
                 participants = o["participants"];
-                debugger;
             }));
         } else {
             subscribeMessageLP(); //@LP@
@@ -605,7 +601,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getRooms: function() {
             return rooms; },
         getRoomsMap: function() {
-            return roomsMap; }
+            return roomsMap; },
+            getMessages: function(){
+                return messages;
+            }
 
     };
 
@@ -619,7 +618,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
             load: function($route, RoomsFactory, $routeParams) {
-                debugger;
                 RoomsFactory.goToRoom($route.current.params.roomId);
             }
         }

@@ -20,6 +20,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
     $scope.baseurl = globalConfig["baseUrl"];
+    $rootScope.firstLetter = firstLetter;
 
 
     $rootScope.goToUserPage = function(username) {
@@ -235,7 +236,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.changeLocation = function changeLocation(url) {
         //alert(url);
         toaster.clear();
-        debugger;
         $location.path(url);
 
         console.log("Change location:" + $location.path());

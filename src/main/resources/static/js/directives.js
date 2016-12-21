@@ -186,7 +186,6 @@ function studentsBlock($http, mySettings) {
         link: function(scope, element, attributes) {
             function updateModelForStudents() {
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
-                    debugger;
                     scope.items = responseObj.data;
                 });
             };
@@ -227,17 +226,16 @@ function participantsBlock($http, mySettings) {
 
 angular.module('springChat.directives').directive('messagesBlock', messagesBlock);
 
-function messagesBlock($http) {
+function messagesBlock($http,RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
 
         },
         templateUrl: 'static_templates/messages_block.html',
-        link: function(scope, element, attributes) {
-            function updateModelForMessages() {
+        link: function($scope, element, attributes) {
+             $scope.messages = RoomsFactory.getMessages;
 
-            };
 
         }
 
@@ -249,13 +247,10 @@ angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
 function roomsBlock($http, RoomsFactory) {
     return {
         restrict: 'EA',
-        scope: {
-
-        },
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
-            $scope.rooms = RoomsFactory.getRoomsMap;
-
+            $scope.rooms = RoomsFactory.getRooms;
+          //  $scope.firstLetter = $rootScope.firstLetter;
 
         }
 

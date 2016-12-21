@@ -15,7 +15,6 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                });*/
         },
         subscribeToConnect(callBack) {
-            debugger;
             if ($rootScope.isInited == false) {
                 console.log("serverPrefix");
                 var onConnect = function(frame) {
