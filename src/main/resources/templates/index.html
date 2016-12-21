@@ -85,11 +85,11 @@
 			</div>
 			<hr/>
 
-			<div class="messages_output_area" messages-block="true"></div><!--It's message displayer-->
+			<div messages-block="true"></div><!--It's message displayer-->
 
 			<hr/>
 			<div class="messages_input_area">
-				<input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..."/>
+				<input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage"/>
 				<div class="controls_area">
 					<div class="multimedia_conversation_controls">
 						<button class="skype"><img src="images\skype24x23.png" alt=""/></button>
@@ -103,7 +103,7 @@
 						</ul>
 						<button class="smiles"><img src="images\smile23x23.png" alt=""/></button>
 						<button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt=""/></button>
-						<div class="send_button">ВІДПРАВИТИ&#47;&#62;</div>
+						<div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
 					</div>
 
 				</div>

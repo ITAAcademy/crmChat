@@ -41,6 +41,12 @@ var ROOM_PERMISSIONS = {
 ADD_USER : 1,
 REMOVE_USER : 2
 };
+
+var checkIfToday = function(inputDateLong){
+    var inputDate = new Date(inputDateLong);
+    var todaysDate = new Date();
+    return inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0);
+}
 var firstLetter = function(name) {
   return name && name.charAt(0);
 }

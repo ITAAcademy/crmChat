@@ -1,9 +1,21 @@
 		<!-- Сьогоднішні повідомлення -->
-		<div class="messages_wrapper" ng-repeat="message in messages()">
-				<div class="message_date_separator">
+		<div class="messages_output_area" id="messagesScroll" class="messages_wrapper" ng-repeat="message in messages() | orderBy : 'date'" >
+		<div infinite-scroll='loadOtherMessages()'
+					infinite-scroll-disabled='message_busy'
+					infinite-scroll-distance='0' infinite-scroll-parent="true"
+					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
+				<div class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(message[$index-1].date))">
 					<div class="line"></div>
 					<div class="big_dot"></div>
 					<span class="date_indicator">Сьогодні</span>
+					<div class="big_dot"></div>
+					<div class="line"></div>
+				</div>
+
+				<div class="message_date_separator" ng-if="!checkIfToday(message.date) &amp;&amp; $index==0">
+					<div class="line"></div>
+					<div class="big_dot"></div>
+					<span class="date_indicator">Вчора</span>
 					<div class="big_dot"></div>
 					<div class="line"></div>
 				</div>
@@ -20,6 +32,7 @@
 						</div>
 						<span class="bottom_details">{{message.message}}</span>
 					</div>
+				</div>
 				</div>
 		</div>
 				<!-- //Сьогоднішні повідомлення -->

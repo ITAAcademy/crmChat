@@ -20,15 +20,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var ajaxRequestsForRoomLP = [];
     var message_busy = true;
     var rooms = [];
-    var roomsMap = new Object();
 
-    $rootScope.$watch(function() {
-        return rooms }, function() {
-        updateContactsMapFromArray(rooms);
-    }, true);
-
-
-    var updateContactsMapFromArray = function(contactsList) {
+    /*var updateContactsMapFromArray = function(contactsList) {
         for (var key in Object.keys(roomsMap))
             delete roomsMap[key];
         for (var i = 0; i < contactsList.length; i++) {
@@ -39,7 +32,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
             roomsMap[characterForGroup].push(contact);
         }
-    }
+    }*/
 
     var findParticipant = function(nickname) {
         for (var c_index in participants)
@@ -151,7 +144,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         var objDiv = document.getElementById("messagesScroll");
         var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 100;
-
+        if (needScrollDown){
+            $rootScope.$broadcast('MessageAreaScrollDownEvent');
+        }
         if (messages.length > 0) {
             if (messages[messages.length - 1].username == msg.username)
                 msg.position = messages[messages.length - 1].position;
@@ -362,7 +357,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
-            //  $scope.message_busy = true;
+            $rootScope.$broadcast('messageBusyEvent',true);
             oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
@@ -376,14 +371,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             for (var key in bot_params)
                 botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
         }
-
-        /*Unconvenient code, maybe be restored
         $timeout(function() {
             var objDiv = document.getElementById("messagesScroll");
             var count = 5;
             objDiv.scrollTop = objDiv.scrollHeight;
-            $scope.message_busy = false;
-        }, 100);*/
+               $rootScope.$broadcast('messageBusyEvent',false);
+        }, 100);
 
 
     }
@@ -600,8 +593,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         setRooms: function(roomsArg) { rooms = roomsArg; },
         getRooms: function() {
             return rooms; },
-        getRoomsMap: function() {
-            return roomsMap; },
             getMessages: function(){
                 return messages;
             }

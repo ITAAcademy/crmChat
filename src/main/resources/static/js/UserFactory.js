@@ -89,7 +89,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                     chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) { // event update
                         console.log("new message in room:" + message.body);
                         var num = JSON.parse(message.body);
-                        newMessageEvent(num);
+                           $rootScope.$broadcast('newMessageEvent',num);
                     });
 
                     chatSocket.subscribe("/topic/users/{0}/status".format(getChatUserId()), function(message) {
@@ -194,8 +194,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                 console.log("infoUpdateLP data:" + data);
                 if (data["newMessage"] != null) //new message in room
                 {
-                    for (var i in data["newMessage"])
-                        newMessageEvent(data["newMessage"][i]);
+                    $rootScope.$broadcast('newMessageArrayEvent',data["newMessage"]);
                 }
                 /*if (data["newGuestRoom"] != null) {
                     if ($scope.currentRoom == undefined)
@@ -326,7 +325,13 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
         setChatUserId: setChatUserId,
         getChatUserId: getChatUserId,
         setRealChatUserId: setRealChatUserId,
-        login: login
+        login: login,
+        getChatUserNickname: function(){
+            return chatUserNickname;
+        },
+        getChatuserAvatar:function(){
+            return chatUserAvatar;
+        }
     };
 
 

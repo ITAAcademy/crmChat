@@ -16,11 +16,12 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     //maybe add button
 }]);
 
-var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory','ChannelFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory,ChannelFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
     $scope.baseurl = globalConfig["baseUrl"];
     $rootScope.firstLetter = firstLetter;
+    $rootScope.checkIfToday = checkIfToday;
 
 
     $rootScope.goToUserPage = function(username) {
@@ -468,65 +469,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     }
 
-    function subscribeInfoUpdateLP() {
-        // alert("subscribeInfoUpdateLP()");
-        $http.post(serverPrefix + "/chat/global/lp/info")
-            .success(function(data, status, headers, config) {
-                console.log("infoUpdateLP data:" + data);
-                if (data["newMessage"] != null) //new message in room
-                {
-                    for (var i in data["newMessage"])
-                        newMessageEvent(data["newMessage"][i]);
-                }
-                /*if (data["newGuestRoom"] != null) {
-                    if ($scope.currentRoom == undefined)
-                        $scope.currentRoom = { roomId: data["newGuestRoom"] };
-                    else
-                        $scope.currentRoom.roomId = data["newGuestRoom"];
-                    changeLocation("/dialog_view/" + data["newGuestRoom"]);
-                }*/
-                if (data["newAsk_ToChatUserId"] != null) {
-                    /*SHOW*/
-                    $scope.askObject = data["newAsk_ToChatUserId"][0];
-                    $scope.showAskWindow();
-                }
-                if (data["newConsultationWithTenant"] != null) {
-                    var roomId = data["newConsultationWithTenant"][0][0];
-
-                    $rootScope.submitConsultation_processUser(roomId);
-
-                    var sendedConsultantId = data["newConsultationWithTenant"][0][1];
-
-                    $rootScope.submitConsultation_processTenant(sendedConsultantId, roomId);
-                }
-                if (data["tenants.add"] != null) {
-                    //TODO tenant addition to list
-                    var tenantObjs = data["tenants.add"];
-                    for (var i = 0; i < tenantObjs.length; i++) {
-                        addTenantToList(tenantObjs[i]);
-                    }
-
-
-                }
-                if (data["tenants.remove"] != null) {
-                    //TODO renant removing from list
-                    var tenantObjs = data["tenants.remove"];
-                    for (var i = 0; i < tenantObjs.length; i++) {
-                        removeTenantFromList((tenantObjs[i]))
-                    }
-
-                }
-                /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
-                     
-                     $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
-                 }*/
-                subscribeInfoUpdateLP();
-            }).error(function errorHandler(data, status, headers, config) {
-                subscribeInfoUpdateLP();
-            });
-
-    }
-
     /*************************************
      * UPDATE ROOM LP
      **************************************/
@@ -579,13 +521,60 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     function updateTenants() {
 
     }
+    $scope.message_busy = true;
 
-    function newMessageEvent(roomId) {
-        for (var roomIndex = 0; roomIndex < RoomsFactory.rooms.length; roomIndex++) {
-            var room = RoomsFactory.rooms[roomIndex];
+     $scope.loadOtherMessages = function() {
+        debugger;
+        if ($scope.message_busy)
+            return;
+        $scope.message_busy = true;
+        console.log("TRY " + $scope.messages.length);
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), $scope.oldMessage). //  messages[0]). //
+        success(function(data, status, headers, config) {
+            console.log("MESSAGE onLOAD OK " + data);
+
+            var objDiv = document.getElementById("messagesScroll");
+            var lastHeight = objDiv.scrollHeight;
+            if (data == "")
+                return;
 
 
-            if (room.roomId == roomId) {
+
+            for (var index = 0; index < data.length; index++) {
+                if (data[index].hasOwnProperty("message")) {
+                    calcPositionUnshift(data[index]);
+                }
+            }
+            //restore scrole
+            $scope.$$postDigest(function() {
+                var objDiv = document.getElementById("messagesScroll");
+                objDiv.scrollTop = objDiv.scrollHeight - lastHeight;
+                $scope.message_busy = false;
+                $scope.$apply();
+            });
+        }).
+        error(function(data, status, headers, config) {
+            console.log('TEST');
+            if (status == "404" || status == "405") chatControllerScope.changeLocation("/chatrooms");
+            //messageError("no other message");
+        });
+    }
+
+    $rootScope.$on('MessageAreaScrollDownEvent',function(){
+         var objDiv = document.getElementById("messagesScroll");
+         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+    });
+    $rootScope.$on('MessageBusyEvent',function(isBusy){
+          $scope.message_busy = isBusy;
+    });
+
+    function newMessageArrayEventHandler(roomIds) {
+        for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
+            var room = RoomsFactory.getRooms()[roomIndex];
+
+//$.inArray(value, array)
+var newMessageInThisRoom = ($.inArray(room.roomId,roomIds));
+            if ( newMessageInThisRoom )  {
                 $rootScope.roomForUpdate[room.roomId] = true;
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
@@ -611,6 +600,15 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 }, 2500);
             }
     }
+    function newMessageEventHandler(message){
+        var messageArr = [];
+        messageArr.push(message);
+    newMessageArrayEventHandler(messageArr);
+    }
+
+    $rootScope.$on('newMessageEvent', newMessageEventHandler );
+     $rootScope.$on('newMessageArray', newMessageArrayEventHandler);
+
 
     $scope.getKeys = function(obj) {
         var keys = Object.keys(obj);
@@ -639,6 +637,60 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         });
     }
+    var messageSended = true;
+
+     function messageError() {
+        toaster.pop('error', "Error", "server request timeout", 0);
+    }
+    $rootScope.messageError = messageError;
+
+    $scope.sendMessage = function(message, attaches) {
+            if (!messageSended)
+                return;
+            var textOfMessage;
+            if (message === undefined) textOfMessage = $scope.newMessage;
+            else textOfMessage = message;
+            if (textOfMessage.length < 1) {
+                $scope.newMessage = '';
+                //$("#newMessageInput")[0].value  = '';
+                return;
+            }
+            var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
+            messageSended = false;
+            if(attaches == null)
+                attaches = [];
+
+            var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
+            if (ChannelFactory.socketSupport == true) {
+                
+                chatSocket.send(destination, {}, JSON.stringify(msgObj));
+                var myFunc = function() {
+                    if (angular.isDefined(sendingMessage)) {
+                        $timeout.cancel(sendingMessage);
+                        sendingMessage = undefined;
+                    }
+                    if (messageSended) return;
+                    messageError();
+                    messageSended = true;
+
+                };
+                sendingMessage = $timeout(myFunc, 2000);
+            } else {
+
+                $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
+                success(function(data, status, headers, config) {
+                    console.log("MESSAGE SEND OK " + data);
+                    messageSended = true;
+                }).
+                error(function(data, status, headers, config) {
+                    messageError();
+                    messageSended = true;
+                });
+            };
+            if (message === undefined)
+                $scope.newMessage = '';
+
+        }
 
 
 

@@ -229,9 +229,6 @@ angular.module('springChat.directives').directive('messagesBlock', messagesBlock
 function messagesBlock($http,RoomsFactory) {
     return {
         restrict: 'EA',
-        scope: {
-
-        },
         templateUrl: 'static_templates/messages_block.html',
         link: function($scope, element, attributes) {
              $scope.messages = RoomsFactory.getMessages;
