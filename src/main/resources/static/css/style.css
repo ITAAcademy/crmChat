@@ -403,6 +403,9 @@ display:inline-block;
 .user_message .message_details .messag_author_name{
 	font-weight: bold;
 }
+.bottom_details{
+	white-space: pre-wrap
+}
 .message_date{
 color:#929292;
 }

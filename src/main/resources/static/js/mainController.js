@@ -524,7 +524,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.message_busy = true;
 
      $scope.loadOtherMessages = function() {
-        debugger;
         if ($scope.message_busy)
             return;
         $scope.message_busy = true;

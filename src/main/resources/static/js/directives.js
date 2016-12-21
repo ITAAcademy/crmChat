@@ -253,3 +253,22 @@ function roomsBlock($http, RoomsFactory) {
 
     };
 };
+
+angular.module('springChat.directives').directive('compilable', function($compile, $parse) {
+    return {
+        restrict: 'E',
+        link: function(scope, element, attr) {
+            scope.$watch(attr.content, function() {
+                element.html($parse(attr.content)(scope));
+                if (typeof attr.callback != 'undefined') {
+                    var callBackFunction = new Function("return " + attr.callback)();
+                    if (typeof callBackFunction != 'undefined')
+                        callBackFunction(element);
+                }
+                $compile(element.contents())(scope);
+                //element.html =$parse(attr.content)(scope);
+
+            }, true);
+        }
+    }
+})
