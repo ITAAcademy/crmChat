@@ -117,7 +117,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                    deferred.reject();
                    return deferred.promise;
                }*/
-        var ChannelFactory = $injector.get('ChannelFactory');
+
         if (ChannelFactory.isSocketSupport === true) {
             chatSocket.send("/app/chat.go.to.dialog/{0}".format(currentRoom.roomId), {}, JSON.stringify({}));
             deferred.resolve();
@@ -193,7 +193,7 @@ function calcPositionUnshift(msg) {
         messages = [];
         console.log("roomId:" + currentRoom.roomId);
 
-        var ChannelFactory = $injector.get('ChannelFactory');
+
         if (ChannelFactory.isSocketSupport === true) {
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
@@ -248,7 +248,7 @@ function calcPositionUnshift(msg) {
 
     var addUserToRoom = function(email) {
         userAddedToRoom = false;
-        var ChannelFactory = $injector.get('ChannelFactory');
+
         if (ChannelFactory.isSocketSupport === true) {
             chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(currentRoom.roomId, email), {}, JSON.stringify({}));
             var myFunc = function() {
@@ -533,7 +533,7 @@ function calcPositionUnshift(msg) {
             }
 
             goToDialog($routeParams.roomId).then(function(data) {
-                var ChannelFactory = $injector.get('ChannelFactory');
+        
                 if (ChannelFactory.isSocketSupport === true) {
                     initSocketsSubscribes();
                 }
@@ -580,8 +580,6 @@ function calcPositionUnshift(msg) {
 
     var updateRooms = function(message) {
         var parseObj;
-
-        var ChannelFactory = $injector.get('ChannelFactory');
         if (ChannelFactory.isSocketSupport === true) {
             parseObj = JSON.parse(message.body);
         } else {
