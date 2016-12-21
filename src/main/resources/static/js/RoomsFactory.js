@@ -22,29 +22,25 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var rooms = [];
     var roomsMap = new Object();
 
-     $rootScope.$watch(function(){return rooms}, function() {
-            updateContactsMapFromArray(rooms);
-        },true);
-
-    /*    $rootScope.$on('$locationChangeStart', function(p1, p2, p3) {
-            var t = $location.hash();
-            debugger;
-        });
-    */
+    $rootScope.$watch(function() {
+        return rooms }, function() {
+        updateContactsMapFromArray(rooms);
+    }, true);
 
 
- var updateContactsMapFromArray = function(contactsList) {
-                    for (var key in Object.keys(roomsMap))
-                        delete roomsMap[key];
-                    for (var i = 0; i < contactsList.length; i++) {
-                        var contact = contactsList[i];
-                        var characterForGroup = contact.name.charAt(0);
-                        if (roomsMap[characterForGroup] == null) {
-                            roomsMap[characterForGroup] = [];
-                        }
-                        roomsMap[characterForGroup].push(contact);
-                    }
-                }
+    var updateContactsMapFromArray = function(contactsList) {
+        debugger;
+        for (var key in Object.keys(roomsMap))
+            delete roomsMap[key];
+        for (var i = 0; i < contactsList.length; i++) {
+            var contact = contactsList[i];
+            var characterForGroup = contact.string.charAt(0);
+            if (roomsMap[characterForGroup] == null) {
+                roomsMap[characterForGroup] = [];
+            }
+            roomsMap[characterForGroup].push(contact);
+        }
+    }
 
     var findParticipant = function(nickname) {
         for (var c_index in participants)
@@ -76,16 +72,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         //console.log("roomName:"+roomName);
         if (!$rootScope.isInited) {
             unsubscribeWatch = $rootScope.$watch('isInited', function(newValue, oldValue) {
-                if(newValue == true)
-                {
+                if (newValue == true) {
                     debugger;
                     goToRoom(roomId);
                 }
             });
             return;
-        }
-        else {
-            if(unsubscribeWatch != undefined)
+        } else {
+            if (unsubscribeWatch != undefined)
                 unsubscribeWatch();
         }
 
@@ -112,23 +106,21 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (room != undefined) {
             currentRoom = room;
             room.nums = 0;
+        } else {
+            deferred.reject();
+            return deferred.promise;
         }
-        /*else {
-                   deferred.reject();
-                   return deferred.promise;
-               }*/
 
-        if (ChannelFactory.isSocketSupport === true) {
+        if (ChannelFactory.isSocketSupport() === true) {
             chatSocket.send("/app/chat.go.to.dialog/{0}".format(currentRoom.roomId), {}, JSON.stringify({}));
             deferred.resolve();
             return deferred.promise;
         } else {
             return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
         }
-
     }
 
-function calcPositionUnshift(msg) {
+    function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
         //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
@@ -193,26 +185,26 @@ function calcPositionUnshift(msg) {
         messages = [];
         console.log("roomId:" + currentRoom.roomId);
 
-
-        if (ChannelFactory.isSocketSupport === true) {
+        if (ChannelFactory.isSocketSupport() === true) {
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/{0}chat.message".format(room), function(message) {
+                chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.roomId), function(message) {
                     calcPositionPush(JSON.parse(message.body)); //POP
                 }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/app/{0}chat.participants/{1}".format(room, globalConfig.lang), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/app/{0}/chat.participants/{1}".format(currentRoom.roomId, globalConfig.lang), function(message) {
                 if (message.body != "{}") {
                     var o = JSON.parse(message.body);
                     loadSubscribeAndMessage(o);
                 } else {
-                    goToAuthorize();
+                    $rootScope.goToAuthorize();
                     return;
                 }
             }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}chat.participants".format(room, globalConfig.lang), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}/chat.participants".format(currentRoom.roomId, globalConfig.lang), function(message) {
                 var o = JSON.parse(message.body);
                 participants = o["participants"];
+                debugger;
             }));
         } else {
             subscribeMessageLP(); //@LP@
@@ -249,7 +241,7 @@ function calcPositionUnshift(msg) {
     var addUserToRoom = function(email) {
         userAddedToRoom = false;
 
-        if (ChannelFactory.isSocketSupport === true) {
+        if (ChannelFactory.isSocketSupport() === true) {
             chatSocket.send("/app/chat/rooms.{0}/user.add.{1}".format(currentRoom.roomId, email), {}, JSON.stringify({}));
             var myFunc = function() {
                 if (angular.isDefined(addingUserToRoom)) {
@@ -323,7 +315,7 @@ function calcPositionUnshift(msg) {
     }
 
     var subscribeParticipantsLP = function() {
-          var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
+        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
@@ -344,10 +336,7 @@ function calcPositionUnshift(msg) {
                         toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
                     }
                     //subscribeParticipantsLP();
-
                 }
-
-
             }));
     };
 
@@ -375,7 +364,7 @@ function calcPositionUnshift(msg) {
     function loadSubscribeAndMessage(message) {
         roomType = message["type"];
 
-       participants = message["participants"];
+        participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
             //  $scope.message_busy = true;
             oldMessage = message["messages"][message["messages"].length - 1];
@@ -389,7 +378,7 @@ function calcPositionUnshift(msg) {
         if (bot_params.length > 0) {
 
             for (var key in bot_params)
-               botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
+                botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
         }
 
         /*Unconvenient code, maybe be restored
@@ -523,18 +512,18 @@ function calcPositionUnshift(msg) {
                 $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.roomId)
                     .success(function(data, status, headers, config) {
                         if (data == "" || data == undefined)
-                            goToAuthorize(); //not found => go out
+                            $rootScope.goToAuthorize(); //not found => go out
                         else
                             $location.path("consultation_view/" + data);
                     }).error(function errorHandler(data, status, headers, config) {
-                        goToAuthorize(); //not found => go out
+                        $rootScope.goToAuthorize(); //not found => go out
                     });
                 return;
             }
 
             goToDialog($routeParams.roomId).then(function(data) {
-        
-                if (ChannelFactory.isSocketSupport === true) {
+
+                if (ChannelFactory.isSocketSupport() === true) {
                     initSocketsSubscribes();
                 }
                 if (data != undefined && data != null) {
@@ -543,7 +532,7 @@ function calcPositionUnshift(msg) {
                 }
                 pageClass = 'scale-fade-in';
             }, function() {
-                goToAuthorize();
+                $rootScope.goToAuthorize();
                 toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                 // location.reload();
             });
@@ -580,7 +569,7 @@ function calcPositionUnshift(msg) {
 
     var updateRooms = function(message) {
         var parseObj;
-        if (ChannelFactory.isSocketSupport === true) {
+        if (ChannelFactory.isSocketSupport() === true) {
             parseObj = JSON.parse(message.body);
         } else {
             parseObj = message;
@@ -612,19 +601,21 @@ function calcPositionUnshift(msg) {
         getCurrentRoom: function() {
             return currentRoom;
         },
-        setRooms: function(roomsArg) { rooms = rooms; },
-        getRooms: function() {return rooms;},
-        getRoomsMap: function(){return roomsMap;}
+        setRooms: function(roomsArg) { rooms = roomsArg; },
+        getRooms: function() {
+            return rooms; },
+        getRoomsMap: function() {
+            return roomsMap; }
 
     };
 
 
 
 }]).config(function($routeProvider) {
-   /* $routeProvider.when("/chatrooms", {
-        templateUrl: "dialogsTemplate.html",
-        controller: "DialogsRouteController"
-    });*/
+    /* $routeProvider.when("/chatrooms", {
+         templateUrl: "dialogsTemplate.html",
+         controller: "DialogsRouteController"
+     });*/
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
             load: function($route, RoomsFactory, $routeParams) {

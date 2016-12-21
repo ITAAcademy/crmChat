@@ -246,15 +246,15 @@ function messagesBlock($http) {
 
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
 
-function roomsBlock($http,RoomsFactory) {
+function roomsBlock($http, RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
 
         },
         templateUrl: 'static_templates/rooms_block.html',
-        link: function(scope, element, attributes) {
-             rooms = RoomsFactory.getRooms;
+        link: function($scope, element, attributes) {
+            $scope.rooms = RoomsFactory.getRoomsMap;
 
 
         }

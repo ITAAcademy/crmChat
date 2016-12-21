@@ -19,25 +19,26 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
 var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
+    $scope.baseurl = globalConfig["baseUrl"];
 
 
     $rootScope.goToUserPage = function(username) {
-        var request = $http({
-            method: "get",
-            url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
-            data: null,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
-        request.success(function(data) {
-            if (data != null) {
-                window.open(generateUrlToUserPage(data), '_blank');
-                //window.top.location.href =generateUrlToUserPage(data);
-                return true;
-            }
-        });
-        return false;
-    }
-    //$scope.$on('$locationChangeStart', RoomsFactory.unsubscribeCurrentRoom());
+            var request = $http({
+                method: "get",
+                url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
+                data: null,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            request.success(function(data) {
+                if (data != null) {
+                    window.open(generateUrlToUserPage(data), '_blank');
+                    //window.top.location.href =generateUrlToUserPage(data);
+                    return true;
+                }
+            });
+            return false;
+        }
+        //$scope.$on('$locationChangeStart', RoomsFactory.unsubscribeCurrentRoom());
 
     $scope.isTenantFree = true;
     $scope.isUserTenant = false;
@@ -259,6 +260,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         window.top.location.href = globalConfig["baseUrl"] + '/site/authorize';
     }
     $rootScope.goToAuthorize = function(func) {
+        return; //@BAG@
         if (UserFactory.authorize || $rootScope.isInited == false) {
             if (func == null || func == undefined) {
                 $location.path("/access_deny");

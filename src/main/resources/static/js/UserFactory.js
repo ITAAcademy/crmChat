@@ -11,6 +11,9 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
     var isInited = false;
     var authorize;
 
+    var tenants;
+    var friends;
+
     var checkRole = function() {
         if (chatUserRole & 256)
             return true;
@@ -18,8 +21,6 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
     }
 
     var socketSupport = true;
-
-
 
     var initStompClient = function() {
 
@@ -263,15 +264,15 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             return;
         }
-
+        debugger;
         if (ChannelFactory.isSocketSupport() == false) {
             RoomsFactory.updateRooms(JSON.parse(mess_obj.chat_rooms));
         } else {
             initIsUserTenant();
             RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
         }
-        // $scope.tenants = typeof mess_obj["tenants"] == "undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
-        //$scope.friends = typeof mess_obj["friends"] == "undefined" ? undefined : JSON.parse(mess_obj["friends"]);
+        tenants = typeof mess_obj["tenants"] == "undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
+        friends = typeof mess_obj["friends"] == "undefined" ? undefined : JSON.parse(mess_obj["friends"]);
         isInited = true;
 
         if (mess_obj.nextWindow == 0) {
@@ -304,7 +305,6 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
 
     var initIsUserTenant = function() {
         if (isUserTenantInited == false) {
-
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
             success(function(data, status, headers, config) {
 
@@ -327,19 +327,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
         setChatUserId: setChatUserId,
         getChatUserId: getChatUserId,
         setRealChatUserId: setRealChatUserId,
-        login: login,
-        isSocketSupport: function() {
-            return socketSupport;
-        },
-        changeLocation: function(url) {
-            $location.path(url);
-            console.log("Change location:" + $location.path());
-            toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
-            console.log("PRIVATE ROOM CREATE FAILD ");
-            /*   $rootScope.goToAuthorize(function() {
-                   changeLocation("/chatrooms");
-               });*/
-        }
+        login: login
     };
 
 
