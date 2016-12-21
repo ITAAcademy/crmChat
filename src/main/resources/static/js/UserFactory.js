@@ -1,4 +1,4 @@
-springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location', '$http', 'toaster', '$injector', 'ChannelFactory' , 'ChatSocket', function($timeout, $rootScope, $location, $http, toaster, $injector, ChannelFactory, chatSocket) {
+springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location', '$http', 'toaster', '$injector', 'ChannelFactory' , 'ChatSocket', 'AskWindow', function($timeout, $rootScope, $location, $http, toaster, $injector, ChannelFactory, chatSocket, AskWindow) {
     $rootScope.authorize = false;
     var isTenant = false;
     var isTrainer = false;
@@ -127,10 +127,9 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                     });
 
                     chatSocket.subscribe("/topic/users/{0}/info".format(getChatUserId()), function(message) {
-
                         var body = JSON.parse(message.body);
-                        askObject = body;
-                        showAskWindow();
+                        AskWindow.askObject = body;
+                        AskWindow.showAskWindow();
                     });
 
                     chatSocket.subscribe("/topic/users/{0}/submitConsultation".format(getChatUserId()), function(message) {
@@ -183,7 +182,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
 
         chatSocket.subscribe("/topic/chat/rooms/user.{0}".format(getChatUserId()), function(message) { // event update
             console.log("chatUserId:" + getChatUserId());
-            updateRooms(message);
+            RoomsFactory.updateRooms(message);
         });
     }
 
@@ -206,8 +205,8 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                 }*/
                 if (data["newAsk_ToChatUserId"] != null) {
                     /*SHOW*/
-                    $scope.askObject = data["newAsk_ToChatUserId"][0];
-                    $scope.showAskWindow();
+                    AskWindow.askObject = data["newAsk_ToChatUserId"][0];
+                    AskWindow.showAskWindow();
                 }
                 if (data["newConsultationWithTenant"] != null) {
                     var roomId = data["newConsultationWithTenant"][0][0];
@@ -245,13 +244,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
             });
 
     }
-
-
-
-
     initStompClient();
-
-
 
     function login(mess_obj) {
         var RoomsFactory = $injector.get('RoomsFactory');

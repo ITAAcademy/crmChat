@@ -128,6 +128,33 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     }
 
+function calcPositionUnshift(msg) {
+        if (msg == null)
+            return null;
+        //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
+
+        var summarised = false;
+        oldMessage = msg;
+        if (messages.length > 0) {
+            if (messages[0].username == msg.username) {
+                if (msg.attachedFiles.length == 0) {
+                    summarised = true;
+                    messages[0].message = msg.message + "\n\n" + messages[0].message;
+                    //  $scope.messages[0].date = msg.date;
+                }
+                msg.position = messages[0].position;
+
+            } else {
+                msg.position = !messages[0].position;
+            }
+        } else {
+            msg.position = false;
+        }
+
+        if (summarised == false)
+            messages.unshift(msg);
+    }
+
     function calcPositionPush(msg) {
         if (msg == null)
             return null;
