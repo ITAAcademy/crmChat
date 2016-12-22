@@ -547,7 +547,7 @@ body {
 }
 
 .user_message .message_author_avatar {
-    margin-left: 29px;
+   
 }
 
 .user_message .message_author_avatar > img {
@@ -561,10 +561,18 @@ body {
 
 .user_message .message_details {
     display: inline-block;
-    margin-left: 9px;
-    padding-right: 28px;
-    width: 490px;
-    margin-top: 3px;
+    padding-right: 20px;
+    width: 400px;
+    border-radius: 5px;
+    min-height:55px;
+    padding-top: 10px;
+    padding-left:15px;
+    padding-bottom:19px;
+
+
+}
+.user_message .message_details .top_details{
+	margin-bottom:12px;
 }
 
 .user_message .message_details .messag_author_name {
@@ -577,6 +585,7 @@ body {
 
 .message_date {
     color: #929292;
+    font-size:14px;
 }
 
 .messages_input_area .message_input {
@@ -820,3 +829,147 @@ Geometric shapes
         font-family: "Myriad Pro", Times, serif;
     }
 }
+
+/*****************CHAT BODY *******************/
+
+.messages_output_area h6 {
+    font-size: 20px;
+    margin: 0 0 20px;
+}
+
+.messages_output_area .answer {
+    margin-top: 12px;
+}
+
+.messages_output_area .answer.left {
+    padding: 0 0 0 58px;
+    text-align: left;
+    float: left;
+}
+
+.messages_output_area .answer {
+    position: relative;
+    max-width: 600px;
+    overflow: hidden;
+    clear: both;
+}
+
+.messages_output_area .answer.left .avatar {
+    left: 0;
+}
+
+.messages_output_area .answer .avatar {
+    bottom: 12px;
+}
+
+.messages_output_area .answer .name {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.messages_output_area .answer.left .avatar .status {
+    right: 4px;
+}
+
+.messages_output_area .answer .avatar .status {
+    bottom: 0;
+}
+
+.messages_output_area .answer.left .text {
+    background: #ebebeb;
+    color: #333333;
+    border-radius: 8px 8px 8px 0;
+}
+
+.messages_output_area .answer .text {
+    padding: 12px;
+    /*padding-bottom: 2px;
+    padding-top:2px;*/
+    margin: 0px;
+    font-size: 16px;
+    line-height: 26px;
+    position: relative;
+}
+
+.messages_output_area .answer.left .text:before {
+    left: -30px;
+    border-right-color: #ebebeb;
+    border-right-width: 12px;
+}
+
+.messages_output_area .answer .text:before {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    border: 18px solid transparent;
+    border-bottom-width: 0;
+}
+
+.messages_output_area .answer.left .time {
+    padding-left: 12px;
+    color: #333333;
+}
+
+.messages_output_area .answer .time {
+    font-size: 16px;
+    line-height: 20px;
+    position: relative;
+    padding-bottom: 1px;
+}
+
+
+/*RIGHT*/
+
+.messages_output_area .answer.right {
+    padding: 0 13px 0 0;
+    text-align: right;
+   /* float: right;*/
+}
+.messages_output_area .answer.left {
+    padding: 0 13px 0 0;
+    text-align: left;
+    margin-left:10px;
+   /* float: right;*/
+}
+.messages_output_area .answer.right .message_details {
+	background-color: #ededed;
+	width:424px;
+	margin-right:12px;
+}
+
+.messages_output_area .answer.left .message_details {
+	background-color: #ededed;
+	width:494px;
+	margin-left:13px;
+}
+
+.messages_output_area .answer.right .user_message .message_author_avatar {
+   margin-left:12px;
+}
+
+.messages_output_area .answer a {
+    text-decoration: underline;
+}
+
+.messages_output_area .answer a:hover {
+    cursor: pointer;
+}
+
+.messages_output_area .answer.right .text {
+    background: #7266ba;
+    color: #ffffff;
+    border-radius: 8px 8px 0 8px;
+}
+
+.messages_output_area .answer.right .text:before {
+    right: -30px;
+    border-left-color: #7266ba;
+    border-left-width: 12px;
+}
+
+.messages_output_area .answer.right .time {
+    padding-right: 12px;
+    color: #333333;
+}
+

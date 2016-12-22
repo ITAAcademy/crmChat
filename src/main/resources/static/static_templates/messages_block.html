@@ -21,8 +21,8 @@
 				</div>
 
 
-				<div class="user_message" ng-repeat-end>
-					<div class="message_author_avatar">
+				<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
+					<div class="message_author_avatar" ng-if="!message.position">
 						<img ng-src="{{$root.baseurl}}/images/avatars/{{new_message.author.avatar}}" alt=""/>
 					</div>
 					<div class="message_details">
@@ -31,6 +31,9 @@
 							<span class="message_date" ng-bind="$root.formatDateWithLast(message.date)"></span>
 						</div>
 						<compilable  class="bottom_details" content="parseMsg(message.message)"></compilable>
+					</div>
+					<div class="message_author_avatar" ng-if="message.position">
+						<img ng-src="{{$root.baseurl}}/images/avatars/{{new_message.author.avatar}}" alt=""/>
 					</div>
 				</div>
 				</div>
