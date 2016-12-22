@@ -595,7 +595,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return rooms; },
             getMessages: function(){
                 return messages;
-            }
+            },
+        getParticipants: function(){
+            return participants;
+        }
 
     };
 

@@ -182,12 +182,12 @@ function studentsBlock($http, mySettings) {
         scope: {
 
         },
-        templateUrl: 'static_templates/users_list_block.html',
+        templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
             var scroll;
             function updateModelForStudents() {
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
-                    scope.items = responseObj.data;
+                    scope.students = responseObj.data;
                 });
             };
             scope.blockName = "Студенти";
@@ -210,18 +210,23 @@ function studentsBlock($http, mySettings) {
 
 angular.module('springChat.directives').directive('participantsBlock', participantsBlock);
 
-function participantsBlock($http, mySettings) {
+function participantsBlock($http, mySettings,RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
 
         },
-        templateUrl: 'static_templates/users_list_block.html',
+        templateUrl: 'static_templates/participants_block.html',
         link: function(scope, element, attributes) {
             function updateModelForParticipants() {
 
             };
+            scope.folded = true;
+            scope.toggleFolded = function() {
+                scope.folded = !scope.folded;
+            }
 
+            scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
             var nice = $(".scroll").niceScroll();
         }
@@ -240,7 +245,6 @@ function messagesBlock($http, RoomsFactory) {
         link: function($scope, element, attributes) {
             $scope.messages = RoomsFactory.getMessages;
             var nice = $(".scroll").niceScroll();
-
         }
 
     };
