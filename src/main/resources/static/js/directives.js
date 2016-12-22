@@ -241,13 +241,17 @@ function messagesBlock($http,RoomsFactory) {
 
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
 
-function roomsBlock($http, RoomsFactory) {
+function roomsBlock($http, RoomsFactory,ChannelFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
             $scope.rooms = RoomsFactory.getRooms;
-          //  $scope.firstLetter = $rootScope.firstLetter;
+
+           $scope.doGoToRoom = function (roomId) {
+            //if ($scope.mouseBusy == false)
+            ChannelFactory.changeLocation('/dialog_view/' + roomId);
+         }
 
         }
 
