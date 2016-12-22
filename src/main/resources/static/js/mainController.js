@@ -40,7 +40,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             });
             return false;
         }
-        //$scope.$on('$locationChangeStart', RoomsFactory.unsubscribeCurrentRoom());
+    $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
     $scope.isTenantFree = true;
     $scope.isUserTenant = false;

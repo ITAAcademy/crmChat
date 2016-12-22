@@ -1,10 +1,10 @@
 		<!-- Сьогоднішні повідомлення -->
-		<div class="messages_output_area" id="messagesScroll" class="messages_wrapper" ng-repeat="message in messages() | orderBy : 'date'" >
+		<div class="messages_output_area" id="messagesScroll" class="messages_wrapper" >
 		<div infinite-scroll='loadOtherMessages()'
 					infinite-scroll-disabled='message_busy'
 					infinite-scroll-distance='0' infinite-scroll-parent="true"
 					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
-				<div class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(message[$index-1].date))">
+				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(message[$index-1].date))">
 					<div class="line"></div>
 					<div class="big_dot"></div>
 					<span class="date_indicator">Сьогодні</span>
@@ -21,7 +21,7 @@
 				</div>
 
 
-				<div class="user_message">
+				<div class="user_message" ng-repeat-end>
 					<div class="message_author_avatar">
 						<img ng-src="{{$root.baseurl}}/images/avatars/{{new_message.author.avatar}}" alt=""/>
 					</div>
