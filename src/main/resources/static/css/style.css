@@ -110,6 +110,9 @@ body {
     padding-top: 5px;
     /* padding-left: 18px; */
     padding-bottom: 34px;
+    /* overflow: hidden; */
+    /* outline: none; */
+    /* max-height: 50%; */
 }
 
 .left_panel.bottom_block {
@@ -160,8 +163,8 @@ body {
 }
 
 .items_list_block .avatar .user_presence_icon {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background-color: green;
     /* display:inline-block; */
@@ -170,7 +173,17 @@ body {
     position: absolute;
     bottom: 11px;
     right: -1px;
+    border-color: #3755a9;
+    border-width: 4px;
+    border-style: solid;
 }
+
+.items_list_block .avatar .user_presence_icon.user_offline_background{
+    background-color: red;
+}
+
+
+
 
 .items_list_block .text_info {
     display: inline-block;
@@ -298,7 +311,7 @@ body {
     /* float: right; */
     /* margin-top: 22px; */
     position: absolute;
-    right: 0px;
+    right: 5px;
     top: calc(50% - 13px);
 }
 
@@ -535,6 +548,9 @@ body {
 
 .bottom_block {
     padding-bottom: 10px;
+    overflow: hidden;
+    outline: none;
+    max-height: 50%;
 }
 
 .controls_area {
@@ -727,6 +743,27 @@ Geometric shapes
 }
 
 
+.section_name{
+
+margin-left: 8px;
+
+font-size: 20px;
+
+color: rgba(153, 153, 153, 0.72);
+}
+.section_name:after{
+	content: "";
+	background-color: rgba(153, 153, 153, 0.26);
+	min-width: 100%;
+	min-height: 1px;
+	/* border-top: 26px solid #d7d7d7; */
+	/* border-right: 21px solid transparent; */
+	/* content: ' '; */
+	margin-left: 2px;
+	margin-top: 10px;
+	position: absolute;
+	/* border: 3px solid; */
+}
 /*MEDIA REQUESTS*/
 
 @media screen and (max-width: 1024px) {
@@ -742,3 +779,4 @@ Geometric shapes
         font-family: "Myriad Pro", Times, serif;
     }
 }
+
