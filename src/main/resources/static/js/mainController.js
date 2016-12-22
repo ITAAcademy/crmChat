@@ -215,10 +215,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $rootScope.parseMsg = function(msg) {
         if (msg == null) return null;
+          msg = htmlEscape(msg);
         msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)', 1);
         msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)', 2, 3);
 
-        msg = htmlEscape(msg);
+      
         return msg; //.replace(' ','&#32;');
     }
     $rootScope.parseMain = function(msg, reg, callback, trimLeft, trimRight) {
