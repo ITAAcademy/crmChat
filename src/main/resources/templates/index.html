@@ -17,6 +17,8 @@
 		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
 		var fileUploadLocal = [[${lgPack.fileOperations}]];
 	</script>
+	<script src="lib/fileinputModule/fileinput.min.js"></script>
+	<script th:src="'lib/fileinputModule/fileinput_locale_'+ ${config.get('currentLang')}+'.js'"></script>
 <script src="lib/jquery.min.js"></script>
 <script src="lib/angular/angular.js"></script>
 <script src="lib/angular-animate/angular-animate.js"></script>
@@ -42,6 +44,11 @@
 <script src="js/ChannelFactory.js"></script>
 <script src="js/UserFactory.js"></script>
 <script src="js/ui.js"></script>
+
+<script src="lib/clamp.js"></script>
+	<script src="lib/elastic.js"></script>
+	<script src="lib/ui-bootstrap.js"></script>
+	<script src="lib/nice_scroll.js"></script>
 
 
 </head>
@@ -89,7 +96,13 @@
 
 			<hr/>
 			<div class="messages_input_area">
-				<input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage"/>
+				<input class="transparent_input message_input" id="newMessageInput" type="text" th:placeholder="${lgPack.lables.chatView.message_placeholder}" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage" ng-keydown="beforeMessageInputKeyPress($event)"
+						ng-keypress="onKeyMessageKeyPressEvent($event)"
+						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
+						ng-click="onMessageInputClick()" typeahead-wait-ms = "1000"
+						uib-typeahead="item for item in data_in_message_input" 							
+						typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" 
+						typeahead-popup-template-url="static_templates\custom_popup_template.html" typeahead-is-open="open_search_list_in_message_input"/>
 				<div class="controls_area">
 					<div class="multimedia_conversation_controls">
 						<button class="skype"><img src="images\skype24x23.png" alt=""/></button>
@@ -107,6 +120,12 @@
 					</div>
 
 				</div>
+				<form name="uploadfile" enctype="multipart/form-data"
+							id="upload_file_form">
+							<input data-preview-file-type="text" class="col-xs-4 file-loading"
+							type="file" multiple="multiple" id="myfile" name="myfile"
+							data-filename-placement="inside" />
+				</form>
 			</div>
 		</div>
 		<div class="clearfix"></div>
