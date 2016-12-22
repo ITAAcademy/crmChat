@@ -52,6 +52,12 @@
                         <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
                         <button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt="" /></button>
                         <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
+                   		<form name="uploadfile" enctype="multipart/form-data"
+							id="upload_file_form">
+							<input data-preview-file-type="text" class="col-xs-4 file-loading"
+							type="file" multiple="multiple" id="myfile" name="myfile"
+							data-filename-placement="inside" />
+						</form>
                     </div>
                 </div>
             </div>
