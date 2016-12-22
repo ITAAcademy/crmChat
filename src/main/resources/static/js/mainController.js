@@ -16,7 +16,7 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     //maybe add button
 }]);
 
-var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory','ChannelFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory,ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
     $scope.baseurl = globalConfig["baseUrl"];
@@ -25,21 +25,21 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
 
     $rootScope.goToUserPage = function(username) {
-            var request = $http({
-                method: "get",
-                url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
-                data: null,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
-            request.success(function(data) {
-                if (data != null) {
-                    window.open(generateUrlToUserPage(data), '_blank');
-                    //window.top.location.href =generateUrlToUserPage(data);
-                    return true;
-                }
-            });
-            return false;
-        }
+        var request = $http({
+            method: "get",
+            url: serverPrefix + "/get_id_by_username?intitaUsername=" + username,
+            data: null,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        request.success(function(data) {
+            if (data != null) {
+                window.open(generateUrlToUserPage(data), '_blank');
+                //window.top.location.href =generateUrlToUserPage(data);
+                return true;
+            }
+        });
+        return false;
+    }
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
     $scope.isTenantFree = true;
@@ -215,11 +215,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $rootScope.parseMsg = function(msg) {
         if (msg == null) return null;
-          msg = htmlEscape(msg);
+        msg = htmlEscape(msg);
         msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)', 1);
         msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)', 2, 3);
 
-      
+
         return msg; //.replace(' ','&#32;');
     }
     $rootScope.parseMain = function(msg, reg, callback, trimLeft, trimRight) {
@@ -525,7 +525,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
     $scope.message_busy = true;
 
-     $scope.loadOtherMessages = function() {
+    $scope.loadOtherMessages = function() {
         if ($scope.message_busy)
             return;
         $scope.message_busy = true;
@@ -561,21 +561,21 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         });
     }
 
-    $rootScope.$on('MessageAreaScrollDownEvent',function(){
-         var objDiv = document.getElementById("messagesScroll");
-         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+    $rootScope.$on('MessageAreaScrollDownEvent', function() {
+        var objDiv = document.getElementById("messagesScroll");
+        objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     });
-    $rootScope.$on('MessageBusyEvent',function(isBusy){
-          $scope.message_busy = isBusy;
+    $rootScope.$on('MessageBusyEvent', function(isBusy) {
+        $scope.message_busy = isBusy;
     });
 
     function newMessageArrayEventHandler(roomIds) {
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
 
-//$.inArray(value, array)
-var newMessageInThisRoom = ($.inArray(room.roomId,roomIds));
-            if ( newMessageInThisRoom )  {
+            //$.inArray(value, array)
+            var newMessageInThisRoom = ($.inArray(room.roomId, roomIds));
+            if (newMessageInThisRoom) {
                 $rootScope.roomForUpdate[room.roomId] = true;
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
@@ -601,14 +601,15 @@ var newMessageInThisRoom = ($.inArray(room.roomId,roomIds));
                 }, 2500);
             }
     }
-    function newMessageEventHandler(message){
+
+    function newMessageEventHandler(message) {
         var messageArr = [];
         messageArr.push(message);
-    newMessageArrayEventHandler(messageArr);
+        newMessageArrayEventHandler(messageArr);
     }
 
-    $rootScope.$on('newMessageEvent', newMessageEventHandler );
-     $rootScope.$on('newMessageArray', newMessageArrayEventHandler);
+    $rootScope.$on('newMessageEvent', newMessageEventHandler);
+    $rootScope.$on('newMessageArray', newMessageArrayEventHandler);
 
 
     $scope.getKeys = function(obj) {
@@ -640,58 +641,58 @@ var newMessageInThisRoom = ($.inArray(room.roomId,roomIds));
     }
     var messageSended = true;
 
-     function messageError() {
+    function messageError() {
         toaster.pop('error', "Error", "server request timeout", 0);
     }
     $rootScope.messageError = messageError;
 
     $scope.sendMessage = function(message, attaches) {
-            if (!messageSended)
-                return;
-            var textOfMessage;
-            if (message === undefined) textOfMessage = $scope.newMessage;
-            else textOfMessage = message;
-            if (textOfMessage.length < 1) {
-                $scope.newMessage = '';
-                //$("#newMessageInput")[0].value  = '';
-                return;
-            }
-            var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
-            messageSended = false;
-            if(attaches == null)
-                attaches = [];
-
-            var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
-            if (ChannelFactory.socketSupport == true) {
-                
-                chatSocket.send(destination, {}, JSON.stringify(msgObj));
-                var myFunc = function() {
-                    if (angular.isDefined(sendingMessage)) {
-                        $timeout.cancel(sendingMessage);
-                        sendingMessage = undefined;
-                    }
-                    if (messageSended) return;
-                    messageError();
-                    messageSended = true;
-
-                };
-                sendingMessage = $timeout(myFunc, 2000);
-            } else {
-
-                $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
-                success(function(data, status, headers, config) {
-                    console.log("MESSAGE SEND OK " + data);
-                    messageSended = true;
-                }).
-                error(function(data, status, headers, config) {
-                    messageError();
-                    messageSended = true;
-                });
-            };
-            if (message === undefined)
-                $scope.newMessage = '';
-
+        if (!messageSended)
+            return;
+        var textOfMessage;
+        if (message === undefined) textOfMessage = $scope.newMessage;
+        else textOfMessage = message;
+        if (textOfMessage.length < 1) {
+            $scope.newMessage = '';
+            //$("#newMessageInput")[0].value  = '';
+            return;
         }
+        var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
+        messageSended = false;
+        if (attaches == null)
+            attaches = [];
+
+        var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
+        if (ChannelFactory.socketSupport == true) {
+
+            chatSocket.send(destination, {}, JSON.stringify(msgObj));
+            var myFunc = function() {
+                if (angular.isDefined(sendingMessage)) {
+                    $timeout.cancel(sendingMessage);
+                    sendingMessage = undefined;
+                }
+                if (messageSended) return;
+                messageError();
+                messageSended = true;
+
+            };
+            sendingMessage = $timeout(myFunc, 2000);
+        } else {
+
+            $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
+            success(function(data, status, headers, config) {
+                console.log("MESSAGE SEND OK " + data);
+                messageSended = true;
+            }).
+            error(function(data, status, headers, config) {
+                messageError();
+                messageSended = true;
+            });
+        };
+        if (message === undefined)
+            $scope.newMessage = '';
+
+    }
 
 
 
@@ -716,10 +717,33 @@ var newMessageInThisRoom = ($.inArray(room.roomId,roomIds));
         }
     };
 
+    $scope.$$postDigest(function() {
+        $(document).ready(function() {
+            debugger;
+            var nice = $(".scroll").niceScroll();
+        });
+        
+        /*var lang = globalConfig.lang;
+        if (lang=="ua")lang="uk";
+        var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
+        $('#myfile').on('change', function(event, numFiles, label) {
+            var totalFilesLength = 0;
+            for (var i = 0; i < this.files.length; i++) {
+                totalFilesLength += this.files[i].size;
+            }
+            if (totalFilesLength > MAX_UPLOAD_FILE_SIZE_BYTES) {
+                $('#myfile').fileinput('lock');
+                var noteStr = fileUploadLocal.fileSizeOverflowLimit + ":" + Math.round(totalFilesLength / 1024) + "/" + MAX_UPLOAD_FILE_SIZE_BYTES / 1024 + "Kb";
+                $scope.$apply(function() {
+                    toaster.pop('error', "Failed", noteStr, 5000);
+                });
 
+                //  alert(noteStr);
+            }
+        });
+        $('#myfile').on('fileclear', function(event, numFiles, label) {
+            $('#myfile').fileinput('unlock');
+        });*/
 
-
-
-
-
+    });
 }]);

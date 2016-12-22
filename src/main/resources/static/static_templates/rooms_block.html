@@ -1,8 +1,14 @@
-<div class="items_list_block bottom_block">
+<div class="contacts_menu_strip">
+    <img class="search_icon" src="images\search17x17.png" alt="" />
+    <div class="contacts_menu_item">КОНТАКТИ</div>
+    <div class="last_contacts_menu_item">ОСТАННІ</div>
+    <img class="group_icon" src="images\group23x16.png" alt="" />
+</div>
+<div class="items_list_block bottom_block scroll">
     <div class="section" ng-repeat="room in rooms() | orderBy : 'string'">
         <div class="section_name" ng-bind="firstLetter(room.string)" ng-if="firstLetter(room.string) != firstLetter(room[$index-1].string)"></div>
-        <div class="section_content" >
-            <div class="block_item" ng-click="doGoToRoom(room.roomId)">
+        <div class="section_content">
+            <div class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
                 <div class="avatar">
                     <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{room.avatars[0]}}" alt="" />
                     <img class="user_presence_icon" alt="" />

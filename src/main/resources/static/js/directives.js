@@ -184,6 +184,7 @@ function studentsBlock($http, mySettings) {
         },
         templateUrl: 'static_templates/users_list_block.html',
         link: function(scope, element, attributes) {
+            var scroll;
             function updateModelForStudents() {
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
                     scope.items = responseObj.data;
@@ -193,8 +194,15 @@ function studentsBlock($http, mySettings) {
             scope.folded = true;
             scope.toggleFolded = function() {
                 scope.folded = !scope.folded;
+                scroll.overflowy = !scope.folded;
+                if(scope.folded)
+                    scroll.scrollTop(scroll.getScrollTop())
+                debugger;
             }
             updateModelForStudents();
+            debugger;
+            scroll = $($(element).find(".scroll")).niceScroll({mousescrollstep : 18*3*.86});
+            scroll.overflowy = !scope.folded;
         }
 
     };
@@ -215,8 +223,7 @@ function participantsBlock($http, mySettings) {
             };
 
             scope.blockName = "Учасники розмови";
-
-
+            var nice = $(".scroll").niceScroll();
         }
 
     };
@@ -226,13 +233,13 @@ function participantsBlock($http, mySettings) {
 
 angular.module('springChat.directives').directive('messagesBlock', messagesBlock);
 
-function messagesBlock($http,RoomsFactory) {
+function messagesBlock($http, RoomsFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
         link: function($scope, element, attributes) {
-             $scope.messages = RoomsFactory.getMessages;
-
+            $scope.messages = RoomsFactory.getMessages;
+            var nice = $(".scroll").niceScroll();
 
         }
 
@@ -241,18 +248,18 @@ function messagesBlock($http,RoomsFactory) {
 
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
 
-function roomsBlock($http, RoomsFactory,ChannelFactory) {
+function roomsBlock($http, RoomsFactory, ChannelFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
             $scope.rooms = RoomsFactory.getRooms;
 
-           $scope.doGoToRoom = function (roomId) {
-            //if ($scope.mouseBusy == false)
-            ChannelFactory.changeLocation('/dialog_view/' + roomId);
-         }
-
+            $scope.doGoToRoom = function(roomId) {
+                //if ($scope.mouseBusy == false)
+                ChannelFactory.changeLocation('/dialog_view/' + roomId);
+            }
+            var nice = $(".scroll").niceScroll();
         }
 
     };

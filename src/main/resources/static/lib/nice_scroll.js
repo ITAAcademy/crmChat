@@ -2646,6 +2646,9 @@
 
     this.isScrollable = function(e) {
       var dom = (e.target) ? e.target : e;
+      var cDom = $(e.currentTarget);
+      if(cDom.hasClass("block_content") && !cDom.hasClass("unfolded")) 
+        return true;
       if (dom.nodeName == 'OPTION') return true;
       while (dom && (dom.nodeType == 1) && !(/^BODY|HTML/.test(dom.nodeName))) {
         var dd = $(dom);
@@ -2691,7 +2694,6 @@
 
     function execScrollWheel(e, hr, chkscroll) {
       var px, py;
-      
       if (e.deltaMode == 0) { // PIXEL
         px = -Math.floor(e.deltaX * (self.opt.mousescrollstep / (18 * 3)));
         py = -Math.floor(e.deltaY * (self.opt.mousescrollstep / (18 * 3)));

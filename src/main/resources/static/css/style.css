@@ -51,7 +51,7 @@ body {
 }
 
 .items_list_block .block_content {
-    max-height: 80px;
+    max-height: 90px;
     overflow: hidden;
     -webkit-transition: 1s ease-out;
     -moz-transition: 1s ease-out;
@@ -61,7 +61,7 @@ body {
 }
 
 .items_list_block .block_content.unfolded {
-    max-height: 500px;
+    max-height: 427px;
     overflow-y: scroll;
 }
 
@@ -106,9 +106,9 @@ body {
 .items_list_block {
     width: 100%;
     color: black;
-    padding-right: 10px;
+    /* padding-right: 10px; */
     padding-top: 5px;
-    padding-left: 18px;
+    /* padding-left: 18px; */
     padding-bottom: 34px;
 }
 
@@ -123,11 +123,22 @@ body {
 .items_list_block .block_name {
     text-align: right;
     font-size: 20px;
+    margin-right: 10px;
 }
 
 .items_list_block .block_item {
     margin-top: 5px;
+    /* margin-left: 10px; */
+    /* margin-right: 10px; */
+    padding-left: 10px;
+    padding-right: 10px;
     position: relative;
+    /* max-height: 55px; */
+}
+
+.items_list_block .block_item.selectable:hover {
+    cursor: pointer;
+    background-color: #5f77ba;
 }
 
 .avatar {
@@ -137,6 +148,7 @@ body {
 .items_list_block .avatar {
     vertical-align: middle;
     position: relative;
+    top: 2.5px;
 }
 
 .items_list_block .avatar >.user_image {
@@ -668,6 +680,10 @@ Geometric shapes
     -ms-transform: skew(0deg, 25deg);
     -o-transform: skew(0deg, 25deg);
     transform: skew(0deg, 25deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
 }
 
 .chevron:after {
@@ -683,6 +699,31 @@ Geometric shapes
     -ms-transform: skew(0deg, -25deg);
     -o-transform: skew(0deg, -25deg);
     transform: skew(0deg, -25deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+}
+
+.chevron.unfolded:before {
+    -webkit-transform: skew(0deg, -25deg);
+    -moz-transform: skew(0deg, -25deg);
+    -ms-transform: skew(0deg, -25deg);
+    -o-transform: skew(0deg, -25deg);
+    transform: skew(0deg, -25deg);
+}
+
+.chevron.unfolded:after {
+    -webkit-transform: skew(0deg, 25deg);
+    -moz-transform: skew(0deg, 25deg);
+    -ms-transform: skew(0deg, 25deg);
+    -o-transform: skew(0deg, 25deg);
+    transform: skew(0deg, 25deg);
+}
+
+.nicescroll-cursors {
+    background-color: rgba(130, 154, 216, 0.67) !important;
+    border: 1px solid rgba(167, 19, 19, 0)!important;
 }
 
 
