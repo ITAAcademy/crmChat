@@ -5,8 +5,11 @@
     <img class="group_icon" src="images\group23x16.png" alt="" />
 </div>
 <div class="items_list_block bottom_block scroll">
-    <div class="section" ng-repeat="room in rooms() | orderBy : 'string'">
-        <div class="section_name" ng-bind="firstLetter(room.string)" ng-if="firstLetter(room.string) != firstLetter(room[$index-1].string)"></div>
+    <div class="section" ng-repeat="room in (roomsF = (rooms() | orderBy:'string'))">
+        <div ng-if="firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
+            <div class="section_name">{{firstLetter(room.string)}}</div>
+            <div class="section-hr"></div>
+        </div>
         <div class="section_content">
             <div class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
                 <div class="avatar">

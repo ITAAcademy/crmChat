@@ -48,7 +48,8 @@ var checkIfToday = function(inputDateLong){
     return inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0);
 }
 var firstLetter = function(name) {
-  return name && name.charAt(0);
+    if(undefined != name)
+  return name.charAt(0);
 }
 
 var formatDateWithLast = function(date) {

@@ -3,6 +3,7 @@ body {
     height: 100%;
     margin: 0px;
     background-color: rgba(237, 238, 240, 0.58);
+    overflow: hidden;
 }
 
 .clearfix {
@@ -141,7 +142,7 @@ body {
 
 .items_list_block .block_item.selectable:hover {
     cursor: pointer;
-    background-color: #125096;
+    background-color: #4c75a4;
 }
 
 .avatar {
@@ -160,21 +161,21 @@ body {
 }
 
 .items_list_block .avatar.online,
-.items_list_block .avatar.online *:not(.user_presence_icon)
-{
-    border-color: green;
+.items_list_block .avatar.online *:not(.user_presence_icon) {
+    border-color: #009900;
 }
+
 .items_list_block .avatar.offline,
-.items_list_block .avatar.offline *:not(.user_presence_icon)
-{
+.items_list_block .avatar.offline *:not(.user_presence_icon) {
     border-color: white;
 }
-.items_list_block .avatar.offline .user_presence_icon{
+
+.items_list_block .avatar.offline .user_presence_icon {
     background-color: white;
 }
+
 .items_list_block .avatar.wait,
-.items_list_block .avatar.wait *:not(.user_presence_icon)
-{
+.items_list_block .avatar.wait *:not(.user_presence_icon) {
     border-color: orange;
 }
 
@@ -198,7 +199,7 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: green;
+    background-color: #009900;
     position: absolute;
     bottom: 8px;
     right: -2px;
@@ -208,22 +209,22 @@ body {
 }
 
 .items_list_block .avatar .user_presence_icon_wraper {
-       border-width: 2px;
-       border-style: solid;
-       background: none;
-       border-left-color: transparent !important;
-       border-bottom-color: transparent !important;
-       transform: rotate(0, 90deg);
-       -ms-transform: rotate(20deg); /* IE 9 */
-       -webkit-transform: rotate(20deg); /* Safari */
-       transform: rotate(75deg);
-       width: 24px;
-       height: 24px;
-       bottom: 6px;
-       right: -4px;
+    border-width: 2px;
+    border-style: solid;
+    background: none;
+    border-left-color: transparent !important;
+    border-bottom-color: transparent !important;
+    transform: rotate(0, 90deg);
+    -ms-transform: rotate(20deg);
+    /* IE 9 */
+    -webkit-transform: rotate(20deg);
+    /* Safari */
+    transform: rotate(75deg);
+    width: 24px;
+    height: 24px;
+    bottom: 6px;
+    right: -4px;
 }
-
-
 
 .items_list_block .text_info {
     display: inline-block;
@@ -251,7 +252,7 @@ body {
 }
 
 .items_list_block.bottom_block .block_item {
-    margin-top: 0px;
+    margin-top: 5px;
 }
 
 .items_list_block.bottom_block .avatar >.user_image {
@@ -554,9 +555,7 @@ body {
     display: inline-block;
 }
 
-.user_message .message_author_avatar {
-   
-}
+.user_message .message_author_avatar {}
 
 .user_message .message_author_avatar > img {
     width: 44px;
@@ -572,15 +571,14 @@ body {
     padding-right: 20px;
     width: 400px;
     border-radius: 5px;
-    min-height:55px;
+    min-height: 55px;
     padding-top: 10px;
-    padding-left:15px;
-    padding-bottom:19px;
-
-
+    padding-left: 15px;
+    padding-bottom: 19px;
 }
-.user_message .message_details .top_details{
-    margin-bottom:12px;
+
+.user_message .message_details .top_details {
+    margin-bottom: 12px;
 }
 
 .user_message .message_details .messag_author_name {
@@ -593,7 +591,7 @@ body {
 
 .message_date {
     color: #929292;
-    font-size:14px;
+    font-size: 14px;
 }
 
 .messages_input_area .message_input {
@@ -799,33 +797,36 @@ Geometric shapes
     border: 1px solid rgba(167, 19, 19, 0)!important;
 }
 
+.section-info-block{
+
+position: relative;
+}
+
 .section_name {
     margin-left: 8px;
-    font-size: 20px;
+    font-size: 24px;
     color: rgba(153, 153, 153, 0.72);
 }
 
-.section_name:after {
-    content: "";
-    background-color: rgba(153, 153, 153, 0.26);
-    min-width: 100%;
-    min-height: 1px;
-    /* border-top: 26px solid #d7d7d7; */
-    /* border-right: 21px solid transparent; */
-    /* content: ' '; */
-    margin-left: 2px;
-    margin-top: 10px;
-    position: absolute;
-    top: 0;
-    /* border: 3px solid; */
-    left: 0px;
+.section-hr{
+
+min-height: 1px;
+
+min-width: calc(100% - 24px);
+
+position: absolute;
+
+top: calc(50% - 1px);
+
+left: 24px;
+
+background-color: #999;
 }
 
 
 /*MEDIA REQUESTS*/
 
 @media screen and (max-width: 1024px) {
-
     .consultant_wrapper {
         width: 599px;
         height: 900px;
@@ -835,6 +836,7 @@ Geometric shapes
         font-family: "Myriad Pro", Times, serif;
     }
 }
+
 
 /*****************CHAT BODY *******************/
 
@@ -930,55 +932,59 @@ Geometric shapes
 .messages_output_area .answer.right {
     padding: 0 13px 0 0;
     text-align: right;
-   /* float: right;*/
+    float: right;
 }
+
 .messages_output_area .answer.left {
     padding: 0 13px 0 0;
     text-align: left;
-    margin-left:10px;
-   /* float: right;*/
+    margin-left: 10px;
+    /* float: right;*/
 }
+
 .messages_output_area .answer.right .message_details {
     background-color: #ededed;
-    width:424px;
-    margin-right:12px;
+    width: 424px;
+    margin-right: 12px;
 }
-.messages_output_area .answer.right .message_details .top_details{
-    text-align:right;
+
+.messages_output_area .answer.right .message_details .top_details {
+    text-align: right;
 }
 
 .messages_output_area .answer.left .message_details {
     background-color: #b7deff;
-    width:494px;
-    margin-left:13px;
+    width: 494px;
+    margin-left: 13px;
 }
+
 .messages_output_area .answer.left .message_details:before {
-width: 0;
-height: 0;
-border-style: solid;
-border-width: 7px 8px 7px 0;
-border-color: transparent #b7deff transparent transparent;
-content:' ';
-margin-left:-22px;
-margin-top:5px;
-display:block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 7px 8px 7px 0;
+    border-color: transparent #b7deff transparent transparent;
+    content: ' ';
+    margin-left: -22px;
+    margin-top: 5px;
+    display: block;
 }
 
 .messages_output_area .answer.right .message_details:before {
-width: 0;
-height: 0;
-border-style: solid;
-border-width: 7px 0 7px 8px;
-border-color: transparent transparent transparent #ededed;
-content:' ';
-display:block;
-position:absolute;
-margin-left:408px;
-margin-top:5px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 7px 0 7px 8px;
+    border-color: transparent transparent transparent #ededed;
+    content: ' ';
+    display: block;
+    position: absolute;
+    margin-left: 408px;
+    margin-top: 5px;
 }
 
 .messages_output_area .answer.right .user_message .message_author_avatar {
-   margin-left:12px;
+    margin-left: 12px;
 }
 
 .messages_output_area .answer a {
