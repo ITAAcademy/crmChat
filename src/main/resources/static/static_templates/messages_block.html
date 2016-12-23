@@ -4,7 +4,7 @@
 					infinite-scroll-disabled='message_busy'
 					infinite-scroll-distance='0' infinite-scroll-parent="true"
 					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
-				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(message[$index-1].date))">
+				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
 					<div class="line"></div>
 					<div class="big_dot"></div>
 					<span class="date_indicator">Сьогодні</span>
@@ -20,10 +20,9 @@
 					<div class="line"></div>
 				</div>
 
-
 				<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
 					<div class="message_author_avatar" ng-if="!message.position">
-						<img ng-src="{{$root.baseurl}}/images/avatars/{{new_message.author.avatar}}" alt=""/>
+						<img ng-src="{{$root.baseurl}}/images/avatars/{{message.chatUserAvatar}}" alt=""/>
 					</div>
 					<div class="message_details">
 						<div class="top_details">
@@ -33,7 +32,7 @@
 						<compilable  class="bottom_details" content="parseMsg(message.message)"></compilable>
 					</div>
 					<div class="message_author_avatar" ng-if="message.position">
-						<img ng-src="{{$root.baseurl}}/images/avatars/{{new_message.author.avatar}}" alt=""/>
+						<img ng-src="{{$root.baseurl}}/images/avatars/{{message.author.avatar}}" alt=""/>
 					</div>
 				</div>
 				</div>
