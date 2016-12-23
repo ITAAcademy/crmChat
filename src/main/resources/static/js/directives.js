@@ -176,6 +176,20 @@ function updateModelGet(http, requestUrl, callback) {
 
 angular.module('springChat.directives').directive('studentsBlock', studentsBlock);
 
+
+function initFolded(scope, element) {
+    scope.scroll;
+    scope.folded = true;
+    scope.toggleFolded = function() {
+        scope.folded = !scope.folded;
+        scope.scroll.overflowy = !scope.folded;
+        if (scope.folded)
+            scope.scroll.scrollTop(scope.scroll.getScrollTop())
+    }
+    scope.scroll = $($(element).find(".scroll")).niceScroll({ mousescrollstep: 18 * 3 * .91 });
+    scope.scroll.overflowy = !scope.folded;
+}
+
 function studentsBlock($http, mySettings) {
     return {
         restrict: 'EA',
@@ -184,25 +198,16 @@ function studentsBlock($http, mySettings) {
         },
         templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
-            var scroll;
+            updateModelForStudents();
+            initFolded(scope, element);
+
             function updateModelForStudents() {
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
                     scope.students = responseObj.data;
                 });
             };
             scope.blockName = "Студенти";
-            scope.folded = true;
-            scope.toggleFolded = function() {
-                scope.folded = !scope.folded;
-                scroll.overflowy = !scope.folded;
-                if(scope.folded)
-                    scroll.scrollTop(scroll.getScrollTop())
-                debugger;
-            }
-            updateModelForStudents();
-            debugger;
-            scroll = $($(element).find(".scroll")).niceScroll({mousescrollstep : 18*3*.86});
-            scroll.overflowy = !scope.folded;
+
         }
 
     };
@@ -210,7 +215,7 @@ function studentsBlock($http, mySettings) {
 
 angular.module('springChat.directives').directive('participantsBlock', participantsBlock);
 
-function participantsBlock($http, mySettings,RoomsFactory) {
+function participantsBlock($http, mySettings, RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -221,14 +226,9 @@ function participantsBlock($http, mySettings,RoomsFactory) {
             function updateModelForParticipants() {
 
             };
-            scope.folded = true;
-            scope.toggleFolded = function() {
-                scope.folded = !scope.folded;
-            }
-
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
-            var nice = $(".scroll").niceScroll();
+            initFolded(scope, element);
         }
 
     };

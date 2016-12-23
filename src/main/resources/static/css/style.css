@@ -61,7 +61,7 @@ body {
 }
 
 .items_list_block .block_content.unfolded {
-    max-height: 427px;
+    max-height: 365px;
     overflow-y: scroll;
 }
 
@@ -151,7 +151,7 @@ body {
 .items_list_block .avatar {
     vertical-align: middle;
     position: relative;
-    top: 2.5px;
+    /* top: 2.5px; */
     border: solid 2px;
     border-radius: 100%;
     padding: 3px;
@@ -269,6 +269,7 @@ body {
     font-size: 0px;
     height: 26px;
     width: 100%;
+    position: relative;
 }
 
 .contacts_menu_strip>* {
@@ -280,12 +281,14 @@ body {
 
 .contacts_menu_strip>.contacts_menu_item {
     background-color: #4c75a4;
-    width: 104px;
+    width: 99px;
     height: 100%;
     text-align: center;
     color: white;
-    margin-left: 26px;
-    margin-right: 26px;
+    /* margin-left: 26px; */
+    /* margin-right: 26px; */
+    position: absolute;
+    left: 44px;
 }
 
 .contacts_menu_strip>.search_icon {
@@ -295,39 +298,41 @@ body {
 
 .contacts_menu_strip> .contacts_menu_item:before {
     border-bottom: 26px solid #4c75a4;
-    border-left: 21px solid transparent;
+    border-left: 22px solid transparent;
     content: ' ';
-    margin-left: -30px;
+    margin-left: -29px;
     position: absolute;
 }
 
 .contacts_menu_strip> .contacts_menu_item:after {
     border-bottom: 26px solid #4c75a4;
-    border-right: 26px solid transparent;
+    border-right: 22px solid transparent;
     content: ' ';
-    margin-left: 10px;
+    margin-left: 8px;
     position: absolute;
 }
 
 .contacts_menu_strip>.last_contacts_menu_item {
     background-color: #d7d7d7;
     color: black;
-    width: 91px;
+    width: 99px;
     height: 100%;
     text-align: center;
+    position: absolute;
+    right: 45px;
 }
 
 .contacts_menu_strip>.last_contacts_menu_item:before {
-    border-top: 25px solid #d7d7d7;
-    border-left: 25px solid transparent;
+    border-top: 27px solid #d7d7d7;
+    border-left: 22px solid transparent;
     content: ' ';
     margin-left: -35px;
     position: absolute;
 }
 
 .contacts_menu_strip>.last_contacts_menu_item:after {
-    border-top: 26px solid #d7d7d7;
-    border-right: 21px solid transparent;
+    border-top: 33px solid #d7d7d7;
+    border-right: 27px solid transparent;
     content: ' ';
     margin-left: 10px;
     position: absolute;
@@ -342,8 +347,11 @@ body {
 .top_left_corner_grey {}
 
 .contacts_menu_strip>.group_icon {
-    margin-top: 5px;
-    margin-left: 8px;
+    /* margin-top: 5px; */
+    /* margin-left: 8px; */
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 .contact_control {
@@ -572,7 +580,7 @@ body {
 
 }
 .user_message .message_details .top_details{
-	margin-bottom:12px;
+    margin-bottom:12px;
 }
 
 .user_message .message_details .messag_author_name {
@@ -931,18 +939,18 @@ Geometric shapes
    /* float: right;*/
 }
 .messages_output_area .answer.right .message_details {
-	background-color: #ededed;
-	width:424px;
-	margin-right:12px;
+    background-color: #ededed;
+    width:424px;
+    margin-right:12px;
 }
 .messages_output_area .answer.right .message_details .top_details{
-	text-align:right;
+    text-align:right;
 }
 
 .messages_output_area .answer.left .message_details {
-	background-color: #b7deff;
-	width:494px;
-	margin-left:13px;
+    background-color: #b7deff;
+    width:494px;
+    margin-left:13px;
 }
 .messages_output_area .answer.left .message_details:before {
 width: 0;

@@ -1,7 +1,7 @@
 <div class="items_list_block top_block">
     <div class="block_name">{{blockName}}</div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
-        <div class="block_item" ng-repeat="participant in participants()">
+        <div class="block_item" ng-repeat="participant in participants() | orderBy : 'username'">
             <div class="avatar ng-class:{offline:!participant.online, online:participant.online}">
                 <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{participant.avatar}}" alt="" />
                 <div class="user_presence_icon"></div>
@@ -15,6 +15,6 @@
         </div>
     </div>
 </div>
-<div class="chevron_wrapper" ng-click="toggleFolded()">
+<div ng-if="participants().length > 1" class="chevron_wrapper" ng-click="toggleFolded()">
     <div class="chevron ng-class:{unfolded:!folded}"></div>
 </div>
