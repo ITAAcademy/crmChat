@@ -110,13 +110,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
         }
     }
-
+        var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
         //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
         var summarised = false;
         oldMessage = msg;
+
         if (messages.length > 0) {
             if (messages[0].username == msg.username) {
                 if (msg.attachedFiles.length == 0) {
@@ -138,6 +139,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function calcPositionPush(msg) {
+
         if (msg == null)
             return null;
         // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
@@ -157,7 +159,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
         if (messages.length > 0) {
-            if (messages[messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
+             var isActual = differenceInSecondsBetweenDates(new Date(msg.date),new Date(messages[messages.length - 1].date))<NEXT_MESSAGE_TIME_LIMIT_SECONDS;
+            if (isActual && messages[messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
                 messages[messages.length - 1].date = msg.date;
                 messages[messages.length - 1].message += "\n\n" + msg.message;
             } else {

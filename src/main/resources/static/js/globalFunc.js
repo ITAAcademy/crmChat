@@ -75,6 +75,13 @@ var formatDateWithLast = function(date) {
         return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
 
 }
+
+var differenceInSecondsBetweenDates = function(t1,t2){
+var dif = t1.getTime() - t2.getTime();
+var Seconds_from_T1_to_T2 = dif / 1000;
+var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
+return Seconds_Between_Dates;
+}
 var formatDate = function(date) {
     // need translate and move to global to config map
     var monthNames = {};
