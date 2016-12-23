@@ -610,7 +610,7 @@ body {
     padding-bottom: 10px;
     overflow: hidden;
     outline: none;
-    max-height: 50%;
+    max-height: 60%;
 }
 
 .controls_area {
@@ -674,6 +674,7 @@ body {
 #tools_dropdown.shown,
 #attaches_dropdown.shown {
     display: block;
+    z-index: 2;
 }
 
 .attaches_area #attaches_dropdown:after {
