@@ -119,8 +119,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         oldMessage = msg;
 
         if (messages.length > 0) {
-            if (messages[0].username == msg.username) {
-                if (msg.attachedFiles.length == 0) {
+             var isActual = differenceInSecondsBetweenDates(new Date(msg.date),new Date(messages[0].date))<NEXT_MESSAGE_TIME_LIMIT_SECONDS;
+            if ( messages[0].username == msg.username) {
+                if (isActual && msg.attachedFiles.length == 0) {
                     summarised = true;
                     messages[0].message = msg.message + "\n\n" + messages[0].message;
                     //  $scope.messages[0].date = msg.date;
