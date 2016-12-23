@@ -11,7 +11,7 @@ body {
 }
 
 .consultant_wrapper {
-    width: 900px;
+    max-width: 900px;
     height: calc(100% - 10px);
     margin: auto;
     position: relative;
@@ -30,7 +30,7 @@ body {
 
 .left_panel {
     width: 301px;
-    background-color: #d7d7d7;
+    background-color: #ffffff;
     float: left;
     height: 100%;
     overflow: hidden;
@@ -131,18 +131,20 @@ body {
 }
 
 .items_list_block .block_item {
-    margin-top: 5px;
+    /* margin-top: 5px; */
     /* margin-left: 10px; */
     /* margin-right: 10px; */
-    padding-left: 10px;
+    padding-left: 20px;
     padding-right: 10px;
-    position: relative;
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
     /* max-height: 55px; */
+    position: relative;
 }
 
 .items_list_block .block_item.selectable:hover {
     cursor: pointer;
-    background-color: #4c75a4;
+    background-color: #c4d3e3;
 }
 
 .avatar {
@@ -252,7 +254,10 @@ body {
 }
 
 .items_list_block.bottom_block .block_item {
-    margin-top: 5px;
+    /* padding-left: 5px; */
+    /* margin-left: 15px; */
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .items_list_block.bottom_block .avatar >.user_image {
@@ -332,10 +337,10 @@ body {
 }
 
 .contacts_menu_strip>.last_contacts_menu_item:after {
-    border-top: 33px solid #d7d7d7;
-    border-right: 27px solid transparent;
+    border-top: 27px solid #d7d7d7;
+    border-right: 22px solid transparent;
     content: ' ';
-    margin-left: 10px;
+    margin-left: 15px;
     position: absolute;
 }
 
@@ -360,7 +365,7 @@ body {
     /* float: right; */
     /* margin-top: 22px; */
     position: absolute;
-    right: 5px;
+    right: 20px;
     top: calc(50% - 13px);
 }
 
@@ -499,7 +504,7 @@ body {
 }
 
 .messages_output_area {
-    height: 753px;
+    max-height: 100%;
     overflow-y: scroll;
     padding-top: 6px;
 }
@@ -569,7 +574,7 @@ body {
 .user_message .message_details {
     display: inline-block;
     padding-right: 20px;
-    width: 400px;
+    width: calc(100% - 130px);
     border-radius: 5px;
     min-height: 55px;
     padding-top: 10px;
@@ -826,18 +831,6 @@ background-color: #999;
 
 /*MEDIA REQUESTS*/
 
-@media screen and (max-width: 1024px) {
-    .consultant_wrapper {
-        width: 599px;
-        height: 900px;
-        position: absolute;
-        left: 50%;
-        margin-left: -300px;
-        font-family: "Myriad Pro", Times, serif;
-    }
-}
-
-
 /*****************CHAT BODY *******************/
 
 .messages_output_area h6 {
@@ -850,16 +843,17 @@ background-color: #999;
 }
 
 .messages_output_area .answer.left {
-    padding: 0 0 0 58px;
+    padding: 0 0 0 15px;
     text-align: left;
     float: left;
 }
 
 .messages_output_area .answer {
     position: relative;
-    max-width: 600px;
+    width: 100%;
     overflow: hidden;
     clear: both;
+    /* text-overflow: ellipsis; */
 }
 
 .messages_output_area .answer.left .avatar {
@@ -930,31 +924,32 @@ background-color: #999;
 /*RIGHT*/
 
 .messages_output_area .answer.right {
-    padding: 0 13px 0 0;
     text-align: right;
     float: right;
+    padding-right: 15px;
 }
 
 .messages_output_area .answer.left {
-    padding: 0 13px 0 0;
     text-align: left;
-    margin-left: 10px;
+    width: 100%;
     /* float: right;*/
 }
 
 .messages_output_area .answer.right .message_details {
     background-color: #ededed;
-    width: 424px;
+    /* max-width: calc(100% - 61px); */
     margin-right: 12px;
 }
 
 .messages_output_area .answer.right .message_details .top_details {
     text-align: right;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .messages_output_area .answer.left .message_details {
     background-color: #b7deff;
-    width: 494px;
+    /* max-width: 100%; */
     margin-left: 13px;
 }
 
@@ -979,8 +974,10 @@ background-color: #999;
     content: ' ';
     display: block;
     position: absolute;
-    margin-left: 408px;
-    margin-top: 5px;
+    right: 67px;
+    top: 25px;
+    /* margin-left: 408px; */
+    /* margin-top: 5px; */
 }
 
 .messages_output_area .answer.right .user_message .message_author_avatar {
