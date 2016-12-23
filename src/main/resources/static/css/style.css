@@ -817,9 +817,7 @@ Geometric shapes
 /*MEDIA REQUESTS*/
 
 @media screen and (max-width: 1024px) {
-    .left_panel {
-        display: none;
-    }
+
     .consultant_wrapper {
         width: 599px;
         height: 900px;
