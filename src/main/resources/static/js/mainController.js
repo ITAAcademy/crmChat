@@ -41,8 +41,8 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         return false;
     }
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
-    function scrollInitFunction(){
-              var nice = $(".scroll").niceScroll();
+    function scrollAndFilesInitFunction(){
+              //var nice = $(".scroll").niceScroll();
         var lang = globalConfig.lang;
         if (lang=="ua")lang="uk";
         var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
@@ -579,19 +579,19 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
     function updateTenants() {
 
     }
-    $scope.message_busy = true;
-
-    $scope.loadOtherMessages = function() {
-        if ($scope.message_busy)
+    $rootScope.message_busy = false;
+    $rootScope.loadOtherMessages = function() {
+        if ($rootScope.message_busy || RoomsFactory.getCurrentRoom()==null)
             return;
-        $scope.message_busy = true;
+        $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), $scope.oldMessage). //  messages[0]). //
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId),RoomsFactory.getOldMessage()). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
 
             var objDiv = document.getElementById("messagesScroll");
             var lastHeight = objDiv.scrollHeight;
+
             if (data == "")
                 return;
 
@@ -599,14 +599,14 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
 
             for (var index = 0; index < data.length; index++) {
                 if (data[index].hasOwnProperty("message")) {
-                    calcPositionUnshift(data[index]);
+                    RoomsFactory.calcPositionUnshift(data[index]);
                 }
             }
             //restore scrole
-            $scope.$$postDigest(function() {
+               $scope.$$postDigest(function() {
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = objDiv.scrollHeight - lastHeight;
-                $scope.message_busy = false;
+                $rootScope.message_busy = false;
                 $scope.$apply();
             });
         }).
@@ -616,13 +616,14 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
             //messageError("no other message");
         });
     }
+        
 
     $rootScope.$on('MessageAreaScrollDownEvent', function() {
         var objDiv = document.getElementById("messagesScroll");
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     });
     $rootScope.$on('MessageBusyEvent', function(isBusy) {
-        $scope.message_busy = isBusy;
+        $rootScope.message_busy = isBusy;
     });
 
     function newMessageArrayEventHandler(roomIds) {
@@ -776,8 +777,7 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             debugger;
-            var nice = $(".scroll").niceScroll();
-                    scrollInitFunction();
+        scrollAndFilesInitFunction();
         });
         
         /*var lang = globalConfig.lang;

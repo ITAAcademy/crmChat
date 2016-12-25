@@ -602,7 +602,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             },
         getParticipants: function(){
             return participants;
-        }
+        },
+        getOldMessage: function(){
+            return oldMessage;
+        },
+        calcPositionUnshift:calcPositionUnshift
 
     };
 

@@ -1,8 +1,8 @@
 		<!-- Сьогоднішні повідомлення -->
 		<div class="messages_output_area messages_wrapper scroll" id="messagesScroll">
-		<div infinite-scroll='loadOtherMessages()'
-					infinite-scroll-disabled='message_busy'
-					infinite-scroll-distance='0' infinite-scroll-parent="true"
+		<div infinite-scroll='$root.loadOtherMessages()'
+					infinite-scroll-disabled='$root.message_busy'
+					infinite-scroll-distance='2' infinite-scroll-parent="true"
 					infinite-scroll-container='"#messagesScroll"' infinite-scroll-invert='true'>
 				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
 					<div class="line"></div>
@@ -11,7 +11,7 @@
 					<div class="big_dot"></div>
 					<div class="line"></div>
 				</div>
-
+	Message_busy:{{$root.testVar}}
 				<div class="message_date_separator" ng-if="!checkIfToday(message.date) &amp;&amp; $index==0">
 					<div class="line"></div>
 					<div class="big_dot"></div>
