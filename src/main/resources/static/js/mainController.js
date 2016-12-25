@@ -622,7 +622,7 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
         var objDiv = document.getElementById("messagesScroll");
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     });
-    $rootScope.$on('MessageBusyEvent', function(isBusy) {
+    $rootScope.$on('MessageBusyEvent', function(event,isBusy) {
         $rootScope.message_busy = isBusy;
     });
 

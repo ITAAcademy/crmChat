@@ -18,7 +18,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var participants = [];
     var roomType = -1;
     var ajaxRequestsForRoomLP = [];
-    var message_busy = true;
+    $rootScope.message_busy = true;
     var rooms = [];
 
     /*var updateContactsMapFromArray = function(contactsList) {
@@ -179,6 +179,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var changeRoom = function() {
         //alert(16);
         messages = [];
+    $rootScope.$broadcast('MessageBusyEvent',false);
         console.log("roomId:" + currentRoom.roomId);
 
         if (ChannelFactory.isSocketSupport() === true) {
@@ -361,7 +362,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
-            $rootScope.$broadcast('messageBusyEvent',true);
+            $rootScope.$broadcast('MessageBusyEvent',true);
             oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
@@ -379,7 +380,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             var objDiv = document.getElementById("messagesScroll");
             var count = 5;
             objDiv.scrollTop = objDiv.scrollHeight;
-               $rootScope.$broadcast('messageBusyEvent',false);
+               $rootScope.$broadcast('MessageBusyEvent',false);
         }, 100);
 
 
@@ -395,9 +396,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
     var loadOtherMessages = function() {
-        if (message_busy)
+        if ($rootScope.message_busy)
             return;
-        message_busy = true;
+       $rootScope.message_busy = true;
         $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(currentRoom.roomId), oldMessage). //  messages[0]). //
         success(function(data, status, headers, config) {
             var objDiv = document.getElementById("messagesScroll");
