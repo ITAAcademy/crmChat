@@ -45,19 +45,15 @@
                     </div>
                     <div class="attaches_area">
                         <ul id="attaches_dropdown" class="popup_dropdown">
-                            <li class="attaches_item"><a href="#">Документ</a></li>
+                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" href="#">Документ</a></li>
                             <li class="video_item"><a href="#">Відео</a></li>
                             <li class="audio_item"><a href="#">Аудіо</a></li>
                         </ul>
+                        <div  class="upload_file_form_container">
+                        </div>
                         <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
                         <button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt="" /></button>
                         <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
-                   		<form name="uploadfile" enctype="multipart/form-data"
-							id="upload_file_form">
-							<input data-preview-file-type="text" class="col-xs-4 file-loading"
-							type="file" multiple="multiple" id="myfile" name="myfile"
-							data-filename-placement="inside" />
-						</form>
                     </div>
                 </div>
             </div>
@@ -104,8 +100,7 @@
     <script src="lib/clamp.js"></script>
 	<script src="lib/elastic.js"></script>
 	<script src="lib/ui-bootstrap.js"></script>
-	<script src="lib/fileinputModule/fileinput.min.js"></script>
-	<script th:src="'lib/fileinputModule/fileinput_locale_'+ ${config.get('currentLang')}+'.js'"></script>
+	<script src="lib/angular-file-upload/ng-file-upload.min.js"></script>
 </body>
 
 </html>

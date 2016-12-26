@@ -41,30 +41,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         return false;
     }
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
-    function scrollAndFilesInitFunction(){
-              //var nice = $(".scroll").niceScroll();
-        var lang = globalConfig.lang;
-        if (lang=="ua")lang="uk";
-        var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
-        $('#myfile').on('change', function(event, numFiles, label) {
-            var totalFilesLength = 0;
-            for (var i = 0; i < this.files.length; i++) {
-                totalFilesLength += this.files[i].size;
-            }
-            if (totalFilesLength > MAX_UPLOAD_FILE_SIZE_BYTES) {
-                $('#myfile').fileinput('lock');
-                var noteStr = fileUploadLocal.fileSizeOverflowLimit + ":" + Math.round(totalFilesLength / 1024) + "/" + MAX_UPLOAD_FILE_SIZE_BYTES / 1024 + "Kb";
-                $scope.$apply(function() {
-                    toaster.pop('error', "Failed", noteStr, 5000);
-                });
-
-                //  alert(noteStr);
-            }
-        });
-        $('#myfile').on('fileclear', function(event, numFiles, label) {
-            $('#myfile').fileinput('unlock');
-        });
-    }
 
 
 
@@ -79,16 +55,13 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     ];
 
     /*FILE FORM INIT*/
-angular.element(document.querySelector('#upload_file_form')).context.onsubmit = function() {
-        var input = this.elements.myfile;
-        var files = [];
-        for (var i = 0; i < input.files.length; i++) files.push(input.files[i]);
+$scope.uploadFiles = function(files) {
+        $scope.files = files;
         if (files) {
-            uploadXhr(files, "upload_file/" + chatControllerScope.currentRoom.roomId,
+            uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                 function successCallback(data) {
                     $scope.uploadProgress = 0;
                     $scope.sendMessage("я отправил вам файл", JSON.parse(data));
-                    $('#myfile').fileinput('clear');
                     $scope.$apply();
                 },
                 function(xhr) {
@@ -501,7 +474,7 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
 
             //$scope.goToDialogById(data);
             if (RoomsFactory.getCurrentRoom() == null)
-                RoomsFactory.getCurrentRoom() = {};
+                RoomsFactory.setCurrentRoom({});
             if (data != null && data != undefined) {
                 //    $scope.currentRoom.roomId = data;
                 changeLocation("/dialog_view/" + data);
@@ -777,7 +750,6 @@ angular.element(document.querySelector('#upload_file_form')).context.onsubmit = 
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             debugger;
-        scrollAndFilesInitFunction();
         });
         
         /*var lang = globalConfig.lang;
