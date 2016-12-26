@@ -285,7 +285,7 @@ body {
     cursor: pointer;
 }
 
-.contacts_menu_strip>.contacts_menu_item {
+.contacts_menu_strip .contacts_menu_item {
     background-color: #4c75a4;
     width: 99px;
     height: 100%;
@@ -294,7 +294,7 @@ body {
     /* margin-left: 26px; */
     /* margin-right: 26px; */
     position: absolute;
-    left: 44px;
+    left: 22px;
 }
 
 .contacts_menu_strip>.search_icon {
@@ -302,7 +302,7 @@ body {
     margin-top: 2px;
 }
 
-.contacts_menu_strip> .contacts_menu_item:before {
+.contacts_menu_strip .contacts_menu_item:before {
     border-bottom: 26px solid #4c75a4;
     border-left: 22px solid transparent;
     content: ' ';
@@ -310,7 +310,7 @@ body {
     position: absolute;
 }
 
-.contacts_menu_strip> .contacts_menu_item:after {
+.contacts_menu_strip .contacts_menu_item:after {
     border-bottom: 26px solid #4c75a4;
     border-right: 22px solid transparent;
     content: ' ';
@@ -318,7 +318,7 @@ body {
     position: absolute;
 }
 
-.contacts_menu_strip>.last_contacts_menu_item {
+.contacts_menu_strip .last_contacts_menu_item {
     background-color: #d7d7d7;
     color: black;
     width: 99px;
@@ -328,7 +328,7 @@ body {
     right: 45px;
 }
 
-.contacts_menu_strip>.last_contacts_menu_item:before {
+.contacts_menu_strip .last_contacts_menu_item:before {
     border-top: 27px solid #d7d7d7;
     border-left: 22px solid transparent;
     content: ' ';
@@ -336,7 +336,7 @@ body {
     position: absolute;
 }
 
-.contacts_menu_strip>.last_contacts_menu_item:after {
+.contacts_menu_strip .last_contacts_menu_item:after {
     border-top: 27px solid #d7d7d7;
     border-right: 22px solid transparent;
     content: ' ';
@@ -352,7 +352,7 @@ body {
 
 .top_left_corner_grey {}
 
-.contacts_menu_strip>.group_icon {
+.contacts_menu_strip .group_icon {
     /* margin-top: 5px; */
     /* margin-left: 8px; */
     position: absolute;
@@ -1021,4 +1021,21 @@ background-color: #999;
 }
 .participants_chevron:after{
     background-color:#c2c3c3;
+}
+.contacts_menu_strip .movable_content{
+    width:277px;
+    text-align:right;
+    height:26px;
+    position:absolute;
+    background-color: #3f3f3f
+}
+.contacts_menu_strip .movable_content.hidden_right{
+margin-left:500px;
+}
+.contacts_menu_strip .room_search_input{
+    margin-left:20px;
+    width:257px;
+}
+.contacts_menu_strip .room_search_input:before{
+
 }

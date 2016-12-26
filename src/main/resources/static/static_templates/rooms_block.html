@@ -1,8 +1,11 @@
 <div class="contacts_menu_strip">
-    <img class="search_icon" src="images\search17x17.png" alt="" />
-    <div class="contacts_menu_item">КОНТАКТИ</div>
-    <div class="last_contacts_menu_item">ОСТАННІ</div>
-    <img class="group_icon" src="images\group23x16.png" alt="" />
+    <img class="search_icon" ng-click="toggleSearch()" src="images\search17x17.png" alt="" />
+    <div class="movable_content ng-class:{ 'hidden_right': searchEnabled };"">
+        <div class="contacts_menu_item">КОНТАКТИ</div>
+        <div class="last_contacts_menu_item">ОСТАННІ</div>
+        <img class="group_icon" src="images\group23x16.png" alt="" />
+    </div>
+    <input type="text" class="room_search_input"/>
 </div>
 <div class="items_list_block bottom_block scroll">
     <div class="section" ng-repeat="room in (roomsF = (rooms() | orderBy:'string'))">

@@ -14,7 +14,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                    changeLocation("/chatrooms");
                });*/
         },
-        subscribeToConnect(callBack) {
+        subscribeToConnect: function(callBack){
             if ($rootScope.isInited == false) {
                 console.log("serverPrefix");
                 var onConnect = function(frame) {

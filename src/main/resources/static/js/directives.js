@@ -258,6 +258,10 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
             $scope.rooms = RoomsFactory.getRooms;
+            $scope.searchEnabled = false;
+            $scope.toggleSearch = function(){
+                $scope.searchEnabled = !$scope.searchEnabled;
+            }
 
             $scope.doGoToRoom = function(roomId) {
                 //if ($scope.mouseBusy == false)
