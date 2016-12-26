@@ -210,6 +210,11 @@ body {
     border-style: solid;
 }
 
+.items_list_block.participants_block .avatar .user_presence_icon{
+    /* background-color: #3f3f3f; */
+    border-color: #e6e6e6;
+}
+
 .items_list_block .avatar .user_presence_icon_wraper {
     border-width: 2px;
     border-style: solid;

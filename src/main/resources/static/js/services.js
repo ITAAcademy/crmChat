@@ -69,10 +69,10 @@ springChatServices.service('AskWindow', ['$rootScope', function($rootScope) {
     this.showAskWindow = function() {
         if (isAskTenantToTakeConsultationVisible == false) {
 
-            $scope.isTenantFree = false;
-            $scope.askTenantToTakeConsultationTogle();
+            $rootScope.isTenantFree = false;
+            $rootScope.askTenantToTakeConsultationTogle();
 
-            $scope.hideAskTenantToTakeConsultation_tenantNotRespond =
+            $rootScope.hideAskTenantToTakeConsultation_tenantNotRespond =
                 $timeout(function() {
                     $scope.hideAskTenantToTakeConsultation();
                 }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
