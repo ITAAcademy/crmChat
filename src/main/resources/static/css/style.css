@@ -1009,4 +1009,16 @@ background-color: #999;
     padding-right: 12px;
     color: #333333;
 }
-
+.participants_block.top_block+.participants_chevron_wrapper{ 
+    background-color:#e6e6e6;
+}
+.participants_block.top_block{
+    background-color:#e6e6e6;
+    color: black;
+}
+.participants_chevron:before{
+    background-color:#c2c3c3;
+}
+.participants_chevron:after{
+    background-color:#c2c3c3;
+}

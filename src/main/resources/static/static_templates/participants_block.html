@@ -1,4 +1,4 @@
-<div class="items_list_block top_block">
+<div class="items_list_block top_block participants_block">
     <div class="block_name">{{blockName}}</div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item" ng-repeat="participant in participants() | orderBy : ['username', 'online']">
@@ -15,6 +15,6 @@
         </div>
     </div>
 </div>
-<div ng-if="participants().length > 1" class="chevron_wrapper" ng-click="toggleFolded()">
-    <div class="chevron ng-class:{unfolded:!folded}"></div>
+<div ng-if="participants().length > 1" class="chevron_wrapper participants_chevron_wrapper" ng-click="toggleFolded()">
+    <div class="chevron participants_chevron ng-class:{unfolded:!folded}"></div>
 </div>
