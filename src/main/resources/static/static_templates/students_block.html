@@ -1,4 +1,4 @@
-<div class="items_list_block top_block">
+<div ng-if="students.length > 0" class="items_list_block top_block">
     <div class="block_name">{{blockName}}</div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item" ng-repeat="student in students | orderBy : ['username', 'online']">
