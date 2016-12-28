@@ -244,7 +244,7 @@ $scope.uploadFiles = function(files) {
 
     $rootScope.parseMsg = function(msg) {
         if (msg == null) return null;
-        msg = htmlEscape(msg);
+       // msg = htmlEscape(msg);
         msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)', 1);
         msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)', 2, 3);
 
@@ -750,6 +750,15 @@ $scope.uploadFiles = function(files) {
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             debugger;
+             $(".message_input").resize(function(e){
+        var containerHeight = $('.right_panel').height(); 
+        var toolsAreaHeight = $('.tools_area').height();
+        var messagesInputHeight = $('.message_input').height();
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight-100;
+        $('.message_block_directive').height(messagesOutputHeight);
+        console.log('messagesInputHeight:'+messagesInputHeight);
+        console.log('messagesOutputHeight:'+messagesOutputHeight);
+    });
         });
         
         /*var lang = globalConfig.lang;
