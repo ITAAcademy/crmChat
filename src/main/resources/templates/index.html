@@ -22,6 +22,7 @@
             </div>
         </div>
         <div class="right_panel">
+
             <div class="tools_area">
                 <ul id="tools_dropdown" class="popup_dropdown">
                     <li class="show_attaches_item"><a href="#">Показати додатки</a></li>
@@ -35,11 +36,12 @@
                 <img class="search_icon" src="images\search17x17.png" alt="" />
             </div>
             <hr/>
-            <div messages-block="true" style="height: calc(100% - 145px); max-height: calc(100% - 145px);"></div>
+            <div class="message_block_directive" messages-block="true" style="height: 400px"></div>
             <!--It's message displayer-->
             <hr/>
+
             <div class="messages_input_area">
-                <input class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage" />
+                <div class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage" contenteditable="true" />
                 <div class="controls_area">
                     <div class="multimedia_conversation_controls">
                         <button class="skype"><img src="images\skype24x23.png" alt="" /></button>
@@ -103,6 +105,8 @@
 	<script src="lib/elastic.js"></script>
 	<script src="lib/ui-bootstrap.js"></script>
 	<script src="lib/angular-file-upload/ng-file-upload.min.js"></script>
+    <script src="lib/jquery.ba-resize.min.js"></script>
+    <script src="lib/angular-contenteditable.js"></script>
 </body>
 
 </html>

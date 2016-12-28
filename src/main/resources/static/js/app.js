@@ -3,7 +3,7 @@
 /* App Module */
 var springChat = angular.module('springChat', ['springChat.controllers', //'springChat.controllers',
     'springChat.services',
-    'springChat.directives','ngFileUpload'
+    'springChat.directives','ngFileUpload','contenteditable'
 ]);
 /*
 springChat.config(function($routeProvider) {

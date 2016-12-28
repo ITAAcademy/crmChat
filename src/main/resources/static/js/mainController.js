@@ -243,7 +243,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $rootScope.parseMsg = function(msg) {
         if (msg == null) return null;
-        msg = htmlEscape(msg);
+       // msg = htmlEscape(msg);
         msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)', 1);
         msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)', 2, 3);
 
@@ -750,9 +750,22 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }
     };
 
+function messageAreaResizer(e){
+ var containerHeight = $('.right_panel').height(); 
+        var toolsAreaHeight = $('.tools_area').height();
+        var messagesInputHeight = $('.message_input').height();
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight-100;
+        if (messagesInputHeight > messagesOutputHeight ) return;
+        $('.message_block_directive').height(messagesOutputHeight);
+        console.log('messagesInputHeight:'+messagesInputHeight);
+        console.log('messagesOutputHeight:'+messagesOutputHeight);
+}
+messageAreaResizer();
+
     $scope.$$postDigest(function() {
         $(document).ready(function() {
-
+             $(".message_input").resize(messageAreaResizer);
+             $(window).resize(messageAreaResizer);
         });
 
                 /*****************************
