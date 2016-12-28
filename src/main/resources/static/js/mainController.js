@@ -747,18 +747,22 @@ $scope.uploadFiles = function(files) {
         }
     };
 
-    $scope.$$postDigest(function() {
-        $(document).ready(function() {
-            debugger;
-             $(".message_input").resize(function(e){
-        var containerHeight = $('.right_panel').height(); 
+function messageAreaResizer(e){
+ var containerHeight = $('.right_panel').height(); 
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
         var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight-100;
+        if (messagesInputHeight > messagesOutputHeight ) return;
         $('.message_block_directive').height(messagesOutputHeight);
         console.log('messagesInputHeight:'+messagesInputHeight);
         console.log('messagesOutputHeight:'+messagesOutputHeight);
-    });
+}
+messageAreaResizer();
+
+    $scope.$$postDigest(function() {
+        $(document).ready(function() {
+             $(".message_input").resize(messageAreaResizer);
+             $(window).resize(messageAreaResizer);
         });
         
         /*var lang = globalConfig.lang;
