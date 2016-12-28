@@ -446,8 +446,17 @@ body {
     position: absolute;
     margin-left: -34px;
 }
+.tools_area > #tools_dropdown .sound_on_item:before {
+    background-image: url("../images/megaphone.png");
+    width: 16px;
+    height: 16px;
+    content: ' ';
+    position: absolute;
+    margin-left: -34px;
+    background-size: cover;
+}
 
-.tools_area > #tools_dropdown .sound_off_item {
+.tools_area > #tools_dropdown > * {
     margin-left: 34px;
 }
 
@@ -1032,11 +1041,14 @@ background-color: #999;
     text-align:right;
     height:26px;
     position:absolute;
-    background-color: #3f3f3f
+    background-color: #3f3f3f;
+    margin-left:0px;
+    -webkit-transition: margin ease-out 1s;
+    -moz-transition: margin ease-out 1s;
+    -o-transition: margin ease-out 1s;
+    transition: margin ease-out 1s;
 }
-.contacts_menu_strip .movable_content.hidden_right{
-margin-left:500px;
-}
+.contacts_menu_strip .movable_content.hidden_right{margin-left: 280px;}
 .contacts_menu_strip .room_search_input{
     margin-left:20px;
     width:257px;

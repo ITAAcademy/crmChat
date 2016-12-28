@@ -110,7 +110,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
         }
     }
-        var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
+    var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
+
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
@@ -119,8 +120,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         oldMessage = msg;
 
         if (messages.length > 0) {
-             var isActual = differenceInSecondsBetweenDates(new Date(msg.date),new Date(messages[0].date))<NEXT_MESSAGE_TIME_LIMIT_SECONDS;
-            if ( messages[0].username == msg.username) {
+            var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[0].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
+            if (messages[0].username == msg.username) {
                 if (isActual && msg.attachedFiles.length == 0) {
                     summarised = true;
                     messages[0].message = msg.message + "\n\n" + messages[0].message;
@@ -147,9 +148,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         var objDiv = document.getElementById("messagesScroll");
         var needScrollDown = Math.round(objDiv.scrollTop + objDiv.clientHeight) >= objDiv.scrollHeight - 100;
-        if (needScrollDown){
+        /*if (needScrollDown) {
             $rootScope.$broadcast('MessageAreaScrollDownEvent');
-        }
+        }*/
         if (messages.length > 0) {
             if (messages[messages.length - 1].username == msg.username)
                 msg.position = messages[messages.length - 1].position;
@@ -160,7 +161,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
         if (messages.length > 0) {
-             var isActual = differenceInSecondsBetweenDates(new Date(msg.date),new Date(messages[messages.length - 1].date))<NEXT_MESSAGE_TIME_LIMIT_SECONDS;
+            var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[messages.length - 1].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
             if (isActual && messages[messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
                 messages[messages.length - 1].date = msg.date;
                 messages[messages.length - 1].message += "\n\n" + msg.message;
@@ -170,6 +171,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         } else {
             messages.push(msg);
         }
+        $rootScope.$$postDigest(function() {
+            var objDiv = document.getElementById("messagesScroll");
+            if (needScrollDown)
+                objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+        });
 
     }
 
@@ -179,7 +185,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var changeRoom = function() {
         //alert(16);
         messages = [];
-    $rootScope.$broadcast('MessageBusyEvent',false);
+        $rootScope.$broadcast('MessageBusyEvent', false);
         console.log("roomId:" + currentRoom.roomId);
 
         if (ChannelFactory.isSocketSupport() === true) {
@@ -362,7 +368,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         participants = message["participants"];
         if (typeof message["messages"] != 'undefined') {
-            $rootScope.$broadcast('MessageBusyEvent',true);
+            $rootScope.$broadcast('MessageBusyEvent', true);
             oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
@@ -380,7 +386,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             var objDiv = document.getElementById("messagesScroll");
             var count = 5;
             objDiv.scrollTop = objDiv.scrollHeight;
-               $rootScope.$broadcast('MessageBusyEvent',false);
+            $rootScope.$broadcast('MessageBusyEvent', false);
         }, 100);
 
 
@@ -398,7 +404,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var loadOtherMessages = function() {
         if ($rootScope.message_busy)
             return;
-       $rootScope.message_busy = true;
+        $rootScope.message_busy = true;
         $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(currentRoom.roomId), oldMessage). //  messages[0]). //
         success(function(data, status, headers, config) {
             var objDiv = document.getElementById("messagesScroll");
@@ -597,17 +603,18 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         },
         setRooms: function(roomsArg) { rooms = roomsArg; },
         getRooms: function() {
-            return rooms; },
-            getMessages: function(){
-                return messages;
-            },
-        getParticipants: function(){
+            return rooms;
+        },
+        getMessages: function() {
+            return messages;
+        },
+        getParticipants: function() {
             return participants;
         },
-        getOldMessage: function(){
+        getOldMessage: function() {
             return oldMessage;
         },
-        calcPositionUnshift:calcPositionUnshift
+        calcPositionUnshift: calcPositionUnshift
 
     };
 

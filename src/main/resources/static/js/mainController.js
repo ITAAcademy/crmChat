@@ -23,7 +23,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.firstLetter = firstLetter;
     $rootScope.checkIfToday = checkIfToday;
 
-
     $rootScope.goToUserPage = function(username) {
         var request = $http({
             method: "get",
@@ -55,30 +54,30 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     ];
 
     /*FILE FORM INIT*/
-$scope.uploadFiles = function(files) {
-        $scope.files = files;
-        if (files) {
-            uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
-                function successCallback(data) {
-                    $scope.uploadProgress = 0;
-                    $scope.sendMessage("я отправил вам файл", JSON.parse(data));
-                    $scope.$apply();
-                },
-                function(xhr) {
-                    $scope.uploadProgress = 0;
-                    $scope.$apply();
-                    alert("SEND FAILED:" + JSON.parse(xhr.response).message);
-                },
-                function(event, loaded) {
-                    console.log(event.loaded + ' / ' + event.totalSize);
-                    $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
-                    $scope.$apply();
+    $scope.uploadFiles = function(files) {
+            $scope.files = files;
+            if (files) {
+                uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
+                    function successCallback(data) {
+                        $scope.uploadProgress = 0;
+                        $scope.sendMessage("я отправил вам файл", JSON.parse(data));
+                        $scope.$apply();
+                    },
+                    function(xhr) {
+                        $scope.uploadProgress = 0;
+                        $scope.$apply();
+                        alert("SEND FAILED:" + JSON.parse(xhr.response).message);
+                    },
+                    function(event, loaded) {
+                        console.log(event.loaded + ' / ' + event.totalSize);
+                        $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
+                        $scope.$apply();
 
-                });
+                    });
+            }
+            return false;
         }
-        return false;
-    }
-    /*END*/
+        /*END*/
 
 
     function BlockItem(avatar, name, online) {
@@ -462,11 +461,13 @@ $scope.uploadFiles = function(files) {
             $scope.seachersTeachers = [];
         });
     }
+
     var goToPrivateDialogErr = function(data, status, headers, config) {
         toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
         console.log("PRIVATE ROOM CREATE FAILD ");
         $rootScope.goToAuthorize(function() { changeLocation("/chatrooms"); });
     }
+
     $scope.goToPrivateDialog = function(intitaUserId) {
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
         success(function(data, status, headers, config) {
@@ -554,11 +555,11 @@ $scope.uploadFiles = function(files) {
     }
     $rootScope.message_busy = false;
     $rootScope.loadOtherMessages = function() {
-        if ($rootScope.message_busy || RoomsFactory.getCurrentRoom()==null)
+        if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
             return;
         $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId),RoomsFactory.getOldMessage()). //  messages[0]). //
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), RoomsFactory.getOldMessage()). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
 
@@ -576,7 +577,7 @@ $scope.uploadFiles = function(files) {
                 }
             }
             //restore scrole
-               $scope.$$postDigest(function() {
+            $scope.$$postDigest(function() {
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = objDiv.scrollHeight - lastHeight;
                 $rootScope.message_busy = false;
@@ -589,29 +590,31 @@ $scope.uploadFiles = function(files) {
             //messageError("no other message");
         });
     }
-        
+
 
     $rootScope.$on('MessageAreaScrollDownEvent', function() {
         var objDiv = document.getElementById("messagesScroll");
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     });
-    $rootScope.$on('MessageBusyEvent', function(event,isBusy) {
+    $rootScope.$on('MessageBusyEvent', function(event, isBusy) {
         $rootScope.message_busy = isBusy;
     });
 
-    function newMessageArrayEventHandler(roomIds) {
+    function newMessageArrayEventHandler(event, roomIds) {
+        debugger;
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
 
             //$.inArray(value, array)
             var newMessageInThisRoom = ($.inArray(room.roomId, roomIds));
-            if (newMessageInThisRoom) {
+            if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     room.date = curentDateInJavaFromat();
-                    new Audio('data/new_mess.mp3').play();
+                    if($scope.soundEnable)
+                        new Audio('data/new_mess.mp3').play();
                     toaster.pop('note', "NewMessage in " + room.string, "", 2000);
                     break; // stop loop
                 }
@@ -632,10 +635,10 @@ $scope.uploadFiles = function(files) {
             }
     }
 
-    function newMessageEventHandler(message) {
+    function newMessageEventHandler(event, message) {
         var messageArr = [];
         messageArr.push(message);
-        newMessageArrayEventHandler(messageArr);
+        newMessageArrayEventHandler(event, messageArr);
     }
 
     $rootScope.$on('newMessageEvent', newMessageEventHandler);
@@ -749,9 +752,27 @@ $scope.uploadFiles = function(files) {
 
     $scope.$$postDigest(function() {
         $(document).ready(function() {
-            debugger;
+
         });
-        
+
+                /*****************************
+     ************CONFIG************
+     *****************************/
+    //get sound
+    $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
+    if ($scope.soundEnable == undefined) {
+        localStorage.setItem('soundEnable', true);
+        $scope.soundEnable = true;
+    }
+    $scope.togleSoundEnable = function() {
+        $scope.soundEnable = !$scope.soundEnable;
+        localStorage.setItem('soundEnable', $scope.soundEnable);
+    }
+
+
+    /*****************************
+     ************CONFIG************
+     *****************************/
         /*var lang = globalConfig.lang;
         if (lang=="ua")lang="uk";
         var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });

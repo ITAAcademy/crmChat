@@ -10,6 +10,7 @@
 
 <body>
     <div class="consultant_wrapper" ng-controller="ChatController">
+    <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="left_panel">
             <div students-block="true"></div>
             <div participants-block="true"></div>
@@ -23,7 +24,7 @@
             <div class="tools_area">
                 <ul id="tools_dropdown" class="popup_dropdown">
                     <li class="show_attaches_item"><a href="#">Показати додатки</a></li>
-                    <li class="sound_off_item"><a href="#">Вимкнути звук</a></li>
+                    <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
                     <li class="remove_history_item"><a href="#">Видалити історію</a></li>
                 </ul>
                 <button class="open_dropdown_button" onclick="tools_dropdown_click()">
