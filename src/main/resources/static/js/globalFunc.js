@@ -49,6 +49,12 @@ var checkIfToday = function(inputDateLong){
     var todaysDate = new Date();
     return inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0);
 }
+var checkIfYesterday = function(inputDateLong){
+    var inputDate = new Date(inputDateLong);
+    var yesterdayDate = new Date();
+     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    return inputDate.setHours(0,0,0,0) == yesterdayDate.setHours(0,0,0,0);
+}
 var firstLetter = function(name) {
     if(undefined != name)
   return name.charAt(0);

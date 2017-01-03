@@ -22,6 +22,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.baseurl = globalConfig["baseUrl"];
     $rootScope.firstLetter = firstLetter;
     $rootScope.checkIfToday = checkIfToday;
+    $rootScope.checkIfYesterday = checkIfYesterday;
 
     $rootScope.goToUserPage = function(username) {
         var request = $http({
