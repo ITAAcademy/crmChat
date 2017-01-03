@@ -8,8 +8,6 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
         changeLocation: function(url) {
             $location.path(url);
             console.log("Change location:" + $location.path());
-            toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
-            console.log("PRIVATE ROOM CREATE FAILD ");
             /*   $rootScope.goToAuthorize(function() {
                    changeLocation("/chatrooms");
                });*/

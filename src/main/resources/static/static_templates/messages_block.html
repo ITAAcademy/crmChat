@@ -1,9 +1,9 @@
 		<!-- Сьогоднішні повідомлення -->
-		<div class="messages_output_area messages_wrapper scroll" id="messagesScroll">
-		<div infinite-scroll='$root.loadOtherMessages()'
-					infinite-scroll-disabled='$root.message_busy'
-					infinite-scroll-distance='1' infinite-scroll-parent="true"
-					infinite-scroll-container='".messages_output_area"' infinite-scroll-invert='true'>
+		<div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()'
+					can-load='!$root.message_busy'
+					treshold='100'
+					infinite-scroll-invert='true'>
+					{{$root.message_busy}}
 				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
 					<div class="line"></div>
 					<div class="big_dot"></div>
@@ -34,6 +34,6 @@
 						<img ng-src="{{$root.baseurl}}/images/avatars/{{message.chatUserAvatar}}" alt=""/>
 					</div>
 				</div>
-				</div>
+				
 		</div>
 				<!-- //Сьогоднішні повідомлення -->
