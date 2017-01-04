@@ -24,6 +24,55 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
 
+    $scope.state = 2;
+
+    $scope.mouseMoveEvent = function(event) {
+        if (event.buttons == 1) {
+
+        }
+    }
+      $scope.dragOptions = {
+        start: function(e) {
+          console.log("STARTING");
+        },
+        drag: function(e) {
+          console.log("DRAGGING");
+        },
+        stop: function(e) {
+          console.log("STOPPING");
+        },
+        container: 'body',
+        dragElement: 'consultant_wrapper'
+    }
+
+    $scope.getStateClass = function() {
+            switch ($scope.state) {
+                case 0:
+                    return "normal";
+                    break;
+                case 1:
+                    return "minimize";
+                    break
+                case 2:
+                    return "fullScreen";
+                     $(".consultant_wrapper").removeAttr("style");
+                    break
+                case -1:
+                    return "closed";
+                    break
+            }
+        }
+        /***************
+        ***********STATE
+        *
+        0 - normal
+        1 - mini
+        2 - full
+        -1 - close
+
+        */
+
+
     $rootScope.goToUserPage = function(username) {
         var request = $http({
             method: "get",
@@ -41,9 +90,6 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         return false;
     }
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
-
-
-
 
     $scope.isTenantFree = true;
     $scope.isUserTenant = false;
@@ -244,7 +290,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $rootScope.parseMsg = function(msg) {
         if (msg == null) return null;
-       // msg = htmlEscape(msg);
+        // msg = htmlEscape(msg);
         msg = $scope.parseMain(msg, '\\B@\\w+@\\w+[.]\\w+', 'goToUserPage(#)', 1);
         msg = $scope.parseMain(msg, '\\B~["].+["]', 'goToCourseByTitle(#,&quot;ua&quot;)', 2, 3);
 
@@ -617,7 +663,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     room.date = curentDateInJavaFromat();
-                    if($scope.soundEnable)
+                    if ($scope.soundEnable)
                         new Audio('data/new_mess.mp3').play();
                     toaster.pop('note', "NewMessage in " + room.string, "", 2000);
                     break; // stop loop
@@ -758,42 +804,42 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $scope.messageSearchEnabled = true;
     }
 
-function messageAreaResizer(e){
- var containerHeight = $('.right_panel').height(); 
+    function messageAreaResizer(e) {
+        var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
-        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight-100;
-        if (messagesInputHeight > messagesOutputHeight ) return;
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 100;
+        if (messagesInputHeight > messagesOutputHeight) return;
         $('.message_block_directive').height(messagesOutputHeight);
-        console.log('messagesInputHeight:'+messagesInputHeight);
-        console.log('messagesOutputHeight:'+messagesOutputHeight);
-}
-messageAreaResizer();
+        console.log('messagesInputHeight:' + messagesInputHeight);
+        console.log('messagesOutputHeight:' + messagesOutputHeight);
+    }
+    messageAreaResizer();
 
     $scope.$$postDigest(function() {
         $(document).ready(function() {
-             $(".message_input").resize(messageAreaResizer);
-             $(window).resize(messageAreaResizer);
+            $(".message_input").resize(messageAreaResizer);
+            $(window).resize(messageAreaResizer);
         });
 
-                /*****************************
-     ************CONFIG************
-     *****************************/
-    //get sound
-    $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
-    if ($scope.soundEnable == undefined) {
-        localStorage.setItem('soundEnable', true);
-        $scope.soundEnable = true;
-    }
-    $scope.togleSoundEnable = function() {
-        $scope.soundEnable = !$scope.soundEnable;
-        localStorage.setItem('soundEnable', $scope.soundEnable);
-    }
+        /*****************************
+         ************CONFIG************
+         *****************************/
+        //get sound
+        $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
+        if ($scope.soundEnable == undefined) {
+            localStorage.setItem('soundEnable', true);
+            $scope.soundEnable = true;
+        }
+        $scope.togleSoundEnable = function() {
+            $scope.soundEnable = !$scope.soundEnable;
+            localStorage.setItem('soundEnable', $scope.soundEnable);
+        }
 
 
-    /*****************************
-     ************CONFIG************
-     *****************************/
+        /*****************************
+         ************CONFIG************
+         *****************************/
         /*var lang = globalConfig.lang;
         if (lang=="ua")lang="uk";
         var fileInput = $("#myfile").fileinput({ language: "uk", maxFileSize: MAX_UPLOAD_FILE_SIZE_BYTES / 1000, minFileSize: 1, showCaption: false, initialPreviewShowDelete: true, browseLabel: "", browseClass: " btn btn-primary load-btn", uploadExtraData: { kvId: '10' } });
