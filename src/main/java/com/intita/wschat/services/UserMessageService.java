@@ -238,6 +238,13 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date);
 		return  wrapBotMessages(messages);
 	}
+	@Transactional(readOnly=true)
+	public ArrayList<UserMessage> get10MessagesByRoomDateBeforeAndBodyContains(Room room, Date date,String body){
+		ArrayList<UserMessage> messages = (body==null || body.length()<1) ?
+				userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date) : userMessageRepository.
+				findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(room, date,body);
+		return  wrapBotMessages(messages);
+	}
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user)  {

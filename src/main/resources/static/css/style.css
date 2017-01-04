@@ -305,6 +305,7 @@ body {
 .contacts_menu_strip>.search_icon {
     margin-left: 7px;
     margin-top: 2px;
+    cursor:pointer;
 }
 
 .contacts_menu_strip .contacts_menu_item:before {

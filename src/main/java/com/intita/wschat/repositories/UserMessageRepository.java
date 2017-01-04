@@ -25,6 +25,7 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  
 	  ArrayList<UserMessage> findFirst10ByRoomAndDateAfter(Room room, Date date);
 	  ArrayList<UserMessage> findFirst10ByRoomAndDateBeforeOrderByIdDesc(Room room, Date date);
+	  ArrayList<UserMessage> findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(Room room, Date date,String body);
 	  ArrayList<UserMessage> findAllByRoomAndDateAfter(Room room, Date date);
 	  ArrayList<UserMessage> findAllByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);
 	  Long countByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);

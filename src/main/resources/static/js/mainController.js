@@ -560,7 +560,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             return;
         $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), RoomsFactory.getOldMessage()). //  messages[0]). //
+        var payload = {'date': RoomsFactory.getOldMessage().date};
+        if (messageSearchEnabled)
+        payload['searchQuery'] = $scope.messageSearchQuery;
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId),payload). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
 
@@ -750,6 +753,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             }, 100);
         }
     };
+     $scope.messageSearchEnabled = false;
+    $scope.enableMessagesSearch = function(){
+        $scope.messageSearchEnabled = true;
+    }
 
 function messageAreaResizer(e){
  var containerHeight = $('.right_panel').height(); 

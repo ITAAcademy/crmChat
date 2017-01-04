@@ -420,12 +420,19 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody ChatMessage message, Principal principal)  {
-		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + message.getDate());
+	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
+		String dateMsStr = json.get("date");
+		if (dateMsStr == null || dateMsStr.length() < 1) return null;
+		Long dateMs = Long.parseLong(dateMsStr);
+		if (dateMs==null) return null;
+		Date date = new Date(dateMs);
+		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + date);
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
 		if( struct == null)
 			throw new ChatUserNotInRoomException("");
-		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(userMessageService.get10MessagesByRoomDateBefore(struct.getRoom(), message.getDate()));
+		String searchQuery = json.get("searchQuery");
+		ArrayList<UserMessage> messages =userMessageService.get10MessagesByRoomDateBeforeAndBodyContains(struct.getRoom(), date,searchQuery);
+		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
 
 		if(messagesAfter.size() == 0)
 			return null;
