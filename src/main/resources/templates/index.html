@@ -10,20 +10,19 @@
 </head>
 
 <body>
-    <div class="consultant_wrapper" ng-controller="ChatController">
-    <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
-        <div class="left_panel">
-            <div students-block="true"></div>
-            <div participants-block="true"></div>
-            <!--  ROOMS BLOCK -->
-            <div rooms-block="true" style="height: calc(100% - 60px);"></div>
-            <div class="bottom_logo">
-                <img src="images\intita95x30.png" alt="" />
-            </div>
+<div class="consultant_wrapper" ng-controller="ChatController">
+    <div class="left_panel">
+        <div students-block="true"></div>
+        <div participants-block="true"></div>
+        <!--  ROOMS BLOCK -->
+        <div rooms-block="true" style="height: calc(100% - 60px);"></div>
+        <div class="bottom_logo">
+            <img src="images\intita95x30.png" alt="" />
         </div>
-        <div class="right_panel">
-
-            <div class="tools_area">
+    </div>
+    <div class="right_panel">
+        <div class="tools_area">
+            <div class="tools_dropdown_container">
                 <ul id="tools_dropdown" class="popup_dropdown">
                     <li class="show_attaches_item"><a href="#">Показати додатки</a></li>
                     <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
@@ -32,38 +31,48 @@
                 <button class="open_dropdown_button" onclick="tools_dropdown_click()">
                     <img src="images\triple_dots26x8.png" alt="" />
                 </button>
+            </div>
+            <div class="search_box">
                 <input type="text" class="transparent_input search_input" placeholder="Пошук..." />
                 <img class="search_icon" src="images\search17x17.png" alt="" />
             </div>
-            <hr/>
-            <div class="message_block_directive" messages-block="true" style="height: 400px"></div>
-            <!--It's message displayer-->
-            <hr/>
-
-            <div class="messages_input_area">
-                <div class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage" contenteditable="true" />
-                <div class="controls_area">
-                    <div class="multimedia_conversation_controls">
-                        <button class="skype"><img src="images\skype24x23.png" alt="" /></button>
-                        <button class="microphone"><img src="images\mic18x23.png" alt="" /></button>
+            <div class="window_panel">
+                <div id="minimize_btn"></div>
+                <div id="fullscreen_btn"></div>
+                <div id="close_btn"></div>
+            </div>
+        </div>
+        <hr/>
+        <div class="message_block_directive" messages-block="true" style="height: 400px"></div>
+        <!--It's message displayer-->
+        <hr/>
+        <div class="messages_input_area">
+            <div class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення сюди..." ng-model="newMessage" contenteditable="true"></div>
+            <div class="controls_area">
+                <div class="multimedia_conversation_controls">
+                    <button class="skype"><img src="images\skype24x23.png" alt="" /></button>
+                    <button class="microphone"><img src="images\mic18x23.png" alt="" /></button>
+                </div>
+                <div class="attaches_area">
+                    <ul id="attaches_dropdown" class="popup_dropdown">
+                        <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" href="#">Документ</a></li>
+                        <li class="video_item"><a href="#">Відео</a></li>
+                        <li class="audio_item"><a href="#">Аудіо</a></li>
+                    </ul>
+                    <div class="upload_file_form_container">
                     </div>
-                    <div class="attaches_area">
-                        <ul id="attaches_dropdown" class="popup_dropdown">
-                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" href="#">Документ</a></li>
-                            <li class="video_item"><a href="#">Відео</a></li>
-                            <li class="audio_item"><a href="#">Аудіо</a></li>
-                        </ul>
-                        <div  class="upload_file_form_container">
-                        </div>
-                        <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
-                        <button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt="" /></button>
-                        <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
-                    </div>
+                    <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
+                    <button class="attaches" onclick="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt="" /></button>
+                    <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
                 </div>
             </div>
         </div>
-        <div class="clearfix"></div>
     </div>
+</div>
+
+
+
+
 
     <script th:inline="javascript">
 		var globalConfig = {  
