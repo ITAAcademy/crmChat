@@ -401,29 +401,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         });
     }
-    var loadOtherMessages = function() {
-        if ($rootScope.message_busy)
-            return;
-        $rootScope.message_busy = true;
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(currentRoom.roomId), oldMessage). //  messages[0]). //
-        success(function(data, status, headers, config) {
-            var objDiv = document.getElementById("messagesScroll");
-            var lastHeight = objDiv.scrollHeight;
-            if (data == "")
-                return;
-
-            for (var index = 0; index < data.length; index++) {
-                if (data[index].hasOwnProperty("message")) {
-                    calcPositionUnshift(data[index]);
-                }
-            }
-            //restore scrole
-        }).
-        error(function(data, status, headers, config) {
-            if (status == "404" || status == "405") chatControllerScope.ChannelFactory.changeLocation("/chatrooms");
-            //messageError("no other message");
-        });
-    }
 
     var checkUserAdditionPermission = function() {
         var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;

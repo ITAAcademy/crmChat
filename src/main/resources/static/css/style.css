@@ -1056,3 +1056,9 @@ background-color: #999;
 .contacts_menu_strip .room_search_input:before{
 
 }
+.message_block_directive {
+     -moz-transition: height 1s ease;
+    -webkit-transition: height 1s ease;
+    -o-transition: height 1s ease;
+    transition: height 1s ease;
+}
