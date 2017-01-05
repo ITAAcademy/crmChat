@@ -138,6 +138,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (summarised == false)
             messages.unshift(msg);
+
+        $rootScope.$$postDigest(function() {
+            var objDiv = document.getElementById("messagesScroll");
+            //if (needScrollDown)
+                objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+        });
     }
 
     function calcPositionPush(msg) {

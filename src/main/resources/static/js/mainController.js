@@ -764,6 +764,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         RoomsFactory.clearMessages();
         RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
         $rootScope.message_busy = false;
+         var objDiv = document.getElementById("messagesScroll");
+        objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.disableMessagesSearch = function() {
         RoomsFactory.clearMessages();
@@ -771,6 +773,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
         $scope.messageSearchEnabled = false;
         $rootScope.message_busy = false;
+        var objDiv = document.getElementById("messagesScroll");
+        objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.currentRoomIsNull = function() {
         return RoomsFactory.getCurrentRoom().roomId == null;

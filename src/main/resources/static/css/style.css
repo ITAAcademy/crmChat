@@ -602,7 +602,7 @@ body {
 
 .right_panel .close_search_icon {
     position: absolute;
-    right: 0px;
+    right: 20px;
     top: calc(50% - 7px);
     width: 17px;
     height: 17px;
@@ -624,7 +624,7 @@ body {
 
 .messages_output_area {
     max-height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-top: 6px;
 }
 

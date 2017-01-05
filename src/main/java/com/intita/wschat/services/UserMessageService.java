@@ -82,8 +82,8 @@ public class UserMessageService {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
 	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> getFirst10UserMessagesByRoomIdContains(Long roomId,String searchQuery) {
-		return wrapBotMessages(userMessageRepository.findFirst10ByRoomAndBodyIgnoreCaseContainingOrderByIdDesc(
+	public ArrayList<UserMessage> getFirst20UserMessagesByRoomIdContains(Long roomId,String searchQuery) {
+		return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndBodyIgnoreCaseContainingOrderByIdDesc(
 				new Room(roomId),searchQuery));
 	}
 	@Transactional(readOnly=true)

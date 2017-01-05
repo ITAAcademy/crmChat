@@ -36,7 +36,7 @@
                 </div>
                 <div class="search_box">
                     <input ng-model="messageSearchQuery" type="text" class="transparent_input search_input" placeholder="Пошук..." />
-                    <img ng-click="enableMessagesSearch()" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; messageSearchQuery.length &gt; 0 &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
+                    <img ng-click="enableMessagesSearch()" ng-class="{'showed':(messageSearchQuery.length &gt; 0 &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
                     <img ng-click="disableMessagesSearch()" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
                 </div>
                 <div class="window_panel">
