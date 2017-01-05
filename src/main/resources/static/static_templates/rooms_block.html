@@ -14,7 +14,7 @@
             <div class="section-hr"></div>
         </div>
         <div class="section_content">
-            <div class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
+            <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
                 <div class="avatar">
                     <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{room.avatars[0]}}" alt="" />
                 </div>

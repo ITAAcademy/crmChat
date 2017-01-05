@@ -265,6 +265,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
         link: function($scope, element, attributes) {
             $scope.rooms = RoomsFactory.getRooms;
             $scope.searchEnabled = false;
+            $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
             $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
             }
@@ -378,6 +379,95 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
                 }
 
                 dragElement.css({
+                    top: y + 'px',
+                    left: x + 'px'
+                });
+            }
+        }
+    }
+
+})
+
+
+angular.module('springChat.directives').directive('ngResizeble', function($document) {
+    return {
+        restrict: 'A',
+        scope: {
+            resizeOptions: '=ngResizeble'
+        },
+        link: function(scope, elem, attr) {
+            var startX, startY, x = 0,
+                y = 0,
+                start, stop, resize, container;
+
+
+
+
+            var resizeElement;
+            var containerElm;
+            // Obtain resize options
+            if (scope.resizeOptions) {
+                start = scope.resizeOptions.start;
+                resize = scope.resizeOptions.resize;
+                stop = scope.resizeOptions.stop;
+                var id = scope.resizeOptions.container;
+                if (id) {
+                    container = document.getElementById(id).getBoundingClientRect();
+                    containerElm = angular.element(document.getElementById(id));
+                }
+                resizeElement = angular.element(document.getElementById(scope.resizeOptions.resizeElement));
+
+            }
+
+            // Bind mousedown event
+            elem.on('mousedown', function(e) {
+                debugger;
+                if ($(resizeElement).hasClass("resize-disable") || e.target != elem[0])
+                    return true;
+
+                e.preventDefault();
+                startX = e.clientX - resizeElement[0].offsetLeft;
+                startY = e.clientY - resizeElement[0].offsetTop;
+                $document.on('mousemove', mousemove);
+                $document.on('mouseup', mouseup);
+                if (start) start(e);
+            });
+
+            // Handle resize event
+            function mousemove(e) {
+                debugger;
+                y = e.clientY - startY;
+                x = e.clientX - startX;
+                setPosition();
+                if (resize) resize(e);
+            }
+
+            // Unbind resize events
+            function mouseup(e) {
+                $document.unbind('mousemove', mousemove);
+                $document.unbind('mouseup', mouseup);
+                if (stop) stop(e);
+            }
+
+            // Move element, within container if provided
+            function setPosition() {
+                var width = resizeElement[0].offsetWidth,
+                    height = resizeElement[0].offsetHeight;
+
+                if (container) {
+                    if (x < container.left) {
+                        x = container.left;
+                    } else if (x > container.right - width) {
+                        x = container.right - width;
+                    }
+                    if (y < container.top) {
+                        y = container.top;
+                    } else if (y > container.bottom - height) {
+                        y = container.bottom - height;
+                    }
+                }
+
+                resizeElement.css({
                     top: y + 'px',
                     left: x + 'px'
                 });

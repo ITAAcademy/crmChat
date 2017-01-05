@@ -1,4 +1,4 @@
-<div ng-if="participants().length > 0" class="items_list_block top_block participants_block">
+<div ng-show="participants().length > 1" class="items_list_block top_block participants_block">
     <div class="block_name">{{blockName}}</div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy : ['!online', 'username']">

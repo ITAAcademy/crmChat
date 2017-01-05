@@ -203,6 +203,11 @@ body {
     background-color: #c4d3e3;
 }
 
+.items_list_block.bottom_block .block_item.selected{
+    background-color: #c4d3e3;
+    opacity: 1.0;
+}
+
 .avatar {
     display: inline-block;
 }
@@ -321,7 +326,6 @@ body {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
 .items_list_block.bottom_block .avatar >.user_image {
     width: 38px;
     height: 38px;
