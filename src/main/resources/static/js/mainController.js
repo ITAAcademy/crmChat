@@ -804,6 +804,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     };
      $scope.messageSearchEnabled = false;
     $scope.enableMessagesSearch = function(){
+        debugger;
         $scope.messageSearchEnabled = true;
     }
     $scope.disableMessagesSearch = function(){

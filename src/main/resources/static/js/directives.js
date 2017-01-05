@@ -326,7 +326,7 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
       elem.on('mousedown', function(e) {
         debugger;
         if($(dragElement).hasClass("drag-disable") || e.target != elem[0])
-            return;
+            return true;
 
         e.preventDefault();
         startX = e.clientX - dragElement[0].offsetLeft;
