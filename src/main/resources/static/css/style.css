@@ -401,6 +401,14 @@ body {
     position: relative;
 }
 
+.tools_area:hover {
+    cursor: -webkit-grab;
+}
+
+.tools_area *:hover {
+    cursor: default;
+}
+
 .tools_area > .tools_dropdown_container {
     vertical-align: middle;
     /* margin: 50%; */
