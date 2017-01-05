@@ -24,7 +24,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
 
-    $scope.state = 2;
+    $scope.state = 0;
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
@@ -48,14 +48,17 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.getStateClass = function() {
             switch ($scope.state) {
                 case 0:
+                    $(".consultant_wrapper").removeClass("drag-disable");
                     return "normal";
                     break;
                 case 1:
+                    $(".consultant_wrapper").removeClass("drag-disable");
                     return "minimize";
                     break
                 case 2:
+                    $(".consultant_wrapper").removeAttr("style");
+                    $(".consultant_wrapper").addClass("drag-disable");
                     return "fullScreen";
-                     $(".consultant_wrapper").removeAttr("style");
                     break
                 case -1:
                     return "closed";
