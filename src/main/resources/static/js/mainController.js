@@ -228,7 +228,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         if (event != undefined && event != null)
             event.stopPropagation();
         if (room != undefined && room != null)
-            $rootScope.askForDeleteMe = { "room": room, isAuthor: $scope.chatUserId == room.roomAuthorId }
+            $rootScope.askForDeleteMe = { "room": room, isAuthor: UserFactory.getChatUserId() == room.roomAuthorId }
         ngDialog.open({
             template: 'askForDeleteMe.html',
             scope: $scope
@@ -558,27 +558,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     /*************************************
      * UPDATE ROOM LP
      **************************************/
-    function subscribeRoomsUpdateLP() {
-        console.log("roomsUpdateLP()");
-        $http.post(serverPrefix + "/chat/rooms/user/login")
-            .success(function(data, status, headers, config) {
-                console.log("roomsUpdateLP data:" + data);
-                updateRooms(data);
-                //console.log("resposnse data received:"+response.data);
-                subscribeRoomsUpdateLP();
-            }).error(function errorHandler(data, status, headers, config) {
-                //console.log("error during http request");
-                //$scope.topics = ["error"];
-                //console.log("resposnse data error:"+response.data);
-                subscribeRoomsUpdateLP();
-            });
-
-    }
-
-    $scope.privateSending = function(username) {
-        $scope.sendTo = (username != $scope.sendTo) ? username : 'everyone';
-    };
-
 
     var isWaiFreeTenatn = false;
 

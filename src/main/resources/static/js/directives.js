@@ -230,7 +230,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             scope.blockName = "Учасники розмови";
             scope.currentRoom = RoomsFactory.getCurrentRoom;
             scope.checkUserAdditionPermission = function() {
-                return RoomsFactory.checkUserAdditionPermission(UserFactory.chatUserId);
+                return RoomsFactory.checkUserAdditionPermission(UserFactory.getChatUserId());
             }
             scope.removeUserFromRoom = RoomsFactory.removeUserFromRoom;
             initFolded(scope, element);

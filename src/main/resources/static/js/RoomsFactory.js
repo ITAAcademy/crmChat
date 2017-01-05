@@ -268,7 +268,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var removeUserFromRoom = function(userId) {
-debugger;
             $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
             success(function(data, status, headers, config) {
                 if (data == false) {
@@ -362,7 +361,8 @@ debugger;
             //calcPositionUnshift(JSON.parse(o["messages"][i].text));
         }
     }
-    function loadMessagesContains(searchQuery){
+
+    function loadMessagesContains(searchQuery) {
         // /chat/room/{roomId}/get_messages_contains
 
         $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), {}).
@@ -373,12 +373,10 @@ debugger;
 
         });
     }
-    function loadMessagesFromArrayList(list){
-        for(var obj
-    in
-        list
-    )
-        {
+
+    function loadMessagesFromArrayList(list) {
+        for (var obj in
+                list) {
             calcPositionUnshift(obj);
         }
     }
@@ -547,23 +545,6 @@ debugger;
 
     }
 
-    function subscribeRoomsUpdateLP() {
-        console.log("roomsUpdateLP()");
-        $http.post(serverPrefix + "/chat/rooms/user/login")
-            .success(function(data, status, headers, config) {
-                console.log("roomsUpdateLP data:" + data);
-                updateRooms(data);
-                //console.log("resposnse data received:"+response.data);
-                subscribeRoomsUpdateLP();
-            }).error(function errorHandler(data, status, headers, config) {
-                //console.log("error during http request");
-                //$scope.topics = ["error"];
-                //console.log("resposnse data error:"+response.data);
-                subscribeRoomsUpdateLP();
-            });
-
-    }
-
     var updateRooms = function(message) {
         var parseObj;
         if (ChannelFactory.isSocketSupport() === true) {
@@ -590,6 +571,22 @@ debugger;
         }
     }
 
+    function subscribeRoomsUpdateLP(){
+            console.log("roomsUpdateLP()");
+            $http.post(serverPrefix + "/chat/rooms/user/login")
+                .success(function(data, status, headers, config) {
+                    console.log("roomsUpdateLP data:" + data);
+                    updateRooms(data);
+                    //console.log("resposnse data received:"+response.data);
+                    subscribeRoomsUpdateLP();
+                }).error(function errorHandler(data, status, headers, config) {
+                    //console.log("error during http request");
+                    //$scope.topics = ["error"];
+                    //console.log("resposnse data error:"+response.data);
+                    subscribeRoomsUpdateLP();
+               });
+    }
+
 
     return {
         goToRoom: goToRoom,
@@ -612,8 +609,9 @@ debugger;
             return oldMessage;
         },
         calcPositionUnshift: calcPositionUnshift,
-        checkUserAdditionPermission : checkUserAdditionPermission,
-        removeUserFromRoom : removeUserFromRoom
+        checkUserAdditionPermission: checkUserAdditionPermission,
+        removeUserFromRoom: removeUserFromRoom,
+        subscribeRoomsUpdateLP: subscribeRoomsUpdateLP
     };
 
 

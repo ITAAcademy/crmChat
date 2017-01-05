@@ -4,7 +4,8 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
     var isTrainer = false;
     var isStudent = false;
     var chatUserNickname, chatUserRole, chatUserAvatar;
-    var realChatUserId, chatUserId;
+    var realChatUserId;
+    var chatUserId = -1;
     var isUserTenantInited = false;
     var isTenantFree;
     var chatUserRole;
@@ -49,9 +50,10 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
             } else {
                 $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
                 success(function(data, status, headers, config) {
+                    var RoomsFactory = $injector.get('RoomsFactory');
                     console.log("LOGIN OK " + data);
                     login(data);
-                    subscribeRoomsUpdateLP();
+                    RoomsFactory.subscribeRoomsUpdateLP();
 
                     subscribeInfoUpdateLP();
                     setRealChatUserId(getChatUserId());
@@ -265,7 +267,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
             return;
         }
         if (ChannelFactory.isSocketSupport() == false) {
-            RoomsFactory.updateRooms(JSON.parse(mess_obj.chat_rooms));
+            RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
         } else {
             initIsUserTenant();
             RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
