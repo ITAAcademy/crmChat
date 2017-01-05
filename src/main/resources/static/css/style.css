@@ -27,11 +27,9 @@ body {
     background-color: #cfcfcf;
 }
 
-*::-webkit-scrollbar-track:no-button  {
+*::-webkit-scrollbar-track:no-button {
     display: none;
 }
-
-
 
 *::-webkit-scrollbar-button:hover {
     background-color: #707070;
@@ -560,7 +558,7 @@ body {
     /* display: inline-block; */
     /* margin-left: 227px; */
     /* height: 24px; */
-    margin-top: 14px;
+    /* margin-top: 14px; */
 }
 
 .transparent_input:focus {
@@ -1146,7 +1144,7 @@ Geometric shapes
 
 .search_box {
     position: absolute;
-    top: 0px;
+    top: 10px;
     left: 55px;
     width: calc(100% - 130px);
     z-index: 2;
