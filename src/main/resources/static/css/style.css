@@ -72,7 +72,6 @@ body {
 .consultant_wrapper.minimize {}
 
 .consultant_wrapper.fullScreen {}
-
 .consultant_wrapper * {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -696,7 +695,7 @@ body {
 
 .bottom_block {
     padding-bottom: 10px;
-    overflow: hidden;
+    overflow: auto;
     outline: none;
     max-height: 60%;
 }

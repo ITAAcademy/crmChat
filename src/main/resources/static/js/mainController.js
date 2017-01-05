@@ -16,7 +16,7 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     //maybe add button
 }]);
 
-var chatController = springChatControllers.controller('ChatController', ['$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function($q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function(ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
     $scope.baseurl = globalConfig["baseUrl"];
@@ -31,15 +31,15 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
         }
     }
-      $scope.dragOptions = {
+    $scope.dragOptions = {
         start: function(e) {
-          console.log("STARTING");
+            console.log("STARTING");
         },
         drag: function(e) {
-          console.log("DRAGGING");
+            console.log("DRAGGING");
         },
         stop: function(e) {
-          console.log("STOPPING");
+            console.log("STOPPING");
         },
         container: 'body',
         dragElement: 'consultant_wrapper'
@@ -229,7 +229,11 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             event.stopPropagation();
         if (room != undefined && room != null)
             $rootScope.askForDeleteMe = { "room": room, isAuthor: $scope.chatUserId == room.roomAuthorId }
-        $('#askForDeleteMe').modal('toggle');
+        ngDialog.open({
+            template: 'askForDeleteMe.html',
+            scope: $scope
+        });
+        //$('#askForDeleteMe').modal('toggle');
     }
 
     $scope.deleteMeFromRoom = function() {
@@ -237,7 +241,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $http.post(serverPrefix + "/chat/rooms/{0}/remove".format($rootScope.askForDeleteMe.room.roomId)).
         success(function(data, status, headers, config) {
             if (data == true)
-                $scope.toggleAskForDeleteMe();
+                ngDialog.closeAll();
             else
                 showERR();
         }).
@@ -342,7 +346,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     }
     $rootScope.goToAuthorize = function(func) {
         return; //@BAG@
-        if (UserFactory.authorize || $rootScope.isInited == false) {
+        if ($rootScope.authorize || $rootScope.isInited == false) {
             if (func == null || func == undefined) {
                 $location.path("/access_deny");
             } else
@@ -458,7 +462,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
 
     $scope.returnToRealUser = function() {
         $scope.changeUser($scope.realChatUserId, $scope.realChatUserId);
-        $scope.isMyRoom = true;
+        $rootScope.isMyRoom = true;
     }
 
     $scope.changeUser = function(chatUserId, chatUserNickName) {
@@ -480,7 +484,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         }, 2000);
 
 
-        $scope.isMyRoom = false;
+        $rootScope.isMyRoom = false;
     }
 
 
@@ -494,7 +498,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $scope.roomAdded = true;
     $scope.showDialogListButton = false;
     $scope.searchResultAdmin;
-    $scope.isMyRoom = true;
+    $rootScope.isMyRoom = true;
     $scope.messageSended = true;
     $scope.userAddedToRoom = true;
     $rootScope.isConectedWithFreeTenant = false;
@@ -585,7 +589,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
                 body: 'Wait for free consultant',
                 timeout: 0,
                 onHideCallback: function() {
-                    if (!$rootScope.isConectedWithFreeTenant && !UserFactory.authorize) {
+                    if (!$rootScope.isConectedWithFreeTenant && !$rootScope.authorize) {
                         isWaiFreeTenatn = false;
                         $rootScope.showToasterWaitFreeTenant();
                     }
@@ -609,10 +613,10 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             return;
         $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
-        var payload = {'date': RoomsFactory.getOldMessage().date};
+        var payload = { 'date': RoomsFactory.getOldMessage().date };
         if ($scope.messageSearchEnabled)
-        payload['searchQuery'] = $scope.messageSearchQuery;
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId),payload). //  messages[0]). //
+            payload['searchQuery'] = $scope.messageSearchQuery;
+        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
 
@@ -802,12 +806,12 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
             }, 100);
         }
     };
-     $scope.messageSearchEnabled = false;
-    $scope.enableMessagesSearch = function(){
+    $scope.messageSearchEnabled = false;
+    $scope.enableMessagesSearch = function() {
         debugger;
         $scope.messageSearchEnabled = true;
     }
-    $scope.disableMessagesSearch = function(){
+    $scope.disableMessagesSearch = function() {
         $scope.messageSearchEnabled = false;
     }
 

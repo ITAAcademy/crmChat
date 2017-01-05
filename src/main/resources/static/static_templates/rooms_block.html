@@ -3,7 +3,7 @@
     <div class="movable_content ng-class:{ 'hidden_right': searchEnabled };"">
         <div class="contacts_menu_item">КОНТАКТИ</div>
         <div class="last_contacts_menu_item">ОСТАННІ</div>
-        <img class="group_icon" src="images\group23x16.png" alt="" />
+        <img ng-click="toggleNewRoomModal()" class="group_icon" src="images\group23x16.png" alt="" />
     </div>
     <input type="text" class="room_search_input"/>
 </div>
@@ -22,7 +22,7 @@
                     <div class="user_name">{{room.string}}</div>
                 </div>
                 <div class="contact_control">
-                    <img src="images\cross13x15.png" alt="" />
+                    <img ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" src="images\cross13x15.png" alt="" />
                 </div>
             </div>
         </div>

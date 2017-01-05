@@ -49,10 +49,8 @@ springChat.config(function($routeProvider) {
 
 });*/
 
-var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services',
-    'springChat.directives'
-]);
-var springChatControllers = angular.module('springChat.controllers', ['ngTagsInput', 'ui.bootstrap', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
+var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services', 'springChat.directives']);
+var springChatControllers = angular.module('springChat.controllers', ['ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 
 springChat.filter('unique', function ($parse) {
     return function (collection, property) {

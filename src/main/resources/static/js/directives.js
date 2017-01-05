@@ -215,7 +215,7 @@ function studentsBlock($http, mySettings) {
 
 angular.module('springChat.directives').directive('participantsBlock', participantsBlock);
 
-function participantsBlock($http, mySettings, RoomsFactory) {
+function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -228,6 +228,11 @@ function participantsBlock($http, mySettings, RoomsFactory) {
             };
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
+            scope.currentRoom = RoomsFactory.getCurrentRoom;
+            scope.checkUserAdditionPermission = function() {
+                return RoomsFactory.checkUserAdditionPermission(UserFactory.chatUserId);
+            }
+            scope.removeUserFromRoom = RoomsFactory.removeUserFromRoom;
             initFolded(scope, element);
         }
 
@@ -259,7 +264,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
         link: function($scope, element, attributes) {
             $scope.rooms = RoomsFactory.getRooms;
             $scope.searchEnabled = false;
-            $scope.toggleSearch = function(){
+            $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
             }
 
@@ -294,112 +299,115 @@ angular.module('springChat.directives').directive('compilable', function($compil
 
 
 angular.module('springChat.directives').directive('ngDraggable', function($document) {
-  return {
-    restrict: 'A',
-    scope: {
-      dragOptions: '=ngDraggable'
-    },
-    link: function(scope, elem, attr) {
-      var startX, startY, x = 0, y = 0,
-          start, stop, drag, container;
+    return {
+        restrict: 'A',
+        scope: {
+            dragOptions: '=ngDraggable'
+        },
+        link: function(scope, elem, attr) {
+            var startX, startY, x = 0,
+                y = 0,
+                start, stop, drag, container;
 
 
 
 
-        var  dragElement;
-        var containerElm;
-      // Obtain drag options
-      if (scope.dragOptions) {
-        start  = scope.dragOptions.start;
-        drag   = scope.dragOptions.drag;
-        stop   = scope.dragOptions.stop;
-        var id = scope.dragOptions.container;
-        if (id) {
-            container = document.getElementById(id).getBoundingClientRect();
-            containerElm = angular.element(document.getElementById(id));
+            var dragElement;
+            var containerElm;
+            // Obtain drag options
+            if (scope.dragOptions) {
+                start = scope.dragOptions.start;
+                drag = scope.dragOptions.drag;
+                stop = scope.dragOptions.stop;
+                var id = scope.dragOptions.container;
+                if (id) {
+                    container = document.getElementById(id).getBoundingClientRect();
+                    containerElm = angular.element(document.getElementById(id));
+                }
+                dragElement = angular.element(document.getElementById(scope.dragOptions.dragElement));
+
+            }
+
+            // Bind mousedown event
+            elem.on('mousedown', function(e) {
+                debugger;
+                if ($(dragElement).hasClass("drag-disable") || e.target != elem[0])
+                    return true;
+
+                e.preventDefault();
+                startX = e.clientX - dragElement[0].offsetLeft;
+                startY = e.clientY - dragElement[0].offsetTop;
+                $document.on('mousemove', mousemove);
+                $document.on('mouseup', mouseup);
+                if (start) start(e);
+            });
+
+            // Handle drag event
+            function mousemove(e) {
+                debugger;
+                y = e.clientY - startY;
+                x = e.clientX - startX;
+                setPosition();
+                if (drag) drag(e);
+            }
+
+            // Unbind drag events
+            function mouseup(e) {
+                $document.unbind('mousemove', mousemove);
+                $document.unbind('mouseup', mouseup);
+                if (stop) stop(e);
+            }
+
+            // Move element, within container if provided
+            function setPosition() {
+                var width = dragElement[0].offsetWidth,
+                    height = dragElement[0].offsetHeight;
+
+                if (container) {
+                    if (x < container.left) {
+                        x = container.left;
+                    } else if (x > container.right - width) {
+                        x = container.right - width;
+                    }
+                    if (y < container.top) {
+                        y = container.top;
+                    } else if (y > container.bottom - height) {
+                        y = container.bottom - height;
+                    }
+                }
+
+                dragElement.css({
+                    top: y + 'px',
+                    left: x + 'px'
+                });
+            }
         }
-        dragElement = angular.element(document.getElementById(scope.dragOptions.dragElement));
-
-      }
-       
-      // Bind mousedown event
-      elem.on('mousedown', function(e) {
-        debugger;
-        if($(dragElement).hasClass("drag-disable") || e.target != elem[0])
-            return true;
-
-        e.preventDefault();
-        startX = e.clientX - dragElement[0].offsetLeft;
-        startY = e.clientY - dragElement[0].offsetTop;
-        $document.on('mousemove', mousemove);
-        $document.on('mouseup', mouseup);
-        if (start) start(e);
-      });
-
-      // Handle drag event
-      function mousemove(e) {
-        debugger;
-        y = e.clientY - startY;
-        x = e.clientX - startX;
-        setPosition();
-        if (drag) drag(e);
-      }
-
-      // Unbind drag events
-      function mouseup(e) {
-        $document.unbind('mousemove', mousemove);
-        $document.unbind('mouseup', mouseup);
-        if (stop) stop(e);
-      }
-
-      // Move element, within container if provided
-      function setPosition() {
-             var width  = dragElement[0].offsetWidth,
-          height = dragElement[0].offsetHeight;
-
-        if (container) {
-          if (x < container.left) {
-            x = container.left;
-          } else if (x > container.right - width) {
-            x = container.right - width;
-          }
-          if (y < container.top) {
-            y = container.top;
-          } else if (y > container.bottom - height) {
-            y = container.bottom - height;
-          }
-        }
-
-        dragElement.css({
-          top: y + 'px',
-          left:  x + 'px'
-        });
-      }
     }
-  }
 
 })
 
- angular.module('springChat.directives').directive('resizable', function() {
-        return {
-            restrict: 'AE',
-            scope: {
-                rDirections: "=",
-                rCenteredX: "=",
-                rCenteredY: "=",
-                rWidth: "=",
-                rHeight: "=",
-                rFlex: "="
-            },
-            link: function(scope, element, attr) {
-                
-                // register watchers on width and height attributes if they are set
-                scope.$watch('rWidth', function(value){
-                    element[0].style.width = scope.rWidth + 'px';
-                });
-                scope.$watch('rHeight', function(value){
-                    element[0].style.height = scope.rHeight + 'px';
-                });
+angular.module('springChat.directives').directive('resizable', function() {
+    return {
+        restrict: 'AE',
+        scope: {
+            rDirections: "=",
+            rCenteredX: "=",
+            rCenteredY: "=",
+            rWidth: "=",
+            rHeight: "=",
+            rFlex: "="
+        },
+        link: function(scope, element, attr) {
 
-                element.addClass('resizable');
-            }}});
+            // register watchers on width and height attributes if they are set
+            scope.$watch('rWidth', function(value) {
+                element[0].style.width = scope.rWidth + 'px';
+            });
+            scope.$watch('rHeight', function(value) {
+                element[0].style.height = scope.rHeight + 'px';
+            });
+
+            element.addClass('resizable');
+        }
+    }
+});

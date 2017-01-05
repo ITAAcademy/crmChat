@@ -268,7 +268,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var removeUserFromRoom = function(userId) {
-
+debugger;
             $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
             success(function(data, status, headers, config) {
                 if (data == false) {
@@ -422,12 +422,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
-    var checkUserAdditionPermission = function() {
+    var checkUserAdditionPermission = function(chatUserId) {
         var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;
-        var havePermitions = UserFactory.chatUserId == currentRoom.roomAuthorId;
+        var havePermitions = chatUserId == currentRoom.roomAuthorId;
         havePermitions = havePermitions || (currentRoom.userPermissions & needPrivilege) == needPrivilege
         if (typeof currentRoom === "undefined") return false;
-        var resultOfChecking = currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && chatControllerScope.isMyRoom && authorize;
+        var resultOfChecking = currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && $rootScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
 
@@ -611,8 +611,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getOldMessage: function() {
             return oldMessage;
         },
-        calcPositionUnshift: calcPositionUnshift
-
+        calcPositionUnshift: calcPositionUnshift,
+        checkUserAdditionPermission : checkUserAdditionPermission,
+        removeUserFromRoom : removeUserFromRoom
     };
 
 

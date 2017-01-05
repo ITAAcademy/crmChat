@@ -7,15 +7,18 @@
     <link rel="icon" href="favicon.ico" />
     <link href="css/style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/ngDialog.min.css"/>
+    <link rel="stylesheet" href="css/ngDialog-theme-default.min.css"/>
 </head>
 
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
+    <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
             <div class="left_panel">
                 <div students-block="true"></div>
                 <div participants-block="true"></div>
                 <!--  ROOMS BLOCK -->
-                <div rooms-block="true" style="height: calc(100% - 60px);"></div>
+                <div rooms-block="true" style="height:100%"></div>
                 <div class="bottom_logo">
                     <img src="images\intita95x30.png" alt="" />
                 </div>
@@ -102,8 +105,8 @@
     <script src="lib/angular-resource/angular-resource.js"></script>
     <script src="lib/angular-sanitize/angular-sanitize.js"></script>
     <script src="lib/angularjs-scroll-glue/src/scrollglue.js"></script>
+    <script src="lib/ngDialog.min.js"></script>
     <script th:src="'lib/angular/i18n/angular-locale_'+ ${config.get('currentLang')}+'.js'"></script>
-    <script src="lib/ui-bootstrap.js"></script>
     <script src="lib/tags_input/ng-tags-input.js"></script>
     <script type='text/javascript' src='lib/infinite-scroll/ng-infinite-scroll-test.min.js'></script>
     <script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>

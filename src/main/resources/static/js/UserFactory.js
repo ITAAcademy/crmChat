@@ -9,7 +9,6 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
     var isTenantFree;
     var chatUserRole;
     var isInited = false;
-    var authorize;
 
     var tenants;
     var friends;
@@ -166,6 +165,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
 
 
                     chatSocket.subscribe("/topic/users/info", function(message) {
+                        var RoomsFactory = $injector.get('RoomsFactory');
                         var operationStatus = JSON.parse(message.body);
                         //operationStatus = JSON.parse(operationStatus);
                         if (operationStatus["updateRoom"].roomId == RoomsFactory.currentRoom.roomId) {
@@ -183,6 +183,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
 
         chatSocket.subscribe("/topic/chat/rooms/user.{0}".format(getChatUserId()), function(message) { // event update
             console.log("chatUserId:" + getChatUserId());
+            var RoomsFactory = $injector.get('RoomsFactory');
             RoomsFactory.updateRooms(message);
         });
     }
@@ -285,10 +286,11 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                      $scope.showDialogListButton = true;
                      return;
                  }*/
+                 $rootScope.authorize = true;
             if ($location.path() == "/")
                 ChannelFactory.changeLocation("/chatrooms");
         } else {
-            authorize = false;
+            $rootScope.authorize = false;
 
             if ($location.path() != "/") {
                 //    $rootScope.goToAuthorize();

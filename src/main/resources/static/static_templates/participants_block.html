@@ -12,6 +12,8 @@
                 <div class="user_presence" ng-show="participant.online">Онлайн</div>
                 <div class="user_presence" ng-show="!participant.online">Оффлайн</div>
             </div>
+            {{checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId}}
+            <div ng-if="checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon" >DEL</span></div>
         </div>
     </div>
 </div>
