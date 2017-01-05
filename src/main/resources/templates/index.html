@@ -39,8 +39,8 @@
                     </div>
                     <div class="window_panel">
                         <div id="minimize_btn"></div>
-                        <div id="fullscreen_btn"></div>
-                        <div id="close_btn"></div>
+                        <div id="fullscreen_btn" ng-click="state == 0 ? state = 2 : state = 0"></div>
+                        <div id="close_btn" ng-click="state = -1"></div>
                     </div>
                 </div>
                 <hr/>

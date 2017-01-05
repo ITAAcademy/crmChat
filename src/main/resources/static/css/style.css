@@ -6,6 +6,45 @@ body {
     overflow: hidden;
 }
 
+*::-webkit-scrollbar-track {
+    background-color: #cfcfcf;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #707070;
+}
+
+*::-webkit-scrollbar-button {
+    background-size: contain;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position-y: center;
+    background-color: #cfcfcf;
+}
+
+*::-webkit-scrollbar-track:no-button  {
+    display: none;
+}
+
+
+
+*::-webkit-scrollbar-button:hover {
+    background-color: #707070;
+}
+
+*::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('../images/scroll_down.svg');
+}
+
+*::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('../images/scroll_up.svg');
+}
+
 .clearfix {
     clear: both;
 }
@@ -22,25 +61,19 @@ body {
     font-family: "Myriad Pro", Times, serif;
 }
 
-
-
-.consultant_wrapper.normal{
-
-position: absolute;
-
-height: calc(60% - 10px);
-
-width: 800px;
+.consultant_wrapper.normal {
+    position: absolute;
+    height: calc(60% - 10px);
+    width: 800px;
 }
-.consultant_wrapper.closed{
 
+.consultant_wrapper.closed {
+    display: none;
 }
-.consultant_wrapper.minimize{
 
-}
-.consultant_wrapper.fullScreen{
+.consultant_wrapper.minimize {}
 
-}
+.consultant_wrapper.fullScreen {}
 
 .consultant_wrapper * {
     box-sizing: border-box;
@@ -326,7 +359,7 @@ width: 800px;
 .contacts_menu_strip>.search_icon {
     margin-left: 7px;
     margin-top: 2px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .contacts_menu_strip .contacts_menu_item:before {
@@ -405,6 +438,14 @@ width: 800px;
 .tools_area {
     height: 40px;
     position: relative;
+}
+
+.tools_area:hover {
+    cursor: -webkit-grab;
+}
+
+.tools_area *:hover {
+    cursor: default;
 }
 
 .tools_area > .tools_dropdown_container {
@@ -1128,6 +1169,16 @@ Geometric shapes
     background-position-y: center;
 }
 
+.window_panel > *:hover {
+    cursor: pointer;
+    background-color: #f1f1f1;
+    -ms-transform: scale(1.3, 1.3);
+    /* IE 9 */
+    -webkit-transform: scale(1.3, 1.3);
+    /* Safari */
+    transform: scale(1.3, 1.3);
+}
+
 #minimize_btn {
     background-image: url(../images/—.svg);
     /* background-size: cover; */
@@ -1141,45 +1192,57 @@ Geometric shapes
     background-image: url(../images/Х.svg);
 }
 
-
-
-
-#nwgrip, #negrip, #swgrip, #segrip, #ngrip, #egrip, #sgrip, #wgrip {
+#nwgrip,
+#negrip,
+#swgrip,
+#segrip,
+#ngrip,
+#egrip,
+#sgrip,
+#wgrip {
     width: 10px;
     height: 10px;
     background-color: #ffffff;
     border: 1px solid #000000;
     position: absolute;
 }
+
 #nwgrip {
     left: -5px;
     top: -5px;
 }
-#negrip{
-     top: -5px;
-     right: -5px;
+
+#negrip {
+    top: -5px;
+    right: -5px;
 }
-#swgrip{
+
+#swgrip {
     bottom: -5px;
     left: -5px;
 }
-#segrip{
-     bottom: -5px;
-    right:-5px;
+
+#segrip {
+    bottom: -5px;
+    right: -5px;
 }
-#ngrip{
-     top: -5px;
-    left:50%;
-}
-#sgrip{
-     bottom: -5px;
+
+#ngrip {
+    top: -5px;
     left: 50%;
 }
-#wgrip{
-     left:-5px;
-     top:50%;
+
+#sgrip {
+    bottom: -5px;
+    left: 50%;
 }
-#egrip{
-     right:-5px;
-     top:50%;
+
+#wgrip {
+    left: -5px;
+    top: 50%;
+}
+
+#egrip {
+    right: -5px;
+    top: 50%;
 }

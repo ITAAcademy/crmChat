@@ -186,7 +186,7 @@ function initFolded(scope, element) {
         if (scope.folded)
             scope.scroll.scrollTop(scope.scroll.getScrollTop())
     }
-    scope.scroll = $($(element).find(".scroll")).niceScroll({ mousescrollstep: 18 * 3 * .91 });
+    scope.scroll = $($(element).find(".scroll"));
     scope.scroll.overflowy = !scope.folded;
 }
 
@@ -244,7 +244,7 @@ function messagesBlock($http, RoomsFactory) {
         templateUrl: 'static_templates/messages_block.html',
         link: function($scope, element, attributes) {
             $scope.messages = RoomsFactory.getMessages;
-            var nice = $(".scroll").niceScroll();
+            var nice = $(".scroll");
         }
 
     };
@@ -267,7 +267,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 //if ($scope.mouseBusy == false)
                 ChannelFactory.changeLocation('/dialog_view/' + roomId);
             }
-            var nice = $(".scroll").niceScroll();
+            var nice = $(".scroll");
         }
 
     };
@@ -324,7 +324,11 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
        
       // Bind mousedown event
       elem.on('mousedown', function(e) {
-       // e.preventDefault();
+        debugger;
+        if($(dragElement).hasClass("drag-disable") || e.target != elem[0])
+            return;
+
+        e.preventDefault();
         startX = e.clientX - dragElement[0].offsetLeft;
         startY = e.clientY - dragElement[0].offsetTop;
         $document.on('mousemove', mousemove);
