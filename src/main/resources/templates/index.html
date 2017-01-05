@@ -34,8 +34,8 @@
                     </div>
                     <div class="search_box">
                         <input ng-model="messageSearchQuery"  type="text" class="transparent_input search_input" placeholder="Пошук..." />
-                        <img ng-unless="messageSearchEnabled" ng-click="enableMessagesSearch" class="search_icon" src="images\search17x17.png" alt="" />
-                        <img ng-if="messageSearchEnabled" ng-click="disableMessagesSearch" class="search_icon" src="images\x.svg" alt="" />
+                        <img  ng-click="enableMessagesSearch()" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; messageSearchQuery.length &gt; 0 &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
+                        <img ng-click="disableMessagesSearch()" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
                     </div>
                     <div class="window_panel">
                         <div id="minimize_btn"></div>
@@ -44,6 +44,7 @@
                     </div>
                 </div>
                 <hr/>
+                <span style="position:absolute;left:0;font-size:12px;top:140px" ng-if="$root.message_busy">message busy</span>
                 <div class="message_block_directive" messages-block="true" style="height: 400px"></div>
                 <!--It's message displayer-->
                 <hr/>
