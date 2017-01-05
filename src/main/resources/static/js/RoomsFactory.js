@@ -362,6 +362,26 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             //calcPositionUnshift(JSON.parse(o["messages"][i].text));
         }
     }
+    function loadMessagesContains(searchQuery){
+        // /chat/room/{roomId}/get_messages_contains
+
+        $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), {}).
+        success(function(data, status, headers, config) {
+            loadMessagesFromArrayList(data);
+        }).
+        error(function(data, status, headers, config) {
+
+        });
+    }
+    function loadMessagesFromArrayList(list){
+        for(var obj
+    in
+        list
+    )
+        {
+            calcPositionUnshift(obj);
+        }
+    }
 
     function loadSubscribeAndMessage(message) {
         roomType = message["type"];

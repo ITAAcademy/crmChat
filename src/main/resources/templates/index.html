@@ -34,7 +34,8 @@
                     </div>
                     <div class="search_box">
                         <input ng-model="messageSearchQuery"  type="text" class="transparent_input search_input" placeholder="Пошук..." />
-                        <img ng-click="enableMessagesSearch" class="search_icon" src="images\search17x17.png" alt="" />
+                        <img ng-unless="messageSearchEnabled" ng-click="enableMessagesSearch" class="search_icon" src="images\search17x17.png" alt="" />
+                        <img ng-if="messageSearchEnabled" ng-click="disableMessagesSearch" class="search_icon" src="images\x.svg" alt="" />
                     </div>
                     <div class="window_panel">
                         <div id="minimize_btn"></div>

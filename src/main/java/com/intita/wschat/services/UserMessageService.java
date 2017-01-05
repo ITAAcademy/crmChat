@@ -82,6 +82,11 @@ public class UserMessageService {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
 	@Transactional(readOnly=true)
+	public ArrayList<UserMessage> getFirst10UserMessagesByRoomIdContains(Long roomId,String searchQuery) {
+		return wrapBotMessages(userMessageRepository.findFirst10ByRoomAndBodyIgnoreCaseContainingOrderByIdDesc(
+				new Room(roomId),searchQuery));
+	}
+	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 	}
@@ -245,6 +250,13 @@ public class UserMessageService {
 				findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(room, date,body);
 		return  wrapBotMessages(messages);
 	}
+    @Transactional(readOnly=true)
+    public ArrayList<UserMessage> get10MessagesByRoomAndBodyContains(Room room, Date date,String body){
+        ArrayList<UserMessage> messages = (body==null || body.length()<1) ?
+                userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date) : userMessageRepository.
+                findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(room, date,body);
+        return  wrapBotMessages(messages);
+    }
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user)  {
@@ -269,8 +281,7 @@ public class UserMessageService {
 	public Set<UserMessage> getMessagesByNotUser( ChatUser user) {
 		Set<UserMessage> messages = userMessageRepository.findAllByAuthorNot( user); 
 		ArrayList<UserMessage> result =  wrapBotMessages( new ArrayList<UserMessage>(messages));
-		return new HashSet<UserMessage>(result);
+        return new HashSet<UserMessage>(result);
 	}
-
 
 }

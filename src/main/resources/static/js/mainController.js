@@ -607,7 +607,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
         $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
         var payload = {'date': RoomsFactory.getOldMessage().date};
-        if (messageSearchEnabled)
+        if ($scope.messageSearchEnabled)
         payload['searchQuery'] = $scope.messageSearchQuery;
         $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId),payload). //  messages[0]). //
         success(function(data, status, headers, config) {
@@ -802,6 +802,9 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
      $scope.messageSearchEnabled = false;
     $scope.enableMessagesSearch = function(){
         $scope.messageSearchEnabled = true;
+    }
+    $scope.disableMessagesSearch = function(){
+        $scope.messageSearchEnabled = false;
     }
 
     function messageAreaResizer(e) {

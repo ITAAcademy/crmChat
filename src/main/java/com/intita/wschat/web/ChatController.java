@@ -1267,6 +1267,13 @@ public class ChatController {
 			return null;
 		return mapper.writerWithView(Views.Public.class).writeValueAsString(userMessageService.getUserMessagesByRoomId(roomId));
 	}
+	@RequestMapping(value="/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<UserMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestParam String searchQuery, Principal principal) throws JsonProcessingException {
+		ArrayList<UserMessage> userMessages = userMessageService.getFirst10UserMessagesByRoomIdContains(roomId, searchQuery);
+		return userMessages;
+	}
+
 	@MessageExceptionHandler(MessageDeliveryException.class)
 	public String handleMessageDeliveryException(MessageDeliveryException e) {
 		//log.error("MessageDeliveryException handler executed");
