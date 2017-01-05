@@ -24,7 +24,7 @@ var chatController = springChatControllers.controller('ChatController', ['$q', '
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
 
-    $scope.state = 0;
+    $scope.state = 2;
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
