@@ -1,4 +1,4 @@
-springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location', '$http', 'toaster', '$injector', 'ChannelFactory' , 'ChatSocket', 'AskWindow', function($timeout, $rootScope, $location, $http, toaster, $injector, ChannelFactory, chatSocket, AskWindow) {
+springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location', '$http', 'toaster', '$injector', 'ChannelFactory', 'ChatSocket', 'AskWindow', function($timeout, $rootScope, $location, $http, toaster, $injector, ChannelFactory, chatSocket, AskWindow) {
     $rootScope.authorize = false;
     var isTenant = false;
     var isTrainer = false;
@@ -90,7 +90,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                     chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) { // event update
                         console.log("new message in room:" + message.body);
                         var num = JSON.parse(message.body);
-                           $rootScope.$broadcast('newMessageEvent',num);
+                        $rootScope.$broadcast('newMessageEvent', num);
                     });
 
                     chatSocket.subscribe("/topic/users/{0}/status".format(getChatUserId()), function(message) {
@@ -197,7 +197,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                 console.log("infoUpdateLP data:" + data);
                 if (data["newMessage"] != null) //new message in room
                 {
-                    $rootScope.$broadcast('newMessageArrayEvent',data["newMessage"]);
+                    $rootScope.$broadcast('newMessageArrayEvent', data["newMessage"]);
                 }
                 /*if (data["newGuestRoom"] != null) {
                     if ($scope.currentRoom == undefined)
@@ -288,7 +288,7 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
                      $scope.showDialogListButton = true;
                      return;
                  }*/
-                 $rootScope.authorize = true;
+            $rootScope.authorize = true;
             if ($location.path() == "/")
                 ChannelFactory.changeLocation("/chatrooms");
         } else {
@@ -322,18 +322,19 @@ springChatServices.factory('UserFactory', ['$timeout','$rootScope', '$location',
     };
 
     var setChatUserId = function(id) { chatUserId = id; };
-    var getChatUserId = function() { return chatUserId; };
+    var getChatUserId = function() {
+        return chatUserId; };
     var setRealChatUserId = function(id) { realChatUserId = id };
-    
+
     return {
         setChatUserId: setChatUserId,
         getChatUserId: getChatUserId,
         setRealChatUserId: setRealChatUserId,
         login: login,
-        getChatUserNickname: function(){
+        getChatUserNickname: function() {
             return chatUserNickname;
         },
-        getChatuserAvatar:function(){
+        getChatuserAvatar: function() {
             return chatUserAvatar;
         }
     };

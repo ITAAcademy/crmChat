@@ -353,7 +353,7 @@ body {
     left: 22px;
 }
 
-.contacts_menu_strip>.search_icon {
+.contacts_menu_strip .search_icon {
     margin-left: 7px;
     margin-top: 2px;
     cursor: pointer;
@@ -583,6 +583,29 @@ body {
     position: absolute;
     right: 0px;
     top: calc(50% - 7px);
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0s, opacity 0.5s linear;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+.right_panel .search_icon.showed {
+    visibility: visible;
+    opacity: 1;
+}
+.right_panel .close_search_icon{
+    position: absolute;
+    right: 0px;
+    top: calc(50% - 7px);
+    width:17px;
+    height:17px;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0s, opacity 0.5s linear;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+.right_panel .close_search_icon.showed{
+    visibility: visible;
+    opacity: 1;
 }
 
 .right_panel hr {

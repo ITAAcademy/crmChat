@@ -365,7 +365,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function loadMessagesContains(searchQuery) {
         // /chat/room/{roomId}/get_messages_contains
 
-        $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), {}).
+        $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery).
         success(function(data, status, headers, config) {
             loadMessagesFromArrayList(data);
         }).
@@ -375,10 +375,16 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function loadMessagesFromArrayList(list) {
-        for (var obj in
-                list) {
-            calcPositionUnshift(obj);
+        oldMessage = list[list.length - 1];
+        for (var index = 0; index < list.length; index++) {
+            if (list[index].hasOwnProperty("message")) {
+                calcPositionUnshift(list[index]);
+            }
         }
+    }
+
+    function clearMessages() {
+        messages = [];
     }
 
     function loadSubscribeAndMessage(message) {
@@ -390,7 +396,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
-                calcPositionUnshift(message["messages"][i]);
+                calcPositionPush(message["messages"][i]);
                 //calcPositionUnshift(JSON.parse(o["messages"][i].text));
             }
         }
@@ -571,20 +577,20 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
     }
 
-    function subscribeRoomsUpdateLP(){
-            console.log("roomsUpdateLP()");
-            $http.post(serverPrefix + "/chat/rooms/user/login")
-                .success(function(data, status, headers, config) {
-                    console.log("roomsUpdateLP data:" + data);
-                    updateRooms(data);
-                    //console.log("resposnse data received:"+response.data);
-                    subscribeRoomsUpdateLP();
-                }).error(function errorHandler(data, status, headers, config) {
-                    //console.log("error during http request");
-                    //$scope.topics = ["error"];
-                    //console.log("resposnse data error:"+response.data);
-                    subscribeRoomsUpdateLP();
-               });
+    function subscribeRoomsUpdateLP() {
+        console.log("roomsUpdateLP()");
+        $http.post(serverPrefix + "/chat/rooms/user/login")
+            .success(function(data, status, headers, config) {
+                console.log("roomsUpdateLP data:" + data);
+                updateRooms(data);
+                //console.log("resposnse data received:"+response.data);
+                subscribeRoomsUpdateLP();
+            }).error(function errorHandler(data, status, headers, config) {
+                //console.log("error during http request");
+                //$scope.topics = ["error"];
+                //console.log("resposnse data error:"+response.data);
+                subscribeRoomsUpdateLP();
+            });
     }
 
 
@@ -611,7 +617,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         calcPositionUnshift: calcPositionUnshift,
         checkUserAdditionPermission: checkUserAdditionPermission,
         removeUserFromRoom: removeUserFromRoom,
-        subscribeRoomsUpdateLP: subscribeRoomsUpdateLP
+        subscribeRoomsUpdateLP: subscribeRoomsUpdateLP,
+        clearMessages: clearMessages,
+        loadMessagesContains: loadMessagesContains
+
     };
 
 

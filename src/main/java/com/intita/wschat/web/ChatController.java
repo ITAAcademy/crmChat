@@ -1269,9 +1269,10 @@ public class ChatController {
 	}
 	@RequestMapping(value="/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<UserMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestParam String searchQuery, Principal principal) throws JsonProcessingException {
+	public ArrayList<ChatMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestBody String searchQuery, Principal principal) throws JsonProcessingException {
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst10UserMessagesByRoomIdContains(roomId, searchQuery);
-		return userMessages;
+        ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
+        return chatMessages;
 	}
 
 	@MessageExceptionHandler(MessageDeliveryException.class)

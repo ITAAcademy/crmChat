@@ -94,6 +94,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
+
     $scope.isTenantFree = true;
     $scope.isUserTenant = false;
     $scope.isUserTenantInited = false;
@@ -789,10 +790,21 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.enableMessagesSearch = function() {
         debugger;
         $scope.messageSearchEnabled = true;
+        RoomsFactory.clearMessages();
+        RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
+        $rootScope.message_busy = false;
     }
     $scope.disableMessagesSearch = function() {
+        RoomsFactory.clearMessages();
+        RoomsFactory.loadMessagesContains(' ');
+
         $scope.messageSearchEnabled = false;
+        $rootScope.message_busy = false;
     }
+    $scope.currentRoomIsNull = function() {
+        return RoomsFactory.getCurrentRoom().roomId == null;
+    }
+    $scope.$on('$routeChangeStart', $scope.disableMessagesSearch);
 
     function messageAreaResizer(e) {
         var containerHeight = $('.right_panel').height();
