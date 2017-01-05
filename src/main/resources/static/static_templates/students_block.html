@@ -1,7 +1,7 @@
 <div ng-if="students.length > 0" class="items_list_block top_block">
     <div class="block_name">{{blockName}}</div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
-        <div class="block_item" ng-repeat="student in students | orderBy : ['username', 'online']">
+        <div class="block_item" ng-repeat="student in students | orderBy : ['username', 'online']" ng-click="goToPrivateDialog(student.chatUserId)">
             <div class="avatar ng-class:{offline:!student.online, online:student.online}">
                 <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{student.avatar}}" alt="" />
                 <div class="user_presence_icon"></div>

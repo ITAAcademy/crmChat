@@ -593,8 +593,33 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             });
     }
 
+    var goToPrivateDialogErr = function(data, status, headers, config) {
+        toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
+        console.log("PRIVATE ROOM CREATE FAILD ");
+        $rootScope.goToAuthorize(function() { changeLocation("/chatrooms"); });
+    }
 
-    return {
+    function goToPrivateDialog(intitaUserId) {
+        $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
+        success(function(data, status, headers, config) {
+            console.log("PRIVATE ROOM CREATE OK ");
+
+            //$scope.goToDialogById(data);
+            if (RoomsFactory.getCurrentRoom() == null)
+                currentRoom = {};
+            if (data != null && data != undefined) {
+                //    $scope.currentRoom.roomId = data;
+                ChannelFactory.changeLocation("/dialog_view/" + data);
+            } else {
+                goToPrivateDialogErr();
+            }
+
+
+        }).
+        error(goToPrivateDialogErr);
+    }
+
+    var RoomsFactory = {
         goToRoom: goToRoom,
         unsubscribeCurrentRoom: unsubscribeCurrentRoom,
         updateRooms: updateRooms,
@@ -619,9 +644,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         removeUserFromRoom: removeUserFromRoom,
         subscribeRoomsUpdateLP: subscribeRoomsUpdateLP,
         clearMessages: clearMessages,
-        loadMessagesContains: loadMessagesContains
-
+        loadMessagesContains: loadMessagesContains,
+        goToPrivateDialog : goToPrivateDialog
     };
+
+    return RoomsFactory;
 
 
 
@@ -641,6 +668,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         templateUrl: "accessDeny.html",
         controller: "AccessDeny"
     });
+    $routeProvider.when("/private_dialog_view/:chatUserId", {
+        resolve: {
+            load: function($route, RoomsFactory, $routeParams) {
+                RoomsFactory.goToPrivateDialog($route.current.params.chatUserId);
+            }
+        }
+    });
+
 
     $routeProvider.otherwise({ redirectTo: '/' });
     console.log("scope test");

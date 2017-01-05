@@ -5,6 +5,15 @@ springChatControllers.config(function($routeProvider) {
         templateUrl: "dialogsTemplate.html",
         controller: "DialogsRouteController"
     });*/
+
+     $routeProvider.when("/builder", {
+        templateUrl: "builderTemplateJSTemp.html",
+        controller: "ChatBotViewBuilderController"
+    });
+    $routeProvider.when("/builderForm", {
+        templateUrl: "builderTemplateJSTemp.html",
+        controller: "ChatBotFormBuilderController"
+    });
     $routeProvider.otherwise({ redirectTo: '/' });
     console.log("scope test");
 
@@ -504,44 +513,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.userAddedToRoom = true;
     $rootScope.isConectedWithFreeTenant = false;
 
-    $scope.goToTeachersList = function() {
-
-        $http.post(serverPrefix + "/chat/users").
-
-        success(function(data, status, headers, config) {
-            console.log("USERS GET OK ");
-            $scope.seachersTeachers = data;
-        }).
-        error(function(data, status, headers, config) {
-            $scope.seachersTeachers = [];
-        });
-    }
-
-    var goToPrivateDialogErr = function(data, status, headers, config) {
-        toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
-        console.log("PRIVATE ROOM CREATE FAILD ");
-        $rootScope.goToAuthorize(function() { changeLocation("/chatrooms"); });
-    }
-
-    $scope.goToPrivateDialog = function(intitaUserId) {
-        $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
-        success(function(data, status, headers, config) {
-            console.log("PRIVATE ROOM CREATE OK ");
-
-            //$scope.goToDialogById(data);
-            if (RoomsFactory.getCurrentRoom() == null)
-                RoomsFactory.setCurrentRoom({});
-            if (data != null && data != undefined) {
-                //    $scope.currentRoom.roomId = data;
-                changeLocation("/dialog_view/" + data);
-            } else {
-                goToPrivateDialogErr();
-            }
-
-
-        }).
-        error(goToPrivateDialogErr);
-    }
 
     function addTenantToList(tenantObj) {
         for (var i = 0; i < $scope.tenants.length; i++) {

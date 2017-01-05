@@ -190,7 +190,7 @@ function initFolded(scope, element) {
     scope.scroll.overflowy = !scope.folded;
 }
 
-function studentsBlock($http, mySettings) {
+function studentsBlock($http, mySettings, RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -207,7 +207,7 @@ function studentsBlock($http, mySettings) {
                 });
             };
             scope.blockName = "Студенти";
-
+            scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
         }
 
     };
@@ -229,6 +229,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
             scope.currentRoom = RoomsFactory.getCurrentRoom;
+            scope.getChatUserId = UserFactory.getChatUserId;
             scope.checkUserAdditionPermission = function() {
                 return RoomsFactory.checkUserAdditionPermission(UserFactory.getChatUserId());
             }
