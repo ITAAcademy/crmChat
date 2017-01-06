@@ -370,7 +370,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     function loadMessagesContains(searchQuery) {
         // /chat/room/{roomId}/get_messages_contains
-
+        if (currentRoom == null){
+        console.warn('loadMessagesContains failed duing to current room is not selected');
+            return;
+        }
         $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery).
         success(function(data, status, headers, config) {
             loadMessagesFromArrayList(data);

@@ -775,6 +775,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $scope.messageSearchEnabled = false;
         $rootScope.message_busy = false;
         var objDiv = document.getElementById("messagesScroll");
+        if (objDiv!=null)
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.currentRoomIsNull = function() {
@@ -817,7 +818,10 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.attaches_dropdown_click = function() {
         $('#attaches_dropdown').toggleClass('shown');
     }
-    messageAreaResizer();
+    $timeout(function() {
+        messageAreaResizer();
+    }, 1000);
+
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             $(".message_input").resize(messageAreaResizer);
