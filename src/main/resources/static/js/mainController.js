@@ -780,25 +780,41 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         return RoomsFactory.getCurrentRoom().roomId == null;
     }
     $scope.$on('$routeChangeStart', $scope.disableMessagesSearch);
+    var savedDistanceToBottom;
+    function saveScrollBottom(){
+        var messagesScrollTop = $('#messagesScroll').scrollTop();
+         savedDistanceToBottom = (typeof $('#messagesScroll') === "undefined" ||
+        typeof $('#messagesScroll')[0] === "undefined" ) ? undefined : $('#messagesScroll').outerHeight()
+        - $('#messagesScroll')[0].scrollHeight +
+        $('#messagesScroll').scrollTop();
+    }
+    function restoreScrollBottom(){
+        if (typeof savedDistanceToBottom === "undefined") return;
+        var messagesScrollOuterHeight = $('#messagesScroll').outerHeight();
+        var messagesScrollElementScrollHeight =  $('#messagesScroll')[0].scrollHeight;
+        var scrollTop =  savedDistanceToBottom - messagesScrollOuterHeight +
+            messagesScrollElementScrollHeight;
+        $('#messagesScroll').scrollTop(scrollTop);
+    }
 
     function messageAreaResizer(e) {
+
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
         var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 100;
         if (messagesInputHeight > messagesOutputHeight) return;
-        var messagesScrollTop = $('#messagesScroll').scrollTop;
-        $('.message_block_directive').height(messagesOutputHeight);
-        $('#messagesScroll').scrollTop(messagesScrollTop);
-        console.log('messagesInputHeight:' + messagesInputHeight);
-        console.log('messagesOutputHeight:' + messagesOutputHeight);
+        saveScrollBottom();
+        $('#messagesScroll').height(messagesOutputHeight);
+        restoreScrollBottom();
     }
-    messageAreaResizer();
+
 
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             $(".message_input").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
+            messageAreaResizer();
         });
 
         /*****************************
