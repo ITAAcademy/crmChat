@@ -6,7 +6,7 @@ springChatControllers.config(function($routeProvider) {
         controller: "DialogsRouteController"
     });*/
 
-     $routeProvider.when("/builder", {
+    $routeProvider.when("/builder", {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotViewBuilderController"
     });
@@ -764,7 +764,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         RoomsFactory.clearMessages();
         RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
         $rootScope.message_busy = false;
-         var objDiv = document.getElementById("messagesScroll");
+        var objDiv = document.getElementById("messagesScroll");
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.disableMessagesSearch = function() {
@@ -792,6 +792,13 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         console.log('messagesOutputHeight:' + messagesOutputHeight);
     }
     messageAreaResizer();
+
+    $scope.tools_dropdown_click = function() {
+        $('#tools_dropdown').toggleClass('shown');
+    }
+    $scope.attaches_dropdown_click = function() {
+        $('#attaches_dropdown').toggleClass('shown');
+    }
 
     $scope.$$postDigest(function() {
         $(document).ready(function() {

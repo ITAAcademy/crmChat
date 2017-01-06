@@ -1,11 +1,9 @@
-<div class="contacts_menu_strip">
-    <img class="search_icon" ng-click="toggleSearch()" src="images\search17x17.png" alt="" />
-    <div class="movable_content ng-class:{ 'hidden_right': searchEnabled };"">
-        <div class="contacts_menu_item">КОНТАКТИ</div>
-        <div class="last_contacts_menu_item">ОСТАННІ</div>
-        <img ng-click="toggleNewRoomModal()" class="group_icon" src="images\group23x16.png" alt="" />
-    </div>
-    <input type="text" class="room_search_input"/>
+<div class="contacts_menu_strip  ng-class:{ 'visible-search': searchEnabled }">
+    <div modale-toggle="true" callback="toggleSearch()" ignore-id="room_search_input" class="search_icon"><img src="images\Forma 1.svg" alt="" /></div>
+    <div class="contacts_menu_item">КОНТАКТИ</div>
+    <div class="last_contacts_menu_item">ОСТАННІ</div>
+    <div class="group_icon"><img src="images\Shape 1.svg" alt="" /></div>
+    <input type="text" id = "room_search_input" class="room_search_input" />
 </div>
 <div class="items_list_block bottom_block scroll">
     <div class="section" ng-repeat="room in (roomsF = (rooms() | orderBy:'string'))">

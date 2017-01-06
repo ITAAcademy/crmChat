@@ -110,6 +110,38 @@ angular.module('springChat.directives').directive('dir', function($compile, $par
         }
     }
 })
+
+
+angular.module('springChat.directives').directive('modaleToggle', function($compile, $parse) {
+    return {
+        restrict: 'EA',
+        scope: {
+            callback: '&callback',
+            ignoreId: '@ignoreId'
+        },
+        link: function(scope, element, attr) {
+            var toggle = false;
+            if (scope.callback != null) {
+                $(window).click(function(e) {
+                    if (e.target.style.pointerEvents == "none")
+                        return;
+                    var ignoredElement = document.getElementById(scope.ignoreId);
+                    
+                    if (e.target === element[0] || element[0].contains(e.target) || (toggle && e.target != ignoredElement && !ignoredElement.contains(e.target))) {
+                        scope.$apply(function() {
+                            scope.callback();
+                            toggle = !toggle;
+                        });
+
+                    }
+                    //alert(e.target === element[0] || element[0].contains(e.target));
+                });
+            }
+        }
+    }
+})
+
+
 angular.module('springChat.directives').directive('starRating', starRating);
 
 function starRating() {
@@ -172,6 +204,30 @@ function updateModelGet(http, requestUrl, callback) {
         console.log('updateModelGet():requestUrl:' + requestUrl + " failed");
     });
 };
+
+
+
+
+
+angular.module('springChat.directives').directive('tenantsBlock', function($http, mySettings, UserFactory) {
+    return {
+        restrict: 'EA',
+        scope: {
+
+        },
+        templateUrl: 'static_templates/participants_block.html',
+        link: function(scope, element, attributes) {
+            updateModelForStudents();
+            initFolded(scope, element);
+
+            function updateModelForStudents() {
+                scope.participants = UserFactory.getTenantsList()
+            };
+            scope.blockName = "Тенанти";
+        }
+
+    };
+});
 
 
 angular.module('springChat.directives').directive('studentsBlock', studentsBlock);
@@ -476,29 +532,3 @@ angular.module('springChat.directives').directive('ngResizeble', function($docum
     }
 
 })
-
-angular.module('springChat.directives').directive('resizable', function() {
-    return {
-        restrict: 'AE',
-        scope: {
-            rDirections: "=",
-            rCenteredX: "=",
-            rCenteredY: "=",
-            rWidth: "=",
-            rHeight: "=",
-            rFlex: "="
-        },
-        link: function(scope, element, attr) {
-
-            // register watchers on width and height attributes if they are set
-            scope.$watch('rWidth', function(value) {
-                element[0].style.width = scope.rWidth + 'px';
-            });
-            scope.$watch('rHeight', function(value) {
-                element[0].style.height = scope.rHeight + 'px';
-            });
-
-            element.addClass('resizable');
-        }
-    }
-});
