@@ -336,7 +336,11 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         },
         getChatuserAvatar: function() {
             return chatUserAvatar;
+        },
+        getTenantsList : function(){
+            return tenants;
         }
+
     };
 
 

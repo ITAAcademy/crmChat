@@ -15,6 +15,8 @@
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="left_panel">
             <div students-block="true"></div>
+            <div tenants-block="true"></div>
+            
             <div participants-block="true"></div>
             <!--  ROOMS BLOCK -->
             <div rooms-block="true" style="height:100%"></div>
@@ -30,7 +32,7 @@
                         <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
                         <li class="remove_history_item"><a href="#">Видалити історію</a></li>
                     </ul>
-                    <button class="open_dropdown_button" onclick="tools_dropdown_click()">
+                    <button modale-toggle = "true" callback = "tools_dropdown_click()" ignore-id = "tools_dropdown" class="open_dropdown_button">
                         <img src="images\triple_dots26x8.png" alt="" />
                     </button>
                 </div>
@@ -72,6 +74,7 @@
                 </div>
             </div>
         </div>
+        <!--
         <div class="ui-resizable-handle ui-resizable-nw" id="nwgrip"></div>
         <div class="ui-resizable-handle ui-resizable-ne" id="negrip"></div>
         <div class="ui-resizable-handle ui-resizable-sw" id="swgrip"></div>
@@ -80,6 +83,7 @@
         <div class="ui-resizable-handle ui-resizable-s" id="sgrip"></div>
         <div class="ui-resizable-handle ui-resizable-e" id="egrip"></div>
         <div class="ui-resizable-handle ui-resizable-w" id="wgrip"></div>
+        -->
     </div>
 
     <script th:inline="javascript">
