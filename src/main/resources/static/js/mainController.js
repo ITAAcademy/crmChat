@@ -53,6 +53,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         container: 'body',
         dragElement: 'consultant_wrapper'
     }
+    $scope.newMessage = "";
 
     $scope.getStateClass = function() {
             switch ($scope.state) {
@@ -691,9 +692,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         if (!messageSended)
             return;
         var textOfMessage;
-        if (message === undefined) textOfMessage = $scope.newMessage;
+        if (typeof message === "undefined") textOfMessage = $scope.newMessage;
         else textOfMessage = message;
-        if (textOfMessage.length < 1) {
+        if (typeof textOfMessage === "undefined" || textOfMessage.length < 1) {
             $scope.newMessage = '';
             //$("#newMessageInput")[0].value  = '';
             return;
@@ -816,12 +817,11 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.attaches_dropdown_click = function() {
         $('#attaches_dropdown').toggleClass('shown');
     }
-
+    messageAreaResizer();
     $scope.$$postDigest(function() {
         $(document).ready(function() {
             $(".message_input").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
-            messageAreaResizer();
         });
 
         /*****************************
