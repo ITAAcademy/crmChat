@@ -796,7 +796,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var messagesScrollElementScrollHeight =  $('#messagesScroll')[0].scrollHeight;
         var scrollTop =  savedDistanceToBottom - messagesScrollOuterHeight +
             messagesScrollElementScrollHeight;
-        $('#messagesScroll').scrollTop(scrollTop);
+       // $('#messagesScroll').scrollTop(scrollTop);
+        $('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
     }
 
     function messageAreaResizer(e) {
