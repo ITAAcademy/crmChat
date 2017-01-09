@@ -839,8 +839,8 @@ body {
     margin-top: -70px;
 }
 
-.tools_dropdown_container > #tools_dropdown.shown,
-.tools_dropdown_container > #attaches_dropdown.shown {
+.tools_dropdown_container >#tools_dropdown.shown,
+#attaches_dropdown.shown {
     display: block;
     z-index: 2;
     /* width: 200px; */

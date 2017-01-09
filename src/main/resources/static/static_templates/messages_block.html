@@ -28,6 +28,9 @@
 							<span class="message_date" ng-bind="$root.formatDateWithLast(message.date)"></span>
 						</div>
 						<compilable  class="bottom_details" content="parseMsg(message.message)"></compilable>
+						<span ng-repeat="file in message.attachedFiles track by $index">
+									<a ng-href="{{file}}">{{$root.getNameFromUrl(file)}}</a>
+								</span>
 					</div>
 					<div class="message_author_avatar" ng-if="message.position">
 						<img ng-src="{{$root.baseurl}}/images/avatars/{{message.chatUserAvatar}}" alt=""/>

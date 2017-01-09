@@ -55,6 +55,12 @@ var checkIfYesterday = function(inputDateLong){
      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
     return inputDate.setHours(0,0,0,0) == yesterdayDate.setHours(0,0,0,0);
 }
+var getNameFromUrl = function(url) {
+    var fileNameSignaturePrefix = "file_name=";
+    var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
+    var endPos = url.length - DEFAULT_FILE_PREFIX_LENGTH;
+    return url.substring(startPos, endPos);
+}
 var firstLetter = function(name) {
     if(undefined != name)
   return name.charAt(0);

@@ -32,6 +32,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.firstLetter = firstLetter;
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
+    $rootScope.getNameFromUrl = getNameFromUrl;
 
     $scope.state = 2;
 
@@ -796,12 +797,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var messagesScrollElementScrollHeight =  $('#messagesScroll')[0].scrollHeight;
         var scrollTop =  savedDistanceToBottom - messagesScrollOuterHeight +
             messagesScrollElementScrollHeight;
-       // $('#messagesScroll').scrollTop(scrollTop);
-        $('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
+        $('#messagesScroll').scrollTop(scrollTop);
+        //$('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
     }
 
     function messageAreaResizer(e) {
-
+        $('#messagesScroll').stop();
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
@@ -809,7 +810,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         if (messagesInputHeight > messagesOutputHeight) return;
         saveScrollBottom();
         //$('#messagesScroll').height(messagesOutputHeight);
-        $('#messagesScroll').stop();
+
         $('#messagesScroll').animate({height: ""+messagesOutputHeight+"px"}, 1000,restoreScrollBottom);
     }
 
