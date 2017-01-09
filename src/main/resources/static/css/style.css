@@ -670,8 +670,8 @@ body {
 }
 
 .messages_output_area {
-    max-height: 100%;
-    overflow-y: auto;
+    height: 100%;
+    overflow-y: auto !important;
     padding-top: 6px;
 }
 
@@ -1191,12 +1191,12 @@ Geometric shapes
     background-color: #c2c3c3;
 }
 
-.message_block_directive {
+/*.messages_output_area {
     -moz-transition: height 1s ease;
     -webkit-transition: height 1s ease;
     -o-transition: height 1s ease;
     transition: height 1s ease;
-}
+}*/
 
 .search_box {
     position: absolute;
