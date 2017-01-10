@@ -336,6 +336,109 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
     };
 };
 
+
+
+angular.module('springChat.directives').directive('fileMiniature', fileMiniature);
+
+function fileMiniature($http, RoomsFactory, ChannelFactory,$parse) {
+    return {
+        restrict: 'EA',
+        templateUrl: 'static_templates/file_miniature.html',
+        link: function($scope, element, attributes) {
+          //TODO filesMiniature
+          var supportedExtensions = ['aac',
+          'ai',
+          ,'aiff',
+          'asp',
+          'avi',
+          'bmp',
+          'c',
+          'cpp',
+          'css',
+          'dat',
+          'dmg',
+          'doc',
+          'docx',
+          'dot',
+          'dotx',
+          'dwg',
+          'dxf',
+          'eps',
+          'exe',
+          'flv',
+          'gif',
+          'h',
+          'html',
+          'ics',
+          'iso',
+          'java',
+          'jpg',
+          'js',
+          'key',
+          'less',
+          'm4v',
+          'mid',
+          'mov',
+          'mp3',
+          'mp4',
+          'mpg',
+          'odp',
+          'ods',
+          'odt',
+          'otp',
+          'ots',
+          'ott',
+          'pdf',
+          'php',
+          'png',
+          'pps',
+          'ppt',
+          'psd',
+          'py',
+          'qt',
+          'rar',
+          'rb',
+          'rtf',
+          'sass',
+          'scss',
+          'sql',
+          'tga',
+          'tgz',
+          'tiff',
+          'txt',
+          'wav',
+          'xls',
+          'xlsx',
+          'xml',
+          'yml',
+          'zip'
+          ];
+            var getFileExtensionByName = function(name){
+                return name.split('.').pop();
+            }
+            var isExtensionSupported = function (extension){
+                if (supportedExtensions.indexOf(extension)!=-1) return true;
+                else return false;
+            }
+            var getImageByExtension = function(ext){
+                var urlTemplate = "images/svg-file-icons/{0}.svg";
+                if (isExtensionSupported(ext)) return urlTemplate.format(ext);
+                else return urlTemplate.format('nopreview');
+            }
+
+            var link = $parse(attributes.link)($scope);
+            var derandomaziedName = $scope.getNameFromUrl(link);
+
+            var extension = getFileExtensionByName(derandomaziedName);
+            $scope.fileName = derandomaziedName;
+            $scope.link = link;
+            $scope.imageSrc = getImageByExtension(extension);
+        }
+
+
+    };
+};
+
 angular.module('springChat.directives').directive('compilable', function($compile, $parse) {
     return {
         restrict: 'E',
