@@ -784,25 +784,38 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }
     $scope.$on('$routeChangeStart', $scope.disableMessagesSearch);
     var savedDistanceToBottom;
+    var savedPaddingHeight; 
     function saveScrollBottom(){
-        var messagesScrollTop = $('#messagesScroll').scrollTop();
-         savedDistanceToBottom = (typeof $('#messagesScroll') === "undefined" ||
-        typeof $('#messagesScroll')[0] === "undefined" ) ? undefined : $('#messagesScroll').outerHeight()
-        - $('#messagesScroll')[0].scrollHeight +
-        $('#messagesScroll').scrollTop();
+        var messagesScroll = $('#messagesScroll');
+        var messagesScrollTop = messagesScroll.scrollTop();
+        savedPaddingHeight = (messagesScroll.outerHeight() - messagesScroll.height());
+         savedDistanceToBottom = (typeof messagesScroll === "undefined" ||
+        typeof messagesScroll[0] === "undefined" ) ? undefined : messagesScroll.outerHeight()
+        - messagesScroll[0].scrollHeight +
+         messagesScroll.scrollTop();
     }
-    function restoreScrollBottom(){
+    function getScrollTopToPreserveScroll(futureHeight){
+        var messagesScroll = $('#messagesScroll');
+        var currentHeight = $('#messagesScroll').height();
+        var outerHeight = savedPaddingHeight + futureHeight;
+        var heightDelta = currentHeight - futureHeight;
+        if (heightDelta<0) return messagesScroll.scrollTop();
+        var scrollHeight = messagesScroll[0].scrollHeight + heightDelta - savedPaddingHeight;
+        console.log('heightDelta:'+heightDelta);
+        console.log('savedPaddingHeight:'+savedPaddingHeight);
+        console.log('scrollHeight:'+scrollHeight);
         if (typeof savedDistanceToBottom === "undefined") return;
-        var messagesScrollOuterHeight = $('#messagesScroll').outerHeight();
-        var messagesScrollElementScrollHeight =  $('#messagesScroll')[0].scrollHeight;
+        var messagesScrollOuterHeight = outerHeight;//$('#messagesScroll').outerHeight();
+        var messagesScrollElementScrollHeight = scrollHeight;// $('#messagesScroll')[0].scrollHeight;
         var scrollTop =  savedDistanceToBottom - messagesScrollOuterHeight +
             messagesScrollElementScrollHeight;
-        $('#messagesScroll').scrollTop(scrollTop);
+       // $('#messagesScroll').scrollTop(scrollTop);
+        return scrollTop
         //$('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
     }
 
     function messageAreaResizer(e) {
-        $('#messagesScroll').stop();
+      //  $('#messagesScroll').stop();
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
@@ -811,7 +824,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         saveScrollBottom();
         //$('#messagesScroll').height(messagesOutputHeight);
 
-        $('#messagesScroll').animate({height: ""+messagesOutputHeight+"px"}, 1000,restoreScrollBottom);
+        $('#messagesScroll').stop(true).animate({height: messagesOutputHeight,
+            scrollTop:getScrollTopToPreserveScroll(messagesOutputHeight)}, 1000);
     }
 
 
