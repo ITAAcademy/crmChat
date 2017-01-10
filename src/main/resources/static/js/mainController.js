@@ -1,11 +1,6 @@
 'use strict';
 /* Controllers */
 springChatControllers.config(function($routeProvider) {
-    /*$routeProvider.when("/chatrooms", {
-        templateUrl: "dialogsTemplate.html",
-        controller: "DialogsRouteController"
-    });*/
-
     $routeProvider.when("/builder", {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotViewBuilderController"
@@ -28,6 +23,7 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
 var chatController = springChatControllers.controller('ChatController', ['ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function(ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
+    $rootScope.imagesPath = globalConfig["imagesPath"];
     $scope.baseurl = globalConfig["baseUrl"];
     $rootScope.firstLetter = firstLetter;
     $rootScope.checkIfToday = checkIfToday;

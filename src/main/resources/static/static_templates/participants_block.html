@@ -3,7 +3,7 @@
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy : ['!online', 'username']">
             <div class="avatar ng-class:{offline:!participant.online, online:participant.online}">
-                <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{participant.avatar}}" alt="" />
+                <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{participant.avatar}}" alt="" />
                 <div class="user_presence_icon"></div>
                 <div class="user_presence_icon_wraper"></div>
             </div>

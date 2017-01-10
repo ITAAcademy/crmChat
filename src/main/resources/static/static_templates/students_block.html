@@ -3,7 +3,7 @@
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item" ng-repeat="student in students | orderBy : ['username', 'online']" ng-click="goToPrivateDialog(student.chatUserId)">
             <div class="avatar ng-class:{offline:!student.online, online:student.online}">
-                <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{student.avatar}}" alt="" />
+                <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{student.avatar}}" alt="" />
                 <div class="user_presence_icon"></div>
                 <div class="user_presence_icon_wraper"></div>
             </div>

@@ -3,7 +3,7 @@
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item selectable" ng-repeat="item in items | orderBy : 'username'">
             <div class="avatar">
-                <img class="user_image" ng-src="{{$root.baseurl}}/images/avatars/{{item.avatar}}" alt="" />
+                <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{item.avatar}}" alt="" />
                 <div class="user_presence_icon  ng-class:{user_offline_background:!item.online}"></div>
             </div>
             <div class="text_info">
