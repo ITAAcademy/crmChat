@@ -285,6 +285,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
             scope.currentRoom = RoomsFactory.getCurrentRoom;
+            scope.hideEmpty = false;
             scope.getChatUserId = UserFactory.getChatUserId;
             scope.checkUserAdditionPermission = function() {
                 return RoomsFactory.checkUserAdditionPermission(UserFactory.getChatUserId());

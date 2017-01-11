@@ -199,7 +199,6 @@ body {
 .items_list_block.bottom_block .block_item.selected {
     background-color: #c4d3e3;
     opacity: 1.0;
-    pointer-events: none;
 }
 
 .avatar {
