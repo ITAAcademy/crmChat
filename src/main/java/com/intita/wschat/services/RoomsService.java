@@ -95,9 +95,21 @@ public class RoomsService {
 	public PrivateRoomInfo getPrivateRoomInfo(Room room) {
 		PrivateRoomInfo info = privateRoomInfoRepo.findByRoom(room);
 		if(info == null && room.getType() == Room.RoomType.PRIVATE)
+		{
+			removeRoom(room);
 			throw(new NullPointerException());
+		}
 		return info;
 	}
+	
+	@Transactional
+	public boolean removeRoom(Room room) {
+		chatLastRoomDateService.removeUserLastRoomDate(room.getChatUserLastRoomDate());
+		userMessageService.removeAllUserMessagesByRoom(room);
+		roomRepo.delete(room);
+		return true;
+	}
+
 
 	@Transactional
 	public Room getPrivateRoom(ChatUser author, ChatUser privateUser) {
@@ -402,7 +414,7 @@ public class RoomsService {
 
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
-			RoomModelSimple sb = RoomModelSimple.buildSimpleModelForRoom(currentUser, messages_cnt , date.toString(),
+			RoomModelSimple sb = RoomModelSimple.buildSimpleModelForRoom(this, currentUser, messages_cnt , date.toString(),
 			entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
 			sb = extendSimpleModelByUserPermissionsForRoom(sb, currentUser, entry.getLastRoom());
 			result.add(sb);
@@ -412,7 +424,7 @@ public class RoomsService {
 	}
 	@Transactional
 	public RoomModelSimple getSimpleModelByUserPermissionsForRoom(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage){
-		RoomModelSimple model = RoomModelSimple.buildSimpleModelForRoom(user, nums, date, room, lastMessage);
+		RoomModelSimple model = RoomModelSimple.buildSimpleModelForRoom(this, user, nums, date, room, lastMessage);
 		model = extendSimpleModelByUserPermissionsForRoom(model,user,room);
 		return model;
 	}

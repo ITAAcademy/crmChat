@@ -73,6 +73,10 @@ public class UserMessageService {
 	public ArrayList<UserMessage> getUserMessagesByRoom(Room room) {
 		return wrapBotMessages(userMessageRepository.findByRoom(room));
 	}
+	@Transactional(readOnly=false)
+	public void removeAllUserMessagesByRoom(Room room) {
+		userMessageRepository.delete(userMessageRepository.findByRoom(room));
+	}
 	@Transactional(readOnly=true)
 	public UserMessage getLastUserMessageByRoom(Room room){
 		return userMessageRepository.findFirstByRoomOrderByDateDesc(room);

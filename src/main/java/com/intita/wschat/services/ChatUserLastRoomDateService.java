@@ -84,6 +84,11 @@ public class ChatUserLastRoomDateService {
 	}
 
 	@Transactional
+	public boolean removeUserLastRoomDate(List<ChatUserLastRoomDate> list){
+		chatUserLastRoomDateRepo.delete(list);
+		return true;
+	}
+	@Transactional
 	public boolean removeUserLastRoomDate(ChatUser user, Room room){
 		ChatUserLastRoomDate last = chatUserLastRoomDateRepo.findFirstByRoomAndChatUser(room, user);
 		if(last == null)

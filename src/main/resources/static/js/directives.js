@@ -126,7 +126,7 @@ angular.module('springChat.directives').directive('modaleToggle', function($comp
                     if (e.target.style.pointerEvents == "none")
                         return;
                     var ignoredElement = document.getElementById(scope.ignoreId);
-                    
+
                     if (e.target === element[0] || element[0].contains(e.target) || (toggle && e.target != ignoredElement && !ignoredElement.contains(e.target))) {
                         scope.$apply(function() {
                             scope.callback();
@@ -312,7 +312,29 @@ function messagesBlock($http, RoomsFactory) {
     };
 };
 
-angular.module('springChat.directives').directive('roomsBlock', roomsBlock);
+angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filter('roomsBlockFilter', function() {
+    return function(fields, state) {
+        if (fields) { // added check for safe code
+            var arrayFields = [];
+            if (state == "LastContacts") {
+                /*fields.sort(function(a, b) {
+                    return a.date - b.date
+                })*/
+                return fields;
+            }
+            /**
+            MAX COUNT OF USERS
+            */
+
+            for (var i = 0; i < fields.length; i++) {
+                if (fields[i].type == 1) {
+                    arrayFields.push(fields[i]);
+                }
+            }
+            return arrayFields;
+        }
+    };
+});;
 
 function roomsBlock($http, RoomsFactory, ChannelFactory) {
     return {
@@ -322,8 +344,27 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
             $scope.rooms = RoomsFactory.getRooms;
             $scope.searchEnabled = false;
             $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
+            $scope.tabState = "Contacts";
+            $scope.sortBy = ['date','string'];
+            $scope.displayLetters = false;
             $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
+            }
+            $scope.showLastContacts = function() {
+                $scope.tabState = "LastContacts";
+                $scope.sortBy = ['-date'];
+                $scope.displayLetters = false;
+            }
+            $scope.showContacts = function() {
+                $scope.tabState = "Contacts";
+                $scope.sortBy = ['string'];
+                $scope.displayLetters = true;
+            }
+
+            $scope.returnAvatar = function(room) {
+                if (room.avatars.length > 1)
+                    return room.avatars[1];
+                return room.avatars[0];
             }
 
             $scope.doGoToRoom = function(roomId) {
@@ -331,10 +372,13 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 ChannelFactory.changeLocation('/dialog_view/' + roomId);
             }
             var nice = $(".scroll");
+            $scope.showLastContacts();
         }
 
     };
 };
+
+
 
 angular.module('springChat.directives').directive('compilable', function($compile, $parse) {
     return {

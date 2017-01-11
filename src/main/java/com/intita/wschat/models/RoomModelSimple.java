@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.web.ChatController;
@@ -16,9 +17,9 @@ public class RoomModelSimple {
 	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
 	final static int MULTI_IMAGE_MAX_IMAGE_COUNT = 4;
 	final static String NO_AVATAR_IMAGE_NAME = "noname.png";
-	
+
 	@Autowired UserMessageService userMessageService;
-	
+
 	public Long getRoomAuthorId() {
 		return roomAuthorId;
 	}
@@ -90,9 +91,24 @@ public class RoomModelSimple {
 		this.userPermissions = userPermissions;
 	}
 
-	public static RoomModelSimple buildSimpleModelForRoom(ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
+	public static RoomModelSimple buildSimpleModelForRoom(RoomsService roomService, ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
 		RoomModelSimple simpleModel = new RoomModelSimple();
-		simpleModel.string = room.getName();
+		if(room.getType() == RoomType.PRIVATE)
+		{
+			try {
+				PrivateRoomInfo info = roomService.getPrivateRoomInfo(room);
+				if(!info.getFirtsUser().equals(user))
+					simpleModel.string = info.getFirtsUser().getNickName();
+				else
+					simpleModel.string = info.getSecondUser().getNickName();
+
+			} catch (NullPointerException e) {
+				simpleModel.string = room.getName();
+			}
+		}
+		else
+			simpleModel.string = room.getName();
+
 		simpleModel.nums = nums;
 		simpleModel.date = date;
 		simpleModel.roomId=room.getId();
@@ -128,7 +144,7 @@ public class RoomModelSimple {
 			multiImageLinksArray[0]=room.getAuthor().getIntitaUser().getAvatar();
 		else
 			multiImageLinksArray[0] = NO_AVATAR_IMAGE_NAME;
-		
+
 		for (int i = 1; i < imagesCountInMultiImage;i++){
 			ChatUser chatUser = room.getUsers().iterator().next();
 			User intitaUser = chatUser.getIntitaUser();

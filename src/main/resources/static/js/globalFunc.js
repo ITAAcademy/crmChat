@@ -63,7 +63,7 @@ var getNameFromUrl = function(url) {
 }
 var firstLetter = function(name) {
     if(undefined != name)
-  return name.charAt(0);
+  return name.toUpperCase().charAt(0);
 }
 
 var formatDateWithLast = function(date) {
