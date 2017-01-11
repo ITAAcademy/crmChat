@@ -1312,3 +1312,17 @@ Geometric shapes
     right: -5px;
     top: 50%;
 }
+img.file-extension-preview {
+    width:60px;
+}
+.display-file-container{
+    display:inline-block;
+    text-align:center;
+    vertical-align:top;
+}
+.display-file-container .file-name{
+    width:60px;
+    height:40px;  word-wrap: break-word;
+    text-overflow:ellipsis;
+    display:inline-block;
+}

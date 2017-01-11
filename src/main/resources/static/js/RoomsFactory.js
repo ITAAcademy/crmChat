@@ -405,7 +405,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
-                calcPositionPush(message["messages"][i]);
+                calcPositionUnshift(message["messages"][i]);
                 //calcPositionUnshift(JSON.parse(o["messages"][i].text));
             }
         }

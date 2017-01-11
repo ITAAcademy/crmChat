@@ -1,18 +1,17 @@
 package com.intita.wschat.models;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -21,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.intita.wschat.domain.ChatMessage;
 
 import jsonview.Views;
+import org.hibernate.validator.constraints.Length;
 
 @Entity(name = "chat_user_message")
 public class UserMessage implements Serializable,Comparable<UserMessage>  {
@@ -33,7 +33,7 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	this.room = room;
 	this.body = chatMessage.getMessage();
 	this.date= new Date();
-	this.attachedFiles = chatMessage.getAttachedFiles();
+	this.setAttachedFiles(chatMessage.getAttachedFiles());
 	}
 	public UserMessage(ChatUser author, Room room, String body){	
 		this.author = author;
@@ -66,7 +66,9 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	
 	
 	@JsonView(Views.Public.class)
-	private ArrayList<String> attachedFiles = new ArrayList<String>();
+	@Lob
+	private String attachedFilesJson;
+
 	
 	@Column
 	@JsonView(Views.Public.class)
@@ -107,11 +109,29 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 		if (o==null)return -1;
 		return this.getId().compareTo(o.getId());
 	}
+	@JsonProperty("attachedFilesJson")
 	public ArrayList<String> getAttachedFiles() {
-		return attachedFiles;
+		ArrayList<String> result = null;
+		ObjectMapper mapper = new ObjectMapper();
+		if (attachedFilesJson==null || attachedFilesJson.length()<1) return new ArrayList<String>();
+		try {
+			result =  mapper.readValue(attachedFilesJson,ArrayList.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		}
+		if (result==null) return new ArrayList<String>();
+		return result;
 	}
+	@JsonProperty("attachedFilesJson")
 	public void setAttachedFiles(ArrayList<String> attachedFiles) {
-		this.attachedFiles = attachedFiles;
+		if (attachedFiles==null) return ;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			this.attachedFilesJson = mapper.writeValueAsString(attachedFiles);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
