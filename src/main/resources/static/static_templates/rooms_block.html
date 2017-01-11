@@ -6,7 +6,7 @@
     <input type="text" id = "room_search_input" class="room_search_input" />
 </div>
 <div class="items_list_block bottom_block scroll">
-    <div class="section" ng-repeat="room in (roomsF = (rooms() | roomsBlockFilter : tabState) | orderBy:sortBy)">
+    <div class="section" ng-repeat="room in (roomsF = ((rooms() | roomsBlockFilter : tabState) | orderBy:sortBy))">
         <div ng-if="displayLetters && firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
             <div class="section_name">{{firstLetter(room.string)}}</div>
             <div class="section-hr"></div>
