@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.event.LoginEvent;
@@ -325,7 +326,7 @@ public class RoomsService {
 		return addUserToRoom(chatUserService.getChatUser(name), room);
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
 	public boolean addUserToRoom(ChatUser user, Room room) {
 		if(room == null)
 			return false;
@@ -334,10 +335,30 @@ public class RoomsService {
 		//have premition?
 		if(room.getChatUsers().contains(user))
 			return false;
-
+		
 		room.addUser(user);
 		roomRepo.save(room);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);
+		return true;
+	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	public boolean addUsersToRoom(ArrayList<ChatUser> users, Room room) {
+		if(room == null)
+			return false;
+		if(users == null)
+			return false;
+		//have premition?
+		ArrayList<ChatUser> compareArray =  new  ArrayList<>(users);
+		compareArray.removeAll(room.getChatUsers());		
+		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
+		System.out.println("QQQQQQQQQQQQQ " +  room.addUsers(compareArray));
+		
+		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
+		roomRepo.save(room);
+		for (ChatUser chatUser : compareArray) {
+			chatLastRoomDateService.addUserLastRoomDateInfo(chatUser, room);
+		}
 		return true;
 	}
 

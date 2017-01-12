@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityExistsException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,16 @@ public class OfflineStudentsGroupService {
 
 	@PostConstruct
 	private void postFunction() {
-		updateGroupRoom(1);
+		
 	}
 
 	@Transactional
-	public void updateGroupRoom(Integer groupId) {
-		OfflineSubGroup group = offlineSubGroupRespository.findOne(groupId);
-		if (group == null)
-			return;
+	public OfflineSubGroup getSubGroup(Integer groupId) {
+		return offlineSubGroupRespository.findOne(groupId);
+	}
+	
+	@Transactional()
+	public void updateGroupRoom(OfflineSubGroup group) {
 		Room room = group.getChatRoom();
 		if (room == null) {
 			ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
@@ -53,7 +56,7 @@ public class OfflineStudentsGroupService {
 			group.setChatRoom(room);
 			offlineSubGroupRespository.save(group);
 		}
-		ArrayList<Integer> list = offlineStudentRespository.getStudentsIdByIdSubGroup(groupId);
+		ArrayList<Integer> list = offlineStudentRespository.getStudentsIdByIdSubGroup(group.getGroup_id());
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
 		Set<ChatUser> roomUserList = room.getUsers();
 
@@ -63,9 +66,7 @@ public class OfflineStudentsGroupService {
 		}
 		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
 		add.removeAll(roomUserList);
-		for (ChatUser chatUser : add) {
-			roomService.addUserToRoom(chatUser, room);
-		}
+		roomService.addUsersToRoom(add, room);
 
 		ArrayList<ChatUser> remove = new ArrayList<>(roomUserList);
 		remove.removeAll(chatUserList);

@@ -28,13 +28,13 @@ public class OfflineSubGroup implements Serializable {
 	private Integer group_id;
 
 	@Column(name = "id_trainer")
-	private Integer idTrainer;
+	private Long idTrainer;
 
 	@Column(name = "id_user_created")
-	private Integer idUserCreated;
+	private Long idUserCreated;
 
 	@Column(name = "id_user_curator")
-	private Integer idUserCurator;
+	private Long idUserCurator;
 
 	private String name;
 
@@ -72,27 +72,27 @@ public class OfflineSubGroup implements Serializable {
 		this.group_id = group_id;
 	}
 
-	public Integer getIdTrainer() {
+	public Long getIdTrainer() {
 		return idTrainer;
 	}
 
-	public void setIdTrainer(Integer idTrainer) {
+	public void setIdTrainer(Long idTrainer) {
 		this.idTrainer = idTrainer;
 	}
 
-	public Integer getIdUserCreated() {
+	public Long getIdUserCreated() {
 		return idUserCreated;
 	}
 
-	public void setIdUserCreated(Integer idUserCreated) {
+	public void setIdUserCreated(Long idUserCreated) {
 		this.idUserCreated = idUserCreated;
 	}
 
-	public Integer getIdUserCurator() {
+	public Long getIdUserCurator() {
 		return idUserCurator;
 	}
 
-	public void setIdUserCurator(Integer idUserCurator) {
+	public void setIdUserCurator(Long idUserCurator) {
 		this.idUserCurator = idUserCurator;
 	}
 

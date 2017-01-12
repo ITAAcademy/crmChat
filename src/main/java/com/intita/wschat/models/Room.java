@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -71,7 +72,7 @@ public class Room implements Serializable,Comparable<Room> {
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<UserMessage> messages = new ArrayList<>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	private Set<ChatUser> users = new HashSet<>();	
 
 	@JsonIgnore
@@ -119,6 +120,9 @@ public class Room implements Serializable,Comparable<Room> {
 
 	public boolean addUser(ChatUser user) {
 		return users.add(user);
+	}
+	public boolean addUsers(ArrayList<ChatUser> users) {
+		return this.users.addAll(users);
 	}
 	public boolean removeUser(ChatUser user) {
 		return users.remove(user);

@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.IntitaConsultation;
+import com.intita.wschat.models.OfflineGroup;
+import com.intita.wschat.models.OfflineSubGroup;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
@@ -46,6 +49,7 @@ import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
+import com.intita.wschat.services.OfflineStudentsGroupService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -59,6 +63,23 @@ import com.intita.wschat.util.ProfanityChecker;
 
 @Controller
 public class StudentsGroupsController {
+	@Autowired private ChatUsersService chatUsersService;
+	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 	
-	
+	@RequestMapping(value = "group_operations/update/{subGroupId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean getBotCategoryNamesHavingString(@PathVariable Integer subGroupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		User intitaUser = user.getIntitaUser();
+		if(intitaUser == null)
+			return false;
+		
+		OfflineSubGroup subGroup = offlineStudentsGroupService.getSubGroup(subGroupId);
+		if(subGroup == null || subGroup.getIdTrainer() != intitaUser.getId())
+			return false;
+		
+		offlineStudentsGroupService.updateGroupRoom(subGroup);
+		
+		return true;
+	}
 }
