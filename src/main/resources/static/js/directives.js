@@ -342,6 +342,34 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
+            $scope.typeaheadOptions = {
+                highlightFirst: true,
+                searchMethod: "getUsersByEmail",
+                templateUrl: "static_templates/usersSearch.html",
+                onSelect:"onFriendClick",
+                delay:1000,
+                minLength:1
+            };
+
+            $scope.getUsersByEmail= function(query, deferred) {
+
+                var url = serverPrefix + "/get_users_like?login=" + query;
+                /*
+                 if (ignore == true) {
+                 url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
+                 } else {
+                 url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
+                 }*/
+
+                $http.get(url).success((function (deferred, data) { // send request
+
+                    // format data
+                    var results = data;
+                    // resolve the deferred object
+                    deferred.resolve({results:results});
+                }).bind(this, deferred));
+            };
+
             $scope.rooms = RoomsFactory.getRooms;
             $scope.searchEnabled = false;
             $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;

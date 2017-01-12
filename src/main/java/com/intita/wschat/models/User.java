@@ -39,7 +39,7 @@ import jsonview.Views;
  * @author Nicolas Haiduchok
  */
 @Entity
-public class User implements UserDetails, Serializable,Comparable<User>{
+public class  User implements UserDetails, Serializable,Comparable<User>{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
 

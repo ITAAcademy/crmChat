@@ -3,7 +3,9 @@
     <div class="contacts_menu_item " ng-click="showContacts()" ng-class="{active: tabState == 'Contacts'}">КОНТАКТИ</div>
     <div class="last_contacts_menu_item" ng-click="showLastContacts()" ng-class="{active: tabState == 'LastContacts'}">ОСТАННІ</div>
     <div class="group_icon"><img src="images\Shape 1.svg" alt="" /></div>
-    <input type="text" id = "room_search_input" class="room_search_input" />
+    <input szn-autocomplete="typeaheadOptions" type="text" id = "room_search_input" class="room_search_input" name="room_search_input"
+           ng-model="searchInputValueEmail"  placeholder="search"
+     />
 </div>
 <div class="items_list_block bottom_block scroll">
     <div class="section" ng-repeat="room in (roomsF = ((rooms() | roomsBlockFilter : tabState) | orderBy:sortBy))">

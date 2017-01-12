@@ -395,6 +395,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $scope.show_search_list = false;
         $scope.show_search_list_admin = false;
     }
+    $scope.onFriendClick = function(user) {
+        if(user.chatUserId != undefined && user.chatUserId != null)
+            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+        else
+            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.id + '?isChatId=false');
+    }
 
     $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
         if (item == undefined || item == '')
@@ -476,7 +482,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.changeUser = function(chatUserId, chatUserNickName) {
 
         $scope.emails = [];
-
         $scope.chatUserId = chatUserId;
         $scope.chatUserNickname = chatUserNickName;
         $scope.searchResultAdmin = "";
