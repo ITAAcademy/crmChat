@@ -70,6 +70,7 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.LecturesService;
+import com.intita.wschat.services.OfflineStudentsGroupService;
 import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -113,6 +114,7 @@ public class RoomController {
 	@Autowired private BotController botController;
 	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
 	@Autowired private RoomPermissionsService roomPermissionsService;
+	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 
 
 	public static class ROLE
@@ -768,7 +770,7 @@ public class RoomController {
 	/*
 	 * Only for remove self from room
 	 */
-	boolean removeUserFromRoomFullyWithoutCheckAuthorization( ChatUser user_o, Room room_o){
+	public boolean removeUserFromRoomFullyWithoutCheckAuthorization( ChatUser user_o, Room room_o){
 		//check for BOT
 		if(user_o.getId() == BotParam.BOT_ID)
 			return false;
@@ -781,7 +783,7 @@ public class RoomController {
 		}
 
 		roomService.removeUserFromRoom(user_o, room_o);
-		chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
+	//	chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
 		updateParticipants();//force update
@@ -846,13 +848,14 @@ public class RoomController {
 		{
 			return false;
 		}
-
+/*
 		Set<Room> all = user_o.getRoomsFromUsers();
 		all.addAll(user_o.getRootRooms());
 		if(all.contains(room_o))
-			return false;
+			return false;*/
 
-		roomService.addUserToRoom(user_o, room_o);
+		if(roomService.addUserToRoom(user_o, room_o) == false)
+			return false;
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
 		updateParticipants();

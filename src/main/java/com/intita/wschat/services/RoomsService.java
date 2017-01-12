@@ -332,6 +332,8 @@ public class RoomsService {
 		if(user == null)
 			return false;
 		//have premition?
+		if(room.getChatUsers().contains(user))
+			return false;
 
 		room.addUser(user);
 		roomRepo.save(room);
@@ -346,7 +348,7 @@ public class RoomsService {
 		if(user == null)
 			return false;
 		//have premition?
-
+		chatLastRoomDateService.removeUserLastRoomDate(user, room);
 		room.removeUser(user);
 		roomRepo.save(room);
 		return true;

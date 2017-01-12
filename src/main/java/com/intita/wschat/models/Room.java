@@ -87,6 +87,7 @@ public class Room implements Serializable,Comparable<Room> {
 		public static final short DEFAULT = 0;
 		public static final short PRIVATE = 1;
 		public static final short CONSULTATION = 2;
+		public static final short STUDENTS_GROUP = 4;
 	}
 
 	/*
