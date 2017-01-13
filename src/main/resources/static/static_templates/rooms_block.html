@@ -21,7 +21,7 @@
                     <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{returnAvatar(room)}}" alt="" />
                 </div>
                 <div class="text_info">
-                    <div class="user_name">{{room.string}}</div>
+                    <div class="user_name">{{room.roomId}}:{{room.string}}</div>
                 </div>
                 <div class="contact_control">
                     <img ng-if="authorize && canBeRemoved(room) && createEnabled == false" ng-click="toggleAskForDeleteMe($event, room)" src="images\cross13x15.png" alt="" />

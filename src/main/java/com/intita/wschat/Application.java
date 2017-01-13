@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.flywaydb.core.Flyway;
+import org.hibernate.SessionFactory;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -42,7 +44,7 @@ import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 public class Application extends SpringBootServletInitializer  implements AsyncConfigurer  {
 
 
-	
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
@@ -109,6 +111,10 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
      
          
         return factory;
+    }
+    @Bean
+    public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf){
+        return hemf.getSessionFactory();
     }
 
 }

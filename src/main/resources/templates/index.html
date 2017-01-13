@@ -41,7 +41,7 @@
             <div class="tools_area" ng-draggable='dragOptions'>
                 <div class="tools_dropdown_container">
                     <ul id="tools_dropdown" class="popup_dropdown">
-                        <li class="show_attaches_item"><a>Показати додатки</a></li>
+                        <li ng-click="showAttaches()" class="show_attaches_item"><a >Показати додатки</a></li>
                         <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
                         <li class="remove_history_item"><a>Видалити історію</a></li>
                     </ul>
@@ -52,7 +52,7 @@
                 <div class="search_box">
                     <input ng-model="messageSearchQuery" type="text" class="transparent_input search_input" placeholder="Пошук..." />
                     <img ng-click="enableMessagesSearch()" ng-class="{'showed':(messageSearchQuery.length &gt; 0 &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
-                    <img ng-click="disableMessagesSearch()" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
+                    <img ng-click="disableMessagesSearch(true)" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
                 </div>
                 <div class="window_panel">
                     <div id="minimize_btn"></div>
@@ -74,9 +74,9 @@
                     </div>
                     <div id="attaches_area" class="attaches_area">
                         <ul id="attaches_dropdown" class="popup_dropdown">
-                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" href="#">Документ</a></li>
-                            <li class="video_item"><a href="#">Відео</a></li>
-                            <li class="audio_item"><a href="#">Аудіо</a></li>
+                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" >Документ</a></li>
+                            <li class="video_item"><a >Відео</a></li>
+                            <li class="audio_item"><a >Аудіо</a></li>
                         </ul>
                         <div class="upload_file_form_container">
                         </div>
