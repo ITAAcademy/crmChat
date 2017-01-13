@@ -12,6 +12,7 @@ import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.web.ChatController;
+import com.mysql.fabric.xmlrpc.base.Array;
 @Component
 public class RoomModelSimple {
 	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
@@ -50,6 +51,7 @@ public class RoomModelSimple {
 	private Date lastMessageDate;
 	private int participantsCount;
 	private String avatars[];
+	private Long[] privateUserIds;
 	Integer userPermissions;
 
 	public short getType() {
@@ -97,11 +99,15 @@ public class RoomModelSimple {
 		{
 			try {
 				PrivateRoomInfo info = roomService.getPrivateRoomInfo(room);
-				if(!info.getFirtsUser().equals(user))
-					simpleModel.string = info.getFirtsUser().getNickName();
+				ChatUser first = info.getFirtsUser();
+				ChatUser second = info.getSecondUser();
+				if(!first.equals(user))
+					simpleModel.string = first.getNickName();
 				else
-					simpleModel.string = info.getSecondUser().getNickName();
-
+					simpleModel.string = second.getNickName();
+				simpleModel.privateUserIds = new Long[2];
+				simpleModel.privateUserIds[0] = first.getId();
+				simpleModel.privateUserIds[1] = second.getId();
 			} catch (NullPointerException e) {
 				simpleModel.string = room.getName();
 			}
@@ -223,4 +229,21 @@ public class RoomModelSimple {
 	public void setUserPermissions(Integer userPermissions) {
 		this.userPermissions = userPermissions;
 	}
+
+	public Long getLastMessageAuthorId() {
+		return lastMessageAuthorId;
+	}
+
+	public void setLastMessageAuthorId(Long lastMessageAuthorId) {
+		this.lastMessageAuthorId = lastMessageAuthorId;
+	}
+
+	public Long[] getPrivateUserIds() {
+		return privateUserIds;
+	}
+
+	public void setPrivateUserIds(Long[] privateUserIds) {
+		this.privateUserIds = privateUserIds;
+	}
+	
 }

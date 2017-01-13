@@ -280,7 +280,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
     var isCreateDialogWndVisible = false;
 
-    $scope.addDialog = function() {};
     $rootScope.formatDateWithLast = formatDateWithLast;
     $rootScope.formatDate = formatDate;
 

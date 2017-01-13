@@ -112,14 +112,23 @@ angular.module('springChat.directives').directive('dir', function($compile, $par
 })
 
 
-angular.module('springChat.directives').directive('modaleToggle', function($compile, $parse) {
+angular.module('springChat.directives').directive('modaleToggle', function($compile, $parse, $rootScope) {
     return {
         restrict: 'EA',
         scope: {
+            id: '=',
             callback: '&callback',
             ignoreId: '@ignoreId'
         },
         link: function(scope, element, attr) {
+            if(scope.id != undefined)
+            {
+                if($rootScope.__modaleToggle == undefined)
+                    $rootScope.__modaleToggle = new Map();
+                $rootScope.__modaleToggle[scope.id] = {
+                    restart : function(){toggle = false}
+                }
+            }
             var toggle = false;
             var ignoredList = [];
             if (scope.ignoreId.trim()[0] == '[') {
@@ -368,7 +377,7 @@ angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filt
 
 
 
-function roomsBlock($http, RoomsFactory, ChannelFactory) {
+function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
@@ -409,12 +418,15 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
             $scope.displayLetters = false;
             $scope.room_create_input = "";
 
+
             $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
             }
-            $scope.createNewRoom = function() {
+            $scope.createNewRoom = function($event) {
+                RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
+                //$scope.toggleCreate();
                 debugger;
-                alert("create new Room");
+                return false;
             }
 
             $scope.toggleCreate = function() {
@@ -423,6 +435,10 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 {
                     userListForAddedToNewRoom = [];
                     $scope.room_create_input = "";
+                }
+                else
+                {
+                    $scope.tabState = "Contacts";
                 }
             }
 
@@ -448,8 +464,16 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 return room.avatars[0];
             }
 
-            $scope.addForCreatRoom = function(chatUserId) {
+            $scope.addForCreatRoom = function(room) {
                 // alert(chatUserId);
+                if(room.type == 1 && room.privateUserIds != undefined)
+                {
+                    if(room.privateUserIds[0] == UserFactory.getChatUserId())
+                        userListForAddedToNewRoom.push(room.privateUserIds[1]);    
+                    if(room.privateUserIds[1] == UserFactory.getChatUserId())
+                        userListForAddedToNewRoom.push(room.privateUserIds[0]);    
+                }
+                
             }
 
             $scope.doGoToRoom = function(roomId) {

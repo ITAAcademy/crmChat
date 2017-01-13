@@ -97,7 +97,7 @@ public class ChatUsersService {
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(List<Long> ids){
-		return chatUsersRepo.findByIdIn(ids);
+		return chatUsersRepo.findAllByIdIn(ids);
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(){
