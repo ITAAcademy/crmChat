@@ -121,13 +121,29 @@ angular.module('springChat.directives').directive('modaleToggle', function($comp
         },
         link: function(scope, element, attr) {
             var toggle = false;
+            var ignoredList = [];
+            if (scope.ignoreId.trim()[0] == '[') {
+                try {
+                    ignoredList = eval(scope.ignoreId);
+                } catch (e) {
+                    ignoredList.push(scope.ignoreId);
+                }
+            } else
+                ignoredList.push(scope.ignoreId);
             if (scope.callback != null) {
                 $(window).click(function(e) {
                     if (e.target.style.pointerEvents == "none")
                         return;
-                    var ignoredElement = document.getElementById(scope.ignoreId);
 
-                    if (e.target === element[0] || element[0].contains(e.target) || (toggle && e.target != ignoredElement && !ignoredElement.contains(e.target))) {
+                    var ignore = true;
+                    for (var i = 0; i < ignoredList.length; i++) {
+                        var ignoredElement = document.getElementById(ignoredList[i]);
+                        if (ignoredElement == null)
+                            continue;
+                        ignore = ignore && e.target != ignoredElement && !ignoredElement.contains(e.target);
+                    }
+
+                    if (e.target === element[0] || element[0].contains(e.target) || (toggle && ignore)) {
                         scope.$apply(function() {
                             scope.callback();
                             toggle = !toggle;
@@ -319,9 +335,9 @@ angular.module('springChat.directives').directive('emHeightSource', function() {
         },
         link: function(scope, elem, attrs) {
             elem.on("resize", function() {
-                 if (scope.__height != elem.height()) {
+                if (scope.__height != elem.height()) {
                     debugger;
-                    scope.callback({'oldSize' : scope.__height, 'newSize' : elem.height()});
+                    scope.callback({ 'oldSize': scope.__height, 'newSize': elem.height() });
                 }
                 scope.__height = elem.height();
             });
@@ -367,7 +383,6 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
             };
 
             $scope.getUsersByEmail = function(query, deferred) {
-
                 var url = serverPrefix + "/get_users_like?login=" + query;
                 /*
                  if (ignore == true) {
@@ -375,9 +390,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                  } else {
                  url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
                  }*/
-
                 $http.get(url).success((function(deferred, data) { // send request
-
                     // format data
                     var results = data;
                     // resolve the deferred object
@@ -385,15 +398,34 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 }).bind(this, deferred));
             };
 
+            var userListForAddedToNewRoom = [];
+
             $scope.rooms = RoomsFactory.getRooms;
             $scope.searchEnabled = false;
+            $scope.createEnabled = false;
             $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
             $scope.tabState = "Contacts";
             $scope.sortBy = ['date', 'string'];
             $scope.displayLetters = false;
+            $scope.room_create_input = "";
+
             $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
             }
+            $scope.createNewRoom = function() {
+                debugger;
+                alert("create new Room");
+            }
+
+            $scope.toggleCreate = function() {
+                $scope.createEnabled = !$scope.createEnabled;
+                if($scope.createEnabled == false)
+                {
+                    userListForAddedToNewRoom = [];
+                    $scope.room_create_input = "";
+                }
+            }
+
             $scope.canBeRemoved = function(room) {
                 if (room.type == 1)
                     return false;
@@ -416,8 +448,13 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 return room.avatars[0];
             }
 
+            $scope.addForCreatRoom = function(chatUserId) {
+                // alert(chatUserId);
+            }
+
             $scope.doGoToRoom = function(roomId) {
-                //if ($scope.mouseBusy == false)
+                if ($scope.searchEnabled || $scope.createEnabled)
+                    return;
                 ChannelFactory.changeLocation('/dialog_view/' + roomId);
             }
             var nice = $(".scroll");
@@ -632,94 +669,30 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
             }
         }
     }
-
 })
 
 
-angular.module('springChat.directives').directive('ngResizeble', function($document) {
+angular.module('springChat.directives').directive('checkbox', function() {
     return {
-        restrict: 'A',
+        restrict: 'EA',
+        require: 'ngModel',
+        replace: true,
+        template: '<a class="g-checkbox"><input id="{{id}}" type="checkbox" style="display: none" ng-checked="ngModel"/></a>',
         scope: {
-            resizeOptions: '=ngResizeble'
+            id: '@',
+            ngModel: '=',
+            ngChange: '&'
         },
-        link: function(scope, elem, attr) {
-            var startX, startY, x = 0,
-                y = 0,
-                start, stop, resize, container;
-
-
-
-
-            var resizeElement;
-            var containerElm;
-            // Obtain resize options
-            if (scope.resizeOptions) {
-                start = scope.resizeOptions.start;
-                resize = scope.resizeOptions.resize;
-                stop = scope.resizeOptions.stop;
-                var id = scope.resizeOptions.container;
-                if (id) {
-                    container = document.getElementById(id).getBoundingClientRect();
-                    containerElm = angular.element(document.getElementById(id));
-                }
-                resizeElement = angular.element(document.getElementById(scope.resizeOptions.resizeElement));
-
-            }
-
-            // Bind mousedown event
-            elem.on('mousedown', function(e) {
-                debugger;
-                if ($(resizeElement).hasClass("resize-disable") || e.target != elem[0])
-                    return true;
-
-                e.preventDefault();
-                startX = e.clientX - resizeElement[0].offsetLeft;
-                startY = e.clientY - resizeElement[0].offsetTop;
-                $document.on('mousemove', mousemove);
-                $document.on('mouseup', mouseup);
-                if (start) start(e);
-            });
-
-            // Handle resize event
-            function mousemove(e) {
-                debugger;
-                y = e.clientY - startY;
-                x = e.clientX - startX;
-                setPosition();
-                if (resize) resize(e);
-            }
-
-            // Unbind resize events
-            function mouseup(e) {
-                $document.unbind('mousemove', mousemove);
-                $document.unbind('mouseup', mouseup);
-                if (stop) stop(e);
-            }
-
-            // Move element, within container if provided
-            function setPosition() {
-                var width = resizeElement[0].offsetWidth,
-                    height = resizeElement[0].offsetHeight;
-
-                if (container) {
-                    if (x < container.left) {
-                        x = container.left;
-                    } else if (x > container.right - width) {
-                        x = container.right - width;
-                    }
-                    if (y < container.top) {
-                        y = container.top;
-                    } else if (y > container.bottom - height) {
-                        y = container.bottom - height;
-                    }
-                }
-
-                resizeElement.css({
-                    top: y + 'px',
-                    left: x + 'px'
-                });
-            }
+        link: function(scope, element, attrs) {
+            element.removeAttr('id');
+            element.bind('click', function() {
+                element.toggleClass('checked');
+                scope.ngModel = !scope.ngModel;
+                if (scope.ngChange != undefined)
+                    scope.ngChange();
+                scope.$apply();
+            })
         }
-    }
 
-})
+    };
+});

@@ -72,7 +72,7 @@
                         <button class="skype"><img src="images\skype24x23.png" alt="" /></button>
                         <button class="microphone"><img src="images\mic18x23.png" alt="" /></button>
                     </div>
-                    <div class="attaches_area">
+                    <div id="attaches_area" class="attaches_area">
                         <ul id="attaches_dropdown" class="popup_dropdown">
                             <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" href="#">Документ</a></li>
                             <li class="video_item"><a href="#">Відео</a></li>
@@ -81,22 +81,12 @@
                         <div class="upload_file_form_container">
                         </div>
                         <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
-                        <button class="attaches" ng-click="attaches_dropdown_click()"><img src="images\attaches26x23.png" alt="" /></button>
+                        <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><img src="images\attaches26x23.png" alt="" /></button>
                         <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--
-        <div class="ui-resizable-handle ui-resizable-nw" id="nwgrip"></div>
-        <div class="ui-resizable-handle ui-resizable-ne" id="negrip"></div>
-        <div class="ui-resizable-handle ui-resizable-sw" id="swgrip"></div>
-        <div class="ui-resizable-handle ui-resizable-se" id="segrip"></div>
-        <div class="ui-resizable-handle ui-resizable-n" id="ngrip"></div>
-        <div class="ui-resizable-handle ui-resizable-s" id="sgrip"></div>
-        <div class="ui-resizable-handle ui-resizable-e" id="egrip"></div>
-        <div class="ui-resizable-handle ui-resizable-w" id="wgrip"></div>
-        -->
     </div>
 
     <script th:inline="javascript">
