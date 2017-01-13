@@ -813,9 +813,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var heightDelta = currentHeight - futureHeight;
         if (heightDelta<0) return messagesScroll.scrollTop();
         var scrollHeight = messagesScroll[0].scrollHeight + heightDelta - savedPaddingHeight;
-        console.log('heightDelta:'+heightDelta);
+        /*console.log('heightDelta:'+heightDelta);
         console.log('savedPaddingHeight:'+savedPaddingHeight);
-        console.log('scrollHeight:'+scrollHeight);
+        console.log('scrollHeight:'+scrollHeight);*/
         if (typeof savedDistanceToBottom === "undefined") return;
         var messagesScrollOuterHeight = outerHeight;//$('#messagesScroll').outerHeight();
         var messagesScrollElementScrollHeight = scrollHeight;// $('#messagesScroll')[0].scrollHeight;
