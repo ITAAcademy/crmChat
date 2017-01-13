@@ -22,7 +22,7 @@
                     <div class="user_name">{{room.string}}</div>
                 </div>
                 <div class="contact_control">
-                    <img ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" src="images\cross13x15.png" alt="" />
+                    <img ng-if="authorize && canBeRemoved(room)" ng-click="toggleAskForDeleteMe($event, room)" src="images\cross13x15.png" alt="" />
                 </div>
             </div>
         </div>

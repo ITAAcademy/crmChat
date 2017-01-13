@@ -52,6 +52,13 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }
     $scope.newMessage = "";
 
+    var roomElement = angular.element(document.getElementById("panel-body"));
+    $scope.resizeRoomElement = function(oldSize, newSize)
+    {
+        debugger;
+        roomElement.css('height', 'calc(100% - ' + newSize + 'px)');
+    }
+
     $scope.getStateClass = function() {
             switch ($scope.state) {
                 case 0:

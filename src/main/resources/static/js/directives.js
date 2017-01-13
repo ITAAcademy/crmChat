@@ -312,15 +312,28 @@ function messagesBlock($http, RoomsFactory) {
 
     };
 };
+angular.module('springChat.directives').directive('emHeightSource', function() {
+    return {
+        scope: {
+            callback: '&callback'
+        },
+        link: function(scope, elem, attrs) {
+            elem.on("resize", function() {
+                 if (scope.__height != elem.height()) {
+                    debugger;
+                    scope.callback({'oldSize' : scope.__height, 'newSize' : elem.height()});
+                }
+                scope.__height = elem.height();
+            });
+        }
+    }
 
+});
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filter('roomsBlockFilter', function() {
     return function(fields, state) {
         if (fields) { // added check for safe code
             var arrayFields = [];
             if (state == "LastContacts") {
-                /*fields.sort(function(a, b) {
-                    return a.date - b.date
-                })*/
                 return fields;
             }
             /**
@@ -335,7 +348,9 @@ angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filt
             return arrayFields;
         }
     };
-});;
+});
+
+
 
 function roomsBlock($http, RoomsFactory, ChannelFactory) {
     return {
@@ -346,12 +361,12 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                 highlightFirst: true,
                 searchMethod: "getUsersByEmail",
                 templateUrl: "static_templates/usersSearch.html",
-                onSelect:"onFriendClick",
-                delay:1000,
-                minLength:1
+                onSelect: "onFriendClick",
+                delay: 1000,
+                minLength: 1
             };
 
-            $scope.getUsersByEmail= function(query, deferred) {
+            $scope.getUsersByEmail = function(query, deferred) {
 
                 var url = serverPrefix + "/get_users_like?login=" + query;
                 /*
@@ -361,12 +376,12 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
                  url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
                  }*/
 
-                $http.get(url).success((function (deferred, data) { // send request
+                $http.get(url).success((function(deferred, data) { // send request
 
                     // format data
                     var results = data;
                     // resolve the deferred object
-                    deferred.resolve({results:results});
+                    deferred.resolve({ results: results });
                 }).bind(this, deferred));
             };
 
@@ -374,10 +389,15 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
             $scope.searchEnabled = false;
             $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
             $scope.tabState = "Contacts";
-            $scope.sortBy = ['date','string'];
+            $scope.sortBy = ['date', 'string'];
             $scope.displayLetters = false;
             $scope.toggleSearch = function() {
                 $scope.searchEnabled = !$scope.searchEnabled;
+            }
+            $scope.canBeRemoved = function(room) {
+                if (room.type == 1)
+                    return false;
+                return true;
             }
             $scope.showLastContacts = function() {
                 $scope.tabState = "LastContacts";
@@ -409,87 +429,86 @@ function roomsBlock($http, RoomsFactory, ChannelFactory) {
 
 angular.module('springChat.directives').directive('fileMiniature', fileMiniature);
 
-function fileMiniature($http, RoomsFactory, ChannelFactory,$parse) {
+function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/file_miniature.html',
         link: function($scope, element, attributes) {
-          //TODO filesMiniature
-          var supportedExtensions = ['aac',
-          'ai',
-          ,'aiff',
-          'asp',
-          'avi',
-          'bmp',
-          'c',
-          'cpp',
-          'css',
-          'dat',
-          'dmg',
-          'doc',
-          'docx',
-          'dot',
-          'dotx',
-          'dwg',
-          'dxf',
-          'eps',
-          'exe',
-          'flv',
-          'gif',
-          'h',
-          'html',
-          'ics',
-          'iso',
-          'java',
-          'jpg',
-          'js',
-          'key',
-          'less',
-          'm4v',
-          'mid',
-          'mov',
-          'mp3',
-          'mp4',
-          'mpg',
-          'odp',
-          'ods',
-          'odt',
-          'otp',
-          'ots',
-          'ott',
-          'pdf',
-          'php',
-          'png',
-          'pps',
-          'ppt',
-          'psd',
-          'py',
-          'qt',
-          'rar',
-          'rb',
-          'rtf',
-          'sass',
-          'scss',
-          'sql',
-          'tga',
-          'tgz',
-          'tiff',
-          'txt',
-          'wav',
-          'xls',
-          'xlsx',
-          'xml',
-          'yml',
-          'zip'
-          ];
-            var getFileExtensionByName = function(name){
+            //TODO filesMiniature
+            var supportedExtensions = ['aac',
+                'ai', , 'aiff',
+                'asp',
+                'avi',
+                'bmp',
+                'c',
+                'cpp',
+                'css',
+                'dat',
+                'dmg',
+                'doc',
+                'docx',
+                'dot',
+                'dotx',
+                'dwg',
+                'dxf',
+                'eps',
+                'exe',
+                'flv',
+                'gif',
+                'h',
+                'html',
+                'ics',
+                'iso',
+                'java',
+                'jpg',
+                'js',
+                'key',
+                'less',
+                'm4v',
+                'mid',
+                'mov',
+                'mp3',
+                'mp4',
+                'mpg',
+                'odp',
+                'ods',
+                'odt',
+                'otp',
+                'ots',
+                'ott',
+                'pdf',
+                'php',
+                'png',
+                'pps',
+                'ppt',
+                'psd',
+                'py',
+                'qt',
+                'rar',
+                'rb',
+                'rtf',
+                'sass',
+                'scss',
+                'sql',
+                'tga',
+                'tgz',
+                'tiff',
+                'txt',
+                'wav',
+                'xls',
+                'xlsx',
+                'xml',
+                'yml',
+                'zip'
+            ];
+            var getFileExtensionByName = function(name) {
                 return name.split('.').pop();
             }
-            var isExtensionSupported = function (extension){
-                if (supportedExtensions.indexOf(extension)!=-1) return true;
+            var isExtensionSupported = function(extension) {
+                if (supportedExtensions.indexOf(extension) != -1) return true;
                 else return false;
             }
-            var getImageByExtension = function(ext){
+            var getImageByExtension = function(ext) {
                 var urlTemplate = "images/svg-file-icons/{0}.svg";
                 if (isExtensionSupported(ext)) return urlTemplate.format(ext);
                 else return urlTemplate.format('nopreview');

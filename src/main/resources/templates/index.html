@@ -8,32 +8,44 @@
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/angular-szn-autocomplete.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/ngDialog.min.css"/>
-    <link rel="stylesheet" href="css/ngDialog-theme-default.min.css"/>
+    <link rel="stylesheet" href="css/ngDialog.min.css" />
+    <link rel="stylesheet" href="css/ngDialog-theme-default.min.css" />
 </head>
+
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="left_panel">
-            <div students-block="true"></div>
-            <div tenants-block="true"></div>
-            
-            <div participants-block="true"></div>
-            <!--  ROOMS BLOCK -->
-            <div rooms-block="true" style="height:100%"></div>
-            <div class="bottom_logo">
-                <img src="images\intita95x30.png" alt="" />
+            <div class="mainContent">
+                <div class="workplace_outter">
+                    <div class="workplace_inner">
+                        <div class="panel panel-default">
+                            <div id="panel-heading" em-height-source = "true" callback="resizeRoomElement(oldSize, newSize)">
+                                <div students-block="true"></div>
+                                <div tenants-block="true"></div>
+                                <div participants-block="true"></div>
+                            </div>
+                            <div id="panel-body">
+                                <div rooms-block="true" style="height:100%"></div>
+                                <div class="bottom_logo">
+                                    <img src="images\intita95x30.png" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
             <div class="tools_area" ng-draggable='dragOptions'>
                 <div class="tools_dropdown_container">
                     <ul id="tools_dropdown" class="popup_dropdown">
-                        <li class="show_attaches_item"><a href="#">Показати додатки</a></li>
+                        <li class="show_attaches_item"><a>Показати додатки</a></li>
                         <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
-                        <li class="remove_history_item"><a href="#">Видалити історію</a></li>
+                        <li class="remove_history_item"><a>Видалити історію</a></li>
                     </ul>
-                    <button modale-toggle = "true" callback = "tools_dropdown_click()" ignore-id = "tools_dropdown" class="open_dropdown_button">
+                    <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
                         <img src="images\triple_dots26x8.png" alt="" />
                     </button>
                 </div>
@@ -88,17 +100,17 @@
     </div>
 
     <script th:inline="javascript">
-		var globalConfig = {  
-					 baseUrl:[[${config.get('baseUrl')}]], 
+        var globalConfig = {  
+                     baseUrl:[[${config.get('baseUrl')}]], 
                      imagesPath : [[${config.get('imagesPath')}]],
-					 lang: [[${config.get('currentLang')}]]
-		};;
-		
-		var USER_COPABILITIES_BY_ROOM = [[${user_copabilities_supported}]];
-		
-		var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
-		var fileUploadLocal = [[${lgPack.fileOperations}]];
-	</script>
+                     lang: [[${config.get('currentLang')}]]
+        };;
+        
+        var USER_COPABILITIES_BY_ROOM = [[${user_copabilities_supported}]];
+        
+        var formBuilderLocal = [[${lgPack.lables.formBuilder}]];
+        var fileUploadLocal = [[${lgPack.fileOperations}]];
+    </script>
     <script src="lib/jquery.min.js"></script>
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular-animate/angular-animate.js"></script>
@@ -124,7 +136,7 @@
     <script src="js/ChannelFactory.js"></script>
     <script src="js/UserFactory.js"></script>
     <script src="lib/angular-szn-autocomplete.js"></script>
-	<script src="lib/angular-file-upload/ng-file-upload.min.js"></script>
+    <script src="lib/angular-file-upload/ng-file-upload.min.js"></script>
     <script src="lib/jquery.ba-resize.min.js"></script>
     <script src="lib/angular-contenteditable.js"></script>
 </body>
