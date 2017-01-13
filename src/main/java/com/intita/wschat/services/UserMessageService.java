@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.stereotype.Service;
@@ -51,6 +54,9 @@ public class UserMessageService {
 	@Autowired
 	private BotItemContainerService botItemContainerService;
 
+	@Autowired
+	private SessionFactory sessionFactory;
+
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
 		return (ArrayList<UserMessage>) IteratorUtils.toList(userMessageRepository.findAll().iterator());
@@ -85,18 +91,13 @@ public class UserMessageService {
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
-	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> getFirst20UserMessagesByRoomIdContains(Long roomId,String searchQuery) {
-		return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndBodyIgnoreCaseContainingOrderByIdDesc(
-				new Room(roomId),searchQuery));
-	}
+
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang) {
 		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
-
 		return wrapBotMessages(userMessageRepository.findByRoom(new Room(roomId)));
 	}
 
@@ -229,38 +230,56 @@ public class UserMessageService {
 		}
 	}
 
+	@Transactional
+	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate, String body,boolean filesOnly,int messagesCount){
+		if (roomId==null) return new ArrayList<UserMessage>();
+		System.out.println("roomId:"+roomId);
+		ArrayList<UserMessage> messages;
+
+			String whereParam = "";
+
+			// Construct WHERE part
+		    whereParam += "m.room.id = :roomId";
+			if (beforeDate!=null) {
+				if (whereParam.length()>0) whereParam += " AND ";
+				whereParam +=  "m.date < :beforeDate";
+			}
+			if (body!=null){
+				if (whereParam.length()>0) whereParam += " AND ";
+				whereParam += "m.body like :body";
+			}
+			if (filesOnly){
+				if (whereParam.length()>0) whereParam += " AND ";
+				whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson is not equal :emptyJsonObject";
+			}
+			String wherePart = "WHERE "+ whereParam;
+		String orderPart = " ORDER BY m.date DESC,m.id";
 
 
+			String hql = "SELECT m FROM chat_user_message m " + " "+wherePart + orderPart;
+		System.out.println("hql:"+hql);
+			Session session = sessionFactory.getCurrentSession();
+			Query query = session.createQuery(hql);
+			query.setMaxResults(messagesCount);
 
-	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date)  {
-		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
-		return  wrapBotMessages(messages);
+		//set params
+			if(roomId!=null)
+				query.setLong("roomId",roomId);
+			if (beforeDate!=null)
+			query.setTimestamp("beforeDate", beforeDate);
+		if (body!=null)
+			query.setString("body", "%"+body+"%");
+		if (filesOnly){
+			query.setString("emptyJsonObject", "[]");
+		}
+
+		messages = new ArrayList<>(query.list());
+		/*System.out.println("Before date:"+beforeDate);
+		for (UserMessage m : messages){
+			System.out.println("message:"+m.getBody() + " "+m.getDate());
+		}*/
+		return wrapBotMessages(messages);
 	}
-	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> get10MessagesByRoomDateAfter(Room room, Date date){
-		ArrayList<UserMessage> messages =  userMessageRepository.findFirst10ByRoomAndDateAfter(room, date);
-		return  wrapBotMessages(messages);
-	}
-	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> get10MessagesByRoomDateBefore(Room room, Date date){		
-		ArrayList<UserMessage> messages =  userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date);
-		return  wrapBotMessages(messages);
-	}
-	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> get10MessagesByRoomDateBeforeAndBodyContains(Room room, Date date,String body){
-		ArrayList<UserMessage> messages = (body==null || body.length()<1) ?
-				userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date) : userMessageRepository.
-				findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(room, date,body);
-		return  wrapBotMessages(messages);
-	}
-    @Transactional(readOnly=true)
-    public ArrayList<UserMessage> get10MessagesByRoomAndBodyContains(Room room, Date date,String body){
-        ArrayList<UserMessage> messages = (body==null || body.length()<1) ?
-                userMessageRepository.findFirst10ByRoomAndDateBeforeOrderByIdDesc(room, date) : userMessageRepository.
-                findFirst10ByRoomAndDateBeforeAndBodyIgnoreCaseContainingOrderByIdDesc(room, date,body);
-        return  wrapBotMessages(messages);
-    }
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user)  {

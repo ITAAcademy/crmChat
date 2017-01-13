@@ -16,7 +16,7 @@ springChatControllers.config(function($routeProvider) {
 
 var chatControllerScope;
 
-springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', , function($locationProvider, $routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
+springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore',  function($locationProvider, $routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
     //maybe add button
 }]);
 
@@ -29,14 +29,14 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
     $rootScope.getNameFromUrl = getNameFromUrl;
-
     $scope.state = 2;
+    var loadOnlyFilesInfiniteScrollMode = false;
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
 
         }
-    }
+    };
     $scope.dragOptions = {
         start: function(e) {
             console.log("STARTING");
@@ -49,7 +49,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         },
         container: 'body',
         dragElement: 'consultant_wrapper'
-    }
+    };
     $scope.newMessage = "";
 
     $scope.getStateClass = function() {
@@ -61,12 +61,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
                 case 1:
                     $(".consultant_wrapper").removeClass("drag-disable");
                     return "minimize";
-                    break
+                    break;
                 case 2:
                     $(".consultant_wrapper").removeAttr("style");
                     $(".consultant_wrapper").addClass("drag-disable");
                     return "fullScreen";
-                    break
+                    break;
                 case -1:
                     return "closed";
                     break
@@ -770,12 +770,16 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var objDiv = document.getElementById("messagesScroll");
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
-    $scope.disableMessagesSearch = function() {
-        RoomsFactory.clearMessages();
-        RoomsFactory.loadMessagesContains(' ');
+    $scope.disableMessagesSearch = function(reloadMessages) {
+        if(reloadMessages===true) {
+            RoomsFactory.clearMessages();
+            RoomsFactory.loadMessagesContains('');
+            $timeout(function() {
+                $rootScope.message_busy = false;
+            }, 500);
 
+        }
         $scope.messageSearchEnabled = false;
-        $rootScope.message_busy = false;
         var objDiv = document.getElementById("messagesScroll");
         if (objDiv!=null)
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
@@ -783,7 +787,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.currentRoomIsNull = function() {
         return RoomsFactory.getCurrentRoom().roomId == null;
     }
-    $scope.$on('$routeChangeStart', $scope.disableMessagesSearch);
+    $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
     var savedDistanceToBottom;
     var savedPaddingHeight; 
     function saveScrollBottom(){
@@ -858,6 +862,25 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $scope.togleSoundEnable = function() {
             $scope.soundEnable = !$scope.soundEnable;
             localStorage.setItem('soundEnable', $scope.soundEnable);
+        }
+        $scope.showAttaches = function(){
+            var messagesWithFiles = RoomsFactory.getMessagesWithFiles();
+            loadOtherMessagesWithFiles();
+            loadOnlyFilesInfiniteScrollMode = true;
+        }
+        function loadOtherMessagesWithFiles(){
+                // /chat/room/{roomId}/get_messages_contains
+                if (currentRoom == null){
+                    console.warn('loadMessagesContains failed duing to current room is not selected');
+                    return;
+                }
+                $http.post(serverPrefix + "/chat/room/{0}/loadOtherMessageWithFiles".format(currentRoom.roomId), searchQuery).
+                success(function(data, status, headers, config) {
+                    loadMessagesFromArrayList(data);
+                }).
+                error(function(data, status, headers, config) {
+
+                });
         }
 
 

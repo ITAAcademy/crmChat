@@ -420,29 +420,38 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> loadOtherMessage(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
-		String dateMsStr = json.get("date");
-		if (dateMsStr == null || dateMsStr.length() < 1) return null;
-		Long dateMs = Long.parseLong(dateMsStr);
-		if (dateMs==null) return null;
-		Date date = new Date(dateMs);
-		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + date);
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
-		if( struct == null)
-			throw new ChatUserNotInRoomException("");
-		String searchQuery = json.get("searchQuery");
-		ArrayList<UserMessage> messages =userMessageService.get10MessagesByRoomDateBeforeAndBodyContains(struct.getRoom(), date,searchQuery);
-		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
+	public ArrayList<ChatMessage> loadOtherMessageMapping(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
+    return loadOtherMessage(room,json,principal,false);
+	}
+    @RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
+    @ResponseBody
+    public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
+        return loadOtherMessage(room,json,principal,true);
+    }
+    public ArrayList<ChatMessage> loadOtherMessage(Long room, Map<String, String> json, Principal principal, boolean filesOnly){
+        String dateMsStr = json.get("date");
+        if (dateMsStr == null || dateMsStr.length() < 1) return null;
+        Long dateMs = Long.parseLong(dateMsStr);
+        if (dateMs==null) return null;
+        Date date = new Date(dateMs);
+        System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + date);
+        CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
+        if( struct == null)
+            throw new ChatUserNotInRoomException("");
+        String searchQuery = json.get("searchQuery");
+        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,searchQuery,false,20);
+        if(messages.size() == 0) return null;
+        ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
 
-		if(messagesAfter.size() == 0)
-			return null;
+        if(messagesAfter.size() == 0)
+            return null;
 
-		return messagesAfter;
+        return messagesAfter;
 		/*	CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, chatUserServise, roomService);//Control room from LP
 		if( struct == null)
 			return "{}";
 		return mapper.writeValueAsString(retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom()));*/
-	}
+    }
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, userService, chatUsersService, roomService);//Control room from LP
@@ -1269,8 +1278,8 @@ public class ChatController {
 	}
 	@RequestMapping(value="/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestBody String searchQuery, Principal principal) throws JsonProcessingException {
-		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoomIdContains(roomId, searchQuery);
+	public ArrayList<ChatMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestBody(required=false) String searchQuery, Principal principal) throws JsonProcessingException {
+		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null,searchQuery,false,20);
         ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
         return chatMessages;
 	}

@@ -20,6 +20,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var ajaxRequestsForRoomLP = [];
     $rootScope.message_busy = true;
     var rooms = [];
+    var oldMessage;
 
     /*var updateContactsMapFromArray = function(contactsList) {
         for (var key in Object.keys(roomsMap))
@@ -384,7 +385,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function loadMessagesFromArrayList(list) {
-        oldMessage = list[list.length - 1];
+        oldMessage = list[list.length-1];
         for (var index = 0; index < list.length; index++) {
             if (list[index].hasOwnProperty("message")) {
                 calcPositionUnshift(list[index]);
@@ -394,6 +395,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     function clearMessages() {
         messages = [];
+        resetOldMessageInfo();
     }
 
     function loadSubscribeAndMessage(message) {
@@ -626,6 +628,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         }).
         error(goToPrivateDialogErr);
+    }
+
+   function resetOldMessageInfo (){
+        oldMessage = null;
     }
 
     var RoomsFactory = {
