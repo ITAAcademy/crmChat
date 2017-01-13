@@ -18,7 +18,7 @@ body
 
     &::-webkit-scrollbar-button
         background-size: contain
-        background-color: white
+        background-color: #fff
         background-repeat: no-repeat
         background-position-y: center
         background-color: #cfcfcf
@@ -78,12 +78,16 @@ body
     float: right
     height: 100%
     width: calc(100% - 301px)
-    background-color: white
+    background-color: #fff
     border-left: 2px solid #c5c5c5
 
 .items_list_block
+    width: 100%
+    color: #000
+    padding-bottom: 34px
+
     &.top_block
-        color: white
+        color: #fff
 
     .block_content
         max-height: 93px
@@ -111,6 +115,8 @@ body
             margin-left: 130px
 
     &.middle_block
+        padding-bottom: 32px
+
         + .chevron_wrapper
             position: absolute
             width: 301px
@@ -125,13 +131,7 @@ body
                 margin-left: 130px
 
                 &:before, &:after
-                    background-color: white
-
-        padding-bottom: 32px
-
-    width: 100%
-    color: black
-    padding-bottom: 34px
+                    background-color: #fff
 
 .left_panel.bottom_block
     padding-bottom: 0
@@ -153,7 +153,7 @@ body
         position: relative
 
         &:hover
-            opacity: 0.5
+            opacity: 0.8
             cursor: pointer
 
         &.selectable:hover
@@ -184,13 +184,13 @@ body
                 border-color: #090
 
         &.offline
-            border-color: white
+            border-color: #fff
 
             *:not(.user_presence_icon)
-                border-color: white
+                border-color: #fff
 
             .user_presence_icon
-                background-color: white
+                background-color: #fff
 
         &.wait
             border-color: orange
@@ -322,11 +322,11 @@ body
 
     .contacts_menu_item.active
         background-color: #4c75a4
-        color: white
+        color: #fff
 
     .last_contacts_menu_item.active
         background-color: #4c75a4
-        color: white
+        color: #fff
 
         &:before
             border-top: 26px solid #4c75a4
@@ -387,7 +387,7 @@ body
         -moz-transition: all ease-out 1s
         -o-transition: all ease-out 1s
         transition: all ease-out 1s
-        background-color: white
+        background-color: #fff
 
     .room_create_input
         left: initial
@@ -447,7 +447,7 @@ body
 .popup_dropdown
     list-style: none
     border: 2px solid #e5e5e5
-    background-color: white
+    background-color: #fff
 
     a
         color: #606060
@@ -476,6 +476,8 @@ body
             margin-top: 0
 
     .show_attaches_item
+        margin-left: 34px
+
         &:before
             background-image: url("../images/attaches_13x14.png")
             width: 13px
@@ -483,8 +485,6 @@ body
             content: " "
             position: absolute
             margin-left: -34px
-
-        margin-left: 34px
 
     .sound_off_item:before
         background-image: url("../images/no_sound16x16.png")
@@ -507,6 +507,8 @@ body
         margin-left: 34px
 
     .remove_history_item
+        margin-left: 34px
+
         &:before
             background-image: url("../images/trashcan12x14.png")
             width: 12px
@@ -514,8 +516,6 @@ body
             content: " "
             position: absolute
             margin-left: -34px
-
-        margin-left: 34px
 
 .transparent_input
     border: 0 solid #000
@@ -609,11 +609,11 @@ body
         border-radius: 50%
 
 .user_message
-    &:hover
-        cursor: pointer
-
     padding-bottom: 25px
     padding-top: 8px
+
+    &:hover
+        cursor: pointer
 
     &:nth-child(2)
         margin-top: 39px
@@ -700,7 +700,7 @@ body
     font-size: 16px
     padding-top: 11px
     padding-left: 11px
-    color: white
+    color: #fff
     display: inline-block
     float: right
     border-radius: 5px
@@ -717,13 +717,13 @@ body
     font-size: 14px
     position: absolute
     display: none
-    margin-left: -40px
-    margin-top: -70px
+    margin-left: -30px
+    margin-top: -80px
 
 .tools_dropdown_container > #tools_dropdown.shown, #attaches_dropdown.shown
     display: block
     z-index: 2
-    background-color: white
+    background-color: #fff
 
 .attaches_area
     #attaches_dropdown:after
@@ -741,6 +741,8 @@ body
         margin-top: 10px
 
     > #attaches_dropdown
+        padding: 10px 9px
+
         .attaches_item:before
             background-image: url("../images/document12x13.png")
             width: 12px
@@ -767,8 +769,6 @@ body
             content: " "
             position: absolute
             margin-left: -31px
-
-        padding: 10px 9px
 
 .shown
     display: block
@@ -858,6 +858,10 @@ body
 
     .answer
         margin-top: 12px
+        position: relative
+        width: 100%
+        overflow: hidden
+        clear: both
 
         &.left
             padding: 0 0 0 15px
@@ -866,11 +870,6 @@ body
 
             .avatar
                 left: 0
-
-        position: relative
-        width: 100%
-        overflow: hidden
-        clear: both
 
         .avatar
             bottom: 12px
@@ -991,11 +990,11 @@ body
                 color: #333
 
 .participants_block.top_block
+    background-color: #e6e6e6
+    color: #000
+
     + .participants_chevron_wrapper
         background-color: #e6e6e6
-
-    background-color: #e6e6e6
-    color: black
 
 .participants_chevron
     &:before, &:after
@@ -1018,7 +1017,7 @@ body
         height: 15px
         display: inline-block
         background-size: contain
-        background-color: white
+        background-color: #fff
         background-repeat: no-repeat
         background-position-y: center
 
@@ -1030,13 +1029,13 @@ body
             transform: scale(1.3, 1.3)
 
 #minimize_btn
-    background-image: url(../images/тАФ.svg)
+    background-image: url(../images/тХд╨ТтХи╨атХи╨┤.svg)
 
 #fullscreen_btn
     background-image: url("../images/Rectangle 10 copy 2.png")
 
 #close_btn
-    background-image: url(../images/╨е.svg)
+    background-image: url(../images/╤В╨е╨╕тХитХб.svg)
 
 #nwgrip, #negrip, #swgrip, #segrip, #ngrip, #egrip, #sgrip, #wgrip
     width: 10px
@@ -1148,12 +1147,10 @@ html, body
 
 .g-checkbox
     display: inline-block
-    width: 20px
-    height: 20px
-    background: gray
-
-    &:hover
-        background: blue
+    width: 16px
+    height: 16px
+    background-size: cover
+    background-image: url("../images/elements/normal.png")
 
     &.checked
-        background: green
+        background-image: url("../images/elements/checked.png")
