@@ -28,7 +28,7 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	Page<ChatUser> findById(Long id, Pageable pageable);
 	ChatUser findById(Long id);
 	
-	ArrayList<ChatUser> findByIdIn(List<Long> users);
+	ArrayList<ChatUser> findAllByIdIn(List<Long> users);
 	
 	Page<ChatUser> findAll(Pageable pageable);
 	ChatUser findOneByIntitaUser(User user);

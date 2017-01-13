@@ -271,28 +271,28 @@ public class RoomController {
 
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
-		
-		
+
+
 
 		Integer role = 0;
 		if(user.getIntitaUser() != null )
 		{
 			if (userService.isAdmin(user.getIntitaUser().getId()))
-			role |= ROLE.ADMIN;
+				role |= ROLE.ADMIN;
 			//check if tenant
 			if (userService.isTenant(user.getIntitaUser().getId()))
-			result.put("isTenant", "true");
+				result.put("isTenant", "true");
 			else 
-			result.put("isTenant", "false");
+				result.put("isTenant", "false");
 			//check if trainer
 			if (userService.isTrainer(user.getIntitaUser().getId()))
 				result.put("isTrainer", "true");
-				else 
+			else 
 				result.put("isTrainer", "false");
-			
+
 			if (userService.isStudent(user.getIntitaUser().getId()))
 				result.put("isStudent", "true");
-				else 
+			else 
 				result.put("isStudent", "false");
 		}
 		result.put("chat_user_role", role.toString());
@@ -607,7 +607,7 @@ public class RoomController {
 			return "redirect:/";
 		}
 	}
-	
+
 	@RequestMapping(value="/chat/go/rooms/private/{userId}", method=RequestMethod.GET)
 	public String goPrivateRoom(@PathVariable Long userId, @RequestParam(required = false, name = "isChatId") Boolean isChatId,   Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
@@ -648,23 +648,6 @@ public class RoomController {
 
 		return new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user));
 	}
-
-	@MessageMapping("/chat/rooms/add.{name}")
-	public void addRoomByAuthor( @DestinationVariable("name") String name, Principal principal) {
-		Long chatUserId = Long.parseLong(principal.getName());
-		ChatUser user = chatUserServise.getChatUser(chatUserId);
-		Room room = roomService.register(name, user);
-		//send to user about room apearenced
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,getRoomsByAuthorSubscribe(principal, Long.parseLong(principal.getName() )));
-		boolean operationSuccess = true;
-		if (room == null)
-			operationSuccess = false;
-		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,operationSuccess,"ADD ROOM");
-		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
-		//send to user that operation success
-		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-	}
-
 
 	//LONG POLLING PART
 
@@ -740,14 +723,33 @@ public class RoomController {
 	@RequestMapping(value="/chat/rooms/add",method=RequestMethod.POST)
 	@ResponseBody
 	//@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public void addRoomByAuthorLP( @RequestBody String roomName, Principal principal) {
-		System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
-
-		System.out.println(principal.getName());//@LOG@
+	public void addRoomByAuthorLP(@RequestParam(name="name") String roomName, @RequestBody(required=false) ArrayList<Long> userIds, Principal principal) {
+		boolean operationSuccess = true;
+		Room room = null;
 		Long chatUserId = Long.parseLong(principal.getName());
 		ChatUser author = chatUserServise.getChatUser(chatUserId);
-		Room room = roomService.register(roomName, author);
-		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		ArrayList<ChatUser> users = chatUserServise.getUsers(userIds);
+		if(userIds.size() == users.size())
+			room = roomService.register(roomName, author, users);
+
+		if (room == null)
+			operationSuccess = false;
+		else
+		{
+			users.add(author);
+			for (ChatUser chatUser : users) {
+				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(), new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
+				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(chatUser));	
+			}
+			System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");//@LOG@
+			System.out.println(principal.getName());//@LOG@
+		}
+		//send to user about room apearenced
+		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM,operationSuccess,"ADD ROOM");
+		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
+		//send to user that operation success
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
+
 	}
 	/***************************
 	 * REMOVE/ADD USERS FROM/TO ROOMS
@@ -783,7 +785,7 @@ public class RoomController {
 		}
 
 		roomService.removeUserFromRoom(user_o, room_o);
-	//	chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
+		//	chatUserLastRoomDateService.removeUserLastRoomDate(user_o, room_o);
 
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user_o));
 		updateParticipants();//force update
@@ -848,7 +850,7 @@ public class RoomController {
 		{
 			return false;
 		}
-/*
+		/*
 		Set<Room> all = user_o.getRoomsFromUsers();
 		all.addAll(user_o.getRootRooms());
 		if(all.contains(room_o))
@@ -885,7 +887,7 @@ public class RoomController {
 			status = false;
 		}
 		else status = true;
-		 
+
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_USER_TO_ROOM,status,"ADD USER TO ROOM");
 		String subscriptionStr = "/topic/users/"+chatUserId+"/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);

@@ -10,6 +10,15 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
 
     };
+    var addDialog = function(dialogName, users) {
+            $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
+            success(function(data, status, headers, config) {
+                console.log("ADD USER OK " + data);
+            }).
+            error(function(data, status, headers, config) {
+                toaster.pop('error', "Error", "server request timeout", 1000);
+            });
+    };
     var errorMsgTitleNotFound = "Сталася помилка";
     var errorMsgContentNotFound = "Кімната не існує або Ви не є її учасником";
     var lastRoomBindings = [];
@@ -662,7 +671,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         subscribeRoomsUpdateLP: subscribeRoomsUpdateLP,
         clearMessages: clearMessages,
         loadMessagesContains: loadMessagesContains,
-        goToPrivateDialog : goToPrivateDialog
+        goToPrivateDialog : goToPrivateDialog,
+        addDialog : addDialog
     };
 
     return RoomsFactory;

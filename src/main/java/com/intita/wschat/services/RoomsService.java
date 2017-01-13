@@ -102,7 +102,7 @@ public class RoomsService {
 		}
 		return info;
 	}
-	
+
 	@Transactional
 	public boolean removeRoom(Room room) {
 		chatLastRoomDateService.removeUserLastRoomDate(room.getChatUserLastRoomDate());
@@ -136,7 +136,7 @@ public class RoomsService {
 			ChatUser chatUser2 = privateRoomInfo.getSecondUser();
 			User user1 = chatUser1.getIntitaUser();
 			User user2 = chatUser2.getIntitaUser();
-			
+
 			ChatUser tenantUser = null;
 			boolean isTrainerUser1 = false;
 			boolean isTrainerUser2 = false;
@@ -232,15 +232,16 @@ public class RoomsService {
 		return roomRepo.findByAuthor(user);
 	}
 
+
 	@Transactional(readOnly = false)
-	public Room register(String name, ChatUser author) {
+	public Room register(String name, ChatUser author, ArrayList<ChatUser> users) {
 		if (name==null || name.length()==0) return null;
 		Room r = new Room();
 		r.setAuthor(author);
 		r.setName(name);
 		r.setType((short) 0);
-		//r.addUser(author);//@BAG@
-		roomRepo.save(r);
+		r.addUsers(users);
+		r = roomRepo.save(r);
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		return r;
 	}
@@ -257,6 +258,10 @@ public class RoomsService {
 		r = roomRepo.save(r);
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
 		return r;
+	}
+	@Transactional(readOnly = false)
+	public Room register(String name, ChatUser author) {
+		return register(name, author, (short)0);
 	}
 
 	@Transactional(readOnly = false)
@@ -294,7 +299,7 @@ public class RoomsService {
 		room.setAuthor(user);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);	
 	}
-	
+
 	@Transactional(readOnly = false)
 	public boolean update(Room room){
 		roomRepo.save(room);
@@ -335,13 +340,13 @@ public class RoomsService {
 		//have premition?
 		if(room.getChatUsers().contains(user))
 			return false;
-		
+
 		room.addUser(user);
 		roomRepo.save(room);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);
 		return true;
 	}
-	
+
 	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
 	public boolean addUsersToRoom(ArrayList<ChatUser> users, Room room) {
 		if(room == null)
@@ -353,7 +358,7 @@ public class RoomsService {
 		compareArray.removeAll(room.getChatUsers());		
 		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
 		System.out.println("QQQQQQQQQQQQQ " +  room.addUsers(compareArray));
-		
+
 		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
 		roomRepo.save(room);
 		for (ChatUser chatUser : compareArray) {
@@ -411,8 +416,8 @@ public class RoomsService {
 	}
 
 	@Transactional
-	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser) {
-		return getRoomsByChatUserAndList(currentUser, null);				
+	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser, ArrayList<Room> list) {
+		return getRoomsByChatUserAndList(currentUser, list);				
 	}
 
 	@Transactional
@@ -438,7 +443,7 @@ public class RoomsService {
 			if (entry.getLastRoom()==null /*|| entry.getLastRoom().getType() == Room.RoomType.CONSULTATION*/) 
 				continue;
 			RoomModelSimple sb = RoomModelSimple.buildSimpleModelForRoom(this, currentUser, messages_cnt , date.toString(),
-			entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
+					entry.getLastRoom(),userMessageService.getLastUserMessageByRoom(entry.getLastRoom()));
 			sb = extendSimpleModelByUserPermissionsForRoom(sb, currentUser, entry.getLastRoom());
 			result.add(sb);
 		}
@@ -456,7 +461,7 @@ public class RoomsService {
 		model.setUserPermissions(userPermissions);
 		return model;
 	}
-	
+
 
 }
 
