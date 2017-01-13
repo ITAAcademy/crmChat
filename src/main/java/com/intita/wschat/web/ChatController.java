@@ -425,21 +425,20 @@ public class ChatController {
 	}
     @RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
     @ResponseBody
-    public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
+    public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room, @RequestBody(required=false) Map<String, String> json, Principal principal)  {
         return loadOtherMessage(room,json,principal,true);
     }
     public ArrayList<ChatMessage> loadOtherMessage(Long room, Map<String, String> json, Principal principal, boolean filesOnly){
         String dateMsStr = json.get("date");
-        if (dateMsStr == null || dateMsStr.length() < 1) return null;
-        Long dateMs = Long.parseLong(dateMsStr);
-        if (dateMs==null) return null;
-        Date date = new Date(dateMs);
+        Long dateMs = null;
+        if (dateMsStr != null && dateMsStr.length() > 0) dateMs = Long.parseLong(dateMsStr);
+        Date date =(dateMs == null) ? null : new Date(dateMs);
         System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!" + date);
         CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, roomService);//Control room from LP
         if( struct == null)
             throw new ChatUserNotInRoomException("");
         String searchQuery = json.get("searchQuery");
-        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,searchQuery,false,20);
+        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,searchQuery,filesOnly,20);
         if(messages.size() == 0) return null;
         ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
 

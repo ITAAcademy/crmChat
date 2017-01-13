@@ -30,7 +30,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.checkIfYesterday = checkIfYesterday;
     $rootScope.getNameFromUrl = getNameFromUrl;
     $scope.state = 2;
-    var loadOnlyFilesInfiniteScrollMode = false;
+    $scope.loadOnlyFilesInfiniteScrollMode = false;
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
@@ -572,12 +572,17 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.loadOtherMessages = function() {
         if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
             return;
+        var urlTemplate = "/{0}/chat/loadOtherMessage";
+        if ($scope.loadOnlyFilesInfiniteScrollMode){
+            urlTemplate = "/{0}/chat/loadOtherMessageWithFiles";
+        }
         $rootScope.message_busy = true;
         console.log("TRY " + $scope.messages.length);
-        var payload = { 'date': RoomsFactory.getOldMessage().date };
+        var date = (RoomsFactory.getOldMessage() == null) ? null : RoomsFactory.getOldMessage().date;
+        var payload = { 'date': date };
         if ($scope.messageSearchEnabled)
             payload['searchQuery'] = $scope.messageSearchQuery;
-        $http.post(serverPrefix + "/{0}/chat/loadOtherMessage".format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
+        $http.post(serverPrefix + urlTemplate.format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
 
@@ -769,7 +774,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     };
     $scope.messageSearchEnabled = false;
     $scope.enableMessagesSearch = function() {
-        debugger;
         $scope.messageSearchEnabled = true;
         RoomsFactory.clearMessages();
         RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
@@ -871,25 +875,27 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             localStorage.setItem('soundEnable', $scope.soundEnable);
         }
         $scope.showAttaches = function(){
-            var messagesWithFiles = RoomsFactory.getMessagesWithFiles();
-            loadOtherMessagesWithFiles();
-            loadOnlyFilesInfiniteScrollMode = true;
+            RoomsFactory.clearMessages();
+            $scope.loadOnlyFilesInfiniteScrollMode = true;
+            $rootScope.loadOtherMessages();
+            $rootScope.message_busy = false;
+            var objDiv = document.getElementById("messagesScroll");
+            objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
-        function loadOtherMessagesWithFiles(){
-                // /chat/room/{roomId}/get_messages_contains
-                if (currentRoom == null){
-                    console.warn('loadMessagesContains failed duing to current room is not selected');
-                    return;
-                }
-                $http.post(serverPrefix + "/chat/room/{0}/loadOtherMessageWithFiles".format(currentRoom.roomId), searchQuery).
-                success(function(data, status, headers, config) {
-                    loadMessagesFromArrayList(data);
-                }).
-                error(function(data, status, headers, config) {
+        $scope.showAllMessages = function(reloadMessages) {
+            if(reloadMessages===true) {
+                RoomsFactory.clearMessages();
+                RoomsFactory.loadMessagesContains('');
+                $timeout(function() {
+                    $rootScope.message_busy = false;
+                }, 500);
 
-                });
+            }
+            $scope.loadOnlyFilesInfiniteScrollMode = false;
+            var objDiv = document.getElementById("messagesScroll");
+            if (objDiv!=null)
+                objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
-
 
         /*****************************
          ************CONFIG************

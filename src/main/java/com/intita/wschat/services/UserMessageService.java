@@ -250,7 +250,7 @@ public class UserMessageService {
 			}
 			if (filesOnly){
 				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson is not equal :emptyJsonObject";
+				whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson != :emptyJsonObject";
 			}
 			String wherePart = "WHERE "+ whereParam;
 		String orderPart = " ORDER BY m.date DESC,m.id";

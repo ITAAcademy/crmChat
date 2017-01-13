@@ -41,7 +41,8 @@
             <div class="tools_area" ng-draggable='dragOptions'>
                 <div class="tools_dropdown_container">
                     <ul id="tools_dropdown" class="popup_dropdown">
-                        <li ng-click="showAttaches()" class="show_attaches_item"><a >Показати додатки</a></li>
+                        <li ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="show_attaches_item"><a >Показати додатки</a></li>
+                        <li ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="show_attaches_item"><a >Показати всі повідомлення</a></li>
                         <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
                         <li class="remove_history_item"><a>Видалити історію</a></li>
                     </ul>
