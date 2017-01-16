@@ -31,6 +31,15 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var rooms = [];
     var oldMessage;
 
+    function isRoomPrivate (room){
+        if (room!=null && room.type === 1) return true;
+        return false;
+    }
+    function isRoomConsultation(room){
+        if (room!=null && room.type === 2) return true;
+        return false;
+    }
+
     /*var updateContactsMapFromArray = function(contactsList) {
         for (var key in Object.keys(roomsMap))
             delete roomsMap[key];
@@ -530,7 +539,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             updateTenants(chatControllerScope.tenants);
             var room = getRoomById(rooms, $routeParams.roomId);
 
-            if (room != null && room.type == 2 && controllerName != "ConsultationController") //redirect to consultation
+            if (room != null && isRoomConsultation(room) && controllerName != "ConsultationController") //redirect to consultation
             {
                 $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.roomId)
                     .success(function(data, status, headers, config) {
@@ -580,6 +589,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         } else {
             parseObj = message;
         }
+
         var needReplace = parseObj.replace;
         var roomList = parseObj.list;
         if (needReplace) {
@@ -605,6 +615,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             .success(function(data, status, headers, config) {
                 console.log("roomsUpdateLP data:" + data);
                 updateRooms(data);
+
                 //console.log("resposnse data received:"+response.data);
                 subscribeRoomsUpdateLP();
             }).error(function errorHandler(data, status, headers, config) {
@@ -672,7 +683,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         clearMessages: clearMessages,
         loadMessagesContains: loadMessagesContains,
         goToPrivateDialog : goToPrivateDialog,
-        addDialog : addDialog
+        addDialog : addDialog,
+        isRoomPrivate : isRoomPrivate,
+        isRoomConsultation : isRoomConsultation
+
     };
 
     return RoomsFactory;

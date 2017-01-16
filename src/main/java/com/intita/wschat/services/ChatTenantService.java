@@ -160,7 +160,7 @@ public class ChatTenantService {
 				//Long id = tenant.getId(); //999
 				if (isTenantBusy(chatUserId) == false)
 				{
-					if (participantRepository.isOnline("" + chatUserId)) //989
+					if (participantRepository.isOnline(chatUserId)) //989
 					{
 						lastAskedtenantCnt = i;
 						return tenant;
@@ -240,7 +240,7 @@ public class ChatTenantService {
 		return false;
 	}
 	public boolean isTenantAvailable(Long chatUserid){
-		if (!participantRepository.isOnline("" + chatUserid))return false;
+		if (!participantRepository.isOnline(chatUserid))return false;
 		if (isTenantBusy(chatUserid)) return false;
 		return true;
 	}

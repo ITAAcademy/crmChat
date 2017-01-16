@@ -247,12 +247,11 @@ public class ChatController {
 			for (ChatUser trainerUser : chatUsers){
 				if (trainerUser==null) continue;
 				Long trainerChatId = trainerUser.getId();
-				String trainerChatIdStr = trainerChatId.toString();
-				if (participantRepository.isOnline(trainerChatIdStr)){
-					ConcurrentHashMap<String,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
-					if (activeSessions.get(trainerChatIdStr).isTimeBased())
+				if (participantRepository.isOnline(trainerChatId)){
+					ConcurrentHashMap<Long,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
+					if (activeSessions.get(trainerChatId).isTimeBased())
 						addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));
-					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
+					else if (activeSessions.get(trainerChatId).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
 					}		
 				}
@@ -264,16 +263,15 @@ public class ChatController {
 	public void propagateRemovingTenantsFromList(ArrayList<ChatUser> usersIds){
 		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
 		if (usersIds.size()<=0)return;
-		ConcurrentHashMap<String,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
+		ConcurrentHashMap<Long,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
 		for (ChatUser tenantUser : usersIds){
 			for (ChatUser trainerUser : chatUsers){	
 				if (trainerUser==null || !activeSessions.containsKey(trainerUser.getId().toString())) continue;
 				Long trainerChatId = trainerUser.getId();
-				String trainerChatIdStr = trainerChatId.toString();
-				if (!participantRepository.isOnline(trainerChatIdStr)){
-					if (activeSessions.get(trainerChatIdStr).isTimeBased())
+				if (!participantRepository.isOnline(trainerChatId)){
+					if (activeSessions.get(trainerChatId).isTimeBased())
 						addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));
-					else if (activeSessions.get(trainerChatIdStr).isConnectionBased()){
+					else if (activeSessions.get(trainerChatId).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
 					}		
 				}
@@ -374,7 +372,7 @@ public class ChatController {
 		for(User user : pageUsers)
 		{
 			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(user, true); 
-			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar(),participantRepository.isOnline(""+chat_user.getId())));
+			userList.add(new LoginEvent(user.getId(),user.getUsername(), user.getAvatar()));//participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  new ObjectMapper().writeValueAsString(userList);
 	}
@@ -621,7 +619,8 @@ public class ChatController {
 	public DeferredResult<String> updateGlobalInfoLP(Principal principal) throws JsonProcessingException {
 		int presenceIndexGrowth = 3;
 		Long timeOut = 15000L;
-		String chatId = principal.getName();
+		String chatIdStr = principal.getName();
+		Long  chatId = Long.parseLong(chatIdStr);
 		participantRepository.addParticipantPresenceByLastConnectionTime(chatId);
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
 		globalInfoResult.put(result,principal.getName());
@@ -634,13 +633,12 @@ public class ChatController {
 	}
 
 	public void processUsersPresence(){
-		for (String chatId : participantRepository.getActiveSessions().keySet()){
+		for (Long chatId : participantRepository.getActiveSessions().keySet()){
 			boolean isParticipantRemoved = participantRepository.invalidateParticipantPresence(chatId,false);
 			ArrayList<ChatUser> tenantsToRemove = new ArrayList();
 			if(isParticipantRemoved){
-				Long chatUserId = Long.parseLong(chatId);
-				if (chatTenantService.isTenant(chatUserId))
-					tenantsToRemove.add(chatUsersService.getChatUser(chatUserId));
+				if (chatTenantService.isTenant(chatId))
+					tenantsToRemove.add(chatUsersService.getChatUser(chatId));
 			}
 			if (tenantsToRemove.size()>0)
 				propagateRemovingTenantsFromList(tenantsToRemove);
@@ -675,7 +673,7 @@ public class ChatController {
 					result = "{}";
 				}
 			}
-			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId, participantRepository.isOnline(chatId));
+			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId);//, participantRepository.isOnline(chatId));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 			if(!nextUser.isSetOrExpired() && result != "{}")//@BAD@
 				nextUser.setResult(result);		
@@ -748,7 +746,7 @@ public class ChatController {
 		for(User u : users)
 		{
 			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
-			userList.add(new LoginEvent(u.getId(),u.getFullName(), u.getAvatar(),participantRepository.isOnline(""+chat_user.getId())));
+			userList.add(new LoginEvent(u.getId(),u.getFullName(), u.getAvatar()));//,participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  userList;
 	
@@ -981,7 +979,7 @@ public class ChatController {
 		for (ChatUser singleChatUser: users){
 			String nn = singleChatUser.getNickName();
 			if (!nicks.contains(nn))continue;
-			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn,participantRepository.isOnline(""+singleChatUser.getId()));
+			LoginEvent userData = new LoginEvent(singleChatUser.getId(),nn);//,participantRepository.isOnline(""+singleChatUser.getId()));
 			usersData.add(userData);	
 		}
 		return usersData;
@@ -1020,7 +1018,7 @@ public class ChatController {
 
 		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
 		for (ChatUser nick: nicks){
-			usersData.add(new LoginEvent(nick.getId(), nick.getNickName(),participantRepository.isOnline(""+nick.getId())));
+			usersData.add(new LoginEvent(nick.getId(), nick.getNickName()));//participantRepository.isOnline(""+nick.getId())));
 		}
 		return usersData;
 		/*ObjectMapper mapper = new ObjectMapper();

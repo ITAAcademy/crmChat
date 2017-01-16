@@ -64,9 +64,13 @@ public class PresenceEventListener {
 	@EventListener
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
-		String chatId = headers.getUser().getName();
+		String chatIdStr = headers.getUser().getName();
+		Long chatId = Long.parseLong(chatIdStr);
+		if (chatId==null){
+			log.warn("Cannot parse chatId");
+		}
 
-		LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), "test",participantRepository.isOnline(chatId));
+		LoginEvent loginEvent = new LoginEvent(chatId, "test");//,participantRepository.isOnline(chatId));
 		messagingTemplate.convertAndSend(loginDestination, loginEvent);
 		
 		// We store the session as we need to be idempotent in the disconnect event processing
@@ -90,11 +94,12 @@ public class PresenceEventListener {
 				});*/
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		Principal principal = headers.getUser();
-		String chatId = principal.getName();
+		String chatIdStr = principal.getName();
+		Long chatId = Long.parseLong(chatIdStr);
 		ChatUser user = chatUsersService.getChatUser(principal);
 		participantRepository.invalidateParticipantPresence(chatId,true);
 		if(!participantRepository.isOnline(chatId)){
-		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatId));
+		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatIdStr));
 		//remove user from tenant list if tenant
 		if (chatTenantService.isTenant(user.getId()))
 		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user, false));

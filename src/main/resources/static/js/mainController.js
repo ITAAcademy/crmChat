@@ -21,6 +21,10 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
 }]);
 
 var chatController = springChatControllers.controller('ChatController', ['ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function(ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
+    //Imports from Services
+    $scope.isUserOnline = UserFactory.isUserOnline;
+    //Imports/>
+
     $rootScope.isInited = false;
     $rootScope.baseurl = globalConfig["baseUrl"];
     $rootScope.imagesPath = globalConfig["imagesPath"];
