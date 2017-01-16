@@ -403,6 +403,35 @@ body {
     height: 46px;
 }
 
+.items_list_block.top_block .avatar.online {
+    border-color: #090
+}
+
+.items_list_block.top_block .avatar.online *:not(.user_presence_icon) {
+    border-color: #090
+}
+
+.items_list_block.top_block .avatar.offline {
+    border-color: #fff
+}
+
+.items_list_block.top_block .avatar.offline *:not(.user_presence_icon) {
+    border-color: #fff
+}
+
+.items_list_block.top_block .avatar.offline .user_presence_icon {
+    background-color: #fff
+}
+
+.items_list_block.top_block .avatar.wait {
+    border-color: orange
+}
+
+.items_list_block.top_block .avatar.wait *:not(.user_presence_icon) {
+    border-color: orange
+}
+
+
 .items_list_block .avatar.online {
     border-color: #090
 }
@@ -412,15 +441,15 @@ body {
 }
 
 .items_list_block .avatar.offline {
-    border-color: #fff
+    border-color: #333
 }
 
 .items_list_block .avatar.offline *:not(.user_presence_icon) {
-    border-color: #fff
+    border-color: #333
 }
 
 .items_list_block .avatar.offline .user_presence_icon {
-    background-color: #fff
+    background-color: #333
 }
 
 .items_list_block .avatar.wait {
@@ -431,12 +460,12 @@ body {
     border-color: orange
 }
 
-.items_list_block.bottom_block .avatar {
-    width: 44px;
-    height: 44px;
+.items_list_block .avatar {
+    width: 48px;
+    height: 48px;
     padding: 2px;
     border-color: #888;
-    border-width: 1px
+    border-width: 2px;
 }
 
 .items_list_block .avatar>.user_image {
@@ -456,7 +485,7 @@ body {
     position: absolute;
     bottom: 5px;
     right: -3px;
-    border-color: #4c75a4;
+    border-color: #2774b2;
     border-width: 2px;
     border-style: solid;
 }
@@ -521,15 +550,15 @@ body {
     margin-top: 14px
 }
 
-.items_list_block.bottom_block .block_item {
+.items_list_block .block_item {
     padding-top: 5px;
     padding-bottom: 5px
 }
 
-.items_list_block.bottom_block .avatar>.user_image {
-    width: 38px;
-    height: 38px;
-    vertical-align: baseline
+.items_list_block .avatar>.user_image {
+    width: 40px;
+    height: 40px;
+    vertical-align: baseline;
 }
 
 .text_info .user_presence:first-letter {
