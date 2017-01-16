@@ -55,7 +55,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     var roomElement = angular.element(document.getElementById("panel-body"));
     $scope.resizeRoomElement = function(oldSize, newSize)
     {
-        debugger;
+        
         roomElement.css('height', 'calc(100% - ' + newSize + 'px)');
     }
 
@@ -623,7 +623,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     });
 
     function newMessageArrayEventHandler(event, roomIds) {
-        debugger;
+        
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
 
@@ -797,6 +797,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.currentRoomIsNull = function() {
         return RoomsFactory.getCurrentRoom().roomId == null;
     }
+    $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
     var savedDistanceToBottom;
     var savedPaddingHeight; 

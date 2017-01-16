@@ -1,5 +1,9 @@
 <div ng-if="students.length > 0" class="items_list_block top_block">
-    <div class="block_name">{{blockName}}</div>
+    <div class="block_head" ng-click="toggleFolded()">
+        <div class="block_name">{{blockName}}</div>
+        <div ng-if="students.length > 1" class="dropdown_icon ng-class:{unfolded:!folded}"></div>
+        <div class="block_head_diveded"></div>
+    </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item" ng-repeat="student in students | orderBy : ['username', 'online']" ng-click="goToPrivateDialog(student.chatUserId)">
             <div class="avatar ng-class:{offline:!student.online, online:student.online}">
@@ -8,13 +12,9 @@
                 <div class="user_presence_icon_wraper"></div>
             </div>
             <div class="text_info">
-                <div class="user_name">{{student.username}}</div>
-                <div class="user_presence" ng-show="student.online">Онлайн</div>
-                <div class="user_presence" ng-show="!student.online">Оффлайн</div>
+                <div class="user_name">{{!!!student.username}}</div>
+                <div class="user_presence">Остання активність</div>
             </div>
         </div>
     </div>
-</div>
-<div ng-if="students.length > 1" class="chevron_wrapper" ng-click="toggleFolded()">
-    <div class="chevron ng-class:{unfolded:!folded}"></div>
 </div>

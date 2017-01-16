@@ -6,6 +6,7 @@
     <title>IntITA Chat</title>
     <link rel="icon" href="favicon.ico" />
     <link href="css/style.css" rel="stylesheet" />
+    <link href="css/loader.css" rel="stylesheet" />
     <link href="css/angular-szn-autocomplete.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/ngDialog.min.css" />
@@ -15,21 +16,51 @@
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
-        <div class="left_panel">
+        <div class="head" ng-draggable='dragOptions'>
+            <img class="logo" src="images\intita95x30.png" alt="" />
+            <div class="notification">
+                <img src="images/elements/Icon notification.png" alt="" />
+                <div class="state"></div>
+            </div>
+            <div class="message_notification">
+                <img src="images/elements/Icon msg.png" alt="" />
+                <div class="state"></div>
+            </div>
+            <div class="window_panel">
+                <div id="minimize_btn"></div>
+                <div id="fullscreen_btn" ng-click="state == 0 ? state = 2 : state = 0"></div>
+                <div id="close_btn" ng-click="state = -1"></div>
+            </div>
+        </div>
+        <div id="loader-wrapper">
+            <div id="loader"></div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
+        </div>
+        <div class="left_panel_mini">
+            <div class="section_content">
+                <div class="block_item selectable">
+                    <div class="avatar">
+                        <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{returnAvatar(getCurrentRoom())}}" alt="" />
+                    </div>
+                    <div class="text_info">
+                        <div class="user_name">{{getCurrentRoom().string}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="left_panel noselect">
             <div class="mainContent">
                 <div class="workplace_outter">
                     <div class="workplace_inner">
                         <div class="panel panel-default">
-                            <div id="panel-heading" em-height-source = "true" callback="resizeRoomElement(oldSize, newSize)">
+                            <div id="panel-heading" em-height-source="true" callback="resizeRoomElement(oldSize, newSize)">
                                 <div students-block="true"></div>
                                 <div tenants-block="true"></div>
                                 <div participants-block="true"></div>
                             </div>
                             <div id="panel-body">
                                 <div rooms-block="true" style="height:100%"></div>
-                                <div class="bottom_logo">
-                                    <img src="images\intita95x30.png" alt="" />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -38,27 +69,25 @@
             <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
-            <div class="tools_area" ng-draggable='dragOptions'>
+            <div class="tools_area">
                 <div class="tools_dropdown_container">
                     <ul id="tools_dropdown" class="popup_dropdown">
-                        <li ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="show_attaches_item"><a >Показати додатки</a></li>
-                        <li ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="show_attaches_item"><a >Показати всі повідомлення</a></li>
+                        <li ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="show_attaches_item"><a>Показати додатки</a></li>
+                        <li ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="show_attaches_item"><a>Показати всі повідомлення</a></li>
                         <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable,} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
                         <li class="remove_history_item"><a>Видалити історію</a></li>
                     </ul>
                     <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
-                        <img src="images\triple_dots26x8.png" alt="" />
+                        <img src="images\elements\config.png" alt="" />
                     </button>
                 </div>
-                <div class="search_box">
-                    <input ng-model="messageSearchQuery" type="text" class="transparent_input search_input" placeholder="Пошук..." />
-                    <img ng-click="enableMessagesSearch()" ng-class="{'showed':(messageSearchQuery.length &gt; 0 &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
-                    <img ng-click="disableMessagesSearch(true)" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
+                <div class="room_info">
+                    <div class="room_name">{{getCurrentRoom().string}}</div>
                 </div>
-                <div class="window_panel">
-                    <div id="minimize_btn"></div>
-                    <div id="fullscreen_btn" ng-click="state == 0 ? state = 2 : state = 0"></div>
-                    <div id="close_btn" ng-click="state = -1"></div>
+                <div class="search_box">
+                    <!--<input ng-model="messageSearchQuery" type="text" class="transparent_input search_input" placeholder="Пошук..." /> -->
+                    <img ng-click="enableMessagesSearch()" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
+                    <img ng-click="disableMessagesSearch(true)" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/Х.svg" alt="" />
                 </div>
             </div>
             <hr/>
@@ -75,9 +104,9 @@
                     </div>
                     <div id="attaches_area" class="attaches_area">
                         <ul id="attaches_dropdown" class="popup_dropdown">
-                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true" >Документ</a></li>
-                            <li class="video_item"><a >Відео</a></li>
-                            <li class="audio_item"><a >Аудіо</a></li>
+                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true">Документ</a></li>
+                            <li class="video_item"><a>Відео</a></li>
+                            <li class="audio_item"><a>Аудіо</a></li>
                         </ul>
                         <div class="upload_file_form_container">
                         </div>
@@ -89,8 +118,7 @@
             </div>
         </div>
     </div>
-
-    <script th:inline="javascript">
+        <script th:inline="javascript">
         var globalConfig = {  
                      baseUrl:[[${config.get('baseUrl')}]], 
                      imagesPath : [[${config.get('imagesPath')}]],

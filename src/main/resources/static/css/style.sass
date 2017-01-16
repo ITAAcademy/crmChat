@@ -1,3 +1,36 @@
+@font-face
+    font-family: "Roboto-Medium"
+    src: url("../fonts/Roboto-Medium.eot")
+    src: url("../fonts/Roboto-Medium.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Medium.woff2") format("woff2")
+    src: url("../fonts/Roboto-Medium.woff") format("woff")
+    src: url("../fonts/Roboto-Medium.ttf") format("truetype")
+    src: url("../fonts/Roboto-Medium.svg#Roboto-Medium") format("svg")
+    font-weight: 500
+    font-style: normal
+
+@font-face
+    font-family: "Roboto-Thin"
+    src: url("../fonts/Roboto-Thin.eot")
+    src: url("../fonts/Roboto-Thin.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Thin.woff2") format("woff2")
+    src: url("../fonts/Roboto-Thin.woff") format("woff")
+    src: url("../fonts/Roboto-Thin.ttf") format("truetype")
+    src: url("../fonts/Roboto-Thin.svg#Roboto-Thin") format("svg")
+    font-weight: 100
+    font-style: normal
+
+@font-face
+    font-family: "Roboto-Light"
+    src: url("../fonts/Roboto-Light.eot")
+    src: url("../fonts/Roboto-Light.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Light.woff2") format("woff2")
+    src: url("../fonts/Roboto-Light.woff") format("woff")
+    src: url("../fonts/Roboto-Light.ttf") format("truetype")
+    src: url("../fonts/Roboto-Light.svg#Roboto-Light") format("svg")
+    font-weight: 300
+    font-style: normal
+
 body
     width: 100%
     height: 100%
@@ -48,7 +81,7 @@ body
     top: 5px
     font-family: "Myriad Pro", Times, serif
     overflow: hidden
-    border-radius: 5px
+    border-radius: 10px
     -webkit-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
     -moz-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
     box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
@@ -80,6 +113,45 @@ body
     width: calc(100% - 301px)
     background-color: #fff
     border-left: 2px solid #c5c5c5
+
+.head
+    min-height: 35px
+    background-color: white
+    position: relative
+    border-bottom: #dbdada 2px solid
+
+    %vertical-img
+        position: absolute
+        margin: auto
+        top: 0
+        bottom: 0
+
+    .logo
+        @extend %vertical-img
+        position: absolute
+        left: 15px
+
+    .notification
+        position: absolute
+        right: 120px
+        height: 100%
+        width: 25px
+
+        img
+            @extend %vertical-img
+
+    .message_notification
+        @extend .notification
+        right: 150px
+    .state
+        @extend %vertical-img
+        width: 10px
+        height: 10px
+        border-radius: 50%
+        background-color: red
+        top: -15px
+        right: 0px
+        opacity: 0.8
 
 .items_list_block
     width: 100%
@@ -424,11 +496,6 @@ body
     position: absolute
     right: 20px
     top: calc(50% - 13px)
-
-.bottom_logo
-    padding-left: 18px
-    position: absolute
-    bottom: 6px
 
 .tools_area
     height: 40px
@@ -1033,13 +1100,13 @@ body
             transform: scale(1.3, 1.3)
 
 #minimize_btn
-    background-image: url(../images/тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕тХитЦСтХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨д╨┤.svg)
+    background-image: url(../images/тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨┤тХитФд╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨ж╨гтХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╢тХи╨▒тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨е╤В╨е╨┤тХи╨в╤В╨е╨╕тХитФд╤В╨е╨╕╤В╨д╨┤.svg)
 
 #fullscreen_btn
     background-image: url("../images/Rectangle 10 copy 2.png")
 
 #close_btn
-    background-image: url(../images/╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХитЦТ.svg)
+    background-image: url(../images/╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨д╨┤тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕тХитЦУ╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХитЦТ╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨е╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕тХитХбтХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╢тХи╨▓.svg)
 
 #nwgrip, #negrip, #swgrip, #segrip, #ngrip, #egrip, #sgrip, #wgrip
     width: 10px

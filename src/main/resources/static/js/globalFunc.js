@@ -13,47 +13,75 @@ var daysName = {},
 var dayName = {},
     hourName = {},
     minuteName = {};
+var daysNameShort = {},
+    hoursNameShort = {},
+    minutesNameShort = {};
+var dayNameShort = {},
+    hourNameShort = {},
+    minuteNameShort = {};
 var endName = {};
-daysName['ua'] = 'днів';
-dayName['ua'] = 'день';
-daysName['en'] = 'day';
-dayName['en'] = 'days';
-daysName['ru'] = 'дней';
-dayName['ru'] = 'день';
 
-hoursName['ua'] = 'годин';
-hourName['ua'] = 'годину';
-hoursName['en'] = 'hour';
-hourName['en'] = 'hours';
-hoursName['ru'] = 'часов';
-hourName['ru'] = 'час';
+daysNameShort['ua'] = 'днів';
+dayNameShort['ua'] = 'день';
+daysNameShort['en'] = 'day';
+dayNameShort['en'] = 'days';
+daysNameShort['ru'] = 'дней';
+dayNameShort['ru'] = 'день';
 
-minutesName['ua'] = ' хвилин ';
-minuteName['ua'] = ' хвилину ';
-minutesName['en'] = ' minutes ';
-minuteName['en'] = ' minute ';
-minutesName['ru'] = ' минут ';
-minuteName['ru'] = ' минуту ';
+hoursNameShort['ua'] = 'годин';
+hourNameShort['ua'] = 'годину';
+hoursNameShort['en'] = 'hour';
+hourNameShort['en'] = 'hours';
+hoursNameShort['ru'] = 'часов';
+hourNameShort['ru'] = 'час';
+
+minutesNameShort['ua'] = ' хвилин ';
+minuteNameShort['ua'] = ' хвилину ';
+minutesNameShort['en'] = ' minutes ';
+minuteNameShort['en'] = ' minute ';
+minutesNameShort['ru'] = ' минут ';
+minuteNameShort['ru'] = ' минуту ';
+
+daysNameShort['ua'] = 'дн.';
+dayNameShort['ua'] = 'дн.';
+daysNameShort['en'] = 'd.';
+dayNameShort['en'] = 'd.';
+daysNameShort['ru'] = 'дн.';
+dayNameShort['ru'] = 'дн.';
+
+hoursNameShort['ua'] = 'год.';
+hourNameShort['ua'] = 'год.';
+hoursNameShort['en'] = 'h';
+hourNameShort['en'] = 'h';
+hoursNameShort['ru'] = 'час.';
+hourNameShort['ru'] = 'час';
+
+minutesNameShort['ua'] = ' хв. ';
+minuteNameShort['ua'] = ' хв. ';
+minutesNameShort['en'] = ' min ';
+minuteNameShort['en'] = ' min ';
+minutesNameShort['ru'] = ' мин. ';
+minuteNameShort['ru'] = ' мин. ';
 
 endName['ua'] = "тому";
 endName['en'] = "ago";
 endName['ru'] = "спустя";
 
 var ROOM_PERMISSIONS = {
-ADD_USER : 1,
-REMOVE_USER : 2
+    ADD_USER: 1,
+    REMOVE_USER: 2
 };
 
-var checkIfToday = function(inputDateLong){
+var checkIfToday = function(inputDateLong) {
     var inputDate = new Date(inputDateLong);
     var todaysDate = new Date();
-    return inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0);
+    return inputDate.setHours(0, 0, 0, 0) == todaysDate.setHours(0, 0, 0, 0);
 }
-var checkIfYesterday = function(inputDateLong){
+var checkIfYesterday = function(inputDateLong) {
     var inputDate = new Date(inputDateLong);
     var yesterdayDate = new Date();
-     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    return inputDate.setHours(0,0,0,0) == yesterdayDate.setHours(0,0,0,0);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    return inputDate.setHours(0, 0, 0, 0) == yesterdayDate.setHours(0, 0, 0, 0);
 }
 var getNameFromUrl = function(url) {
     var fileNameSignaturePrefix = "file_name=";
@@ -62,12 +90,16 @@ var getNameFromUrl = function(url) {
     return url.substring(startPos, endPos);
 }
 var firstLetter = function(name) {
-    if(undefined != name)
-  return name.toUpperCase().charAt(0);
+    if (undefined != name)
+        return name.toUpperCase().charAt(0);
 }
 
-var formatDateWithLast = function(date) {
-    if (date == null || date == undefined || isNaN(date))
+var formatDateWithLast = function(date, short) {
+    if(short == undefined)
+        short = false;
+    
+    debugger;
+    if (date == null || date == undefined)
         return "";
 
     // need translate and move to global to config map
@@ -78,16 +110,24 @@ var formatDateWithLast = function(date) {
 
     var delta = new Date().getTime() - dateObj.getTime();
     if (delta > 60000 * 59)
-        return formatDate(date);
+        return formatDate(date, short);
     else
     if (Math.round(delta / 60000) == 0)
         return null;
 
     var minutesStr = Math.round(delta / 60000);
-    if (minutesStr > 1)
-        return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
-    else
-        return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
+    if (short) {
+        if (minutesStr > 1)
+            return minutesStr + minutesNameShort[globalConfig.lang];
+        else
+            return minutesStr + minuteNameShort[globalConfig.lang];
+    } else {
+        if (minutesStr > 1)
+            return minutesStr + minutesNameShort[globalConfig.lang] + endNameShort[globalConfig.lang];
+        else
+            return minutesStr + minuteNameShort[globalConfig.lang] + endNameShort[globalConfig.lang];
+    }
+
 
 }
 
@@ -97,8 +137,11 @@ var Seconds_from_T1_to_T2 = dif / 1000;
 var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
 return Seconds_Between_Dates;
 }
-var formatDate = function(date) {
+var formatDate = function(date, short) {
     // need translate and move to global to config map
+    if(short == undefined)
+        short = false;
+
     var monthNames = {};
     monthNames['ua'] = [
         "Січеня", "Лютого", "Березеня ",
@@ -125,6 +168,13 @@ var formatDate = function(date) {
     var minutes = dateObj.getMinutes();
     if (minutes < 10)
         minutes = '0' + minutes;
+    if(short)
+    {
+        if(monthIndex + 1 < 10)
+            return day + "." + monthIndex + 1;
+        else
+            return day + "." + monthIndex + 1;
+    }
 
     return day + " " + monthNames[globalConfig.lang][monthIndex] + " " + dateObj.getHours() + ":" + minutes;
 }

@@ -275,6 +275,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         tenants = typeof mess_obj["tenants"] == "undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
         friends = typeof mess_obj["friends"] == "undefined" ? undefined : JSON.parse(mess_obj["friends"]);
         isInited = true;
+        setTimeout(function() { $('body').addClass('loaded'); }, 100);
 
         if (mess_obj.nextWindow == 0) {
 
@@ -303,6 +304,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
             //  $rootScope.showToasterWaitFreeTenant();
         }
+
     }
 
     var initIsUserTenant = function() {
@@ -323,7 +325,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
     var setChatUserId = function(id) { chatUserId = id; };
     var getChatUserId = function() {
-        return chatUserId; };
+        return chatUserId;
+    };
     var setRealChatUserId = function(id) { realChatUserId = id };
 
     return {
@@ -337,7 +340,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         getChatuserAvatar: function() {
             return chatUserAvatar;
         },
-        getTenantsList : function(){
+        getTenantsList: function() {
             return tenants;
         }
 

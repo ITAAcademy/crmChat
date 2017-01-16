@@ -1,5 +1,10 @@
 <div class="items_list_block top_block">
-    <div class="block_name">{{blockName}}</div>
+    <div class="block_head">
+        <div class="block_controll">{{blockName}}</div>
+        <div class="block_head_diveded"></div>
+        <div class="block_name">{{blockName}}</div>
+        <div class="dropdown_icon"></div>
+    </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div class="block_item selectable" ng-repeat="item in items | orderBy : 'username'">
             <div class="avatar">

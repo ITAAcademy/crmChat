@@ -345,7 +345,6 @@ angular.module('springChat.directives').directive('emHeightSource', function() {
         link: function(scope, elem, attrs) {
             elem.on("resize", function() {
                 if (scope.__height != elem.height()) {
-                    debugger;
                     scope.callback({ 'oldSize': scope.__height, 'newSize': elem.height() });
                 }
                 scope.__height = elem.height();
@@ -425,7 +424,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory) {
             $scope.createNewRoom = function($event) {
                 RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
                 //$scope.toggleCreate();
-                debugger;
+                
                 return false;
             }
 
@@ -640,7 +639,7 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
 
             // Bind mousedown event
             elem.on('mousedown', function(e) {
-                debugger;
+                
                 if ($(dragElement).hasClass("drag-disable") || e.target != elem[0])
                     return true;
 
@@ -654,7 +653,7 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
 
             // Handle drag event
             function mousemove(e) {
-                debugger;
+                
                 y = e.clientY - startY;
                 x = e.clientX - startX;
                 setPosition();

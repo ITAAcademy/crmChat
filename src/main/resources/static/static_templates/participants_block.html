@@ -1,5 +1,10 @@
-<div ng-init="hideEmpty = true" ng-show="!hideEmpty || participants().length > 1" class="items_list_block top_block participants_block">
-    <div class="block_name">{{blockName}}</div>
+<div ng-init="hideEmpty = true" ng-show="!hideEmpty || participants().length > 1" class="items_list_block participants_block">
+    <div class="block_head" ng-click="toggleFolded()">
+        <div class="block_controll"><img src="images/elements/add.png"></div>
+        <div class="block_name">{{blockName}}</div>
+        <div ng-if="students.length > 1" class="dropdown_icon ng-class:{unfolded:!folded}"></div>
+        <div class="block_head_diveded"></div>
+    </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy : ['!online', 'username']">
             <div class="avatar ng-class:{offline:!participant.online, online:participant.online}">
@@ -14,17 +19,8 @@
             </div>
             <div ng-if="checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon">DEL</div>
         </div>
-        <div class="block_item">
-            <div class="avatar">
-                <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{participant.avatar}}" alt="" />
-            </div>
-            <div class="text_info">
-                <div class="user_presence">Додати </div>
-            </div>
-            <div ng-if="checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon">DEL</div>
+        <div class="block_item" ng-if="participants().length == 1 && checkUserAdditionPermission()">
+            <div class="add_bg_btn">Додати нового учасника</div>
         </div>
     </div>
-</div>
-<div ng-if="participants().length > 2" class="chevron_wrapper participants_chevron_wrapper" ng-click="toggleFolded()">
-    <div class="chevron participants_chevron ng-class:{unfolded:!folded}"></div>
 </div>
