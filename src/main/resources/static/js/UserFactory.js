@@ -13,11 +13,18 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
     var tenants;
     var friends;
+    var onlineUsersIds = [];
 
     var checkRole = function() {
         if (chatUserRole & 256)
             return true;
         return false;
+    }
+    var isUserOnline = function(chatUserId){
+        return onlineUsersIds.indexOf(chatUserId)==-1 ? false : true;
+    }
+    var setOnlineUsersIds = function(ids){
+        onlineUsersIds = ids;
     }
 
     var socketSupport = true;
@@ -66,7 +73,13 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
         })
     };
-
+    $rootScope.$on("login", function(event, chatUserId){
+        onlineUsersIds.push(chatUserId);
+    });
+    $rootScope.$on("logout",function(event,chatUserId){
+        var index = onlineUsersIds.indexOf(chatUserId);
+        onlineUsersIds.splice(index,1);
+    });
 
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
@@ -262,6 +275,9 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         chatUserAvatar = mess_obj.chat_user_avatar
         $rootScope.isInited = true;
 
+        var onlineUserIds = JSON.parse(mess_obj.onlineUsersIdsJson);
+        setOnlineUsersIds(onlineUserIds);
+
         if (mess_obj.nextWindow == -1) {
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             return;
@@ -342,7 +358,9 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         },
         getTenantsList: function() {
             return tenants;
-        }
+        },
+        isUserOnline : isUserOnline,
+        setOnlineUsersIds : setOnlineUsersIds
 
     };
 

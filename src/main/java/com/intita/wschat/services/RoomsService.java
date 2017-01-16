@@ -178,8 +178,8 @@ public class RoomsService {
 				}
 			}
 			if(hasStudentAndTenant==null)return null;
-			if (isTrainerUser1 && !participantRepository.isOnline(chatUser1.getId().toString())) return chatUser1;
-			if (isTrainerUser2 && !participantRepository.isOnline(chatUser2.getId().toString())) return chatUser2;
+			if (isTrainerUser1 && !participantRepository.isOnline(chatUser1.getId())) return chatUser1;
+			if (isTrainerUser2 && !participantRepository.isOnline(chatUser2.getId())) return chatUser2;
 		}
 		return null;
 	}
@@ -216,7 +216,7 @@ public class RoomsService {
 				uTemp = privateRoomInfo.getSecondUser();
 			else
 				uTemp = privateRoomInfo.getFirtsUser();
-			users.add(new LoginEvent(uTemp, participantRepository.isOnline(uTemp.getId().toString())));
+			users.add(new LoginEvent(uTemp, participantRepository.isOnline(uTemp.getId())));
 		}
 		return users;
 	}

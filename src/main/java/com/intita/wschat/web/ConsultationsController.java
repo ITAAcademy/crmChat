@@ -179,7 +179,7 @@ public class ConsultationsController {
 				ChatUser chatConsultant = consultant.getChatUser();
 				if(new Date().after(finishDate))
 				{
-					if(!participantRepository.isOnline(chatAuthor.getId().toString()) || !participantRepository.isOnline(chatConsultant.getId().toString()))
+					if(!participantRepository.isOnline(chatAuthor.getId()) || !participantRepository.isOnline(chatConsultant.getId()))
 						finishConsultation(cons);
 				}
 				if(cons.getFinishDate() == null)
@@ -234,7 +234,7 @@ public class ConsultationsController {
 			if(varible.equals("start") && cons.getStartDate() == null)
 			{
 				Room room = cons.getRoom();
-				if(!participantRepository.isOnline(iCons.getConsultant().getChatUser().getId().toString()))//need wait
+				if(!participantRepository.isOnline(iCons.getConsultant().getChatUser().getId()))//need wait
 					return new ResponseEntity<String>(HttpStatus.METHOD_NOT_ALLOWED);
 				
 				room.setActive(true);//activate room

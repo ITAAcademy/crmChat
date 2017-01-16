@@ -1,6 +1,7 @@
 package com.intita.wschat.event;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -23,15 +24,18 @@ import com.intita.wschat.web.ChatController;
 
 @Component
 public class ParticipantRepository {
-	public ConcurrentHashMap<String,IPresentOnForum> getActiveSessions() {
+	public ConcurrentHashMap<Long,IPresentOnForum> getActiveSessions() {
 		return activeSessions;
+	}
+	public Set<Long> getActiveUsers(){
+		return activeSessions.keySet();
 	}
 	@Autowired ChatUsersService chatUsersService;
 	@Autowired ChatController chatController;
 	private final static Logger log = LoggerFactory.getLogger(ParticipantRepository.class);
-	private ConcurrentHashMap<String,IPresentOnForum> activeSessions = new ConcurrentHashMap<String,IPresentOnForum>();
+	private ConcurrentHashMap<Long,IPresentOnForum> activeSessions = new ConcurrentHashMap<Long,IPresentOnForum>();
 	//put null to distinguish WS from LP sessions. We need no last action time for Web Sockets
-	public void addParticipantPresenceByConnections(String chatId) {
+	public void addParticipantPresenceByConnections(Long chatId) {
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum presence = activeSessions.get(chatId);
 			presence.addConnectionsCount(1);
@@ -44,7 +48,7 @@ public class ParticipantRepository {
 		}
 		
 	}
-	public void addParticipantPresenceByLastConnectionTime(String chatId){
+	public void addParticipantPresenceByLastConnectionTime(Long chatId){
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum presence = activeSessions.get(chatId);
 			presence.setLastPresenceTime(new Date());
@@ -52,13 +56,13 @@ public class ParticipantRepository {
 		}
 		else{
 			activeSessions.put(chatId, new LongpollPresence());
-			chatController.tryAddTenantInListToTrainerLP(Long.parseLong(chatId));
+			chatController.tryAddTenantInListToTrainerLP(chatId);
 			//log.info(String.format("Participant %s presence added first time ",chatId));
 		}
 			//System.out.println("user "+chatId+" enter chat");
 	}
 
-	public boolean isOnline(String chatId) {
+	public boolean isOnline(Long chatId) {
 		boolean containsKey = activeSessions.containsKey(chatId);
 		boolean isPresent = containsKey ? activeSessions.get(chatId).isPresent() : false;
 		//System.out.println("isOnline "+chatId+" ? "+ online);
@@ -69,7 +73,7 @@ public class ParticipantRepository {
 	 * @param chatId
 	 * @return "true" if participant is removed, "false" if not removed or only presence index decreased
 	 */
-	public boolean invalidateParticipantPresence(String chatId,boolean invalidateWS) {
+	public boolean invalidateParticipantPresence(Long chatId,boolean invalidateWS) {
 		//log.info(String.format("Participant %s presence invalidating...",chatId));
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum userPresent = activeSessions.get(chatId);
@@ -77,7 +81,7 @@ public class ParticipantRepository {
 			userPresent.decreaseConnectionsCount(1);
 			if (!userPresent.isPresent())
 			{
-				ChatUser chatUser = chatUsersService.getChatUser(Long.parseLong(chatId));
+				ChatUser chatUser = chatUsersService.getChatUser(chatId);
 				chatController.propagateRemovingTenantFromListToTrainer(chatUser);
 				activeSessions.remove(chatId);
 				//log.info(String.format("Participant %s presence removed",chatId));

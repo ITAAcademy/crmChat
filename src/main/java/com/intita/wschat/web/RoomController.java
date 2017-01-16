@@ -268,7 +268,14 @@ public class RoomController {
 			result.put("nextWindow", "0");
 			result.put("chat_user_avatar", iUser.getAvatar());
 		}
-
+		String activeUsersJson = null;
+		Set<Long> activeUsers = participantRepository.getActiveUsers();
+		try {
+			activeUsersJson = mapper.writeValueAsString(activeUsers);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		result.put("onlineUsersIdsJson",activeUsersJson);
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
 
@@ -353,7 +360,7 @@ public class RoomController {
 		}
 
 		LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
-				room_o.getAuthor().getNickName(), avatar, participantRepository.isOnline(room_o.getAuthor().getId().toString()));
+				room_o.getAuthor().getNickName(), avatar);//participantRepository.isOnline(room_o.getAuthor().getId().toString())
 		userList.add(currentChatUserLoginEvent);
 		for(ChatUser user : room_o.getUsers())
 		{
@@ -371,7 +378,7 @@ public class RoomController {
 				avatar = iUser.getAvatar();
 			}
 
-			userList.add(new LoginEvent(intitaId, user.getId(),user.getNickName(), avatar, participantRepository.isOnline(user.getId().toString())));
+			userList.add(new LoginEvent(intitaId, user.getId(),user.getNickName(), avatar)); //participantRepository.isOnline(user.getId().toString())));
 		}
 		return  userList;
 	}
@@ -1025,6 +1032,6 @@ public class RoomController {
 	@PostConstruct
 	private void PostConstructor()
 	{
-		participantRepository.addParticipantPresenceByLastConnectionTime("" + BotParam.BOT_ID);//BOT online OK
+		participantRepository.addParticipantPresenceByLastConnectionTime (BotParam.BOT_ID);//BOT online OK
 	}
 }

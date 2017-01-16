@@ -19,7 +19,6 @@ public class LoginEvent {
 	private boolean typing;
 	private String avatar;
 	private int role;
-	private boolean online;
 
 	public Long getIntitaUserId() {
 		return intitaUserId;
@@ -44,28 +43,18 @@ public class LoginEvent {
 		this.role = role;
 	}
 
-	public boolean isOnline() {
-		return online;
-	}
-
-	public void setOnline(boolean online) {
-		this.online = online;
-	}
-
-	public LoginEvent(Long chatUserId,String username,boolean isOnline) {
+	public LoginEvent(Long chatUserId,String username) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
-		online = isOnline;
 	}
-	public LoginEvent(Long intitaUserId, Long chatUserId,String username, String avatar, boolean isOnline) {
+	public LoginEvent(Long intitaUserId, Long chatUserId,String username, String avatar) {
 		this.intitaUserId = intitaUserId;
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
-		online = isOnline;
 		this.avatar = avatar;
 	}
 	public LoginEvent(ChatUser u, boolean isOnline){
@@ -81,17 +70,14 @@ public class LoginEvent {
 		}
 		time = new Date();
 		typing = false;
-		online = isOnline;
-		
 	}
 
-	public LoginEvent(Long chatUserId,String username, String avatar,boolean isOnline) {
+	public LoginEvent(Long chatUserId,String username, String avatar) {
 		this.chatUserId=chatUserId;
 		this.username = username;
 		this.avatar = avatar;
 		time = new Date();
 		typing = false;
-		online = isOnline;
 	}
 
 	public String getUsername() {
