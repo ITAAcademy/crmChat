@@ -161,9 +161,8 @@ public class ChatController {
 	private final Map<String,Queue<DeferredResult<String>>> responseBodyQueue =  new ConcurrentHashMap<String,Queue<DeferredResult<String>>>();// key => roomId
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
-
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
-	//private ConcurrentLinkedMap<DeferredResult<String>> globalInfoResult = new ConcurrentLinkedQueue<>();
+	
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
 	private HashMap<Long,HashMap<String,Object>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
 
