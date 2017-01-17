@@ -6,14 +6,14 @@
         <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">
-        <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy : ['!online', 'username']">
+        <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort">
             <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
                 <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{participant.avatar}}" alt="" />
                 <div class="user_presence_icon"></div>
                 <div class="user_presence_icon_wraper"></div>
             </div>
             <div class="text_info">
-                <div class="user_name">{{participant.username}}</div>
+                <div class="user_name">{{participant.chatUserId}}:{{participant.username}}</div>
                 <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
                 <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
             </div>

@@ -905,6 +905,16 @@ body {
     background-size: cover
 }
 
+.tools_area .tools_dropdown_container>#tools_dropdown .leave_room_item:before {
+    background: url("../images/X.svg");
+    width: 15px;
+    height: 15px;
+    content: " ";
+    position: absolute;
+    margin-left: -34px;
+    background-size: cover
+}
+
 .tools_area .tools_dropdown_container>#tools_dropdown>* {
     margin-left: 34px
 }

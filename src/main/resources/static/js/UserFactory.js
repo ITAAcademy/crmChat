@@ -345,6 +345,12 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     };
     var setRealChatUserId = function(id) { realChatUserId = id };
 
+    var participantsSort = function(participant)
+    {
+    var isOnline = isUserOnline(participant.chatUserId);
+    return isOnline ? 'a'+participant.username : 'b' + participant.username;
+    }
+
     return {
         setChatUserId: setChatUserId,
         getChatUserId: getChatUserId,
@@ -360,8 +366,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
             return tenants;
         },
         isUserOnline : isUserOnline,
-        setOnlineUsersIds : setOnlineUsersIds
-
+        setOnlineUsersIds : setOnlineUsersIds,
+        participantsSort : participantsSort
     };
 
 

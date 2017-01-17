@@ -35,6 +35,10 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.getNameFromUrl = getNameFromUrl;
     $scope.state = 2;
     $scope.loadOnlyFilesInfiniteScrollMode = false;
+    $scope.toggleAskForDeleteMeFromCurrentRoom = function(){
+        //TODO leave current room
+        toggleAskForDeleteMe(RoomsFactory.getCurrentRoom());
+    }
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
@@ -117,8 +121,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.isUserTenantInited = false;
     $scope.blocksNames = ['first', 'second'];
     $scope.blocksItems = [
-        [new BlockItem("", "Людмила Журавская", true)],
-        [new BlockItem("", "Василій Пупкін", true), new BlockItem("", "Микола Петряк", true)]
+        [new BlockItem("", "Людмила Журавская")],
+        [new BlockItem("", "Василій Пупкін", true), new BlockItem("", "Микола Петряк")]
     ];
 
     /*FILE FORM INIT*/
@@ -148,10 +152,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         /*END*/
 
 
-    function BlockItem(avatar, name, online) {
+    function BlockItem(avatar, name) {
         this.avatar = avatar;
         this.name = name;
-        this.online = online;
     }
     $scope.clickSetTenantFree = function() {
         $scope.isTenantFree = !$scope.isTenantFree;
@@ -242,9 +245,11 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
     };
 
-    $scope.toggleAskForDeleteMe = function(event, room) {
-        if (event != undefined && event != null)
-            event.stopPropagation();
+    var toggleAskForDeleteMe = function(room) {
+
+       // if (event != undefined && event != null)
+        //    event.stopPropagation();
+
         if (room != undefined && room != null)
             $rootScope.askForDeleteMe = { "room": room, isAuthor: UserFactory.getChatUserId() == room.roomAuthorId }
         ngDialog.open({
@@ -252,7 +257,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             scope: $scope
         });
         //$('#askForDeleteMe').modal('toggle');
-    }
+    };
 
     $scope.deleteMeFromRoom = function() {
         var showERR = function() { $rootScope.askForDeleteMe.error = "Не вдалося видалити Вас з розмови!!!"; }
@@ -632,7 +637,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             var room = RoomsFactory.getRooms()[roomIndex];
             room.lastMessage = messagesMap[room.roomId];
             //$.inArray(value, array)
-            var newMessageInThisRoom = ($.inArray(room.roomId, roomIds));
+            var newMessageInThisRoom = ($.inArray(""+room.roomId, roomIds));
             if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
 
@@ -921,6 +926,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
+
+            $scope.canLeaveCurrentRoom = function() {
+                if (RoomsFactory.getCurrentRoom().type == 1)
+                    return false;
+                return true;
+            }
 
         /*****************************
          ************CONFIG************

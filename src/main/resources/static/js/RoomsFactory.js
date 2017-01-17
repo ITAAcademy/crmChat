@@ -59,24 +59,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 return participants[c_index];
         return null;
     }
-
-    var setParticipantOnline = function(chatUserId) { //$rootScope.$on("login", function(event, chatUserId)
-        for (var index in participants) {
-            if (participants[index].chatUserId == chatUserId) {
-                participants[index].online = true;
-                break;
-            }
-        }
-    };
-
-    var setParticipantOffline = function(chatUserId) {
-        for (var index in participants) {
-            if (participants[index].chatUserId == chatUserId) {
-                participants[index].online = false;
-                break;
-            }
-        }
-    };
     var unsubscribeWatch = null;
 
     var goToRoom = function(roomId) {
