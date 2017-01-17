@@ -604,7 +604,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 }
             }
         }
-        if (typeof currentRoom != 'undefined') {
+        if ( currentRoom != null) {
             currentRoom = getRoomById(rooms, currentRoom.roomId);
         }
     }

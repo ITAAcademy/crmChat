@@ -626,15 +626,17 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $rootScope.message_busy = isBusy;
     });
 
-    function newMessageArrayEventHandler(event, roomIds) {
-        
+    function newMessageMapEventHandler(event, messagesMap) {
+        if (messagesMap==null)return;
+        var roomIds = Object.keys(messagesMap);
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
-
+            room.lastMessage = messagesMap[room.roomId];
             //$.inArray(value, array)
             var newMessageInThisRoom = ($.inArray(room.roomId, roomIds));
             if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
+
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
@@ -661,14 +663,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             }
     }
 
-    function newMessageEventHandler(event, message) {
-        var messageArr = [];
-        messageArr.push(message);
-        newMessageArrayEventHandler(event, messageArr);
-    }
-
-    $rootScope.$on('newMessageEvent', newMessageEventHandler);
-    $rootScope.$on('newMessageArray', newMessageArrayEventHandler);
+    $rootScope.$on('newMessageEvent', newMessageMapEventHandler);
 
 
     $scope.getKeys = function(obj) {
@@ -799,6 +794,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.currentRoomIsNull = function() {
+        if (RoomsFactory.getCurrentRoom()==null)return true;
         return RoomsFactory.getCurrentRoom().roomId == null;
     }
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;

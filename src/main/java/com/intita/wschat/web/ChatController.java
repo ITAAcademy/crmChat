@@ -468,24 +468,25 @@ public class ChatController {
 		return messageToSave;
 	}
 
-	public synchronized void addMessageToBuffer(Long room, UserMessage message)
+	public synchronized void addMessageToBuffer(Long roomId, UserMessage message)
 	{
 		synchronized (messagesBuffer)
 		{
-			Queue<UserMessage> list = messagesBuffer.get(room.toString());
+			Queue<UserMessage> list = messagesBuffer.get(roomId.toString());
 			if(list == null)
 			{
 				list = new ConcurrentLinkedQueue<>();
-				messagesBuffer.put(room.toString(), list);
+				messagesBuffer.put(roomId.toString(), list);
 			}
 			list.add(message);
 			log.info("ADD: " + list.size());
 		}
 
-
+		HashMap payload = new HashMap();
+		payload.put(roomId,message.getBody());
 		//send message to WS users
-		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", room);
-		addFieldToInfoMap("newMessage", room);
+		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", payload);
+		addFieldToInfoMap("newMessage", roomId);
 	}
 	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
 		HashMap<String,Object> demandedRoomExtraData = new HashMap<String,Object>();
