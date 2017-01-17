@@ -35,6 +35,10 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.getNameFromUrl = getNameFromUrl;
     $scope.state = 2;
     $scope.loadOnlyFilesInfiniteScrollMode = false;
+    $scope.toggleAskForDeleteMeFromCurrentRoom = function(){
+        //TODO leave current room
+        toggleAskForDeleteMe(RoomsFactory.getCurrentRoom());
+    }
 
     $scope.mouseMoveEvent = function(event) {
         if (event.buttons == 1) {
@@ -242,9 +246,11 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
     };
 
-    $scope.toggleAskForDeleteMe = function(event, room) {
-        if (event != undefined && event != null)
-            event.stopPropagation();
+    var toggleAskForDeleteMe = function(room) {
+
+       // if (event != undefined && event != null)
+        //    event.stopPropagation();
+
         if (room != undefined && room != null)
             $rootScope.askForDeleteMe = { "room": room, isAuthor: UserFactory.getChatUserId() == room.roomAuthorId }
         ngDialog.open({
@@ -252,7 +258,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             scope: $scope
         });
         //$('#askForDeleteMe').modal('toggle');
-    }
+    };
 
     $scope.deleteMeFromRoom = function() {
         var showERR = function() { $rootScope.askForDeleteMe.error = "Не вдалося видалити Вас з розмови!!!"; }
@@ -895,6 +901,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             if (objDiv!=null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
+
+            $scope.canLeaveCurrentRoom = function() {
+                if (RoomsFactory.getCurrentRoom().type == 1)
+                    return false;
+                return true;
+            }
 
         /*****************************
          ************CONFIG************

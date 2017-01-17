@@ -456,11 +456,6 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory) {
                 }
             }
 
-            $scope.canBeRemoved = function(room) {
-                if (room.type == 1)
-                    return false;
-                return true;
-            }
             $scope.showLastContacts = function() {
                 $scope.tabState = "LastContacts";
                 $scope.sortBy = ['-date'];
