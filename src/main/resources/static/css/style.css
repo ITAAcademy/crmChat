@@ -517,10 +517,16 @@ body {
     border-color: #2774b2
 }
 
+.left_panel_mini .items_list_block .avatar .user_presence_icon {
+    border-color: #ebecf9;
+}
 .items_list_block .avatar .user_presence_icon {
     border-color: #ffffff;
 }
 
+.left_panel_mini .block_item.selected .avatar .user_presence_icon {
+    border-color: #ffffff;
+}
 .block_item.selected .avatar .user_presence_icon {
     border-color: #c4d3e3;
 }
