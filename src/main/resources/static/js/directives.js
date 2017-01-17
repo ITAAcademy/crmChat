@@ -291,6 +291,8 @@ function studentsBlock($http, mySettings, RoomsFactory,UserFactory) {
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.blockName = "Студенти";
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
+            scope.participantsSort = UserFactory.participantsSort;
+
         }
 
     };
@@ -314,6 +316,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             scope.currentRoom = RoomsFactory.getCurrentRoom;
             scope.hideEmpty = false;
             scope.getChatUserId = UserFactory.getChatUserId;
+            scope.participantsSort = UserFactory.participantsSort;
             scope.checkUserAdditionPermission = function() {
                 return RoomsFactory.checkUserAdditionPermission(UserFactory.getChatUserId());
             }

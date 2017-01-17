@@ -123,9 +123,9 @@ var formatDateWithLast = function(date, short) {
             return minutesStr + minuteNameShort[globalConfig.lang];
     } else {
         if (minutesStr > 1)
-            return minutesStr + minutesNameShort[globalConfig.lang] + endNameShort[globalConfig.lang];
+            return minutesStr + minutesNameShort[globalConfig.lang] + endName[globalConfig.lang];
         else
-            return minutesStr + minuteNameShort[globalConfig.lang] + endNameShort[globalConfig.lang];
+            return minutesStr + minuteNameShort[globalConfig.lang] + endName[globalConfig.lang];
     }
 
 

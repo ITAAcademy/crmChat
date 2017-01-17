@@ -118,8 +118,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.isUserTenantInited = false;
     $scope.blocksNames = ['first', 'second'];
     $scope.blocksItems = [
-        [new BlockItem("", "Людмила Журавская", true)],
-        [new BlockItem("", "Василій Пупкін", true), new BlockItem("", "Микола Петряк", true)]
+        [new BlockItem("", "Людмила Журавская")],
+        [new BlockItem("", "Василій Пупкін", true), new BlockItem("", "Микола Петряк")]
     ];
 
     /*FILE FORM INIT*/
@@ -149,10 +149,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         /*END*/
 
 
-    function BlockItem(avatar, name, online) {
+    function BlockItem(avatar, name) {
         this.avatar = avatar;
         this.name = name;
-        this.online = online;
     }
     $scope.clickSetTenantFree = function() {
         $scope.isTenantFree = !$scope.isTenantFree;
@@ -633,7 +632,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             var room = RoomsFactory.getRooms()[roomIndex];
             room.lastMessage = messagesMap[room.roomId];
             //$.inArray(value, array)
-            var newMessageInThisRoom = ($.inArray(room.roomId, roomIds));
+            var newMessageInThisRoom = ($.inArray(""+room.roomId, roomIds));
             if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
 
