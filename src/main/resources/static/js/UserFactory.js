@@ -99,8 +99,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                         $rootScope.$broadcast("logout", chatUserId);
 
                     });
-
-                    chatSocket.subscribe("/topic/users/must/get.room.num/chat.message", function(message) { // event update
+                    //TODO make channel private
+                    chatSocket.subscribe("/topic/{0}/must/get.room.num/chat.message".format(getChatUserId()), function(message) { // event update
                         console.log("new message in room:" + message.body);
                         var num = JSON.parse(message.body);
                         $rootScope.$broadcast('newMessageEvent', num);

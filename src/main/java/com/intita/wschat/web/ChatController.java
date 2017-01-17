@@ -484,8 +484,12 @@ public class ChatController {
 
 		HashMap payload = new HashMap();
 		payload.put(roomId,message.getBody());
+		Room chatRoom = chatRoomsService.getRoom(roomId);
 		//send message to WS users
-		simpMessagingTemplate.convertAndSend("/topic/users/must/get.room.num/chat.message", payload);
+		for (ChatUser user : chatRoom.getUsers()){
+			simpMessagingTemplate.convertAndSend("/topic/"+user.getId()+"/must/get.room.num/chat.message", payload);
+		}
+		simpMessagingTemplate.convertAndSend("/topic/"+chatRoom.getAuthor().getId()+"/must/get.room.num/chat.message", payload);
 		addFieldToInfoMap("newMessage", roomId);
 	}
 	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
