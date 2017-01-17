@@ -211,6 +211,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         //alert(16);
         messages = [];
         $rootScope.$broadcast('MessageBusyEvent', false);
+        $rootScope.$broadcast('RoomChanged', false);
         console.log("roomId:" + currentRoom.roomId);
 
         if (ChannelFactory.isSocketSupport() === true) {

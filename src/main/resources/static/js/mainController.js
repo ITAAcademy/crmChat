@@ -16,7 +16,7 @@ springChatControllers.config(function($routeProvider) {
 
 var chatControllerScope;
 
-springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore',  function($locationProvider, $routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
+springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', function($locationProvider, $routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore) {
     //maybe add button
 }]);
 
@@ -57,9 +57,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.newMessage = "";
 
     var roomElement = angular.element(document.getElementById("panel-body"));
-    $scope.resizeRoomElement = function(oldSize, newSize)
-    {
-        
+    $scope.resizeRoomElement = function(oldSize, newSize) {
+
         roomElement.css('height', 'calc(100% - ' + newSize + 'px)');
     }
 
@@ -406,10 +405,10 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $scope.show_search_list_admin = false;
     }
     $scope.onFriendClick = function(user) {
-        if(user.chatUserId != undefined && user.chatUserId != null)
-            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+        if (user.chatUserId != undefined && user.chatUserId != null)
+            window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
         else
-            window.location.replace(serverPrefix +'/chat/go/rooms/private/' + user.id + '?isChatId=false');
+            window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.id + '?isChatId=false');
     }
 
     $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
@@ -576,7 +575,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
             return;
         var urlTemplate = "/{0}/chat/loadOtherMessage";
-        if ($scope.loadOnlyFilesInfiniteScrollMode){
+        if ($scope.loadOnlyFilesInfiniteScrollMode) {
             urlTemplate = "/{0}/chat/loadOtherMessageWithFiles";
         }
         $rootScope.message_busy = true;
@@ -627,7 +626,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     });
 
     function newMessageMapEventHandler(event, messagesMap) {
-        if (messagesMap==null)return;
+        if (messagesMap == null) return;
         var roomIds = Object.keys(messagesMap);
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
@@ -771,16 +770,38 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
     };
     $scope.messageSearchEnabled = false;
-    $scope.enableMessagesSearch = function() {
+    $scope.enableMessagesSearch = function(event) {
+        debugger;
+        event.stopPropagation();
+        event.preventDefault();
+        $scope.messageSearchQuery = "";
         $scope.messageSearchEnabled = true;
-        RoomsFactory.clearMessages();
-        RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
-        $rootScope.message_busy = false;
-        var objDiv = document.getElementById("messagesScroll");
-        objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+        setTimeout(function() {$("#searchInput").focus();}, 500);
+        
+
     }
+    var updateMessagesSearchTimeout;
+    $scope.updateMessagesSearch = function() {
+        if (updateMessagesSearchTimeout != undefined)
+            $timeout.cancel(updateMessagesSearchTimeout);
+        updateMessagesSearchTimeout = $timeout(function() {
+            RoomsFactory.clearMessages();
+            RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
+            $rootScope.message_busy = false;
+            var objDiv = document.getElementById("messagesScroll");
+            objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+        }, 500);
+    }
+    $scope.focusMessagesSearchChange = function() {
+        if ($scope.messageSearchQuery == '')
+            $scope.disableMessagesSearch(true);
+
+    }
+    $rootScope.$on('RoomChanged', function(event, isBusy) {
+        $scope.disableMessagesSearch();
+    });
     $scope.disableMessagesSearch = function(reloadMessages) {
-        if(reloadMessages===true) {
+        if (reloadMessages === true) {
             RoomsFactory.clearMessages();
             RoomsFactory.loadMessagesContains('');
             $timeout(function() {
@@ -790,58 +811,62 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
         $scope.messageSearchEnabled = false;
         var objDiv = document.getElementById("messagesScroll");
-        if (objDiv!=null)
-        objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+        if (objDiv != null)
+            objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
     $scope.currentRoomIsNull = function() {
-        if (RoomsFactory.getCurrentRoom()==null)return true;
+        if (RoomsFactory.getCurrentRoom() == null) return true;
         return RoomsFactory.getCurrentRoom().roomId == null;
     }
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
     var savedDistanceToBottom;
-    var savedPaddingHeight; 
-    function saveScrollBottom(){
+    var savedPaddingHeight;
+
+    function saveScrollBottom() {
         var messagesScroll = $('#messagesScroll');
         var messagesScrollTop = messagesScroll.scrollTop();
         savedPaddingHeight = (messagesScroll.outerHeight() - messagesScroll.height());
-         savedDistanceToBottom = (typeof messagesScroll === "undefined" ||
-        typeof messagesScroll[0] === "undefined" ) ? undefined : messagesScroll.outerHeight()
-        - messagesScroll[0].scrollHeight +
-         messagesScroll.scrollTop();
+        savedDistanceToBottom = (typeof messagesScroll === "undefined" ||
+                typeof messagesScroll[0] === "undefined") ? undefined : messagesScroll.outerHeight() - messagesScroll[0].scrollHeight +
+            messagesScroll.scrollTop();
     }
-    function getScrollTopToPreserveScroll(futureHeight){
+
+    function getScrollTopToPreserveScroll(futureHeight) {
         var messagesScroll = $('#messagesScroll');
         var currentHeight = $('#messagesScroll').height();
         var outerHeight = savedPaddingHeight + futureHeight;
         var heightDelta = currentHeight - futureHeight;
-        if (heightDelta<0) return messagesScroll.scrollTop();
+        if (heightDelta < 0) return messagesScroll.scrollTop();
         var scrollHeight = messagesScroll[0].scrollHeight + heightDelta - savedPaddingHeight;
         /*console.log('heightDelta:'+heightDelta);
         console.log('savedPaddingHeight:'+savedPaddingHeight);
         console.log('scrollHeight:'+scrollHeight);*/
         if (typeof savedDistanceToBottom === "undefined") return;
-        var messagesScrollOuterHeight = outerHeight;//$('#messagesScroll').outerHeight();
-        var messagesScrollElementScrollHeight = scrollHeight;// $('#messagesScroll')[0].scrollHeight;
-        var scrollTop =  savedDistanceToBottom - messagesScrollOuterHeight +
+        var messagesScrollOuterHeight = outerHeight; //$('#messagesScroll').outerHeight();
+        var messagesScrollElementScrollHeight = scrollHeight; // $('#messagesScroll')[0].scrollHeight;
+        var scrollTop = savedDistanceToBottom - messagesScrollOuterHeight +
             messagesScrollElementScrollHeight;
-       // $('#messagesScroll').scrollTop(scrollTop);
+        // $('#messagesScroll').scrollTop(scrollTop);
         return scrollTop
-        //$('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
+            //$('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
     }
 
     function messageAreaResizer(e) {
-      //  $('#messagesScroll').stop();
+        //  $('#messagesScroll').stop();
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.message_input').height();
-        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 100;
-        if (messagesInputHeight > messagesOutputHeight) return;
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 75;
+        if (messagesInputHeight > messagesOutputHeight)
+            return;
         saveScrollBottom();
         //$('#messagesScroll').height(messagesOutputHeight);
 
-        $('#messagesScroll').stop(true).animate({height: messagesOutputHeight,
-            scrollTop:getScrollTopToPreserveScroll(messagesOutputHeight)}, 1000);
+        $('#messagesScroll').stop(true).animate({
+            height: messagesOutputHeight,
+            scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
+        }, 1000);
     }
 
 
@@ -874,7 +899,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             $scope.soundEnable = !$scope.soundEnable;
             localStorage.setItem('soundEnable', $scope.soundEnable);
         }
-        $scope.showAttaches = function(){
+        $scope.showAttaches = function() {
             RoomsFactory.clearMessages();
             $scope.loadOnlyFilesInfiniteScrollMode = true;
             $rootScope.loadOtherMessages();
@@ -883,7 +908,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
         $scope.showAllMessages = function(reloadMessages) {
-            if(reloadMessages===true) {
+            if (reloadMessages === true) {
                 RoomsFactory.clearMessages();
                 RoomsFactory.loadMessagesContains('');
                 $timeout(function() {
@@ -893,7 +918,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             }
             $scope.loadOnlyFilesInfiniteScrollMode = false;
             var objDiv = document.getElementById("messagesScroll");
-            if (objDiv!=null)
+            if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
 
