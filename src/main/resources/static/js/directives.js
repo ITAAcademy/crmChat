@@ -121,12 +121,11 @@ angular.module('springChat.directives').directive('modaleToggle', function($comp
             ignoreId: '@ignoreId'
         },
         link: function(scope, element, attr) {
-            if(scope.id != undefined)
-            {
-                if($rootScope.__modaleToggle == undefined)
+            if (scope.id != undefined) {
+                if ($rootScope.__modaleToggle == undefined)
                     $rootScope.__modaleToggle = new Map();
                 $rootScope.__modaleToggle[scope.id] = {
-                    restart : function(){toggle = false}
+                    restart: function() { toggle = false }
                 }
             }
             var toggle = false;
@@ -272,7 +271,7 @@ function initFolded(scope, element) {
     scope.scroll.overflowy = !scope.folded;
 }
 
-function studentsBlock($http, mySettings, RoomsFactory,UserFactory) {
+function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -356,6 +355,7 @@ angular.module('springChat.directives').directive('emHeightSource', function() {
     }
 
 });
+angular.module('springChat.directives').directive('roomsBlockMini', roomsBlockMini);
 angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filter('roomsBlockFilter', function(RoomsFactory) {
     return function(fields, state) {
         if (fields) { // added check for safe code
@@ -377,126 +377,136 @@ angular.module('springChat.directives').directive('roomsBlock', roomsBlock).filt
     };
 });
 
+var roomsBlockLinkFunction;
 
+function roomsBlockMini($http, RoomsFactory, ChannelFactory, UserFactory) {
+    return {
+        restrict: 'EA',
+        templateUrl: 'static_templates/rooms_block_mini.html',
+        link: function($scope, element, attributes) {
+            roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory)
+        }
+
+    };
+};
 
 function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
-            $scope.typeaheadOptions = {
-                highlightFirst: true,
-                searchMethod: "getUsersByEmail",
-                templateUrl: "static_templates/usersSearch.html",
-                onSelect: "onFriendClick",
-                delay: 1000,
-                minLength: 1
-            };
+            roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory)
+        }
+    };
+};
 
-        $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
-        //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
+roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
+    $scope.typeaheadOptions = {
+        highlightFirst: true,
+        searchMethod: "getUsersByEmail",
+        templateUrl: "static_templates/usersSearch.html",
+        onSelect: "onFriendClick",
+        delay: 1000,
+        minLength: 1
+    };
 
-            $scope.getUsersByEmail = function(query, deferred) {
-                var url = serverPrefix + "/get_users_like?login=" + query;
-                /*
-                 if (ignore == true) {
-                 url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
-                 } else {
-                 url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
-                 }*/
-                $http.get(url).success((function(deferred, data) { // send request
-                    // format data
-                    var results = data;
-                    // resolve the deferred object
-                    deferred.resolve({ results: results });
-                }).bind(this, deferred));
-            };
+    $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
+    //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
 
-            var userListForAddedToNewRoom = [];
+    $scope.getUsersByEmail = function(query, deferred) {
+        var url = serverPrefix + "/get_users_like?login=" + query;
+        /*
+         if (ignore == true) {
+         url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
+         } else {
+         url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
+         }*/
+        $http.get(url).success((function(deferred, data) { // send request
+            // format data
+            var results = data;
+            // resolve the deferred object
+            deferred.resolve({ results: results });
+        }).bind(this, deferred));
+    };
 
-            $scope.rooms = RoomsFactory.getRooms;
-            $scope.searchEnabled = false;
-            $scope.createEnabled = false;
-            $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
-            $scope.tabState = "Contacts";
-            $scope.sortBy = ['date', 'string'];
-            $scope.displayLetters = false;
+    var userListForAddedToNewRoom = [];
+
+    $scope.rooms = RoomsFactory.getRooms;
+    $scope.searchEnabled = false;
+    $scope.createEnabled = false;
+    $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
+    $scope.tabState = "Contacts";
+    $scope.sortBy = ['date', 'string'];
+    $scope.displayLetters = false;
+    $scope.room_create_input = "";
+    $scope.isInterlocutorOnline = function(room) {
+        if (room == null || room.privateUserIds == null || room.privateUserIds.length < 1) return false;
+        if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0])) return true;
+        if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
+        console.log('Interlocutor ' + room.privateUserIds[0] + 'is online');
+        return false;
+    }
+
+    $scope.toggleSearch = function() {
+        $scope.searchEnabled = !$scope.searchEnabled;
+    }
+    $scope.createNewRoom = function($event) {
+        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
+        //$scope.toggleCreate();
+
+        return false;
+    }
+
+    $scope.toggleCreate = function() {
+        $scope.createEnabled = !$scope.createEnabled;
+        if ($scope.createEnabled == false) {
+            userListForAddedToNewRoom = [];
             $scope.room_create_input = "";
-            $scope.isInterlocutorOnline = function(room){
-                if (room == null || room.privateUserIds==null || room.privateUserIds.length < 1) return false;
-                if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0]))return true;
-                if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
-                console.log('Interlocutor '+room.privateUserIds[0]+'is online');
-                return false;
-            }
+        } else {
+            $scope.tabState = "Contacts";
+        }
+    }
 
-            $scope.toggleSearch = function() {
-                $scope.searchEnabled = !$scope.searchEnabled;
-            }
-            $scope.createNewRoom = function($event) {
-                RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
-                //$scope.toggleCreate();
-                
-                return false;
-            }
+    $scope.canBeRemoved = function(room) {
+        if (room.type == 1)
+            return false;
+        return true;
+    }
+    $scope.showLastContacts = function() {
+        $scope.tabState = "LastContacts";
+        $scope.sortBy = ['-date'];
+        $scope.displayLetters = false;
+    }
+    $scope.showContacts = function() {
+        $scope.tabState = "Contacts";
+        $scope.sortBy = ['string'];
+        $scope.displayLetters = true;
+    }
 
-            $scope.toggleCreate = function() {
-                $scope.createEnabled = !$scope.createEnabled;
-                if($scope.createEnabled == false)
-                {
-                    userListForAddedToNewRoom = [];
-                    $scope.room_create_input = "";
-                }
-                else
-                {
-                    $scope.tabState = "Contacts";
-                }
-            }
+    $scope.returnAvatar = function(room) {
+        if (room.avatars.length > 1)
+            return room.avatars[1];
+        return room.avatars[0];
+    }
 
-            $scope.canBeRemoved = function(room) {
-                if (room.type == 1)
-                    return false;
-                return true;
-            }
-            $scope.showLastContacts = function() {
-                $scope.tabState = "LastContacts";
-                $scope.sortBy = ['-date'];
-                $scope.displayLetters = false;
-            }
-            $scope.showContacts = function() {
-                $scope.tabState = "Contacts";
-                $scope.sortBy = ['string'];
-                $scope.displayLetters = true;
-            }
-
-            $scope.returnAvatar = function(room) {
-                if (room.avatars.length > 1)
-                    return room.avatars[1];
-                return room.avatars[0];
-            }
-
-            $scope.addForCreatRoom = function(room) {
-                // alert(chatUserId);
-                if(room.type == 1 && room.privateUserIds != undefined)
-                {
-                    if(room.privateUserIds[0] == UserFactory.getChatUserId())
-                        userListForAddedToNewRoom.push(room.privateUserIds[1]);    
-                    if(room.privateUserIds[1] == UserFactory.getChatUserId())
-                        userListForAddedToNewRoom.push(room.privateUserIds[0]);    
-                }
-                
-            }
-
-            $scope.doGoToRoom = function(roomId) {
-                if ($scope.searchEnabled || $scope.createEnabled)
-                    return;
-                ChannelFactory.changeLocation('/dialog_view/' + roomId);
-            }
-            var nice = $(".scroll");
-            $scope.showLastContacts();
+    $scope.addForCreatRoom = function(room) {
+        // alert(chatUserId);
+        if (room.type == 1 && room.privateUserIds != undefined) {
+            if (room.privateUserIds[0] == UserFactory.getChatUserId())
+                userListForAddedToNewRoom.push(room.privateUserIds[1]);
+            if (room.privateUserIds[1] == UserFactory.getChatUserId())
+                userListForAddedToNewRoom.push(room.privateUserIds[0]);
         }
 
-    };
+    }
+
+    $scope.doGoToRoom = function(roomId) {
+        if ($scope.searchEnabled || $scope.createEnabled)
+            return;
+        ChannelFactory.changeLocation('/dialog_view/' + roomId);
+    }
+    var nice = $(".scroll");
+    $scope.showLastContacts();
 };
 
 angular.module('springChat.directives').directive('fileMiniature', fileMiniature);
@@ -651,7 +661,7 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
 
             // Bind mousedown event
             elem.on('mousedown', function(e) {
-                
+
                 if ($(dragElement).hasClass("drag-disable") || e.target != elem[0])
                     return true;
 
@@ -665,7 +675,7 @@ angular.module('springChat.directives').directive('ngDraggable', function($docum
 
             // Handle drag event
             function mousemove(e) {
-                
+
                 y = e.clientY - startY;
                 x = e.clientX - startX;
                 setPosition();

@@ -37,18 +37,7 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <div class="left_panel_mini">
-            <div class="section_content">
-                <div class="block_item selectable">
-                    <div class="avatar">
-                        <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{returnAvatar(getCurrentRoom())}}" alt="" />
-                    </div>
-                    <div class="text_info">
-                        <div class="user_name">{{getCurrentRoom().string}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div rooms-block-mini="true" class="left_panel_mini noselect"></div>
         <div class="left_panel noselect">
             <div class="mainContent">
                 <div class="workplace_outter">
@@ -70,6 +59,7 @@
         </div>
         <div class="right_panel">
             <div class="tools_area">
+                <img id="menu" src="images/elements/menu_icon.svg"/>
                 <div class="tools_dropdown_container">
                     <ul id="tools_dropdown" class="popup_dropdown">
                         <li ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="show_attaches_item"><a>Показати додатки</a></li>
