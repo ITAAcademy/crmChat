@@ -26,8 +26,9 @@
                     <div class="user_name">{{room.roomId}}:{{room.string}}</div>
                     <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : room.lastMessage}}</div>
                 </div>
-                <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.date, true) : ''}}</div>
+                <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true) : ''}}</div>
                 <div class="contact_control">
+                    <div ng-if="room.nums > 0" class="budget">{{room.nums}}</div>
                     <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
                 </div>
             </div>

@@ -465,7 +465,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
             userListForAddedToNewRoom = [];
             $scope.room_create_input = "";
         } else {
-            $scope.tabState = "Contacts";
+            $scope.showContacts();
         }
     }
 
@@ -476,7 +476,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
     $scope.showLastContacts = function() {
         $scope.tabState = "LastContacts";
-        $scope.sortBy = ['-date'];
+        $scope.sortBy = ['-nums', '-date'];
         $scope.displayLetters = false;
     }
     $scope.showContacts = function() {

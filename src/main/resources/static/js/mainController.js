@@ -637,6 +637,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             var room = RoomsFactory.getRooms()[roomIndex];
             room.lastMessage = messagesMap[room.roomId];
             //$.inArray(value, array)
+            debugger;
             var newMessageInThisRoom = ($.inArray(""+room.roomId, roomIds));
             if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
@@ -644,7 +645,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
-                    room.date = curentDateInJavaFromat();
+                    //room.date = curentDateInJavaFromat();
+                    room.lastMessageDate = curentDateInJavaFromat();
                     if ($scope.soundEnable)
                         new Audio('data/new_mess.mp3').play();
                     toaster.pop('note', "NewMessage in " + room.string, "", 2000);
@@ -899,11 +901,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
          ************CONFIG************
          *****************************/
         //get sound
-        $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
-        if ($scope.soundEnable == undefined) {
+        if (localStorage.getItem('soundEnable') == undefined) {
             localStorage.setItem('soundEnable', true);
             $scope.soundEnable = true;
         }
+        $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
+        
         $scope.togleSoundEnable = function() {
             $scope.soundEnable = !$scope.soundEnable;
             localStorage.setItem('soundEnable', $scope.soundEnable);
