@@ -35,7 +35,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.getNameFromUrl = getNameFromUrl;
     $scope.state = 2;
     $scope.loadOnlyFilesInfiniteScrollMode = false;
-    $scope.toggleAskForDeleteMeFromCurrentRoom = function(){
+    $scope.toggleAskForDeleteMeFromCurrentRoom = function() {
         //TODO leave current room
         toggleAskForDeleteMe(RoomsFactory.getCurrentRoom());
     }
@@ -247,7 +247,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
     var toggleAskForDeleteMe = function(room) {
 
-       // if (event != undefined && event != null)
+        // if (event != undefined && event != null)
         //    event.stopPropagation();
 
         if (room != undefined && room != null)
@@ -635,19 +635,17 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var roomIds = Object.keys(messagesMap);
         for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
             var room = RoomsFactory.getRooms()[roomIndex];
-            room.lastMessage = messagesMap[room.roomId];
-            //$.inArray(value, array)
-            debugger;
-            var newMessageInThisRoom = ($.inArray(""+room.roomId, roomIds));
+            var newMessageInThisRoom = ($.inArray("" + room.roomId, roomIds));
             if (newMessageInThisRoom != -1) {
                 $rootScope.roomForUpdate[room.roomId] = true;
-
+                room.lastMessage = messagesMap[room.roomId];
+                room.lastMessageDate = (new Date()).getTime();
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
                     RoomsFactory.updateNewMsgNumber(1);
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     //room.date = curentDateInJavaFromat();
-                    room.lastMessageDate = curentDateInJavaFromat();
+
                     if ($scope.soundEnable)
                         new Audio('data/new_mess.mp3').play();
                     toaster.pop('note', "NewMessage in " + room.string, "", 2000);
@@ -784,12 +782,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         event.preventDefault();
         $scope.messageSearchQuery = "";
         $scope.messageSearchEnabled = true;
-        setTimeout(function() {$("#searchInput").focus();}, 500);
-        
+        setTimeout(function() { $("#searchInput").focus(); }, 500);
+
 
     }
     $scope.showMenu = false;
-    $scope.toggleMenu = function(){
+    $scope.toggleMenu = function() {
         $scope.showMenu = !$scope.showMenu;
     }
 
@@ -909,7 +907,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             $scope.soundEnable = true;
         }
         $scope.soundEnable = localStorage.getItem('soundEnable') == 'true';
-        
+
         $scope.togleSoundEnable = function() {
             $scope.soundEnable = !$scope.soundEnable;
             localStorage.setItem('soundEnable', $scope.soundEnable);
@@ -937,11 +935,11 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
 
-            $scope.canLeaveCurrentRoom = function() {
-                if (RoomsFactory.getCurrentRoom().type == 1)
-                    return false;
-                return true;
-            }
+        $scope.canLeaveCurrentRoom = function() {
+            if (RoomsFactory.getCurrentRoom().type == 1)
+                return false;
+            return true;
+        }
 
         /*****************************
          ************CONFIG************

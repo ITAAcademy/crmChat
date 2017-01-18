@@ -112,7 +112,7 @@ var formatDateWithLast = function(date, short) {
         return formatDate(date, short);
     else
     if (Math.round(delta / 60000) == 0)
-        return null;
+        return "щойно";
 
     var minutesStr = Math.round(delta / 60000);
     if (short) {

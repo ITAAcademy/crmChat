@@ -1806,7 +1806,7 @@ body {
 
 @media only screen and (min-width:961px) {
     .items_list_block .block_content {
-        /* min-height: 205px; */
+         min-height: 205px; 
         max-height: 205px;
     }
 }
