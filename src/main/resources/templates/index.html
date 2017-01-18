@@ -20,11 +20,13 @@
             <img class="logo" src="images\intita95x30.png" alt="" />
             <div class="notification">
                 <img src="images/elements/Icon notification.png" alt="" />
+                <div class="text"></div>
                 <div class="state"></div>
             </div>
             <div class="message_notification">
                 <img src="images/elements/Icon msg.png" alt="" />
-                <div class="state"></div>
+                <div ng-if="getNewMsgNumber() > 0" class="text" ng-bind="getNewMsgNumber()"></div>
+                <div ng-if="getNewMsgNumber() > 0" class="state"></div>
             </div>
             <div class="window_panel">
                 <div id="minimize_btn"></div>

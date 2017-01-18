@@ -93,6 +93,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function goToRoomEvn(id) {
         console.log("goToRoomEvn(" + id + ")");
         if (currentRoom != undefined) {
+            updateNewMsgNumber(-currentRoom.nums);
             currentRoom.nums = 0;
             //push up previesly room
             //currentRoom.date = curentDateInJavaFromat();
@@ -595,6 +596,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (currentRoom != null) {
             currentRoom = getRoomById(rooms, currentRoom.roomId);
         }
+        updateNewMsgNumber();
     }
 
     function subscribeRoomsUpdateLP() {
@@ -643,6 +645,18 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function resetOldMessageInfo() {
         oldMessage = null;
     }
+    var newMsgNumber = 0;
+    var updateNewMsgNumber = function(diff) {
+        if(diff != undefined)
+        {
+            newMsgNumber += diff;
+            return;
+        }
+        newMsgNumber = 0;
+        for (var i = 0; i < rooms.length; i++) {
+            newMsgNumber += rooms[i].nums;
+        }
+    }
 
     var RoomsFactory = {
         goToRoom: goToRoom,
@@ -651,7 +665,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getCurrentRoom: function() {
             return currentRoom;
         },
-        setRooms: function(roomsArg) { rooms = roomsArg; },
+        setRooms: function(roomsArg) { rooms = roomsArg; updateNewMsgNumber();},
         getRooms: function() {
             return rooms;
         },
@@ -663,6 +677,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         },
         getOldMessage: function() {
             return oldMessage;
+        },
+        updateNewMsgNumber: updateNewMsgNumber,
+        getNewMsgNumber: function(){
+            return newMsgNumber;
         },
         calcPositionUnshift: calcPositionUnshift,
         checkUserAdditionPermission: checkUserAdditionPermission,

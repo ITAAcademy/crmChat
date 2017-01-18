@@ -644,6 +644,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
                 if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                     room.nums++;
+                    RoomsFactory.updateNewMsgNumber(1);
                     // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                     //room.date = curentDateInJavaFromat();
                     room.lastMessageDate = curentDateInJavaFromat();
@@ -791,6 +792,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.toggleMenu = function(){
         $scope.showMenu = !$scope.showMenu;
     }
+
+    $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
     var updateMessagesSearchTimeout;
     $scope.updateMessagesSearch = function() {
         if (updateMessagesSearchTimeout != undefined)

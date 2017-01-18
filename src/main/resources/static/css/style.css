@@ -170,15 +170,28 @@ body {
 .head .message_notification {
     right: 120px;
 }
-
+.head .message_notification .text{
+    font-size: 14px;
+    /* position: relative; */
+    /* left:7px; */
+    width: 100%;
+    /* background: #333; */
+    text-align: center;
+    line-height: 32px;
+}
 .head .state {
-    width: 10px;
-    height: 10px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background-color: red;
     top: -15px;
+    opacity: .8;
+}
+.head .message_notification .state{
     right: 0px;
-    opacity: .8
+}
+.head .notification .state{
+    right: 5px;
 }
 
 .items_list_block {
