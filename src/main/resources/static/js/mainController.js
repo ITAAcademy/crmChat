@@ -928,7 +928,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
 
             $scope.canLeaveCurrentRoom = function() {
-                if (RoomsFactory.getCurrentRoom().type == 1)
+                if (RoomsFactory.getCurrentRoom()==null || RoomsFactory.getCurrentRoom().type == 1)
                     return false;
                 return true;
             }

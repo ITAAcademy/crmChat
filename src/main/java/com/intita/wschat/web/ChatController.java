@@ -223,11 +223,11 @@ public class ChatController {
 
 	public void groupCastAddTenantToList(ChatUser tenant){
 		String subscriptionStr = "/topic/chat.tenants.add";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, true));
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant));
 	}
 	public void groupCastRemoveTenantFromList(ChatUser tenant){
 		String subscriptionStr = "/topic/chat.tenants.remove";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant, false));
+		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant));
 	}
 
 	public void propagateRemovingTenantFromListToTrainer(ChatUser user){
@@ -249,7 +249,7 @@ public class ChatController {
 				if (participantRepository.isOnline(trainerChatId)){
 					ConcurrentHashMap<Long,IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
 					if (activeSessions.get(trainerChatId).isTimeBased())
-						addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser, true));
+						addFieldToUserInfoMap(trainerUser,"tenants.add",chatUsersService.getLoginEvent(tenantUser));
 					else if (activeSessions.get(trainerChatId).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
 					}		
@@ -269,7 +269,7 @@ public class ChatController {
 				Long trainerChatId = trainerUser.getId();
 				if (!participantRepository.isOnline(trainerChatId)){
 					if (activeSessions.get(trainerChatId).isTimeBased())
-						addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser, true));
+						addFieldToUserInfoMap(trainerUser,"tenants.remove",chatUsersService.getLoginEvent(tenantUser));
 					else if (activeSessions.get(trainerChatId).isConnectionBased()){
 						//Do nothing now, but may be usable in future	
 					}		
@@ -494,9 +494,9 @@ public class ChatController {
 	}
 	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
 		HashMap<String,Object> demandedRoomExtraData = new HashMap<String,Object>();
-		demandedRoomExtraData.put("trainer", new LoginEvent(chatUserTrainer,false));
+		demandedRoomExtraData.put("trainer", new LoginEvent(chatUserTrainer));
 
-		LoginEvent studentLE = new LoginEvent(chatUser,false);
+		LoginEvent studentLE = new LoginEvent(chatUser);
 		demandedRoomExtraData.put("student", studentLE);
 		demandedRoomExtraData.put("lastMessage", lastMessage);
 
@@ -908,35 +908,42 @@ public class ChatController {
 		return jsonInString;
 	}
 
+
 	@RequestMapping(value="/get_users_like", method = RequestMethod.GET)
 	@ResponseBody
 	public String getUsersLike(@RequestParam String login, @RequestParam(required = false) Long room, @RequestParam(required = false) boolean eliminate_users_of_current_room) throws JsonProcessingException {
 		ArrayList<User> usersResult = null;
-
 		if(eliminate_users_of_current_room)
 		{
-			List<ChatUser> users = new  ArrayList<ChatUser>();
-			Set<ChatUser>  users_set = null;
-			users_set = roomService.getRoom(room).getUsers();
-			users.addAll(users_set);
-			users.add(roomService.getRoom(room).getAuthor());
-
-			List<Long> room_emails = new  ArrayList<>();
-			for(int i = 0; i <  users.size(); i++)
-			{
-				User i_user = users.get(i).getIntitaUser();
-				if(i_user != null)
-					room_emails.add(i_user.getId());
-			}
-			usersResult = new ArrayList(userService.getUsersFist5(login, room_emails));
+			ArrayList<Long> roomUsers = roomService.getRoomUsersIds(room);
+			usersResult = new ArrayList(userService.getUsersFist5(login, roomUsers));
 		}
 		else
 			usersResult = new ArrayList(userService.getUsersFist5(login));
-
 		ObjectMapper mapper = new ObjectMapper();
-
 		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(usersResult);
 		return jsonInString;
+	}
+
+	@RequestMapping(value="/get_users_log_events_like", method = RequestMethod.GET)
+	@ResponseBody
+	public String getChatUsersLike(@RequestParam String login, @RequestParam(required = false) Long room, @RequestParam(required = false) boolean eliminate_users_of_current_room) throws JsonProcessingException {
+		ArrayList<User> usersResult = null;
+		if(eliminate_users_of_current_room)
+		{
+			ArrayList<Long> roomUsers = roomService.getRoomUsersIds(room);
+			usersResult = new ArrayList(userService.getUsersFist5(login, roomUsers));
+		}
+		else
+			usersResult = new ArrayList(userService.getUsersFist5(login));
+		ArrayList<LoginEvent> loginEvents = new ArrayList<>();
+		for (User u: usersResult)
+			loginEvents.add(new LoginEvent(u,u.getChatUser().getId()));
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(loginEvents);
+		return jsonInString;
+
+
 	}
 
 

@@ -110,6 +110,37 @@ public class RoomsService {
 		roomRepo.delete(room);
 		return true;
 	}
+	public ArrayList<Long> getRoomUsersIds(Long roomId){
+		//TODO write correct method
+		List<ChatUser> roomUsers = getAllRoomUsers(roomId);
+		ArrayList<Long> roomUsersIds = new  ArrayList<>();
+		for(int i = 0; i <  roomUsers.size(); i++)
+		{
+			User intitaUser =roomUsers.get(i).getIntitaUser();
+			if (intitaUser!=null)
+			roomUsersIds.add(intitaUser.getId());
+		}
+		return roomUsersIds;
+	}
+	public List<ChatUser> getAllRoomUsers(Long roomId){
+		List<ChatUser> users = new  ArrayList<ChatUser>();
+		Set<ChatUser>  users_set = null;
+		Room room = getRoom(roomId);
+		users_set = room.getUsers();
+		users.addAll(users_set);
+		users.add(room.getAuthor());
+		return users;
+	}
+	public ArrayList<Long> getRoomChatUsersIds(Long roomId){
+		//TODO write correct method
+		List<ChatUser> roomUsers = getAllRoomUsers(roomId);
+		ArrayList<Long> roomUsersIds = new  ArrayList<>();
+		for(int i = 0; i <  roomUsers.size(); i++)
+		{
+				roomUsersIds.add(roomUsers.get(i).getId());
+		}
+		return roomUsersIds;
+	}
 
 
 	@Transactional
@@ -216,7 +247,7 @@ public class RoomsService {
 				uTemp = privateRoomInfo.getSecondUser();
 			else
 				uTemp = privateRoomInfo.getFirtsUser();
-			users.add(new LoginEvent(uTemp, participantRepository.isOnline(uTemp.getId())));
+			users.add(new LoginEvent(uTemp));
 		}
 		return users;
 	}

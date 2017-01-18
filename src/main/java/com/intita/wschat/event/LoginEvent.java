@@ -57,7 +57,7 @@ public class LoginEvent {
 		typing = false;
 		this.avatar = avatar;
 	}
-	public LoginEvent(ChatUser u, boolean isOnline){
+	public LoginEvent(ChatUser u){
 		if (u!=null){
 			this.chatUserId=u.getId();
 			User intitaUser = u.getIntitaUser();
@@ -70,6 +70,14 @@ public class LoginEvent {
 		}
 		time = new Date();
 		typing = false;
+	}
+	public LoginEvent(User u,Long chatUserId){
+		this.chatUserId = chatUserId;
+		this.nickName = u.getNickName();
+			this.avatar = u.getAvatar();
+			this.intitaUserId = u.getId();
+			this.username = u.getFullName();
+
 	}
 
 	public LoginEvent(Long chatUserId,String username, String avatar) {

@@ -248,7 +248,7 @@ public class UsersService {
 	public ArrayList<LoginEvent> getAllFreeTenantsLoginEvent(Long... ignoreUsers){
 		ArrayList<ChatUser> tenants = getAllFreeTenants(ignoreUsers);
 		ArrayList<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
-		for(ChatUser user : tenants) loginEvents.add(chatUsersService.getLoginEvent(user, true));
+		for(ChatUser user : tenants) loginEvents.add(chatUsersService.getLoginEvent(user));
 		return loginEvents;
 	}
 

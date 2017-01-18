@@ -79,7 +79,7 @@ public class PresenceEventListener {
 		ChatUser user = chatUsersService.getChatUser(principal);
 		if (chatTenantService.isTenant(user.getId())){
 			//log.info(String.format("propagation of new tenant '%s' for trainers by ws and lp...", chatId));
-			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user, true));
+			messagingTemplate.convertAndSend("/topic/chat.tenants.add",new LoginEvent(user));
 			chatController.tryAddTenantInListToTrainerLP(user);
 		}
 	}
@@ -102,7 +102,7 @@ public class PresenceEventListener {
 		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatIdStr));
 		//remove user from tenant list if tenant
 		if (chatTenantService.isTenant(user.getId()))
-		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user, false));
+		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user));
 		chatController.propagateRemovingTenantFromListToTrainer(user);
 		chatController.tryRemoveChatUserRequiredTrainer(user);
 		}
