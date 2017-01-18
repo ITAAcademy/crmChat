@@ -17,7 +17,9 @@
                 <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
                 <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
             </div>
-            <div ng-if="checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon">DEL</div>
+            <div class="contact_control">
+                <img class="delete-user-icon" ng-if="checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" src="images\cross13x15.png" alt="" />
+            </div>
         </div>
         <div class="block_item" ng-if="participants().length == 1 && checkUserAdditionPermission()">
             <div class="add_bg_btn">Додати нового учасника</div>

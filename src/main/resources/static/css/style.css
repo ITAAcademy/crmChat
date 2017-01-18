@@ -125,20 +125,26 @@ body {
 #menu {
     position: absolute;
     top: 5px;
-    left: 25px;
+    left: 15px;
+    z-index: 255;
     display: none;
 }
+
 #menu:hover {
     cursor: pointer;
 }
+
 @media only screen and (max-width:960px) {
     .left_panel {
         z-index: 222222;
-        width: 0;
+        max-width: 0;
+        -webkit-transition: 1s ease-in-out;
+        -moz-transition: 1s ease-in-out;
+        -o-transition: 1s ease-in-out;
+        transition: 1s ease-in-out;
     }
     .left_panel.active {
-        z-index: 222222;
-        width: 301;
+        max-width: 301px;
     }
     .left_panel_mini {
         display: block;
@@ -152,8 +158,8 @@ body {
     .user_message .message_details {
         width: calc(100% - 70px);
     }
-    #menu{
-    	display: block;
+    #menu {
+        display: block;
     }
 }
 
@@ -520,6 +526,7 @@ body {
 .left_panel_mini .items_list_block .avatar .user_presence_icon {
     border-color: #ebecf9;
 }
+
 .items_list_block .avatar .user_presence_icon {
     border-color: #ffffff;
 }
@@ -527,6 +534,7 @@ body {
 .left_panel_mini .block_item.selected .avatar .user_presence_icon {
     border-color: #ffffff;
 }
+
 .block_item.selected .avatar .user_presence_icon {
     border-color: #c4d3e3;
 }
@@ -794,7 +802,15 @@ body {
     padding-right: 52px;
     right: 0
 }
-
+.delete-user-icon
+{
+	opacity: 0.5;
+}
+.delete-user-icon:hover
+{
+	opacity: 1;
+	cursor: pointer;
+}
 .contacts_menu_strip .group_icon {
     position: absolute;
     top: 0;
@@ -1740,5 +1756,6 @@ body {
     /* Non-prefixed version, currently
                                   not supported by any browser */
 }
+
 
 /*# sourceMappingURL=style.css.map */

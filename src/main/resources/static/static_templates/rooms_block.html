@@ -28,7 +28,6 @@
                 </div>
                 <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.date, true) : ''}}</div>
                 <div class="contact_control">
-                    <img ng-if="authorize && canBeRemoved(room) && createEnabled == false" ng-click="toggleAskForDeleteMe($event, room)" src="images\cross13x15.png" alt="" />
                     <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
                 </div>
             </div>

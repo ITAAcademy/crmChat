@@ -785,6 +785,10 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         
 
     }
+    $scope.showMenu = false;
+    $scope.toggleMenu = function(){
+        $scope.showMenu = !$scope.showMenu;
+    }
     var updateMessagesSearchTimeout;
     $scope.updateMessagesSearch = function() {
         if (updateMessagesSearchTimeout != undefined)
