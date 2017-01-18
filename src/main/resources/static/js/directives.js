@@ -393,47 +393,52 @@ function roomsBlockMini($http, RoomsFactory, ChannelFactory, UserFactory) {
     };
 };
 
-function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory) {
+function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory,$timeout) {
+    //TODO finish rooms search
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/rooms_block.html',
         link: function($scope, element, attributes) {
-            roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory)
+            roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
+            $scope.roomsListSearched = [];
+            $scope.isUserOnline = UserFactory.isUserOnline;
+            $scope.getRoomsOrSearchedRooms = function(){
+                if ($scope.searchEnabled) return $scope.roomsListSearched;
+                    else return RoomsFactory.getRooms();
+
+            }
+            /*$scope.getUsersByEmail = function(query, deferred) {
+                var url = serverPrefix + "/get_users_like?login=" + query;
+                $http.get(url).success((function(deferred, data) { // send request
+                    var results = data;
+                    deferred.resolve({ results: results });
+                }).bind(this, deferred));
+            };*/
+            $scope.participantsSort = UserFactory.participantsSort;
+            $scope.updateChatUsersByEmail = function(email, delay) {
+                $timeout.cancel($scope.updatingUsersByEmailPromise);
+                if (email==null || email.length < 1) {
+                    $scope.updatingUsersByEmailPromise = undefined;
+                    $scope.roomsListSearched=[];
+                    return;
+                }
+                $scope.updatingUsersByEmailPromise = $timeout(function(){
+                    var url = serverPrefix + "/get_users_log_events_like?login=" + email;
+                  return  $http.get(url,{}).success(function(data) { // send request
+                      $scope.roomsListSearched = data;
+                    });
+                },delay);
+             };
         }
     };
 };
 
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
-    $scope.typeaheadOptions = {
-        highlightFirst: true,
-        searchMethod: "getUsersByEmail",
-        templateUrl: "static_templates/usersSearch.html",
-        onSelect: "onFriendClick",
-        delay: 1000,
-        minLength: 1
-    };
-
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
 
-    $scope.getUsersByEmail = function(query, deferred) {
-        var url = serverPrefix + "/get_users_like?login=" + query;
-        /*
-         if (ignore == true) {
-         url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
-         } else {
-         url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
-         }*/
-        $http.get(url).success((function(deferred, data) { // send request
-            // format data
-            var results = data;
-            // resolve the deferred object
-            deferred.resolve({ results: results });
-        }).bind(this, deferred));
-    };
-
     var userListForAddedToNewRoom = [];
-
+    $scope.isUserOnline = UserFactory.isUserOnline;
     $scope.rooms = RoomsFactory.getRooms;
     $scope.searchEnabled = false;
     $scope.createEnabled = false;
@@ -486,6 +491,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
 
     $scope.returnAvatar = function(room) {
+        if (room.avatars==null) return "noname.png";
         if (room.avatars.length > 1)
             return room.avatars[1];
         return room.avatars[0];

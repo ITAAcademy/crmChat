@@ -86,14 +86,24 @@ public class ChatUsersService {
 
 	}
 	@Transactional
-	public List<ChatUser> getUsersFist5(String nickName, List<String> excludedNicks){
+	public List<ChatUser> getUsersFist5ExcludeNicks(String nickName, List<String> excludedNicks){
 		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameNotInAndNickNameLike( excludedNicks, nickName + "%");
 		return users;
 	}
 	@Transactional
-	public LoginEvent getLoginEvent(ChatUser chatUser,boolean isOnline){
+	public List<ChatUser> getUsersFist5(String nickName){
+		List<ChatUser> users = chatUsersRepo.findFirst5ByNickName(nickName + "%");
+		return users;
+	}
+	@Transactional
+	public List<ChatUser> getUsersFist5ExcludingList(String nickName, List<Long> excludedIds){
+		List<ChatUser> users = chatUsersRepo.findFirst5ByNickNameExcludeList( nickName,excludedIds,new PageRequest(0, 5));
+		return users;
+	}
+	@Transactional
+	public LoginEvent getLoginEvent(ChatUser chatUser){
 		if (chatUser==null) return null;
-		return new LoginEvent(chatUser, isOnline);
+		return new LoginEvent(chatUser);
 	}
 	@Transactional
 	public ArrayList<ChatUser> getUsers(List<Long> ids){

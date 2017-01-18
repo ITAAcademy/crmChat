@@ -34,7 +34,10 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	ChatUser findOneByIntitaUser(User user);
 	List<ChatUser> findFirst10ByIdNotIn(List<Long> users);
 	//  List<User> findFirst5ByLoginAndByPassword( String users, String login);
-	List<ChatUser> findFirst5ByNickNameNotInAndNickNameLike( List<String> users, String login);
+	List<ChatUser> findFirst5ByNickNameNotInAndNickNameLike( List<String> users, String nickName);
+	List<ChatUser> findFirst5ByNickName(String nickName);
+	@Query("select u from chat_user u where u.nickName like ?1  and u.id not in ?2")
+	List<ChatUser> findFirst5ByNickNameExcludeList( String nickName, List<Long> excludedChatUsers, Pageable pageable);
 	List<ChatUser> findFirst5ByNickNameLike(String nickName);
 	ChatUser findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(ArrayList<Room> room, ArrayList<Room> room2, Long user_id);
 
