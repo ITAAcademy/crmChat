@@ -170,7 +170,8 @@ body {
 .head .message_notification {
     right: 120px;
 }
-.head .message_notification .text{
+
+.head .message_notification .text {
     font-size: 14px;
     /* position: relative; */
     /* left:7px; */
@@ -179,6 +180,7 @@ body {
     text-align: center;
     line-height: 32px;
 }
+
 .head .state {
     width: 7px;
     height: 7px;
@@ -187,10 +189,12 @@ body {
     top: -15px;
     opacity: .8;
 }
-.head .message_notification .state{
+
+.head .message_notification .state {
     right: 0px;
 }
-.head .notification .state{
+
+.head .notification .state {
     right: 5px;
 }
 
@@ -1797,5 +1801,12 @@ body {
     }
     .user_message .message_details {
         width: calc(100% - 70px);
+    }
+}
+
+@media only screen and (min-width:961px) {
+    .items_list_block .block_content {
+        /* min-height: 205px; */
+        max-height: 205px;
     }
 }
