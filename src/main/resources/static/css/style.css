@@ -1772,7 +1772,7 @@ body {
 
 /*# sourceMappingURL=style.css.map */
 
-@media only screen and (max-width:960px) {
+@media screen and (max-width:960px) {
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1804,7 +1804,7 @@ body {
     }
 }
 
-@media only screen and (min-width:961px) {
+@media screen and (min-width:961px) {
     .items_list_block .block_content {
          min-height: 205px; 
         max-height: 205px;

@@ -243,6 +243,9 @@ public class RoomsService {
 		r.addUsers(users);
 		r = roomRepo.save(r);
 		chatLastRoomDateService.addUserLastRoomDateInfo(author, r);
+		for (ChatUser chatUser : users) {
+			chatLastRoomDateService.addUserLastRoomDateInfo(chatUser, r);
+		}
 		return r;
 	}
 	@Transactional(readOnly = false)

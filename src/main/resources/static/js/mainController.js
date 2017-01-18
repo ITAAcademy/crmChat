@@ -629,6 +629,14 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.$on('MessageBusyEvent', function(event, isBusy) {
         $rootScope.message_busy = isBusy;
     });
+    $rootScope.checkPrivateRelations = function(room, user) {
+        if (room.type == 1 && room.privateUserIds != undefined) {
+
+            if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)
+                return true;
+        }
+        return false;
+    }
 
     function newMessageMapEventHandler(event, messagesMap) {
         if (messagesMap == null) return;
