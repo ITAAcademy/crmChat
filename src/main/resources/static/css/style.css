@@ -1138,6 +1138,10 @@ body {
     max-height: calc(100% - 25px);
     /* padding-bottom: 40px */
 }
+.left_panel_mini .bottom_block {
+    padding-bottom: 0px;
+    max-height: 100%;
+}
 
 .controls_area {
     margin-top: 8px
@@ -1624,7 +1628,7 @@ body {
 }
 
 img.file-extension-preview {
-    width: 60px
+    width: 40px;
 }
 
 .display-file-container {
@@ -1635,10 +1639,14 @@ img.file-extension-preview {
 
 .display-file-container .file-name {
     width: 60px;
-    height: 40px;
+    max-width: 60px;
+    max-height: 40px;
     word-wrap: break-word;
     text-overflow: ellipsis;
-    display: inline-block
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 14px;
 }
 
 .user.dialog {

@@ -446,7 +446,6 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         if (room == null || room.privateUserIds == null || room.privateUserIds.length < 1) return false;
         if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0])) return true;
         if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
-        console.log('Interlocutor ' + room.privateUserIds[0] + 'is online');
         return false;
     }
 
