@@ -1,0 +1,14 @@
+		
+<div class="row">
+    <div class="col-xs-12 chat-box">
+        <h4>Teachers</h4>
+        <div class="share">
+        <ul ng-repeat="teacher in seachersTeachers | orderBy: '-username' ">
+                <li>               
+                    <img style="width: 50px; height: 50px;" th:src="${config.get('baseUrl')+'/images/avatars/{{teacher.avatar}}'}"	/>
+                    <a ng-href="#/private_dialog_view/{{teacher.chatUserId}}">{{teacher.username}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

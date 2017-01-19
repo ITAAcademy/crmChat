@@ -1,0 +1,23 @@
+<div class="row">
+    <div th:include="chatTemplate"></div>
+</div>
+<div ng-hide="consultant">
+    <div ng-show="currentRoom.active" th:each="rating : ${ratingsPack}">
+        <span class="col-xs-4" th:text="${rating.name}"> </span>
+        <star-rating class="col-xs-7" th:attr="ng-model=${'ratings[' + rating.id + ']'}" max="10" onRatingSelect="angular.noop"></star-rating>
+        <span th:attr="ng-bind=${'ratings[' + rating.id + ']'}" class="col-xs-1">khj</span>
+    </div> <span ng-if="status == 1" class="col-xs-2">
+
+		<button ng-disabled="isCanStart()" class="btn btn-block btn-info"
+			ng-click="ssFunction('start')">
+			<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
+			<span ng-show="messageSended">Start</span>
+    </button>
+    </span> <span ng-if="status == 2" class="col-xs-2">
+		<button class="btn btn-block  btn-info"
+			ng-click="ssFunction('finish')">
+			<img ng-hide="messageSended" src="images/ajax_loader_blue_32.gif" />
+			<span ng-show="messageSended">Finish</span>
+    </button>
+    </span>
+</div>
