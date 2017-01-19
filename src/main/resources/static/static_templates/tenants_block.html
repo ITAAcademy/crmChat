@@ -1,0 +1,28 @@
+<div ng-init="hideEmpty = true" ng-show="!hideEmpty || getTenantsList().length > 0" class="items_list_block participants_block">
+    <div class="block_head" ng-click="toggleFolded()">
+    <div class="block_controll"><img src="images/elements/add.png"></div>
+    <div class="block_name">{{blockName}}</div>
+<div ng-if="getTenantsList().length > 2" class="dropdown_icon ng-class:{unfolded:!folded}"></div>
+    <div class="block_head_diveded"></div>
+    </div>
+    <div class="block_content scroll ng-class:{unfolded:!folded}">
+    <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
+    <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
+    <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{participant.avatar}}" alt="" />
+    <div class="user_presence_icon"></div>
+    <div class="user_presence_icon_wraper"></div>
+    </div>
+    <div class="text_info">
+    <div class="user_name">{{participant.chatUserId}}:{{participant.username}}</div>
+<div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
+    <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
+    </div>
+    <div class="contact_control">
+    <img class="delete-user-icon" ng-if="!$root.checkPrivateRelations(currentRoom(), participant)  &amp;&amp; checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" src="images\cross13x15.png" alt="" />
+    </div>
+    </div>
+    <div class="block_item" ng-if="getTenantsList().length == 1 && checkUserAdditionPermission()">
+    <div class="add_bg_btn">Додати нового учасника</div>
+</div>
+</div>
+</div>

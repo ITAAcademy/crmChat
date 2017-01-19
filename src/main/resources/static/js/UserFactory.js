@@ -11,7 +11,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var chatUserRole;
     var isInited = false;
 
-    var tenants;
+    var tenants = [];
     var friends;
     var onlineUsersIds = [];
 
@@ -262,6 +262,20 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     }
     initStompClient();
 
+    function addTenantToList(tenantObj) {
+        for (var i = 0; i < tenants.length; i++) {
+            if (tenantObj != null && tenants[i] != null && tenantObj.id == tenants[i].id) return; //tenant is already excist in list
+        }
+       tenants.push(tenantObj);
+    }
+
+    function removeTenantFromList(tenantObj) {
+        for (var i = 0; i < tenants.length; i++) {
+            if (tenantObj != null && tenants[i] != null && tenantObj.id == tenants[i].id) tenants.splice(i, 1); //tenant is already excist in list
+        }
+    }
+
+
     function login(mess_obj) {
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chat_id;
@@ -288,8 +302,9 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
             initIsUserTenant();
             RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
         }
-        tenants = typeof mess_obj["tenants"] == "undefined" ? undefined : JSON.parse(mess_obj["tenants"]);
-        friends = typeof mess_obj["friends"] == "undefined" ? undefined : JSON.parse(mess_obj["friends"]);
+        tenants = typeof mess_obj["tenants"] == "undefined" ? [] : JSON.parse(mess_obj["tenants"]);
+        friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
+
         isInited = true;
         setTimeout(function() { $('body').addClass('loaded'); }, 100);
 

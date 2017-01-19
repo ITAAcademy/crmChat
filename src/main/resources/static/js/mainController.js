@@ -531,19 +531,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.isConectedWithFreeTenant = false;
 
 
-    function addTenantToList(tenantObj) {
-        for (var i = 0; i < $scope.tenants.length; i++) {
-            if (tenantObj != null && $scope.tenants[i] != null && tenantObj.id == $scope.tenants[i].id) return; //tenant is already excist in list
-        }
-        $scope.tenants.push(tenantObj);
-    }
-
-    function removeTenantFromList(tenantObj) {
-        for (var i = 0; i < $scope.tenants.length; i++) {
-            if (tenantObj != null && $scope.tenants[i] != null && tenantObj.id == $scope.tenants[i].id) $scope.tenants.splice(i, 1); //tenant is already excist in list
-        }
-    }
-
     /*************************************
      * UPDATE ROOM LP
      **************************************/
@@ -630,6 +617,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         $rootScope.message_busy = isBusy;
     });
     $rootScope.checkPrivateRelations = function(room, user) {
+        if (room==null)return;
         if (room.type == 1 && room.privateUserIds != undefined) {
 
             if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)

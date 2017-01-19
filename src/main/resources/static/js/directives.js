@@ -239,15 +239,11 @@ angular.module('springChat.directives').directive('tenantsBlock', function($http
         scope: {
 
         },
-        templateUrl: 'static_templates/participants_block.html',
+        templateUrl: 'static_templates/tenants_block.html',
         link: function(scope, element, attributes) {
-            updateModelForStudents();
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
-
-            function updateModelForStudents() {
-                scope.participants = UserFactory.getTenantsList()
-            };
+            scope.getTenantsList = UserFactory.getTenantsList;
             scope.blockName = "Тенанти";
         }
 
@@ -265,7 +261,8 @@ function initFolded(scope, element) {
         scope.folded = !scope.folded;
         scope.scroll.overflowy = !scope.folded;
         if (scope.folded)
-            scope.scroll.scrollTop(scope.scroll.getScrollTop())
+            scope.scroll.scrollTop(scope.scroll.scrollTop())
+
     }
     scope.scroll = $($(element).find(".scroll"));
     scope.scroll.overflowy = !scope.folded;

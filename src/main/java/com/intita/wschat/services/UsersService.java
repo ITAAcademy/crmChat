@@ -227,7 +227,6 @@ public class UsersService {
 
 	/**
 	 * Returns all online & free tenants, ignoring users from argument ArrayList
-	 * @param ignoreUsersList
 	 * @return
 	 */
 	@Transactional
@@ -236,9 +235,11 @@ public class UsersService {
 		ArrayList<Long> all = new ArrayList<Long>(Arrays.asList(usersRepo.findAllTenants()));//WTF
 		ArrayList<Long> free = new ArrayList<Long>();
 		List<Long> ignoreList = Arrays.asList(ignoreUsers);
-		for (Long userId : all ){
-			if(!ignoreList.contains(userId) && chatTenantService.isTenantAvailable(userId))
-			free.add(userId);
+		for (Long chatUserId : all ){
+			if(chatUserId==null)continue;
+			if(!ignoreList.contains(chatUserId) && chatTenantService.isTenantAvailable(chatUserId))
+				free.add(chatUserId);
+
 		}
 		if(free == null)
 			return result;
