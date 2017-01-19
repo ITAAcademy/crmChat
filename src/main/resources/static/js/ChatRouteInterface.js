@@ -908,7 +908,8 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
             deferred.reject();
             return deferred.promise;
         }*/
-
+        //TODO
+        $scope.userPermissionsForRoom = room.userPermissions;
         if ($rootScope.socketSupport) {
             chatSocket.send("/app/chat.go.to.dialog/{0}".format(chatControllerScope.currentRoom.roomId), {}, JSON.stringify({}));
             deferred.resolve();
@@ -1316,12 +1317,20 @@ springChatControllers.controller('ChatRouteInterface', ['$route', '$routeParams'
     }
 
     $scope.checkUserAdditionPermission = function() {
-        var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;
       //  console.log("TEST" + (chatControllerScope.currentRoom.userPermissions & needPrivilege) == needPrivilege);
-      var havePermitions = chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId;
-      havePermitions = havePermitions || (chatControllerScope.currentRoom.userPermissions & needPrivilege) == needPrivilege
+      var isAuthor = chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId;
+      var havePermissions = $scope.userPermissionsForRoom & ROOM_PERMISSIONS.ADD_USER;
+      var canAdd = isAuthor || havePermissions;
         if (typeof chatControllerScope.currentRoom === "undefined") return false;
-        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && chatControllerScope.isMyRoom && $rootScope.authorize;
+        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && canAdd && chatControllerScope.isMyRoom && $rootScope.authorize;
+        return resultOfChecking;
+    }
+    $scope.checkUserRemovingPermission = function() {
+     var isAuthor = chatControllerScope.chatUserId == chatControllerScope.currentRoom.roomAuthorId;
+      var havePermissions = $scope.userPermissionsForRoom & ROOM_PERMISSIONS.REMOVE_USER;
+      var canRemove = isAuthor || havePermissions;
+        if (typeof chatControllerScope.currentRoom === "undefined") return false;
+        var resultOfChecking = chatControllerScope.currentRoom.active /*&& ($scope.roomType != 1)*/ && canRemove && chatControllerScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
 
