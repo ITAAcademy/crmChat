@@ -52,38 +52,50 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
 
 }]);
 
-springChatServices.service('AskWindow', ['$rootScope', function($rootScope) {
-
-
-    var isAskTenantToTakeConsultationVisible = false;
-
-    this.askTenantToTakeConsultationTogle = function() {
-        $('#askTenantToTakeConsultation').modal('toggle');
-        isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
+springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$http', function($rootScope,ngDialog,$timeout,$http) {
+    var hideAskTenantToTakeConsultation_tenantNotRespond;
+    var tenantInviteDialog;
+    var yesLink;
+    var noLink;
+    this.setLinks = function(yesLinkArg,noLinkArg){
+        if (typeof yesLinkArg === "undefined")return;
+        yesLink = yesLinkArg;
+        if (typeof noLinkArg === "undefined")return;
+        noLink = noLinkArg;
     };
-    this.askTenantToTakeConsultationHide = function() {
-        $('#askTenantToTakeConsultation').modal('hide');
-        isAskTenantToTakeConsultationVisible = false;
-    };
+        this.showAskWindow = function() {
 
-    this.showAskWindow = function() {
-        if (isAskTenantToTakeConsultationVisible == false) {
-
+         tenantInviteDialog = ngDialog.open({
+            template: 'askTenantToTakeConsultationWindow.html',
+            height: 400
+        });
             $rootScope.isTenantFree = false;
-            $rootScope.askTenantToTakeConsultationTogle();
 
-            $rootScope.hideAskTenantToTakeConsultation_tenantNotRespond =
+            $timeout.cancel(hideAskTenantToTakeConsultation_tenantNotRespond);
+            hideAskTenantToTakeConsultation_tenantNotRespond =
                 $timeout(function() {
-                    $scope.hideAskTenantToTakeConsultation();
+                    if (tenantInviteDialog!=null)
+                    tenantInviteDialog.close();
                 }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
-        }
-    }
+    };
 
-    this.hideAskTenantToTakeConsultation = function() {
-        if (isAskTenantToTakeConsultationVisible == true) {
-            $scope.askTenantToTakeConsultationHide();
+    $rootScope.answerToTakeConsultation = function(value) {
+        $timeout.cancel(this.hideAskTenantToTakeConsultation_tenantNotRespond);
+        tenantInviteDialog.close();
+        if (value) {
+            $http.post(serverPrefix + yesLink). //$scope.chatUserId)
+            success(function(data, status, headers, config) {}).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
+        } else {
+            $http.post(serverPrefix + noLink).
+            success(function(data, status, headers, config) {
+            }).
+            error(function(data, status, headers, config) {
+                alert("error : " + status)
+            });
         }
-    }
-    this.askObj = null;
+    };
 
 }]);

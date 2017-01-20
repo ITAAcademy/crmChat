@@ -233,7 +233,7 @@ function updateModelGet(http, requestUrl, callback) {
 
 
 
-angular.module('springChat.directives').directive('tenantsBlock', function($http, mySettings, UserFactory) {
+angular.module('springChat.directives').directive('tenantsBlock', function($http, mySettings, UserFactory,RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -244,12 +244,12 @@ angular.module('springChat.directives').directive('tenantsBlock', function($http
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.getTenantsList = UserFactory.getTenantsList;
+            scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
             scope.blockName = "Тенанти";
         }
 
     };
 });
-
 
 angular.module('springChat.directives').directive('studentsBlock', studentsBlock);
 

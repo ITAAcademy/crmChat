@@ -7,13 +7,23 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var realChatUserId;
     var chatUserId = -1;
     var isUserTenantInited = false;
-    var isTenantFree;
     var chatUserRole;
     var isInited = false;
 
     var tenants = [];
     var friends;
     var onlineUsersIds = [];
+
+    var isTenantFree = true;
+    var setTenantFree = function(){
+        isTenantFree = true;
+    }
+    var setTenantBusy = function(){
+        isTenantFree = false;
+    }
+    var getTenantIsFree = function(){
+        return isTenantFree;
+    }
 
     var checkRole = function() {
         if (chatUserRole & 256)
@@ -143,7 +153,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
                     chatSocket.subscribe("/topic/users/{0}/info".format(getChatUserId()), function(message) {
                         var body = JSON.parse(message.body);
-                        AskWindow.askObject = body;
+                        AskWindow.setLinks(body.yesLink,body.noLink);
                         AskWindow.showAskWindow();
                     });
 
@@ -221,7 +231,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                 }*/
                 if (data["newAsk_ToChatUserId"] != null) {
                     /*SHOW*/
-                    AskWindow.askObject = data["newAsk_ToChatUserId"][0];
+                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink,data["newAsk_ToChatUserId"][0].noLink);
                     AskWindow.showAskWindow();
                 }
                 if (data["newConsultationWithTenant"] != null) {
@@ -382,7 +392,11 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         },
         isUserOnline : isUserOnline,
         setOnlineUsersIds : setOnlineUsersIds,
-        participantsSort : participantsSort
+        participantsSort : participantsSort,
+        setTenantFree : setTenantFree,
+        setTenantBusy : setTenantBusy,
+        getTenantIsFree : getTenantIsFree
+
     };
 
 
