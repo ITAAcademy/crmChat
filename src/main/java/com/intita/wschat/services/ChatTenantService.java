@@ -30,23 +30,18 @@ import com.intita.wschat.repositories.ChatTenantRepository;
 public class ChatTenantService {
 	@Autowired private ParticipantRepository participantRepository;
 	@Autowired private ChatUsersService chatUsersService;
-
-	private int lastAskedtenantCnt = 0;
-
-	private final static Logger log = LoggerFactory.getLogger(ChatTenantService.class);
-	@Autowired
-	private ChatTenantRepository chatTenantRepo;
-
-
-	private List<Long> tenantsBusy =  new ArrayList<Long>();	 	 
-
+	@Autowired private ChatTenantRepository chatTenantRepo;
 	@PostConstruct
 	@Transactional
 	public void createAdminUser() {
-		System.out.println("admin user created");		
+		System.out.println("admin user created");
 		//register("user", "user", "user");
-
 	}
+
+	private final static Logger log = LoggerFactory.getLogger(ChatTenantService.class);
+
+	private int lastAskedTenantCnt = 0;
+	private List<Long> tenantsBusy =  new ArrayList<Long>();	 	 
 
 	@Transactional
 	public Page<ChatTenant> getTenantsFromPages(int page, int pageSize){
@@ -63,7 +58,7 @@ public class ChatTenantService {
 
 	@Transactional
 	public ArrayList<ChatTenant> getTenants(){
-		Iterable<ChatTenant> chatTenantsIterable = null;
+		ArrayList<ChatTenant> chatTenantsIterable = null;
 		try{
 			chatTenantsIterable = chatTenantRepo.findAllByEndDateAfterOrEndDateIsNull(new Date());
 		}
@@ -118,21 +113,21 @@ public class ChatTenantService {
 	public ChatTenant getFreeTenant(List<ChatTenant> tenants) {			
 		
 
-		int i_0; //  = lastAskedtenantCnt + 1;
-		int i_1;  // = lastAskedtenantCnt;
+		int i_0; //  = lastAskedTenantCnt + 1;
+		int i_1;  // = lastAskedTenantCnt;
 
 		int tenantsLastIndex = tenants.size() - 1;
 
 		boolean secondCircle = false;		
 
-		if (lastAskedtenantCnt == tenantsLastIndex) {
+		if (lastAskedTenantCnt == tenantsLastIndex) {
 			i_0 = 0;
 			i_1 = tenantsLastIndex;
 			secondCircle = true;
 		}
 		else {
-			i_0  = lastAskedtenantCnt + 1;
-			i_1  = lastAskedtenantCnt;
+			i_0  = lastAskedTenantCnt + 1;
+			i_1  = lastAskedTenantCnt;
 		}		
 
 		int i = i_0;
@@ -162,7 +157,7 @@ public class ChatTenantService {
 				{
 					if (participantRepository.isOnline(chatUserId)) //989
 					{
-						lastAskedtenantCnt = i;
+						lastAskedTenantCnt = i;
 						return tenant;
 					}					
 				}		
@@ -203,8 +198,8 @@ public class ChatTenantService {
 	}
 
 	public boolean setTenantFree(Long chatUserid) {
-				boolean res = tenantsBusy.remove(chatUserid);
-				return res;
+		boolean res = tenantsBusy.remove(chatUserid);
+		return res;
 	}
 
 	public Long getChatTenantId(Long chatUserId) {

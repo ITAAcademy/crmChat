@@ -45,6 +45,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
         }
     };
+
     $scope.dragOptions = {
         start: function(e) {
             console.log("STARTING");
@@ -116,7 +117,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
 
-    $scope.isTenantFree = true;
     $scope.isUserTenant = false;
     $scope.isUserTenantInited = false;
     $scope.blocksNames = ['first', 'second'];
@@ -157,93 +157,19 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         this.name = name;
     }
     $scope.clickSetTenantFree = function() {
-        $scope.isTenantFree = !$scope.isTenantFree;
-        /*console.log("$scope.isTenantFree = " + $scope.isTenantFree)
-        return;*/
-        if ($scope.isTenantFree) {
-            $http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)        
-            success(function(data, status, headers, config) {
-
-            }).
-            error(function(data, status, headers, config) {
-                alert("error")
-            });
-        } else {
-            $http.post(serverPrefix + "/bot_operations/tenant/becomeBusy"). //$scope.chatUserId)        
-            success(function(data, status, headers, config) {
-
-            }).
-            error(function(data, status, headers, config) {
-                alert("error")
-            });
-        }
+        UserFactory.setTenantFree(true);
+        $http.post(serverPrefix + "/bot_operations/tenant/becomeFree");
     }
-
-    var isAskTenantToTakeConsultationVisible = false;
+    $scope.clickSetTenantBusy = function(){
+        UserFactory.setTenantBusy();
+        $http.post(serverPrefix + "/bot_operations/tenant/becomeBusy");
+    }
+    $scope.answerToFinishConsultation = function() {
+        var needReloadPage = false;
+        $http.post(serverPrefix + "/bot_operations/tenant/becomeFree");
+    };
 
     $scope.needReloadPage = true;
-
-    /* $scope.askTenantToTakeConsultationTogle = function() {
-         $('#askTenantToTakeConsultation').modal('toggle');
-         isAskTenantToTakeConsultationVisible = !isAskTenantToTakeConsultationVisible;
-     };
-     $scope.askTenantToTakeConsultationHide = function() {
-         $('#askTenantToTakeConsultation').modal('hide');
-         isAskTenantToTakeConsultationVisible = false;
-     };*/
-
-    $scope.showAskWindow = function() {
-        if (isAskTenantToTakeConsultationVisible == false) {
-
-            $scope.isTenantFree = false;
-            $scope.askTenantToTakeConsultationTogle();
-
-            $scope.hideAskTenantToTakeConsultation_tenantNotRespond =
-                $timeout(function() {
-                    $scope.hideAskTenantToTakeConsultation();
-                }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
-        }
-    }
-
-    $scope.hideAskTenantToTakeConsultation = function() {
-        if (isAskTenantToTakeConsultationVisible == true) {
-            $scope.askTenantToTakeConsultationHide();
-        }
-    }
-
-    $scope.answerToFinishConsultation = function() {
-        $scope.needReloadPage = false;
-        $http.post(serverPrefix + "/bot_operations/tenant/becomeFree"). //$scope.chatUserId)        
-        success(function(data, status, headers, config) {
-
-        }).
-        error(function(data, status, headers, config) {
-            alert("error : " + status)
-        });
-    }
-
-    $scope.answerToTakeConsultation = function(value) {
-        $timeout.cancel($scope.hideAskTenantToTakeConsultation_tenantNotRespond);
-        $scope.hideAskTenantToTakeConsultation();
-
-        if (value) {
-            //alert($rootScope.sendedId + "  " +  $scope.askConsultation_roomId)
-            //alert($scope.askConsultation_roomId);
-            $http.post(serverPrefix + $scope.askObject.yesLink). //$scope.chatUserId)
-            success(function(data, status, headers, config) {}).
-            error(function(data, status, headers, config) {
-                alert("error : " + status)
-            });
-        } else {
-            $http.post(serverPrefix + $scope.askObject.noLink).
-            success(function(data, status, headers, config) {
-
-            }).
-            error(function(data, status, headers, config) {
-                alert("error : " + status)
-            });
-        }
-    };
 
     var toggleAskForDeleteMe = function(room) {
 
@@ -936,7 +862,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
                 return false;
             return true;
         }
-
+        $scope.getTenantIsFree = UserFactory.getTenantIsFree;
 
         /*****************************
          ************CONFIG************

@@ -29,6 +29,12 @@
                 <div ng-if="getNewMsgNumber() > 0" class="text" ng-bind="getNewMsgNumber()"></div>
                 <div ng-if="getNewMsgNumber() > 0" class="state"></div>
             </div>
+            <div class="tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
+                <img src="images/cloud.svg"/>
+            </div>
+            <div class="tenant_busy_control" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
+                <img src="images/crossed_cloud.svg"/>
+            </div>
             <div class="window_panel">
                 <div id="minimize_btn"></div>
                 <div id="fullscreen_btn" ng-click="state == 0 ? state = 2 : state = 0"></div>
@@ -84,7 +90,6 @@
                 </div>
             </div>
             <hr/>
-            <span style="position:absolute;left:0;font-size:12px;top:140px" ng-if="$root.message_busy">message busy</span>
             <div class="message_block_directive" messages-block="true"></div>
             <!--It's message displayer-->
             <hr/>
