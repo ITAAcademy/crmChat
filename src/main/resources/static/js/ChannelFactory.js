@@ -1,6 +1,19 @@
 springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$location', '$http', 'toaster', 'ChatSocket', function($rootScope, $timeout, $location, $http, toaster, chatSocket) {
     var socketSupport = true;
-    $rootScope.isInited = false;
+    var isInited = false;
+    var getIsInited = function(){
+        return isInited;
+    }
+    var isInitedCallback;
+    var setIsInitedCallback = function(callback){
+        isInitedCallback = callback;
+    }
+    var setIsInited = function(val){
+        var initialized = isInited==false && val==true ;
+        isInited = val;
+        if (initialized && isInitedCallback!=null ) isInitedCallback();
+
+    }
     return {
         isSocketSupport: function() {
             return socketSupport;
@@ -13,7 +26,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                });*/
         },
         subscribeToConnect: function(callBack){
-            if ($rootScope.isInited == false) {
+            if (isInited == false) {
                 console.log("serverPrefix");
                 var onConnect = function(frame) {
                     callBack(socketSupport, frame)
@@ -23,7 +36,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                     /***************************************
                      * TRY LONG POLING LOGIN
                      **************************************/
-                    if ($rootScope.isInited == false) {
+                    if (isInited == false) {
                         socketSupport = false;
                         callBack(socketSupport, {})
                     }
@@ -32,7 +45,10 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                 toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error, 99999);
                 changeLocation("/");
             }
-        }
+        },
+        getIsInited : getIsInited,
+        setIsInited : setIsInited,
+        setIsInitedCallback : setIsInitedCallback
     };
 
 }]);

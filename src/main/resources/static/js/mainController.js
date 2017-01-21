@@ -22,10 +22,9 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
 
 var chatController = springChatControllers.controller('ChatController', ['ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', function(ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
     //Imports from Services
-    $scope.isUserOnline = UserFactory.isUserOnline;
     //Imports/>
 
-    $rootScope.isInited = false;
+    ChannelFactory.setIsInited(false);
     $rootScope.baseurl = globalConfig["baseUrl"];
     $rootScope.imagesPath = globalConfig["imagesPath"];
     $scope.baseurl = globalConfig["baseUrl"];
@@ -294,7 +293,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }
     $rootScope.goToAuthorize = function(func) {
         return; //@BAG@
-        if ($rootScope.authorize || $rootScope.isInited == false) {
+        if ($rootScope.authorize || ChannelFactory.getIsInited() == false) {
             if (func == null || func == undefined) {
                 $location.path("/access_deny");
             } else

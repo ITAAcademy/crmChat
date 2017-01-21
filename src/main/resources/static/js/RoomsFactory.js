@@ -1,5 +1,5 @@
 springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', '$q', '$sce', '$rootScope', 'ChannelFactory', function($injector, $route, $routeParams, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, $q, $sce, $rootScope, ChannelFactory) {
-
+    var UserFactory = $injector.get('UserFactory');
     var addRoomWithBot = function(roomName) {
         $http.post(serverPrefix + "/chat/rooms/create/with_bot/", roomName)
         success(function(data, status, headers, config) {
@@ -64,8 +64,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     var goToRoom = function(roomId) {
         //console.log("roomName:"+roomName);
-        if (!$rootScope.isInited) {
-            unsubscribeWatch = $rootScope.$watch('isInited', function(newValue, oldValue) {
+       /* if (!ChannelFactory.getIsInited()) {
+            unsubscribeWatch = $rootScope.$watch('getIsInited', function(newValue, oldValue) {
                 if (newValue == true) {
                     goToRoom(roomId);
                 }
@@ -74,11 +74,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         } else {
             if (unsubscribeWatch != undefined)
                 unsubscribeWatch();
-        }
+        }*/
 
         if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
             getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
-        return goToRoomEvn(roomId);
+        var evn = goToRoomEvn(roomId);
+        return evn;
     };
 
     var goToRoomById = function(roomId) {
@@ -231,12 +232,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         lastRoomBindings.push(
             chatSocket.subscribe("/topic/{0}/chat.typing".format(currentRoom.roomId), function(message) {
                 var parsed = JSON.parse(message.body);
-                if (parsed.username == UserFactory.chatUserId) return;
+                if (parsed.username == UserFactory.getChatUserId()) return;
 
                 for (var index in participants) {
                     var participant = participants[index];
 
-                    if (participant.chatUserId == parsed.username) {
+                    if (participant.getChatUserId == parsed.username) {
                         participants[index].typing = parsed.typing;
                     }
                 }
@@ -473,59 +474,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             event.preventDefault();
         }*/
     }
-    tenants = [];
     var subscribeBindings = [];
 
-    function updateTenants(tenants) {
-        this.tenants = tenants;
-        var itemsToRemove = [];
-        if (tenants != null) {
-            for (var i = 0; i < tenants.length; i++) {
-                if (UserFactory.chatUserId == tenants[i].chatUserId) {
-                    itemsToRemove.push(i);
-                    continue;
-                }
-            }
-            for (var k = itemsToRemove.length - 1; k >= 0; k--)
-                tenants.splice(itemsToRemove[k], 1);
-        }
-    }
-
-    function initSocketsSubscribes() {
-        console.log('initSocketsSubscribes');
-        subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
-            var tenant = JSON.parse(message.body);
-            for (var i = 0; i < tenants.length; i++) {
-                if (tenant.chatUserId == tenants[i].chatUserId) {
-                    tenants.splice(i, 1);
-                    break;
-                }
-            }
-            //updateTenants(o);
-        }));
-        /*   subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
-            var o = JSON.parse(message.body);
-            updateTenants(o);
-        }));*/
-        subscribeBindings.push(chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
-            var tenant = JSON.parse(message.body);
-            var alreadyExcist = false;
-            for (var i = 0; i < tenants.length; i++) {
-                if (tenant.chatUserId == tenants[i].chatUserId || UserFactory.chatUserId == tenant.chatUserId) {
-                    alreadyExcist = true;
-                    break;
-                }
-            }
-            if (!alreadyExcist && tenant.chatUserId != UserFactory.chatUserId) tenants.push(tenant);
-            // updateTenants(o);
-        }));
-    }
-
     // $watch('isInited', function() {
+    ChannelFactory.setIsInitedCallback(afterIsInited);
     function afterIsInited() {
         console.log("try " + currentRoom);
-        if (isInited == true) {
-            updateTenants(chatControllerScope.tenants);
+        if (ChannelFactory.getIsInited() == true) {
+
             var room = getRoomById(rooms, $routeParams.roomId);
 
             if (room != null && isRoomConsultation(room) && controllerName != "ConsultationController") //redirect to consultation
@@ -542,11 +498,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 return;
             }
 
-            goToDialog($routeParams.roomId).then(function(data) {
+            if($routeParams.roomId==null) return;
+            goToRoom($routeParams.roomId).then(function(data) {
 
-                if (ChannelFactory.isSocketSupport() === true) {
-                    initSocketsSubscribes();
-                }
                 if (data != undefined && data != null) {
                     currentRoom = data.data;
                     dialogName = currentRoom.string;
@@ -557,7 +511,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                 // location.reload();
             });
-
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(currentRoom.roomId)).
             success(function(data, status, headers, config) {
                 if (data == true)

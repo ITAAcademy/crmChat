@@ -178,7 +178,7 @@ springChatControllers.controller('DialogsRouteController', ['$q', '$rootScope', 
     /*
      * 
      */
-    if ($rootScope.isInited == true)
+    if (ChannelFactory.getIsInited() == true)
         $scope.goToDialogList();
     console.log("initing:" + chatControllerScope.socketSupport);
     $scope.pageClass = 'scale-fade';

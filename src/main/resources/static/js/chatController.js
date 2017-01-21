@@ -65,7 +65,7 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
 
     $rootScope.$watch('isInited', function() {
         console.log("try " + chatControllerScope.currentRoom);
-        if ($rootScope.isInited == true) {
+        if (ChannelFactory.getIsInited()) {
             updateTenants(chatControllerScope.tenants);
             var room = getRoomById($scope.rooms, $routeParams.roomId);
 
@@ -83,7 +83,7 @@ springChatControllers.controller('ChatRouteController', ['$routeParams', '$rootS
                 return;
             }
 
-            $scope.goToDialog($routeParams.roomId).then(function(data) {
+            RoomsFactory.goToRoom($routeParams.roomId).then(function(data) {
                 if ($rootScope.socketSupport) {
                         initSocketsSubscribes();
                 }

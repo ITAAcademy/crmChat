@@ -8,7 +8,6 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var chatUserId = -1;
     var isUserTenantInited = false;
     var chatUserRole;
-    var isInited = false;
 
     var tenants = [];
     var friends;
@@ -39,6 +38,36 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
     var socketSupport = true;
 
+    function initSocketsSubscribes() {
+        console.log('initSocketsSubscribes');
+        chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
+            var tenant = JSON.parse(message.body);
+            for (var i = 0; i < tenants.length; i++) {
+                if (tenant.chatUserId == tenants[i].chatUserId) {
+                    tenants.splice(i, 1);
+                    break;
+                }
+            }
+            //updateTenants(o);
+        });
+        /*   subscribeBindings.push(chatSocket.subscribe("/app/chat.tenants", function(message) {
+         var o = JSON.parse(message.body);
+         updateTenants(o);
+         }));*/
+       chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
+            var tenant = JSON.parse(message.body);
+            var alreadyExcist = false;
+            for (var i = 0; i < tenants.length; i++) {
+                if (tenant.chatUserId == tenants[i].chatUserId || getChatUserId() == tenant.chatUserId) {
+                    alreadyExcist = true;
+                    break;
+                }
+            }
+            if (!alreadyExcist && tenant.chatUserId != getChatUserId()) tenants.push(tenant);
+            // updateTenants(o);
+        });
+    }
+
     var initStompClient = function() {
 
         function reInitForLP() {
@@ -57,8 +86,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
-
-
+            initSocketsSubscribes();
         };
 
         ChannelFactory.subscribeToConnect(function(socketSupport, frame) {
@@ -213,6 +241,21 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         });
     }
 
+    function updateTenants(tenants) {
+        this.tenants = tenants;
+        var itemsToRemove = [];
+        if (tenants != null) {
+            for (var i = 0; i < tenants.length; i++) {
+                if (getChatUserId() == tenants[i].chatUserId) {
+                    itemsToRemove.push(i);
+                    continue;
+                }
+            }
+            for (var k = itemsToRemove.length - 1; k >= 0; k--)
+                tenants.splice(itemsToRemove[k], 1);
+        }
+    }
+
     function subscribeInfoUpdateLP() {
         // alert("subscribeInfoUpdateLP()");
         $http.post(serverPrefix + "/chat/global/lp/info")
@@ -297,7 +340,6 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         chatUserNickname = mess_obj.chat_user_nickname;
         chatUserRole = mess_obj.chat_user_role;
         chatUserAvatar = mess_obj.chat_user_avatar
-        $rootScope.isInited = true;
 
         var onlineUserIds = JSON.parse(mess_obj.onlineUsersIdsJson);
         setOnlineUsersIds(onlineUserIds);
@@ -315,7 +357,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         tenants = typeof mess_obj["tenants"] == "undefined" ? [] : JSON.parse(mess_obj["tenants"]);
         friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
 
-        isInited = true;
+        ChannelFactory.setIsInited(true);
         setTimeout(function() { $('body').addClass('loaded'); }, 100);
 
         if (mess_obj.nextWindow == 0) {
