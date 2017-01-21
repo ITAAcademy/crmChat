@@ -626,56 +626,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }
     $rootScope.messageError = messageError;
 
-    $scope.sendMessage = function(message, attaches) {
-        if (!messageSended)
-            return;
-        var textOfMessage;
-        if (typeof message === "undefined") textOfMessage = $scope.newMessage;
-        else textOfMessage = message;
-        if (typeof textOfMessage === "undefined" || textOfMessage.length < 1) {
-            $scope.newMessage = '';
-            //$("#newMessageInput")[0].value  = '';
-            return;
-        }
-        var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
-        messageSended = false;
-        if (attaches == null)
-            attaches = [];
-
-        var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
-        if (ChannelFactory.socketSupport == true) {
-
-            chatSocket.send(destination, {}, JSON.stringify(msgObj));
-            var myFunc = function() {
-                if (angular.isDefined(sendingMessage)) {
-                    $timeout.cancel(sendingMessage);
-                    sendingMessage = undefined;
-                }
-                if (messageSended) return;
-                messageError();
-                messageSended = true;
-
-            };
-            sendingMessage = $timeout(myFunc, 2000);
-        } else {
-
-            $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
-            success(function(data, status, headers, config) {
-                console.log("MESSAGE SEND OK " + data);
-                messageSended = true;
-            }).
-            error(function(data, status, headers, config) {
-                messageError();
-                messageSended = true;
-            });
-        };
-        if (message === undefined)
-            $scope.newMessage = '';
-
-    }
-
-
-
     $rootScope.submitConsultation_processUser = function(roomId) {
         if (roomId == RoomsFactory.getCurrentRoom().roomId) {
 
@@ -789,8 +739,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         //  $('#messagesScroll').stop();
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
-        var messagesInputHeight = $('.message_input').height();
-        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 75;
+        var messagesInputHeight = $('.messages_input_area').height();
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight;
         if (messagesInputHeight > messagesOutputHeight)
             return;
         saveScrollBottom();
@@ -812,13 +762,12 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $timeout(function() {
         messageAreaResizer();
     }, 1000);
-
+    $timeout(function () {
+        //DOM has finished rendering
+        $(".message_input").resize(messageAreaResizer);
+        $(window).resize(messageAreaResizer);
+    });
     $scope.$$postDigest(function() {
-        $(document).ready(function() {
-            $(".message_input").resize(messageAreaResizer);
-            $(window).resize(messageAreaResizer);
-        });
-
         /*****************************
          ************CONFIG************
          *****************************/

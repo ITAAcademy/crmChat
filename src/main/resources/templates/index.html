@@ -93,27 +93,7 @@
             <div class="message_block_directive" messages-block="true"></div>
             <!--It's message displayer-->
             <hr/>
-            <div class="messages_input_area">
-                <div class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage" content-editable="true"></div>
-                <div class="controls_area">
-                    <div class="multimedia_conversation_controls">
-                        <button class="skype"><img src="images\skype24x23.png" alt="" /></button>
-                        <button class="microphone"><img src="images\mic18x23.png" alt="" /></button>
-                    </div>
-                    <div id="attaches_area" class="attaches_area">
-                        <ul id="attaches_dropdown" class="popup_dropdown">
-                            <li class="attaches_item"><a ngf-select="uploadFiles($files)" multiple="true">Документ</a></li>
-                            <li class="video_item"><a>Відео</a></li>
-                            <li class="audio_item"><a>Аудіо</a></li>
-                        </ul>
-                        <div class="upload_file_form_container">
-                        </div>
-                        <button class="smiles"><img src="images\smile23x23.png" alt="" /></button>
-                        <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><img src="images\attaches26x23.png" alt="" /></button>
-                        <div class="send_button" ng-click="sendMessage()">ВІДПРАВИТИ&#47;&#62;</div>
-                    </div>
-                </div>
-            </div>
+            <div class="messages_input_area" message-input="true"></div>
         </div>
     </div>
         <script th:inline="javascript">

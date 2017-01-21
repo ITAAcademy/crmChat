@@ -339,6 +339,67 @@ function messagesBlock($http, RoomsFactory) {
 
     };
 };
+
+angular.module('springChat.directives').directive('messageInput', messageInput);
+
+function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,ChannelFactory) {
+    return {
+        restrict: 'EA',
+        templateUrl: 'static_templates/message_input.html',
+        link: function($scope, element, attributes) {
+            var messageSended = true;
+            $scope.sendMessage = function(message, attaches) {
+                if (!messageSended)
+                    return;
+                var textOfMessage;
+                if (typeof message === "undefined") textOfMessage = $scope.newMessage;
+                else textOfMessage = message;
+                if (typeof textOfMessage === "undefined" || textOfMessage.length < 1) {
+                    $scope.newMessage = '';
+                    //$("#newMessageInput")[0].value  = '';
+                    return;
+                }
+                var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
+                messageSended = false;
+                if (attaches == null)
+                    attaches = [];
+
+                var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
+                if (ChannelFactory.isSocketSupport() == true) {
+
+                    ChatSocket.send(destination, {}, JSON.stringify(msgObj));
+                    var myFunc = function() {
+                        if (angular.isDefined(sendingMessage)) {
+                            $timeout.cancel(sendingMessage);
+                            sendingMessage = undefined;
+                        }
+                        if (messageSended) return;
+                        $scope.messageError();
+                        messageSended = true;
+
+                    };
+                    sendingMessage = $timeout(myFunc, 2000);
+                } else {
+
+                    $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
+                    success(function(data, status, headers, config) {
+                        console.log("MESSAGE SEND OK " + data);
+                        messageSended = true;
+                    }).
+                    error(function(data, status, headers, config) {
+                        $scope.messageError();
+                        messageSended = true;
+                    });
+                };
+                if (message === undefined)
+                    $scope.newMessage = '';
+
+            }
+        }
+
+    };
+};
+
 angular.module('springChat.directives').directive('emHeightSource', function() {
     return {
         scope: {

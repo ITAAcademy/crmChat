@@ -77,7 +77,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                 login(data);
             }).
             error(function(data, status, headers, config) {
-                messageError();
+                $rootScope.messageError();
                 toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             });
         }
@@ -104,7 +104,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                     setRealChatUserId(getChatUserId());
                 }).
                 error(function(data, status, headers, config) {
-                    messageError();
+                    $rootScope.messageError();
                     toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
                 });
             }
