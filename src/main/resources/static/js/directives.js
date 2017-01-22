@@ -569,6 +569,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.doGoToRoom = function(roomId) {
         if ($scope.searchEnabled || $scope.createEnabled)
             return;
+        $scope.loadOnlyFilesInfiniteScrollMode = false;
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
     }
     var nice = $(".scroll");
