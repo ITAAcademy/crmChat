@@ -706,31 +706,32 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     var savedDistanceToBottom;
     var savedPaddingHeight;
 
+    /**
+     * Store distance between bottom of container and bottom of scroll
+     */
     function saveScrollBottom() {
         var messagesScroll = $('#messagesScroll');
         var messagesScrollTop = messagesScroll.scrollTop();
-        savedPaddingHeight = (messagesScroll.outerHeight() - messagesScroll.height());
         savedDistanceToBottom = (typeof messagesScroll === "undefined" ||
-                typeof messagesScroll[0] === "undefined") ? undefined : messagesScroll.outerHeight() - messagesScroll[0].scrollHeight +
-            messagesScroll.scrollTop();
+                typeof messagesScroll[0] === "undefined") ? undefined :  messagesScroll[0].scrollHeight -
+            messagesScroll.scrollTop() - messagesScroll[0].clientHeight
+        console.log('savedDistanceToBottom:'+savedDistanceToBottom);
     }
 
     function getScrollTopToPreserveScroll(futureHeight) {
         var messagesScroll = $('#messagesScroll');
-        var currentHeight = $('#messagesScroll').height();
-        var outerHeight = savedPaddingHeight + futureHeight;
+        var currentHeight = messagesScroll[0].clientHeight;
         var heightDelta = currentHeight - futureHeight;
         if (heightDelta < 0) return messagesScroll.scrollTop();
-        var scrollHeight = messagesScroll[0].scrollHeight + heightDelta - savedPaddingHeight;
-        /*console.log('heightDelta:'+heightDelta);
+        var scrollHeight = messagesScroll[0].scrollHeight + heightDelta ;
+        console.log('heightDelta:'+heightDelta);
         console.log('savedPaddingHeight:'+savedPaddingHeight);
-        console.log('scrollHeight:'+scrollHeight);*/
+        console.log('scrollHeight:'+scrollHeight);
         if (typeof savedDistanceToBottom === "undefined") return;
-        var messagesScrollOuterHeight = outerHeight; //$('#messagesScroll').outerHeight();
-        var messagesScrollElementScrollHeight = scrollHeight; // $('#messagesScroll')[0].scrollHeight;
-        var scrollTop = savedDistanceToBottom - messagesScrollOuterHeight +
-            messagesScrollElementScrollHeight;
+        var scrollTop =  scrollHeight - savedDistanceToBottom -
+            messagesScroll[0].clientHeight;
         // $('#messagesScroll').scrollTop(scrollTop);
+        console.log('scrollTop:'+scrollTop);
         return scrollTop
             //$('#messagesScroll').animate({scrollTop: ""+scrollTop+"px"}, 1000);
     }
