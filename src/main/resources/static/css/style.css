@@ -1099,6 +1099,11 @@
     color: #929292;
     font-size: 14px
 }
+.messages_input_area{
+    position:absolute;
+    bottom:0px;
+    background-color:white;
+}
 
 .messages_input_area .message_input {
     width: 560px;
