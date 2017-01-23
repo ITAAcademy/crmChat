@@ -471,7 +471,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.showDialogListButton = false;
     $scope.searchResultAdmin;
     $rootScope.isMyRoom = true;
-    $scope.messageSended = true;
+   // $rootScope.messageSended = true;
     $scope.userAddedToRoom = true;
     $rootScope.isConectedWithFreeTenant = false;
 
@@ -639,7 +639,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
         });
     }
-    var messageSended = true;
 
     function messageError() {
         toaster.pop('error', "Error", "server request timeout", 0);

@@ -347,9 +347,8 @@ function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,Channe
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
-            var messageSended = true;
             $scope.sendMessage = function(message, attaches) {
-                if (!messageSended)
+                if (!UserFactory.isMessageSended())
                     return;
                 var textOfMessage;
                 if (typeof message === "undefined") textOfMessage = $scope.newMessage;
@@ -360,7 +359,7 @@ function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,Channe
                     return;
                 }
                 var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
-                messageSended = false;
+                UserFactory.setMessageSended(false);
                 if (attaches == null)
                     attaches = [];
 
@@ -373,9 +372,9 @@ function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,Channe
                             $timeout.cancel(sendingMessage);
                             sendingMessage = undefined;
                         }
-                        if (messageSended) return;
+                        if ( UserFactory.isMessageSended()) return;
                         $scope.messageError();
-                        messageSended = true;
+                        UserFactory.setMessageSended(true);
 
                     };
                     sendingMessage = $timeout(myFunc, 2000);
@@ -384,11 +383,11 @@ function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,Channe
                     $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
                     success(function(data, status, headers, config) {
                         console.log("MESSAGE SEND OK " + data);
-                        messageSended = true;
+                        UserFactory.setMessageSended(true);
                     }).
                     error(function(data, status, headers, config) {
                         $scope.messageError();
-                        messageSended = true;
+                        UserFactory.setMessageSended(true);
                     });
                 };
                 if (message === undefined)

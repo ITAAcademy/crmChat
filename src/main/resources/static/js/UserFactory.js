@@ -12,6 +12,13 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var tenants = [];
     var friends;
     var onlineUsersIds = [];
+    var messageSended = true;
+    var isMessageSended = function(){
+        return messageSended;
+    }
+    var setMessageSended = function(val){
+        messageSended = val;
+    }
 
     var isTenantFree = true;
     var setTenantFree = function(){
@@ -437,7 +444,9 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         participantsSort : participantsSort,
         setTenantFree : setTenantFree,
         setTenantBusy : setTenantBusy,
-        getTenantIsFree : getTenantIsFree
+        getTenantIsFree : getTenantIsFree,
+        isMessageSended : isMessageSended,
+        setMessageSended : setMessageSended
 
     };
 
