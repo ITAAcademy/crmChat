@@ -153,8 +153,11 @@ angular.module('springChat.directives').directive('modaleToggle', function($comp
 
                     if (e.target === element[0] || element[0].contains(e.target) || (toggle && ignore)) {
                         scope.$apply(function() {
-                            scope.callback();
-                            toggle = !toggle;
+                            var res = scope.callback();
+                            if (res == undefined)
+                                toggle = !toggle;
+                            else
+                                toggle = res;
                         });
 
                     }
@@ -233,7 +236,7 @@ function updateModelGet(http, requestUrl, callback) {
 
 
 
-angular.module('springChat.directives').directive('tenantsBlock', function($http, mySettings, UserFactory,RoomsFactory) {
+angular.module('springChat.directives').directive('tenantsBlock', function($http, mySettings, UserFactory, RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -318,6 +321,15 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             }
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.removeUserFromRoom = RoomsFactory.removeUserFromRoom;
+            var toggleNewUser = false;
+            scope.toggleNewUser = function() {
+                toggleNewUser = !toggleNewUser;
+                if (toggleNewUser)
+                    scope.$root.$emit('rootScope:roomsBlockModeChange', 2);
+                else
+                    scope.$root.$emit('rootScope:roomsBlockModeChange', 1);
+                return toggleNewUser;
+            }
             initFolded(scope, element);
         }
 
@@ -342,7 +354,7 @@ function messagesBlock($http, RoomsFactory) {
 
 angular.module('springChat.directives').directive('messageInput', messageInput);
 
-function messageInput($http, RoomsFactory,ChatSocket,$timeout,UserFactory,ChannelFactory) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
@@ -451,7 +463,7 @@ function roomsBlockMini($http, RoomsFactory, ChannelFactory, UserFactory) {
     };
 };
 
-function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory,$timeout) {
+function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) {
     //TODO finish rooms search
     return {
         restrict: 'EA',
@@ -460,33 +472,33 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory,$timeout) {
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
             $scope.roomsListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            $scope.getRoomsOrSearchedRooms = function(){
-                if ($scope.searchEnabled) return $scope.roomsListSearched;
+            $scope.getRoomsOrSearchedRooms = function() {
+                    if ($scope.searchEnabled) return $scope.roomsListSearched;
                     else return RoomsFactory.getRooms();
 
-            }
-            /*$scope.getUsersByEmail = function(query, deferred) {
-                var url = serverPrefix + "/get_users_like?login=" + query;
-                $http.get(url).success((function(deferred, data) { // send request
-                    var results = data;
-                    deferred.resolve({ results: results });
-                }).bind(this, deferred));
-            };*/
+                }
+                /*$scope.getUsersByEmail = function(query, deferred) {
+                    var url = serverPrefix + "/get_users_like?login=" + query;
+                    $http.get(url).success((function(deferred, data) { // send request
+                        var results = data;
+                        deferred.resolve({ results: results });
+                    }).bind(this, deferred));
+                };*/
             $scope.participantsSort = UserFactory.participantsSort;
             $scope.updateChatUsersByEmail = function(email, delay) {
                 $timeout.cancel($scope.updatingUsersByEmailPromise);
-                if (email==null || email.length < 1) {
+                if (email == null || email.length < 1) {
                     $scope.updatingUsersByEmailPromise = undefined;
-                    $scope.roomsListSearched=[];
+                    $scope.roomsListSearched = [];
                     return;
                 }
-                $scope.updatingUsersByEmailPromise = $timeout(function(){
+                $scope.updatingUsersByEmailPromise = $timeout(function() {
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
-                  return  $http.get(url,{}).success(function(data) { // send request
-                      $scope.roomsListSearched = data;
+                    return $http.get(url, {}).success(function(data) { // send request
+                        $scope.roomsListSearched = data;
                     });
-                },delay);
-             };
+                }, delay);
+            };
         }
     };
 };
@@ -502,6 +514,20 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.tabState = "Contacts";
+    /****
+     * 1 - default
+     * 2 - add new user
+     */
+    $scope.mode = 1;
+    var roomsBlockModeChangeSubscription;
+    $scope.$on('$destroy', function() {
+        roomsBlockModeChangeSubscription();
+    });
+
+    roomsBlockModeChangeSubscription = $scope.$root.$on('rootScope:roomsBlockModeChange', function(event, data) {
+        console.log(data);
+        $scope.mode = data;
+    });
     $scope.sortBy = ['date', 'string'];
     $scope.displayLetters = false;
     $scope.room_create_input = "";
@@ -510,6 +536,36 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0])) return true;
         if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
         return false;
+    }
+
+    $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
+    $scope.clickToRoomEvent = function(room) {
+        switch ($scope.mode) {
+            case 1:
+                $scope.doGoToRoom(room.roomId);
+                break;
+            case 2:
+                if (room.privateUserIds[0] == UserFactory.getChatUserId())
+                    addNewUser(room.privateUserIds[1]);
+                if (room.privateUserIds[1] == UserFactory.getChatUserId())
+                    addNewUser(room.privateUserIds[0]);
+                break;
+        }
+    }
+    $scope.clickToUserEvent = function(user) {
+        switch ($scope.mode) {
+            case 1:
+                $scope.onFriendClick(user);
+                break;
+            case 2:
+                addNewUser(user.chatUserId);
+                break;
+        }
+    }
+
+    function addNewUser(chatUserId) {
+
+        RoomsFactory.addUserToRoom(chatUserId);
     }
 
     $scope.toggleSearch = function() {
@@ -549,7 +605,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
 
     $scope.returnAvatar = function(room) {
-        if (room.avatars==null) return "noname.png";
+        if (room.avatars == null) return "noname.png";
         if (room.avatars.length > 1)
             return room.avatars[1];
         return room.avatars[0];

@@ -938,7 +938,7 @@ public class ChatController {
 			usersResult = new ArrayList(userService.getUsersFist5(login));
 		ArrayList<LoginEvent> loginEvents = new ArrayList<>();
 		for (User u: usersResult)
-			loginEvents.add(new LoginEvent(u,u.getChatUser().getId()));
+			loginEvents.add(new LoginEvent(u,chatUsersService.getChatUserFromIntitaUser(u, false).getId()));
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(loginEvents);
 		return jsonInString;

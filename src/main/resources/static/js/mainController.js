@@ -113,6 +113,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         });
         return false;
     }
+   
     $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
 
