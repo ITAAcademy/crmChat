@@ -90,7 +90,10 @@
                 </div>
             </div>
             <hr/>
-            <div class="message_block_directive" messages-block="true"></div>
+            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()'
+                 can-load='!$root.message_busy'
+                 treshold='100'
+                 infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->
             <hr/>
             <div class="messages_input_area" message-input="true"></div>
