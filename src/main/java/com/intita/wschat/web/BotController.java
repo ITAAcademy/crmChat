@@ -533,7 +533,7 @@ public class BotController {
 		if(room == null)
 			return false;
 
-		chatTenantService.setTenantBusy(tenant);
+		tenantSendBecomeBusy(tenant);
 		askUser(tenant, user.getNickName() + " запрошує Вас приїднатися до співбесіди " + room.getName() + ".\n Ви погоджуєтеся?",
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
 		return true;
@@ -552,8 +552,12 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeBusy(Principal principal) {
-		chatTenantService.setTenantBusy(principal);
-		chatController.groupCastRemoveTenantFromList(chatUsersService.getChatUser(principal));
+		ChatUser tenant = chatUsersService.getChatUser(principal);
+		tenantSendBecomeBusy(tenant);
+	}
+	public void tenantSendBecomeBusy(ChatUser tenant) {
+		chatTenantService.setTenantBusy(tenant);
+		chatController.groupCastRemoveTenantFromList(tenant);
 	}
 	/*private void updateTenants(){
 		String subscriptionStr = "/topic/chat.tenants.add";

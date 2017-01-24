@@ -648,8 +648,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
     $rootScope.submitConsultation_processUser = function(roomId) {
         if (roomId == RoomsFactory.getCurrentRoom().roomId) {
-
-            chatControllerScope.userAddedToRoom = true;
             $rootScope.isConectedWithFreeTenant = true;
 
             toaster.clear();
@@ -659,10 +657,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     };
 
     $rootScope.submitConsultation_processTenant = function(tenantId, roomId) {
-        if (tenantId == $scope.chatUserId) {
-            $scope.hideAskTenantToTakeConsultation();
+        if (tenantId == UserFactory.getChatUserId()) {
             $timeout(function() {;
-                chatControllerScope.changeLocation('/dialog_view/' + roomId);
+                ChannelFactory.changeLocation('/dialog_view/' + roomId);
             }, 100);
         }
     };
