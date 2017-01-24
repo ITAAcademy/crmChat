@@ -626,8 +626,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
     $rootScope.submitConsultation_processUser = function(roomId) {
         if (roomId == RoomsFactory.getCurrentRoom().roomId) {
-
-            chatControllerScope.userAddedToRoom = true;
             $rootScope.isConectedWithFreeTenant = true;
 
             toaster.clear();
@@ -637,10 +635,9 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     };
 
     $rootScope.submitConsultation_processTenant = function(tenantId, roomId) {
-        if (tenantId == $scope.chatUserId) {
-            $scope.hideAskTenantToTakeConsultation();
+        if (tenantId == UserFactory.getChatUserId()) {
             $timeout(function() {;
-                chatControllerScope.changeLocation('/dialog_view/' + roomId);
+                ChannelFactory.changeLocation('/dialog_view/' + roomId);
             }, 100);
         }
     };
@@ -739,7 +736,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.messages_input_area').height();
-        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight;
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 10;//pading
         if (messagesInputHeight > messagesOutputHeight)
             return;
         saveScrollBottom();

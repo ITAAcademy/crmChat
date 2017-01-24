@@ -332,7 +332,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                         //alert(14)
                         ChannelFactory.changeLocation("/chatrooms");
                         toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
-                        toaster.pop('warning', "Сталася помилка", "Кімната не існує або Ви не є її учасником", 5000);
                     }
                     //subscribeParticipantsLP();
                 }
@@ -468,7 +467,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
             var room = getRoomById(rooms, $routeParams.roomId);
 
-            if (room != null && isRoomConsultation(room) && controllerName != "ConsultationController") //redirect to consultation
+            if (room != null && isRoomConsultation(room)) //redirect to consultation
             {
                 $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.roomId)
                     .success(function(data, status, headers, config) {
@@ -484,12 +483,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
             if ($routeParams.roomId == null) return;
             goToRoom($routeParams.roomId).then(function(data) {
-
                 if (data != undefined && data != null) {
                     currentRoom = data.data;
-                    dialogName = currentRoom.string;
                 }
-                pageClass = 'scale-fade-in';
             }, function() {
                 $rootScope.goToAuthorize();
                 toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
