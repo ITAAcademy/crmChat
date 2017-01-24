@@ -468,7 +468,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
             var room = getRoomById(rooms, $routeParams.roomId);
 
-            if (room != null && isRoomConsultation(room) && controllerName != "ConsultationController") //redirect to consultation
+            if (room != null && isRoomConsultation(room)) //redirect to consultation
             {
                 $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.roomId)
                     .success(function(data, status, headers, config) {

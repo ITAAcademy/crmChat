@@ -1520,8 +1520,8 @@
 .search_box {
     position: absolute;
     /* top: 10px; */
-    left: 55px;
-    width: calc(100% - 90px);
+    left: 45px;
+    width: calc(100% - 80px);
     height: 100%;
     /* z-index: 999999; */
 }
