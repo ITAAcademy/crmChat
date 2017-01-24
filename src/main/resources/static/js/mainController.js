@@ -761,7 +761,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var containerHeight = $('.right_panel').height();
         var toolsAreaHeight = $('.tools_area').height();
         var messagesInputHeight = $('.messages_input_area').height();
-        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight;
+        var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 10;//pading
         if (messagesInputHeight > messagesOutputHeight)
             return;
         saveScrollBottom();
