@@ -152,6 +152,8 @@ angular.module('springChat.directives').directive('modaleToggle', function($comp
                     }
 
                     if (e.target === element[0] || element[0].contains(e.target) || (toggle && ignore)) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         scope.$apply(function() {
                             var res = scope.callback();
                             if (res == undefined)
@@ -260,7 +262,9 @@ angular.module('springChat.directives').directive('studentsBlock', studentsBlock
 function initFolded(scope, element) {
     scope.scroll;
     scope.folded = true;
-    scope.toggleFolded = function() {
+    scope.toggleFolded = function(event) {
+        if(event != undefined && $(event.target).hasClass("block_controll"))
+            return;
         scope.folded = !scope.folded;
         scope.scroll.overflowy = !scope.folded;
         if (scope.folded)
@@ -384,7 +388,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             $timeout.cancel(sendingMessage);
                             sendingMessage = undefined;
                         }
-                        if ( UserFactory.isMessageSended()) return;
+                        if (UserFactory.isMessageSended()) return;
                         $scope.messageError();
                         UserFactory.setMessageSended(true);
 
@@ -471,18 +475,14 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
             $scope.roomsListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            $scope.getRoomsOrSearchedRooms = function() {
-                    if ($scope.searchEnabled) return $scope.roomsListSearched;
-                    else return RoomsFactory.getRooms();
-
-                }
-                /*$scope.getUsersByEmail = function(query, deferred) {
-                    var url = serverPrefix + "/get_users_like?login=" + query;
-                    $http.get(url).success((function(deferred, data) { // send request
-                        var results = data;
-                        deferred.resolve({ results: results });
-                    }).bind(this, deferred));
-                };*/
+            $scope.getRooms = RoomsFactory.getRooms;
+            /*$scope.getUsersByEmail = function(query, deferred) {
+                var url = serverPrefix + "/get_users_like?login=" + query;
+                $http.get(url).success((function(deferred, data) { // send request
+                    var results = data;
+                    deferred.resolve({ results: results });
+                }).bind(this, deferred));
+            };*/
             $scope.participantsSort = UserFactory.participantsSort;
             $scope.updateChatUsersByEmail = function(email, delay) {
                 $timeout.cancel($scope.updatingUsersByEmailPromise);
@@ -526,6 +526,14 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     roomsBlockModeChangeSubscription = $scope.$root.$on('rootScope:roomsBlockModeChange', function(event, data) {
         console.log(data);
         $scope.mode = data;
+        switch ($scope.mode) {
+            case 1:
+                break;
+            case 2:
+                $scope.showContacts();
+                break;
+        }
+
     });
     $scope.sortBy = ['date', 'string'];
     $scope.displayLetters = false;
@@ -548,6 +556,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
                     addNewUser(room.privateUserIds[1]);
                 if (room.privateUserIds[1] == UserFactory.getChatUserId())
                     addNewUser(room.privateUserIds[0]);
+                $scope.mode = 1;
                 break;
         }
     }
@@ -558,6 +567,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
                 break;
             case 2:
                 addNewUser(user.chatUserId);
+                $scope.mode = 1;
                 break;
         }
     }
@@ -569,6 +579,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     $scope.toggleSearch = function() {
         $scope.searchEnabled = !$scope.searchEnabled;
+        return $scope.searchEnabled;
     }
     $scope.createNewRoom = function($event) {
         RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
@@ -593,6 +604,9 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return true;
     }
     $scope.showLastContacts = function() {
+        if($scope.mode == 2)
+            return;
+
         $scope.tabState = "LastContacts";
         $scope.sortBy = ['-nums', '-date'];
         $scope.displayLetters = false;

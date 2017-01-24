@@ -258,10 +258,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var addUserToRoom = function(chatUserId) {
         $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.roomId, chatUserId), {}).
         success(function(data, status, headers, config) {
-            chatControllerScope.userAddedToRoom = true;
+            
         }).
         error(function(data, status, headers, config) {
-            chatControllerScope.userAddedToRoom = true;
+            
         });
     }
 

@@ -189,6 +189,9 @@
 .items_list_block .block_content {
     max-height: 70px;
     overflow: hidden;
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-right: -5px;
     -webkit-transition: 1s ease-out;
     -moz-transition: 1s ease-out;
     -o-transition: 1s ease-out;
@@ -199,6 +202,8 @@
 .items_list_block .block_content.unfolded {
     max-height: 365px;
     overflow-y: scroll
+        padding-right: 0px;
+    margin-right: 0px;
 }
 
 .items_list_block.top_block+.chevron_wrapper {
@@ -1787,7 +1792,7 @@ body {
 
 @media screen and (min-width:961px) {
     .items_list_block .block_content {
-         min-height: 205px; 
-        max-height: 205px;
+         min-height: 140px;
+         max-height: 140px;
     }
 }

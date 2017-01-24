@@ -11,7 +11,7 @@
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
     <!--IF (searchDisabled) Rooms Models list used in search -->
-    <div ng-if="!searchEnabled" class="section" ng-repeat="room in (roomsF = ((getRoomsOrSearchedRooms() | roomsBlockFilter : tabState) | orderBy:sortBy))">
+    <div ng-if="!searchEnabled || roomsListSearched.length == 0" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : tabState) | orderBy:sortBy))">
         <div ng-if="displayLetters && firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
             <div class="section_name">{{firstLetter(room.string)}}</div>
             <div class="section-hr"></div>
@@ -30,13 +30,14 @@
                 <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true) : ''}}</div>
                 <div class="contact_control">
                     <div ng-if="room.nums > 0" class="budget">{{room.nums}}</div>
+                    <div ng-if="mode == 2" class="budget">+</div>
                     <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
                 </div>
             </div>
         </div>
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->
-    <div id="items_list_block_search" ng-if="searchEnabled" class="section" ng-repeat="user in (usersF = ((getRoomsOrSearchedRooms()) | orderBy:participantsSort))">
+    <div id="items_list_block_search" ng-if="searchEnabled" class="section" ng-repeat="user in (usersF = ((roomsListSearched) | orderBy:participantsSort))">
         <div ng-if="displayLetters && firstLetter(usersF[$index].nickName) != firstLetter(usersF[$index-1].nickName)" class="section-info-block">
             <div class="section_name">{{firstLetter(user.nickName)}}</div>
             <div class="section-hr"></div>
@@ -51,6 +52,9 @@
                 <div class="text_info">
                     <div class="user_name">{{user.chatUserId}}:{{user.nickName}}</div>
                     <div class="user_presence">{{isUserOnline(user.chatUserId) ? 'Онлайн' :'Офлайн'}}</div>
+                </div>
+                <div class="contact_control">
+                    <div ng-if="mode == 2" class="budget">+</div>
                 </div>
             </div>
         </div>
