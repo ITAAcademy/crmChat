@@ -361,7 +361,7 @@
     padding-top: 2.5px;
     padding-bottom: 2.5px;
     position: relative;
-    margin-top: 5px;
+    /* margin-top: 5px; */
 }
 
 .items_list_block .block_item:hover {
@@ -593,7 +593,7 @@
 
 .items_list_block .block_item {
     padding-top: 5px;
-    padding-bottom: 5px
+    padding-bottom: 5px;
 }
 
 .left_panel_mini .items_list_block .block_item {
@@ -1704,7 +1704,7 @@ body {
 .panel {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.42857
+    line-height: 1.42857;
 }
 
 .g-checkbox {
