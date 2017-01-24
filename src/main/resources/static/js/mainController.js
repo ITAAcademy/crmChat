@@ -146,29 +146,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     ];
 
     /*FILE FORM INIT*/
-    $scope.uploadFiles = function(files) {
-            $scope.files = files;
-            if (files) {
-                uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
-                    function successCallback(data) {
-                        $scope.uploadProgress = 0;
-                        $scope.sendMessage("я отправил вам файл", JSON.parse(data));
-                        $scope.$apply();
-                    },
-                    function(xhr) {
-                        $scope.uploadProgress = 0;
-                        $scope.$apply();
-                        alert("SEND FAILED:" + JSON.parse(xhr.response).message);
-                    },
-                    function(event, loaded) {
-                        console.log(event.loaded + ' / ' + event.totalSize);
-                        $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
-                        $scope.$apply();
 
-                    });
-            }
-            return false;
-        }
         /*END*/
 
 
