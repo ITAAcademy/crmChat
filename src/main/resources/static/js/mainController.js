@@ -51,6 +51,11 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $rootScope.firstLetter = firstLetter;
     $rootScope.checkIfToday = checkIfToday;
     $rootScope.checkIfYesterday = checkIfYesterday;
+    $rootScope.needShowDayDivided = function(curr, prev){
+        if(checkIfToday(curr) || checkIfYesterday(curr))
+            return true;
+        return isSameDay(curr, prev);
+    };
     $rootScope.getNameFromUrl = getNameFromUrl;
     $scope.state = 2;
     $scope.loadOnlyFilesInfiniteScrollMode = false;

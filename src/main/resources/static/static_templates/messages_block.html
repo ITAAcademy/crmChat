@@ -1,36 +1,41 @@
-		<!-- Сьогоднішні повідомлення -->
-				<div ng-repeat-start="message in messages() | orderBy : 'date'" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
-					<div class="line"></div>
-					<div class="big_dot"></div>
-					<span class="date_indicator">Сьогодні</span>
-					<div class="big_dot"></div>
-					<div class="line"></div>
-				</div>
-				<div class="message_date_separator" ng-if="checkIfYesterday(message.date) &amp;&amp; $index==0">
-					<div class="line"></div>
-					<div class="big_dot"></div>
-					<span class="date_indicator">Вчора</span>
-					<div class="big_dot"></div>
-					<div class="line"></div>
-				</div>
-
-				<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
-					<div class="message_author_avatar" ng-if="!message.position">
-						<img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt=""/>
-					</div>
-					<div class="message_details">
-						<div class="top_details">
-							<span class="messag_author_name">{{message.username}}</span>
-							<span class="message_date" ng-bind="$root.formatDateWithLast(message.date)"></span>
-						</div>
-						<compilable  class="bottom_details" content="parseMsg(message.message)"></compilable>
-						<hr ng-repeat-start="file in message.attachedFiles track by $index" ng-if="$index==0"/>
-						<div class="display-file-container" ng-repeat-end file-miniature="true" link="file" >
-						</div>
-					</div>
-					<div class="message_author_avatar" ng-if="message.position">
-						<img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt=""/>
-					</div>
-				</div>
-
-				<!-- //Сьогоднішні повідомлення -->
+<!-- Сьогоднішні повідомлення -->
+<div ng-repeat-start="message in (orderedMsgs = (messages() | orderBy : 'date'))" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
+    <div class="line"></div>
+    <div class="big_dot"></div>
+    <span class="date_indicator">Сьогодні</span>
+    <div class="big_dot"></div>
+    <div class="line"></div>
+</div>
+<div class="message_date_separator" ng-if="checkIfYesterday(message.date)">
+    <div class="line"></div>
+    <div class="big_dot"></div>
+    <span class="date_indicator">Вчора</span>
+    <div class="big_dot"></div>
+    <div class="line"></div>
+</div>
+<div class="message_date_separator" ng-if="!needShowDayDivided(message.date, orderedMsgs[$index - 1].date)">
+    <div class="line"></div>
+    <div class="big_dot"></div>
+    <span class="date_indicator">{{$root.formatDateWithLast(message.date, false, true)}}</span>
+    <div class="big_dot"></div>
+    <div class="line"></div>
+</div>
+<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
+    <div class="message_author_avatar" ng-if="!message.position">
+        <img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt="" />
+    </div>
+    <div class="message_details">
+        <div class="top_details">
+            <span class="messag_author_name">{{message.username}}</span>
+            <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, true)"></span>
+        </div>
+        <compilable class="bottom_details" content="parseMsg(message.message)"></compilable>
+        <hr ng-repeat-start="file in message.attachedFiles track by $index" ng-if="$index==0" />
+        <div class="display-file-container" ng-repeat-end file-miniature="true" link="file">
+        </div>
+    </div>
+    <div class="message_author_avatar" ng-if="message.position">
+        <img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt="" />
+    </div>
+</div>
+<!-- //Сьогоднішні повідомлення -->

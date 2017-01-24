@@ -1,5 +1,3 @@
-
-
 function toArray(object) {
     return angular.isArray(object) ? object : Object.keys(object).map(function(key) {
         return object[key];
@@ -81,8 +79,19 @@ var checkIfYesterday = function(inputDateLong) {
     var inputDate = new Date(inputDateLong);
     var yesterdayDate = new Date();
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    return inputDate.setHours(0, 0, 0, 0) == yesterdayDate.setHours(0, 0, 0, 0);
+    return (yesterdayDate.getDate() == inputDate.getDate() && yesterdayDate.getMonth() == inputDate.getMonth() && yesterdayDate.getFullYear() == inputDate.getFullYear());
 }
+
+var isSameDay = function(currentdate, previus) {
+    if(currentdate == undefined && previus == undefined)
+        return true;
+    var dateToCheck = new Date(currentdate);
+    var actualDate = new Date(previus);
+    debugger;
+    return (dateToCheck.getDate() == actualDate.getDate() && dateToCheck.getMonth() == actualDate.getMonth() && dateToCheck.getFullYear() == actualDate.getFullYear())
+}
+
+
 var getNameFromUrl = function(url) {
     var fileNameSignaturePrefix = "file_name=";
     var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
@@ -94,10 +103,13 @@ var firstLetter = function(name) {
         return name.toUpperCase().charAt(0);
 }
 
-var formatDateWithLast = function(date, short) {
-    if(short == undefined)
+var formatDateWithLast = function(date, short, withoutTime) {
+    if (short == undefined)
         short = false;
+    if (withoutTime == undefined)
+        withoutTime = false;
     
+
     if (date == null || date == undefined)
         return "";
 
@@ -109,7 +121,7 @@ var formatDateWithLast = function(date, short) {
 
     var delta = new Date().getTime() - dateObj.getTime();
     if (delta > 60000 * 59)
-        return formatDate(date, short);
+        return formatDate(date, short, withoutTime);
     else
     if (Math.round(delta / 60000) == 0)
         return "щойно";
@@ -130,21 +142,21 @@ var formatDateWithLast = function(date, short) {
 
 }
 
-var differenceInSecondsBetweenDates = function(t1,t2){
-var dif = t1.getTime() - t2.getTime();
-var Seconds_from_T1_to_T2 = dif / 1000;
-var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
-return Seconds_Between_Dates;
+var differenceInSecondsBetweenDates = function(t1, t2) {
+    var dif = t1.getTime() - t2.getTime();
+    var Seconds_from_T1_to_T2 = dif / 1000;
+    var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
+    return Seconds_Between_Dates;
 }
-var formatDate = function(date, short) {
+var formatDate = function(date, short, withoutTime) {
     // need translate and move to global to config map
-    if(short == undefined)
+    if (short == undefined)
         short = false;
 
     var monthNames = {};
     monthNames['ua'] = [
         "Січеня", "Лютого", "Березеня ",
-        "Квітня", "Травня ", "Червня ", "Липеня",
+        "Квітня", "Травня ", "Червня ", "Липня",
         "Серпня", "Вересеня", "Жовтеня",
         "Листопада", "Груденя"
     ];
@@ -167,15 +179,16 @@ var formatDate = function(date, short) {
     var minutes = dateObj.getMinutes();
     if (minutes < 10)
         minutes = '0' + minutes;
-    if(short)
-    {
-        if(monthIndex + 1 < 10)
-            return day + "." + monthIndex + 1;
+    if (short) {
+        if (monthIndex + 1 < 10)
+            return day + ".0" + (monthIndex + 1);
         else
-            return day + "." + monthIndex + 1;
+            return day + "." + (monthIndex + 1);
     }
-
-    return day + " " + monthNames[globalConfig.lang][monthIndex] + " " + dateObj.getHours() + ":" + minutes;
+    var res = day + " " + monthNames[globalConfig.lang][monthIndex];
+    if(!withoutTime)
+        res += " " + dateObj.getHours() + ":" + minutes;
+    return res;
 }
 
 function getCurrentTime() {
@@ -412,18 +425,19 @@ function parseBoolean(value) {
 function Color(val) {
     this.val = val;
 }
-    function send(destination, data, ok_funk, err_funk) {
-        var xhr = getXmlHttp();
-        xhr.open("POST", serverPrefix + destination, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 || xhr.readyState == "complete") {
-                ok_funk();
-            } else
-                err_funk();
 
-        }
-        xhr.send(data);
+function send(destination, data, ok_funk, err_funk) {
+    var xhr = getXmlHttp();
+    xhr.open("POST", serverPrefix + destination, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 || xhr.readyState == "complete") {
+            ok_funk();
+        } else
+            err_funk();
+
     }
+    xhr.send(data);
+}
 
 function htmlEscape(str) {
     return str
@@ -435,7 +449,7 @@ function htmlEscape(str) {
 }
 
 // I needed the opposite function today, so adding here too:
-function htmlUnescape(str){
+function htmlUnescape(str) {
     return str
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
