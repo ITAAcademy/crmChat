@@ -201,7 +201,7 @@
 
 .items_list_block .block_content.unfolded {
     max-height: 365px;
-    overflow-y: scroll
+    overflow-y: scroll;
         padding-right: 0px;
     margin-right: 0px;
 }
@@ -1109,6 +1109,7 @@
     bottom:0px;
     background-color:white;
     padding-bottom:10px;
+    margin-left:4px;
 }
 
 .messages_input_area .message_input {
