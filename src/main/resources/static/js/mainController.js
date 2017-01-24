@@ -9,6 +9,26 @@ springChatControllers.config(function($routeProvider) {
         templateUrl: "builderTemplateJSTemp.html",
         controller: "ChatBotFormBuilderController"
     });
+    $routeProvider.when("/dialog_view/:roomId/", {
+        resolve: {
+            load: function($route, RoomsFactory,ChannelFactory, $routeParams) {
+                if (!ChannelFactory.getIsInited()) return;
+                RoomsFactory.goToRoom($route.current.params.roomId);
+            }
+        }
+    });
+    $routeProvider.when("/access_deny", {
+        templateUrl: "accessDeny.html",
+        controller: "AccessDeny"
+    });
+    $routeProvider.when("/private_dialog_view/:chatUserId", {
+        resolve: {
+            load: function($route, RoomsFactory, $routeParams) {
+                RoomsFactory.goToPrivateDialog($route.current.params.chatUserId);
+            }
+        }
+    });
+
     $routeProvider.otherwise({ redirectTo: '/' });
     console.log("scope test");
 
@@ -452,7 +472,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.showDialogListButton = false;
     $scope.searchResultAdmin;
     $rootScope.isMyRoom = true;
-    $scope.messageSended = true;
+   // $rootScope.messageSended = true;
     $scope.userAddedToRoom = true;
     $rootScope.isConectedWithFreeTenant = false;
 
@@ -620,7 +640,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
 
         });
     }
-    var messageSended = true;
 
     function messageError() {
         toaster.pop('error', "Error", "server request timeout", 0);
@@ -747,6 +766,8 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             return;
         saveScrollBottom();
         //$('#messagesScroll').height(messagesOutputHeight);
+        //$('#messagesScroll').scrollTop(getScrollTopToPreserveScroll(messagesOutputHeight));
+
 
         $('#messagesScroll').stop(true).animate({
             height: messagesOutputHeight,

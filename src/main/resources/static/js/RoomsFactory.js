@@ -639,32 +639,4 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
 
-}]).config(function($routeProvider) {
-    /* $routeProvider.when("/chatrooms", {
-         templateUrl: "dialogsTemplate.html",
-         controller: "DialogsRouteController"
-     });*/
-    $routeProvider.when("/dialog_view/:roomId/", {
-        resolve: {
-            load: function($route, RoomsFactory, $routeParams) {
-                RoomsFactory.goToRoom($route.current.params.roomId);
-            }
-        }
-    });
-    $routeProvider.when("/access_deny", {
-        templateUrl: "accessDeny.html",
-        controller: "AccessDeny"
-    });
-    $routeProvider.when("/private_dialog_view/:chatUserId", {
-        resolve: {
-            load: function($route, RoomsFactory, $routeParams) {
-                RoomsFactory.goToPrivateDialog($route.current.params.chatUserId);
-            }
-        }
-    });
-
-
-    $routeProvider.otherwise({ redirectTo: '/' });
-    console.log("scope test");
-
-});
+}]);

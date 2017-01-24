@@ -52,11 +52,12 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
 
 }]);
 
-springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$http', function($rootScope,ngDialog,$timeout,$http) {
+springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$http','$injector', function($rootScope,ngDialog,$timeout,$http,$injector) {
     var hideAskTenantToTakeConsultation_tenantNotRespond;
     var tenantInviteDialog;
     var yesLink;
     var noLink;
+
     this.setLinks = function(yesLinkArg,noLinkArg){
         if (typeof yesLinkArg === "undefined")return;
         yesLink = yesLinkArg;
@@ -64,12 +65,12 @@ springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$ht
         noLink = noLinkArg;
     };
         this.showAskWindow = function() {
-
+            var UserFactory = $injector.get('UserFactory');
          tenantInviteDialog = ngDialog.open({
             template: 'askTenantToTakeConsultationWindow.html',
             height: 400
         });
-            $rootScope.isTenantFree = false;
+            UserFactory.setTenantBusy();
 
             $timeout.cancel(hideAskTenantToTakeConsultation_tenantNotRespond);
             hideAskTenantToTakeConsultation_tenantNotRespond =
