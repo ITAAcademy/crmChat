@@ -380,7 +380,7 @@ $header = new Header();
 var elem = $(window);
     var res_elem = $('.draggable');
     res_elem.css({ top: (elem.height() - 600) + 'px' });
-    res_elem.css({ left: (elem.width() - 400) + 'px' });
+    res_elem.css({ left: (elem.width() - 450) + 'px' });
 
         }
          $( window ).resize(resizeFunc);
@@ -412,7 +412,7 @@ var elem = $(window);
 
 </script>
 <!-- http://www.freeformatter.com/javascript-escape.html#ad-output $('body').append();-->
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
  <style type="text/css">
  .dnd-container{
     position: fixed; z-index: 99999999;top: 0px;left: 0px;width: 100%;height: 100%;transform: none;pointer-events: none;
@@ -421,9 +421,9 @@ var elem = $(window);
     width: 100%;
     height: 100%;
     max-height: 600px;
-    max-width: 400px;
+    max-width: 450px;
     top: calc(100% - 600px);
-    left: calc(100% - 400px);
+    left: calc(100% - 450px);
     bottom: 0;
     right: 0;
     position: absolute;transform: none;pointer-events: all;
@@ -435,9 +435,9 @@ var elem = $(window);
  }
  .dnd-container .chat.mini{
     max-height: 65px;
-    max-width: 400px;
+    max-width: 450px;
     top: calc(100% - 65px) !important;
-    left: calc(100% - 400px) !important;
+    left: calc(100% - 450px) !important;
  }
   .dnd-container .chat.full{
     max-height: 100%;
@@ -472,7 +472,8 @@ var elem = $(window);
  .window_panel > *{
     display: inline-block;
     width: 20px; height: 35px;
-    background-size: contain;   background-position-y: center;    background-repeat: no-repeat;
+    color: #425569;
+    line-height: 35px;
  }
  .window_panel{
     position:absolute;top: 15px;right: 10px;width: 90px;height: 35px;background: none;color:#fff;
@@ -483,6 +484,16 @@ var elem = $(window);
  .dnd-container .chat.mini .handle,
  .dnd-container .chat.full .handle{
     cursor: initial;
+ }
+ .material-icons{
+    -webkit-transition: color .25s ease-in-out;
+    -moz-transition: color .25s ease-in-out;
+    -o-transition: color .25s ease-in-out;
+    transition: color .25s ease-in-out;
+ }
+ .material-icons:hover{
+    cursor: pointer;
+    color: #4b75a4;
  }
  @media screen and (min-width:900px) {
     .window_panel{
@@ -495,10 +506,10 @@ var elem = $(window);
             <div ng-show="init" class="draggable chat mini ng-class:{mini: state==1, full: state==2}" ng-click="click(!$dragged &amp;&amp; !$resized &amp;&amp; !$rotated, $dropmodel)" dnd-draggable="state == 0" dnd-draggable-opts="{layer: 'layer1', handle: '.handle'}" dnd-on-dragstart="main.dragstart()" dnd-on-drag="main.drag($dropmodel)" dnd-on-dragend="main.dragend($dropmodel)" dnd-containment="'.dnd-container'" dnd-rect="main.rect3" dnd-model="main.dragmodel">
             <div class="logo"></div>
             <iframe style="width: 100%;height: 100%;border: none;" src="https://localhost:8080/crmChat"></iframe>
-                <div class="window_panel"  style="">
-                <div id="minimize_btn" ng-click="minimizete()" style="background-image: url(https://localhost:8080/crmChat/images/elements/%E2%80%94.png);   "></div>
-                <div id="fullscreen_btn" ng-click="fullScreen()" style="background-image: url(https://localhost:8080/crmChat/images/elements/Rectangle%2010%20copy%202.png);"></div>
-                <div id="close_btn" ng-click="state = -1"></div>
+            <div class="window_panel" style="">
+                <div id="minimize_btn" class="material-icons" ng-click="minimizete()">indeterminate_check_box</div>
+                <div id="fullscreen_btn" class="material-icons" ng-click="fullScreen()">web_asset</div>
+                <div id="close_btn" class="material-icons" ng-click="state = -1">close</div>
             </div>
             <div class="handle" dnd-draggable-handle="" style=""></div>
             

@@ -2,7 +2,7 @@
     <div class="block_head" ng-click="toggleFolded($event)">
         <div ng-if="checkUserAdditionPermission()" class="block_controll" modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block"><img src="images/elements/add.png"></div>
         <div class="block_name">{{blockName}}</div>
-        <div ng-if="participants().length > 2" class="dropdown_icon ng-class:{unfolded:!folded}"></div>
+        <div ng-if="participants().length > 2" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
         <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">

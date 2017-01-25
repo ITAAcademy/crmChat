@@ -2,7 +2,7 @@
     <div class="block_head" ng-click="toggleFolded()">
     <div class="block_controll"><img src="images/elements/add.png"></div>
     <div class="block_name">{{blockName}}</div>
-<div ng-if="getTenantsList().length > 2" class="dropdown_icon ng-class:{unfolded:!folded}"></div>
+    <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
     <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded}">

@@ -321,21 +321,23 @@
     text-align: start;
     overflow: hidden;
     position: absolute;
-    right: 20px;
+    right: 25px;
     color: #3e87b8;
 }
 
 .items_list_block .dropdown_icon {
-    background-image: url("../images/elements/dropdown icon.png");
     position: absolute;
-    width: 12px;
-    height: 8px;
-    right: 5px;
-    top: 10px;
+    width: 25px;
+    height: 25px;
+    right: 0px;
+    top: 0px;
     -webkit-transition: 1s ease-in-out;
     -moz-transition: 1s ease-in-out;
     -o-transition: 1s ease-in-out;
     transition: 1s ease-in-out;
+    color: #3e87b8;
+    font-weight: 900;
+    font-size: 25px;
 }
 
 .items_list_block .dropdown_icon.unfolded {
@@ -357,7 +359,7 @@
 }
 
 .items_list_block.top_block .dropdown_icon {
-    background-image: url("../images/elements/dropdown icon_white.png");
+    color: white;
 }
 
 .items_list_block .block_item {
