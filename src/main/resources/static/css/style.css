@@ -83,6 +83,7 @@
     overflow: hidden;
     position: absolute;
     box-shadow: 1px 0px 6px 0px #425569;
+    z-index: 1;
 }
 
 .left_panel_mini {
@@ -101,6 +102,7 @@
     width: calc(100% - 301px);
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
+    position: relative;
 }
 
 #menu {
@@ -1115,6 +1117,8 @@
     background-color:white;
     padding-bottom:10px;
     margin-left:4px;
+    right: 0;
+    left: 0;
 }
 
 .messages_input_area .message_input {

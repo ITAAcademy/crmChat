@@ -430,7 +430,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var checkUserAdditionPermission = function(chatUserId) {
         if (currentRoom == undefined)
             return false;
-        var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD | USER_COPABILITIES_BY_ROOM.REMOVE;
+        var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD_USER | USER_COPABILITIES_BY_ROOM.REMOVE_USER;
         var havePermitions = chatUserId == currentRoom.roomAuthorId;
         havePermitions = havePermitions || (currentRoom.userPermissions & needPrivilege) == needPrivilege
         if (typeof currentRoom === "undefined") return false;
