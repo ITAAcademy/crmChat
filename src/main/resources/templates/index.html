@@ -95,7 +95,7 @@
                  treshold='100'
                  infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->
-            <div class="messages_input_area" message-input="true"></div>
+            <div ng-show="isMessageInputAvailable()" class="messages_input_area" message-input="true"></div>
         </div>
     </div>
         <script th:inline="javascript">

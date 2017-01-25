@@ -437,6 +437,13 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         var resultOfChecking = currentRoom.active /*&& ($scope.roomType != 1)*/ && havePermitions && $rootScope.isMyRoom && $rootScope.authorize;
         return resultOfChecking;
     }
+    var checkMessageAdditionPermission = function() {
+        if (currentRoom == undefined)
+            return false;
+        if (typeof currentRoom === "undefined") return false;
+        var resultOfChecking = currentRoom.active && $rootScope.isMyRoom && $rootScope.authorize;
+        return resultOfChecking;
+    }
 
     var unsubscribeCurrentRoom = function(event) {
         var isLastRoomBindingsEmpty = lastRoomBindings == undefined || lastRoomBindings.length == 0;
@@ -627,7 +634,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         isRoomPrivate: isRoomPrivate,
         isRoomConsultation: isRoomConsultation,
         addTenantToRoom: addTenantToRoom,
-        addUserToRoom: addUserToRoom
+        addUserToRoom: addUserToRoom,
+        checkMessageAdditionPermission: checkMessageAdditionPermission
 
     };
 
