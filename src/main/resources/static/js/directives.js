@@ -363,16 +363,20 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
-            $scope.sendMessage = function(message, attaches) {
+            $scope.sendMessage = function(message, attaches,clearMessageInput) {
+                var isClearMessageInputNeeded = clearMessageInput==null || clearMessageInput===true ? true : false;
                 if (!UserFactory.isMessageSended())
                     return;
                 var textOfMessage;
                 if (typeof message === "undefined") textOfMessage = $scope.newMessage;
                 else textOfMessage = message;
-                if (typeof textOfMessage === "undefined" || textOfMessage.length < 1) {
-                    $scope.newMessage = '';
-                    //$("#newMessageInput")[0].value  = '';
+                if(typeof textOfMessage === "undefined" || textOfMessage.length < 1){
                     return;
+                }
+                if (isClearMessageInputNeeded) {
+                    $scope.newMessage = '';
+                    $scope.files = [];
+                    //$("#newMessageInput")[0].value  = '';
                 }
                 var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
                 UserFactory.setMessageSended(false);
@@ -428,11 +432,11 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             $scope.sendMessageAndFiles = function() {
                 var files = $scope.files;
                 var textOfMessage = $scope.newMessage == null || $scope.newMessage.length<1 ? " " : $scope.newMessage;
-                if (files) {
+                if (files!=null && files.length>0) {
                     uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                         function successCallback(data) {
                             $scope.uploadProgress = 0;
-                            $scope.sendMessage(textOfMessage, JSON.parse(data));
+                            $scope.sendMessage(textOfMessage, JSON.parse(data),true);
                             $scope.$apply();
                         },
                         function(xhr) {
@@ -446,6 +450,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             $scope.$apply();
 
                         });
+                }
+                else{
+                    $scope.sendMessage(textOfMessage,undefined,true);
                 }
                 return false;
             }
