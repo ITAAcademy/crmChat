@@ -2,8 +2,11 @@
     width: 100%;
     height: 100%;
     margin: 0;
-    background-color: rgba(237, 238, 240, 0.58);
-    overflow: hidden
+    /* background-color: rgba(237, 238, 240, 0.58); */
+    background: none;
+    padding: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .tenant_busy_control {
@@ -188,7 +191,7 @@
 }
 
 .items_list_block .block_content {
-    max-height: 70px;
+    max-height: 65px;
     overflow: hidden;
     overflow-y: auto;
     padding-right: 5px;
@@ -1762,7 +1765,7 @@ body {
 
 /*# sourceMappingURL=style.css.map */
 
-@media screen and (max-width:960px) {
+@media screen and (max-width:949px) {
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1799,7 +1802,7 @@ body {
     }
 }
 
-@media screen and (min-width:961px) {
+@media screen and (min-width:950px) {
     .items_list_block .block_content {
         min-height: 130px;
         max-height: 130px;

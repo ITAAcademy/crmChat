@@ -16,7 +16,7 @@
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
-        <div class="head" ng-draggable='dragOptions'>
+        <div class="head">
         <img id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" src="images/elements/menu_icon.svg"/>
             <img class="logo" src="images\intita95x30.png" alt="" />
             <div class="notification">
@@ -34,11 +34,6 @@
             </div>
             <div class="tenant_busy_control" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <img src="images/crossed_cloud.svg"/>
-            </div>
-            <div class="window_panel">
-                <div id="minimize_btn"></div>
-                <div id="fullscreen_btn" ng-click="state == 0 ? state = 2 : state = 0"></div>
-                <div id="close_btn" ng-click="state = -1"></div>
             </div>
         </div>
         <div id="loader-wrapper">
