@@ -69,13 +69,13 @@
         <div class="right_panel">
             <div class="tools_area">
                 <div class="tools_dropdown_container">
-                    <ul id="tools_dropdown" class="popup_dropdown">
-                        <li ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="show_attaches_item"><a>Показати додатки</a></li>
-                        <li ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="show_attaches_item"><a>Показати всі повідомлення</a></li>
-                        <li ng-click="togleSoundEnable()" class="ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable} "><a>{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a></li>
-                        <li class="leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()"><a>Вийти з кімнати</a></li>
-                        <li class="remove_history_item"><a>Видалити історію</a></li>
-                    </ul>
+                    <div id="tools_dropdown" class="popup_dropdown">
+                        <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item">Показати додатки</a>
+                        <a ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item">Показати всі повідомлення</a>
+                        <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:!soundEnable, sound_off_item:soundEnable} ">{{soundEnable ? 'Вимкнути звук' : 'Увімкнути звук'}}</a>
+                        <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()">Вийти з кімнати</a>
+                        <a class="dropdown_item remove_history_item">Видалити історію</a>
+                    </div>
                     <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
                         <img src="images\elements\config.png" alt="" />
                     </button>
