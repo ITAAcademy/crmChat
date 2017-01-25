@@ -880,22 +880,22 @@
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .show_attaches_item:before {
-    background-image: url("../images/attaches_13x14.png");
+   content:'attach_file';
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
-    background-image: url("../images/no_sound16x16.png");
+    content:'volume_off';
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .sound_on_item:before {
-    background-image: url("../images/megaphone.png");
+    content:'volume_up';
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .leave_room_item:before {
-    background: url("../images/X.svg");
+    content:'exit_to_app';
 }
 .tools_area .tools_dropdown_container>#tools_dropdown .remove_history_item:before {
-    background-image: url("../images/trashcan12x14.png");
+   content:'delete';
 }
 
 .transparent_input {
@@ -955,10 +955,21 @@
     position: absolute;
     left: 10px;
     content: '';
-    width: 22px;
-    height: 22px;
     background-size: cover;
     background-repeat:no-repeat;
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
 }
 
 .right_panel .search_icon {
@@ -1209,7 +1220,7 @@
 }
 
 .attaches_area>#attaches_dropdown .attaches_item:before {
-    background-image: url("../images/document12x13.png");
+  content:'folder';
 }
 
 .attaches_area>#attaches_dropdown li {
@@ -1217,11 +1228,11 @@
 }
 
 .attaches_area>#attaches_dropdown .video_item:before {
-    background-image: url("../images/camera15x11.png");
+   content:'ondemand_video';
 }
 
 .attaches_area>#attaches_dropdown .audio_item:before {
-    background-image: url("../images/music12x12.png");
+    content:'music_video';
 }
 
 .shown {
