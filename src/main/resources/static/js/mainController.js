@@ -533,7 +533,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }).
         error(function(data, status, headers, config) {
             console.log('TEST');
-            if (status == "404" || status == "405") chatControllerScope.changeLocation("/chatrooms");
+            if (status == "404" || status == "405") chatControllerScope.changeLocation("/");
             //messageError("no other message");
         });
     }
@@ -698,6 +698,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         if (objDiv != null)
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
     }
+    $scope.isMessageInputAvailable = RoomsFactory.checkMessageAdditionPermission;
     $scope.currentRoomIsNull = function() {
         if (RoomsFactory.getCurrentRoom() == null) return true;
         return RoomsFactory.getCurrentRoom().roomId == null;
