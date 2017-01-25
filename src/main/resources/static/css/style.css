@@ -201,7 +201,7 @@
 }
 
 .items_list_block .block_content.unfolded {
-    max-height: 365px;
+    max-height: 320px;
     padding-right: 0px;
     overflow-y: scroll;
     margin-right: 0px;
@@ -571,7 +571,7 @@
     font-style: normal;
     color: #425569;
     position: absolute;
-    bottom: 6px;
+    bottom: 10px;
     right: 5px;
 }
 
@@ -805,7 +805,7 @@
 .contact_control {
     position: absolute;
     right: 15px;
-    top: calc(50% - 19px);
+    top: calc(50% - 15px);
 }
 
 .tools_area {
@@ -1801,8 +1801,8 @@ body {
 
 @media screen and (min-width:961px) {
     .items_list_block .block_content {
-        min-height: 140px;
-        max-height: 140px;
+        min-height: 130px;
+        max-height: 130px;
     }
 }
 .files_input{

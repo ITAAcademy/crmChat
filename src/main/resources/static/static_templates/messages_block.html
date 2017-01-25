@@ -27,7 +27,7 @@
     <div class="message_details">
         <div class="top_details">
             <span class="messag_author_name">{{message.username}}</span>
-            <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, true)"></span>
+            <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
         </div>
         <compilable class="bottom_details" content="parseMsg(message.message)"></compilable>
         <hr ng-repeat-start="file in message.attachedFiles track by $index" ng-if="$index==0" />

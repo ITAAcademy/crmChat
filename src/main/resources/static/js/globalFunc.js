@@ -19,51 +19,42 @@ var dayNameShort = {},
     minuteNameShort = {};
 var endName = {};
 
-daysNameShort['ua'] = 'днів';
-dayNameShort['ua'] = 'день';
-daysNameShort['en'] = 'day';
-dayNameShort['en'] = 'days';
-daysNameShort['ru'] = 'дней';
-dayNameShort['ru'] = 'день';
+daysName['ua'] = ' днів';
+dayName['ua'] = ' день';
+daysName['en'] = ' day';
+dayName['en'] = ' days';
+daysName['ru'] = ' дней';
+dayName['ru'] = ' день';
 
-hoursNameShort['ua'] = 'годин';
-hourNameShort['ua'] = 'годину';
-hoursNameShort['en'] = 'hour';
-hourNameShort['en'] = 'hours';
-hoursNameShort['ru'] = 'часов';
-hourNameShort['ru'] = 'час';
+hoursName['ua'] = ' годин';
+hourName['ua'] = ' годину';
+hoursName['en'] = ' hour';
+hourName['en'] = ' hours';
+hoursName['ru'] = ' часов';
+hourName['ru'] = 'час';
 
-minutesNameShort['ua'] = ' хвилин ';
-minuteNameShort['ua'] = ' хвилину ';
-minutesNameShort['en'] = ' minutes ';
-minuteNameShort['en'] = ' minute ';
-minutesNameShort['ru'] = ' минут ';
-minuteNameShort['ru'] = ' минуту ';
+minutesName['ua'] = ' хвилин ';
+minuteName['ua'] = ' хвилину ';
+minutesName['en'] = ' minutes ';
+minuteName['en'] = ' minute ';
+minutesName['ru'] = ' минут ';
+minuteName['ru'] = ' минуту ';
 
-daysNameShort['ua'] = 'дн.';
-dayNameShort['ua'] = 'дн.';
-daysNameShort['en'] = 'd.';
-dayNameShort['en'] = 'd.';
-daysNameShort['ru'] = 'дн.';
-dayNameShort['ru'] = 'дн.';
+daysNameShort['ua'] = ' дн.';
+daysNameShort['en'] = ' d.';
+daysNameShort['ru'] = ' дн.';
 
-hoursNameShort['ua'] = 'год.';
-hourNameShort['ua'] = 'год.';
-hoursNameShort['en'] = 'h';
-hourNameShort['en'] = 'h';
-hoursNameShort['ru'] = 'час.';
-hourNameShort['ru'] = 'час';
+hoursNameShort['ua'] = ' год.';
+hoursNameShort['en'] = ' h';
+hoursNameShort['ru'] = ' час.';
 
 minutesNameShort['ua'] = ' хв. ';
-minuteNameShort['ua'] = ' хв. ';
 minutesNameShort['en'] = ' min ';
-minuteNameShort['en'] = ' min ';
 minutesNameShort['ru'] = ' мин. ';
-minuteNameShort['ru'] = ' мин. ';
 
-endName['ua'] = "тому";
-endName['en'] = "ago";
-endName['ru'] = "спустя";
+endName['ua'] = " тому";
+endName['en'] = " ago";
+endName['ru'] = " спустя";
 
 var ROOM_PERMISSIONS = {
     ADD_USER: 1,
@@ -83,7 +74,7 @@ var checkIfYesterday = function(inputDateLong) {
 }
 
 var isSameDay = function(currentdate, previus) {
-    if(currentdate == undefined && previus == undefined)
+    if (currentdate == undefined && previus == undefined)
         return true;
     var dateToCheck = new Date(currentdate);
     var actualDate = new Date(previus);
@@ -108,12 +99,14 @@ var firstLetter = function(name) {
         return name.toUpperCase().charAt(0);
 }
 
-var formatDateWithLast = function(date, short, withoutTime) {
+var formatDateWithLast = function(date, short, withoutTime, max_time) {
     if (short == undefined)
         short = false;
     if (withoutTime == undefined)
         withoutTime = false;
-    
+    if (max_time == undefined)
+        max_time = 60;
+
 
     if (date == null || date == undefined)
         return "";
@@ -125,7 +118,7 @@ var formatDateWithLast = function(date, short, withoutTime) {
         return "";
 
     var delta = new Date().getTime() - dateObj.getTime();
-    if (delta > 60000 * 59)
+    if (delta > 60000 * max_time)
         return formatDate(date, short, withoutTime);
     else
     if (Math.round(delta / 60000) == 0)
@@ -133,18 +126,37 @@ var formatDateWithLast = function(date, short, withoutTime) {
 
     var minutesStr = Math.round(delta / 60000);
     if (short) {
-        if (minutesStr > 1)
+        if (minutesStr < 60)
             return minutesStr + minutesNameShort[globalConfig.lang];
         else
-            return minutesStr + minuteNameShort[globalConfig.lang];
-    } else {
-        if (minutesStr > 1)
-            return minutesStr + minutesNameShort[globalConfig.lang] + endName[globalConfig.lang];
+        if (Math.ceil(minutesStr / 60) < 24)
+            return Math.ceil(minutesStr / 60) + hoursNameShort[globalConfig.lang];
         else
-            return minutesStr + minuteNameShort[globalConfig.lang] + endName[globalConfig.lang];
+            return Math.ceil(minutesStr / (60 * 24)) + daysNameShort[globalConfig.lang];
+
+    } else {
+        debugger;
+        if (minutesStr > 1) {
+            if (minutesStr < 60)
+                return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];
+            else {
+                var hours = Math.ceil(minutesStr / 60);
+                if (hours < 24) {
+                    if (hours > 1)
+                        return hours + hoursName[globalConfig.lang] + endName[globalConfig.lang];
+                    else
+                        return hours + hourName[globalConfig.lang] + endName[globalConfig.lang];
+                } else {
+                    var days = Math.ceil(hours / 24);
+                    if (days > 1)
+                        return days + daysName[globalConfig.lang] + endName[globalConfig.lang];
+                    else
+                        return days + dayName[globalConfig.lang] + endName[globalConfig.lang];
+                }
+            }
+        } else
+            return minutesStr + minuteName[globalConfig.lang] + endName[globalConfig.lang];
     }
-
-
 }
 
 var differenceInSecondsBetweenDates = function(t1, t2) {
@@ -191,7 +203,7 @@ var formatDate = function(date, short, withoutTime) {
             return day + "." + (monthIndex + 1);
     }
     var res = day + " " + monthNames[globalConfig.lang][monthIndex];
-    if(!withoutTime)
+    if (!withoutTime)
         res += " " + dateObj.getHours() + ":" + minutes;
     return res;
 }

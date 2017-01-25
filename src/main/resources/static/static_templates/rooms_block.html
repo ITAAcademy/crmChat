@@ -27,7 +27,7 @@
                     <div class="user_name">{{room.roomId}}:{{room.string}}</div>
                     <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : room.lastMessage}}</div>
                 </div>
-                <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true) : ''}}</div>
+                <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
                 <div class="contact_control">
                     <div ng-if="room.nums > 0" class="budget">{{room.nums}}</div>
                     <div ng-if="mode == 2" class="budget">+</div>
