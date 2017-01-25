@@ -852,7 +852,7 @@
     position: absolute;
     /* margin-left: 10px; */
     margin-top: 28px;
-    padding: 21px 13px;
+    padding: 4px 0px;
     right: -1px;
 }
 
@@ -876,63 +876,26 @@
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .show_attaches_item {
-    margin-left: 34px
+
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .show_attaches_item:before {
     background-image: url("../images/attaches_13x14.png");
-    width: 13px;
-    height: 14px;
-    content: " ";
-    position: absolute;
-    margin-left: -34px
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
     background-image: url("../images/no_sound16x16.png");
-    width: 16px;
-    height: 16px;
-    content: " ";
-    position: absolute;
-    margin-left: -34px;
-    background-size: cover;
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .sound_on_item:before {
     background-image: url("../images/megaphone.png");
-    width: 16px;
-    height: 16px;
-    content: " ";
-    position: absolute;
-    margin-left: -34px;
-    background-size: cover
 }
 
 .tools_area .tools_dropdown_container>#tools_dropdown .leave_room_item:before {
     background: url("../images/X.svg");
-    width: 15px;
-    height: 15px;
-    content: " ";
-    position: absolute;
-    margin-left: -34px;
-    background-size: cover
 }
-
-.tools_area .tools_dropdown_container>#tools_dropdown>* {
-    margin-left: 34px
-}
-
-.tools_area .tools_dropdown_container>#tools_dropdown .remove_history_item {
-    margin-left: 34px
-}
-
 .tools_area .tools_dropdown_container>#tools_dropdown .remove_history_item:before {
     background-image: url("../images/trashcan12x14.png");
-    width: 12px;
-    height: 14px;
-    content: " ";
-    position: absolute;
-    margin-left: -34px
 }
 
 .transparent_input {
@@ -979,6 +942,23 @@
     z-index: 39;
     position: absolute;
     right: 10px;
+}
+.dropdown_item{
+    line-height: 22px;
+    padding: 4px 25px 4px 44px;
+    display: block;
+}
+.dropdown_item:hover{
+ background-color:#e4eaf0;
+}
+.dropdown_item:before{
+    position: absolute;
+    left: 10px;
+    content: '';
+    width: 22px;
+    height: 22px;
+    background-size: cover;
+    background-repeat:no-repeat;
 }
 
 .right_panel .search_icon {
@@ -1194,19 +1174,19 @@
 }
 
 .attaches_area #attaches_dropdown {
-    width: 115px;
+    /*width: 115px;*/
     font-size: 14px;
     position: absolute;
     display: none;
     margin-left: -30px;
-    margin-top: -80px
+    margin-bottom: 50px;
+    bottom:0px;
 }
 
 .tools_dropdown_container>#tools_dropdown.shown,
 #attaches_dropdown.shown {
     display: block;
     z-index: 2;
-    background-color: #fff
 }
 
 .attaches_area #attaches_dropdown:after {
@@ -1225,16 +1205,11 @@
 }
 
 .attaches_area>#attaches_dropdown {
-    padding: 10px 9px
+    padding: 4px 0px
 }
 
 .attaches_area>#attaches_dropdown .attaches_item:before {
     background-image: url("../images/document12x13.png");
-    width: 12px;
-    height: 13px;
-    content: " ";
-    position: absolute;
-    margin-left: -31px
 }
 
 .attaches_area>#attaches_dropdown li {
@@ -1243,20 +1218,10 @@
 
 .attaches_area>#attaches_dropdown .video_item:before {
     background-image: url("../images/camera15x11.png");
-    width: 15px;
-    height: 11px;
-    content: " ";
-    position: absolute;
-    margin-left: -31px
 }
 
 .attaches_area>#attaches_dropdown .audio_item:before {
     background-image: url("../images/music12x12.png");
-    width: 12px;
-    height: 12px;
-    content: " ";
-    position: absolute;
-    margin-left: -31px
 }
 
 .shown {
