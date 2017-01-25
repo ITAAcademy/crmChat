@@ -57,6 +57,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         return isSameDay(curr, prev);
     };
     $rootScope.getNameFromUrl = getNameFromUrl;
+    $rootScope.getNameFromRandomizedUrl = getNameFromRandomizedUrl;
     $scope.state = 2;
     $scope.loadOnlyFilesInfiniteScrollMode = false;
     $scope.toggleAskForDeleteMeFromCurrentRoom = function() {
@@ -767,7 +768,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     }, 1000);
     $timeout(function () {
         //DOM has finished rendering
-        $(".message_input").resize(messageAreaResizer);
+        $(".messages_input_area").resize(messageAreaResizer);
         $(window).resize(messageAreaResizer);
     });
     $scope.$$postDigest(function() {

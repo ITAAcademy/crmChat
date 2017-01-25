@@ -410,14 +410,29 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.newMessage = '';
 
             };
-
-            $scope.uploadFiles = function(files) {
+            $scope.clearFiles = function(){
+                $scope.files = [];
+            }
+            $scope.selectFiles = function(files){
                 $scope.files = files;
+            }
+            $scope.getNamesFromFiles = function(files){
+                if (files==null) return null;
+            var names = [];
+            for (var i = 0; i < files.length; i++){
+                names.push(files[i].name);
+            }
+            return names;
+            }
+
+            $scope.sendMessageAndFiles = function() {
+                var files = $scope.files;
+                var textOfMessage = $scope.newMessage == null || $scope.newMessage.length<1 ? " " : $scope.newMessage;
                 if (files) {
                     uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                         function successCallback(data) {
                             $scope.uploadProgress = 0;
-                            $scope.sendMessage("я отправил вам файл", JSON.parse(data));
+                            $scope.sendMessage(textOfMessage, JSON.parse(data));
                             $scope.$apply();
                         },
                         function(xhr) {
@@ -759,10 +774,13 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
             }
 
             var link = $parse(attributes.link)($scope);
-            var derandomaziedName = $scope.getNameFromUrl(link);
+            //use only name (not link)
+            var nameOnly = typeof attributes.nameonly == "undefined" || attributes.nameonly=='false' ? false : true;
+            var derandomaziedName = nameOnly ? link : $scope.getNameFromRandomizedUrl(link);
 
             var extension = getFileExtensionByName(derandomaziedName);
             $scope.fileName = derandomaziedName;
+            if (!nameOnly)
             $scope.link = link;
             $scope.imageSrc = getImageByExtension(extension);
         }

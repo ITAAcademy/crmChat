@@ -91,11 +91,16 @@ var isSameDay = function(currentdate, previus) {
     return (dateToCheck.getDate() == actualDate.getDate() && dateToCheck.getMonth() == actualDate.getMonth() && dateToCheck.getFullYear() == actualDate.getFullYear())
 }
 
-
-var getNameFromUrl = function(url) {
+var getNameFromRandomizedUrl = function(url) {
     var fileNameSignaturePrefix = "file_name=";
     var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
     var endPos = url.length - DEFAULT_FILE_PREFIX_LENGTH;
+    return url.substring(startPos, endPos);
+}
+var getNameFromUrl = function(url) {
+    var fileNameSignaturePrefix = "file_name=";
+    var startPos = url.lastIndexOf(fileNameSignaturePrefix) + fileNameSignaturePrefix.length;
+    var endPos = url.length;
     return url.substring(startPos, endPos);
 }
 var firstLetter = function(name) {

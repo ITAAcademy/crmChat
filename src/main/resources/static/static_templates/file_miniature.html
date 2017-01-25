@@ -1,4 +1,5 @@
  <div class="file-extension-preview-wrapper">
-    	<a ng-href="{{link}}" ><img class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/></a>
-    </div>
+    	<a  ng-if="link!=null" ng-href="{{link}}" ><img class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/></a>
+     <img  ng-if="link==null"  class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/>
+ </div>
     <span class="file-name">{{fileName}}</span>
