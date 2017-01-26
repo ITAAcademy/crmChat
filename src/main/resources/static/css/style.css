@@ -781,7 +781,6 @@
 .contacts_menu_strip.visible-create .search_icon,
 .contacts_menu_strip.visible-search .group_icon {
     pointer-events: none;
-    transition-delay: 1s;
     color: #53667A;
 }
 

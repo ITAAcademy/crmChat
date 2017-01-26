@@ -3,6 +3,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var isTenant = false;
     var isTrainer = false;
     var isStudent = false;
+    var studentTrainerList = [];
     var chatUserNickname, chatUserRole, chatUserAvatar;
     var realChatUserId;
     var chatUserId = -1;
@@ -13,21 +14,21 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var friends;
     var onlineUsersIds = [];
     var messageSended = true;
-    var isMessageSended = function(){
+    var isMessageSended = function() {
         return messageSended;
     }
-    var setMessageSended = function(val){
+    var setMessageSended = function(val) {
         messageSended = val;
     }
 
     var isTenantFree = true;
-    var setTenantFree = function(){
+    var setTenantFree = function() {
         isTenantFree = true;
     }
-    var setTenantBusy = function(){
+    var setTenantBusy = function() {
         isTenantFree = false;
     }
-    var getTenantIsFree = function(){
+    var getTenantIsFree = function() {
         return isTenantFree;
     }
 
@@ -36,10 +37,10 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
             return true;
         return false;
     }
-    var isUserOnline = function(chatUserId){
-        return onlineUsersIds.indexOf(chatUserId)==-1 ? false : true;
+    var isUserOnline = function(chatUserId) {
+        return onlineUsersIds.indexOf(chatUserId) == -1 ? false : true;
     }
-    var setOnlineUsersIds = function(ids){
+    var setOnlineUsersIds = function(ids) {
         onlineUsersIds = ids;
     }
 
@@ -61,7 +62,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
          var o = JSON.parse(message.body);
          updateTenants(o);
          }));*/
-       chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
+        chatSocket.subscribe("/topic/chat.tenants.add", function(message) {
             var tenant = JSON.parse(message.body);
             var alreadyExcist = false;
             for (var i = 0; i < tenants.length; i++) {
@@ -118,12 +119,12 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
         })
     };
-    $rootScope.$on("login", function(event, chatUserId){
+    $rootScope.$on("login", function(event, chatUserId) {
         onlineUsersIds.push(chatUserId);
     });
-    $rootScope.$on("logout",function(event,chatUserId){
+    $rootScope.$on("logout", function(event, chatUserId) {
         var index = onlineUsersIds.indexOf(chatUserId);
-        onlineUsersIds.splice(index,1);
+        onlineUsersIds.splice(index, 1);
     });
 
     function initForWS(reInit) {
@@ -188,7 +189,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
                     chatSocket.subscribe("/topic/users/{0}/info".format(getChatUserId()), function(message) {
                         var body = JSON.parse(message.body);
-                        AskWindow.setLinks(body.yesLink,body.noLink);
+                        AskWindow.setLinks(body.yesLink, body.noLink);
                         AskWindow.showAskWindow();
                     });
 
@@ -281,7 +282,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                 }*/
                 if (data["newAsk_ToChatUserId"] != null) {
                     /*SHOW*/
-                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink,data["newAsk_ToChatUserId"][0].noLink);
+                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink, data["newAsk_ToChatUserId"][0].noLink);
                     AskWindow.showAskWindow();
                 }
                 if (data["newConsultationWithTenant"] != null) {
@@ -326,7 +327,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         for (var i = 0; i < tenants.length; i++) {
             if (tenantObj != null && tenants[i] != null && tenantObj.id == tenants[i].id) return; //tenant is already excist in list
         }
-       tenants.push(tenantObj);
+        tenants.push(tenantObj);
     }
 
     function removeTenantFromList(tenantObj) {
@@ -342,6 +343,11 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         isTenant = Boolean(mess_obj.isTenant);
         isTrainer = Boolean(mess_obj.isTrainer);
         isStudent = Boolean(mess_obj.isStudent);
+        if (isStudent) {
+            alert("I am student. Uhhuu!!!");
+            studentTrainerList.push(JSON.parse(mess_obj.trainer));
+            debugger;
+        }
 
         console.log("isTenant:" + isTenant + " isTrainer:" + isTrainer + " isStudent:" + isStudent);
         chatUserNickname = mess_obj.chat_user_nickname;
@@ -419,10 +425,9 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     };
     var setRealChatUserId = function(id) { realChatUserId = id };
 
-    var participantsSort = function(participant)
-    {
-    var isOnline = isUserOnline(participant.chatUserId);
-    return isOnline ? 'a'+participant.username : 'b' + participant.username;
+    var participantsSort = function(participant) {
+        var isOnline = isUserOnline(participant.chatUserId);
+        return isOnline ? 'a' + participant.username : 'b' + participant.username;
     }
 
     return {
@@ -439,14 +444,18 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         getTenantsList: function() {
             return tenants;
         },
-        isUserOnline : isUserOnline,
-        setOnlineUsersIds : setOnlineUsersIds,
-        participantsSort : participantsSort,
-        setTenantFree : setTenantFree,
-        setTenantBusy : setTenantBusy,
-        getTenantIsFree : getTenantIsFree,
-        isMessageSended : isMessageSended,
-        setMessageSended : setMessageSended
+        getStudentTrainerList: function() {
+            return studentTrainerList;
+        },
+
+        isUserOnline: isUserOnline,
+        setOnlineUsersIds: setOnlineUsersIds,
+        participantsSort: participantsSort,
+        setTenantFree: setTenantFree,
+        setTenantBusy: setTenantBusy,
+        getTenantIsFree: getTenantIsFree,
+        isMessageSended: isMessageSended,
+        setMessageSended: setMessageSended
 
     };
 

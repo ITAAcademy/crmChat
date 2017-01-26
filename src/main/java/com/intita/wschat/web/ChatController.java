@@ -750,7 +750,7 @@ public class ChatController {
 		for(User u : users)
 		{
 			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
-			userList.add(new LoginEvent(u.getId(),u.getFullName(), u.getAvatar()));//,participantRepository.isOnline(""+chat_user.getId())));
+			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  userList;
 	

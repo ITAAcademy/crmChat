@@ -203,6 +203,14 @@ public class UsersService {
 		}
 		return null;
 	}
+
+	@Transactional
+	public User getTrenerByStudent(Long studentIntitaId){
+		Long trenerId = usersRepo.getTrainerByUserId(studentIntitaId);
+		if(trenerId != null)
+			return getUser(trenerId);
+		return null;
+	}
 	/*
 	@Transactional
 	public boolean getAllTrainer(){

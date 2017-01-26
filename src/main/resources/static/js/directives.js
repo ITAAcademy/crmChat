@@ -257,6 +257,7 @@ angular.module('springChat.directives').directive('tenantsBlock', function($http
 });
 
 angular.module('springChat.directives').directive('studentsBlock', studentsBlock);
+angular.module('springChat.directives').directive('trainersBlock', trainersBlock);
 
 
 function initFolded(scope, element) {
@@ -298,6 +299,25 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
 
         }
 
+    };
+};
+
+function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
+    return {
+        restrict: 'EA',
+        scope: {
+
+        },
+        templateUrl: 'static_templates/trainers_block.html',
+        link: function(scope, element, attributes) {
+            debugger;
+            scope.students = UserFactory.getStudentTrainerList;
+            initFolded(scope, element);
+            scope.isUserOnline = UserFactory.isUserOnline;
+            scope.blockName = "Тренер";
+            scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
+            scope.participantsSort = UserFactory.participantsSort;
+        }
     };
 };
 

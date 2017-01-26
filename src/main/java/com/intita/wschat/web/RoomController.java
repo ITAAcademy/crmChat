@@ -78,6 +78,8 @@ import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
+import com.intita.wschat.web.RoomController.ROLE;
+import com.intita.wschat.web.RoomController.UpdateRoomsPacketModal;
 
 import jsonview.Views;
 //import scala.annotation.meta.setter;
@@ -143,17 +145,17 @@ public class RoomController {
 	static final private ObjectMapper mapper = new ObjectMapper();
 
 	private static final Queue<SubscribedtoRoomsUsersBufferModal> subscribedtoRoomsUsersBuffer = new ConcurrentLinkedQueue<SubscribedtoRoomsUsersBufferModal>();// key
-																																								// =>
-																																								// roomId
+	// =>
+	// roomId
 	private final Map<Long, ConcurrentLinkedQueue<DeferredResult<String>>> responseRoomBodyQueue = new ConcurrentHashMap<Long, ConcurrentLinkedQueue<DeferredResult<String>>>();// key
-																																												// =>
-																																												// roomId
+	// =>
+	// roomId
 
 	private ArrayList<Room> roomsArray;
 
 	private final Map<String, Queue<DeferredResult<String>>> responseBodyQueueForParticipents = new ConcurrentHashMap<String, Queue<DeferredResult<String>>>();// key
-																																								// =>
-																																								// roomId
+	// =>
+	// roomId
 
 	@PostConstruct
 	private void postFunction() {
@@ -234,64 +236,61 @@ public class RoomController {
 	 * what doing with new auth user
 	 **********************/
 	@SubscribeMapping("/chat.login/{userId}")
-	public Map<String, String> login(Principal principal, @DestinationVariable("userId") Long userId)// Control
-																										// user
-																										// page
-																										// after
-																										// auth
+	public Map<String, String> login(Principal principal, @DestinationVariable("userId") Long userId)//Control user page after auth 
 	{
 
 		Map<String, String> result = new HashMap<>();
-		if (userId == -1)
+		if(userId == -1)
 			userId = Long.parseLong(principal.getName());
 
 		ChatUser user = chatUserServise.getChatUser(userId);
 
-		if (user == null || Long.parseLong(principal.getName()) != user.getId().longValue()) {
+		if(user == null || Long.parseLong(principal.getName()) != user.getId().longValue())
+		{
 			ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
-			if (user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
+			if(user_real.getIntitaUser() == null || !userService.isAdmin(user_real.getIntitaUser().getId()))
 				return null;
 		}
 		User iUser = user.getIntitaUser();
-		if (iUser == null) {
+		if(iUser == null)
+		{
 			Room room;
-			if (user.getChatUserLastRoomDate().iterator().hasNext()) {
+			if(user.getChatUserLastRoomDate().iterator().hasNext()){
 				room = user.getChatUserLastRoomDate().iterator().next().getLastRoom();
-			} else {
+			}
+			else
+			{
 				/*
 				 * ADD BOT TO CHAT
 				 */
-				// boolean botEnable =
-				// Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
-				if (s_botEnable != null)
+				if(s_botEnable != null)
 					botEnable = Boolean.parseBoolean(s_botEnable.getValue());
-				if (botEnable) {
+				if (botEnable){
 					room = createDialogWithBot("BotSys_" + userId + "_" + new Date().toString(), principal);
-				} else
+				}
+				else 
 					room = createRoomWithTenant(principal);
 
-				// test - no free tenant
-				// room = null;
+				//test - no free tenant
+				//room = null;
 
-				// send msg about go to guest room if you is tenant with current
-				// Id
-				/*
-				 * if (room != null)
-				 * chatController.addFieldToInfoMap("newGuestRoom",
-				 * room.getId());
-				 */
+				//send msg about go to guest room if you is tenant with current Id
+				/*if (room != null)
+					chatController.addFieldToInfoMap("newGuestRoom", room.getId());*/
 			}
-			// simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." +
-			// user.getId(), roomService.getRoomsModelByChatUser(user));
+			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			if (room != null)
 				result.put("nextWindow", room.getId().toString());
 			else
 				result.put("nextWindow", "-1");
-		} else {
-			// subscribedtoRoomsUsersBuffer.add(user);
+		}
+		else
+		{
+			//subscribedtoRoomsUsersBuffer.add(user);
 			result.put("nextWindow", "0");
 			result.put("chat_user_avatar", iUser.getAvatar());
 		}
@@ -302,28 +301,45 @@ public class RoomController {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		result.put("onlineUsersIdsJson", activeUsersJson);
+		result.put("onlineUsersIdsJson",activeUsersJson);
 		result.put("chat_id", userId.toString());
 		result.put("chat_user_nickname", user.getNickName());
 
+
+
 		Integer role = 0;
-		if (user.getIntitaUser() != null) {
-			if (userService.isAdmin(user.getIntitaUser().getId()))
+		if(iUser != null )
+		{
+			if (userService.isAdmin(iUser.getId()))
 				role |= ROLE.ADMIN;
-			// check if tenant
-			if (userService.isTenant(user.getIntitaUser().getId()))
+			//check if tenant
+			if (userService.isTenant(iUser.getId()))
 				result.put("isTenant", "true");
-			else
+			else 
 				result.put("isTenant", "false");
-			// check if trainer
-			if (userService.isTrainer(user.getIntitaUser().getId()))
+			//check if trainer
+			if (userService.isTrainer(iUser.getId()))
 				result.put("isTrainer", "true");
-			else
+			else 
 				result.put("isTrainer", "false");
 
-			if (userService.isStudent(user.getIntitaUser().getId()))
+			if (userService.isStudent(iUser.getId()))
+			{
 				result.put("isStudent", "true");
-			else
+				User iTrainer = userService.getTrainer(iUser.getId());
+				result.put("trainer", null);
+				if(iTrainer != null)
+				{
+					ChatUser chatTrainer = chatUserServise.getChatUserFromIntitaUser(iTrainer, false);
+					if(chatTrainer != null)
+						try {
+							result.put("trainer", mapper.writeValueAsString(chatUserServise.getLoginEvent(chatTrainer)));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						}
+				}
+			}
+			else 
 				result.put("isStudent", "false");
 		}
 		result.put("chat_user_role", role.toString());
@@ -336,24 +352,25 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("chat_rooms", rooms);
-		Long intitaUserId = null == user.getIntitaUser() ? null : user.getIntitaUser().getId();
-
+		Long intitaUserId = null==user.getIntitaUser() ? null : user.getIntitaUser().getId();
+		/*** @deprecated
 		try {
 			result.put("friends", mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
 		} catch (JsonProcessingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		if (userService.isTrainer(intitaUserId)) {
-			ArrayList<LoginEvent> tenantsObjects = userService.getAllFreeTenantsLoginEvent(user.getId());
+		 */
+		if(userService.isTrainer(intitaUserId))
+		{
+			ArrayList<LoginEvent> tenantsObjects =  userService.getAllFreeTenantsLoginEvent(user.getId());
 			String tenantsJson = null;
 			try {
 				tenantsJson = mapper.writeValueAsString(tenantsObjects);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
-			result.put("tenants", tenantsJson);
+			result.put("tenants",tenantsJson );
 		}
 
 		return result;
@@ -428,10 +445,10 @@ public class RoomController {
 	@SubscribeMapping("/{room}/chat.participants/{lang}")
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room,
 			@DestinationVariable("lang") String lang, SimpMessageHeaderAccessor headerAccessor, Principal principal) {// ONLY
-																														// FOR
-																														// TEST
-																														// NEED
-																														// FIX
+		// FOR
+		// TEST
+		// NEED
+		// FIX
 		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise,
 				roomService);
 		if (status == null) {
@@ -597,7 +614,7 @@ public class RoomController {
 
 		if (room == null) {
 			room = roomService.registerPrivate(author, other);// private room
-																// type => 1
+			// type => 1
 
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(),
 					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
@@ -807,7 +824,7 @@ public class RoomController {
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean permitions = (roomPermissionsService.getPermissionsOfUser(room_o, authorUser)
 				& RoomPermissions.Permission.REMOVE_USER.getValue()) == RoomPermissions.Permission.REMOVE_USER
-						.getValue();
+				.getValue();
 		if (haveNullObj || isAuthor || (!(permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor) {
 			return false;
 		}
@@ -935,7 +952,7 @@ public class RoomController {
 	@RequestMapping(value = "/chat/rooms.{room}/user/add", method = RequestMethod.POST)
 	public @ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId, @RequestParam(name="chatId", required=false) Long chatId,
 			@RequestParam(name="email", required=false) String email, Principal principal, HttpRequest req)
-			throws InterruptedException, JsonProcessingException {
+					throws InterruptedException, JsonProcessingException {
 		if(chatId != null)
 			return mapper.writeValueAsString(addChatUserToRoomFn(chatId, roomId, principal, false));
 		if(email != null)
@@ -1069,7 +1086,7 @@ public class RoomController {
 	@PostConstruct
 	private void PostConstructor() {
 		participantRepository.addParticipantPresenceByLastConnectionTime(BotParam.BOT_ID);// BOT
-																							// online
-																							// OK
+		// online
+		// OK
 	}
 }
