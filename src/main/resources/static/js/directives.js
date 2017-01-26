@@ -310,7 +310,6 @@ function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
         },
         templateUrl: 'static_templates/trainers_block.html',
         link: function(scope, element, attributes) {
-            debugger;
             scope.students = UserFactory.getStudentTrainerList;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;

@@ -344,9 +344,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         isTrainer = Boolean(mess_obj.isTrainer);
         isStudent = Boolean(mess_obj.isStudent);
         if (isStudent) {
-            alert("I am student. Uhhuu!!!");
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
-            debugger;
         }
 
         console.log("isTenant:" + isTenant + " isTrainer:" + isTrainer + " isStudent:" + isStudent);
