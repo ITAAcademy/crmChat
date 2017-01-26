@@ -34,12 +34,12 @@
             <div class="window_icon tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                 <i class="material-icons ">hourglass_empty</i>
             </div>
-            <div class="window_icon tenant_busy_control" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
+            <div class="window_icon" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <i class="material-icons ">hourglass_full</i>
-                <div ng-if="getRoomsRequiredTrainersLength() > 0" class="state"></div>
             </div>
-               <div  class="window_icon waiting_users">
-
+               <div class="window_icon">
+                   <i class="material-icons ">face</i>
+                   <div ng-show="getRoomsRequiredTrainersLength()>0" class="state"></div>
                </div>
            </div>
         </div>

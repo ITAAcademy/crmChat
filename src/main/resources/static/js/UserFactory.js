@@ -21,7 +21,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         return roomsRequiredTrainers;
     }
     var getRoomsRequiredTrainersLength = function(){
-        return roomsRequiredTrainers==null || !roomsRequiredTrainers.hasOwnProperty('length') ? 0 : roomsRequiredTrainers.length;
+        return roomsRequiredTrainers==null  ? 0 : Object.keys(roomsRequiredTrainers).length;
     }
     var isMessageSended = function(){
         return messageSended;
@@ -433,6 +433,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var setRealChatUserId = function(id) { realChatUserId = id };
 
     var participantsSort = function(participant) {
+        if (participant==null) return '';
         var isOnline = isUserOnline(participant.chatUserId);
         return isOnline ? 'a' + participant.username : 'b' + participant.username;
     }
