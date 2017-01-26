@@ -462,7 +462,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         setTenantBusy: setTenantBusy,
         getTenantIsFree: getTenantIsFree,
         isMessageSended: isMessageSended,
-        setMessageSended: setMessageSended
+        setMessageSended: setMessageSended,
         getRoomsRequiredTrainers : getRoomsRequiredTrainers,
         getRoomsRequiredTrainersLength : getRoomsRequiredTrainersLength
 
