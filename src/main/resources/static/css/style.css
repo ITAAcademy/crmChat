@@ -9,11 +9,6 @@
     box-sizing: border-box;
 }
 
-.tenant_busy_control {
-    height: 100%;
-    width: 25px;
-}
-
 .tenant_busy_control .img {
     margin: auto;
     position: absolute;
@@ -136,8 +131,19 @@
     top:0px;
 }
 
-.windows_icon{
+.window_icon{
     display:inline-block;
+    color: #757575;
+    cursor:pointer;
+    vertical-align:middle;
+}
+.window_icon .text {
+    overflow:hidden;
+    width:20px;
+    height:15px;
+    position:absolute;
+    margin-left:3px;
+    margin-top:-26px;
 }
 
 .head .logo {
@@ -146,20 +152,13 @@
     width: 75px;
 }
 
-.head .notification,
-.head .message_notification {
-    height: 100%;
-    width: 25px;
-}
 
 .head .message_notification .text {
     font-size: 14px;
     /* position: relative; */
     /* left:7px; */
-    width: 100%;
     /* background: #333; */
     text-align: center;
-    line-height: 32px;
 }
 
 .head .state {
@@ -168,10 +167,6 @@
     border-radius: 50%;
     background-color: red;
     opacity: .8;
-}
-
-.head .message_notification .state {
-    right: 0px;
 }
 
 .items_list_block {
@@ -1787,7 +1782,9 @@ body {
     padding:5px;
     padding-top:0px;
 }
-.windows_icons_wrapper{
+.window_icons_wrapper{
     right:150px;
     position:absolute;
+    height:100%;
+    padding-top: 5px;
 }
