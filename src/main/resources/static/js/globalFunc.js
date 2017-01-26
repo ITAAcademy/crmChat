@@ -78,7 +78,6 @@ var isSameDay = function(currentdate, previus) {
         return true;
     var dateToCheck = new Date(currentdate);
     var actualDate = new Date(previus);
-    debugger;
     return (dateToCheck.getDate() == actualDate.getDate() && dateToCheck.getMonth() == actualDate.getMonth() && dateToCheck.getFullYear() == actualDate.getFullYear())
 }
 
@@ -135,7 +134,6 @@ var formatDateWithLast = function(date, short, withoutTime, max_time) {
             return Math.ceil(minutesStr / (60 * 24)) + daysNameShort[globalConfig.lang];
 
     } else {
-        debugger;
         if (minutesStr > 1) {
             if (minutesStr < 60)
                 return minutesStr + minutesName[globalConfig.lang] + endName[globalConfig.lang];

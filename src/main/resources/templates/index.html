@@ -18,7 +18,7 @@
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="head">
-        <img id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" src="images/elements/menu_icon.svg"/>
+        <i id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <img class="logo" src="images\intita95x30.png" alt="" />
             <div class="notification">
                 <img src="images/elements/Icon notification.png" alt="" />
@@ -63,7 +63,7 @@
             <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
-            <div class="tools_area">
+            <div ng-if= "!currentRoomIsNull()" class="tools_area">
                 <div class="tools_dropdown_container">
                     <div id="tools_dropdown" class="popup_dropdown">
                         <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item">Показати додатки</a>
@@ -73,7 +73,7 @@
                         <a class="dropdown_item remove_history_item">Видалити історію</a>
                     </div>
                     <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
-                        <img src="images\elements\config.png" alt="" />
+                        <i class="material-icons">more_vert</i>
                     </button>
                 </div>
                 <div class="room_info">
@@ -81,8 +81,8 @@
                 </div>
                 <div class="search_box">
                     <input id="searchInput" ng-model="messageSearchQuery" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text"  placeholder="Пошук..." />
-                    <img ng-click="enableMessagesSearch($event)" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}" class="search_icon" src="images\search17x17.png" alt="" />
-                    <img ng-click="disableMessagesSearch(true)" ng-class="{'showed':messageSearchEnabled}" class="close_search_icon" src="images/X.svg" alt="" />
+                    <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}" >search</i>
+                    <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-class="{'showed':messageSearchEnabled}" >cancel</i>
                 </div>
             </div>
             <hr/>
