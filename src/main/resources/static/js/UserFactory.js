@@ -14,7 +14,16 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var friends;
     var onlineUsersIds = [];
     var messageSended = true;
-    var isMessageSended = function() {
+
+    var roomsRequiredTrainers = new Map();
+
+    var getRoomsRequiredTrainers = function(){
+        return roomsRequiredTrainers;
+    }
+    var getRoomsRequiredTrainersLength = function(){
+        return roomsRequiredTrainers==null || !roomsRequiredTrainers.hasOwnProperty('length') ? 0 : roomsRequiredTrainers.length;
+    }
+    var isMessageSended = function(){
         return messageSended;
     }
     var setMessageSended = function(val) {
@@ -454,6 +463,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         getTenantIsFree: getTenantIsFree,
         isMessageSended: isMessageSended,
         setMessageSended: setMessageSended
+        getRoomsRequiredTrainers : getRoomsRequiredTrainers,
+        getRoomsRequiredTrainersLength : getRoomsRequiredTrainersLength
 
     };
 

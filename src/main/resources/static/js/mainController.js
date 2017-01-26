@@ -610,10 +610,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
     $scope.getLength = function(obj) {
         return Object.keys(obj).length;
     }
-    $scope.roomsRequiredTrainers = new Map();
-    $scope.$watch('roomsRequiredTrainers', function(value) {
-        $scope.roomsRequiredTrainersLength = $scope.getLength($scope.roomsRequiredTrainers);
-    }, true);
 
     $scope.confirmToHelp = function(roomId) {
         $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
@@ -816,6 +812,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             return true;
         }
         $scope.getTenantIsFree = UserFactory.getTenantIsFree;
+        $scope.getRoomsRequiredTrainersLength = UserFactory.getRoomsRequiredTrainersLength;
 
         /*****************************
          ************CONFIG************
