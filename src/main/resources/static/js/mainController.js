@@ -505,7 +505,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         var date = (RoomsFactory.getOldMessage() == null) ? null : RoomsFactory.getOldMessage().date;
         var payload = { 'date': date };
         if ($scope.messageSearchEnabled)
-            payload['searchQuery'] = $scope.messageSearchQuery;
+            payload['searchQuery'] = $scope.messageSearchQuery.value;
         $http.post(serverPrefix + urlTemplate.format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
         success(function(data, status, headers, config) {
             console.log("MESSAGE onLOAD OK " + data);
@@ -648,7 +648,7 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         debugger;
         event.stopPropagation();
         event.preventDefault();
-        $scope.messageSearchQuery = "";
+        $scope.messageSearchQuery = {'value':''};
         $scope.messageSearchEnabled = true;
         setTimeout(function() { $("#searchInput").focus(); }, 500);
 
@@ -666,14 +666,14 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
             $timeout.cancel(updateMessagesSearchTimeout);
         updateMessagesSearchTimeout = $timeout(function() {
             RoomsFactory.clearMessages();
-            RoomsFactory.loadMessagesContains($scope.messageSearchQuery);
+            RoomsFactory.loadMessagesContains($scope.messageSearchQuery.value);
             $rootScope.message_busy = false;
             var objDiv = document.getElementById("messagesScroll");
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }, 500);
     }
     $scope.focusMessagesSearchChange = function() {
-        if ($scope.messageSearchQuery == '')
+        if ($scope.messageSearchQuery.value == '')
             $scope.disableMessagesSearch(true);
 
     }

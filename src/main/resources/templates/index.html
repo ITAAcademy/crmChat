@@ -87,7 +87,7 @@
                     <div class="room_name">{{getCurrentRoom().string}}</div>
                 </div>
                 <div class="search_box">
-                    <input id="searchInput" ng-model="messageSearchQuery" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text"  placeholder="Пошук..." />
+                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text"  placeholder="Пошук..." />
                     <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}" >search</i>
                     <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-class="{'showed':messageSearchEnabled}" >cancel</i>
                 </div>
