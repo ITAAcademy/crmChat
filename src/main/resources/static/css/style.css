@@ -10,8 +10,6 @@
 }
 
 .tenant_busy_control {
-    position: absolute;
-    right: 90px;
     height: 100%;
     width: 25px;
 }
@@ -126,14 +124,20 @@
     z-index: 111;
 }
 
-.head .logo,
-.head .notification img,
-.head .message_notification img,
-.head .state {
+.head .logo
+{
     position: absolute;
     margin: auto;
     top: 0;
     bottom: 0
+}
+.head .state {
+    position: absolute;
+    top:0px;
+}
+
+.windows_icon{
+    display:inline-block;
 }
 
 .head .logo {
@@ -144,14 +148,8 @@
 
 .head .notification,
 .head .message_notification {
-    position: absolute;
-    right: 150px;
     height: 100%;
     width: 25px;
-}
-
-.head .message_notification {
-    right: 120px;
 }
 
 .head .message_notification .text {
@@ -169,16 +167,11 @@
     height: 7px;
     border-radius: 50%;
     background-color: red;
-    top: -15px;
     opacity: .8;
 }
 
 .head .message_notification .state {
     right: 0px;
-}
-
-.head .notification .state {
-    right: 5px;
 }
 
 .items_list_block {
@@ -1794,4 +1787,7 @@ body {
     padding:5px;
     padding-top:0px;
 }
-
+.windows_icons_wrapper{
+    right:150px;
+    position:absolute;
+}

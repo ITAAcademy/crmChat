@@ -20,22 +20,24 @@
         <div class="head">
         <img id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" src="images/elements/menu_icon.svg"/>
             <img class="logo" src="images\intita95x30.png" alt="" />
-            <div class="notification">
+           <div class="windows_icons_wrapper">
+            <div class="windows_icon notification">
                 <img src="images/elements/Icon notification.png" alt="" />
                 <div class="text"></div>
                 <div class="state"></div>
             </div>
-            <div class="message_notification">
+            <div class="windows_icon message_notification">
                 <img src="images/elements/Icon msg.png" alt="" />
                 <div ng-if="getNewMsgNumber() > 0" class="text" ng-bind="getNewMsgNumber()"></div>
                 <div ng-if="getNewMsgNumber() > 0" class="state"></div>
             </div>
-            <div class="tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
+            <div class="windows_icon tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                 <img src="images/cloud.svg"/>
             </div>
-            <div class="tenant_busy_control" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
+            <div class="windows_icon tenant_busy_control" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <img src="images/crossed_cloud.svg"/>
             </div>
+           </div>
         </div>
         <div id="loader-wrapper">
             <div id="loader"></div>
