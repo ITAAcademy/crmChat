@@ -1615,7 +1615,8 @@ img.file-extension-preview {
 .display-file-container {
     display: inline-block;
     text-align: center;
-    vertical-align: top
+    vertical-align: top;
+    margin: 10px;
 }
 
 .display-file-container .file-name {
@@ -1807,6 +1808,10 @@ body {
         min-height: 130px;
         max-height: 130px;
     }
+    [trainers-block] .items_list_block .block_content {
+        min-height: 65px;
+        max-height: 65px;
+    }
 }
 .files_input{
     padding:5px;
@@ -1817,6 +1822,70 @@ body {
     position:absolute;
     height:100%;
     padding-top: 5px;
+}
+.modal-footer{
+    text-align: right;
+    padding-bottom: 15px;
+}
+.modal-content{
+    
+font-size: 16px;
+    
+padding: 15px;
+}
+.modal-header{
+    
+text-align: center;
+    
+background-color: #1e8eda;
+    
+color: white;
+    
+width: calc(100% + 40px);
+    
+height: 40px;
+    
+line-height: 40px;
+    
+font-size: 20px;
+    
+margin-left: -20px;
+    
+/* margin-top: -20px; */
+    
+/* margin-bottom: 20px; */
+}
+.modal-footer button{
+    
+background-color: #1e8eda;
+    
+border: none;
+    
+border-radius: 14px;
+    
+font-size: 22px;
+    
+color: white;
+    
+height: 30px;
+    
+line-height: 30px;
+    
+width: 60px;
+    
+text-align: center;
+    
+margin-right: calc(25% - 32px);
+    
+margin-left: calc(25% - 32px);
+    
+margin-top: 10px;
+    
+outline: none;
+}
+.modal-footer button:hover{
+    cursor: pointer;
+    opacity: 0.8;
 }
 .notification_menu{
     position:absolute;

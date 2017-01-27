@@ -64,11 +64,17 @@ springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$ht
         if (typeof noLinkArg === "undefined")return;
         noLink = noLinkArg;
     };
+    this.setAskObject = function(obj){
+        $rootScope.askObject = obj;
+        this.setLinks(obj.yesLink, obj.noLink);
+    }
+
+    
         this.showAskWindow = function() {
             var UserFactory = $injector.get('UserFactory');
          tenantInviteDialog = ngDialog.open({
-            template: 'askTenantToTakeConsultationWindow.html',
-            height: 400
+            template: 'askTenantToTakeConsultationWindow.html'/*,
+            height: 400*/
         });
             UserFactory.setTenantBusy();
 

@@ -198,7 +198,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
                     chatSocket.subscribe("/topic/users/{0}/info".format(getChatUserId()), function(message) {
                         var body = JSON.parse(message.body);
-                        AskWindow.setLinks(body.yesLink, body.noLink);
+                        //AskWindow.setLinks(body.yesLink, body.noLink);
+                        AskWindow.setAskObject(body);
                         AskWindow.showAskWindow();
                     });
 
@@ -291,7 +292,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                 }*/
                 if (data["newAsk_ToChatUserId"] != null) {
                     /*SHOW*/
-                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink, data["newAsk_ToChatUserId"][0].noLink);
+//                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink, data["newAsk_ToChatUserId"][0].noLink);
+                    AskWindow.setAskObject(data["newAsk_ToChatUserId"][0]);
                     AskWindow.showAskWindow();
                 }
                 if (data["newConsultationWithTenant"] != null) {

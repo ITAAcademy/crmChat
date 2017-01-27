@@ -455,7 +455,7 @@ public class BotController {
 
 		Object[] obj = new Object[] {  tenantChatUserId, roomId };
 
-		askUser(t_user.getChatUser(),"Р’Рё Р·РіРѕРґРЅС– РЅР° РєРѕРЅСЃСѓР»СЊС‚Р°С†С–СЋ?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
+		askUser(t_user.getChatUser(),"Запит від не авторизізованого користувача?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
 
 		waitConsultationUser(room_0);
 
@@ -534,7 +534,7 @@ public class BotController {
 			return false;
 
 		tenantSendBecomeBusy(tenant);
-		askUser(tenant, user.getNickName() + " Р·Р°РїСЂРѕС€СѓС” Р’Р°СЃ РїСЂРёС—РґРЅР°С‚РёСЃСЏ РґРѕ СЃРїС–РІР±РµСЃС–РґРё " + room.getName() + ".\n Р’Рё РїРѕРіРѕРґР¶СѓС”С‚РµСЃСЏ?",
+		askUser(tenant, user.getNickName() + " запрошує Вас у кімнату " + room.getName() + ".\n Чи згодні Ви?",
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
 		return true;
 	}

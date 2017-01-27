@@ -1,13 +1,9 @@
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" ng-click="toggleNewRoomModal()">&times;</button>
-                <h4 id="wndTitle"  class="modal-title">{{askObject.msg}}</h4>
-            </div>
-            <div class="modal-footer">
-                <button id="closeButton"  type="button" class="btn btn-default modal-btn-left" ng-click="answerToTakeConsultation (true)">Так</button>
-                <button id="createButton"  type="button" class="btn btn-default" ng-click=" answerToTakeConsultation(false);">Ні</button>
-            </div>
-        </div>
-    </div>
+<div class="modal-header">
+Зверніть увагу!!!
+</div>
+<div class="modal-content">{{askObject.msg}}</div>
+<div class="modal-footer">
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="answerToTakeConsultation (true)">Так</button>
+    <button id="createButton" type="button" class="btn btn-default" ng-click=" answerToTakeConsultation(false);">Ні</button>
+</div>
+
