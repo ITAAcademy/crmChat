@@ -576,7 +576,7 @@ function notificable($templateRequest, $sce, $compile) {
     //TODO finish rooms search
     return {
         scope:{
-            itemClick : '&itemclick',
+            itemClick : '=itemclick',
             getData : '&data',
         },
         restrict: 'EA',
