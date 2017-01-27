@@ -1189,7 +1189,8 @@
 }
 .multimedia_conversation_controls {
     display: inline-block;
-    margin-left: 26px
+    margin-left: 26px;
+    opacity: 0.2;
 }
 
 .multimedia_conversation_controls>* {
