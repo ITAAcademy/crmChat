@@ -7,7 +7,7 @@ var springChat = angular.module('springChat', ['springChat.controllers', //'spri
 ]);
 
 var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services', 'springChat.directives']);
-var springChatControllers = angular.module('springChat.controllers', ['ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
+var springChatControllers = angular.module('springChat.controllers', ['angular-nicescroll', 'ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 
 springChat.filter('unique', function ($parse) {
     return function (collection, property) {

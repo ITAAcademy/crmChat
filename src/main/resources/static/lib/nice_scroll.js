@@ -58,7 +58,7 @@
 
   var _globaloptions = {
     zindex: "auto",
-    cursoropacitymin: 0,
+    cursoropacitymin: 1,
     cursoropacitymax: 1,
     cursorcolor: "#424242",
     cursorwidth: "6px",
