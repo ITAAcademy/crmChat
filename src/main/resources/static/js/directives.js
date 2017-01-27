@@ -581,28 +581,26 @@ function notificable($templateRequest, $sce, $compile) {
         },
         restrict: 'EA',
         link: function(scope, element, attrs) {
-           if (attrs.template==null){
-               console.error('Template must be set');
-               return;
-           }
+            if (attrs.template == null) {
+                console.error('Template must be set');
+                return;
+            }
+            var templatePath = 'static_templates/' + attrs.template + '.html';
+            var templateUrl = $sce.getTrustedResourceUrl(templatePath);
+            $templateRequest(templateUrl).then(function(template) {
+                // template is the HTML template as a string
 
-
-               var templatePath = 'static_templates/' + attrs.template + '.html';
-                var templateUrl = $sce.getTrustedResourceUrl(templatePath);
-                $templateRequest(templateUrl).then(function(template) {
-                    // template is the HTML template as a string
-
-                    // Let's put it into an HTML element and parse any directives and expressions
-                    // in the code. (Note: This is just an example, modifying the DOM from within
-                    // a controller is considered bad style.)
-                    var container = $('#'+attrs.container);
-                    scope.$parent.toggleVisible = function(){
-                        container.toggleClass('shown');
-                    }
-                    $compile(container.html(template).contents())(scope);
-                }, function() {
-                    // An error has occurred
-                });
+                // Let's put it into an HTML element and parse any directives and expressions
+                // in the code. (Note: This is just an example, modifying the DOM from within
+                // a controller is considered bad style.)
+                var container = $('#' + attrs.container);
+                scope.$parent.toggleVisible = function() {
+                    container.toggleClass('shown');
+                }
+                $compile(container.html(template).contents())(scope);
+            }, function() {
+                // An error has occurred
+            });
 
         }
     };
@@ -622,12 +620,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.tabState = "Contacts";
-   /* $scope.stripHtml = function(html)
-    {
-        var tmp = document.createElement("DIV");
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || "";
-    }*/
+    /* $scope.stripHtml = function(html)
+     {
+         var tmp = document.createElement("DIV");
+         tmp.innerHTML = html;
+         return tmp.textContent || tmp.innerText || "";
+     }*/
     /****
      * 1 - default
      * 2 - add new user
@@ -663,6 +661,8 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
     $scope.clickToRoomEvent = function(room) {
+        if ($scope.searchEnabled || $scope.createEnabled)
+            return;
         switch ($scope.mode) {
             case 1:
                 $scope.doGoToRoom(room.roomId);
@@ -675,6 +675,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
                 $scope.mode = 1;
                 break;
         }
+        $scope.$root.hideMenu();
     }
     $scope.clickToUserEvent = function(user) {
         switch ($scope.mode) {
@@ -686,6 +687,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
                 $scope.mode = 1;
                 break;
         }
+        $scope.$root.hideMenu();
     }
 
     function addNewUser(chatUserId) {
@@ -699,8 +701,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
     $scope.createNewRoom = function($event) {
         RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
-        //$scope.toggleCreate();
-
+        $scope.$root.hideMenu();
         return false;
     }
 

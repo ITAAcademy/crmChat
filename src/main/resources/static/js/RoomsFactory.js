@@ -562,7 +562,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function goToPrivateDialog(intitaUserId) {
-        debugger;
+        $rootScope.hideMenu();
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
         success(function(data, status, headers, config) {
             console.log("PRIVATE ROOM CREATE OK ");

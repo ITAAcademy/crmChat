@@ -648,6 +648,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
     $scope.toggleMenu = function() {
         $scope.showMenu = !$scope.showMenu;
     }
+    $rootScope.hideMenu = function(){
+        $scope.showMenu = false;   
+    }
 
     $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
     var updateMessagesSearchTimeout;
@@ -664,7 +667,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
     }
     $scope.focusMessagesSearchChange = function() {
         if ($scope.messageSearchQuery.value == '')
-            $scope.disableMessagesSearch(true);
+            $scope.disableMessagesSearch(false);
 
     }
     $rootScope.$on('RoomChanged', function(event, isBusy) {

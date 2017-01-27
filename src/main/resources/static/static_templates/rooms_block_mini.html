@@ -3,7 +3,7 @@
         <div class="section_content">
             <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
                 <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
-                    <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{returnAvatar(room)}}" alt="" />
+                    <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + returnAvatar(room) + ')'}"></div>
                     <div class="user_presence_icon" ng-show="isRoomPrivate(room)"></div>
                     <div class="user_presence_icon_wraper" ng-show="isRoomPrivate(room)"></div>
                 </div>

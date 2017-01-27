@@ -5,10 +5,10 @@
         <div ng-if="participants().length > 2" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
         <div class="block_head_diveded"></div>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded}" >
+    <div class="block_content scroll ng-class:{unfolded:!folded}">
         <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort">
             <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
-                <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{participant.avatar}}" alt="" />
+                <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + participant.avatar + ')'}"></div>
                 <div class="user_presence_icon"></div>
                 <div class="user_presence_icon_wraper"></div>
             </div>
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="block_item" ng-if="checkUserAdditionPermission()">
-            <div  modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block" class="add_bg_btn">Додати нового учасника</div>
+            <div modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block" class="add_bg_btn">Додати нового учасника</div>
         </div>
     </div>
 </div>
