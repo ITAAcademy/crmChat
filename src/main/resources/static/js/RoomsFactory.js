@@ -409,10 +409,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
         $timeout(function() {
             var objDiv = document.getElementById("messagesScroll");
-            var count = 5;
             objDiv.scrollTop = objDiv.scrollHeight;
             $rootScope.$broadcast('MessageBusyEvent', false);
-        }, 100);
+        }, 0, false);
 
 
     }
