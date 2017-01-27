@@ -22,7 +22,7 @@
 </div>
 <div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
     <div class="message_author_avatar" ng-if="!message.position">
-        <img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt="" />
+        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
     </div>
     <div class="message_details">
         <div class="top_details">
@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="message_author_avatar" ng-if="message.position">
-        <img ng-src="{{$root.imagesPath}}/avatars/{{message.chatUserAvatar}}" alt="" />
+        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
     </div>
 </div>
 <!-- //Сьогоднішні повідомлення -->

@@ -499,6 +499,10 @@
     background-color: olive;
     display: inline-block;
     border-radius: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
 }
 
 .items_list_block .avatar .user_presence_icon,
@@ -1060,13 +1064,17 @@
     display: inline-block
 }
 
-.user_message .message_author_avatar>img {
+.user_message .message_author_avatar>div {
     width: 45px;
     height: 45px;
     background-color: #f26522;
     display: inline-block;
     border-radius: 50%;
-    border: 0
+    border: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
 }
 
 .user_message .message_details {

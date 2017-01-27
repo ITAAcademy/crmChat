@@ -664,7 +664,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
     }
     $scope.focusMessagesSearchChange = function() {
         if ($scope.messageSearchQuery.value == '')
-            $scope.disableMessagesSearch(true);
+            $scope.disableMessagesSearch(false);
 
     }
     $rootScope.$on('RoomChanged', function(event, isBusy) {
