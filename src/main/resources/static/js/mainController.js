@@ -611,16 +611,6 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         return Object.keys(obj).length;
     }
 
-    $scope.confirmToHelp = function(roomId) {
-        $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
-        success(function(data, status, headers, config) {
-            changeLocation("/dialog_view/" + roomId);
-        }).
-        error(function(data, status, headers, config) {
-
-        });
-    }
-
     function messageError() {
         toaster.pop('error', "Error", "server request timeout", 0);
     }
@@ -753,6 +743,13 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }, 1000);
     }
 
+    $rootScope.stripHtml = function(html)
+    {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    }
+    $rootScope.isRoomPrivate = RoomsFactory.isRoomPrivate;
 
     $scope.tools_dropdown_click = function() {
         $('#tools_dropdown').toggleClass('shown');
@@ -813,6 +810,17 @@ var chatController = springChatControllers.controller('ChatController', ['ngDial
         }
         $scope.getTenantIsFree = UserFactory.getTenantIsFree;
         $scope.getRoomsRequiredTrainersLength = UserFactory.getRoomsRequiredTrainersLength;
+        $scope.getRoomsRequiredTrainers = UserFactory.getRoomsRequiredTrainers;
+
+        $scope.confirmToHelp = function(roomId) {
+            $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
+            success(function(data, status, headers, config) {
+                changeLocation("/dialog_view/" + roomId);
+            }).
+            error(function(data, status, headers, config) {
+
+            });
+        }
 
         /*****************************
          ************CONFIG************

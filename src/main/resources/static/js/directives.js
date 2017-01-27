@@ -569,6 +569,49 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
     };
 };
 
+
+
+angular.module('springChat.directives').directive('notificable', notificable);
+
+function notificable($templateRequest, $sce, $compile) {
+    //TODO finish rooms search
+    return {
+        scope:{
+            itemClick : '&itemclick',
+            getData : '&data',
+        },
+        restrict: 'EA',
+        link: function(scope, element, attrs) {
+           if (attrs.template==null){
+               console.error('Template must be set');
+               return;
+           }
+
+
+               var templatePath = 'static_templates/' + attrs.template + '.html';
+                var templateUrl = $sce.getTrustedResourceUrl(templatePath);
+                $templateRequest(templateUrl).then(function(template) {
+                    // template is the HTML template as a string
+
+                    // Let's put it into an HTML element and parse any directives and expressions
+                    // in the code. (Note: This is just an example, modifying the DOM from within
+                    // a controller is considered bad style.)
+                    var container = $('#'+attrs.container);
+                    scope.$parent.toggleVisible = function(){
+                        container.toggleClass('shown');
+                    }
+                    $compile(container.html(template).contents())(scope);
+                }, function() {
+                    // An error has occurred
+                });
+
+        }
+    };
+};
+
+
+
+
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
@@ -580,12 +623,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.tabState = "Contacts";
-    $scope.stripHtml = function(html)
+   /* $scope.stripHtml = function(html)
     {
         var tmp = document.createElement("DIV");
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || "";
-    }
+    }*/
     /****
      * 1 - default
      * 2 - add new user

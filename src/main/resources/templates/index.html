@@ -39,10 +39,12 @@
             <div class="window_icon" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <i class="material-icons ">hourglass_full</i>
             </div>
-               <div class="window_icon">
+               <div class="window_icon" notificable="true" ng-click="toggleVisible()" template="waiting_users_list"
+                    itemclick="confirmToHelp()" data="getRoomsRequiredTrainers()" container="waiting_users_container">
                    <i class="material-icons ">face</i>
                    <div ng-show="getRoomsRequiredTrainersLength()>0" class="state"></div>
                </div>
+               <div id="waiting_users_container" class="notification_menu"></div>
            </div>
         </div>
         <div id="loader-wrapper">
