@@ -13,7 +13,10 @@
     cursor: pointer;
 }
 
-
+*{
+        -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 .tenant_busy_control .img {
     margin: auto;
     position: absolute;
@@ -22,24 +25,30 @@
 }
 
 *::-webkit-scrollbar-track {
-    background-color: #f9f9f7
+    background:transparent
 }
 
 *::-webkit-scrollbar {
-    width: 5px;
-    background-color: #f9f9f7
+    width: 10px;
+     -webkit-appearance: none;
+    background: transparent;
+    z-index: 300;
 }
 
 .left_panel_mini *::-webkit-scrollbar {
     width: 0px;
-    background-color: #f9f9f7
+      background:transparent
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: rgba(112, 112, 112, 0.59);
+    background-color: rgba(139, 139, 139, 0.63);
     border-radius: 50px;
+    border: 2px solid rgb(255, 255, 255);
 }
-
+.items_list_block.top_block *::-webkit-scrollbar-thumb{
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgb(39, 116, 178);
+}
 .clearfix {
     clear: both
 }
@@ -105,9 +114,11 @@
 
 #menu {
     position: absolute;
-    top: 8px;
+    top: 1px;
     left: 15px;
     z-index: 255;
+    line-height: 35px;
+    color: #4c75a3;
     display: none;
 }
 
@@ -187,15 +198,15 @@
 
 .items_list_block .block_content {
     max-height: 65px;
-    overflow: hidden;
     overflow-y: auto;
-    padding-right: 5px;
-    margin-right: -5px;
+    /* padding-right: 5px; */
+    /* margin-right: -5px; */
     -webkit-transition: 1s ease-out;
     -moz-transition: 1s ease-out;
     -o-transition: 1s ease-out;
     transition: 1s ease-out;
     transition-property: max-height;
+    overflow-y: scroll;
 }
 
 .items_list_block .block_content.unfolded {
@@ -595,6 +606,7 @@
 .items_list_block .block_item {
     padding-top: 5px;
     padding-bottom: 5px;
+    /* position:absolute; */
 }
 
 .left_panel_mini .items_list_block .block_item {
@@ -1073,7 +1085,8 @@
 }
 
 .user_message .message_details .messag_author_name {
-    font-weight: bold
+    font-weight: bold;
+    color: #425569;
 }
 
 .bottom_details {
@@ -1115,6 +1128,7 @@
 .left_panel_mini .bottom_block {
     padding-bottom: 0px;
     max-height: 100%;
+    padding-top: 25px;
 }
 
 .controls_area {
