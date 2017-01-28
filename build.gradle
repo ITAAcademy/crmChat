@@ -7,10 +7,14 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 //jar.enabled = false
-//bootRepackage.enabled = false
+bootRepackage.enabled = false
 
 war {
     baseName = 'crmChat'
+}
+
+configurations {
+    providedRuntime
 }
 
 buildscript {
@@ -72,8 +76,8 @@ dependencies {
     
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-tomcat")
-
+    //compile("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     compile("org.springframework.boot:spring-boot-starter-actuator")
     
     compile("org.springframework.security:spring-security-messaging")
