@@ -1,5 +1,5 @@
 <div  ng-repeat="(key, value) in getData()" class="block_item selectable"
-      ng-click="itemClick({{key}})">
+      ng-click="itemClick(key)">
         <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{value.student.avatar}}" alt="" />
     <div class="text_info">
         <div class="user_name">{{value.student.nickName}}</div>

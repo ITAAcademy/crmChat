@@ -575,9 +575,9 @@ angular.module('springChat.directives').directive('notificable', notificable);
 function notificable($templateRequest, $sce, $compile) {
     //TODO finish rooms search
     return {
-        scope: {
-            itemClick: '&itemclick',
-            getData: '&data',
+        scope:{
+            itemClick : '=itemclick',
+            getData : '&data',
         },
         restrict: 'EA',
         link: function(scope, element, attrs) {
@@ -585,8 +585,6 @@ function notificable($templateRequest, $sce, $compile) {
                 console.error('Template must be set');
                 return;
             }
-
-
             var templatePath = 'static_templates/' + attrs.template + '.html';
             var templateUrl = $sce.getTrustedResourceUrl(templatePath);
             $templateRequest(templateUrl).then(function(template) {
