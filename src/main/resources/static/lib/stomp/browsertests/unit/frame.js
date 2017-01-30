@@ -1,4 +1,4 @@
-﻿module("Stomp Frame");
+module("Stomp Frame");
 
 test("marshall a CONNECT frame", function() {
   var out = Stomp.Frame.marshall("CONNECT", {login: 'jmesnil', passcode: 'wombats'});

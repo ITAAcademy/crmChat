@@ -9,6 +9,15 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 //jar.enabled = false
 //bootRepackage.enabled = false
+//exclude('src/main/resources/static/source')
+
+sourceSets {
+    main {
+        resources {
+            exclude 'static/source/**'
+        }
+    }
+}
 
 war {
     baseName = 'crmChat'

@@ -1,0 +1,20 @@
+<div ng-if="students.length > 0" class="items_list_block top_block">
+    <div class="block_head" ng-click="toggleFolded()">
+        <div class="block_name">{{blockName}}</div>
+        <div ng-if="students.length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
+        <div class="block_head_diveded"></div>
+    </div>
+    <div class="block_content scroll ng-class:{unfolded:!folded}">
+        <div class="block_item" ng-repeat="student in students | orderBy:participantsSort" ng-click="goToPrivateDialog(student.intitaUserId)">
+            <div class="avatar ng-class:{offline:!isUserOnline(student), online:isUserOnline(student)}">
+                <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + student.avatar + ')'}"></div>
+                <div class="user_presence_icon"></div>
+                <div class="user_presence_icon_wraper"></div>
+            </div>
+            <div class="text_info">
+                <div class="user_name">{{student.nickName}}</div>
+                <div class="user_presence">Остання активність</div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1236 @@
+@font-face
+    font-family: "Roboto-Medium"
+    src: url("../fonts/Roboto-Medium.eot")
+    src: url("../fonts/Roboto-Medium.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Medium.woff2") format("woff2")
+    src: url("../fonts/Roboto-Medium.woff") format("woff")
+    src: url("../fonts/Roboto-Medium.ttf") format("truetype")
+    src: url("../fonts/Roboto-Medium.svg#Roboto-Medium") format("svg")
+    font-weight: 500
+    font-style: normal
+
+@font-face
+    font-family: "Roboto-Thin"
+    src: url("../fonts/Roboto-Thin.eot")
+    src: url("../fonts/Roboto-Thin.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Thin.woff2") format("woff2")
+    src: url("../fonts/Roboto-Thin.woff") format("woff")
+    src: url("../fonts/Roboto-Thin.ttf") format("truetype")
+    src: url("../fonts/Roboto-Thin.svg#Roboto-Thin") format("svg")
+    font-weight: 100
+    font-style: normal
+
+@font-face
+    font-family: "Roboto-Light"
+    src: url("../fonts/Roboto-Light.eot")
+    src: url("../fonts/Roboto-Light.eot?#iefix") format("embedded-opentype")
+    src: url("../fonts/Roboto-Light.woff2") format("woff2")
+    src: url("../fonts/Roboto-Light.woff") format("woff")
+    src: url("../fonts/Roboto-Light.ttf") format("truetype")
+    src: url("../fonts/Roboto-Light.svg#Roboto-Light") format("svg")
+    font-weight: 300
+    font-style: normal
+
+body
+    width: 100%
+    height: 100%
+    margin: 0
+    background-color: rgba(237, 238, 240, 0.58)
+    overflow: hidden
+
+*
+    &::-webkit-scrollbar-track
+        background-color: #cfcfcf
+
+    &::-webkit-scrollbar
+        width: 10px
+        background-color: #f5f5f5
+
+    &::-webkit-scrollbar-thumb
+        background-color: #707070
+
+    &::-webkit-scrollbar-button
+        background-size: contain
+        background-color: #fff
+        background-repeat: no-repeat
+        background-position-y: center
+        background-color: #cfcfcf
+
+    &::-webkit-scrollbar-track:no-button
+        display: none
+
+    &::-webkit-scrollbar-button
+        &:hover
+            background-color: #707070
+
+        &:vertical
+            &:increment
+                background-image: url("../images/scroll_down.svg")
+
+            &:decrement
+                background-image: url("../images/scroll_up.svg")
+
+.clearfix
+    clear: both
+
+.consultant_wrapper
+    max-width: 900px
+    height: calc(100% - 10px)
+    margin: auto
+    position: relative
+    top: 5px
+    font-family: "Myriad Pro", Times, serif
+    overflow: hidden
+    border-radius: 10px
+    -webkit-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+    -moz-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+    box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+
+    &.normal
+        position: absolute
+        height: calc(60% - 10px)
+        width: 800px
+
+    &.closed
+        display: none
+
+    *
+        box-sizing: border-box
+        -moz-box-sizing: border-box
+
+.left_panel
+    width: 301px
+    background-color: #fff
+    float: left
+    height: 100%
+    overflow: hidden
+    position: relative
+
+.right_panel
+    overflow: hidden
+    float: right
+    height: 100%
+    width: calc(100% - 301px)
+    background-color: #fff
+    border-left: 2px solid #c5c5c5
+
+.head
+    min-height: 35px
+    background-color: white
+    position: relative
+    border-bottom: #dbdada 2px solid
+
+    %vertical-img
+        position: absolute
+        margin: auto
+        top: 0
+        bottom: 0
+
+    .logo
+        @extend %vertical-img
+        position: absolute
+        left: 15px
+
+    .notification
+        position: absolute
+        right: 120px
+        height: 100%
+        width: 25px
+
+        img
+            @extend %vertical-img
+
+    .message_notification
+        @extend .notification
+        right: 150px
+    .state
+        @extend %vertical-img
+        width: 10px
+        height: 10px
+        border-radius: 50%
+        background-color: red
+        top: -15px
+        right: 0px
+        opacity: 0.8
+
+.items_list_block
+    width: 100%
+    color: #000
+    padding-bottom: 34px
+
+    &.top_block
+        color: #fff
+
+    .block_content
+        max-height: 93px
+        overflow: hidden
+        -webkit-transition: 1s ease-out
+        -moz-transition: 1s ease-out
+        -o-transition: 1s ease-out
+        transition: 1s ease-out
+        transition-property: max-height
+
+        &.unfolded
+            max-height: 365px
+            overflow-y: scroll
+
+    &.top_block + .chevron_wrapper
+        position: absolute
+        background-color: #4c75a4
+        cursor: pointer
+        width: 301px
+        height: 25px
+        margin-top: -25px
+
+        > .chevron
+            margin-top: 10px
+            margin-left: 130px
+
+    &.middle_block
+        padding-bottom: 32px
+
+        + .chevron_wrapper
+            position: absolute
+            width: 301px
+            height: 25px
+            background-color: #d7d7d7
+            cursor: pointer
+            width: 301px
+            margin-top: -25px
+
+            > .chevron
+                margin-top: 10px
+                margin-left: 130px
+
+                &:before, &:after
+                    background-color: #fff
+
+.left_panel.bottom_block
+    padding-bottom: 0
+
+.items_list_block
+    &.top_block
+        background-color: #4c75a4
+
+    .block_name
+        text-align: right
+        font-size: 20px
+        margin-right: 10px
+
+    .block_item
+        padding-left: 20px
+        padding-right: 10px
+        padding-top: 2.5px
+        padding-bottom: 2.5px
+        position: relative
+
+        &:hover
+            opacity: 0.8
+            cursor: pointer
+
+        &.selectable:hover
+            cursor: pointer
+            background-color: #c4d3e3
+
+    &.bottom_block .block_item.selected
+        background-color: #c4d3e3
+        opacity: 1
+
+.avatar
+    display: inline-block
+
+.items_list_block
+    .avatar
+        vertical-align: middle
+        position: relative
+        border: solid 2px
+        border-radius: 100%
+        padding: 3px
+        width: 85px
+        height: 85px
+
+        &.online
+            border-color: #090
+
+            *:not(.user_presence_icon)
+                border-color: #090
+
+        &.offline
+            border-color: #fff
+
+            *:not(.user_presence_icon)
+                border-color: #fff
+
+            .user_presence_icon
+                background-color: #fff
+
+        &.wait
+            border-color: orange
+
+            *:not(.user_presence_icon)
+                border-color: orange
+
+    &.bottom_block .avatar
+        width: 44px
+        height: 44px
+        padding: 2px
+        border-color: #888
+        border-width: 1px
+
+    .avatar
+        > .user_image
+            width: 75px
+            height: 75px
+            background-color: olive
+            display: inline-block
+            border-radius: 50%
+
+        .user_presence_icon, .user_presence_icon_wraper
+            width: 20px
+            height: 20px
+            border-radius: 50%
+            background-color: #090
+            position: absolute
+            bottom: 8px
+            right: -2px
+            border-color: #4c75a4
+            border-width: 4px
+            border-style: solid
+            &.online
+                background-color: green
+            &.offline
+                background-color: white
+
+    &.participants_block .avatar .user_presence_icon
+        border-color: #e6e6e6
+
+    .avatar .user_presence_icon_wraper
+        border-width: 2px
+        border-style: solid
+        background: 0
+        border-left-color: transparent !important
+        border-bottom-color: transparent !important
+        transform: rotate(90deg)
+        -ms-transform: rotate(20deg)
+        -webkit-transform: rotate(20deg)
+        transform: rotate(75deg)
+        width: 24px
+        height: 24px
+        bottom: 6px
+        right: -4px
+
+    .text_info
+        display: inline-block
+        margin-left: 7px
+        vertical-align: middle
+        position: relative
+        max-width: calc(100% - 100px)
+        word-wrap: break-word
+        text-overflow: ellipsis
+        overflow: hidden
+        max-height: 70px
+
+        > .user_name
+            max-height: 60px
+            overflow: hidden
+            text-overflow: ellipsis
+            word-wrap: initial
+
+    &.middle_block .block_item
+        margin-top: 14px
+
+    &.bottom_block
+        .block_item
+            padding-top: 5px
+            padding-bottom: 5px
+
+        .avatar > .user_image
+            width: 38px
+            height: 38px
+            vertical-align: baseline
+
+.contacts_list
+    .avatar
+        .user_presence_icon
+            bottom: 0px
+
+.text_info .user_presence
+    margin-top: 5px
+
+.contacts_menu_strip
+    font-size: 0
+    height: 26px
+    width: 100%
+    position: relative
+
+    > *
+        vertical-align: middle
+        font-size: 18px
+        cursor: pointer
+        line-height: 30px
+
+    .contacts_menu_item
+        background-color: #6c90ba
+        width: 145px
+        height: 100%
+        text-align: center
+        color: #333
+        position: absolute
+        left: 17px
+        top: 0
+        padding-left: 30px
+        padding-right: 30px
+        z-index: 0
+
+    .last_contacts_menu_item
+        background-color: #6c90ba
+        color: #333
+        width: 120px
+        height: 100%
+        text-align: center
+        position: absolute
+        right: 20px
+        top: 0
+        padding-right: 26px
+
+        &:before
+            border-top: 26px solid #6c90ba
+            border-left: 26px solid transparent
+            content: " "
+            position: absolute
+            top: 0
+            left: -26px
+
+    .contacts_menu_item.active
+        background-color: #4c75a4
+        color: #fff
+
+    .last_contacts_menu_item.active
+        background-color: #4c75a4
+        color: #fff
+
+        &:before
+            border-top: 26px solid #4c75a4
+
+    .search_icon
+        position: relative
+        cursor: pointer
+        background-color: #333
+        width: 26px
+        height: 100%
+        z-index: 1
+
+    .group_icon > img
+        width: 20px
+        height: 20px
+        margin: 3px
+
+        #create-btn
+
+            z-index: 111
+
+    .search_icon
+        > img
+            width: 20px
+            height: 20px
+            margin: 3px
+
+        &:after
+            border-top: 26px solid #333
+            border-right: 26px solid transparent
+            content: " "
+            right: -26px
+            top: 0
+            position: absolute
+
+    .group_icon:before
+        border-bottom: 26px solid #333
+        border-left: 26px solid transparent
+        content: " "
+        position: absolute
+        top: 0
+        left: -26px
+
+    .top_right_corner_grey
+        content: ""
+        position: absolute
+        margin-left: -24px
+
+    .room_create_input, .room_search_input
+        width: 100%
+        max-width: 0
+        height: calc(100% - 2px)
+        position: absolute
+        top: 1px
+        left: 0
+        border: 0
+        padding: 0
+        -webkit-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+        -moz-box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+        box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97)
+        -webkit-transition: all ease-out 1s
+        -moz-transition: all ease-out 1s
+        -o-transition: all ease-out 1s
+        transition: all ease-out 1s
+        background-color: #fff
+
+    .room_create_input
+        left: initial
+        right: -100%
+        padding-left: 100%
+
+    &.visible-create .search_icon, &.visible-search .group_icon
+        pointer-events: none
+        transition-delay: 1s
+
+    &.visible-create .search_icon > img, &.visible-search .group_icon > img
+        opacity: 0.2
+
+    &.visible-create .room_create_input, &.visible-search .room_search_input
+        max-width: calc(100% - 2px)
+        padding-left: 52px
+        padding-right: 52px
+        right: 0
+
+    .group_icon
+        position: absolute
+        top: 0
+        right: 0
+        width: 26px
+        height: 100%
+        background-color: #333
+        z-index: 1
+
+.contact_control
+    position: absolute
+    right: 20px
+    top: calc(50% - 13px)
+
+.tools_area
+    height: 40px
+    position: relative
+
+    &:hover
+        cursor: -webkit-grab
+
+    *:hover
+        cursor: default
+
+    > .tools_dropdown_container
+        vertical-align: middle
+        position: absolute
+        left: 0
+        top: calc(50% - 9.5px)
+        width: 100%
+        height: 100%
+
+.popup_dropdown
+    list-style: none
+    border: 2px solid #e5e5e5
+    background-color: #fff
+
+    a
+        color: #606060
+        text-decoration: none
+
+.tools_area .tools_dropdown_container > #tools_dropdown
+    display: none
+    position: absolute
+    margin-left: 10px
+    margin-top: 20px
+    padding: 21px 13px
+
+    &:before
+        background-image: url("../images/arrow_up23x7.png")
+        width: 23px
+        height: 7px
+        display: block
+        position: absolute
+        content: " "
+        top: -6px
+
+    &.shown li
+        margin-top: 18px
+
+        &:first-child
+            margin-top: 0
+
+    .show_attaches_item
+        margin-left: 34px
+
+        &:before
+            background-image: url("../images/attaches_13x14.png")
+            width: 13px
+            height: 14px
+            content: " "
+            position: absolute
+            margin-left: -34px
+
+    .sound_off_item:before
+        background-image: url("../images/no_sound16x16.png")
+        width: 16px
+        height: 16px
+        content: " "
+        position: absolute
+        margin-left: -34px
+
+    .sound_on_item:before
+        background-image: url("../images/megaphone.png")
+        width: 16px
+        height: 16px
+        content: " "
+        position: absolute
+        margin-left: -34px
+        background-size: cover
+
+    > *
+        margin-left: 34px
+
+    .remove_history_item
+        margin-left: 34px
+
+        &:before
+            background-image: url("../images/trashcan12x14.png")
+            width: 12px
+            height: 14px
+            content: " "
+            position: absolute
+            margin-left: -34px
+
+.transparent_input
+    border: 0 solid #000
+    border-bottom-width: 1px
+    border-bottom-color: #bcbcbc
+    background-color: transparent
+    color: #bcbcbc
+    font-size: 18px
+    padding-left: 17px
+    padding-bottom: 5px
+
+.search_input
+    width: calc(100% - 20px)
+
+.transparent_input:focus
+    outline: 0
+
+.open_dropdown_button
+    background: 0
+    border: 0
+    display: inline-block
+    outline: 0
+    cursor: pointer
+
+.right_panel
+    .open_dropdown_button
+        margin-left: 18px
+        z-index: 39
+        position: absolute
+
+    .search_icon
+        position: absolute
+        right: 0
+        top: calc(50% - 7px)
+        visibility: hidden
+        opacity: 0
+        -webkit-transition: visibility 0s, opacity 0.5s linear
+        transition: visibility 0s, opacity 0.5s linear
+
+        &.showed
+            visibility: visible
+            opacity: 1
+
+    .close_search_icon
+        position: absolute
+        right: 20px
+        top: calc(50% - 7px)
+        width: 17px
+        height: 17px
+        visibility: hidden
+        opacity: 0
+        -webkit-transition: visibility 0s, opacity 0.5s linear
+        transition: visibility 0s, opacity 0.5s linear
+
+        &.showed
+            visibility: visible
+            opacity: 1
+
+    hr
+        margin-bottom: 6px
+        margin-top: 6px
+
+.messages_output_area
+    height: 100%
+    overflow-y: auto !important
+    padding-top: 6px
+
+.message_date_separator
+    text-align: center
+    color: #bcbcbc
+
+    > *
+        vertical-align: middle
+
+.date_indicator
+    font-size: 10px
+
+.message_date_separator
+    .line
+        width: 102px
+        height: 1px
+        background-color: #bcbcbc
+        display: inline-block
+        content: ""
+
+    .big_dot
+        background-color: #bcbcbc
+        display: inline-block
+        width: 7px
+        height: 7px
+        border-radius: 50%
+
+.user_message
+    padding-bottom: 25px
+    padding-top: 8px
+
+    &:hover
+        cursor: pointer
+
+    &:nth-child(2)
+        margin-top: 39px
+
+    > *
+        vertical-align: top
+
+    .message_author_avatar
+        display: inline-block
+
+        > img
+            width: 45px
+            height: 45px
+            background-color: #f26522
+            display: inline-block
+            border-radius: 50%
+            border: 0
+
+    .message_details
+        display: inline-block
+        padding-right: 20px
+        width: calc(100% - 130px)
+        border-radius: 5px
+        min-height: 55px
+        padding-top: 10px
+        padding-left: 15px
+        padding-bottom: 19px
+
+        .top_details
+            margin-bottom: 12px
+
+        .messag_author_name
+            font-weight: bold
+
+.bottom_details
+    white-space: pre-wrap
+    word-break: break-all
+
+.message_date
+    color: #929292
+    font-size: 14px
+
+.messages_input_area .message_input
+    width: 560px
+    margin-left: 19px
+    font-size: 15px
+    color: #949494
+    min-height: 25px
+
+.bottom_block
+    padding-bottom: 10px
+    overflow: auto
+    outline: 0
+    max-height: calc(100% - 25px)
+    padding-bottom: 40px
+
+.controls_area
+    margin-top: 8px
+
+    button
+        border: 0
+        background: 0
+        border: 0
+        outline: 0
+        display: inline-block
+        margin-top: 7px
+
+.attaches_area
+    display: inline-block
+    float: right
+    margin-right: 10px
+
+    >
+        *
+            cursor: pointer
+
+        button
+            margin-top: 7px
+
+.send_button
+    width: 127px
+    height: 35px
+    background-color: #4c75a4
+    font-size: 16px
+    padding-top: 11px
+    padding-left: 11px
+    color: #fff
+    display: inline-block
+    float: right
+    border-radius: 5px
+
+.multimedia_conversation_controls
+    display: inline-block
+    margin-left: 26px
+
+    > *
+        cursor: pointer
+
+.attaches_area #attaches_dropdown
+    width: 115px
+    font-size: 14px
+    position: absolute
+    display: none
+    margin-left: -30px
+    margin-top: -80px
+
+.tools_dropdown_container > #tools_dropdown.shown, #attaches_dropdown.shown
+    display: block
+    z-index: 2
+    background-color: #fff
+
+.attaches_area
+    #attaches_dropdown:after
+        background-image: url("../images/arrow_up23x7.png")
+        width: 23px
+        height: 7px
+        content: " "
+        position: absolute
+        -webkit-transform: rotate(180deg)
+        -moz-transform: rotate(180deg)
+        -ms-transform: rotate(180deg)
+        -o-transform: rotate(180deg)
+        transform: rotate(180deg)
+        margin-left: 70px
+        margin-top: 10px
+
+    > #attaches_dropdown
+        padding: 10px 9px
+
+        .attaches_item:before
+            background-image: url("../images/document12x13.png")
+            width: 12px
+            height: 13px
+            content: " "
+            position: absolute
+            margin-left: -31px
+
+        li
+            margin-left: 31px
+
+        .video_item:before
+            background-image: url("../images/camera15x11.png")
+            width: 15px
+            height: 11px
+            content: " "
+            position: absolute
+            margin-left: -31px
+
+        .audio_item:before
+            background-image: url("../images/music12x12.png")
+            width: 12px
+            height: 12px
+            content: " "
+            position: absolute
+            margin-left: -31px
+
+.shown
+    display: block
+
+.chevron
+    position: absolute
+    text-align: center
+    padding: 5px
+    height: 5px
+    width: 43px
+
+    &:before
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        height: 5px
+        width: 51%
+        background-color: #125096
+        -webkit-transform: skew(0deg, 25deg)
+        -moz-transform: skew(0deg, 25deg)
+        -ms-transform: skew(0deg, 25deg)
+        -o-transform: skew(0deg, 25deg)
+        transform: skew(0deg, 25deg)
+        -webkit-transition: 0.5s ease-in-out
+        -moz-transition: 0.5s ease-in-out
+        -o-transition: 0.5s ease-in-out
+        transition: 0.5s ease-in-out
+
+    &:after
+        content: ""
+        position: absolute
+        top: 0
+        right: 0
+        height: 5px
+        width: 50%
+        background-color: #125096
+        -webkit-transform: skew(0deg, -25deg)
+        -moz-transform: skew(0deg, -25deg)
+        -ms-transform: skew(0deg, -25deg)
+        -o-transform: skew(0deg, -25deg)
+        transform: skew(0deg, -25deg)
+        -webkit-transition: 0.5s ease-in-out
+        -moz-transition: 0.5s ease-in-out
+        -o-transition: 0.5s ease-in-out
+        transition: 0.5s ease-in-out
+
+    &.unfolded
+        &:before
+            -webkit-transform: skew(0deg, -25deg)
+            -moz-transform: skew(0deg, -25deg)
+            -ms-transform: skew(0deg, -25deg)
+            -o-transform: skew(0deg, -25deg)
+            transform: skew(0deg, -25deg)
+
+        &:after
+            -webkit-transform: skew(0deg, 25deg)
+            -moz-transform: skew(0deg, 25deg)
+            -ms-transform: skew(0deg, 25deg)
+            -o-transform: skew(0deg, 25deg)
+            transform: skew(0deg, 25deg)
+
+.nicescroll-cursors
+    background-color: rgba(130, 154, 216, 0.67) !important
+    border: 1px solid rgba(167, 19, 19, 0) !important
+
+.section-info-block
+    position: relative
+
+.section_name
+    margin-left: 8px
+    font-size: 24px
+    color: rgba(153, 153, 153, 0.72)
+
+.section-hr
+    min-height: 1px
+    min-width: calc(100% - 24px)
+    position: absolute
+    top: calc(50% - 1px)
+    left: 24px
+    background-color: #999
+
+.messages_output_area
+    h6
+        font-size: 20px
+        margin: 0 0 20px
+
+    .answer
+        margin-top: 12px
+        position: relative
+        width: 100%
+        overflow: hidden
+        clear: both
+
+        &.left
+            padding: 0 0 0 15px
+            text-align: left
+            float: left
+
+            .avatar
+                left: 0
+
+        .avatar
+            bottom: 12px
+
+        .name
+            font-size: 14px
+            line-height: 20px
+
+        &.left .avatar .status
+            right: 4px
+
+        .avatar .status
+            bottom: 0
+
+        &.left .text
+            background: #ebebeb
+            color: #333
+            border-radius: 8px 8px 8px 0
+
+        .text
+            padding: 12px
+            margin: 0
+            font-size: 16px
+            line-height: 26px
+            position: relative
+
+        &.left .text:before
+            left: -30px
+            border-right-color: #ebebeb
+            border-right-width: 12px
+
+        .text:before
+            content: ""
+            display: block
+            position: absolute
+            bottom: 0
+            border: 18px solid transparent
+            border-bottom-width: 0
+
+        &.left .time
+            padding-left: 12px
+            color: #333
+
+        .time
+            font-size: 16px
+            line-height: 20px
+            position: relative
+            padding-bottom: 1px
+
+        &.right
+            text-align: right
+            float: right
+            padding-right: 15px
+
+        &.left
+            text-align: left
+            width: 100%
+
+        &.right .message_details
+            background-color: #ededed
+            margin-right: 12px
+
+            .top_details
+                text-align: right
+                text-overflow: ellipsis
+                overflow: hidden
+
+        &.left .message_details
+            background-color: #b7deff
+            margin-left: 13px
+
+            &:before
+                width: 0
+                height: 0
+                border-style: solid
+                border-width: 7px 8px 7px 0
+                border-color: transparent #b7deff transparent transparent
+                content: " "
+                margin-left: -22px
+                margin-top: 5px
+                display: block
+
+        &.right
+            .message_details:before
+                width: 0
+                height: 0
+                border-style: solid
+                border-width: 7px 0 7px 8px
+                border-color: transparent transparent transparent #ededed
+                content: " "
+                display: block
+                position: absolute
+                right: 67px
+                top: 25px
+
+            .user_message .message_author_avatar
+                margin-left: 12px
+
+        a
+            text-decoration: underline
+
+            &:hover
+                cursor: pointer
+
+        &.right
+            .text
+                background: #7266ba
+                color: #fff
+                border-radius: 8px 8px 0 8px
+
+                &:before
+                    right: -30px
+                    border-left-color: #7266ba
+                    border-left-width: 12px
+
+            .time
+                padding-right: 12px
+                color: #333
+
+.participants_block.top_block
+    background-color: #e6e6e6
+    color: #000
+
+    + .participants_chevron_wrapper
+        background-color: #e6e6e6
+
+.participants_chevron
+    &:before, &:after
+        background-color: #c2c3c3
+
+.search_box
+    position: absolute
+    top: 10px
+    left: 55px
+    width: calc(100% - 130px)
+    z-index: 2
+
+.window_panel
+    top: 15px
+    right: 10px
+    position: absolute
+
+    > *
+        width: 15px
+        height: 15px
+        display: inline-block
+        background-size: contain
+        background-color: #fff
+        background-repeat: no-repeat
+        background-position-y: center
+
+        &:hover
+            cursor: pointer
+            background-color: #f1f1f1
+            -ms-transform: scale(1.3, 1.3)
+            -webkit-transform: scale(1.3, 1.3)
+            transform: scale(1.3, 1.3)
+
+#minimize_btn
+    background-image: url(../images/тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨┤тХитФд╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨ж╨гтХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╢тХи╨▒тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨е╤В╨е╨┤тХи╨в╤В╨е╨╕тХитФд╤В╨е╨╕╤В╨д╨┤.svg)
+
+#fullscreen_btn
+    background-image: url("../images/Rectangle 10 copy 2.png")
+
+#close_btn
+    background-image: url(../images/╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨д╨┤тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕тХитЦУ╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨етХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХитЦТ╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕╤В╨е╨е╤В╨е╨┤тХи╨в╤В╨е╨╕тХитХб╤В╨е╨╕тХитХбтХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╡тХи╨╡тХд╨ТтХи╨╡тХитФд╤В╨е╨╕тХи╨▓тХд╨ТтХи╨╡тХитХХ╤В╨е╨╕╤В╨е╨▒тХд╨ТтХи╨╡тХитХХтХд╨ТтХи╨╢тХи╨▓.svg)
+
+#nwgrip, #negrip, #swgrip, #segrip, #ngrip, #egrip, #sgrip, #wgrip
+    width: 10px
+    height: 10px
+    background-color: #fff
+    border: 1px solid #000
+    position: absolute
+
+#nwgrip
+    left: -5px
+    top: -5px
+
+#negrip
+    top: -5px
+    right: -5px
+
+#swgrip
+    bottom: -5px
+    left: -5px
+
+#segrip
+    bottom: -5px
+    right: -5px
+
+#ngrip
+    top: -5px
+    left: 50%
+
+#sgrip
+    bottom: -5px
+    left: 50%
+
+#wgrip
+    left: -5px
+    top: 50%
+
+#egrip
+    right: -5px
+    top: 50%
+
+img.file-extension-preview
+    width: 60px
+
+.display-file-container
+    display: inline-block
+    text-align: center
+    vertical-align: top
+
+    .file-name
+        width: 60px
+        height: 40px
+        word-wrap: break-word
+        text-overflow: ellipsis
+        display: inline-block
+
+.user.dialog
+    margin: 5px
+
+    &:hover
+        background-color: #819abe
+
+.szn-autocomplete-results
+    .avatar .user_image
+        width: 38px
+        height: 38px
+        vertical-align: baseline
+        display: inline-block
+        border-radius: 50%
+
+    .text_info
+        display: inline-block
+        margin-left: 7px
+        vertical-align: middle
+        position: relative
+        max-width: 200px
+        word-wrap: break-word
+        text-overflow: ellipsis
+        max-height: 70px
+        vertical-align: baseline
+        overflow: hidden
+
+html, body
+    height: 100%
+    min-height: 100%
+
+.mainContent
+    height: 100%
+
+.workplace_outter
+    width: 100%
+    height: 100%
+
+.workplace_inner
+    width: 2000px
+    display: inline-block
+    height: 100%
+    font: 0 / 0 a
+    white-space: nowrap
+
+.workplace_outter .panel
+    width: 300px
+    display: inline-block
+    height: 100%
+
+.panel
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-size: 14px
+    line-height: 1.42857
+
+.g-checkbox
+    display: inline-block
+    width: 16px
+    height: 16px
+    background-size: cover
+    background-image: url("../images/elements/normal.png")
+
+    &.checked
+        background-image: url("../images/elements/checked.png")

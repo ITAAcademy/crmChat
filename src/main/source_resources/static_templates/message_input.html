@@ -1,0 +1,23 @@
+<hr/>
+<div class="transparent_input message_input" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage" content-editable="true"></div>
+<div class="files_input">
+    <img ng-if="files!=null && files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()"/>
+    <div ng-repeat="file in getNamesFromFiles(files) track by $index" class="display-file-container" file-miniature="true" nameOnly="true" link="file" ></div>
+</div>
+<div class="controls_area">
+    <div class="multimedia_conversation_controls">
+        <button class="skype"><i class="material-icons">videocam</i></button>
+        <button class="microphone"><i class="material-icons">mic</i></button>
+    </div>
+    <div id="attaches_area" class="attaches_area">
+        <ul id="attaches_dropdown" class="popup_dropdown">
+            <a class=" dropdown_item attaches_item ngf_select"  ngf-select ngf-change="selectFiles($files)" multiple="true">Документ</a>
+            <a class=" dropdown_item video_item">Відео</a>
+            <a class="dropdown_item audio_item">Аудіо</a>
+        </ul>
+        <div class="upload_file_form_container"></div>
+        <button class="smiles"><i class="material-icons">tag_faces</i></button>
+        <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
+        <div class="send_button" ng-click="sendMessageAndFiles()">ВІДПРАВИТИ&#47;<i class="material-icons">send</i></div>
+    </div>
+</div>
