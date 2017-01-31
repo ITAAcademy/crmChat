@@ -19,7 +19,7 @@ gulp.task('scripts',function(){
     return gulp.src('source_resources/js/**/*.js',{since:gulp.lastRun('scripts')})
         .pipe(babel({presets:['es2015']}))
         .pipe(debug({title: 'babel:'}))
-        .pipe(uglify(uglifyOptions))
+      /*  .pipe(uglify(uglifyOptions))*/
         .pipe(gulp.dest('resources/static/js'));
 });
 gulp.task('lib',function(){

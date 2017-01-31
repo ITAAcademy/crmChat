@@ -576,7 +576,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
 
 
 
-angular.module('springChat.directives').directive('notificable','$templateRequest', '$sce', '$compile', notificable);
+angular.module('springChat.directives').directive('notificable',['$templateRequest', '$sce', '$compile', notificable]);
 
 function notificable($templateRequest, $sce, $compile) {
     //TODO finish rooms search
