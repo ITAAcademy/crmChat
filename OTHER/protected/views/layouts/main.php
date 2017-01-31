@@ -316,47 +316,49 @@ $header = new Header();
 
     app.controller('chat-controller', function($scope){
 
-        this.dragstart = function(){
+        $scope.dragstart = function(){
             console.log('dragstart', arguments);
              var res_elem = $('.draggable');
-             res_elem.toggleClass("disable-animation");
+             res_elem.addClass("disable-animation");
+             $("iframe").addClass("disable-mouse");
         };
 
-        this.drag = function(){
+        $scope.drag = function(){
             console.log('drag', arguments);
         };
 
-        this.dragend = function(){
+        $scope.dragend = function(){
             console.log('dragend', arguments);
             if(!arguments[0]) this.dropped = false;
                          var res_elem = $('.draggable');
-             res_elem.toggleClass("disable-animation");
+             res_elem.removeClass("disable-animation");
+             $("iframe").removeClass("disable-mouse");
         };
 
-        this.dragenter = function(dropmodel){
+        $scope.dragenter = function(dropmodel){
             console.log('dragenter', arguments);
             this.active = dropmodel;
         };
 
-        this.dragover = function(){
+        $scope.dragover = function(){
             console.log('dragover', arguments);
         };
 
-        this.dragleave = function(){
+        $scope.dragleave = function(){
             console.log('dragleave', arguments);
             this.active = undefined;
         };
 
-        this.drop = function(dragmodel, model){
+        $scope.drop = function(dragmodel, model){
             console.log('drop', arguments);
             this.dropped = model;
         };
 
-        this.isDropped = function(model){
+        $scope.isDropped = function(model){
             return this.dropped === model;
         };
 
-        this.isActive = function(model){
+        $scope.isActive = function(model){
             return this.active === model;
         };
         $scope.minimizete = function(){
@@ -380,7 +382,8 @@ $header = new Header();
 var elem = $(window);
     var res_elem = $('.draggable');
     res_elem.css({ top: (elem.height() - 600) + 'px' });
-    res_elem.css({ left: (elem.width() - 450) + 'px' });
+    res_elem.css({ left: (elem.width() - 400) + 'px' });
+    $( ".chat" ).draggable({ /*handle: ".handle"*/ cancel: ".ignore", containment: "parent",  start: $scope.dragstart, stop: $scope.dragend});
 
         }
          $( window ).resize(resizeFunc);
@@ -421,29 +424,33 @@ var elem = $(window);
     width: 100%;
     height: 100%;
     max-height: 600px;
-    max-width: 450px;
+    max-width: 400px;
     top: calc(100% - 600px);
-    left: calc(100% - 450px);
+    left: calc(100% - 400px);
     bottom: 0;
     right: 0;
-    position: absolute;transform: none;pointer-events: all;
-    -webkit-transition: all .5s ease-in-out;
-    -moz-transition: all .5s ease-in-out;
-    -o-transition: all .5s ease-in-out;
-    transition: all .5s ease-in-out;
+    position: absolute;
+    transform: none;
+    pointer-events: all;
+    -webkit-transition: all 1.0s ease;
+    -moz-transition: all 1.0s ease;
+    -o-transition: all 1.0s ease;
+    transition: all 1.0s ease;
     margin: 0;
  }
  .dnd-container .chat.mini{
     max-height: 65px;
-    max-width: 450px;
+    max-width: 300px;
     top: calc(100% - 65px) !important;
-    left: calc(100% - 450px) !important;
+    left: calc(100% - 300px) !important;
  }
   .dnd-container .chat.full{
     max-height: 100%;
     max-width: 950px;
-    right: 0px;
-    bottom: 0px;
+    height: 100% !important;
+    width: 100% !important;
+    right: 0px !important;
+    bottom: 0px !important;
     top: 0 !important;
     left: 0 !important;
      margin: auto;
@@ -472,7 +479,7 @@ var elem = $(window);
  .window_panel > *{
     display: inline-block;
     width: 20px; height: 35px;
-    color: #425569;
+    color: #4c75a3;
     line-height: 35px;
  }
  .window_panel{
@@ -493,7 +500,10 @@ var elem = $(window);
  }
  .material-icons:hover{
     cursor: pointer;
-    color: #4b75a4;
+    color: #3598db;
+ }
+ .disable-mouse{
+    pointer-events: none;
  }
  @media screen and (min-width:900px) {
     .window_panel{
@@ -503,15 +513,15 @@ var elem = $(window);
   </style>
 
 <div ng-controller="chat-controller as main" class="dnd-container">
-            <div ng-show="init" class="draggable chat mini ng-class:{mini: state==1, full: state==2}" ng-click="click(!$dragged &amp;&amp; !$resized &amp;&amp; !$rotated, $dropmodel)" dnd-draggable="state == 0" dnd-draggable-opts="{layer: 'layer1', handle: '.handle'}" dnd-on-dragstart="main.dragstart()" dnd-on-drag="main.drag($dropmodel)" dnd-on-dragend="main.dragend($dropmodel)" dnd-containment="'.dnd-container'" dnd-rect="main.rect3" dnd-model="main.dragmodel">
-            <div class="logo"></div>
+            <div ng-show="init" class="draggable chat mini ng-class:{mini: state==1, full: state==2}" ng-click="click(!$dragged &amp;&amp; !$resized &amp;&amp; !$rotated, $dropmodel)" >
+            <div class="logo ignore"></div>
             <iframe style="width: 100%;height: 100%;border: none;" src="https://localhost:8080/crmChat"></iframe>
-            <div class="window_panel" style="">
+            <div class="window_panel ignore" style="">
                 <div id="minimize_btn" class="material-icons" ng-click="minimizete()">indeterminate_check_box</div>
                 <div id="fullscreen_btn" class="material-icons" ng-click="fullScreen()">web_asset</div>
                 <div id="close_btn" class="material-icons" ng-click="state = -1">close</div>
             </div>
-            <div class="handle" dnd-draggable-handle="" style=""></div>
+            <div class="handle" style=""></div>
             
 
             </div>

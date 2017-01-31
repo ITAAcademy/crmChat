@@ -17,13 +17,13 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
     var roomsRequiredTrainers = new Map();
 
-    var getRoomsRequiredTrainers = function(){
+    var getRoomsRequiredTrainers = function() {
         return roomsRequiredTrainers;
     }
-    var getRoomsRequiredTrainersLength = function(){
-        return roomsRequiredTrainers==null  ? 0 : Object.keys(roomsRequiredTrainers).length;
+    var getRoomsRequiredTrainersLength = function() {
+        return roomsRequiredTrainers == null ? 0 : Object.keys(roomsRequiredTrainers).length;
     }
-    var isMessageSended = function(){
+    var isMessageSended = function() {
         return messageSended;
     }
     var setMessageSended = function(val) {
@@ -128,14 +128,6 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
         })
     };
-    $rootScope.$on("login", function(event, chatUserId) {
-        onlineUsersIds.push(chatUserId);
-    });
-    $rootScope.$on("logout", function(event, chatUserId) {
-        var index = onlineUsersIds.indexOf(chatUserId);
-        onlineUsersIds.splice(index, 1);
-    });
-
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
             var mess_obj = JSON.parse(message.body);
@@ -148,10 +140,13 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
                         var chatUserId = JSON.parse(message.body).chatUserId;
                         $rootScope.$broadcast("login", chatUserId);
+                        onlineUsersIds.push(chatUserId);
                     });
                     chatSocket.subscribe("/topic/chat.logout", function(message) {
                         var chatUserId = JSON.parse(message.body).username;
                         $rootScope.$broadcast("logout", chatUserId);
+                        var index = onlineUsersIds.indexOf(chatUserId);
+                        onlineUsersIds.splice(index, 1);
 
                     });
                     //TODO make channel private
@@ -292,7 +287,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                 }*/
                 if (data["newAsk_ToChatUserId"] != null) {
                     /*SHOW*/
-//                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink, data["newAsk_ToChatUserId"][0].noLink);
+                    //                    AskWindow.setLinks(data["newAsk_ToChatUserId"][0].yesLink, data["newAsk_ToChatUserId"][0].noLink);
                     AskWindow.setAskObject(data["newAsk_ToChatUserId"][0]);
                     AskWindow.showAskWindow();
                 }
@@ -435,7 +430,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var setRealChatUserId = function(id) { realChatUserId = id };
 
     var participantsSort = function(participant) {
-        if (participant==null) return '';
+        if (participant == null) return '';
         var isOnline = isUserOnline(participant.chatUserId);
         return isOnline ? 'a' + participant.username : 'b' + participant.username;
     }
@@ -466,8 +461,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         getTenantIsFree: getTenantIsFree,
         isMessageSended: isMessageSended,
         setMessageSended: setMessageSended,
-        getRoomsRequiredTrainers : getRoomsRequiredTrainers,
-        getRoomsRequiredTrainersLength : getRoomsRequiredTrainersLength
+        getRoomsRequiredTrainers: getRoomsRequiredTrainers,
+        getRoomsRequiredTrainersLength: getRoomsRequiredTrainersLength
 
     };
 

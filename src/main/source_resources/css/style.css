@@ -204,11 +204,11 @@
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
-    -webkit-transition: 1s ease-out;
+  /*  -webkit-transition: 1s ease-out;
     -moz-transition: 1s ease-out;
     -o-transition: 1s ease-out;
     transition: 1s ease-out;
-    transition-property: max-height;
+    transition-property: max-height;*/
     overflow-y: scroll;
 }
 
@@ -1776,10 +1776,10 @@ body {
     .left_panel {
         z-index: 222222;
         max-width: 0;
-        -webkit-transition: .5s ease-in-out;
-        -moz-transition: .5s ease-in-out;
-        -o-transition: .5s ease-in-out;
-        transition: 0.5s ease-in-out;
+        -webkit-transition: max-width .5s ease-in-out;
+        -moz-transition:max-width .5s ease-in-out;
+        -o-transition:max-width .5s ease-in-out;
+        transition:max-width 0.5s ease-in-out;
     }
     .left_panel.active {
         max-width: 301px;
