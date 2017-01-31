@@ -208,6 +208,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.roomId), function(message) {
                     calcPositionPush(JSON.parse(message.body)); //POP
                 }));
+            lastRoomBindings.push(
+                chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId,UserFactory.getChatUserId()), function(message) {
+                    unsubscribeCurrentRoom();
+                }));
 
             lastRoomBindings.push(chatSocket.subscribe("/app/{0}/chat.participants/{1}".format(currentRoom.roomId, globalConfig.lang), function(message) {
                 if (message.body != "{}") {
