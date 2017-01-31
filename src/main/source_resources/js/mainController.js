@@ -643,6 +643,17 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
+
+       /* $interval(function(){
+            if($scope.getNewMsgNumber() > 0)
+            {
+                $("message_notification").addClass("animation-play-state: running;");
+            }
+            else
+            {
+                $("message_notification").removeClass("animation-play-state: running;");
+            }
+        }, 1)*/
         var updateMessagesSearchTimeout;
         $scope.updateMessagesSearch = function() {
             if (updateMessagesSearchTimeout != undefined)

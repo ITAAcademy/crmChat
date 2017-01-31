@@ -27,15 +27,15 @@
                 <img src="images/elements/Icon notification.png" alt="" />
                 <div class="text"></div>
             </div>
-            <div class="window_icon message_notification">
+            <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
                 <i class="material-icons ">chat_bubble_outline</i>
-                <div ng-if="getNewMsgNumber() > 0" class="text" ng-bind="getNewMsgNumber()"></div>
+                <div class="text" ng-bind="getNewMsgNumber()"></div>
                 <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
             </div>
-            <div class="window_icon tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
+            <div class="window_icon tenant_busy_control ng-hide" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                 <i class="material-icons ">hourglass_empty</i>
             </div>
-            <div class="window_icon" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
+            <div class="window_icon ng-hide" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <i class="material-icons ">hourglass_full</i>
             </div>
                <div class="window_icon" notificable="true" ng-click="toggleVisible()" template="waiting_users_list"
