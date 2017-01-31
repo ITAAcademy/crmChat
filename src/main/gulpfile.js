@@ -1,5 +1,10 @@
 'use strict';
 const gulp = require('gulp');
+/*
+var gulpLoadPlugins = require('gulp-load-plugins');
+var plugins = gulpLoadPlugins();
+*/
+var gutil = require('gulp-util');
 const cssmin = require('gulp-cssmin');
 const uncss = require('gulp-uncss');
 const uglify = require('gulp-uglify');
@@ -32,6 +37,7 @@ gulp.task('assets',function(){
     return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')}).pipe(gulp.dest('resources/static/'));
 });
 gulp.task('templates:static',function(){
+	gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(gulp.dest('resources/templates'));
     return gulp.src('source_resources/static_templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(gulp.dest('resources/static/static_templates'));
 });
 gulp.task('templates',function(){
@@ -39,9 +45,10 @@ gulp.task('templates',function(){
 });
 
 gulp.task('build',gulp.series('styles','assets','templates:static','templates','scripts','lib'));
-
+gutil.log('Start watching!');
 gulp.watch('source_resources/css/*.{css,sass}',gulp.series('styles'));
 gulp.watch('source_resources/images/**/*.*',gulp.series('assets'));
 gulp.watch('source_resources/static_templates/*.*',gulp.series('templates'));
+gulp.watch('source_resources/templates/*.*',gulp.series('templates'));
 gulp.watch('source_resources/js/*.*',gulp.series('scripts'));
 gulp.watch('source_resources/lib/*.*',gulp.series('lib'));

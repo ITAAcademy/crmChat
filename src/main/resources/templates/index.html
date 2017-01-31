@@ -26,12 +26,11 @@
             <div class="window_icon notification">
                 <img src="images/elements/Icon notification.png" alt="" />
                 <div class="text"></div>
-                <div class="state"></div>
             </div>
             <div class="window_icon message_notification">
                 <i class="material-icons ">chat_bubble_outline</i>
                 <div ng-if="getNewMsgNumber() > 0" class="text" ng-bind="getNewMsgNumber()"></div>
-                <div ng-if="getNewMsgNumber() > 0" class="state"></div>
+                <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
             </div>
             <div class="window_icon tenant_busy_control" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                 <i class="material-icons ">hourglass_empty</i>
@@ -42,7 +41,6 @@
                <div class="window_icon" notificable="true" ng-click="toggleVisible()" template="waiting_users_list"
                     itemclick="confirmToHelp" data="getRoomsRequiredTrainers()" container="waiting_users_container">
                    <i class="material-icons ">face</i>
-                   <div ng-show="getRoomsRequiredTrainersLength()>0" class="state"></div>
                </div>
                <div id="waiting_users_container" class="notification_menu"></div>
            </div>
