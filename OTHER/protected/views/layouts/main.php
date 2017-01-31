@@ -307,12 +307,8 @@ $header = new Header();
 <!-- Placeholder for old browser -->
 
 
-<script type="text/javascript" src = "https://localhost:8080/crmChat/lib/angular-dnd.js"></script>
-
-
-
     <script type="text/javascript">
-    var app = angular.module('mainApp', ['dnd']);
+    var app = angular.module('mainApp', []);
 
     app.controller('chat-controller', function($scope){
 
@@ -389,10 +385,9 @@ var elem = $(window);
          $( window ).resize(resizeFunc);
          $( document ).ready(resizeFunc);
           
-
-                $scope.state = 1;
-
-        if(localStorage.getItem("chatState") == undefined)
+$(document).ready(function(){
+    $scope.state = 1;
+$scope.$apply(function(){if(localStorage.getItem("chatState") == undefined)
             $scope.state = 0;
         else
         {
@@ -406,10 +401,10 @@ var elem = $(window);
         $scope.$watch('state', function(){
             localStorage.setItem("chatState", $scope.state);
         })
-        $scope.init = true;
-
-
-    });
+        $scope.init = true;});
+        
+});
+        });
 
    
 
@@ -419,6 +414,9 @@ var elem = $(window);
  <style type="text/css">
  .dnd-container{
     position: fixed; z-index: 99999999;top: 0px;left: 0px;width: 100%;height: 100%;transform: none;pointer-events: none;
+ }
+ .dnd-container *{
+     box-sizing: border-box;
  }
  .dnd-container .chat{
     width: 100%;
@@ -436,6 +434,15 @@ var elem = $(window);
     -moz-transition: all 1.0s ease;
     -o-transition: all 1.0s ease;
     transition: all 1.0s ease;
+
+    -webkit-transition-property: top, bottom, left, right;
+    transition-property: top, bottom, left, right;
+
+    -webkit-transform: translateZ(0);
+-moz-transform: translateZ(0);
+-ms-transform: translateZ(0);
+-o-transform: translateZ(0);
+transform: translateZ(0);
     margin: 0;
  }
  .dnd-container .chat.mini{
@@ -483,7 +490,7 @@ var elem = $(window);
     line-height: 35px;
  }
  .window_panel{
-    position:absolute;top: 15px;right: 10px;width: 90px;height: 35px;background: none;color:#fff;
+    position:absolute;top: 15px;right: 0px;width: 60px;height: 35px;background: none;color:#fff;
  }
  .handle{
     position:absolute;top: 15px;left: 60px;width: calc(100% - 250px);height: 35px;background: none;color:#fff;cursor: move;
@@ -492,6 +499,9 @@ var elem = $(window);
  .dnd-container .chat.full .handle{
     cursor: initial;
  }
+  .dnd-container .chat.full .window_panel{
+  top: 15px;right: 15px;
+    }
  .material-icons{
     -webkit-transition: color .25s ease-in-out;
     -moz-transition: color .25s ease-in-out;
@@ -506,20 +516,18 @@ var elem = $(window);
     pointer-events: none;
  }
  @media screen and (min-width:900px) {
-    .window_panel{
-  top: 15px;right: 10px;
-    }
+
 }
   </style>
 
 <div ng-controller="chat-controller as main" class="dnd-container">
-            <div ng-show="init" class="draggable chat mini ng-class:{mini: state==1, full: state==2}" ng-click="click(!$dragged &amp;&amp; !$resized &amp;&amp; !$rotated, $dropmodel)" >
+            <div ng-show="init" class="draggable chat mini ng-class:{mini: state==1, full: state==2}" ng-click="" >
             <div class="logo ignore"></div>
             <iframe style="width: 100%;height: 100%;border: none;" src="https://localhost:8080/crmChat"></iframe>
             <div class="window_panel ignore" style="">
                 <div id="minimize_btn" class="material-icons" ng-click="minimizete()">indeterminate_check_box</div>
                 <div id="fullscreen_btn" class="material-icons" ng-click="fullScreen()">web_asset</div>
-                <div id="close_btn" class="material-icons" ng-click="state = -1">close</div>
+              <!--  <div id="close_btn" class="material-icons" ng-click="state = -1">close</div> -->
             </div>
             <div class="handle" style=""></div>
             
