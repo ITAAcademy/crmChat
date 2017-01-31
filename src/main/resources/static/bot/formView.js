@@ -1,1 +1,0 @@
-"use strict";springChatControllers.controller("ChatFormViewController",["$rootScope","$scope","$window","$uibModal","$http","$location","$interval","$cookies","$timeout","toaster","ChatSocket","$cookieStore","$q","$controller",function(o,t,e,r,$,i,l,c,n,a,s,C,h,p){}]);

@@ -26,7 +26,7 @@ gulp.task('lib',function(){
     return gulp.src('source_resources/lib/**/*.*',{since:gulp.lastRun('lib')}).pipe(gulp.dest('resources/static/lib'));
 });
 gulp.task('styles',function(){
-    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')}).pipe(autoprefixer()).pipe(cssmin()).pipe(gulp.dest('resources/static/css'));
+    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')}).pipe(autoprefixer())/*.pipe(cssmin())*/.pipe(gulp.dest('resources/static/css'));
 });
 gulp.task('assets',function(){
     return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')}).pipe(gulp.dest('resources/static/'));
