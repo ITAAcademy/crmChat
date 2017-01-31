@@ -644,16 +644,16 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
 
-       /* $interval(function(){
-            if($scope.getNewMsgNumber() > 0)
-            {
-                $("message_notification").addClass("animation-play-state: running;");
-            }
-            else
-            {
-                $("message_notification").removeClass("animation-play-state: running;");
-            }
-        }, 1)*/
+        /* $interval(function(){
+             if($scope.getNewMsgNumber() > 0)
+             {
+                 $("message_notification").addClass("animation-play-state: running;");
+             }
+             else
+             {
+                 $("message_notification").removeClass("animation-play-state: running;");
+             }
+         }, 1)*/
         var updateMessagesSearchTimeout;
         $scope.updateMessagesSearch = function() {
             if (updateMessagesSearchTimeout != undefined)
@@ -705,7 +705,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             var messagesScroll = $('#messagesScroll');
             var messagesScrollTop = messagesScroll.scrollTop();
             savedDistanceToBottom = (typeof messagesScroll === "undefined" ||
-                    typeof messagesScroll[0] === "undefined") ? undefined : messagesScroll[0].scrollHeight -
+                    typeof messagesScroll[0] === "undefined") ? 0 : messagesScroll[0].scrollHeight -
                 messagesScroll.scrollTop() - messagesScroll[0].clientHeight
         }
 
@@ -740,7 +740,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 //$('#messagesScroll').height(messagesOutputHeight);
                 //$('#messagesScroll').scrollTop(getScrollTopToPreserveScroll(messagesOutputHeight));
 
-
                 $('#messagesScroll').stop(true).animate({
                     height: messagesOutputHeight,
                     scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
@@ -761,14 +760,15 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.attaches_dropdown_click = function() {
             $('#attaches_dropdown').toggleClass('shown');
         }
-        $timeout(function() {
-            messageAreaResizer();
-        }, 1000);
+
+        messageAreaResizer();
+
         $timeout(function() {
             //DOM has finished rendering
             $(".messages_input_area").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
         });
+
         $scope.$$postDigest(function() {
             /*****************************
              ************CONFIG************

@@ -146,10 +146,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (summarised == false)
             messages.unshift(msg);
-
         $rootScope.$$postDigest(function() {
             var objDiv = document.getElementById("messagesScroll");
-            //if (needScrollDown)
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
     }
@@ -209,7 +207,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                     calcPositionPush(JSON.parse(message.body)); //POP
                 }));
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId,UserFactory.getChatUserId()), function(message) {
+                chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {
                     unsubscribeCurrentRoom();
                 }));
 
@@ -262,10 +260,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var addUserToRoom = function(chatUserId) {
         $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.roomId, chatUserId), {}).
         success(function(data, status, headers, config) {
-            
+
         }).
         error(function(data, status, headers, config) {
-            
+
         });
     }
 
@@ -411,11 +409,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             for (var key in bot_params)
                 botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
         }
-        $timeout(function() {
-            var objDiv = document.getElementById("messagesScroll");
-            objDiv.scrollTop = objDiv.scrollHeight;
+
+
+
+        $rootScope.$$postDigest(function() {
+            $('#messagesScroll').stop(true).animate({scrollTop: 999999
+            }, 500);
             $rootScope.$broadcast('MessageBusyEvent', false);
-        }, 0, false);
+        });
 
 
     }
@@ -608,8 +609,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getCurrentRoom: function() {
             return currentRoom;
         },
-        setRooms: function(roomsArg) { rooms = roomsArg;
-            updateNewMsgNumber(); },
+        setRooms: function(roomsArg) {
+            rooms = roomsArg;
+            updateNewMsgNumber();
+        },
         getRooms: function() {
             return rooms;
         },
