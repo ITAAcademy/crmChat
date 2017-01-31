@@ -627,7 +627,7 @@ public class ChatController {
 		Long  chatId = Long.parseLong(chatIdStr);
 		participantRepository.addParticipantPresenceByLastConnectionTime(chatId);
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
-		globalInfoResult.put(result,principal.getName());
+		globalInfoResult.put(result, principal.getName());
 
 		//	LoginEvent loginEvent = new LoginEvent(Long.parseLong(principal.getName()), "test",participantRepository.isOnline(principal.getName()));
 		//	simpMessagingTemplate.convertAndSend("/topic/addFieldToInfoMap", loginEvent);
