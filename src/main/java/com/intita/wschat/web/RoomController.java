@@ -996,9 +996,10 @@ public class RoomController {
 	@ResponseBody
 	public boolean removeUserFromRoomRequest(@PathVariable("id") Long id, @PathVariable("room") Long room,
 			Principal principal) {
+		//TODO unsubscribe user from room
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUser(id);
-
+		simpMessagingTemplate.convertAndSend(String.format("/topic/chat/rooms/%s/remove_user/%s",room,id),"");
 		return removeUserFromRoomFully(user_o, room_o, principal, false);
 	}
 
