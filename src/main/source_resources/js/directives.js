@@ -388,6 +388,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
+                var sendingMessage = null;
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
                 if (!UserFactory.isMessageSended())
                     return;
@@ -412,9 +413,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {
-                        if (angular.isDefined(sendingMessage)) {
+                        if (sendingMessage!=null) {
                             $timeout.cancel(sendingMessage);
-                            sendingMessage = undefined;
+                            sendingMessage = null;
                         }
                         if (UserFactory.isMessageSended()) return;
                         $scope.messageError();
@@ -576,20 +577,23 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
 
 
 
-angular.module('springChat.directives').directive('notificable',['$templateRequest', '$sce', '$compile', notificable]);
+angular.module('springChat.directives').directive('notificable',['$templateRequest', '$sce', '$compile','$parse',notificable]);
 
-function notificable($templateRequest, $sce, $compile) {
+function notificable($templateRequest, $sce, $compile,$parse) {
     //TODO finish rooms search
     return {
-        scope:{
-            itemClick : '=itemclick',
-            getData : '&data',
-        },
         restrict: 'EA',
         link: function(scope, element, attrs) {
             if (attrs.template == null) {
                 console.error('Template must be set');
                 return;
+            }
+
+            scope.itemClick =  $parse(attrs.itemclick);
+
+            var getDataHandler = $parse(attrs.data);
+            scope.getData =  function(){
+               return getDataHandler(scope)();
             }
             var templatePath = 'static_templates/' + attrs.template + '.html';
             var templateUrl = $sce.getTrustedResourceUrl(templatePath);

@@ -23,10 +23,12 @@
         <i id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <img class="logo" src="images\intita95x30.png" alt="" />
            <div class="window_icons_wrapper">
-            <div class="window_icon notification">
+            <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list"
+                 itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">
                 <img src="images/elements/Icon notification.png" alt="" />
                 <div class="text"></div>
             </div>
+               <div id="notification_container" class="notification_menu"></div>
             <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
                 <i class="material-icons ">chat_bubble_outline</i>
                 <div class="text" ng-bind="getNewMsgNumber()"></div>
@@ -38,11 +40,6 @@
             <div class="window_icon ng-hide" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
                 <i class="material-icons ">hourglass_full</i>
             </div>
-               <div class="window_icon" notificable="true" ng-click="toggleVisible()" template="waiting_users_list"
-                    itemclick="confirmToHelp" data="getRoomsRequiredTrainers()" container="waiting_users_container">
-                   <i class="material-icons ">face</i>
-               </div>
-               <div id="waiting_users_container" class="notification_menu"></div>
            </div>
         </div>
         <div id="loader-wrapper">

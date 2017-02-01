@@ -28,27 +28,26 @@ gulp.task('scripts',function(){
         .pipe(gulp.dest('resources/static/js'));
 });
 gulp.task('lib',function(){
-    return gulp.src('source_resources/lib/**/*.*',{since:gulp.lastRun('lib')}).pipe(gulp.dest('resources/static/lib'));
+    return gulp.src('source_resources/lib/**/*.*',{since:gulp.lastRun('lib')}).pipe(debug({title: 'lib:'})).pipe(gulp.dest('resources/static/lib'));
 });
 gulp.task('styles',function(){
-    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')}).pipe(autoprefixer())/*.pipe(cssmin())*/.pipe(gulp.dest('resources/static/css'));
+    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')}).pipe(debug({title: 'styles:'})).pipe(autoprefixer())/*.pipe(cssmin())*/.pipe(gulp.dest('resources/static/css'));
 });
 gulp.task('assets',function(){
-    return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')}).pipe(gulp.dest('resources/static/'));
+    return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')}).pipe(debug({title: 'assets:'})).pipe(gulp.dest('resources/static/'));
 });
 gulp.task('templates:static',function(){
-	gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(gulp.dest('resources/templates'));
-    return gulp.src('source_resources/static_templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(gulp.dest('resources/static/static_templates'));
+    return gulp.src('source_resources/static_templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(debug({title: 'templates:static:'})).pipe(gulp.dest('resources/static/static_templates'));
 });
 gulp.task('templates',function(){
-    return gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates')}).pipe(gulp.dest('resources/templates'));
+    return gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates')}).pipe(debug({title: 'templates:'})).pipe(gulp.dest('resources/templates'));
 });
 
 gulp.task('build',gulp.series('styles','assets','templates:static','templates','scripts','lib'));
 gutil.log('Start watching!');
 gulp.watch('source_resources/css/*.{css,sass}',gulp.series('styles'));
 gulp.watch('source_resources/images/**/*.*',gulp.series('assets'));
-gulp.watch('source_resources/static_templates/*.*',gulp.series('templates'));
+gulp.watch('source_resources/static_templates/*.*',gulp.series('templates:static'));
 gulp.watch('source_resources/templates/*.*',gulp.series('templates'));
-gulp.watch('source_resources/js/*.*',gulp.series('scripts'));
+gulp.watch('source_resources/js/**/*.*',gulp.series('scripts'));
 gulp.watch('source_resources/lib/*.*',gulp.series('lib'));
