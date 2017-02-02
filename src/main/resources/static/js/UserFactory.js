@@ -8,7 +8,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var studentTrainerList = [];
     var chatUserNickname, chatUserRole, chatUserAvatar;
     var realChatUserId;
-    var chatUserId = -1;
+    var chatUserId = null;
     var isUserTenantInited = false;
     var chatUserRole;
 
