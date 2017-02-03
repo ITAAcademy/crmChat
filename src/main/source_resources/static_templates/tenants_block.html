@@ -1,11 +1,13 @@
 <div ng-init="hideEmpty = true" ng-show="!hideEmpty || getTenantsList().length > 0" class="items_list_block participants_block">
     <div class="block_head" ng-click="toggleFolded()">
         <div class="block_controll"><img src="images/elements/add.png"></div>
-        <div class="block_name">{{blockName}}</div>
+        <div ng-unless="students().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
+        <div class="block_name">{{blockName}}</div>
+        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons">close</i>
         <div class="block_head_diveded"></div>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded}">
+    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
         <div ng-click="addTenantToRoom(participant.chatUserId)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
             <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + participant.avatar + ')'}"></div>

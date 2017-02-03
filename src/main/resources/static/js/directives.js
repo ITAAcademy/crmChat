@@ -243,6 +243,17 @@ angular.module('springChat.directives').directive('studentsBlock', ['$http', 'my
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
 function initFolded(scope, element) {
+    scope.collapseBlock = function () {
+        scope.collapsed = true;
+    };
+    scope.unCollapseBlock = function () {
+        scope.collapsed = false;
+    };
+    scope.toggleCollapseBlock = function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        scope.collapsed = !scope.collapsed;
+    };
     scope.scroll;
     scope.folded = true;
     scope.toggleFolded = function (event) {

@@ -18,6 +18,7 @@ body {
     box-sizing: border-box;
 }
 
+
 .material-icons:hover {
     cursor: pointer;
 }
@@ -75,7 +76,7 @@ body {
     font-weight: 300;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 1px 3px 9px 0 rgb(33, 73, 105);
+    box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97);
 }
 
 .consultant_wrapper.normal {
@@ -128,7 +129,7 @@ body {
     left: 15px;
     z-index: 255;
     line-height: 35px;
-    color: #ffffff;
+    color: #4c75a3;
     display: none;
 }
 
@@ -138,10 +139,10 @@ body {
 
 .head {
     min-height: 35px;
-    background-color: #2774b2;
+    background-color: #fff;
     position: relative;
-    /* border-bottom: #ffffff 1px solid; */
-    /* box-shadow: 0px 1px 4px #6d7a87; */
+    /* border-bottom: #dbdada 2px solid; */
+    box-shadow: 0px 1px 4px #6d7a87;
     z-index: 111;
 }
 
@@ -159,7 +160,7 @@ body {
 
 .window_icon {
     display: inline-block;
-    color: #ffffff;
+    color: #757575;
     cursor: pointer;
     vertical-align: middle;
 }
@@ -199,7 +200,7 @@ body {
     width: 100%;
     color: #000;
     /* padding-bottom: 34px; */
-    border-top: #ffffff 1px solid;
+    border-top: #3598db 1px solid;
 }
 
 .items_list_block.top_block {
@@ -211,12 +212,16 @@ body {
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
-  /*  -webkit-transition: 1s ease-out;
-    -moz-transition: 1s ease-out;
-    -o-transition: 1s ease-out;
-    transition: 1s ease-out;
-    transition-property: max-height;*/
+    /*  -webkit-transition: 1s ease-out;
+      -moz-transition: 1s ease-out;
+      -o-transition: 1s ease-out;
+      transition: 1s ease-out;
+      transition-property: max-height;*/
     overflow-y: scroll;
+}
+.collapse_block_button{
+    right:0px;
+    position:absolute;
 }
 
 .items_list_block .block_content.unfolded {
@@ -224,6 +229,10 @@ body {
     padding-right: 0px;
     overflow-y: scroll;
     margin-right: 0px;
+}
+.items_list_block .block_content.collapsed{
+    max-height: 0px;
+    min-height: 0px;
 }
 
 .items_list_block.top_block+.chevron_wrapper {
@@ -305,20 +314,20 @@ body {
     left: 10px;
 }
 .left_panel_mini .contact_control .budget{
-    
-border-radius: 50%;
-    
-width: 20px;
-    
-height: 20px;
-    
-line-height: 20px;
-    
-font-size: 13px;
-    
-bottom: 15px;
-    
-left: -42px;
+
+    border-radius: 50%;
+
+    width: 20px;
+
+    height: 20px;
+
+    line-height: 20px;
+
+    font-size: 13px;
+
+    bottom: 15px;
+
+    left: -42px;
 }
 .items_list_block .block_head {
     position: relative;
@@ -332,11 +341,11 @@ left: -42px;
 }
 
 .items_list_block .block_head_diveded {
-    width: calc(100% - 67px);
+    width: 100%;
     height: 1px;
     background-color: #3598db;
     position: absolute;
-    right: 0px;
+    /* right: 0px; */
     top: 24px;
 }
 
@@ -351,16 +360,14 @@ left: -42px;
     line-height: 25px;
     text-align: start;
     overflow: hidden;
-    position: absolute;
-    right: 25px;
+    /* position: absolute; */
+    left: 25px;
     color: #3e87b8;
 }
 
 .items_list_block .dropdown_icon {
-    position: absolute;
     width: 25px;
     height: 25px;
-    right: 0px;
     top: 0px;
     -webkit-transition: 1s ease-in-out;
     transition: 1s ease-in-out;
@@ -1766,7 +1773,7 @@ body {
                                   not supported by any browser */
 }
 
-@media only screen and (max-width: 600px) {
+@media screen and (max-width:949px) {
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1826,12 +1833,12 @@ body {
     }
 }
 
-@media only screen and (min-width:950px) {
+@media screen and (min-width:950px) {
     .items_list_block .block_content {
         min-height: 130px;
         max-height: 130px;
     }
-    [trainers-block] .items_list_block .block_content {
+    trainers-block .items_list_block .block_content {
         min-height: 65px;
         max-height: 65px;
     }
@@ -1872,10 +1879,6 @@ body {
     /* margin-bottom: 20px; */
 }
 
-.bottom_details *{
-	max-height: 100%;
-	max-width: 100%;
-}
 .modal-footer button {
     background-color: #1e8eda;
     border: none;
