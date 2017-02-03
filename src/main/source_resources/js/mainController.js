@@ -646,9 +646,13 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.showMenu = false;
         $scope.toggleMenu = function() {
             $scope.showMenu = !$scope.showMenu;
+            return $scope.showMenu;
         }
         $rootScope.hideMenu = function() {
             $scope.showMenu = false;
+            debugger;
+            $rootScope.__modaleToggle['menu'].restart();
+            return $scope.showMenu;
         }
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;

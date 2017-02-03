@@ -20,12 +20,12 @@
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="head">
-        <i id="menu" modale-toggle="true" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
+        <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <img class="logo" src="images\Logo_bigUA_white.png" alt="" />
            <div class="window_icons_wrapper">
             <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list"
                  itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">
-                <img src="images/elements/Icon notification.png" alt="" />
+                <i class="material-icons">notifications</i>
                 <div class="text"></div>
             </div>
                <div id="notification_container" class="notification_menu"></div>
@@ -140,7 +140,7 @@
     <script src="lib/angular-file-upload/ng-file-upload.min.js"></script>
     <script src="lib/jquery.ba-resize.min.js"></script>
     <script src="lib/angular-contenteditable.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
+    <!--<script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>-->
 
 </body>
 
