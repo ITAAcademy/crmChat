@@ -11,7 +11,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     };
     var addDialog = function(dialogName, users) {
-        $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
+       return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
         success(function(data, status, headers, config) {
             console.log("ADD USER OK " + data);
         }).

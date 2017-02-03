@@ -672,6 +672,7 @@ public class RoomController {
 	}
 
 	@RequestMapping(value = "/chat/go/rooms/private/{userId}", method = RequestMethod.GET)
+	@ResponseBody
 	public Long goPrivateRoom(@PathVariable Long userId,
 								@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
 								Principal principal) throws JsonProcessingException {
@@ -788,7 +789,7 @@ public class RoomController {
 	@RequestMapping(value = "/chat/rooms/add", method = RequestMethod.POST)
 	@ResponseBody
 	// @SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
-	public void addRoomByAuthorLP(@RequestParam(name = "name") String roomName,
+	public Long addRoomByAuthorLP(@RequestParam(name = "name") String roomName,
 								  @RequestBody(required = false) ArrayList<Long> userIds, Principal principal) {
 		boolean operationSuccess = true;
 		Room room = null;
@@ -815,7 +816,7 @@ public class RoomController {
 		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
 		// send to user that operation success
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-
+		return room==null ? null : room.getId();
 	}
 
 	/***************************
