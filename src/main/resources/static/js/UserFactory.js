@@ -165,7 +165,6 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
                             if (!operationStatus.success) toaster.pop("error", "Error", "user wasn't added to room");
                             break;
                         case Operations.add_room:
-                            roomAdded = true;
                             if (!operationStatus.success) toaster.pop("error", "Error", "room wasn't added");
                             break;
                         case Operations.add_room_on_login:

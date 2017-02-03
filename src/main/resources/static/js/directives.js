@@ -668,8 +668,10 @@ roomsBlockLinkFunction = function roomsBlockLinkFunction($scope, element, attrib
         return $scope.searchEnabled;
     };
     $scope.createNewRoom = function ($event) {
-        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom);
-        $scope.$root.hideMenu();
+        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom).success(function (data, status, headers, config) {
+            $scope.$root.hideMenu();
+            ChannelFactory.changeLocation("/dialog_view/" + data);
+        });
         return false;
     };
 

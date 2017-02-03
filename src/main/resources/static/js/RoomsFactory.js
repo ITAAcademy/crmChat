@@ -11,7 +11,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     };
     var addDialog = function addDialog(dialogName, users) {
-        $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).success(function (data, status, headers, config) {
+        return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).success(function (data, status, headers, config) {
             console.log("ADD USER OK " + data);
         }).error(function (data, status, headers, config) {
             toaster.pop('error', "Error", "server request timeout", 1000);
