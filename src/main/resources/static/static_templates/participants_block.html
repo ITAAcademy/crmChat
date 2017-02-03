@@ -21,8 +21,5 @@
                 <img class="delete-user-icon" ng-if="!$root.checkPrivateRelations(currentRoom(), participant)  &amp;&amp; checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" src="images\cross13x15.png" alt="" />
             </div>
         </div>
-        <div class="block_item" ng-if="checkUserAdditionPermission()">
-            <div modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block" class="add_bg_btn">Додати нового учасника</div>
-        </div>
     </div>
 </div>

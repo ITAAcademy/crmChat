@@ -946,6 +946,14 @@ public class ChatController {
 
 	}
 
+	@RequestMapping(value="/get_rooms_containing_string", method = RequestMethod.GET)
+	@ResponseBody
+	public List<RoomModelSimple> getChatUsersLike(@RequestParam String query,Principal principal) throws JsonProcessingException {
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
+		List<RoomModelSimple> result  = roomService.getRoomsContainingStringByOwner(query,chatUser);
+		return result;
+	}
+
 
 
 	@RequestMapping(value="/get_all_users_emails_like", method = RequestMethod.GET)

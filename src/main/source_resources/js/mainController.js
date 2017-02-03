@@ -330,10 +330,19 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             $scope.show_search_list_admin = false;
         }
         $scope.onFriendClick = function(user) {
-            if (user.chatUserId != undefined && user.chatUserId != null)
-                window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+            if (user.chatUserId == undefined || user.chatUserId == null) return null;
+            $http.get(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true', {}).
+            success(function(data, status, headers, config) {
+                changeLocation("/dialog_view/" + data);
+            }).
+            error(function(data, status, headers, config) {
+
+            });
+
+          /*  if (user.chatUserId != undefined && user.chatUserId != null)
+                ChannelFactory.changeLocation('/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
             else
-                window.location.replace(serverPrefix + '/chat/go/rooms/private/' + user.id + '?isChatId=false');
+            ChannelFactory.changeLocation('#/chat/go/rooms/private/' + user.id + '?isChatId=false');*/
         }
 
         $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
