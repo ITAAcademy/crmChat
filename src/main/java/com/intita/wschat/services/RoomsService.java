@@ -321,6 +321,19 @@ public class RoomsService {
 		roomRepo.save(room);//@NEED_ASK@
 		return true;
 	}
+	public List<RoomModelSimple> getRoomsContainingStringByOwner(String query, ChatUser user){
+		List<RoomModelSimple> list = getRoomsModelByChatUser(user);
+		List<RoomModelSimple> result = new ArrayList<RoomModelSimple>();
+		for (RoomModelSimple model : list){
+			String title = model.getString() == null ? "" : model.getString().toLowerCase();
+			String lastMessage = model.getLastMessage() == null ? "" : model.getLastMessage().toLowerCase();
+			String queryStr = query == null ? "" : query.toLowerCase();
+			if (title.indexOf(queryStr)!=-1 ||
+					 lastMessage.indexOf(queryStr)!=-1)
+				result.add(model);
+		}
+		return result;
+	}
 
 	public boolean addUserToRoom(Long id, User user) {
 		Room room = roomRepo.findOne(id);
