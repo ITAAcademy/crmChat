@@ -672,7 +672,7 @@ public class RoomController {
 	}
 
 	@RequestMapping(value = "/chat/go/rooms/private/{userId}", method = RequestMethod.GET)
-	public String goPrivateRoom(@PathVariable Long userId,
+	public Long goPrivateRoom(@PathVariable Long userId,
 								@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
 								Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
@@ -689,10 +689,10 @@ public class RoomController {
 			if (cUser == null) {
 				throw new RoomNotFoundException("target user not registered!!!");
 			}
-			return "redirect:/#/dialog_view/" + getPrivateRoom(cUser, principalChatUser).getId();
+			return getPrivateRoom(cUser, principalChatUser).getId();
 		} catch (RoomNotFoundException ex) {
 			log.info("goPrivateRoomWithUser ::: " + ex.getMessage());
-			return "redirect:/";
+			return null;
 		}
 	}
 

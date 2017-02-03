@@ -494,9 +494,12 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
         templateUrl: 'static_templates/rooms_block.html',
         link: function link($scope, element, attributes) {
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
-            $scope.roomsListSearched = [];
+            $scope.usersListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            $scope.getRooms = RoomsFactory.getRooms;
+            $scope.getRooms = function () {
+                if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0) return RoomsFactory.getRooms();else return $scope.roomsListSearched;
+            };
+
             /*$scope.getUsersByEmail = function(query, deferred) {
                 var url = serverPrefix + "/get_users_like?login=" + query;
                 $http.get(url).success((function(deferred, data) { // send request
@@ -509,11 +512,26 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                 $timeout.cancel($scope.updatingUsersByEmailPromise);
                 if (email == null || email.length < 1) {
                     $scope.updatingUsersByEmailPromise = undefined;
-                    $scope.roomsListSearched = [];
+                    $scope.usersListSearched = [];
                     return;
                 }
                 $scope.updatingUsersByEmailPromise = $timeout(function () {
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
+                    return $http.get(url, {}).success(function (data) {
+                        // send request
+                        $scope.usersListSearched = data;
+                    });
+                }, delay);
+            };
+            $scope.updateRoomsByQuery = function (query, delay) {
+                $timeout.cancel($scope.updatingUsersByEmailPromise);
+                if (query == null || query.length < 1) {
+                    $scope.updatingUsersByEmailPromise = undefined;
+                    $scope.roomsListSearched = [];
+                    return;
+                }
+                $scope.updatingUsersByEmailPromise = $timeout(function () {
+                    var url = serverPrefix + "/get_rooms_containing_string?query=" + query;
                     return $http.get(url, {}).success(function (data) {
                         // send request
                         $scope.roomsListSearched = data;
@@ -613,7 +631,8 @@ roomsBlockLinkFunction = function roomsBlockLinkFunction($scope, element, attrib
 
     $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
     $scope.clickToRoomEvent = function (room) {
-        if ($scope.searchEnabled || $scope.createEnabled) return;
+        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
+            return;
         switch ($scope.mode) {
             case 1:
                 $scope.doGoToRoom(room.roomId);
@@ -696,7 +715,8 @@ roomsBlockLinkFunction = function roomsBlockLinkFunction($scope, element, attrib
     };
 
     $scope.doGoToRoom = function (roomId) {
-        if ($scope.searchEnabled || $scope.createEnabled) return;
+        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
+            return;
         $scope.loadOnlyFilesInfiniteScrollMode = false;
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
     };
