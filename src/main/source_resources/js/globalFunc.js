@@ -1,3 +1,14 @@
+function inIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+    return false;
+}
+
+if(inIframe())
+    $("body").addClass("frame");
 function toArray(object) {
     return angular.isArray(object) ? object : Object.keys(object).map(function(key) {
         return object[key];
