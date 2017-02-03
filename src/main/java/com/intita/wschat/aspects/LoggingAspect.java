@@ -18,7 +18,7 @@ package com.intita.wschat.aspects;
 public class LoggingAspect {
     //@Around("execution(* com.blablabla.server..*.*(..))")
     //@Around("execution(* com.intita.forum.services..*.*(..))")
-    @Around("execution(* com.intita.wschat.services..*(..)) || execution(* com.intita.wschat.repositories..*(..)) || execution(* com.intita.wschat.web..*(..))")
+    //@Around("execution(* com.intita.wschat.services..*(..)) || execution(* com.intita.wschat.repositories..*(..)) || execution(* com.intita.wschat.web..*(..))")
     public Object logMethod(ProceedingJoinPoint joinPoint) throws Throwable{
         final Logger logger = LoggerFactory.getLogger(joinPoint.getTarget().getClass().getName());
         Object retVal = null;

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +25,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Nicolas Haiduchok
  */
 @Entity(name="chat_lang")
+@Cacheable
 public class Lang implements Serializable,Comparable<ChatUser> {
 
 	@Id

@@ -26,6 +26,8 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory
 import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -39,82 +41,73 @@ import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
+@EnableCaching
 @Import({WebSocketTraceChannelInterceptor.class, WebSocketTraceChannelInterceptorAutoConfiguration.class})
 //@ComponentScan("org.springframework.boot.actuate.trace")
 public class Application extends SpringBootServletInitializer  implements AsyncConfigurer  {
-
-
-
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
 	}
 
 	public static void main(String[] args) {
-
 		try {
 			SpringApplication.run(Application.class, args);	
 		} catch (Exception e) {
-			
-		}
 
+		}
 	}
 
-    @Override public void onStartup( ServletContext servletContext ) throws ServletException {
-        super.onStartup( servletContext );
-        servletContext.addListener( new RequestContextListener() ); 
+	@Override public void onStartup( ServletContext servletContext ) throws ServletException {
+		super.onStartup( servletContext );
+		servletContext.addListener( new RequestContextListener() ); 
 
-    }
-    
+	}
 	@Override
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setMaxPoolSize(10);
-        taskExecutor.setThreadNamePrefix("LULExecutor-");
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
-    
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new SimpleAsyncUncaughtExceptionHandler();
-    }
-    
-    @Value("${ssl.path}")
-    String keystoreFile;
-    @Value("${ssl.pass}")
-    String keystorePass = "qqqqqq";
-    final String keystoreType = "PKCS12";
-    final String keystoreProvider = "SunJSSE";
-    final String keystoreAlias = "tomcat";
-    
-    @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-         
-        // keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
-        // keytool -list -v -keystore keystore.p12 -storetype pkcs12
-         
-        // curl -u user:password -k https://127.0.0.1:9000/greeting
-         
-        TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
-        factory.addConnectorCustomizers((TomcatConnectorCustomizer) (Connector con) -> {
-            con.setScheme("https");
-            con.setSecure(true);
-            Http11NioProtocol proto = (Http11NioProtocol) con.getProtocolHandler();
-            proto.setSSLEnabled(true);
-            proto.setKeystoreFile(keystoreFile);
-            proto.setKeystorePass(keystorePass);
-            proto.setKeystoreType(keystoreType);
-            proto.setProperty("keystoreProvider", keystoreProvider);
-            proto.setKeyAlias(keystoreAlias);
-        });
-     
-         
-        return factory;
-    }
-    @Bean
-    public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf){
-        return hemf.getSessionFactory();
-    }
+	public Executor getAsyncExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setMaxPoolSize(10);
+		taskExecutor.setThreadNamePrefix("LULExecutor-");
+		taskExecutor.initialize();
+		return taskExecutor;
+	}
+	@Override
+	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+		return new SimpleAsyncUncaughtExceptionHandler();
+	}
+	@Value("${ssl.path}")
+	String keystoreFile;
+	@Value("${ssl.pass}")
+	String keystorePass = "qqqqqq";
+	final String keystoreType = "PKCS12";
+	final String keystoreProvider = "SunJSSE";
+	final String keystoreAlias = "tomcat";
+
+	@Bean
+	public EmbeddedServletContainerFactory servletContainer() {
+
+		// keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+		// keytool -list -v -keystore keystore.p12 -storetype pkcs12
+		// curl -u user:password -k https://127.0.0.1:9000/greeting
+		TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
+		factory.addConnectorCustomizers((TomcatConnectorCustomizer) (Connector con) -> {
+			con.setScheme("https");
+			con.setSecure(true);
+			Http11NioProtocol proto = (Http11NioProtocol) con.getProtocolHandler();
+			proto.setSSLEnabled(true);
+			proto.setKeystoreFile(keystoreFile);
+			proto.setKeystorePass(keystorePass);
+			proto.setKeystoreType(keystoreType);
+			proto.setProperty("keystoreProvider", keystoreProvider);
+			proto.setKeyAlias(keystoreAlias);
+		});
+
+
+		return factory;
+	}
+	@Bean
+	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf){
+		return hemf.getSessionFactory();
+	}
 
 }

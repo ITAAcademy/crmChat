@@ -75,7 +75,7 @@ body {
     font-weight: 300;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97);
+    box-shadow: 1px 3px 9px 0 rgb(33, 73, 105);
 }
 
 .consultant_wrapper.normal {
@@ -128,7 +128,7 @@ body {
     left: 15px;
     z-index: 255;
     line-height: 35px;
-    color: #4c75a3;
+    color: #ffffff;
     display: none;
 }
 
@@ -138,10 +138,10 @@ body {
 
 .head {
     min-height: 35px;
-    background-color: #fff;
+    background-color: #2774b2;
     position: relative;
-    /* border-bottom: #dbdada 2px solid; */
-    box-shadow: 0px 1px 4px #6d7a87;
+    /* border-bottom: #ffffff 1px solid; */
+    /* box-shadow: 0px 1px 4px #6d7a87; */
     z-index: 111;
 }
 
@@ -159,7 +159,7 @@ body {
 
 .window_icon {
     display: inline-block;
-    color: #757575;
+    color: #ffffff;
     cursor: pointer;
     vertical-align: middle;
 }
@@ -199,7 +199,7 @@ body {
     width: 100%;
     color: #000;
     /* padding-bottom: 34px; */
-    border-top: #3598db 1px solid;
+    border-top: #ffffff 1px solid;
 }
 
 .items_list_block.top_block {
@@ -1766,7 +1766,7 @@ body {
                                   not supported by any browser */
 }
 
-@media screen and (max-width:949px) {
+@media only screen and (max-width: 600px) {
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1826,7 +1826,7 @@ body {
     }
 }
 
-@media screen and (min-width:950px) {
+@media only screen and (min-width:950px) {
     .items_list_block .block_content {
         min-height: 130px;
         max-height: 130px;
@@ -1872,6 +1872,10 @@ body {
     /* margin-bottom: 20px; */
 }
 
+.bottom_details *{
+	max-height: 100%;
+	max-width: 100%;
+}
 .modal-footer button {
     background-color: #1e8eda;
     border: none;

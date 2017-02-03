@@ -1199,11 +1199,14 @@ public class ChatController {
 		model.addAttribute("user_copabilities_supported", RoomPermissions.Permission.getSupported());
 	}
 
+	@RequestMapping(value="/updateLang", method = RequestMethod.GET)
+	public void  updateLang(HttpServletRequest request) {
+		chatLangService.updateDataFromDatabase();
+	}
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
-
-		chatLangService.updateDataFromDatabase();
+	
 		if(before != null)
 		{
 			return "redirect:"+ before;

@@ -128,6 +128,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
         })
     };
+
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
             var mess_obj = JSON.parse(message.body);
@@ -344,6 +345,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
 
 
     function login(mess_obj) {
+        $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chat_id;
         isTenant = Boolean(mess_obj.isTenant);
@@ -375,7 +377,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
 
         ChannelFactory.setIsInited(true);
-        setTimeout(function() { $('body').addClass('loaded'); }, 100);
+
 
         if (mess_obj.nextWindow == 0) {
 

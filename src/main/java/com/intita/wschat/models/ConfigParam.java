@@ -3,6 +3,7 @@ package com.intita.wschat.models;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
  * @author Nicolas Haiduchok
  */
 @Entity(name="config")
+@Cacheable
 public class ConfigParam {
 	@Id
 	@GeneratedValue
@@ -106,6 +108,7 @@ public class ConfigParam {
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
+
 	public static HashMap listAsMap(List<ConfigParam> list){
 		HashMap<String,String> resultMap = new HashMap<String,String>();
 		
