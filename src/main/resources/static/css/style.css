@@ -1773,7 +1773,29 @@ body {
                                   not supported by any browser */
 }
 
+<<<<<<< HEAD
 @media screen and (max-width:949px) {
+=======
+@media only screen and (max-width: 300px) {
+body.frame .head .logo {
+    position: absolute;
+    left: 15px;
+    width: 75px;
+    background-color: #2774b2;
+    z-index: 9999;
+}
+}
+
+body.frame .dnd-container .chat.full .window_panel,
+body.frame .window_icons_wrapper {
+    right: 54px;
+    position: absolute;
+    height: 100%;
+    padding-top: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+>>>>>>> fff2c999449b0c46598249172ef561f2e63aed46
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1807,6 +1829,7 @@ body {
         left: 45px;
         width: 75px;
     }
+    
     .send_button {
         width: 35px;
         height: 35px;
@@ -1822,6 +1845,7 @@ body {
         line-height: 35px;
         cursor: pointer;
     }
+
     .send_button i {
         display: initial;
         font-size: 24px;
@@ -1833,12 +1857,23 @@ body {
     }
 }
 
+<<<<<<< HEAD
 @media screen and (min-width:950px) {
+=======
+@media only screen and (min-width:1350px) {
+>>>>>>> fff2c999449b0c46598249172ef561f2e63aed46
     .items_list_block .block_content {
         min-height: 130px;
         max-height: 130px;
     }
     trainers-block .items_list_block .block_content {
+        min-height: 65px;
+        max-height: 65px;
+    }
+}
+
+@media only screen and (max-height: 768px) {
+	    .items_list_block .block_content {
         min-height: 65px;
         max-height: 65px;
     }
@@ -1850,7 +1885,7 @@ body {
 }
 
 .window_icons_wrapper {
-    right: 54px;
+    right: 10px;
     position: absolute;
     height: 100%;
     padding-top: 5px;

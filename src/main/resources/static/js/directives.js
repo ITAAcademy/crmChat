@@ -112,14 +112,15 @@ var modaleToggle = function modaleToggle($compile, $parse, $rootScope) {
     return {
         restrict: 'EA',
         scope: {
-            id: '=',
+            modaleToggleId: '@modaleToggleId',
             callback: '&callback',
             ignoreId: '@ignoreId'
         },
         link: function link(scope, element, attr) {
-            if (scope.id != undefined) {
+            debugger;
+            if (scope.modaleToggleId != undefined) {
                 if ($rootScope.__modaleToggle == undefined) $rootScope.__modaleToggle = new Map();
-                $rootScope.__modaleToggle[scope.id] = {
+                $rootScope.__modaleToggle[scope.modaleToggleId] = {
                     restart: function restart() {
                         toggle = false;
                     }
