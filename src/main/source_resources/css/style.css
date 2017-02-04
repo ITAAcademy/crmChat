@@ -1,4 +1,4 @@
-﻿/*! * * * * * * * * * * * * * * * * * * * *\  
+﻿/*! * * * * * * * * * * * * * * * * * * * *\
   CSShake :: Package
   v1.5.0
   CSS classes to move your DOM
@@ -17,7 +17,6 @@ body {
     overflow: hidden;
     box-sizing: border-box;
 }
-
 
 .material-icons:hover {
     cursor: pointer;
@@ -76,7 +75,7 @@ body {
     font-weight: 300;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 1px 3px 9px 0 rgba(158, 158, 158, 0.97);
+    box-shadow: 1px 3px 9px 0 rgb(33, 73, 105);
 }
 
 .consultant_wrapper.normal {
@@ -129,7 +128,7 @@ body {
     left: 15px;
     z-index: 255;
     line-height: 35px;
-    color: #4c75a3;
+    color: #ffffff;
     display: none;
 }
 
@@ -139,10 +138,10 @@ body {
 
 .head {
     min-height: 35px;
-    background-color: #fff;
+    background-color: #2774b2;
     position: relative;
-    /* border-bottom: #dbdada 2px solid; */
-    box-shadow: 0px 1px 4px #6d7a87;
+    /* border-bottom: #ffffff 1px solid; */
+    /* box-shadow: 0px 1px 4px #6d7a87; */
     z-index: 111;
 }
 
@@ -160,7 +159,7 @@ body {
 
 .window_icon {
     display: inline-block;
-    color: #757575;
+    color: #ffffff;
     cursor: pointer;
     vertical-align: middle;
 }
@@ -179,6 +178,15 @@ body {
     left: 20px;
     width: 75px;
 }
+.collapse_block_button{
+    right:0px;
+    position:absolute;
+}
+.items_list_block .block_content.collapsed{
+    max-height: 0px;
+    min-height: 0px;
+}
+
 
 .head .message_notification .text {
     font-size: 14px;
@@ -200,7 +208,7 @@ body {
     width: 100%;
     color: #000;
     /* padding-bottom: 34px; */
-    border-top: #3598db 1px solid;
+    border-top: #ffffff 1px solid;
 }
 
 .items_list_block.top_block {
@@ -219,20 +227,12 @@ body {
       transition-property: max-height;*/
     overflow-y: scroll;
 }
-.collapse_block_button{
-    right:0px;
-    position:absolute;
-}
 
 .items_list_block .block_content.unfolded {
     max-height: 320px;
     padding-right: 0px;
     overflow-y: scroll;
     margin-right: 0px;
-}
-.items_list_block .block_content.collapsed{
-    max-height: 0px;
-    min-height: 0px;
 }
 
 .items_list_block.top_block+.chevron_wrapper {
@@ -345,7 +345,6 @@ body {
     height: 1px;
     background-color: #3598db;
     position: absolute;
-    /* right: 0px; */
     top: 24px;
 }
 
@@ -360,8 +359,9 @@ body {
     line-height: 25px;
     text-align: start;
     overflow: hidden;
-    /* position: absolute; */
-    left: 25px;
+    /*position: absolute;
+    right: 25px;*/
+    left:25px;
     color: #3e87b8;
 }
 
@@ -1773,15 +1773,14 @@ body {
                                   not supported by any browser */
 }
 
-
 @media only screen and (max-width: 300px) {
-body.frame .head .logo {
-    position: absolute;
-    left: 15px;
-    width: 75px;
-    background-color: #2774b2;
-    z-index: 9999;
-}
+    body.frame .head .logo {
+        position: absolute;
+        left: 15px;
+        width: 75px;
+        background-color: #2774b2;
+        z-index: 9999;
+    }
 }
 
 body.frame .dnd-container .chat.full .window_panel,
@@ -1826,7 +1825,7 @@ body.frame .window_icons_wrapper {
         left: 45px;
         width: 75px;
     }
-    
+
     .send_button {
         width: 35px;
         height: 35px;
@@ -1866,7 +1865,7 @@ body.frame .window_icons_wrapper {
 }
 
 @media only screen and (max-height: 768px) {
-	    .items_list_block .block_content {
+    .items_list_block .block_content {
         min-height: 65px;
         max-height: 65px;
     }
@@ -1907,6 +1906,10 @@ body.frame .window_icons_wrapper {
     /* margin-bottom: 20px; */
 }
 
+.bottom_details *{
+    max-height: 100%;
+    max-width: 100%;
+}
 .modal-footer button {
     background-color: #1e8eda;
     border: none;
