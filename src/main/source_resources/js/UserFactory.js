@@ -350,7 +350,8 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         isTenant = Boolean(mess_obj.isTenant);
         isTrainer = Boolean(mess_obj.isTrainer);
         isStudent = Boolean(mess_obj.isStudent);
-        if (isStudent) {
+        if (isStudent && mess_obj.trainer != undefined) {
+            debugger;
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
         }
 
