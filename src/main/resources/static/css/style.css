@@ -1773,9 +1773,7 @@ body {
                                   not supported by any browser */
 }
 
-<<<<<<< HEAD
-@media screen and (max-width:949px) {
-=======
+
 @media only screen and (max-width: 300px) {
 body.frame .head .logo {
     position: absolute;
@@ -1795,7 +1793,6 @@ body.frame .window_icons_wrapper {
 }
 
 @media only screen and (max-width: 600px) {
->>>>>>> fff2c999449b0c46598249172ef561f2e63aed46
     .left_panel {
         z-index: 222222;
         max-width: 0;
@@ -1857,11 +1854,7 @@ body.frame .window_icons_wrapper {
     }
 }
 
-<<<<<<< HEAD
-@media screen and (min-width:950px) {
-=======
 @media only screen and (min-width:1350px) {
->>>>>>> fff2c999449b0c46598249172ef561f2e63aed46
     .items_list_block .block_content {
         min-height: 130px;
         max-height: 130px;
