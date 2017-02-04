@@ -1,1 +1,0 @@
-ALTER TABLE `chat_room_users` CHANGE `permissions_key` `permissions_key` BIGINT(20) NOT NULL DEFAULT '0';
