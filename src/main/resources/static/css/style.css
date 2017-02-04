@@ -1773,6 +1773,10 @@ body {
                                   not supported by any browser */
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3032d4e999be76f01d84d5a1a727cd503817a96a
 @media only screen and (max-width: 300px) {
     body.frame .head .logo {
         position: absolute;
