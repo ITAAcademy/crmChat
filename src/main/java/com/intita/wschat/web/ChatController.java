@@ -1280,6 +1280,18 @@ public class ChatController {
 		return "formView";
 	}
 
+	@RequestMapping(value="/builder", method = RequestMethod.GET)
+	public String  getFormEditorTemplate(HttpServletRequest request,Model model, Principal principal) {
+		String lang = getCurrentLang();
+		List<ConfigParam> config =  configParamService.getParams();
+		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
+		configMap.put("currentLang", lang);
+		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
+		model.addAttribute("config", configMap);
+		return "builder_index";
+	}
+
+
 	@MessageExceptionHandler
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public String handleProfanity(TooMuchProfanityException e) {

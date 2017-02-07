@@ -165,7 +165,8 @@ public class BotController {
 	@ResponseBody
 	public String getBotCategoryNamesHavingString(@PathVariable String categoryName,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
 		//TODO
-		return objectMapper.writeValueAsString(botCategoryService.getBotCategoriesHavingName(categoryName,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT));
+		ArrayList<BotCategory> category = botCategoryService.getBotCategoriesHavingName(categoryName,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT);
+		return objectMapper.writeValueAsString(category);
 	}
 	@RequestMapping(value = "bot_operations/get_bot_dialog_items_descriptions_having_string_first5/{categoryId}/{description}", method = RequestMethod.GET)
 	@ResponseBody

@@ -1,11 +1,20 @@
 'use strict';
-springChatControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, Scopes, $q, $controller) {
+if(typeof springChatControllers !== 'undefined') {
+    springChatControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'Scopes', '$q', '$controller', chatViewItemControllerForBuilderForView]);
+}
+else if(forumBuilderControllers !== 'undefined') {
+    forumBuilderControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', '$q', '$controller', chatViewItemControllerForBuilderForBuilder]);
+}
+function chatViewItemControllerForBuilderForBuilder($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, $q, $controller){
+   return chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, null, $q, $controller);
+}
 
-    angular.extend(this, $controller('ChatBotController', { $scope: $scope }));
 
+function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, Scopes, $q, $controller) {
+    // angular.extend(this, $controller('ChatBotController', { $scope: $scope }));
     $scope.controllerName = "ChatViewItemController";
-    $scope.chatControllerScope = Scopes.get('ChatController');
-    $scope.chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
+    $scope.chatControllerScope = Scopes==null ? null : Scopes.get('ChatController');
+    $scope.chatRouteInterfaceScope = Scopes==null ? null : Scopes.get('ChatRouteInterface');
 
     $scope.parse = function() {
 
@@ -18,8 +27,8 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
 
         for (var index = 0; index <  $scope.$parent.botChildrens.length; index++) {
             if ( $scope.$parent.botChildrens[index].scope ==  $scope) {
-                 $scope.$parent.botChildrens.splice(index, 1);
-                
+                $scope.$parent.botChildrens.splice(index, 1);
+
                 break;
             }
         }
@@ -29,13 +38,13 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     $scope.init = function(scope, element, attr) {
         element[0].style.display = "block";
         /* if (scope.preventParent != undefined && scope.preventParent != null) {
-             for (var index = 0; index < scope.preventParent.botChildrens.length; index++) {
-                 if (scope.preventParent.botChildrens[index].scope == preventScope) {
-                     scope.preventParent.botChildrens.splice(index, 1);
-                     
-                     break;
-                 }
-             }
+         for (var index = 0; index < scope.preventParent.botChildrens.length; index++) {
+         if (scope.preventParent.botChildrens[index].scope == preventScope) {
+         scope.preventParent.botChildrens.splice(index, 1);
+
+         break;
+         }
+         }
          }
          scope.preventParent = scope.$parent;
          scope.preventScope = scope;*/
@@ -64,11 +73,11 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     }
 
     /*
-    $scope.getChildNodes(){
-        var element = $scope.botChildrens.element;
-        var scope = $scope.botChildrens.scope;
-        var Nodes = {'childrens':};
-    }*/
+     $scope.getChildNodes(){
+     var element = $scope.botChildrens.element;
+     var scope = $scope.botChildrens.scope;
+     var Nodes = {'childrens':};
+     }*/
 
 
     $scope.getNewItem = function(answer, href) {
@@ -79,11 +88,11 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
     }
     $scope.sendPostToUrl = function(href, linkData) {
         /*$http({
-            method: 'POST',
-            url: href,
-            data: linkData,
-            //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
-        });*/
+         method: 'POST',
+         url: href,
+         data: linkData,
+         //headers: {'Content-Type': 'application/x-www-form-urlencoded'};
+         });*/
         $http.post(serverPrefix + '\\' + href, linkData). // + $scope.dialogName).
         success(function(data, status, headers, config) {
             // console.log('room with bot created: ' + $scope.dialogName)
@@ -101,4 +110,4 @@ springChatControllers.controller('ChatViewItemController', ['$routeParams', '$ro
         });
     }
 
-}]);
+}

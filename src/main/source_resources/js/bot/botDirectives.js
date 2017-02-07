@@ -1,7 +1,7 @@
 'use strict';
-angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
+var formBuilderServices = angular.module('formBuilder.directives', []);
+angular.module('formBuilder.directives').directive('botContainer', function($compile, $parse) {
     return {
-        controller: 'ChatBotController',
         scope: {
             content: '&'
         },
@@ -93,7 +93,7 @@ angular.module('springChat.directives').directive('botContainer', function($comp
 
 /*
 
-angular.module('springChat.directives').directive('botContainer', function($compile, $parse) {
+angular.module('formBuilder.directives').directive('botContainer', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
         link: function(scope, element, attr, ctrl) {
@@ -167,7 +167,28 @@ angular.module('springChat.directives').directive('botContainer', function($comp
             }
         }
         */
-angular.module('springChat.directives').directive('botList', function($compile, $parse) {
+
+var dirFunc = function($compile, $parse) {
+    return {
+        restrict: 'E',
+        link: function(scope, element, attr) {
+            scope.$watch(attr.content, function() {
+                element.html($parse(attr.content)(scope));
+                if (typeof attr.callback != 'undefined') {
+                    var callBackFunction = new Function("return " + attr.callback)();
+                    if (typeof callBackFunction != 'undefined')
+                        callBackFunction(element);
+                }
+                $compile(element.contents())(scope);
+                //element.html =$parse(attr.content)(scope);
+
+            }, true);
+        }
+    }
+};
+angular.module('formBuilder.directives').directive('dir',['$compile','$parse',dirFunc] )
+
+angular.module('formBuilder.directives').directive('botList', function($compile, $parse) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -227,7 +248,7 @@ ispost,//if false - redirect to link href, true - make post request
 href, //link to other page or address for post request 
 classes; // list of classes like: "btn btn-large"
 */
-angular.module('springChat.directives').directive('botlink', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botlink', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -299,7 +320,7 @@ angular.module('springChat.directives').directive('botlink', function($compile, 
     }
 });
 
-angular.module('springChat.directives').directive('botinput', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botinput', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -326,7 +347,7 @@ angular.module('springChat.directives').directive('botinput', function($compile,
     }
 });
 
-angular.module('springChat.directives').directive('botsubmit', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botsubmit', function($compile, $parse, $http) {
     return {
         scope: {
             text: '='
@@ -395,7 +416,7 @@ attr.cbname - name of group, determining names of children
 attr.legend - title of checkgroup
 attr.isradio - determine if group is readiogroup
 */
-angular.module('springChat.directives').directive('botcheckgroup', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botcheckgroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -453,7 +474,7 @@ angular.module('springChat.directives').directive('botcheckgroup', function($com
 
 
 
-angular.module('springChat.directives').directive('botradiogroup', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botradiogroup', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -515,7 +536,7 @@ angular.module('springChat.directives').directive('botradiogroup', function($com
 attributes:
 
 */
-angular.module('springChat.directives').directive('botClose', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botClose', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {},
@@ -533,7 +554,7 @@ angular.module('springChat.directives').directive('botClose', function($compile,
     }
 });
 
-angular.module('springChat.directives').directive('botarray', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botarray', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -582,7 +603,7 @@ angular.module('springChat.directives').directive('botarray', function($compile,
     }
 });
 
-angular.module('springChat.directives').directive('botselect', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botselect', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -610,7 +631,7 @@ angular.module('springChat.directives').directive('botselect', function($compile
 
 
 
-angular.module('springChat.directives').directive('inputListBox', function($compile, $parse) {
+angular.module('formBuilder.directives').directive('inputListBox', function($compile, $parse) {
     return {
         restrict: 'E',
         scope: {
@@ -657,7 +678,7 @@ angular.module('springChat.directives').directive('inputListBox', function($comp
     }
 })
 
-angular.module('springChat.directives').directive('botcheckbox', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('botcheckbox', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -697,7 +718,7 @@ angular.module('springChat.directives').directive('botcheckbox', function($compi
     }
 });
 
-angular.module('springChat.directives').directive('bottext', function($compile, $parse, $http) {
+angular.module('formBuilder.directives').directive('bottext', function($compile, $parse, $http) {
     return {
         controller: 'ChatViewItemController',
         scope: {
@@ -722,7 +743,7 @@ angular.module('springChat.directives').directive('bottext', function($compile, 
     }
 });
 
-angular.module('springChat.directives').directive('botrating', botrating);
+angular.module('formBuilder.directives').directive('botrating', botrating);
 
 function botrating() {
     return {
@@ -788,7 +809,7 @@ function botrating() {
     };
 };
 
-angular.module('springChat.directives').directive('botcalendar', botcalendar);
+angular.module('formBuilder.directives').directive('botcalendar', botcalendar);
 
 function isAssignable($parse, attrs, propertyName) {
     var fn = $parse(attrs[propertyName]);

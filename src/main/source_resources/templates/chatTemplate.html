@@ -33,17 +33,17 @@
 									ng-class="{'showed-search-form':(showedSearchForm || searchFocus) }"
 									ng-mouseover="showedSearchForm=true"
 									ng-mouseout="showedSearchForm=false">
-									<label for="search" class="sr-only ">Search</label> 
+									<label for="search" class="sr-only ">Search</label>
 									<input
 									ng-focus="searchFocus=true;" ng-blur="searchFocus=false;"
 									autocomplete="off" type="text" class="form-control display-block"
 									name="search" id="search"
 									ng-model="$parent.searchInputValue.email"
-									ng-change="showSearchList()" 
-									placeholder="search" 
+									ng-change="showSearchList()"
+									placeholder="search"
 									typeahead-wait-ms = "1000"
-									uib-typeahead="item for item in $parent.emails" 
-									typeahead-template-url="customSearch.html"	
+									uib-typeahead="item for item in $parent.emails"
+									typeahead-template-url="customSearch.html"
 									typeahead-on-select = "  $parent.searchInputValue.email = $item.email; addUserToRoom()"/>
 									<span class="glyphicon glyphicon-plus form-control-feedback"></span>
 								</div>
@@ -53,11 +53,11 @@
 							[{{participants.length}}]</h6>
 							<div ng-repeat="participant in participants | orderBy:'-username'" class="user">
 								<div class="avatar">
-									<a target="_blank" ng-if="participant.intitaUserId" 
+									<a target="_blank" ng-if="participant.intitaUserId"
 										ng-href="{{baseurl}}/profile/{{participant.intitaUserId}}">
 										<div class="avatar-contaiter centered"  >
 										<!--ng-init="scaleCenterIconCircle()" -->
-											<img											
+											<img
 											ng-src="{{baseurl}}/images/avatars/{{participant.avatar}}"
 											alt="{{participant.username}}" />
 										</div>
@@ -78,11 +78,11 @@
 						<div ng-if="tenants!=null &#38;&#38; tenants.length>0">Tenants:</div>
 						<div  ng-repeat="tenant in tenants" class="user" ng-click="addTenantToRoom(tenant.chatUserId)">
 									<div class="avatar">
-									<a target="_blank" ng-if="tenant.intitaUserId" 
+									<a target="_blank" ng-if="tenant.intitaUserId"
 										ng-href="{{baseurl}}/profile/{{tenant.intitaUserId}}">
 										<div class="avatar-contaiter centered"  >
 										<!--ng-init="scaleCenterIconCircle()" -->
-											<img											
+											<img
 											ng-src="{{baseurl}}/images/avatars/{{tenant.avatar}}"
 											alt="{{tenant.username}}" />
 										</div>
@@ -153,10 +153,10 @@
 						ng-keypress="onKeyMessageKeyPressEvent($event)"
 						ng-keyup="onKeyMessageKeyReleaseEvent($event)"
 						ng-click="onMessageInputClick()"
-						
-						typeahead-wait-ms = "1000"  
-						uib-typeahead="item for item in data_in_message_input" 							
-						typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []" 
+
+						typeahead-wait-ms = "1000"
+						uib-typeahead="item for item in data_in_message_input"
+						typeahead-on-select = "appendDifferenceToSearchInput_in_message_input($model); data_in_message_input = []"
 						typeahead-popup-template-url="customPopupTemplate.html" typeahead-is-open="open_search_list_in_message_input"/>
 					</div>
 					<span  th:title="${lgPack.lables.chatView.send}" class="btn answer-btn answer-btn-2 fix-btn-2" ng-click="sendMessage()"></span>
@@ -183,6 +183,6 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div id="new_room_modal" class="modal fade" th:include="createDialogModalWindow"/>
 	<div id="new_consultation_modal" class="modal fade" th:include="createConsultationModalWindow"/>

@@ -1,14 +1,6 @@
 'use strict';
 /* Controllers */
 springChatControllers.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when("/builder", {
-        templateUrl: "builderTemplateJSTemp.html",
-        controller: "ChatBotViewBuilderController"
-    });
-    $routeProvider.when("/builderForm", {
-        templateUrl: "builderTemplateJSTemp.html",
-        controller: "ChatBotFormBuilderController"
-    });
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
             load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', function($route, RoomsFactory, ChannelFactory, $routeParams) {
