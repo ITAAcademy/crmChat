@@ -27,6 +27,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var participants = [];
     var roomType = -1;
     var ajaxRequestsForRoomLP = [];
+    var userAddedToRoom = true;
     $rootScope.message_busy = true;
     var rooms = [];
     var oldMessage;
@@ -641,7 +642,13 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         isRoomConsultation: isRoomConsultation,
         addTenantToRoom: addTenantToRoom,
         addUserToRoom: addUserToRoom,
-        checkMessageAdditionPermission: checkMessageAdditionPermission
+        checkMessageAdditionPermission: checkMessageAdditionPermission,
+        getUserAddedToRoom: function(){
+            return userAddedToRoom;
+        },
+        setUserAddedToRoom: function(val){
+            userAddedToRoom = val;
+        }
 
     };
 

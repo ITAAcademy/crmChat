@@ -29,7 +29,8 @@
             <span class="messag_author_name">{{message.username}}</span>
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
         </div>
-        <compilable class="bottom_details" content="parseMsg(message.message)"></compilable>
+        <compilable  ng-if="message.chatUserId != 0" class="bottom_details" content="parseMsg(message.message)" time="message.date"></compilable>
+        <div  ng-if="message.chatUserId == 0" bot-container = " "  style="margin: 0px;" content="message.message" time="message.date" ></div>
         <hr ng-repeat-start="file in message.attachedFiles track by $index" ng-if="$index==0" />
         <div class="display-file-container" ng-repeat-end file-miniature="true" link="file">
         </div>

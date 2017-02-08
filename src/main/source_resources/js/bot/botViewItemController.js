@@ -1,20 +1,14 @@
 'use strict';
 if(typeof springChatControllers !== 'undefined') {
-    springChatControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'Scopes', '$q', '$controller', chatViewItemControllerForBuilderForView]);
+    springChatControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', '$q', '$controller', chatViewItemControllerForView]);
 }
 else if(forumBuilderControllers !== 'undefined') {
-    forumBuilderControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', '$q', '$controller', chatViewItemControllerForBuilderForBuilder]);
-}
-function chatViewItemControllerForBuilderForBuilder($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, $q, $controller){
-   return chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, null, $q, $controller);
+    forumBuilderControllers.controller('ChatViewItemController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', '$q', '$controller', chatViewItemControllerForView]);
 }
 
-
-function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, Scopes, $q, $controller) {
+function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, $q, $controller) {
     // angular.extend(this, $controller('ChatBotController', { $scope: $scope }));
     $scope.controllerName = "ChatViewItemController";
-    $scope.chatControllerScope = Scopes==null ? null : Scopes.get('ChatController');
-    $scope.chatRouteInterfaceScope = Scopes==null ? null : Scopes.get('ChatRouteInterface');
 
     $scope.parse = function() {
 
@@ -60,15 +54,16 @@ function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, 
         scope.$parent.botChildrens.push({ 'element': element, 'scope': scope });
         scope.botChildrens = new Array();
 
-        if (scope.chatRouteInterfaceScope == null || scope.chatRouteInterfaceScope == undefined)
-            return null;
+      /*  if (scope.chatRouteInterfaceScope == null || scope.chatRouteInterfaceScope == undefined)
+            return null;*/
 
 
         //  scope.enabledListener(scope, element);
-        if (element[0].attributes.name != undefined && scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined) {
+        //TODO restore downward commented code
+        /*if (element[0].attributes.name != undefined && scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value] != undefined) {
             scope.itemvalue = scope.chatRouteInterfaceScope.botParameters[element[0].attributes.name.value];
             scope.mainScope.disabled = true;
-        }
+        }*/
 
     }
 

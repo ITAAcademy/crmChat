@@ -1,5 +1,5 @@
 'use strict';
-springChatControllers.controller('ChatBotController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'Scopes', '$q', '$controller', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, Scopes, $q, $controller) {
+springChatControllers.controller('ChatBotController', ['$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', '$q', '$controller','RoomsFactory', function($routeParams, $rootScope, $scope, $http, $location, $interval, $cookies, $timeout, toaster, $cookieStore, $q, $controller,RoomsFactory) {
     //angular.extend(this, $controller('ChatRouteInterface', { $scope: $scope }));
 
     /*
@@ -7,33 +7,30 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
      */
 
     $scope.controllerName = "ChatBotController";
-    var chatControllerScope = Scopes.get('ChatController');
-
-    var chatRouteInterfaceScope = Scopes.get('ChatRouteInterface');
 
     $scope.disabled = false;
-    if (chatControllerScope != null || chatControllerScope != undefined && chatControllerScope.currentRoom != null) {
-        $scope.currentRoom = chatControllerScope.currentRoom;
+    if ( RoomsFactory.getCurrentRoom() != null) {
+        $scope.currentRoom =RoomsFactory.getCurrentRoom();
     }
 
-    if (chatRouteInterfaceScope != null || chatRouteInterfaceScope != undefined) 
+    /*if (chatRouteInterfaceScope != null || chatRouteInterfaceScope != undefined)
         chatRouteInterfaceScope.$watch('participants', function() {
             if (chatRouteInterfaceScope.participants.length > 2) {
                 $scope.disabled = true;
-                chatControllerScope.currentRoom.active = true;
+                RoomsFactory.getCurrentRoom().active = true;
 
                 // if ($scope.toasterWaitFreeTenant != undefined)
                      //   $scope.toasterWaitFreeTenant.close;
                      toaster.clear();
             } else
-                chatControllerScope.currentRoom.active = false;
+                RoomsFactory.getCurrentRoom().active = false;
 
-        });
+        });*/
 
     var askIsFreeTenant;
 
     $scope.giveTenant = function() {
-        $http.post(serverPrefix + "/bot_operations/close/{0}".format(chatControllerScope.currentRoom.roomId)).
+        $http.post(serverPrefix + "/bot_operations/close/{0}".format(RoomsFactory.getCurrentRoom().roomId)).
         success(function(data, status, headers, config) {
         		{      		      
         		
@@ -41,7 +38,7 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
         		}            		
         }).
         error(function(data, status, headers, config) {
-            chatControllerScope.userAddedToRoom = true;
+            RoomsFactory.setUserAddedToRoom(true)
             toaster.pop('error', "Error", "server request timeout", 1000);
         });
     }
