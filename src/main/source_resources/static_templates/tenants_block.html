@@ -5,7 +5,6 @@
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
         <div class="block_name">{{blockName}}</div>
         <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons">close</i>
-        <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
         <div ng-click="addTenantToRoom(participant.chatUserId)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
