@@ -31,19 +31,29 @@ gulp.task('scripts',function(){
         .pipe(gulp.dest('resources/static/js'));
 });
 gulp.task('lib',function(){
-    return gulp.src('source_resources/lib/**/*.*',{since:gulp.lastRun('lib')}).pipe(debug({title: 'lib:'})).pipe(gulp.dest('resources/static/lib'));
+    return gulp.src('source_resources/lib/**/*.*',{since:gulp.lastRun('lib')})
+        .pipe(plumber())
+        .pipe(debug({title: 'lib:'})).pipe(gulp.dest('resources/static/lib'));
 });
 gulp.task('styles',function(){
-    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')}).pipe(debug({title: 'styles:'})).pipe(autoprefixer())/*.pipe(cssmin())*/.pipe(gulp.dest('resources/static/css'));
+    return gulp.src('source_resources/css/*.{css,sass}',{since:gulp.lastRun('styles')})
+        .pipe(plumber())
+        .pipe(debug({title: 'styles:'})).pipe(autoprefixer())/*.pipe(cssmin())*/.pipe(gulp.dest('resources/static/css'));
 });
 gulp.task('assets',function(){
-    return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')}).pipe(debug({title: 'assets:'})).pipe(gulp.dest('resources/static/'));
+    return gulp.src('source_resources/{images,fonts,data}/**/*.*',{since:gulp.lastRun('assets')})
+        .pipe(plumber())
+        .pipe(debug({title: 'assets:'})).pipe(gulp.dest('resources/static/'));
 });
 gulp.task('templates:static',function(){
-    return gulp.src('source_resources/static_templates/*.*',{since:gulp.lastRun('templates:static')}).pipe(debug({title: 'templates:static:'})).pipe(gulp.dest('resources/static/static_templates'));
+    return gulp.src('source_resources/static_templates/*.*',{since:gulp.lastRun('templates:static')})
+        .pipe(plumber())
+        .pipe(debug({title: 'templates:static:'})).pipe(gulp.dest('resources/static/static_templates'));
 });
 gulp.task('templates',function(){
-    return gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates')}).pipe(debug({title: 'templates:'})).pipe(gulp.dest('resources/templates'));
+    return gulp.src('source_resources/templates/*.*',{since:gulp.lastRun('templates')})
+        .pipe(plumber())
+        .pipe(debug({title: 'templates:'})).pipe(gulp.dest('resources/templates'));
 });
 
 gulp.task('build',gulp.series('styles','assets','templates:static','templates','scripts','lib'));
