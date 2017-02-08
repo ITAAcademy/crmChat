@@ -20,6 +20,11 @@ forumBuilderControllers.config(['$routeProvider', function($routeProvider) {
 
 }]);
 
+forumBuilderControllers.controller('ChatBotController', ['$scope',function($scope) {
+    //angular.extend(this, $controller('ChatRouteInterface', { $scope: $scope }));
+    $scope.controllerName = "ChatBotController";
+}]);
+
 formBuilder.filter('unique', function ($parse) {
     return function (collection, property) {
 

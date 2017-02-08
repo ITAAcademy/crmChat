@@ -2,6 +2,9 @@
 var targetDirectives;
 if(typeof directivesModule !== 'undefined') {
     targetDirectives =  directivesModule;
+}
+else if(formBuilderDirectives !== 'undefined') {
+    targetDirectives =  formBuilderDirectives;
     var dirFunc = function($compile, $parse) {
         return {
             restrict: 'E',
@@ -21,9 +24,6 @@ if(typeof directivesModule !== 'undefined') {
         }
     };
     targetDirectives.directive('dir',['$compile','$parse',dirFunc] )
-}
-else if(formBuilderDirectives !== 'undefined') {
-    targetDirectives =  formBuilderDirectives;
 }
 targetDirectives.directive('botContainer', function($compile, $parse) {
     return {
@@ -111,7 +111,7 @@ targetDirectives.directive('botContainer', function($compile, $parse) {
             }
 
 
-            scope.enabledListener(scope, element);
+            //scope.enabledListener(scope, element);
             //scope.giveTenant();
         }
     }
