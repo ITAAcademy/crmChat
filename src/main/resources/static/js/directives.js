@@ -228,11 +228,11 @@ var tenantsBlock = function tenantsBlock($http, mySettings, UserFactory, RoomsFa
         scope: {},
         templateUrl: 'static_templates/tenants_block.html',
         link: function link(scope, element, attributes) {
+            scope.blockName = "Тенанти";
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.getTenantsList = UserFactory.getTenantsList;
             scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
-            scope.blockName = "Тенанти";
         }
 
     };
@@ -254,7 +254,12 @@ function initFolded(scope, element) {
         event.stopPropagation();
         event.preventDefault();
         scope.collapsed = !scope.collapsed;
+        localStorage.setItem("chat/" + scope.blockName, scope.collapsed);
     };
+    var storageValue = localStorage.getItem("chat/" + scope.blockName);
+    debugger;
+    if (storageValue != null) scope.collapsed = storageValue == "true";
+
     scope.scroll;
     scope.folded = true;
     scope.toggleFolded = function (event) {
@@ -273,6 +278,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
         scope: {},
         templateUrl: 'static_templates/students_block.html',
         link: function link(scope, element, attributes) {
+            scope.blockName = "Студенти";
             updateModelForStudents();
             initFolded(scope, element);
 
@@ -282,7 +288,6 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 });
             };
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.blockName = "Студенти";
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
         }
@@ -296,10 +301,10 @@ function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
         scope: {},
         templateUrl: 'static_templates/trainers_block.html',
         link: function link(scope, element, attributes) {
+            scope.blockName = "Тренер";
             scope.students = UserFactory.getStudentTrainerList;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.blockName = "Тренер";
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
         }
@@ -901,6 +906,7 @@ angular.module('springChat.directives').directive('checkbox', function () {
 
     };
 });
+
 function audioVideoRP($http, RoomsFactory) {
     //avpr - Audio/Video player/recorder
     return {

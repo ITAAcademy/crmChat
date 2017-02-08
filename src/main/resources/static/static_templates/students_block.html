@@ -1,9 +1,13 @@
 <div ng-if="students.length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
-        <div ng-unless="students().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
-        <div ng-if="students.length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
+        <div class="block_controll"><img src="images/elements/add.png"></div>
+        <div ng-if="students.length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
-        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons">close</i>
+        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">
+            <svg style="width:22px;height:24px" viewBox="0 0 24 24">
+    <path fill="#000000" d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" />
+</svg>
+        </i>
         <!--<div class="block_head_diveded"></div>-->
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">

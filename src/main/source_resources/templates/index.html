@@ -21,7 +21,8 @@
         <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
         <div class="head">
         <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
-            <img class="logo" src="images\Logo_bigUA_white.png" alt="" />
+            <i class="logo material-icons">chat</i><i class="logo-text">Онлайн чат</i>
+
            <div class="window_icons_wrapper" ng-if="$root.authorize">
             <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list"
                  itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">

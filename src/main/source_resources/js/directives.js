@@ -47,7 +47,7 @@ var imageDrop = function($parse, $document) {
         }
     };
 };
-angular.module('springChat.directives').directive("imagedrop",['$parse', '$document',imageDrop] );
+angular.module('springChat.directives').directive("imagedrop", ['$parse', '$document', imageDrop]);
 
 var autoGrow = function() {
     return function(scope, element, attr) {
@@ -92,7 +92,7 @@ var autoGrow = function() {
         update();
     }
 };
-angular.module('springChat.directives').directive('autoGrow',autoGrow);
+angular.module('springChat.directives').directive('autoGrow', autoGrow);
 
 var dirFunc = function($compile, $parse) {
     return {
@@ -112,7 +112,7 @@ var dirFunc = function($compile, $parse) {
         }
     }
 };
-angular.module('springChat.directives').directive('dir',['$compile','$parse',dirFunc] )
+angular.module('springChat.directives').directive('dir', ['$compile', '$parse', dirFunc])
 
 var modaleToggle = function($compile, $parse, $rootScope) {
     return {
@@ -129,7 +129,7 @@ var modaleToggle = function($compile, $parse, $rootScope) {
                     $rootScope.__modaleToggle = new Map();
                 $rootScope.__modaleToggle[scope.modaleToggleId] = {
                     restart: function() { toggle = false }
-                } 
+                }
             }
             var toggle = false;
             var ignoredList = [];
@@ -173,7 +173,7 @@ var modaleToggle = function($compile, $parse, $rootScope) {
     }
 };
 
-angular.module('springChat.directives').directive('modaleToggle',['$compile', '$parse', '$rootScope', modaleToggle]);
+angular.module('springChat.directives').directive('modaleToggle', ['$compile', '$parse', '$rootScope', modaleToggle]);
 
 
 angular.module('springChat.directives').directive('starRating', starRating);
@@ -249,34 +249,41 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
         },
         templateUrl: 'static_templates/tenants_block.html',
         link: function(scope, element, attributes) {
+            scope.blockName = "Тенанти";
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.getTenantsList = UserFactory.getTenantsList;
             scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
-            scope.blockName = "Тенанти";
         }
 
     };
 };
 
-angular.module('springChat.directives').directive('tenantsBlock', ['$http','mySettings','UserFactory','RoomsFactory',tenantsBlock]);
+angular.module('springChat.directives').directive('tenantsBlock', ['$http', 'mySettings', 'UserFactory', 'RoomsFactory', tenantsBlock]);
 
-angular.module('springChat.directives').directive('studentsBlock',['$http','mySettings','RoomsFactory','UserFactory',studentsBlock]);
-angular.module('springChat.directives').directive('trainersBlock', ['$http','mySettings','RoomsFactory','UserFactory',trainersBlock]);
+angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', studentsBlock]);
+angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
 
 function initFolded(scope, element) {
-    scope.collapseBlock = function(){
+    scope.collapseBlock = function() {
         scope.collapsed = true;
     }
-    scope.unCollapseBlock = function(){
+    scope.unCollapseBlock = function() {
         scope.collapsed = false;
     }
-    scope.toggleCollapseBlock = function(event){
+    scope.toggleCollapseBlock = function(event) {
         event.stopPropagation();
         event.preventDefault();
         scope.collapsed = !scope.collapsed;
+        localStorage.setItem("chat/" + scope.blockName, scope.collapsed);
     }
+    var storageValue = localStorage.getItem("chat/" + scope.blockName);
+    debugger;
+    if (storageValue != null)
+        scope.collapsed = storageValue == "true";
+
+
     scope.scroll;
     scope.folded = true;
     scope.toggleFolded = function(event) {
@@ -300,6 +307,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
         },
         templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
+            scope.blockName = "Студенти";
             updateModelForStudents();
             initFolded(scope, element);
 
@@ -309,7 +317,6 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 });
             };
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.blockName = "Студенти";
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
 
@@ -326,17 +333,17 @@ function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
         },
         templateUrl: 'static_templates/trainers_block.html',
         link: function(scope, element, attributes) {
+            scope.blockName = "Тренер";
             scope.students = UserFactory.getStudentTrainerList;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.blockName = "Тренер";
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
         }
     };
 };
 
-angular.module('springChat.directives').directive('participantsBlock',['$http','mySettings','RoomsFactory','UserFactory',participantsBlock]);
+angular.module('springChat.directives').directive('participantsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', participantsBlock]);
 
 function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
@@ -377,7 +384,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$http','RoomsFactory',messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$http', 'RoomsFactory', messagesBlock]);
 
 function messagesBlock($http, RoomsFactory) {
     return {
@@ -391,8 +398,9 @@ function messagesBlock($http, RoomsFactory) {
     };
 };
 
-angular.module('springChat.directives').directive('messageInput', ['$http','RoomsFactory','ChatSocket','$timeout',
-    'UserFactory','ChannelFactory',messageInput]);
+angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
+    'UserFactory', 'ChannelFactory', messageInput
+]);
 
 function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory) {
     return {
@@ -425,7 +433,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {
-                        if (sendingMessage!=null) {
+                        if (sendingMessage != null) {
                             $timeout.cancel(sendingMessage);
                             sendingMessage = null;
                         }
@@ -515,7 +523,7 @@ angular.module('springChat.directives').directive('emHeightSource', function() {
     }
 
 });
-angular.module('springChat.directives').directive('roomsBlockMini', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory',roomsBlockMini]);
+angular.module('springChat.directives').directive('roomsBlockMini', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', roomsBlockMini]);
 var roomsBlockFilter = function(RoomsFactory) {
     return function(fields, state) {
         if (fields) { // added check for safe code
@@ -536,7 +544,7 @@ var roomsBlockFilter = function(RoomsFactory) {
         }
     };
 };
-angular.module('springChat.directives').directive('roomsBlock',['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', '$timeout', roomsBlock]).filter('roomsBlockFilter',['RoomsFactory',roomsBlockFilter ]);
+angular.module('springChat.directives').directive('roomsBlock', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', '$timeout', roomsBlock]).filter('roomsBlockFilter', ['RoomsFactory', roomsBlockFilter]);
 
 var roomsBlockLinkFunction;
 
@@ -560,9 +568,9 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
             $scope.usersListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            $scope.getRooms = function(){
-                if (!$scope.searchEnabled || $scope.roomsListSearched==null || $scope.roomsListSearched.length == 0)
-                return RoomsFactory.getRooms();
+            $scope.getRooms = function() {
+                if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
+                    return RoomsFactory.getRooms();
                 else return $scope.roomsListSearched;
             }
 
@@ -608,9 +616,9 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
 
 
 
-angular.module('springChat.directives').directive('notificable',['$templateRequest', '$sce', '$compile','$parse',notificable]);
+angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse', notificable]);
 
-function notificable($templateRequest, $sce, $compile,$parse) {
+function notificable($templateRequest, $sce, $compile, $parse) {
     //TODO finish rooms search
     return {
         restrict: 'EA',
@@ -620,11 +628,11 @@ function notificable($templateRequest, $sce, $compile,$parse) {
                 return;
             }
 
-            scope.itemClick =  $parse(attrs.itemclick);
+            scope.itemClick = $parse(attrs.itemclick);
 
             var getDataHandler = $parse(attrs.data);
-            scope.getData =  function(){
-               return getDataHandler(scope)();
+            scope.getData = function() {
+                return getDataHandler(scope)();
             }
             var templatePath = 'static_templates/' + attrs.template + '.html';
             var templateUrl = $sce.getTrustedResourceUrl(templatePath);
@@ -702,7 +710,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
     $scope.clickToRoomEvent = function(room) {
-        if ($scope.createEnabled)//if ($scope.searchEnabled || $scope.createEnabled)
+        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
         switch ($scope.mode) {
             case 1:
@@ -741,7 +749,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return $scope.searchEnabled;
     }
     $scope.createNewRoom = function($event) {
-        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom).success(function(data, status, headers, config){
+        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom).success(function(data, status, headers, config) {
             $scope.$root.hideMenu();
             ChannelFactory.changeLocation("/dialog_view/" + data);
         });
@@ -796,7 +804,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
 
     $scope.doGoToRoom = function(roomId) {
-        if ($scope.createEnabled)//if ($scope.searchEnabled || $scope.createEnabled)
+        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
         $scope.loadOnlyFilesInfiniteScrollMode = false;
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
@@ -805,7 +813,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.showLastContacts();
 };
 
-angular.module('springChat.directives').directive('fileMiniature',['$http', 'RoomsFactory', 'ChannelFactory', '$parse', fileMiniature]);
+angular.module('springChat.directives').directive('fileMiniature', ['$http', 'RoomsFactory', 'ChannelFactory', '$parse', fileMiniature]);
 
 function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
     return {
@@ -925,7 +933,7 @@ var compilable = function($compile, $parse) {
         }
     }
 };
-angular.module('springChat.directives').directive('compilable',['$compile','$parse',compilable] );
+angular.module('springChat.directives').directive('compilable', ['$compile', '$parse', compilable]);
 
 var ngDraggable = function($document) {
     return {
@@ -1014,7 +1022,7 @@ var ngDraggable = function($document) {
     }
 };
 
-angular.module('springChat.directives').directive('ngDraggable',['$document',ngDraggable] );
+angular.module('springChat.directives').directive('ngDraggable', ['$document', ngDraggable]);
 
 
 angular.module('springChat.directives').directive('checkbox', function() {
@@ -1041,6 +1049,7 @@ angular.module('springChat.directives').directive('checkbox', function() {
 
     };
 });
+
 function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorder
     return {
         restrict: 'EA',
@@ -1076,4 +1085,4 @@ function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorde
     };
 }
 
-angular.module('springChat.directives').directive('audioVideoRP',['$http', 'RoomsFactory', audioVideoRP]); //
+angular.module('springChat.directives').directive('audioVideoRP', ['$http', 'RoomsFactory', audioVideoRP]); //

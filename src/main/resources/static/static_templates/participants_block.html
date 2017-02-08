@@ -2,8 +2,12 @@
     <div class="block_head" ng-click="toggleFolded($event)">
         <div ng-if="checkUserAdditionPermission()" class="block_controll" modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block"><img src="images/elements/add.png"></div>
         <div class="block_name">{{blockName}}</div>
-        <div ng-if="participants().length > 2" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">expand_more</div>
-        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons">close</i>
+        <div ng-show="participants().length > 2" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
+        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">
+            <svg style="width:22px;height:24px" viewBox="0 0 24 24">
+    <path fill="#000000" d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" />
+</svg>
+        </i>
         <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
