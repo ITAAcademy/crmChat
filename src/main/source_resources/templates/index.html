@@ -22,7 +22,7 @@
         <div class="head">
         <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <img class="logo" src="images\Logo_bigUA_white.png" alt="" />
-           <div class="window_icons_wrapper">
+           <div class="window_icons_wrapper" ng-if="$root.authorize">
             <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list"
                  itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">
                 <i class="material-icons">notifications</i>
