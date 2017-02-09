@@ -18,7 +18,7 @@
 
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
-        <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
+        
         <div class="head">
         <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <i class="logo material-icons">chat</i><i class="logo-text">Онлайн чат</i>
@@ -70,6 +70,7 @@
             <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
+        <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
             <div ng-if= "!currentRoomIsNull()" class="tools_area">
                 <div class="tools_dropdown_container">
                     <div id="tools_dropdown" class="popup_dropdown">
