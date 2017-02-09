@@ -123,7 +123,6 @@ var modaleToggle = function($compile, $parse, $rootScope) {
             ignoreId: '@ignoreId'
         },
         link: function(scope, element, attr) {
-            debugger;
             if (scope.modaleToggleId != undefined) {
                 if ($rootScope.__modaleToggle == undefined)
                     $rootScope.__modaleToggle = new Map();
@@ -279,7 +278,6 @@ function initFolded(scope, element) {
         localStorage.setItem("chat/" + scope.blockName, scope.collapsed);
     }
     var storageValue = localStorage.getItem("chat/" + scope.blockName);
-    debugger;
     if (storageValue != null)
         scope.collapsed = storageValue == "true";
 
@@ -1062,7 +1060,6 @@ function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorde
             navigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError);
 
             function onMediaSuccess(stream) {
-                debugger;
                 $scope.$apply(function() {
                     $scope.stream = $sce.trustAsResourceUrl(URL.createObjectURL(stream));
                 })
