@@ -209,6 +209,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 }));
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {
+                    if (!UserFactory.isAdmin())
                     unsubscribeCurrentRoom();
                 }));
 
