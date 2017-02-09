@@ -2,7 +2,11 @@ package com.intita.wschat.models;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.Null;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -22,10 +26,10 @@ public class OfflineGroup implements Serializable {
 	private int city;
 
 	@Column(name="id_user_created")
-	private int idUserCreated;
+	private Long idUserCreated;
 
 	@Column(name="id_user_curator")
-	private int idUserCurator;
+	private Long idUserCurator;
 
 	private String name;
 
@@ -34,6 +38,30 @@ public class OfflineGroup implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date")
 	private Date startDate;
+	
+	
+	@OneToOne
+	private Room chatRoom;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
+	private List<OfflineSubGroup> subGroups;
+
+
+	public List<OfflineSubGroup> getSubGroups() {
+		return subGroups;
+	}
+
+	public void setSubGroups(List<OfflineSubGroup> subGroups) {
+		this.subGroups = subGroups;
+	}
+
+	public Room getChatRoom() {
+		return chatRoom;
+	}
+
+	public void setChatRoom(Room chatRoom) {
+		this.chatRoom = chatRoom;
+	}
 
 	public OfflineGroup() {
 	}
@@ -54,19 +82,19 @@ public class OfflineGroup implements Serializable {
 		this.city = city;
 	}
 
-	public int getIdUserCreated() {
+	public Long getIdUserCreated() {
 		return this.idUserCreated;
 	}
 
-	public void setIdUserCreated(int idUserCreated) {
+	public void setIdUserCreated(Long idUserCreated) {
 		this.idUserCreated = idUserCreated;
 	}
 
-	public int getIdUserCurator() {
+	public Long getIdUserCurator() {
 		return this.idUserCurator;
 	}
 
-	public void setIdUserCurator(int idUserCurator) {
+	public void setIdUserCurator(Long idUserCurator) {
 		this.idUserCurator = idUserCurator;
 	}
 

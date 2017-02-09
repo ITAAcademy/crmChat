@@ -31,6 +31,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
   
   List<User> findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(String login, String login1, String login2);
   //
+  
+  @Query(value = "SELECT * FROM user_super_visor WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
+  Object findInSupervisorTable(Long userId);
+  
   @Query(value = "SELECT * FROM user_admin WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
   Object findInAdminTable(Long userId);
   

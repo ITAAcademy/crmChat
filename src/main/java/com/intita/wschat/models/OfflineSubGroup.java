@@ -2,6 +2,7 @@ package com.intita.wschat.models;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -24,8 +25,9 @@ public class OfflineSubGroup implements Serializable {
 
 	private String data;
 
-	@Column(name = "`group`")
-	private Integer group_id;
+	@ManyToOne
+	@JoinColumn(name = "`group`")
+	private OfflineGroup group;
 
 	@Column(name = "id_trainer")
 	private Long idTrainer;
@@ -33,7 +35,7 @@ public class OfflineSubGroup implements Serializable {
 	@Column(name = "id_user_created")
 	private Long idUserCreated;
 
-	@Column(name = "id_user_curator")
+	@Column(name = "id_user_curator", nullable=true)
 	private Long idUserCurator;
 
 	private String name;
@@ -56,20 +58,20 @@ public class OfflineSubGroup implements Serializable {
 		this.id = id;
 	}
 
+	public OfflineGroup getGroup() {
+		return group;
+	}
+
+	public void setGroup(OfflineGroup group) {
+		this.group = group;
+	}
+
 	public String getData() {
 		return data;
 	}
 
 	public void setData(String data) {
 		this.data = data;
-	}
-
-	public Integer getGroup_id() {
-		return group_id;
-	}
-
-	public void setGroup_id(Integer group_id) {
-		this.group_id = group_id;
 	}
 
 	public Long getIdTrainer() {

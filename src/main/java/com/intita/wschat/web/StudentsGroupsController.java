@@ -63,19 +63,37 @@ import com.intita.wschat.util.ProfanityChecker;
 
 @Controller
 public class StudentsGroupsController {
+	@Autowired private UsersService usersService;
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 	
-	@RequestMapping(value = "group_operations/update/{subGroupId}", method = RequestMethod.GET)
+	@RequestMapping(value = "sub_group_operations/update/{subGroupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean getBotCategoryNamesHavingString(@PathVariable Integer subGroupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public boolean subGroupUpdate(@PathVariable Integer subGroupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
 		ChatUser user = chatUsersService.getChatUser(principal);
 		User intitaUser = user.getIntitaUser();
 		if(intitaUser == null)
 			return false;
 		
 		OfflineSubGroup subGroup = offlineStudentsGroupService.getSubGroup(subGroupId);
-		if(subGroup == null || subGroup.getIdTrainer() != intitaUser.getId())
+		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
+			return false;
+		
+		offlineStudentsGroupService.updateSubGroupRoom(subGroup);
+		
+		return true;
+	}
+	
+	@RequestMapping(value = "group_operations/update/{groupId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean groupUpdate(@PathVariable Integer groupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		User intitaUser = user.getIntitaUser();
+		if(intitaUser == null)
+			return false;
+		
+		OfflineGroup subGroup = offlineStudentsGroupService.getGroup(groupId);
+		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
 			return false;
 		
 		offlineStudentsGroupService.updateGroupRoom(subGroup);

@@ -340,6 +340,20 @@ public class RoomsService {
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
+	
+	public void replaceUsersInRoom(Room room, ArrayList<ChatUser> chatUserList) {
+		Set<ChatUser> roomUserList = room.getUsers();
+		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
+		add.removeAll(roomUserList);
+		addUsersToRoom(add, room);
+
+		ArrayList<ChatUser> remove = new ArrayList<>(roomUserList);
+		remove.removeAll(chatUserList);
+		for (ChatUser chatUser : remove) {
+			removeUserFromRoom(chatUser, room);
+		}
+	}
+	
 
 	public void setAuthor(ChatUser user, Room room)
 	{

@@ -14,9 +14,9 @@ import com.intita.wschat.models.OfflineGroup;
 import com.intita.wschat.models.OfflineSubGroup;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import java.lang.Integer;
 
 
 
 public interface OfflineSubGroupRespository extends CrudRepository<OfflineSubGroup, Integer> {
-
 }

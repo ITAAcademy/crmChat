@@ -31,7 +31,7 @@ public class UsersService {
 
 	@Autowired
 	private ChatUsersService chatUsersService;
-	
+
 	@Autowired
 	private ChatTenantService chatTenantService;
 
@@ -158,6 +158,12 @@ public class UsersService {
 		if(usersRepo.findInAdminTable(id) != null)
 			return true;
 		return false;
+	}	
+	@Transactional
+	public boolean isSuperVisor(Long id){
+		if(usersRepo.findInSupervisorTable(id) != null)
+			return true;
+		return false;
 	}
 	@Transactional
 	public boolean isTenant(Long id){
@@ -219,7 +225,7 @@ public class UsersService {
 			return true;
 		return false;
 	}
-	*/
+	 */
 	@Transactional
 	public ArrayList<ChatUser> getAllTenants(){
 		ArrayList<ChatUser> result = new ArrayList<>();
@@ -253,7 +259,7 @@ public class UsersService {
 			return result;
 		return new ArrayList<>(chatUsersService.getUsers(free));
 	}
-	
+
 	public ArrayList<LoginEvent> getAllFreeTenantsLoginEvent(Long... ignoreUsers){
 		ArrayList<ChatUser> tenants = getAllFreeTenants(ignoreUsers);
 		ArrayList<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
