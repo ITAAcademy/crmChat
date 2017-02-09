@@ -11,7 +11,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     };
     var addDialog = function(dialogName, users) {
-       return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
+        return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
         success(function(data, status, headers, config) {
             console.log("ADD USER OK " + data);
         }).
@@ -210,7 +210,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {
                     if (!UserFactory.isAdmin())
-                    unsubscribeCurrentRoom();
+                        unsubscribeCurrentRoom();
                 }));
 
             lastRoomBindings.push(chatSocket.subscribe("/app/{0}/chat.participants/{1}".format(currentRoom.roomId, globalConfig.lang), function(message) {
@@ -415,7 +415,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
         $rootScope.$$postDigest(function() {
-            $('#messagesScroll').stop(true).animate({scrollTop: 999999
+            $('#messagesScroll').stop(true).animate({
+                scrollTop: 999999
             }, 500);
             $rootScope.$broadcast('MessageBusyEvent', false);
         });
@@ -644,10 +645,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         addTenantToRoom: addTenantToRoom,
         addUserToRoom: addUserToRoom,
         checkMessageAdditionPermission: checkMessageAdditionPermission,
-        getUserAddedToRoom: function(){
+        getUserAddedToRoom: function() {
             return userAddedToRoom;
         },
-        setUserAddedToRoom: function(val){
+        setUserAddedToRoom: function(val) {
             userAddedToRoom = val;
         }
 
