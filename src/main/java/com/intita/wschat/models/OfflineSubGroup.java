@@ -26,7 +26,7 @@ public class OfflineSubGroup implements Serializable {
 	private String data;
 
 	@ManyToOne
-	@JoinColumn(name = "`group`")
+
 	private OfflineGroup group;
 
 	@Column(name = "id_trainer")
