@@ -10,7 +10,6 @@ import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
@@ -21,7 +20,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,10 +57,7 @@ import com.intita.wschat.util.ProfanityChecker;
 
 @Controller
 public class ConsultationsController {
-	
-	@Autowired
-	private VelocityEngine velocityEngine;
-	
+
 	 @Value("${chat.mail.username}")
 	 String mail_userName;
 	 @Value("${chat.mail.password}")
@@ -274,8 +269,9 @@ public class ConsultationsController {
 	                ArrayList<UserMessage> messages = userMessageService.getUserMessagesByRoom(room);
 	                ArrayList<ChatMessage> simpleMessage = ChatMessage.getAllfromUserMessages(messages);
 	                model.put("messages", simpleMessage);
-	                String text = VelocityEngineUtils.mergeTemplateIntoString(
-	                        velocityEngine, "consultation_email.vm","UTF-8", model);
+	              /*  String text = VelocityEngineUtils.mergeTemplateIntoString(
+	                        velocityEngine, "consultation_email.vm","UTF-8", model);*/
+	              String text = "NOT WORK NOW, TO DO LATER";
 	                message.setText(text, true);
 	            }
 	        };
