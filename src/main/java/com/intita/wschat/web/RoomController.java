@@ -315,8 +315,11 @@ public class RoomController {
 		Integer role = 0;
 		if(activeIntitaUser != null )
 		{
-			if (userService.isAdmin(activeIntitaUser.getId()))
+			if (userService.isAdmin(activeIntitaUser.getId())) {
+				result.put("isAdmin", "true");
 				role |= ROLE.ADMIN;
+			}
+			else result.put("isAdmin", "false");
 			//check if tenant
 			if (userService.isTenant(activeIntitaUser.getId()))
 				result.put("isTenant", "true");

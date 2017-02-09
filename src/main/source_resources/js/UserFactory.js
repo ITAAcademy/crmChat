@@ -3,6 +3,7 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
     var isTenant = false;
     var isTrainer = false;
     var isStudent = false;
+    var isAdmin = false;
     var studentTrainerList = [];
     var chatUserNickname, chatUserRole, chatUserAvatar;
     var realChatUserId;
@@ -347,9 +348,10 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chat_id;
-        isTenant = Boolean(mess_obj.isTenant);
-        isTrainer = Boolean(mess_obj.isTrainer);
-        isStudent = Boolean(mess_obj.isStudent);
+        isTenant = mess_obj.isTenant=='true';
+        isTrainer = mess_obj.isTrainer =='true';
+        isStudent =mess_obj.isStudent == 'true';
+        isAdmin = mess_obj.isAdmin == 'true';
         if (isStudent && mess_obj.trainer != undefined) {
             debugger;
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
@@ -464,7 +466,10 @@ springChatServices.factory('UserFactory', ['$timeout', '$rootScope', '$location'
         isMessageSended: isMessageSended,
         setMessageSended: setMessageSended,
         getRoomsRequiredTrainers: getRoomsRequiredTrainers,
-        getRoomsRequiredTrainersLength: getRoomsRequiredTrainersLength
+        getRoomsRequiredTrainersLength: getRoomsRequiredTrainersLength,
+        isAdmin: function(){
+            return isAdmin;
+        }
 
     };
 
