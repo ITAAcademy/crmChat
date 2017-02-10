@@ -300,7 +300,7 @@ function initFolded(scope, element) {
     scope.scroll;
     scope.folded = true;
     scope.toggleFolded = function(event) {
-        if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("material-icons")) )
+        if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")) )
             return;
         scope.folded = !scope.folded;
         scope.scroll.overflowy = !scope.folded;
