@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('chatIntITAMessenger', []).directive('itaMessenger', ['$http', '$sce', function ($http, $sce) {
+var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('itaMessenger', ['$http', '$sce', function ($http, $sce) {
     return {
         restrict: 'EA',
         scope: {
