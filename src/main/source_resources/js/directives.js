@@ -251,7 +251,22 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
             scope.blockName = "Тенанти";
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.getTenantsList = UserFactory.getTenantsList;
+            scope.getTenantsList = function(){
+                var tenantsList = UserFactory.getTenantsList();
+                var participantsList = RoomsFactory.getParticipants();
+                var resultList = [];
+                for (var i = 0; i < tenantsList.length; i++){
+                    var isParticipant = true;
+                    for (var j = 0; j < participantsList.length; j++) {
+                        if (tenantsList[i].chatUserId == participantsList[j].chatUserId){
+                            isParticipant = false;
+                            break;
+                        }
+                    }
+                    if(isParticipant) resultList.push(tenantsList[i]);
+                }
+                return resultList;
+            }
             scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
         }
 
