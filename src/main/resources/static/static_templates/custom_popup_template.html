@@ -1,7 +1,0 @@
-<script type="text/ng-template" id="customPopupTemplate.html">
-        <ul class="dropdown-menu" style="bottom: 80px; z-index: 10000000;" ng-show="isOpen() &amp;&amp; !moveInProgress" role="listbox" aria-labelledby="w">
-            <li ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
-                <div uib-typeahead-match="" index="$index" match="match" query="query" template-url="templateUrl"></div>
-            </li>
-        </ul>
-    </script>

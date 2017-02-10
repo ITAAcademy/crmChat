@@ -66,7 +66,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             }
         };
 
-        $scope.newMessage = "";
+        $scope.newMessage = {value:""};
 
         var roomElement = angular.element(document.getElementById("panel-body"));
         $scope.resizeRoomElement = function(oldSize, newSize) {
