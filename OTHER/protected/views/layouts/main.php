@@ -32,6 +32,7 @@ $header = new Header();
           href="<?php echo StaticFilesHelper::fullPathTo('css', 'hamburgerMenu.css'); ?>"/>
     <link rel="shortcut icon" href="<?php echo StaticFilesHelper::fullPathTo('css', 'images/favicon.ico'); ?>"
           type="image/x-icon"/>
+    <script type="text/javascript" src="<?php echo StaticFilesHelper::fullPathTo('js', 'jquery-1.8.3.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo StaticFilesHelper::fullPathTo('js', 'openDialog.js'); ?>"></script>
     <!--[if lte IE 8]>
     <script src="<?php echo StaticFilesHelper::fullPathTo('angular', 'js/json3.min.js'); ?>"></script>
@@ -151,7 +152,6 @@ $header = new Header();
             ?>
         </div>
     </div>
-    
     <div id="contentBoxMain">
         <?php echo $content; ?>
         <!--Form Auth-->
@@ -174,10 +174,9 @@ $header = new Header();
         $this->renderPartial('/site/_forgotpass');
         $this->endWidget('zii.widgets.jui.CJuiDialog');
         ?>
-        
+        <!--forgot pass modal-->
     </div>
 </div>
-
 <div id="mainfooter">
     <div class="footercontent">
         <div class="leftfooter">
@@ -304,354 +303,15 @@ $header = new Header();
 <!-- Placeholder for old browser -->
 <script src="<?php echo StaticFilesHelper::fullPathTo('js', 'placeholder.min.js'); ?>"></script>
 <!-- Placeholder for old browser -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script type="text/javascript">
-/*
- * jQuery resize event - v1.1 - 3/14/2010
- * http://benalman.com/projects/jquery-resize-plugin/
- * 
- * Copyright (c) 2010 "Cowboy" Ben Alman
- * Dual licensed under the MIT and GPL licenses.
- * http://benalman.com/about/license/
- */
-(function($,h,c){var a=$([]),e=$.resize=$.extend($.resize,{}),i,k="setTimeout",j="resize",d=j+"-special-event",b="delay",f="throttleWindow";e[b]=250;e[f]=true;$.event.special[j]={setup:function(){if(!e[f]&&this[k]){return false}var l=$(this);a=a.add(l);$.data(this,d,{w:l.width(),h:l.height()});if(a.length===1){g()}},teardown:function(){if(!e[f]&&this[k]){return false}var l=$(this);a=a.not(l);l.removeData(d);if(!a.length){clearTimeout(i)}},add:function(l){if(!e[f]&&this[k]){return false}var n;function m(s,o,p){var q=$(this),r=$.data(this,d);r.w=o!==c?o:q.width();r.h=p!==c?p:q.height();n.apply(this,arguments)}if($.isFunction(l)){n=l;return m}else{n=l.handler;l.handler=m}}};function g(){i=h[k](function(){a.each(function(){var n=$(this),m=n.width(),l=n.height(),o=$.data(this,d);if(m!==o.w||l!==o.h){n.trigger(j,[o.w=m,o.h=l])}});g()},e[b])}})(jQuery,this);
-</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-   <script type="text/javascript">
-
-
-
-    var app = angular.module('mainApp', []);
-
-    app.controller('chat-controller', function($scope) {
-
-        var busy = false;
-        $scope.dragstart = function() {
-            $scope.$apply(function() {
-                busy = true;
-            });
-            console.log('dragstart', arguments);
-            var res_elem = $('.draggable');
-            res_elem.addClass("disable-animation");
-            $("iframe").addClass("disable-mouse");
-        };
-
-        $scope.drag = function() {
-            console.log('drag', arguments);
-        };
-
-        $scope.dragend = function() {
-            console.log('dragend', arguments);
-            if (!arguments[0]) this.dropped = false;
-            var res_elem = $('.draggable');
-            res_elem.removeClass("disable-animation");
-            $("iframe").removeClass("disable-mouse");
-            var res_elem = $('.draggable');
-            localStorage.setItem("chatX", res_elem.css("left"));
-            localStorage.setItem("chatY", res_elem.css("top"));
-
-            $scope.$apply(function() {
-                busy = false;
-            });
-        };
-
-        $scope.dragenter = function(dropmodel) {
-            debugger;
-            console.log('dragenter', arguments);
-            this.active = dropmodel;
-        };
-
-        $scope.dragover = function() {
-            console.log('dragover', arguments);
-        };
-
-        $scope.dragleave = function() {
-            console.log('dragleave', arguments);
-            this.active = undefined;
-        };
-
-        $scope.drop = function(dragmodel, model) {
-            console.log('drop', arguments);
-            this.dropped = model;
-        };
-
-        $scope.isDropped = function(model) {
-            return this.dropped === model;
-        };
-
-        $scope.isActive = function(model) {
-            return this.active === model;
-        };
-        $scope.minimizeteMin = function() {
-            if ($scope.state == 1 && busy == false) {
-                $scope.state = 0;
-                return;
-            }
-        }
-        $scope.minimizete = function() {
-            if ($scope.state == 1) {
-                $scope.state = 0;
-                return;
-            }
-            $scope.state = 1;
-        }
-        $scope.fullScreen = function() {
-            if ($scope.state == 1) {
-                $scope.state = 0;
-                return;
-            }
-            if ($scope.state == 2) {
-                $scope.state = 0;
-                return;
-            }
-            $scope.state = 2;
-
-        }
-
-    var elem = $(".dnd-container");
-            var res_elem = $('.draggable');
-
-
-
-        var reinitElemPos = function(){
-                        var elem = $(".dnd-container");
-            var res_elem = $('.draggable');
-            var x = localStorage.getItem("chatX");
-            var y = localStorage.getItem("chatY");
-            if (x == undefined || y == undefined) {
-                var elem = $(".dnd-container");
-                res_elem.css({ top: (elem.height() - 600) + 'px' });
-                res_elem.css({ left: (elem.width() - 400) + 'px' });
-            } else {
-                var offset = res_elem.position();
-                console.log(elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0);
-                if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0)
-                    {
-                        if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 ) {
-                res_elem.css({ top: (elem.height() - res_elem.height()) + 'px' });
-            }
-            if (elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
-                res_elem.css({ left: (elem.width() - res_elem.width()) + 'px' });
-            }
-                    }
-                    else
-                    {
-                res_elem.css({ left: x });
-                res_elem.css({ top: y });        
-                    }
-                
-            }
-            return true;
-        }
-
-          $(document).ready(reinitElemPos);
-          $(window).resize(reinitElemPos);
-
-        $(document).ready(function() {
-            $scope.state = 0;
-            var elem = $(".dnd-container");
-            var res_elem = $('.draggable');
-
-            
-            $scope.$apply(function() {
-         //   $('.draggable').bind( 'resize', reinitElemPos);
-                $scope.$watch('state', function() {
-                    localStorage.setItem("chatState", $scope.state);
-                    var res_elem = $('.draggable');
-                    if ($scope.state == 2) {
-                        res_elem.removeClass("normal");
-                    } else {
-                        setTimeout(function() {
-                            reinitElemPos();
-                            res_elem.addClass("normal");
-                        }, 600);
-                    }
-                })
-
-                if (localStorage.getItem("chatState") == undefined)
-                {
-                    $scope.state = 0;
-                    $(".chat").removeClass("mini");
-                }
-                else {
-                    $scope.state = parseInt(localStorage.getItem("chatState"));
-                    if ($scope.state != 1) {
-                        {
-                        $(".chat").removeClass("mini");
-                        reinitElemPos();
-                        }
-                    }
-                }
-                
-                setTimeout(function() {res_elem.removeClass("disable-animation");}, 100);
-                $(".chat").draggable({ /*handle: ".handle"*/ cancel: ".ignore", containment: "parent", start: $scope.dragstart, stop: $scope.dragend });
-                $scope.init = true;
-            });
-reinitElemPos();
-        });
-    });
+    ga('create', 'UA-83801032-1', 'auto');
+    ga('send', 'pageview');
 
 </script>
-
-<!-- http://www.freeformatter.com/javascript-escape.html#ad-output $('body').append();-->
-<
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
- <style type="text/css">
- .dnd-container{
-    position: fixed; z-index: 99999999;top: 0px;left: 0px;width: 100%;height: 100%;transform: none;pointer-events: none;
- }
- .dnd-container *{
-     box-sizing: border-box;
- }
- .dnd-container .chat{
-    width: 100%;
-    height: 100%;
-    max-height: 600px;
-    max-width: 400px;
-    top: calc(100% - 600px);
-    left: calc(100% - 400px);
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    transform: none;
-    pointer-events: all;
-    -webkit-transition: all .5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    -webkit-transition-property: top, bottom, left, right;
-    transition-property: top, bottom, left, right;
-
-    -webkit-transform: translateZ(0);
--moz-transform: translateZ(0);
--ms-transform: translateZ(0);
--o-transform: translateZ(0);
-transform: translateZ(0);
-    margin: 0;
-    height: 600px !important;
-    width: 400px !important;
-    max-height: 100%;
- }
-  .dnd-container .chat.normal{
-    -webkit-transition-property: all;
-    transition-property: all;
-  }
- .dnd-container .chat.mini{
-    max-height: 65px;
-    max-width: 300px;
-    /*top: calc(100% - 53px) !important;
-    left: calc(100% - 300px) !important;*/
- }
-  .dnd-container .chat.full{
-    max-height: 100%;
-    max-width: 950px;
-    height: 100% !important;
-    width: 100% !important;
-    right: 0px !important;
-    bottom: 0px !important;
-    top: 0 !important;
-    left: 0 !important;
-     margin: auto;
-         -webkit-transition-property: none;
-    transition-property: none;
- }
- .dnd-container .chat.disable-animation{
-     -webkit-transition: initial;
-    -moz-transition: initial;
-    -o-transition: initial;
-    transition: initial;
- }
- .dnd-container .chat .logo{
-        background-color: white;
-    background-image: url(https://qa.intita.com/images/mainpage/Logo_small.png);
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 110px;
-    height: 30px;
-    position: absolute;
-    top: 18px;
-    left: 25px;
-    max-width: 0;
- }
- .dnd-container .chat.mini .logo{
-    max-width: 100%;
- }
- .window_panel > *{
-    display: inline-block;
-    width: 20px; height: 35px;
-    color: #fff;
-    line-height: 35px;
- }
- .window_panel{
-    position:absolute;top: 15px;right: 10px;width: 60px;height: 35px;background: none;color:#fff; text-align: center;
- }
- .dnd-container .chat .handle{
-    position:absolute;top: 15px;left: 50px;width: calc(100% - 160px);height: 35px;background: none;color:#fff;cursor: move;
- }
- .dnd-container .chat.mini .handle{
-    cursor: pointer;
- }
-
- .dnd-container .chat.full .handle{
-     pointer-events: none;
- }
-
-
- .dnd-container .chat.mini #minimize_btn{
-    display: none;
- }
-  .dnd-container .chat.full .window_panel{
-  top: 15px;right: 10px;
-    }
- .dnd-container .material-icons{
-    -webkit-transition: color .25s ease-in-out;
-    -moz-transition: color .25s ease-in-out;
-    -o-transition: color .25s ease-in-out;
-    transition: color .25s ease-in-out;
-    font-size: 20px;
- }
- .dnd-container .material-icons:hover{
-    cursor: pointer;
-    color: #a3c6e2;
- }
- .disable-mouse{
-    pointer-events: none;
- }
- @media only screen and (min-width:900px) {
-  .dnd-container .chat.full .window_panel{
-  top: 15px;right: 25px;
-}
- @media only screen and (max-width:899px) {
-    .dnd-container .chat{
-           max-height: 100%;
-    max-width: 950px;
-    height: 100% !important;
-    width: 100% !important;
-    right: 0px !important;
-    bottom: 0px !important;
-    top: 0 !important;
-    left: 0 !important;
-     margin: auto;
-         -webkit-transition-property: none;
-    transition-property: none;
-    }
-}
-  </style>
-<script type="text/javascript">
-
-</script>
-<div ng-controller="chat-controller as main" class="dnd-container">
-            <div ng-show="init" class="draggable disable-animation chat mini ng-class:{mini: state==1, full: state==2}" ng-click="" >
-            <iframe style="width: 100%;height: 100%;border: none;" src="https://localhost:8080/crmChat"></iframe>
-            <div class="window_panel ignore" style="">
-                <div id="minimize_btn" class="material-icons" ng-click="minimizete()">indeterminate_check_box</div>
-                <div id="fullscreen_btn" class="material-icons" ng-click="fullScreen()">web_asset</div>
-            </div>
-            <div class="handle" ng-mouseup="minimizeteMin()" style=""></div>
-            
-
-            </div>
-</div>
-
 </body>
 </html>

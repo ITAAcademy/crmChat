@@ -1276,6 +1276,7 @@ background-color: #46688d;
     display: inline-block;
     margin-left: 26px;
     opacity: 0.2;
+    pointer-events: none;
 }
 
 .multimedia_conversation_controls>* {

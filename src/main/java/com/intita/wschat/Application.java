@@ -35,6 +35,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 
@@ -71,6 +74,19 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
 		taskExecutor.initialize();
 		return taskExecutor;
 	}
+	
+	@Bean
+	public CorsFilter corsFilter() {
+	    final UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+	    final CorsConfiguration corsConfiguration = new CorsConfiguration();
+	    corsConfiguration.setAllowCredentials(true);
+	    corsConfiguration.addAllowedOrigin("*");
+	    corsConfiguration.addAllowedHeader("*");
+	    corsConfiguration.addAllowedMethod("*");
+	    urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+	    return new CorsFilter(urlBasedCorsConfigurationSource);
+	}
+	
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 		return new SimpleAsyncUncaughtExceptionHandler();

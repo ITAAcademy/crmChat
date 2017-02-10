@@ -45,6 +45,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -392,6 +393,12 @@ public class ChatController {
 			lecturesList = lecturesService.getFirstFiveLecturesByTitleUaLike(title);	
 
 		return  new ArrayList<Lectures>(lecturesList);
+	}
+	
+	@CrossOrigin(origins = "*", maxAge=3600)
+	@RequestMapping(value = "/static_templates/itaMessegger.html", method = RequestMethod.GET)
+	public String getChatTemplate(){
+		return "itaMessegger";
 	}
 
 	@RequestMapping(value="/chat/lectures/get_five_titles_like/", method = RequestMethod.GET)
