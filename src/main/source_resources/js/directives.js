@@ -300,7 +300,7 @@ function initFolded(scope, element) {
     scope.scroll;
     scope.folded = true;
     scope.toggleFolded = function(event) {
-        if (event != undefined && $(event.target).hasClass("block_controll"))
+        if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")) )
             return;
         scope.folded = !scope.folded;
         scope.scroll.overflowy = !scope.folded;
@@ -329,9 +329,30 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
                     scope.students = responseObj.data;
                 });
             };
+            function updateModelForGroups(){
+                 updateModelGet($http, "get_group_users_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
+                    scope.students = responseObj.data;
+                });
+            }
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
+            scope.isGroupMode = false;
+            scope.toggleGroupMode = function(){
+                if ( scope.isGroupMode ) {
+                     disableGroupMode();
+                } else {
+                     enableGroupMode();
+                }
+            }
+            var enableGroupMode = function(){
+                updateModelForGroups();
+                 scope.isGroupMode = true;
+            }
+            var disableGroupMode = function(){
+                updateModelForStudents();
+                scope.isGroupMode = false;
+            }
 
         }
 

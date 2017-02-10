@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 
 
@@ -25,6 +26,9 @@ public interface UserRepository extends CrudRepository<User, Long> {
 //  List<User> findFirst5ByLoginAndByPassword( String users, String login);
   List<User> findFirst5ByIdNotInAndLoginLike( List<Long> users, String login);
   List<User> findFirst5ByLoginLike(String login);
+  ArrayList<User> findAllByIdIn(List<Long> users);
+  @Query("select u.id from User u where u.id in ?1")
+  ArrayList<Long> findAllIdsByIdIn(List<Long> users);
   
   @Query("select u from User u where (u.firstName like ?1 or u.secondName like ?1 or u.login like ?1) and u.id not in ?2")
   List<User> findFirst5ByLoginLikeCustom( String login, List<Long> users, Pageable pageable);

@@ -123,6 +123,10 @@ public class ChatUsersService {
 		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
 	@Transactional
+	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){
+		return chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);
+	}
+	@Transactional
 	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){
 		User currentUser = userService.getUser(email);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
