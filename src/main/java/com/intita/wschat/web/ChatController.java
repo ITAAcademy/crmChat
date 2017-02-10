@@ -95,6 +95,7 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.CourseService;
+import com.intita.wschat.services.IntitaSubGtoupService;
 import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
@@ -144,6 +145,7 @@ public class ChatController {
 	@Autowired private BotItemContainerService dialogItemService;
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private ChatTenantService chatTenantService;
+	@Autowired private IntitaSubGtoupService subGroupService;
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -950,8 +952,18 @@ public class ChatController {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(loginEvents);
 		return jsonInString;
-
-
+	}
+	@RequestMapping(value="/get_group_users_by_trainer", method = RequestMethod.GET)
+	@ResponseBody
+	public String getGroupUsersByTrainer(@RequestParam(required = true) Long trainerChatId) throws JsonProcessingException {
+		User intitaUser = userService.getUserFromChat(trainerChatId);
+		ArrayList<ChatUser> usersResult = subGroupService.getTrainerStudents(intitaUser.getId());
+		ArrayList<LoginEvent> loginEvents = new ArrayList<>();
+		for (ChatUser chatUser: usersResult)
+			loginEvents.add(new LoginEvent(chatUser));
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(loginEvents);
+		return jsonInString;
 	}
 
 	@RequestMapping(value="/get_rooms_containing_string", method = RequestMethod.GET)

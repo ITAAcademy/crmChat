@@ -67,6 +67,20 @@ public class IntitaSubGtoupService {
 		}
 		return students;
 	}
-
+	@Transactional
+	public ArrayList<ChatUser> getTrainerStudents(Long trainerUserId){
+		ArrayList<Integer> studentsOfTrainer = intitaSubGroupRespository.getStudentsByTrainer(trainerUserId.intValue());
+		ArrayList<Long> studentLong = new ArrayList<Long>();
+		for (Integer studentId : studentsOfTrainer){
+			studentLong.add(studentId.longValue());
+		}
+		ArrayList<Long> students = userService.getUsersIds(studentLong);
+		if (students.isEmpty())return new ArrayList<ChatUser>();
+		else
+		return chatUserService.getChatUsersFromIntitaIds(students);
+		
+	}
+	
+ 
 
 }

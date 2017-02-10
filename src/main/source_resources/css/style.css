@@ -328,6 +328,7 @@ body {
     background-color: #3598db;
     position: relative;
     z-index: 1;
+    text-align: center;
 }
 
 .items_list_block .block_controll.hide {

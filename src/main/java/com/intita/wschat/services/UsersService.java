@@ -48,6 +48,16 @@ public class UsersService {
 		return usersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
+	
+	@Transactional
+	public ArrayList<User> getUsers(List<Long> ids){
+		return usersRepo.findAllByIdIn(ids);
+	}
+	@Transactional
+	public ArrayList<Long> getUsersIds(List<Long> ids){
+		return usersRepo.findAllIdsByIdIn(ids);
+	}
+	
 	@Transactional
 	public User getUser(Principal principal){
 		String chatUserIdStr = principal.getName();

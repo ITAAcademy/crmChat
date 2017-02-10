@@ -1,6 +1,7 @@
-<div ng-if="students.length > 0" class="items_list_block top_block">
-    <div class="block_head" ng-click="toggleFolded()">
-        <div class="block_controll"><img src="images/elements/add.png"></div>
+<div ng-if="students.length > 0 || isGroupMode" class="items_list_block top_block">
+    <div class="block_head" ng-click="toggleFolded($event)">
+        <div class="block_controll" ng-show="isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons">group_work</i></div>
+        <div class="block_controll" ng-show="!isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons">account_circle</i></div>
         <div ng-if="students.length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
         <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">
