@@ -1277,6 +1277,10 @@ background-color: #46688d;
 .send_button:hover {
     opacity: 0.8;
 }
+.send_button.disabled{
+    opacity: .5;
+    pointer-events: none;  
+}
 
 .multimedia_conversation_controls {
     display: inline-block;

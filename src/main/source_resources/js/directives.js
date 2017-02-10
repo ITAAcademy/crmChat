@@ -417,7 +417,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     return;
                 }
                 if (isClearMessageInputNeeded) {
-                    $scope.newMessage = '';
+                    $scope.newMessage.value = '';
                     $scope.files = [];
                     //$("#newMessageInput")[0].value  = '';
                 }
@@ -454,7 +454,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     });
                 };
                 if (message === undefined)
-                    $scope.newMessage = '';
+                    $scope.newMessage.value = '';
 
             };
             $scope.clearFiles = function() {
@@ -474,7 +474,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
             $scope.sendMessageAndFiles = function() {
                 var files = $scope.files;
-                var textOfMessage = $scope.newMessage == null || $scope.newMessage.length < 1 ? " " : $scope.newMessage;
+                var textOfMessage = $scope.newMessage.value == null || $scope.newMessage.value.length < 1 ? " " : $scope.newMessage.value;
                 if (files != null && files.length > 0) {
                     uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                         function successCallback(data) {

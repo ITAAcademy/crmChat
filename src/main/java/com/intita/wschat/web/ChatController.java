@@ -451,7 +451,7 @@ public class ChatController {
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, userService, chatUsersService, roomService);//Control room from LP
-		if(struct == null || !struct.room.isActive() || message.getMessage().isEmpty())//cant add msg
+		if(struct == null || !struct.room.isActive() || message.getMessage().trim().isEmpty())//cant add msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(struct.user, struct.room, message);
@@ -461,7 +461,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
-		if(!room.isActive() || message.getMessage().isEmpty())//cant add msg
+		if(!room.isActive() || message.getMessage().trim().isEmpty())//cant add msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(chatUser,room,message);
@@ -529,6 +529,8 @@ public class ChatController {
 
 		Room o_room = struct.getRoom();
 		UserMessage messageToSave = filterMessageWithoutFakeObj(user, message, o_room);//filterMessage(roomStr, message, principal);
+		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
+		String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 		if (messageToSave!=null)
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
@@ -537,11 +539,10 @@ public class ChatController {
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
-			OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL,true,"SENDING MESSAGE TO ALL USERS");
-			String subscriptionStr = "/topic/users/" + principal.getName() + "/status";
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 			return message;
 		}
+		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 		return null;
 	}
 
