@@ -59,7 +59,6 @@ angular.module('angular-content-editable')
         function onFocus(e) {
             // turn on the flag
             noEscape = true;
-
             if (elem.html() == scope.placeholder)
                 elem.html('');
             // select all on focus

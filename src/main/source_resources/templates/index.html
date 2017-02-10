@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html style="width: 100%; height: 100%" lang="en" ng-app="springChat">
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i&amp;subset=cyrillic,cyrillic-ext" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i&amp;subset=cyrillic,cyrillic-ext" rel="stylesheet" />
 
 <head>
     <meta charset="utf-8" />
@@ -13,35 +13,33 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/ngDialog.min.css" />
     <link rel="stylesheet" href="css/ngDialog-theme-default.min.css" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="lib/jquery-emojiarea/jquery.emojiarea.css"/>
 </head>
 
 <body id="body">
     <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
-        
         <div class="head">
-        <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
+            <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
             <i class="logo material-icons">chat</i><i class="logo-text">Онлайн чат</i>
-
-           <div class="window_icons_wrapper" ng-if="$root.authorize">
-            <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list"
-                 itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">
-                <i class="material-icons">notifications</i>
-                <div class="text"></div>
+            <div class="window_icons_wrapper" ng-if="$root.authorize">
+                <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" itemclick="confirmToHelp" data="getRoomsRequiredTrainers" container="notification_container">
+                    <i class="material-icons">notifications</i>
+                    <div class="text"></div>
+                </div>
+                <div id="notification_container" class="notification_menu"></div>
+                <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
+                    <i class="material-icons ">chat_bubble_outline</i>
+                    <div class="text" ng-bind="getNewMsgNumber()"></div>
+                    <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
+                </div>
+                <div class="window_icon tenant_busy_control ng-hide" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
+                    <i class="material-icons ">hourglass_empty</i>
+                </div>
+                <div class="window_icon ng-hide" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
+                    <i class="material-icons ">hourglass_full</i>
+                </div>
             </div>
-               <div id="notification_container" class="notification_menu"></div>
-            <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
-                <i class="material-icons ">chat_bubble_outline</i>
-                <div class="text" ng-bind="getNewMsgNumber()"></div>
-                <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
-            </div>
-            <div class="window_icon tenant_busy_control ng-hide" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
-                <i class="material-icons ">hourglass_empty</i>
-            </div>
-            <div class="window_icon ng-hide" ng-show="!getTenantIsFree()" ng-click="clickSetTenantFree()">
-                <i class="material-icons ">hourglass_full</i>
-            </div>
-           </div>
         </div>
         <div id="loader-wrapper">
             <div id="loader"></div>
@@ -70,8 +68,8 @@
             <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
-        <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
-            <div ng-if= "!currentRoomIsNull()" class="tools_area">
+            <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
+            <div ng-if="!currentRoomIsNull()" class="tools_area">
                 <div class="tools_dropdown_container">
                     <div id="tools_dropdown" class="popup_dropdown">
                         <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item">Показати додатки</a>
@@ -88,16 +86,13 @@
                     <div class="room_name">{{getCurrentRoom().string}}</div>
                 </div>
                 <div class="search_box">
-                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text"  placeholder="Пошук..." />
-                    <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}" >search</i>
-                    <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-class="{'showed':messageSearchEnabled}" >cancel</i>
+                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text" placeholder="Пошук..." />
+                    <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}">search</i>
+                    <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-class="{'showed':messageSearchEnabled}">cancel</i>
                 </div>
             </div>
             <hr/>
-            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()'
-                 can-load='!$root.message_busy'
-                 treshold='100'
-                 infinite-scroll-invert='true' messages-block="true"></div>
+            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!$root.message_busy' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->
             <div ng-show="isMessageInputAvailable()" class="messages_input_area" message-input="true"></div>
         </div>
@@ -115,6 +110,8 @@
         var fileUploadLocal = [[${lgPack.fileOperations}]];
     </script>
     <script src="lib/jquery.min.js"></script>
+    <script src="lib/jquery-emojiarea/jquery.emojiarea.js"></script>
+    <script src="lib/jquery-emojiarea/packs/basic/emojis.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.min.js"></script>

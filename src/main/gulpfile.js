@@ -64,6 +64,6 @@ gulp.task('watch',function(){
     gulp.watch('source_resources/static_templates/*.*',gulp.series('templates:static'));
     gulp.watch('source_resources/templates/*.*',gulp.series('templates'));
     gulp.watch('source_resources/js/**/*.*',gulp.series('scripts'));
-    gulp.watch('source_resources/lib/*.*',gulp.series('lib'));
+    gulp.watch('source_resources/lib/**/*.*',gulp.series('lib'));
 });
 gulp.task('dev',gulp.series('build','watch'));

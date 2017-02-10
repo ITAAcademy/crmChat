@@ -109,6 +109,10 @@ body {
     fill: white
 }
 
+.chat_emojja {
+    width: 20px;
+}
+
 .consultant_wrapper * {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -197,11 +201,11 @@ body {
 
 .window_icon .text {
     overflow: hidden;
-    width: 20px;
-    height: 15px;
+    width: 14px;
+    height: 27px;
     position: absolute;
     margin-left: 3px;
-    margin-top: -26px;
+    margin-top: -41px;
 }
 
 .head .logo {
@@ -223,7 +227,7 @@ body {
 }
 
 .head .message_notification .text {
-    font-size: 14px;
+    font-size: 10px;
     /* position: relative; */
     /* left:7px; */
     /* background: #333; */
@@ -1230,6 +1234,7 @@ body {
     outline: 0;
     display: inline-block;
     margin-top: 4px;
+    padding: 0;
 }
 
 .controls_area button > i {
@@ -1245,7 +1250,7 @@ body {
 .attaches_area {
     display: inline-block;
     float: right;
-    margin-right: 10px
+    margin-right: 10px;
 }
 
 .send_button {
@@ -1263,6 +1268,7 @@ body {
     text-align: center;
     line-height: 35px;
     cursor: pointer;
+    margin-left: 5px;
 }
 
 .send_button i.material-icons {
@@ -1886,17 +1892,28 @@ body.frame .window_icons_wrapper {
         margin-left: 0px !important;
     }
     .messages_output_area .answer.right .message_details {
-    background-color: #ededed;
-    margin-right: -6px;
-}
-.messages_output_area .answer.left .message_details .top_details {text-align: right;}
-.messages_output_area .answer.right .message_details .top_details {text-align: left;}
-.messages_output_area .answer.right .message_author_avatar {position: absolute;left: 25px;top: 10px;}
-.messages_output_area .answer.left .message_author_avatar {position: absolute;right: 20px;}
-.messages_output_area .answer.left .message_details:before,
-.messages_output_area .answer.right .message_details:before{
-    display: none;
-}
+        background-color: #ededed;
+        margin-right: -6px;
+    }
+    .messages_output_area .answer.left .message_details .top_details {
+        text-align: right;
+    }
+    .messages_output_area .answer.right .message_details .top_details {
+        text-align: left;
+    }
+    .messages_output_area .answer.right .message_author_avatar {
+        position: absolute;
+        left: 25px;
+        top: 10px;
+    }
+    .messages_output_area .answer.left .message_author_avatar {
+        position: absolute;
+        right: 20px;
+    }
+    .messages_output_area .answer.left .message_details:before,
+    .messages_output_area .answer.right .message_details:before {
+        display: none;
+    }
     .head .logo {
         position: absolute;
         left: 45px;
