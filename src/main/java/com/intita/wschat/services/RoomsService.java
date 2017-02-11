@@ -522,6 +522,10 @@ public class RoomsService {
 		model.setUserPermissions(userPermissions);
 		return model;
 	}
+	@Transactional
+	public ArrayList<Room> getRoomsByIds(ArrayList<Long> intitaUsersIds){
+		return roomRepo.findRoomsByIds(intitaUsersIds);
+	}
 
 
 }

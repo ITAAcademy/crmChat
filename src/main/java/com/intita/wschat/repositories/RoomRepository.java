@@ -23,4 +23,6 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
   List<Room> findFirst10ByIdNotIn(List<Long> users);
   Room findByAuthorAndTypeAndUsersContaining(ChatUser author, short type, ChatUser privateUser);
   ArrayList<Room> findByAuthor(ChatUser author);
+  @Query("select r from ChatRoom r where r.id in ?1")
+  ArrayList<Room> findRoomsByIds(ArrayList<Long> ids);
 }

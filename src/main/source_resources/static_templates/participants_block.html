@@ -11,20 +11,8 @@
         <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
-        <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort">
-            <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
-                <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + participant.avatar + ')'}"></div>
-                <div class="user_presence_icon"></div>
-                <div class="user_presence_icon_wraper"></div>
-            </div>
-            <div class="text_info">
-                <div class="user_name">{{participant.chatUserId}}:{{participant.username}}</div>
-                <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
-                <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
-            </div>
-            <div class="contact_control">
-                <img class="delete-user-icon" ng-if="!$root.checkPrivateRelations(currentRoom(), participant)  &amp;&amp; checkUserAdditionPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom().roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" src="images\cross13x15.png" alt="" />
-            </div>
+        <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort" ng-include="'static_templates/participants_block_item.html'">
+          
         </div>
     </div>
 </div>

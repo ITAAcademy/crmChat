@@ -1,29 +1,18 @@
 package com.intita.wschat.services;
 
-import java.security.Principal;
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.IntitaSubGroup;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
-import com.intita.wschat.repositories.ChatUserRepository;
 import com.intita.wschat.repositories.IntitaSubGroupRespository;
 
 @Service
@@ -33,6 +22,7 @@ public class IntitaSubGtoupService {
 	private IntitaSubGroupRespository intitaSubGroupRespository;
 	@Autowired 	private UsersService userService;
 	@Autowired 	private ChatUsersService chatUserService;
+	@Autowired private RoomsService roomsService;
 
 	@PostConstruct
 	@Transactional
@@ -77,8 +67,20 @@ public class IntitaSubGtoupService {
 		ArrayList<Long> students = userService.getUsersIds(studentLong);
 		if (students.isEmpty())return new ArrayList<ChatUser>();
 		else
-		return chatUserService.getChatUsersFromIntitaIds(students);
-		
+		return chatUserService.getChatUsersFromIntitaIds(students);	
+	}
+	@Transactional
+	public ArrayList<Room> getTrainerGroupRooms(Long trainerUserId){
+		ArrayList<BigInteger> roomsOfTrainer = intitaSubGroupRespository.getRoomsByTrainer(trainerUserId.intValue());
+		ArrayList<Long> roomsLong = new ArrayList<Long>();
+		for (BigInteger roomId : roomsOfTrainer){
+			if (roomId!=null)
+			roomsLong.add(roomId.longValue());
+		}
+		if (roomsLong.isEmpty())
+			return new ArrayList<Room>();
+		else
+		return roomsService.getRoomsByIds( roomsLong );
 	}
 	
  

@@ -275,7 +275,7 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
 
 angular.module('springChat.directives').directive('tenantsBlock', ['$http', 'mySettings', 'UserFactory', 'RoomsFactory', tenantsBlock]);
 
-angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', studentsBlock]);
+angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory','ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
 
@@ -312,7 +312,7 @@ function initFolded(scope, element) {
     scope.scroll.overflowy = !scope.folded;
 }
 
-function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
+function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -323,6 +323,9 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
             scope.blockName = "Студенти";
             updateModelForStudents();
             initFolded(scope, element);
+            scope.students = [];
+            scope.groupRooms = [];
+            initRoomsFunctions(scope,ChannelFactory,UserFactory);
 
             function updateModelForStudents() {
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
@@ -330,8 +333,8 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 });
             };
             function updateModelForGroups(){
-                 updateModelGet($http, "get_group_users_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
-                    scope.students = responseObj.data;
+                 updateModelGet($http, "get_group_rooms_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
+                    scope.groupRooms = responseObj.data;
                 });
             }
             scope.isUserOnline = UserFactory.isUserOnline;
@@ -581,6 +584,7 @@ var roomsBlockFilter = function(RoomsFactory) {
 angular.module('springChat.directives').directive('roomsBlock', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', '$timeout', roomsBlock]).filter('roomsBlockFilter', ['RoomsFactory', roomsBlockFilter]);
 
 var roomsBlockLinkFunction;
+var initRoomsFunctions;
 
 function roomsBlockMini($http, RoomsFactory, ChannelFactory, UserFactory) {
     return {
@@ -690,60 +694,12 @@ function notificable($templateRequest, $sce, $compile, $parse) {
 };
 
 
-
-
-roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
-    $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
-    //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
-
-    var userListForAddedToNewRoom = [];
-    $scope.isUserOnline = UserFactory.isUserOnline;
-    $scope.rooms = RoomsFactory.getRooms;
-    $scope.searchEnabled = false;
-    $scope.createEnabled = false;
-    $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
-    $scope.tabState = "Contacts";
-    /* $scope.stripHtml = function(html)
-     {
-         var tmp = document.createElement("DIV");
-         tmp.innerHTML = html;
-         return tmp.textContent || tmp.innerText || "";
-     }*/
-    /****
-     * 1 - default
-     * 2 - add new user
-     */
-
-    $scope.mode = 1;
-    var roomsBlockModeChangeSubscription;
-    $scope.$on('$destroy', function() {
-        roomsBlockModeChangeSubscription();
-    });
-
-    roomsBlockModeChangeSubscription = $scope.$root.$on('rootScope:roomsBlockModeChange', function(event, data) {
-        console.log(data);
-        $scope.mode = data;
-        switch ($scope.mode) {
-            case 1:
-                break;
-            case 2:
-                $scope.showContacts();
-                break;
-        }
-
-    });
-    $scope.sortBy = ['date', 'string'];
-    $scope.displayLetters = false;
-    $scope.room_create_input = "";
-    $scope.isInterlocutorOnline = function(room) {
-        if (room == null || room.privateUserIds == null || room.privateUserIds.length < 1) return false;
-        if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0])) return true;
-        if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
-        return false;
+initRoomsFunctions = function($scope,ChannelFactory,UserFactory){
+        function addNewUser(chatUserId) {
+        RoomsFactory.addUserToRoom(chatUserId);
     }
 
-    $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
-    $scope.clickToRoomEvent = function(room) {
+ $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
         switch ($scope.mode) {
@@ -773,10 +729,66 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         $scope.$root.hideMenu();
     }
 
-    function addNewUser(chatUserId) {
-
-        RoomsFactory.addUserToRoom(chatUserId);
+    $scope.doGoToRoom = function(roomId) {
+        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
+            return;
+        $scope.loadOnlyFilesInfiniteScrollMode = false;
+        ChannelFactory.changeLocation('/dialog_view/' + roomId);
     }
+
+            $scope.mode = 1;
+}
+roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
+    $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
+    //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
+
+    var userListForAddedToNewRoom = [];
+    $scope.isUserOnline = UserFactory.isUserOnline;
+    $scope.rooms = RoomsFactory.getRooms;
+    $scope.searchEnabled = false;
+    $scope.createEnabled = false;
+    $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
+    $scope.tabState = "Contacts";
+    /* $scope.stripHtml = function(html)
+     {
+         var tmp = document.createElement("DIV");
+         tmp.innerHTML = html;
+         return tmp.textContent || tmp.innerText || "";
+     }*/
+    /****
+     * 1 - default
+     * 2 - add new user
+     */
+     initRoomsFunctions($scope,ChannelFactory,UserFactory);
+    
+    var roomsBlockModeChangeSubscription;
+    $scope.$on('$destroy', function() {
+        roomsBlockModeChangeSubscription();
+    });
+
+    roomsBlockModeChangeSubscription = $scope.$root.$on('rootScope:roomsBlockModeChange', function(event, data) {
+        console.log(data);
+        $scope.mode = data;
+        switch ($scope.mode) {
+            case 1:
+                break;
+            case 2:
+                $scope.showContacts();
+                break;
+        }
+
+    });
+    $scope.sortBy = ['date', 'string'];
+    $scope.displayLetters = false;
+    $scope.room_create_input = "";
+    $scope.isInterlocutorOnline = function(room) {
+        if (room == null || room.privateUserIds == null || room.privateUserIds.length < 1) return false;
+        if (UserFactory.getChatUserId() != room.privateUserIds[0] && $scope.isUserOnline(room.privateUserIds[0])) return true;
+        if (UserFactory.getChatUserId() != room.privateUserIds[1] && $scope.isUserOnline(room.privateUserIds[1])) return true;
+        return false;
+    }
+
+    $scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
 
     $scope.toggleSearch = function() {
         $scope.searchEnabled = !$scope.searchEnabled;
@@ -837,12 +849,6 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     }
 
-    $scope.doGoToRoom = function(roomId) {
-        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
-            return;
-        $scope.loadOnlyFilesInfiniteScrollMode = false;
-        ChannelFactory.changeLocation('/dialog_view/' + roomId);
-    }
     var nice = $(".scroll");
     $scope.showLastContacts();
 };

@@ -351,7 +351,7 @@ public class ChatController {
 		if(!all.contains(o_room))
 			return null;
 
-		long timeSpend = System.currentTimeMillis() - startTime;
+		//long timeSpend = System.currentTimeMillis() - startTime;
 		//log.info("isMyRoom time:" + timeSpend );
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
 	}
@@ -963,6 +963,23 @@ public class ChatController {
 			loginEvents.add(new LoginEvent(chatUser));
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(loginEvents);
+		return jsonInString;
+	}
+	@RequestMapping(value="/get_group_rooms_by_trainer", method = RequestMethod.GET)
+	@ResponseBody
+	public String getGroupRoomsByTrainer(@RequestParam(required = true) Long trainerChatId,Principal principal) throws JsonProcessingException {
+		User intitaUser = userService.getUserFromChat(trainerChatId);
+		ArrayList<Room> roomsResult = subGroupService.getTrainerGroupRooms(intitaUser.getId());
+		ArrayList<RoomModelSimple> roomsModels = new ArrayList<RoomModelSimple>();
+		for (Room room: roomsResult){
+			CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room.getId(), principal, userService, chatUsersService,
+					roomService);
+			RoomModelSimple sb = roomService.getSimpleModelByUserPermissionsForRoom(struct.getUser(), 0,
+					new Date().toString(), struct.getRoom(), userMessageService.getLastUserMessageByRoom(struct.getRoom()));
+			roomsModels.add(sb);
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = 	mapper.writerWithView(Views.Public.class).writeValueAsString(roomsModels);
 		return jsonInString;
 	}
 

@@ -1,12 +1,12 @@
 package com.intita.wschat.repositories;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.intita.wschat.models.IntitaSubGroup;
-import com.intita.wschat.models.User;
 
 public interface IntitaSubGroupRespository extends CrudRepository<IntitaSubGroup, Long> {
 
@@ -16,4 +16,6 @@ public interface IntitaSubGroupRespository extends CrudRepository<IntitaSubGroup
 	ArrayList<Long> getStudentsBySubGroupId(Long subGroupId);
 	@Query(value = "SELECT id_user FROM offline_students WHERE id_subgroup in (SELECT id FROM offline_subgroups WHERE id_trainer=?1)", nativeQuery = true)
 	ArrayList<Integer> getStudentsByTrainer(Integer trainerUserId);
+	@Query(value = "SELECT chat_room_id FROM offline_subgroups WHERE id_trainer=?1", nativeQuery = true)
+	ArrayList<BigInteger> getRoomsByTrainer(Integer trainerUserId);
 }
