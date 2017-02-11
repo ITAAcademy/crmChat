@@ -81,10 +81,10 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
                     console.log(elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0);
                     if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
                         if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0) {
-                            res_elem.css({ top: (elem.height() - res_elem.height()) + 'px' });
+                            res_elem.css({ top: 'auto', bottom : "0px" });
                         }
                         if (elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
-                            res_elem.css({ left: (elem.width() - res_elem.width()) + 'px' });
+                            res_elem.css({ left: 'auto', right : "0px" });
                         }
                     } else {
                         res_elem.css({ left: x });
@@ -100,6 +100,7 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
 
             var myElement =  document.getElementById('chat_mini');
             addResizeListener(myElement, reinitElemPos);
+
 
             $(document).ready(function() {
                 $scope.state = 0;

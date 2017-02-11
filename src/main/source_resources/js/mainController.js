@@ -550,6 +550,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
+            debugger;
             for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
                 var room = RoomsFactory.getRooms()[roomIndex];
                 var newMessageInThisRoom = ($.inArray("" + room.roomId, roomIds));
