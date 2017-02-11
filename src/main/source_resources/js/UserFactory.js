@@ -375,7 +375,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             initIsUserTenant();
             var rooms = JSON.parse(mess_obj.chat_rooms).list;
             RoomsFactory.setRooms(rooms);
-            if ($routeParams.roomId == null) {
+            if ($routeParams.roomId == null && rooms.length > 0) {
                 if (isStudent && mess_obj.trainer != undefined) {
                     RoomsFactory.goToPrivateDialog(studentTrainerList[0].intitaUserId);
                 } else {
