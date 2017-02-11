@@ -81,10 +81,10 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
                     console.log(elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0);
                     if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
                         if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0) {
-                            res_elem.css({ top: 'auto', bottom : "0px" });
+                            res_elem.css({ top: 'initial', bottom : "0px" });
                         }
                         if (elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
-                            res_elem.css({ left: 'auto', right : "0px" });
+                            res_elem.css({ left: 'initial', right : "0px" });
                         }
                     } else {
                         res_elem.css({ left: x });
