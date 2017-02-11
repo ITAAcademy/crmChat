@@ -174,7 +174,7 @@ body {
 .logo-text {
     color: white;
     position: absolute;
-    left: 50px;
+    left: 45px;
     font-family: "Roboto";
     font-size: 20px;
     font-weight: 400;
@@ -1848,14 +1848,17 @@ body {
         line-height: 35px;
         display: block;
     }
-    body .window_icons_wrapper {
-        display: none;
+     body .window_icons_wrapper{
+         right: 15px;
+     }
+    body .window_icons_wrapper .notification,
+    body .window_icons_wrapper .tenant_busy_control{
+         display: none;
     }
 }
 
 body.frame .dnd-container .chat.full .window_panel,
 body.frame .window_icons_wrapper {
-    right: 54px;
     position: absolute;
     height: 100%;
 }
@@ -1969,7 +1972,7 @@ body.frame .window_icons_wrapper {
 }
 
 .window_icons_wrapper {
-    right: 10px;
+    right: 54px;
     top: 0;
     position: absolute;
     height: 100%;
