@@ -321,20 +321,22 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFacto
         templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
             scope.blockName = "Студенти";
-            updateModelForStudents();
-            initFolded(scope, element);
             scope.students = [];
             scope.groupRooms = [];
+            updateModelForStudents();
+            initFolded(scope, element);
             initRoomsFunctions(scope,ChannelFactory,UserFactory);
 
             function updateModelForStudents() {
+                if(scope.groupRooms.length>0)return;
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
-                    scope.students = responseObj.data;
+                    scope.students = responseObj.data || [];
                 });
             };
             function updateModelForGroups(){
+                if(scope.groupRooms.length>0)return;
                  updateModelGet($http, "get_group_rooms_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
-                    scope.groupRooms = responseObj.data;
+                    scope.groupRooms = responseObj.data || [];
                 });
             }
             scope.isUserOnline = UserFactory.isUserOnline;
@@ -349,12 +351,13 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFacto
                 }
             }
             var enableGroupMode = function(){
+                scope.isGroupMode = true;
                 updateModelForGroups();
-                 scope.isGroupMode = true;
+             
             }
             var disableGroupMode = function(){
-                updateModelForStudents();
                 scope.isGroupMode = false;
+                updateModelForStudents();
             }
 
         }

@@ -2078,3 +2078,7 @@ body.frame .window_icons_wrapper {
 svg {
     fill: currentColor;
 }
+
+.items_list_block .students_section .block_item.selectable:hover {
+    background-color: #3c8cdb;
+}
