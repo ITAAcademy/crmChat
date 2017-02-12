@@ -315,9 +315,6 @@ function initFolded(scope, element) {
 function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFactory) {
     return {
         restrict: 'EA',
-        scope: {
-
-        },
         templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
             scope.blockName = "Студенти";
