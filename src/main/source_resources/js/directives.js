@@ -299,10 +299,22 @@ function initFolded(scope, element) {
 
     scope.scroll;
     scope.folded = true;
+    var unfold = function() {
+        scope.folded = false;
+       scope.unCollapseBlock();
+    }
+    var fold = function(colapseRequired){
+        scope.folded = true;
+        cope.unCollapseBlock();
+    }
+
     scope.toggleFolded = function(event) {
         if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")) )
             return;
-        scope.folded = !scope.folded;
+        if ( scope.folded )
+            unfold();
+        else
+            fold();
         scope.scroll.overflowy = !scope.folded;
         if (scope.folded)
             scope.scroll.scrollTop(scope.scroll.scrollTop())

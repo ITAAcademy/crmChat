@@ -220,12 +220,6 @@ body {
     position: absolute;
 }
 
-#trainers-block.items_list_block .block_content.collapsed,
-.items_list_block .block_content.collapsed {
-    max-height: 0px;
-    min-height: 0px;
-}
-
 .head .message_notification .text {
     font-size: 10px;
     /* position: relative; */
@@ -2081,4 +2075,9 @@ svg {
 
 .items_list_block .students_section .block_item.selectable:hover {
     background-color: #3c8cdb;
+}
+#trainers-block.items_list_block .block_content.collapsed,
+.items_list_block .block_content.collapsed {
+    max-height: 0px;
+    min-height: 0px;
 }
