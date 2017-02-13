@@ -14,7 +14,7 @@
     <!-- if participants -->
     <div  class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
        <div ng-show="!isGroupMode" class="block_item" ng-repeat="participant in students | orderBy:participantsSort" ng-click="goToPrivateDialog(participant.intitaUserId)" ng-include="'static_templates/participants_block_item.html'"></div>
-       <div  ng-show="isGroupMode" class="students_section" ng-repeat="room in groupRooms" ng-init="roomsF = groupRooms" ng-include="'static_templates/section_rooms_block_item.html'"></div>
+       <div ng-init="displayLetters = false"  ng-show="isGroupMode" class="students_section" ng-repeat="room in groupRooms" ng-init="roomsF = groupRooms" ng-include="'static_templates/section_rooms_block_item.html'"></div>
     </div>
     <!-- if rooms -->
 

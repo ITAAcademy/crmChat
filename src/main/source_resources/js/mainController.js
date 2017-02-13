@@ -46,6 +46,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.firstLetter = firstLetter;
         $rootScope.checkIfToday = checkIfToday;
         $rootScope.checkIfYesterday = checkIfYesterday;
+        $rootScope.isRoomPrivate = RoomsFactory.isRoomPrivate;
         $rootScope.needShowDayDivided = function(curr, prev) {
             if (checkIfToday(curr) || checkIfYesterday(curr))
                 return true;
@@ -537,15 +538,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.$on('MessageBusyEvent', function(event, isBusy) {
             $rootScope.message_busy = isBusy;
         });
-        $rootScope.checkPrivateRelations = function(room, user) {
-            if (room == null) return;
-            if (room.type == 1 && room.privateUserIds != undefined) {
-
-                if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)
-                    return true;
-            }
-            return false;
-        }
 
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
@@ -758,7 +750,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         }
-        $rootScope.isRoomPrivate = RoomsFactory.isRoomPrivate;
+    
 
         $scope.tools_dropdown_click = function() {
             $('#tools_dropdown').toggleClass('shown');

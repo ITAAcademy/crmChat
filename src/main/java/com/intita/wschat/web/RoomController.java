@@ -827,6 +827,7 @@ public class RoomController {
 	 ***************************/
 
 	boolean removeUserFromRoomFully(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
+		if (room_o.getType()==RoomType.STUDENTS_GROUP)return false;
 		ChatUser authorUser = chatUserServise.getChatUser(principal);
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
@@ -909,6 +910,7 @@ public class RoomController {
 	}
 
 	boolean addUserToRoom(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
+		if (room_o.getType()==RoomType.STUDENTS_GROUP)return false;
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
@@ -1008,8 +1010,9 @@ public class RoomController {
 		//TODO unsubscribe user from room
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUser(id);
-		simpMessagingTemplate.convertAndSend(String.format("/topic/chat/rooms/%s/remove_user/%s",room,id),"");
-		return removeUserFromRoomFully(user_o, room_o, principal, false);
+		boolean isRemoved = removeUserFromRoomFully(user_o, room_o, principal, false);;
+		if (isRemoved)simpMessagingTemplate.convertAndSend(String.format("/topic/chat/rooms/%s/remove_user/%s",room,id),"");
+		return isRemoved;
 	}
 
 	public static void addFieldToSubscribedtoRoomsUsersBuffer(SubscribedtoRoomsUsersBufferModal modal) {

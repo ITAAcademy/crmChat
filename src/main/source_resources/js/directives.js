@@ -305,7 +305,7 @@ function initFolded(scope, element) {
     }
     var fold = function(colapseRequired){
         scope.folded = true;
-        cope.unCollapseBlock();
+        scope.unCollapseBlock();
     }
 
     scope.toggleFolded = function(event) {
@@ -334,7 +334,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFacto
             scope.groupRooms = [];
             updateModelForStudents();
             initFolded(scope, element);
-            initRoomsFunctions(scope,ChannelFactory,UserFactory);
+            initRoomsFunctions(scope,ChannelFactory,UserFactory,RoomsFactory);
 
             function updateModelForStudents() {
                 if(scope.groupRooms.length>0)return;
@@ -405,6 +405,15 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             function updateModelForParticipants() {
 
             };
+            var checkPrivateRelations = function(room, user) {
+            if (room == null) return;
+            if (room.type == 1 && room.privateUserIds != undefined) {
+
+                if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)
+                    return true;
+            }
+            return false;
+        }
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
             scope.currentRoom = RoomsFactory.getCurrentRoom;
@@ -416,6 +425,11 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             }
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.removeUserFromRoom = RoomsFactory.removeUserFromRoom;
+            scope.checkUserRemovingPermission = function(participant){
+            return !checkPrivateRelations(scope.currentRoom(), participant)  && 
+            scope.checkUserAdditionPermission() && participant.chatUserId &&
+            scope.currentRoom().roomAuthorId != participant.chatUserId;
+            }
             var toggleNewUser = false;
             scope.toggleNewUser = function() {
                 toggleNewUser = !toggleNewUser;
@@ -706,7 +720,7 @@ function notificable($templateRequest, $sce, $compile, $parse) {
 };
 
 
-initRoomsFunctions = function($scope,ChannelFactory,UserFactory){
+initRoomsFunctions = function($scope,ChannelFactory,UserFactory,RoomsFactory){
         function addNewUser(chatUserId) {
         RoomsFactory.addUserToRoom(chatUserId);
     }
@@ -771,7 +785,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
      * 1 - default
      * 2 - add new user
      */
-     initRoomsFunctions($scope,ChannelFactory,UserFactory);
+     initRoomsFunctions($scope,ChannelFactory,UserFactory,RoomsFactory);
     
     var roomsBlockModeChangeSubscription;
     $scope.$on('$destroy', function() {
