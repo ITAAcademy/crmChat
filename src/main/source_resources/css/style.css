@@ -1522,6 +1522,10 @@ body {
     overflow: hidden;
     margin-left: 45px;
 }
+.messages_output_area .answer.right .message_details .bottom_details{
+float:left;
+text-align:left;
+}
 
 .messages_output_area .answer.left .message_details {
     background-color: #c7edfc;
