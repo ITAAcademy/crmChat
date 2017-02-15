@@ -479,7 +479,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 var textOfMessage;
                 if (typeof message === "undefined") textOfMessage = $scope.newMessage;
                 else textOfMessage = message;
-                if (typeof textOfMessage === "undefined" || textOfMessage.length < 1) {
+                if ((typeof textOfMessage === "undefined" || textOfMessage.length < 1) && attaches == undefined) {
                     return;
                 }
                 if (isClearMessageInputNeeded) {
@@ -494,7 +494,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
                 var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
                 if (ChannelFactory.isSocketSupport() == true) {
-
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {
                         if (sendingMessage != null) {
@@ -508,7 +507,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     };
                     sendingMessage = $timeout(myFunc, 2000);
                 } else {
-
                     $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
                     success(function(data, status, headers, config) {
                         console.log("MESSAGE SEND OK " + data);
@@ -538,6 +536,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 return names;
             }
 
+
             $scope.sendMessageAndFiles = function() {
                 var files = $scope.files;
                 var textOfMessage = $scope.newMessage.value == null || $scope.newMessage.value.length < 1 ? " " : $scope.newMessage.value;
@@ -549,6 +548,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             $scope.$apply();
                         },
                         function(xhr) {
+                            $scope.messageError();
                             $scope.uploadProgress = 0;
                             $scope.$apply();
                         },

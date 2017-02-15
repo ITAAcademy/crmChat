@@ -470,7 +470,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj( ChatUser chatUser,  ChatMessage message, Room room) {
-		if(!room.isActive() || message.getMessage().trim().isEmpty())//cant add msg
+		if(!room.isActive() || ( message.getMessage().trim().isEmpty() && message.getAttachedFiles().isEmpty()))//cant add msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(chatUser,room,message);
