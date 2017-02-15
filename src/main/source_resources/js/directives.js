@@ -399,9 +399,6 @@ angular.module('springChat.directives').directive('participantsBlock', ['$http',
 function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
-        scope: {
-
-        },
         templateUrl: 'static_templates/participants_block.html',
         link: function(scope, element, attributes) {
             function updateModelForParticipants() {
@@ -464,15 +461,35 @@ function messagesBlock($http, RoomsFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', messageInput
+    'UserFactory', 'ChannelFactory','$interval',messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory,$interval) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
             var sendingMessage = null;
+            var typing;
+                        var getParticipants = RoomsFactory.getParticipants;
+             $scope.isAnyOneWriting = function(){
+                var participants = getParticipants();
+                for (var i = 0; i < participants.length; i++){
+                    if(participants[i].typing)return true;
+                }
+                return false;
+             }
+            $scope.getWritingUsersInfo = function(){
+                var writingUsersNames=[];
+                var participants = getParticipants();
+                for (var i = 0; i < participants.length; i++){
+                    var participant = participants[i];
+                    if (participant.typing) writingUsersNames.push(participant.username || participant.nickName);
+                }
+                //var notificationTemplate = writingUsersNames.length == 1 ? "{0} набирає повідомлення..." : "Користувачі {0}..."
+               // return notificationTemplate.format(writingUsersNames.join(","));
+               return writingUsersNames.join(",");
+            }
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
                 if (!UserFactory.isMessageSended())
@@ -566,7 +583,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             }
 
             $scope.keyPress = function(event){
-                debugger;
+                $scope.startTyping(event);
                 if (event.keyCode == 13 && !event.shiftKey)
                 {
                     event.stopPropagation();
@@ -577,6 +594,40 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     
                 }
             }
+
+
+$scope.startTyping = function(event) {
+        //var keyCode = event.which || event.keyCode;
+        //var typedChar = String.fromCharCode(keyCode);
+        //if(typedChar==' ')$scope.onMessageInputClick();       
+        /*switch (specialInputMode) {
+            case INPUT_MODE.DOG_MODE:
+                processDogInput();
+                break;
+            case INPUT_MODE.COMMAND_MODE:
+                processCommandInput();
+                break;
+            case INPUT_MODE.TILDA_MODE:
+                processTildaInput();
+                break;
+
+        }*/
+        //      Don't send notification if we are still typing or we are typing a private message
+        if ( typeof typing!="undefined") return;
+        typing = $interval(function() {
+            $scope.stopTyping();
+        }, 1500);
+
+        ChatSocket.send("/topic/{0}/chat.typing".format( RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
+    };
+    $scope.stopTyping = function() {
+        if (angular.isDefined(typing)) {
+            $interval.cancel(typing);
+            typing = undefined;
+            ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: false }));
+
+        }
+    };
 
             //$compile(element.contents())(scope);
         }
