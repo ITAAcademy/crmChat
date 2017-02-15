@@ -27,10 +27,10 @@
     position: absolute;
     transform: none;
     pointer-events: all;
-    -webkit-transition: all 1.0s ;
-    -moz-transition: all 1.0s ;
-    -o-transition: all 1.0s ;
-    transition: all 1.0s ;
+    -webkit-transition: all 1.0s;
+    -moz-transition: all 1.0s;
+    -o-transition: all 1.0s;
+    transition: all 1.0s;
     -webkit-transition-property: top, bottom, left, right;
     transition-property: top, bottom, left, right;
     -webkit-transform: translateZ(0);
@@ -41,6 +41,7 @@
     margin: 0;
     height: 600px !important;
     width: 400px !important;
+    /*max-height: calc(100% - 76px);*/
     max-height: 100%;
     max-width: 100%;
 }
@@ -167,27 +168,23 @@
     }
 }
 
-@media only screen and (max-width:600px) {
-  /*  .dnd-container .chat {
+@media only screen and (min-width:300px) and (max-width:600px) {
+    /*  .dnd-container .chat {
      min-width: 100% !important;
      max-width: 100% !important;
  }*/
-  /*  .dnd-container .chat {
-        max-height: 100%;
-        max-width: 950px;
+    .dnd-container .chat {
         height: 100% !important;
         width: 100% !important;
-        right: 0px !important;
-        bottom: 0px !important;
-        top: 0 !important;
-        left: 0 !important;
-        margin: auto;
-        -webkit-transition-property: none;
-        transition-property: none;
-    }*/
+    }
+    .dnd-container .chat.mini .handle {}
+    .dnd-container .chat.mini {
+        bottom: !important;
+        left: calc(50% - 110px) !important;
+    }
 }
 </style>
-<div id= "chat_mini" ng-show="init" class="draggable disable-animation chat mini ng-class:{mini: state==1, full: state==2}" ng-click="">
+<div id="chat_mini" ng-show="init" class="draggable disable-animation chat mini ng-class:{mini: state==1, full: state==2}" ng-click="">
     <iframe style="width: 100%;height: 100%;border: none;" ng-src="{{crm_path}}"></iframe>
     <div class="window_panel ignore" style="">
         <div id="minimize_btn" class="material-icons" ng-click="minimizete()">remove</div>
