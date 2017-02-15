@@ -245,7 +245,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 for (var index in participants) {
                     var participant = participants[index];
 
-                    if (participant.getChatUserId == parsed.username) {
+                    if (participant.getChatUserId() == parsed.username) {
                         participants[index].typing = parsed.typing;
                     }
                 }
@@ -655,6 +655,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         },
         setUserAddedToRoom: function(val) {
             userAddedToRoom = val;
+        },
+        containsUserId: function(chatUserId){
+            for (var i = 0; i < participants.length; i++){
+                if(participants[i].chatUserId == chatUserId) return true;
+            }
+            return false;
         }
 
     };

@@ -360,12 +360,13 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
                     enableGroupMode();
                 }
             }
-            var enableGroupMode = function() {
+            var enableGroupMode = function(){
+                scope.blockName = "Групи";
                 scope.isGroupMode = true;
                 updateModelForGroups();
-
             }
-            var disableGroupMode = function() {
+            var disableGroupMode = function(){
+                scope.blockName = "Студенти";
                 scope.isGroupMode = false;
                 updateModelForStudents();
             }
@@ -737,6 +738,14 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
     function addNewUser(chatUserId) {
         RoomsFactory.addUserToRoom(chatUserId);
     }
+       $scope.getOpponentIdFromRoom = function getOpponentIdFromRoom(room){
+        if (room.privateUserIds == null) return null;
+            var currentUserId = UserFactory.getChatUserId();
+        if (room.privateUserIds[0] == currentUserId)
+        return room.privateUserIds[1];
+        if (room.privateUserIds[1] == currentUserId)
+        return room.privateUserIds[0];
+        }
 
     $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
@@ -746,10 +755,11 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
                 $scope.doGoToRoom(room.roomId);
                 break;
             case 2:
-                if (room.privateUserIds[0] == UserFactory.getChatUserId())
-                    addNewUser(room.privateUserIds[1]);
-                if (room.privateUserIds[1] == UserFactory.getChatUserId())
-                    addNewUser(room.privateUserIds[0]);
+                var opponentUserId = $scope.getOpponentIdFromRoom(room);
+                if(opponentUserId!=null)
+                addNewUser(opponentUserId);
+            else
+                console.warn('opponentUserId is null');
                 $scope.mode = 1;
                 break;
         }
@@ -788,6 +798,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.tabState = "Contacts";
+    $scope.canBeAddedToRoom = function(room){
+        //TODO check if user can be added to room
+        var opponentUserId = $scope.getOpponentIdFromRoom(room);
+        if (opponentUserId == null) return null;
+        return $scope.mode == 2 && !RoomsFactory.containsUserId(opponentUserId);
+        };
     /* $scope.stripHtml = function(html)
      {
          var tmp = document.createElement("DIV");
