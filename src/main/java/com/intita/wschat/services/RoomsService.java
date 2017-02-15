@@ -321,6 +321,7 @@ public class RoomsService {
 		roomRepo.save(room);//@NEED_ASK@
 		return true;
 	}
+	
 	public List<RoomModelSimple> getRoomsContainingStringByOwner(String query, ChatUser user){
 		List<RoomModelSimple> list = getRoomsModelByChatUser(user);
 		List<RoomModelSimple> result = new ArrayList<RoomModelSimple>();

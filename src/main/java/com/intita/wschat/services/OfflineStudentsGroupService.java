@@ -37,49 +37,57 @@ public class OfflineStudentsGroupService {
 
 	@PostConstruct
 	private void postFunction() {
-		
+
 	}
 
 	@Transactional
 	public OfflineSubGroup getSubGroup(Integer subGroupId) {
 		return offlineSubGroupRespository.findOne(subGroupId);
 	}
-	
+
 	@Transactional
 	public OfflineGroup getGroup(Integer groupId) {
 		return offlineGroupRespository.findOne(groupId);
 	}
-	
+
 	@Transactional()
-	public void updateSubGroupRoom(OfflineSubGroup subGroup) {
+	public boolean updateSubGroupRoom(OfflineSubGroup subGroup, boolean withGroup) {
 		Room room = subGroup.getChatRoom();
+		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) subGroup.getIdTrainer(), false);
+		if (author == null)
+			return false;
+
 		if (room == null) {
-			ChatUser author = chatUsersService.getChatUserFromIntitaId((long) subGroup.getIdUserCreated(), false);
-			if (author == null)
-				return;
-			
 			room = roomService.register(subGroup.getGroup().getName() + subGroup.getName(), author, Room.RoomType.STUDENTS_GROUP);
 			subGroup.setChatRoom(room);
 			offlineSubGroupRespository.save(subGroup);
 		}
 		room.setName(subGroup.getGroup().getName() + " - "  + subGroup.getName());
+		roomControler.changeAuthor(author, room, false, author.getPrincipal() , true);
+
 		ArrayList<Integer> list = offlineStudentRespository.getStudentsIdByIdSubGroup(subGroup.getId());
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) 
 			chatUserList.add(chatUsersService.getChatUserFromIntitaId(list.get(i).longValue(), false));
 		roomService.replaceUsersInRoom(room, chatUserList);
+		if(withGroup)
+			updateGroupRoom(subGroup.getGroup(), false);
+		return true;
 	}
 
-	public void updateGroupRoom(OfflineGroup group) {
-		 Room room = group.getChatRoom();
+	public void updateGroupRoom(OfflineGroup group, boolean withSubGroups) {
+		Room room = group.getChatRoom();
+		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
+		if (author == null)
+			return;
+		
 		if (room == null) {
-			ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
-			if (author == null)
-				return;
 			room = roomService.register(group.getName(), author, Room.RoomType.STUDENTS_GROUP);
 			group.setChatRoom(room);
 			offlineGroupRespository.save(group);
 		}
+		room.setName(group.getName());
+		roomControler.changeAuthor(author, room, false, author.getPrincipal() , true);
 		ArrayList<Integer> subGroupsId = new ArrayList<>();
 		ArrayList<OfflineSubGroup> subGroups = new ArrayList<>(group.getSubGroups());
 		for (OfflineSubGroup subGroup : subGroups) {
@@ -87,12 +95,18 @@ public class OfflineStudentsGroupService {
 		}
 		if(subGroupsId.isEmpty())
 			return;
-		
+
 		ArrayList<Integer> list = offlineStudentRespository.getStudentsIdByIdSubGroups(subGroupsId);
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) 
 			chatUserList.add(chatUsersService.getChatUserFromIntitaId(list.get(i).longValue(), false));
 		roomService.replaceUsersInRoom(room, chatUserList);
-		
+		if(withSubGroups)
+		{
+			for (OfflineSubGroup subGroup : subGroups) {
+				updateSubGroupRoom(subGroup, false);
+			}
+		}
+
 	}
 }

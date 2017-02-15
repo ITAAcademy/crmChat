@@ -89,54 +89,35 @@ public class RoomController {
 	final String DIALOG_NAME_PREFIX = "DIALOG_";
 	private final static Logger log = LoggerFactory.getLogger(RoomController.class);
 
-	@Autowired(required = true)
-	private HttpServletRequest request;
+	@Autowired(required = true) private HttpServletRequest request;
 
-	@Autowired
-	private ProfanityChecker profanityFilter;
+	@Autowired private ProfanityChecker profanityFilter;
 
-	@Autowired
-	private SessionProfanity profanity;
+	@Autowired private SessionProfanity profanity;
 
-	@Autowired
-	private ParticipantRepository participantRepository;
-	@Autowired
-	private LecturesService lecturesService;
+	@Autowired private ParticipantRepository participantRepository;
+	@Autowired private LecturesService lecturesService;
 
-	@Autowired
-	private SimpMessagingTemplate simpMessagingTemplate;
-	@Autowired
-	private ConsultationsService chatIntitaConsultationService;
+	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired private ConsultationsService chatIntitaConsultationService;
 
-	@Autowired
-	private RoomsService roomService;
-	@Autowired
-	private UsersService userService;
-	@Autowired
-	private UserMessageService userMessageService;
-	@Autowired
-	private ChatUsersService chatUserServise;
-	@Autowired
-	private ChatTenantService chatTenantService;
-	@Autowired
-	private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	@Autowired private RoomsService roomService;
+	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
+	@Autowired private UsersService userService;
+	@Autowired private UserMessageService userMessageService;
+	@Autowired private ChatUsersService chatUserServise;
+	@Autowired private ChatTenantService chatTenantService;
+	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	// @Autowired private IntitaConsultationsService
 	// chatIntitaConsultationService;
-	@Autowired
-	private ConfigParamService configService;
-	@Autowired
-	private ChatController chatController;
+	@Autowired private ConfigParamService configService;
+	@Autowired private ChatController chatController;
 
-	@Autowired
-	private BotCategoryService botCategoryService;
-	@Autowired
-	private BotController botController;
-	@Autowired
-	private FlywayMigrationStrategyCustom flyWayStategy;
-	@Autowired
-	private RoomPermissionsService roomPermissionsService;
-	@Autowired
-	private OfflineStudentsGroupService offlineStudentsGroupService;
+	@Autowired private BotCategoryService botCategoryService;
+	@Autowired private BotController botController;
+	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
+	@Autowired private RoomPermissionsService roomPermissionsService;
+	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -875,7 +856,7 @@ public class RoomController {
 	}
 
 	@Transactional
-	public boolean changeAuthor(ChatUser newAuthor, Room room, Principal principal, boolean ignoreAuthor) {
+	public boolean changeAuthor(ChatUser newAuthor, Room room, boolean savePreviusAuthorAsUser, Principal principal, boolean ignoreAuthor) {
 		if (room == null || newAuthor == null)
 			return false;
 		ChatUser author = room.getAuthor();
@@ -893,20 +874,25 @@ public class RoomController {
 			return false;
 		// remove room from cache author object
 		author.getRootRooms().remove(room);
+		if(savePreviusAuthorAsUser)
+		{
+			addUserToRoom(author, room, principal, true);
+			if (!contain) {
+				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(newAuthor));
+				updateParticipants();
 
-		addUserToRoom(author, room, principal, true);
-		if (!contain) {
-			addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(newAuthor));
-			updateParticipants();
+				simpMessagingTemplate.convertAndSend("/topic/" + newAuthor.getId().toString() + "/chat.participants",
+						retrieveParticipantsMessage(room.getId()));
+				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + newAuthor.getId(),
+						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
 
-			simpMessagingTemplate.convertAndSend("/topic/" + newAuthor.getId().toString() + "/chat.participants",
-					retrieveParticipantsMessage(room.getId()));
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + newAuthor.getId(),
-					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
-
+			}
+		}
+		else
+		{
+			chatLastRoomDateService.removeUserLastRoomDate(author, room);
 		}
 		return true;
-
 	}
 
 	boolean addUserToRoom(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
