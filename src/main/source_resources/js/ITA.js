@@ -38,7 +38,7 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
 
             $scope.minimizeteMin = function() {
                 if ($scope.state == 1 && busy == false) {
-                    debugger;
+                    
                     var oldVal = parseInt(localStorage.getItem("chatStateFromMinimalizate"));
                     if (oldVal == undefined || oldVal == 1)
                         $scope.state = 0;

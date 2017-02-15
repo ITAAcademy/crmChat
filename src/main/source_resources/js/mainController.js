@@ -542,7 +542,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
-            debugger;
+            
             for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
                 var room = RoomsFactory.getRooms()[roomIndex];
                 var newMessageInThisRoom = ($.inArray("" + room.roomId, roomIds));
@@ -619,7 +619,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         };
         $scope.messageSearchEnabled = false;
         $scope.enableMessagesSearch = function(event) {
-            debugger;
+            
             event.stopPropagation();
             event.preventDefault();
             $scope.messageSearchQuery = { 'value': '' };
@@ -635,7 +635,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $rootScope.hideMenu = function() {
             $scope.showMenu = false;
-            debugger;
+            
             $rootScope.__modaleToggle['menu'].restart();
             return $scope.showMenu;
         }
