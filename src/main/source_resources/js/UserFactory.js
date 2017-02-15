@@ -353,7 +353,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         isStudent = mess_obj.isStudent == 'true';
         isAdmin = mess_obj.isAdmin == 'true';
         if (isStudent && mess_obj.trainer != undefined) {
-            debugger;
+            
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
         }
 

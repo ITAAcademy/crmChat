@@ -1068,7 +1068,7 @@ var compilable = function($compile, $parse) {
             scope.$watch(attr.content, function() {
                 var content = ($parse(attr.content)(scope)).replace(new RegExp("compilable", 'g'), "div");
                 content = content.replace(new RegExp("ng-bind", 'g'), "ha");
-                debugger;
+                
                 element.html(content);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();

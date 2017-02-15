@@ -94,7 +94,7 @@
                 //$(el).attr({ contenteditable: 'true' });
                 var range, sel = window.getSelection();
                 var no_yet = true;
-                debugger;
+                
                 if (el == sel.baseNode)
                     no_yet = false
                 else {

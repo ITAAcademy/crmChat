@@ -31,8 +31,8 @@
         </div>
         <compilable ng-if="message.chatUserId != 0" class="bottom_details" content="parseMsg(message.message)" time="message.date"></compilable>
         <div ng-if="message.chatUserId == 0" bot-container=" " style="margin: 0px;" content="message.message" time="message.date"></div>
-        <hr ng-repeat-start="file in message.attachedFiles track by $index" ng-if="$index==0" />
-        <div class="display-file-container" ng-repeat-end file-miniature="true" link="file">
+        <hr ng-if="message.attachedFiles.length > 0 && message.message != ' ' " />
+        <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
     </div>
     <div class="message_author_avatar" ng-if="message.position">
