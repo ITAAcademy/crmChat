@@ -480,6 +480,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         getRoomsRequiredTrainersLength: getRoomsRequiredTrainersLength,
         isAdmin: function() {
             return isAdmin;
+        },
+        isTenant: function() {
+            return isTenant;
         }
 
     };

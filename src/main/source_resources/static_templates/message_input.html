@@ -1,5 +1,5 @@
 <hr/>
-<div class="transparent_input message_input" tabindex="-1" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage.value" content-editable="true"></div>
+<div class="transparent_input message_input" tabindex="-1" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
 
 <div class="files_input">
     <img ng-if="files!=null && files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />

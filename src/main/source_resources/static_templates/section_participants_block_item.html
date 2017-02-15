@@ -1,20 +1,20 @@
- <div ng-if="displayLetters && firstLetter(usersF[$index].nickName) != firstLetter(usersF[$index-1].nickName)" class="section-info-block">
-            <div class="section_name">{{firstLetter(user.nickName)}}</div>
-            <div class="section-hr"></div>
+<div ng-if="displayLetters && firstLetter(usersF[$index].nickName) != firstLetter(usersF[$index-1].nickName)" class="section-info-block">
+    <div class="section_name">{{firstLetter(user.nickName)}}</div>
+    <div class="section-hr"></div>
+</div>
+<div class="section_content">
+    <div class="block_item selectable" ng-click="clickToUserEvent(user)">
+        <div class="avatar  ng-class:{offline:!isUserOnline(user.chatUserId), online:isUserOnline(user.chatUserId)}">
+            <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
+            <div class="user_presence_icon"></div>
+            <div class="user_presence_icon_wraper"></div>
         </div>
-        <div class="section_content">
-            <div class="block_item selectable" ng-click="clickToUserEvent(user)">
-                <div class="avatar  ng-class:{offline:!isUserOnline(user.chatUserId), online:isUserOnline(user.chatUserId)}">
-                    <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
-                    <div class="user_presence_icon"></div>
-                    <div class="user_presence_icon_wraper"></div>
-                </div>
-                <div class="text_info">
-                    <div class="user_name">{{user.chatUserId}}:{{user.nickName}}</div>
-                    <div class="user_presence">{{isUserOnline(user.chatUserId) ? 'Онлайн' :'Офлайн'}}</div>
-                </div>
-                <div class="contact_control">
-                    <div ng-if="mode == 2" class="budget">+</div>
-                </div>
-            </div>
+        <div class="text_info">
+            <div class="user_name">{{user.nickName}}</div>
+            <div class="user_presence">{{isUserOnline(user.chatUserId) ? 'Онлайн' :'Офлайн'}}</div>
         </div>
+        <div class="contact_control">
+            <div ng-if="mode == 2" class="budget">+</div>
+        </div>
+    </div>
+</div>

@@ -251,19 +251,19 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
             scope.blockName = "Тенанти";
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
-            scope.getTenantsList = function(){
+            scope.getTenantsList = function() {
                 var tenantsList = UserFactory.getTenantsList();
                 var participantsList = RoomsFactory.getParticipants();
                 var resultList = [];
-                for (var i = 0; i < tenantsList.length; i++){
+                for (var i = 0; i < tenantsList.length; i++) {
                     var isParticipant = true;
                     for (var j = 0; j < participantsList.length; j++) {
-                        if (tenantsList[i].chatUserId == participantsList[j].chatUserId){
+                        if (tenantsList[i].chatUserId == participantsList[j].chatUserId) {
                             isParticipant = false;
                             break;
                         }
                     }
-                    if(isParticipant) resultList.push(tenantsList[i]);
+                    if (isParticipant) resultList.push(tenantsList[i]);
                 }
                 return resultList;
             }
@@ -275,7 +275,7 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
 
 angular.module('springChat.directives').directive('tenantsBlock', ['$http', 'mySettings', 'UserFactory', 'RoomsFactory', tenantsBlock]);
 
-angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory','ChannelFactory', studentsBlock]);
+angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
 
@@ -301,17 +301,17 @@ function initFolded(scope, element) {
     scope.folded = true;
     var unfold = function() {
         scope.folded = false;
-       scope.unCollapseBlock();
+        scope.unCollapseBlock();
     }
-    var fold = function(colapseRequired){
+    var fold = function(colapseRequired) {
         scope.folded = true;
         scope.unCollapseBlock();
     }
 
     scope.toggleFolded = function(event) {
-        if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")) )
+        if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")))
             return;
-        if ( scope.folded )
+        if (scope.folded)
             unfold();
         else
             fold();
@@ -324,7 +324,7 @@ function initFolded(scope, element) {
     scope.scroll.overflowy = !scope.folded;
 }
 
-function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFactory) {
+function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/students_block.html',
@@ -334,17 +334,18 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFacto
             scope.groupRooms = [];
             updateModelForStudents();
             initFolded(scope, element);
-            initRoomsFunctions(scope,ChannelFactory,UserFactory,RoomsFactory);
+            initRoomsFunctions(scope, ChannelFactory, UserFactory, RoomsFactory);
 
             function updateModelForStudents() {
-                if(scope.groupRooms.length>0)return;
+                if (scope.groupRooms.length > 0) return;
                 updateModelGet($http, "chat/get_students/", function(responseObj) {
                     scope.students = responseObj.data || [];
                 });
             };
-            function updateModelForGroups(){
-                if(scope.groupRooms.length>0)return;
-                 updateModelGet($http, "get_group_rooms_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
+
+            function updateModelForGroups() {
+                if (scope.groupRooms.length > 0) return;
+                updateModelGet($http, "get_group_rooms_by_trainer?trainerChatId={0}".format(UserFactory.getChatUserId()), function(responseObj) {
                     scope.groupRooms = responseObj.data || [];
                 });
             }
@@ -352,18 +353,17 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory,ChannelFacto
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
             scope.isGroupMode = false;
-            scope.toggleGroupMode = function(){
-                if ( scope.isGroupMode ) {
-                     disableGroupMode();
+            scope.toggleGroupMode = function() {
+                if (scope.isGroupMode) {
+                    disableGroupMode();
                 } else {
-                     enableGroupMode();
+                    enableGroupMode();
                 }
             }
             var enableGroupMode = function(){
                 scope.blockName = "Групи";
                 scope.isGroupMode = true;
                 updateModelForGroups();
-             
             }
             var disableGroupMode = function(){
                 scope.blockName = "Студенти";
@@ -408,14 +408,14 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
 
             };
             var checkPrivateRelations = function(room, user) {
-            if (room == null) return;
-            if (room.type == 1 && room.privateUserIds != undefined) {
+                if (room == null) return;
+                if (room.type == 1 && room.privateUserIds != undefined) {
 
-                if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)
-                    return true;
+                    if (room.privateUserIds[0] == user.chatUserId || room.privateUserIds[1] == user.chatUserId)
+                        return true;
+                }
+                return false;
             }
-            return false;
-        }
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = "Учасники розмови";
             scope.currentRoom = RoomsFactory.getCurrentRoom;
@@ -427,10 +427,10 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
             }
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.removeUserFromRoom = RoomsFactory.removeUserFromRoom;
-            scope.checkUserRemovingPermission = function(participant){
-            return !checkPrivateRelations(scope.currentRoom(), participant)  && 
-            scope.checkUserAdditionPermission() && participant.chatUserId &&
-            scope.currentRoom().roomAuthorId != participant.chatUserId;
+            scope.checkUserRemovingPermission = function(participant) {
+                return !checkPrivateRelations(scope.currentRoom(), participant) &&
+                    scope.checkUserAdditionPermission() && participant.chatUserId &&
+                    scope.currentRoom().roomAuthorId != participant.chatUserId;
             }
             var toggleNewUser = false;
             scope.toggleNewUser = function() {
@@ -472,8 +472,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
+            var sendingMessage = null;
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
-                var sendingMessage = null;
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
                 if (!UserFactory.isMessageSended())
                     return;
@@ -552,7 +552,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         function(xhr) {
                             $scope.uploadProgress = 0;
                             $scope.$apply();
-                            alert("SEND FAILED:" + JSON.parse(xhr.response).message);
                         },
                         function(event, loaded) {
                             console.log(event.loaded + ' / ' + event.totalSize);
@@ -564,6 +563,19 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.sendMessage(textOfMessage, undefined, true);
                 }
                 return false;
+            }
+
+            $scope.keyPress = function(event){
+                debugger;
+                if (event.keyCode == 13 && !event.shiftKey)
+                {
+                    event.stopPropagation();
+                    event.target.blur();
+                    setTimeout(function() {
+                        $scope.sendMessageAndFiles();
+                    }, 0);
+                    
+                }
             }
 
             //$compile(element.contents())(scope);
@@ -722,8 +734,8 @@ function notificable($templateRequest, $sce, $compile, $parse) {
 };
 
 
-initRoomsFunctions = function($scope,ChannelFactory,UserFactory,RoomsFactory){
-        function addNewUser(chatUserId) {
+initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory) {
+    function addNewUser(chatUserId) {
         RoomsFactory.addUserToRoom(chatUserId);
     }
        $scope.getOpponentIdFromRoom = function getOpponentIdFromRoom(room){
@@ -735,7 +747,7 @@ initRoomsFunctions = function($scope,ChannelFactory,UserFactory,RoomsFactory){
         return room.privateUserIds[0];
         }
 
- $scope.clickToRoomEvent = function(room) {
+    $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
         switch ($scope.mode) {
@@ -773,7 +785,7 @@ initRoomsFunctions = function($scope,ChannelFactory,UserFactory,RoomsFactory){
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
     }
 
-            $scope.mode = 1;
+    $scope.mode = 1;
 }
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
@@ -802,8 +814,8 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
      * 1 - default
      * 2 - add new user
      */
-     initRoomsFunctions($scope,ChannelFactory,UserFactory,RoomsFactory);
-    
+    initRoomsFunctions($scope, ChannelFactory, UserFactory, RoomsFactory);
+
     var roomsBlockModeChangeSubscription;
     $scope.$on('$destroy', function() {
         roomsBlockModeChangeSubscription();

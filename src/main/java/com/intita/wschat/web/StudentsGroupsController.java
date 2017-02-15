@@ -79,8 +79,7 @@ public class StudentsGroupsController {
 		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
 			return false;
 		
-		offlineStudentsGroupService.updateSubGroupRoom(subGroup);
-		
+		offlineStudentsGroupService.updateSubGroupRoom(subGroup, true);
 		return true;
 	}
 	
@@ -96,7 +95,7 @@ public class StudentsGroupsController {
 		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
 			return false;
 		
-		offlineStudentsGroupService.updateGroupRoom(subGroup);
+		offlineStudentsGroupService.updateGroupRoom(subGroup, true);
 		
 		return true;
 	}
