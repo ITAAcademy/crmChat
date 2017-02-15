@@ -114,7 +114,7 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
             addResizeListener(myElement, reinitElemPos);
 
 
-            jQuery(document).ready(function() {
+            jQuery("iframe").on('load',function() {
                 $scope.state = 0;
                 var elem = jQuery(".dnd-container");
                 var res_elem = jQuery('.draggable');

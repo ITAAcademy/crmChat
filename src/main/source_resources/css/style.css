@@ -2,6 +2,11 @@
     font-family: "MyriadPro2";
     src: url(../fonts/myriadpro2/regular.woff) format('woff');
 }
+@font-face{font-family:'MyriadPro2';src:url('../font/myriadpro2/regular.eot');
+src: url('../font/myriadpro2/regular.eot?#iefix') format('embedded-opentype'),
+url('../font/myriadpro2/regular.woff') format('woff'),
+url('../font/myriadpro2/regular.ttf') format('truetype'),
+url('../font/myriadpro2/regular.eot#helveticaneuecyrbold') format('svg');font-weight:normal;font-style:normal;}
 
 body {
     width: 100%;
@@ -1522,9 +1527,10 @@ body {
     overflow: hidden;
     margin-left: 45px;
 }
-.messages_output_area .answer.right .message_details .bottom_details{
-float:left;
-text-align:left;
+
+.messages_output_area .answer.right .message_details .bottom_details {
+    float: left;
+    text-align: left;
 }
 
 .messages_output_area .answer.left .message_details {
@@ -1837,30 +1843,6 @@ body {
                                   not supported by any browser */
 }
 
-@media only screen and (max-width: 300px) {
-    body.frame .head .logo {
-        position: absolute;
-        left: 15px;
-        background-color: #4b75a4;
-        z-index: 9999;
-        line-height: 35px;
-        display: block;
-    }
-     body .window_icons_wrapper{
-         right: 15px;
-     }
-    body .window_icons_wrapper .notification,
-    body .window_icons_wrapper .tenant_busy_control{
-         display: none;
-    }
-}
-
-body.frame .dnd-container .chat.full .window_panel,
-body.frame .window_icons_wrapper {
-    position: absolute;
-    height: 100%;
-}
-
 @media only screen and (max-width: 600px) {
     .left_panel {
         z-index: 222222;
@@ -1963,6 +1945,31 @@ body.frame .window_icons_wrapper {
         max-height: 65px;
     }
 }
+
+@media only screen and (max-width: 300px) {
+    body.frame .head .logo {
+        position: absolute;
+        left: 15px;
+        background-color: #4b75a4;
+        z-index: 9999;
+        line-height: 35px;
+        display: block;
+    }
+    body .window_icons_wrapper {
+        right: 15px;
+    }
+    body.frame .window_icons_wrapper .notification,
+    body.frame .window_icons_wrapper .tenant_busy_control {
+        display: none !important;
+    }
+}
+
+body.frame .dnd-container .chat.full .window_panel,
+body.frame .window_icons_wrapper {
+    position: absolute;
+    height: 100%;
+}
+
 
 .files_input {
     padding: 5px;
@@ -2080,6 +2087,7 @@ svg {
 .items_list_block .students_section .block_item.selectable:hover {
     background-color: #3c8cdb;
 }
+
 #trainers-block.items_list_block .block_content.collapsed,
 .items_list_block .block_content.collapsed {
     max-height: 0px;

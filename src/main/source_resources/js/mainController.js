@@ -126,7 +126,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.$on('$routeChangeStart', RoomsFactory.unsubscribeCurrentRoom);
 
 
-        $scope.isUserTenant = false;
+        $scope.isUserTenant = UserFactory.isTenant;;
         $scope.isUserTenantInited = false;
         $scope.blocksNames = ['first', 'second'];
         $scope.blocksItems = [

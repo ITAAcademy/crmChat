@@ -1,23 +1,23 @@
-  <div ng-if="displayLetters && firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
-            <div class="section_name">{{firstLetter(room.string)}}</div>
-            <div class="section-hr"></div>
+<div ng-if="displayLetters && firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
+    <div class="section_name">{{firstLetter(room.string)}}</div>
+    <div class="section-hr"></div>
+</div>
+<div class="section_content">
+    <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="clickToRoomEvent(room)">
+        <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
+            <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + returnAvatar(room) + ')'}"></div>
+            <div class="user_presence_icon" ng-show="isRoomPrivate(room)"></div>
+            <div class="user_presence_icon_wraper" ng-show="isRoomPrivate(room)"></div>
         </div>
-        <div class="section_content">
-            <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="clickToRoomEvent(room)">
-                <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
-                    <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + returnAvatar(room) + ')'}"></div>
-                    <div class="user_presence_icon" ng-show="isRoomPrivate(room)"></div>
-                    <div class="user_presence_icon_wraper" ng-show="isRoomPrivate(room)"></div>
-                </div>
-                <div class="text_info">
-                    <div class="user_name">{{room.roomId}}:{{room.string}}</div>
-                    <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : stripHtml(room.lastMessage)}}</div>
-                </div>
-                <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
-                <div class="contact_control">
-                    <div ng-if="room.nums > 0 &amp;&amp; !createEnabled" class="budget">{{room.nums}}</div>
-                    <div ng-if="mode == 2" class="budget">+</div>
-                    <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
-                </div>
-            </div>
+        <div class="text_info">
+            <div class="user_name">{{room.string}}</div>
+            <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : stripHtml(room.lastMessage)}}</div>
         </div>
+        <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
+        <div class="contact_control">
+            <div ng-if="room.nums > 0 &amp;&amp; !createEnabled" class="budget">{{room.nums}}</div>
+            <div ng-if="mode == 2" class="budget">+</div>
+            <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
+        </div>
+    </div>
+</div>

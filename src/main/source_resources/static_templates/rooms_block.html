@@ -15,6 +15,5 @@
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->
     <div id="items_list_block_search" ng-if="searchEnabled &amp;&amp; tabState != 'LastContacts'" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'">
-       
     </div>
 </div>
