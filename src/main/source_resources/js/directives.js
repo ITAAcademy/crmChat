@@ -564,6 +564,19 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 return false;
             }
 
+            $scope.keyPress = function(event){
+                debugger;
+                if (event.keyCode == 13 && !event.shiftKey)
+                {
+                    event.stopPropagation();
+                    event.target.blur();
+                    setTimeout(function() {
+                        $scope.sendMessageAndFiles();
+                    }, 0);
+                    
+                }
+            }
+
             //$compile(element.contents())(scope);
         }
 
