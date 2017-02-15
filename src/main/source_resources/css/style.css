@@ -1,12 +1,8 @@
-﻿@font-face {
-    font-family: "MyriadPro2";
-    src: url(../fonts/myriadpro2/regular.woff) format('woff');
-}
-@font-face{font-family:'MyriadPro2';src:url('../font/myriadpro2/regular.eot');
-src: url('../font/myriadpro2/regular.eot?#iefix') format('embedded-opentype'),
-url('../font/myriadpro2/regular.woff') format('woff'),
-url('../font/myriadpro2/regular.ttf') format('truetype'),
-url('../font/myriadpro2/regular.eot#helveticaneuecyrbold') format('svg');font-weight:normal;font-style:normal;}
+﻿@font-face{font-family:'MyriadPro2';src:url('../font/myriadpro2/regular.eot');
+src: url('../fonts/myriadpro2/regular.eot?#iefix') format('embedded-opentype'),
+url('../fonts/myriadpro2/regular.woff') format('woff'),
+url('../fonts/myriadpro2/regular.ttf') format('truetype'),
+url('../fonts/myriadpro2/regular.eot#helveticaneuecyrbold') format('svg');font-weight:normal;font-style:normal;}
 
 body {
     width: 100%;
@@ -1105,15 +1101,17 @@ body {
 }
 
 .date_indicator {
-    font-size: 10px
+    font-size: 10px;
+    min-width: 50px;
+    display: inline-block;
 }
 
 .message_date_separator .line {
-    width: 102px;
+    width: 20%;
     height: 1px;
     background-color: #bcbcbc;
     display: inline-block;
-    content: ""
+    content: "";
 }
 
 .message_date_separator .big_dot {
