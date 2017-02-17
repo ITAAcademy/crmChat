@@ -545,13 +545,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             $scope.selectFiles = function(files) {
                 $scope.files = files;
             }
-            $scope.getNamesFromFiles = function(files) {
-                if (files == null) return null;
-                var names = [];
-                for (var i = 0; i < files.length; i++) {
-                    names.push(files[i].name);
-                }
-                return names;
+
+            $scope.removeFileFromUpload = function(index){
+                $scope.files.splice(index,1);
             }
 
 
@@ -959,7 +955,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.showLastContacts();
 };
 
-angular.module('springChat.directives').directive('fileMiniature', ['$http', 'RoomsFactory', 'ChannelFactory', '$parse', fileMiniature]);
+var fileMiniatureDirective = angular.module('springChat.directives').directive('fileMiniature', ['$http', 'RoomsFactory', 'ChannelFactory', '$parse', fileMiniature]);
 
 function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
     return {
@@ -1047,6 +1043,11 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
             }
 
             var link = $parse(attributes.link)($scope);
+            if (attributes.removeCallback!=null){
+            $scope.removeItemCallback = $parse(attributes.removeCallback)($scope);
+            $scope.removable = true;
+            }
+            //$scope.fileIndex = $parse(attributes.fileIndex)($scope);
             //use only name (not link)
             var nameOnly = typeof attributes.nameonly == "undefined" || attributes.nameonly == 'false' ? false : true;
             var derandomaziedName = nameOnly ? link : $scope.getNameFromRandomizedUrl(link);
@@ -1061,6 +1062,19 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
 
     };
 };
+
+fileMiniatureDirective.filter('fileNamesFilter',function(){
+            return function(files) {
+                if (files == null) return null;
+                var names = [];
+                for (var i = 0; i < files.length; i++) {
+                    names.push(files[i].name);
+                }
+                return names;
+            }
+});
+
+
 var compilable = function($compile, $parse) {
     return {
         restrict: 'E',

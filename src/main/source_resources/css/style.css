@@ -2108,3 +2108,11 @@ svg {
 .user_write_message_notification i{
     vertical-align: middle;
 }
+.remove_file_icon{
+    right: 0px;
+    bottom: 0px;
+    position: absolute;
+}
+.file-extension-preview-wrapper{
+    position:relative;
+}

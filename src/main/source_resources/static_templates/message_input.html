@@ -3,7 +3,7 @@
 
 <div class="files_input">
     <img ng-if="files!=null && files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
-    <div ng-repeat="file in getNamesFromFiles(files) track by $index" class="display-file-container" file-miniature="true" nameOnly="true" link="file"></div>
+    <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>
 </div>
 <div class="controls_area">
     <div class="multimedia_conversation_controls">
