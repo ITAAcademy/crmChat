@@ -246,7 +246,7 @@ public class UserMessageService {
 			}
 			if (body!=null){
 				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam += "m.body like :body";
+				whereParam += "lower(m.body) like lower(:body)";
 			}
 			if (filesOnly){
 				if (whereParam.length()>0) whereParam += " AND ";

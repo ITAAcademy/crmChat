@@ -400,6 +400,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/participants_block.html',
+        scope:{},
         link: function(scope, element, attributes) {
             function updateModelForParticipants() {
 

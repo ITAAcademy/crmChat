@@ -661,6 +661,9 @@ body {
     bottom: 10px;
     right: 5px;
 }
+.top_block.items_list_block .date {
+    color: #ffffff;
+}
 
 .items_list_block .text_info>.user_name {
     max-height: 60px;
