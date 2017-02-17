@@ -1034,12 +1034,13 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
                 return name.split('.').pop();
             }
             var isExtensionSupported = function(extension) {
-                if (supportedExtensions.indexOf(extension) != -1) return true;
+                if (supportedExtensions.indexOf(extension.toLowerCase()) != -1) return true;
                 else return false;
             }
             var getImageByExtension = function(ext) {
+                var lowerCaseExtension = ext.toLowerCase();
                 var urlTemplate = "images/svg-file-icons/{0}.svg";
-                if (isExtensionSupported(ext)) return urlTemplate.format(ext);
+                if (isExtensionSupported(lowerCaseExtension)) return urlTemplate.format(lowerCaseExtension);
                 else return urlTemplate.format('nopreview');
             }
 
