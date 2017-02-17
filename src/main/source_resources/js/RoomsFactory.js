@@ -245,7 +245,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 for (var index in participants) {
                     var participant = participants[index];
 
-                    if (participant.getChatUserId() == parsed.username) {
+                    if (participant.chatUserId == parsed.username) {
                         participants[index].typing = parsed.typing;
                     }
                 }

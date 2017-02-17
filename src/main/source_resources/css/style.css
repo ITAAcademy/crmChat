@@ -661,6 +661,9 @@ body {
     bottom: 10px;
     right: 5px;
 }
+.top_block.items_list_block .date {
+    color: #ffffff;
+}
 
 .items_list_block .text_info>.user_name {
     max-height: 60px;
@@ -2094,4 +2097,29 @@ svg {
 .items_list_block .block_content.collapsed {
     max-height: 0px;
     min-height: 0px;
+}
+.user_write_message_notification_wrapper {
+    height:40px;
+    clear:both;
+    margin-left: 75px;
+    margin-right: 75px;
+}
+.user_write_message_notification{
+    color: grey;
+    padding: 10px;
+    /*background: #eeeeee;*/
+
+    text-align:center;
+    vertical-align:middle;
+}
+.user_write_message_notification i{
+    vertical-align: middle;
+}
+.remove_file_icon{
+    right: 0px;
+    bottom: 0px;
+    position: absolute;
+}
+.file-extension-preview-wrapper{
+    position:relative;
 }
