@@ -128,6 +128,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
+                console.log('!!!!! MESSAGE OPERATION Unshift calcPositionUnshift:'+msg.message);
         //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
         var summarised = false;
         oldMessage = msg;
@@ -161,6 +162,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (msg == null)
             return null;
+        console.log('!!!!! MESSAGE OPERATION Push calcPositionPush:'+msg.message);
         // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var objDiv = document.getElementById("messagesScroll");
@@ -201,8 +203,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
      *************************************/
     var changeRoom = function() {
         //alert(16);
+        $rootScope.loadingSubscribesAndMessages = true;
         messages = [];
-        $rootScope.$broadcast('MessageBusyEvent', false);
+       // $rootScope.message_busy = false;
         $rootScope.$broadcast('RoomChanged', false);
         console.log("roomId:" + currentRoom.roomId);
 
@@ -251,6 +254,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 }
             }));
         //chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
+        $rootScope.message_busy = false;
     }
     var addTenantToRoom = function(id) {
         $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).
@@ -358,6 +362,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         participants = message["participants"];
         roomType = message["type"];
     }
+    $rootScope.loadingSubscribesAndMessages = true;
 
     function loadMessagesOnly(message) {
         roomType = message["type"];
@@ -397,12 +402,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function loadSubscribeAndMessage(message) {
+        console.log('loadSubscribeAndMessage');
         roomType = message["type"];
 
         participants = message["participants"];
-        if (typeof message["messages"] != 'undefined') {
-            $rootScope.$broadcast('MessageBusyEvent', true);
-            oldMessage = message["messages"][message["messages"].length - 1];
+
+        if (typeof message["messages"] != 'undefined') { 
+            $rootScope.loadingSubscribesAndMessages = true;
+           // oldMessage = message["messages"][message["messages"].length - 1];
 
             for (var i = 0; i < message["messages"].length; i++) {
                 calcPositionUnshift(message["messages"][i]);
@@ -415,16 +422,21 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             for (var key in bot_params)
                 botParameters[bot_params[key].name] = JSON.parse(bot_params[key].value);
         }
+       // $timeout(function () {
+                
+          //  },2000);  
 
-
-
-        $rootScope.$$postDigest(function() {
+        $rootScope.$$postDigest(function() { 
+            
             $('#messagesScroll').stop(true).animate({
                 scrollTop: 999999
-            }, 500);
-            $rootScope.$broadcast('MessageBusyEvent', false);
+            }, 500); 
+    
         });
-
+             $timeout(function(){
+          $rootScope.loadingSubscribesAndMessages = false;  
+        }); 
+         
 
     }
 
