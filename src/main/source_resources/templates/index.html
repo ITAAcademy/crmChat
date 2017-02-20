@@ -93,7 +93,7 @@
                 </div>
             </div>
             <hr/>
-            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!$root.message_busy' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
+            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!($root.message_busy || $root.loadingSubscribesAndMessages)' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->
             <div ng-show="isMessageInputAvailable()" class="messages_input_area" message-input="true"></div>
         </div>

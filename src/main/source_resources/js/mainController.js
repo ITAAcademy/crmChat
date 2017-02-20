@@ -486,6 +486,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $rootScope.message_busy = false;
         $rootScope.loadOtherMessages = function() {
+            console.log('loadOtherMessages');
             if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
                 return;
             var urlTemplate = "/{0}/chat/loadOtherMessage";
@@ -534,9 +535,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.$on('MessageAreaScrollDownEvent', function() {
             var objDiv = document.getElementById("messagesScroll");
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
-        });
-        $rootScope.$on('MessageBusyEvent', function(event, isBusy) {
-            $rootScope.message_busy = isBusy;
         });
 
         function newMessageMapEventHandler(event, messagesMap) {
@@ -670,7 +668,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         }
         $rootScope.$on('RoomChanged', function(event, isBusy) {
-            $scope.disableMessagesSearch();
+            $scope.disableMessagesSearch(false);
         });
         $scope.disableMessagesSearch = function(reloadMessages) {
             if (reloadMessages === true) {
