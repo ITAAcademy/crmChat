@@ -70,8 +70,22 @@
         </div>
         <div class="right_panel">
             <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
+
             <div ng-if="!currentRoomIsNull()" class="tools_area">
-                <div class="tools_dropdown_container">
+                    <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-if="!messageSearchEnabled &amp;&amp; !currentRoomIsNull()">search</i>
+                    <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-if="messageSearchEnabled">cancel</i>
+                     <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
+                    <i class="material-icons">more_vert</i>
+                    </button>
+                <div class="room_info">
+                    <div class="room_name">{{getCurrentRoom().string}}</div>
+                    <i class="material-icons" ng-click="enableRoomNameChangeMode()">event_note</i>
+                </div>
+                <div class="search_box" ng-if="messageSearchEnabled">
+                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text" placeholder="Пошук..." />
+                </div>
+            </div>
+             <div class="tools_dropdown_container">
                     <div id="tools_dropdown" class="popup_dropdown">
                         <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item">Показати додатки</a>
                         <a ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item">Показати всі повідомлення</a>
@@ -79,19 +93,7 @@
                         <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()">Вийти з кімнати</a>
                         <a class="dropdown_item remove_history_item">Видалити історію</a>
                     </div>
-                    <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="open_dropdown_button">
-                        <i class="material-icons">more_vert</i>
-                    </button>
                 </div>
-                <div class="room_info">
-                    <div class="room_name">{{getCurrentRoom().string}}</div>
-                </div>
-                <div class="search_box">
-                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-class="{'showed':(messageSearchEnabled)}" ng-change="updateMessagesSearch()" ng-blur="focusMessagesSearchChange()" type="text" placeholder="Пошук..." />
-                    <i ng-click="enableMessagesSearch($event)" class="search_icon material-icons" ng-class="{'showed':(!messageSearchEnabled &amp;&amp; !currentRoomIsNull())}">search</i>
-                    <i ng-click="disableMessagesSearch(true)" class="close_search_icon material-icons" ng-class="{'showed':messageSearchEnabled}">cancel</i>
-                </div>
-            </div>
             <hr/>
             <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!($root.message_busy || $root.loadingSubscribesAndMessages)' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->

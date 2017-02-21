@@ -88,8 +88,6 @@ body {
 .consultant_wrapper .material-icons {
     font-size: 20px;
     line-height: 24px;
-    -webkit-transition: 0.3s ease-in-out;
-    transition: 0.3s ease-in-out;
 }
 
 .collapse_block_button.detach {
@@ -787,7 +785,7 @@ body {
 }
 
 .contacts_menu_strip .search_icon {
-    position: relative;
+    /*position: relative;*/
     cursor: pointer;
     background-color: #46688d;
     width: 26px;
@@ -908,9 +906,11 @@ body {
 .tools_area {
     height: 25px;
     position: relative;
+    text-align:right;
+    padding: 0px 5px;
 }
 
-.tools_area>.tools_dropdown_container {
+.right_panel .tools_dropdown_container {
     vertical-align: middle;
     position: absolute;
     /* left: 0; */
@@ -932,16 +932,16 @@ body {
     cursor: pointer;
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown {
+.right_panel .tools_dropdown_container>#tools_dropdown {
     display: none;
     position: absolute;
     /* margin-left: 10px; */
-    margin-top: 30px;
+    top: 5px;
     padding: 4px 0px;
     right: 3px;
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown:before {
+.right_panel .tools_dropdown_container>#tools_dropdown:before {
     background-image: url("../images/arrow_up23x7.png");
     width: 23px;
     height: 7px;
@@ -952,7 +952,7 @@ body {
     right: 6px;
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown.shown li {
+.right_panel .tools_dropdown_container>#tools_dropdown.shown li {
     margin-top: 18px
 }
 
@@ -960,25 +960,25 @@ body {
     margin-top: 0
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown .show_attaches_item {}
+.right_panel .tools_dropdown_container>#tools_dropdown .show_attaches_item {}
 
-.tools_area .tools_dropdown_container>#tools_dropdown .show_attaches_item:before {
+.right_panel .tools_dropdown_container>#tools_dropdown .show_attaches_item:before {
     content: 'attach_file';
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
+.right_panel .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
     content: 'volume_off';
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown .sound_on_item:before {
+.right_panel .tools_dropdown_container>#tools_dropdown .sound_on_item:before {
     content: 'volume_up';
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown .leave_room_item:before {
+.right_panel .tools_dropdown_container>#tools_dropdown .leave_room_item:before {
     content: 'exit_to_app';
 }
 
-.tools_area .tools_dropdown_container>#tools_dropdown .remove_history_item:before {
+.right_panel .tools_dropdown_container>#tools_dropdown .remove_history_item:before {
     content: 'delete';
 }
 
@@ -1002,8 +1002,6 @@ body {
     font-family: "Roboto";
     display: inline-block;
     font-weight: 500;
-    pointer-events: none;
-    opacity: 0;
     -webkit-transition: visibility 0s, opacity .5s linear;
     transition: visibility 0s, opacity .5s linear;
 }
@@ -1024,9 +1022,6 @@ body {
 .right_panel .open_dropdown_button {
     /* margin-left: 18px; */
     z-index: 39;
-    position: absolute;
-    right: 5px;
-    top: 0px;
     color: #8b8b8b;
 }
 
@@ -1063,23 +1058,12 @@ body {
 
 .right_panel .close_search_icon,
 .right_panel .search_icon {
-    position: absolute;
+    /*position: absolute;
     right: 0;
-    top: 0;
+    top: 0;*/
     line-height: 29px;
     height: 100%;
-    visibility: hidden;
-    opacity: 0;
-    -webkit-transition: visibility 0s, opacity .5s linear;
-    transition: visibility 0s, opacity .5s linear;
     color: #8b8b8b;
-}
-
-.right_panel .close_search_icon.showed,
-.right_panel .showed {
-    visibility: visible;
-    pointer-events: all;
-    opacity: 1;
 }
 
 .right_panel .message_details hr {
@@ -1614,9 +1598,9 @@ body {
 
 .search_box {
     position: absolute;
-    /* top: 10px; */
+     top: 0px;
     left: 10px;
-    width: calc(100% - 40px);
+    width: calc(100% - 100px);
     height: 100%;
     /* z-index: 999999; */
 }
@@ -1809,7 +1793,7 @@ body {
     background-image: url("../images/elements/checked.png")
 }
 
-.room_name {
+.room_info {
     position: absolute;
     left: 0;
     right: 0;
@@ -1831,6 +1815,12 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.room_info .room_name {
+    display:inline-block;
+}
+.room_info .material-icons {
+    vertical-align:middle;
 }
 
 .noselect {
