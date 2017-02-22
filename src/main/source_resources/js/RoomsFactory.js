@@ -684,6 +684,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         goToPrivateDialog: goToPrivateDialog,
         addDialog: addDialog,
         isRoomPrivate: isRoomPrivate,
+        isRoomGroup:isRoomGroup,
         isRoomConsultation: isRoomConsultation,
         addTenantToRoom: addTenantToRoom,
         addUserToRoom: addUserToRoom,

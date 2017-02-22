@@ -47,6 +47,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.checkIfToday = checkIfToday;
         $rootScope.checkIfYesterday = checkIfYesterday;
         $rootScope.isRoomPrivate = RoomsFactory.isRoomPrivate;
+        $rootScope.isRoomGroup = RoomsFactory.isRoomGroup;
         $rootScope.needShowDayDivided = function(curr, prev) {
             if (checkIfToday(curr) || checkIfYesterday(curr))
                 return true;
@@ -669,6 +670,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $rootScope.$on('RoomChanged', function(event, isBusy) {
             $scope.disableMessagesSearch(false);
+            $scope.disableRoomNameChangeMode();
         });
         $scope.disableMessagesSearch = function(reloadMessages) {
             if (reloadMessages === true) {
@@ -700,6 +702,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);         
             }
             $scope.isRoomChangeModeEnabled = !$scope.isRoomChangeModeEnabled;
+        }
+        $scope.disableRoomNameChangeMode = function(){
+        $scope.isRoomChangeModeEnabled = false;
         }
          $scope.focusNewRoomNameChange = function(){
              $scope.isRoomChangeModeEnabled = false;
