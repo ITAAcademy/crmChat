@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -1251,7 +1252,7 @@ public class ChatController {
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
-	
+		chatLangService.updateDataFromDatabase();
 		if(before != null)
 		{
 			return "redirect:"+ before;
@@ -1284,6 +1285,12 @@ public class ChatController {
 			Long intitaUserId = user.getIntitaUser().getId();
 		}
 		return getTeachersTemplate(request, "chatTemplate", model, principal);
+	}
+	
+	@RequestMapping(value="/static_templates/{page}.html", method = RequestMethod.GET)
+	public ModelAndView  test(@PathVariable String page, HttpRequest request, ModelAndView mv,Principal principal) {
+		mv.setViewName("../static/static_templates/" + page);
+		return mv;
 	}
 
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)

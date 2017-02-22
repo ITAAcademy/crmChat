@@ -2,7 +2,7 @@
 <div class="transparent_input message_input" tabindex="-1" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
 
 <div class="files_input">
-    <img ng-if="files!=null && files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
+    <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()"/>
     <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>
 </div>
 <div class="controls_area">
@@ -12,8 +12,8 @@
     </div>
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">
-            <a class=" dropdown_item attaches_item ngf_select" ngf-select ngf-change="selectFiles($files)" multiple="true">Документ</a>
-            <a class=" dropdown_item video_item">Відео</a>
+            <a class="dropdown_item attaches_item ngf_select" ngf-select="true" ngf-change="selectFiles(&#36;files)" multiple="true">Документ</a>
+            <a class="dropdown_item video_item">Відео</a>
             <a class="dropdown_item audio_item">Аудіо</a>
         </ul>
         <div class="upload_file_form_container"></div>

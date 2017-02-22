@@ -1,6 +1,6 @@
 <div ng-init="hideEmpty = true" ng-show="!hideEmpty || getTenantsList().length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
-        <div class="block_controll"><img src="images/elements/add.png"></div>
+        <div class="block_controll"><img src="images/elements/add.png"/></div>
         <div ng-if="getTenantsList().length == 0" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
@@ -25,7 +25,7 @@
             <div class="contact_control">
             </div>
         </div>
-        <div class="block_item" ng-if="getTenantsList().length == 1 && checkUserAdditionPermission()">
+        <div class="block_item" ng-if="getTenantsList().length == 1 &amp;&amp; checkUserAdditionPermission()">
             <div class="add_bg_btn">Додати нового учасника</div>
         </div>
     </div>

@@ -20,7 +20,7 @@
     <div class="big_dot"></div>
     <div class="line"></div>
 </div>
-<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end>
+<div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end="">
     <div class="message_author_avatar" ng-if="!message.position">
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
     </div>
@@ -31,7 +31,7 @@
         </div>
         <compilable ng-if="message.chatUserId != 0" class="bottom_details" content="parseMsg(message.message)" time="message.date"></compilable>
         <div ng-if="message.chatUserId == 0" bot-container=" " style="margin: 0px;" content="message.message" time="message.date"></div>
-        <hr ng-if="message.attachedFiles.length > 0 && message.message != ' ' " />
+        <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.message != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
     </div>

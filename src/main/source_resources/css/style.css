@@ -785,7 +785,7 @@ body {
 }
 
 .contacts_menu_strip .search_icon {
-    /*position: relative;*/
+    position: relative;
     cursor: pointer;
     background-color: #46688d;
     width: 26px;
