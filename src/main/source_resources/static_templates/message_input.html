@@ -1,5 +1,5 @@
 <hr/>
-<div class="transparent_input message_input" tabindex="-1" type="text" placeholder="Напишіть ваше повідомлення" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
+<div class="transparent_input message_input" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
 
 <div class="files_input">
     <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()"/>
@@ -12,14 +12,14 @@
     </div>
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">
-            <a class="dropdown_item attaches_item ngf_select" ngf-select="true" ngf-change="selectFiles(&#36;files)" multiple="true">Документ</a>
-            <a class="dropdown_item video_item">Відео</a>
-            <a class="dropdown_item audio_item">Аудіо</a>
+            <a class="dropdown_item attaches_item ngf_select" ngf-select="true" ngf-change="selectFiles(&#36;files)" multiple="true" th:text="${lgPack.inputArea.attaches.doc}">Документ</a>
+            <a class="dropdown_item video_item" th:text="${lgPack.inputArea.attaches.video}">Відео</a>
+            <a class="dropdown_item audio_item" th:text="${lgPack.inputArea.attaches.audio}">Аудіо</a>
         </ul>
         <div class="upload_file_form_container"></div>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
-        <div class="send_button" ng-click="sendMessageAndFiles()">ВІДПРАВИТИ &#47;&gt; <i class="material-icons">send</i></div>
+        <div class="send_button" ng-click="sendMessageAndFiles()"><span  th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>
         <!--- class="newMessage.value.trim().length==0"-->
     </div>
 </div>

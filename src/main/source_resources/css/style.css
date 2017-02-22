@@ -743,6 +743,7 @@ body {
     font-family: "Roboto";
     font-weight: 500;
     font-style: normal;
+    text-transform: uppercase;
 }
 
 .contacts_menu_strip .last_contacts_menu_item {
@@ -759,6 +760,7 @@ body {
     font-family: "Roboto";
     font-weight: 500;
     font-style: normal;
+    text-transform: uppercase;
 }
 
 .contacts_menu_strip .last_contacts_menu_item:before {
@@ -908,6 +910,13 @@ body {
     position: relative;
     text-align:right;
     padding: 0px 5px;
+}
+
+.tools_area .material-icons{
+    color:#8c8c8c
+}
+.tools_area .material-icons:hover{
+    color:#4b75a4
 }
 
 .right_panel .tools_dropdown_container {
@@ -1258,6 +1267,7 @@ body {
     line-height: 35px;
     cursor: pointer;
     margin-left: 5px;
+    text-transform: uppercase;
 }
 
 .send_button i.material-icons {
@@ -1598,9 +1608,9 @@ body {
 
 .search_box {
     position: absolute;
-     top: 0px;
+    top: 0px;
     left: 10px;
-    width: calc(100% - 100px);
+    width: calc(100% - 59px);
     height: 100%;
     /* z-index: 999999; */
 }
@@ -1815,6 +1825,17 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.room_info .room_name .edit{
+    font-size: 18px;
+    color: #3e87b8;
+    -webkit-transform: rotateZ(333deg);
+            transform: rotateZ(333deg);
+    position: relative;
+    left: -5px;
+}
+.room_info .room_name .edit:hover{
+    opacity: 0.5;
 }
 .room_info .room_name {
     display:inline-block;

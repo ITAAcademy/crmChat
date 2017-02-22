@@ -1246,13 +1246,15 @@ public class ChatController {
 	}
 
 	@RequestMapping(value="/updateLang", method = RequestMethod.GET)
-	public void  updateLang(HttpServletRequest request) {
+	@ResponseBody
+	public boolean  updateLang(HttpServletRequest request) {
 		chatLangService.updateDataFromDatabase();
+		return true;
 	}
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
-		chatLangService.updateDataFromDatabase();
+		//chatLangService.updateDataFromDatabase();
 		if(before != null)
 		{
 			return "redirect:"+ before;
@@ -1288,8 +1290,9 @@ public class ChatController {
 	}
 	
 	@RequestMapping(value="/static_templates/{page}.html", method = RequestMethod.GET)
-	public ModelAndView  test(@PathVariable String page, HttpRequest request, ModelAndView mv,Principal principal) {
+	public ModelAndView  test(@PathVariable String page, HttpRequest request, ModelAndView mv, Model model,Principal principal) {
 		mv.setViewName("../static/static_templates/" + page);
+		mv.addObject("lgPack", chatLangService.getLocalizationMap().get(getCurrentLang()));
 		return mv;
 	}
 

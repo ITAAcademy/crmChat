@@ -2,14 +2,14 @@
 <div ng-repeat-start="message in (orderedMsgs = (messages() | orderBy : 'date'))" class="message_date_separator" ng-if="checkIfToday(message.date) &amp;&amp; (checkIfToday(message.date) != checkIfToday(messages()[$index-1].date))">
     <div class="line"></div>
     <div class="big_dot"></div>
-    <span class="date_indicator">Сьогодні</span>
+    <span class="date_indicator" th:text="${lgPack.msgBox.today}">Сьогодні</span>
     <div class="big_dot"></div>
     <div class="line"></div>
 </div>
 <div class="message_date_separator" ng-if="checkIfYesterday(message.date)">
     <div class="line"></div>
     <div class="big_dot"></div>
-    <span class="date_indicator">Вчора</span>
+    <span class="date_indicator" th:text="${lgPack.msgBox.yesterday}">Вчора</span>
     <div class="big_dot"></div>
     <div class="line"></div>
 </div>

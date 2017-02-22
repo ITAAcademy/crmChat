@@ -1,10 +1,10 @@
-<div class="modal-header">
+<div class="modal-header" th:text="${lgPack.deleteDialog.head}">
     Ви точно хочите видалити бесіду?
 </div>
-<div class="modal-content">
+<div class="modal-content" th:text="${lgPack.deleteDialog.content}">
     В наслідок чого буде видалена бесіда!!!
 </div>
 <div class="modal-footer">
-    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="deleteMeFromRoom()">Так</button>
-    <button type="button" class="btn btn-default" ng-click="closeThisDialog()">Ні</button>
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="deleteMeFromRoom()" th:text="${lgPack.chatGlobal.yes}">Так</button>
+    <button type="button" class="btn btn-default" ng-click="closeThisDialog()" th:text="${lgPack.chatGlobal.no}">Ні</button>
 </div>

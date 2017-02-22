@@ -248,7 +248,7 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
         },
         templateUrl: 'static_templates/tenants_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = "Тенанти";
+            scope.blockName = lgPack.blockNames.tenants;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.getTenantsList = function() {
@@ -329,7 +329,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
         restrict: 'EA',
         templateUrl: 'static_templates/students_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = "Студенти";
+            scope.blockName = lgPack.blockNames.students;
             scope.students = [];
             scope.groupRooms = [];
             updateModelForStudents();
@@ -361,12 +361,12 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
                 }
             }
             var enableGroupMode = function(){
-                scope.blockName = "Групи";
+                scope.blockName = lgPack.blockNames.groups;
                 scope.isGroupMode = true;
                 updateModelForGroups();
             }
             var disableGroupMode = function(){
-                scope.blockName = "Студенти";
+                scope.blockName = lgPack.blockNames.students;
                 scope.isGroupMode = false;
                 updateModelForStudents();
             }
@@ -384,7 +384,7 @@ function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
         },
         templateUrl: 'static_templates/trainers_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = "Тренер";
+            scope.blockName = lgPack.blockNames.trainers; 
             scope.students = UserFactory.getStudentTrainerList;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
@@ -415,7 +415,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 return false;
             }
             scope.participants = RoomsFactory.getParticipants;
-            scope.blockName = "Учасники розмови";
+            scope.blockName = lgPack.blockNames.participants;
             scope.currentRoom = RoomsFactory.getCurrentRoom;
             scope.hideEmpty = false;
             scope.getChatUserId = UserFactory.getChatUserId;
