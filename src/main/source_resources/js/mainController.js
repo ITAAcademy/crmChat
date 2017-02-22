@@ -691,9 +691,19 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
         $scope.isRoomChangeModeEnabled = false;
+        $scope.newRoomName = {'value':''};
+
         $scope.toggleRoomNameChangeMode = function(){
+            if (!$scope.isRoomChangeModeEnabled){
+                $scope.newRoomName.value = $scope.getCurrentRoom().string;
+            }else{
+                RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);         
+            }
             $scope.isRoomChangeModeEnabled = !$scope.isRoomChangeModeEnabled;
         }
+         $scope.focusNewRoomNameChange = function(){
+             $scope.isRoomChangeModeEnabled = false;
+         }
 
         $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
         var savedDistanceToBottom;

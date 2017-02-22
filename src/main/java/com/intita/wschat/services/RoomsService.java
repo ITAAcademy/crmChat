@@ -527,6 +527,19 @@ public class RoomsService {
 	public ArrayList<Room> getRoomsByIds(ArrayList<Long> intitaUsersIds){
 		return roomRepo.findRoomsByIds(intitaUsersIds);
 	}
+	
+	@Transactional
+	public String updateRoomName(Long roomId, String roomName){
+		Room room = roomRepo.findById(roomId);
+		String newName = roomName.trim();
+		if (newName.length()>0){
+		room.setName(newName);
+		roomRepo.save(room);
+		return newName;
+		}
+		return room.getName();
+		
+	}
 
 
 }

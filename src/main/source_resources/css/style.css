@@ -1010,14 +1010,14 @@ body {
 .transparent_input:focus {
     outline: 0
 }
-
-.open_dropdown_button {
+.material_button{
     background: 0;
     border: 0;
     display: inline-block;
     outline: 0;
-    cursor: pointer
-}
+    cursor: pointer;
+    padding:0;
+} 
 
 .right_panel .open_dropdown_button {
     /* margin-left: 18px; */

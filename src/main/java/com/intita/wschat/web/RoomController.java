@@ -493,6 +493,16 @@ public class RoomController {
 		log.info("P&M:" + participantsAndMessages);
 		return participantsAndMessages;
 	}
+	
+	@RequestMapping(value = "/{room}/chat/set_name", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String setRoomName(@PathVariable("room") Long room,@RequestParam String newName, Principal principal)
+			throws JsonProcessingException {
+		String nameAfterChanging = roomService.updateRoomName(room, newName);
+		log.info("Room name changed:" + newName);
+		return nameAfterChanging;
+	}
+	
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
 	@ResponseBody

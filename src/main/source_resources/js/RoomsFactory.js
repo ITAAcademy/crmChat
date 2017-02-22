@@ -349,6 +349,32 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 }
             }));
     };
+    var changeCurrentRoomName = function(name){
+            return changeRoomName(currentRoom.roomId,name);
+    }
+    var changeRoomName = function(roomId,name) {
+        var currentUrl = serverPrefix + "/{0}/chat/set_name".format(roomId)
+        ajaxRequestsForRoomLP.push(
+            $.ajax({
+                type: "POST",
+                url: currentUrl,
+                mimeType: "text/plain; charset=UTF-8",
+                data: {'newName':name},
+                success: function(data) {
+                    currentRoom.string = data;
+                    console.log('room name changed to:'+data);
+                },
+                error: function(xhr, text_status, error_thrown) {
+                    if (xhr.status === 0 || xhr.readyState === 0) return;
+                    if (xhr.status === 404 || xhr.status === 405) {
+                        //alert(14)
+                        toaster.pop('warning', "Сталася помилка", "помилка зміни імені кімнати", 5000);
+                    }
+                    //subscribeParticipantsLP();
+                }
+            }));
+    };
+
 
     /*************************************
      * SEND MESSAGE
@@ -662,6 +688,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         addTenantToRoom: addTenantToRoom,
         addUserToRoom: addUserToRoom,
         checkMessageAdditionPermission: checkMessageAdditionPermission,
+        changeCurrentRoomName: changeCurrentRoomName,
         getUserAddedToRoom: function() {
             return userAddedToRoom;
         },
