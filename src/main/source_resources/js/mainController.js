@@ -3,9 +3,10 @@
 springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
-            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', function($route, RoomsFactory, ChannelFactory, $routeParams) {
+            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams','$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams,$rootScope) {
                 if (!ChannelFactory.getIsInited()) return;
                 RoomsFactory.goToRoom($route.current.params.roomId);
+                 $rootScope.$broadcast('dialog_view_route');
             }]
         }
     });

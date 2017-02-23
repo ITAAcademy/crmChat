@@ -79,7 +79,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
             getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
-        var evn = goToRoomEvn(roomId);
+        var evn = goToRoomEvn(roomId);  
         return evn;
     };
 

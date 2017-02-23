@@ -692,11 +692,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
             $scope.usersListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            $scope.getRooms = function() {
-                if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
-                    return RoomsFactory.getRooms();
-                else return $scope.roomsListSearched;
-            }
+            
 
             /*$scope.getUsersByEmail = function(query, deferred) {
                 var url = serverPrefix + "/get_users_like?login=" + query;
@@ -937,6 +933,13 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
             return room.avatars[1];
         return room.avatars[0];
     }
+    $scope.$on('dialog_view_route', function(){
+    $scope.showLastContacts();
+});
+   /* $scope.showLastContactItem = function(roomId) {
+        $scope.showLastContacts();
+        //TODO select specific last contact item
+    }*/
 
     $scope.addForCreatRoom = function(room) {
         // alert(chatUserId);
@@ -948,6 +951,11 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         }
 
     }
+    $scope.getRooms = function() {
+                if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
+                    return RoomsFactory.getRooms();
+                else return $scope.roomsListSearched;
+            }
 
     var nice = $(".scroll");
     $scope.showLastContacts();
