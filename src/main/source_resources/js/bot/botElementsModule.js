@@ -153,7 +153,6 @@ var BOT_ELEMENTS_MODULE = function() {
 
             var nv = "elementsListForLink[{0}]".format(index);
             template = template.split("this").join(nv);
-            //  console.log(scope.elementsListForLink[index]);
             return template;
         };
         return object;
@@ -225,7 +224,7 @@ var BOT_ELEMENTS_MODULE = function() {
          var testElm = getTestElement();
          var testElm2 = getTestElement();
          testElm.childrens.push(testElm2);
-         console.log('test:' + testElm.getHTML());*/
+         */
 
     return publicData;
 

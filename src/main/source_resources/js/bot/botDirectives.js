@@ -77,7 +77,6 @@ targetDirectives.directive('botContainer', function($compile, $parse) {
                     var body = processBotParameters(parsedData.body);
                 else
                     var body = parsedData.body;
-                console.log('botContainer content:' + body);
                 // var elementValue = parsedData.body.replace(/\\"/g, '"');
                 element.html(prefix + body + sufix);
                 if (typeof attr.callback != 'undefined') {
@@ -212,7 +211,6 @@ targetDirectives.directive('botList', function($compile, $parse) {
                         element[0].classList.add("layout-ul-vertical");
                     }
                     //element[0].classList.toggle("layout-ul-vertical");
-                    console.log("render List");
                     for (var i = 0; i < elements.length; i++) {
                         if (scope.horizontal) {
                             elements[i].classList.add("layout-li-horizontal");
@@ -269,7 +267,6 @@ targetDirectives.directive('botlink', function($compile, $parse, $http) {
                 // scope.href = "";
                 scope.mainScope = scope.$parent.mainScope;
                 var body = "{{text}}";
-                console.log("body:" + body);
                 var usePost = attr.ispost === 'true';
                 if (usePost) {
                     scope.href = "";
@@ -381,7 +378,6 @@ targetDirectives.directive('botsubmit', function($compile, $parse, $http) {
                 scope.mainScope.getParamsInJSON(formData);
                 // $.each((formElm).serializeArray(), function (i, field) { formData[field.name] = field.value || ""; });
                 var dataToSend = JSON.stringify(formData);
-                console.log('dataToSend:' + dataToSend);
                 $.ajax({
                     type: "POST",
                     contentType: "binary/octet-stream",
@@ -647,7 +643,6 @@ targetDirectives.directive('inputListBox', function($compile, $parse) {
         link: function(scope, element, attributes) {
 
             scope.$watch('inputValue', function() {
-                console.log('scope.$watch inputValue ' + scope.inputValue)
 
                 if (scope.keyPressProcessed == false) {
 
@@ -658,8 +653,6 @@ targetDirectives.directive('inputListBox', function($compile, $parse) {
                         var size = scope.inputValue.length;
 
                         var substr = listElement.substring(0, size);
-
-                        console.log("scope.inputValue = " + scope.inputValue + " listElement = " + listElement + " input_size = " + size + " substr = " + substr);
 
                         if (size == 1) {
                             if (listElement[0] == scope.inputValue)
@@ -844,7 +837,6 @@ function botcalendar($compile, $parse) {
             post: function(scope, element, attributes) {
                 scope.popup1 = {};
                 scope.open1 = function() {
-                    console.log('open1');
                     scope.popup1.opened = true;
                 };
                 scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];

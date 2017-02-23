@@ -57,7 +57,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var socketSupport = true;
 
     function initSocketsSubscribes() {
-        console.log('initSocketsSubscribes');
         chatSocket.subscribe("/topic/chat.tenants.remove", function(message) {
             var tenant = JSON.parse(message.body);
             for (var i = 0; i < tenants.length; i++) {
@@ -91,7 +90,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         function reInitForLP() {
             $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
             success(function(data, status, headers, config) {
-                console.log("LOGIN OK " + data);
                 login(data);
             }).
             error(function(data, status, headers, config) {
@@ -100,7 +98,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             });
         }
         var onConnect = function(frame) {
-            console.log("onconnect");
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
@@ -114,7 +111,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
                 success(function(data, status, headers, config) {
                     var RoomsFactory = $injector.get('RoomsFactory');
-                    console.log("LOGIN OK " + data);
                     login(data);
                     RoomsFactory.subscribeRoomsUpdateLP();
 
@@ -153,7 +149,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                     });
                     //TODO make channel private
                     chatSocket.subscribe("/topic/{0}/must/get.room.num/chat.message".format(getChatUserId()), function(message) { // event update
-                        console.log("new message in room:" + message.body);
                         var num = JSON.parse(message.body);
                         $rootScope.$broadcast('newMessageEvent', num);
                     });
@@ -249,7 +244,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         });
 
         chatSocket.subscribe("/topic/chat/rooms/user.{0}".format(getChatUserId()), function(message) { // event update
-            console.log("chatUserId:" + getChatUserId());
             var RoomsFactory = $injector.get('RoomsFactory');
             RoomsFactory.updateRooms(message);
         });
@@ -274,7 +268,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         // alert("subscribeInfoUpdateLP()");
         $http.post(serverPrefix + "/chat/global/lp/info")
             .success(function(data, status, headers, config) {
-                console.log("infoUpdateLP data:" + data);
                 if (data["newMessage"] != null) //new message in room
                 {
                     $rootScope.$broadcast('newMessageArrayEvent', data["newMessage"]);
@@ -357,7 +350,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
         }
 
-        console.log("isTenant:" + isTenant + " isTrainer:" + isTrainer + " isStudent:" + isStudent);
         chatUserNickname = mess_obj.chat_user_nickname;
         chatUserRole = mess_obj.chat_user_role;
         chatUserAvatar = mess_obj.chat_user_avatar
@@ -399,7 +391,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                  if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
                      //mess_obj.nextWindow=$scope.currentRoom.roomId;
                      //  goToDialogEvn($scope.currentRoom.roomId);
-                     console.log("currentRoom");
                      ChannelFactory.changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
                      $scope.showDialogListButton = true;
                      return;

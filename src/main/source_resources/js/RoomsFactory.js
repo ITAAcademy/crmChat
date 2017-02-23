@@ -3,17 +3,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var addRoomWithBot = function(roomName) {
         $http.post(serverPrefix + "/chat/rooms/create/with_bot/", roomName)
         success(function(data, status, headers, config) {
-            console.log('room with bot created: ' + roomName)
         }).
         error(function(data, status, headers, config) {
-            console.log('creating room with bot failed ')
         });
 
     };
     var addDialog = function(dialogName, users) {
         return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
         success(function(data, status, headers, config) {
-            console.log("ADD USER OK " + data);
         }).
         error(function(data, status, headers, config) {
             toaster.pop('error', "Error", "server request timeout", 1000);
@@ -68,7 +65,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var unsubscribeWatch = null;
 
     var goToRoom = function(roomId) {
-        //console.log("roomName:"+roomName);
         /* if (!ChannelFactory.getIsInited()) {
              unsubscribeWatch = $rootScope.$watch('getIsInited', function(newValue, oldValue) {
                  if (newValue == true) {
@@ -88,7 +84,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     var goToRoomById = function(roomId) {
-        console.log("roomId:" + roomId);
         return goToRoomEvn(roomId).then(function() {
             if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
                 getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
@@ -97,7 +92,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     function goToRoomEvn(id) {
-        console.log("goToRoomEvn(" + id + ")");
         if (currentRoom != undefined) {
             updateNewMsgNumber(-currentRoom.nums);
             currentRoom.nums = 0;
@@ -128,7 +122,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function calcPositionUnshift(msg) {
         if (msg == null)
             return null;
-                console.log('!!!!! MESSAGE OPERATION Unshift calcPositionUnshift:'+msg.message);
         //     msg.message = msg.message.escapeHtml();//WRAP HTML CODE
         var summarised = false;
         oldMessage = msg;
@@ -162,7 +155,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (msg == null)
             return null;
-        console.log('!!!!! MESSAGE OPERATION Push calcPositionPush:'+msg.message);
         // msg.message = msg.message.escapeHtml();//WRAP HTML CODE
 
         var objDiv = document.getElementById("messagesScroll");
@@ -207,7 +199,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         messages = [];
        // $rootScope.message_busy = false;
         $rootScope.$broadcast('RoomChanged', false);
-        console.log("roomId:" + currentRoom.roomId);
 
         if (ChannelFactory.isSocketSupport() === true) {
             lastRoomBindings.push(
@@ -362,7 +353,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 data: {'newName':name},
                 success: function(data) {
                     currentRoom.string = data;
-                    console.log('room name changed to:'+data);
                 },
                 error: function(xhr, text_status, error_thrown) {
                     if (xhr.status === 0 || xhr.readyState === 0) return;
@@ -428,7 +418,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function loadSubscribeAndMessage(message) {
-        console.log('loadSubscribeAndMessage');
         roomType = message["type"];
 
         participants = message["participants"];
@@ -519,7 +508,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     ChannelFactory.setIsInitedCallback(afterIsInited);
 
     function afterIsInited() {
-        console.log("try " + currentRoom);
         if (ChannelFactory.getIsInited() == true) {
 
             var room = getRoomById(rooms, $routeParams.roomId);
@@ -590,25 +578,19 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function subscribeRoomsUpdateLP() {
-        console.log("roomsUpdateLP()");
         $http.post(serverPrefix + "/chat/rooms/user/login")
             .success(function(data, status, headers, config) {
-                console.log("roomsUpdateLP data:" + data);
                 updateRooms(data);
-
-                //console.log("resposnse data received:"+response.data);
                 subscribeRoomsUpdateLP();
             }).error(function errorHandler(data, status, headers, config) {
-                //console.log("error during http request");
                 //$scope.topics = ["error"];
-                //console.log("resposnse data error:"+response.data);
                 subscribeRoomsUpdateLP();
             });
     }
 
     var goToPrivateDialogErr = function(data, status, headers, config) {
         toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
-        console.log("PRIVATE ROOM CREATE FAILD ");
+        console.warn("PRIVATE ROOM CREATE FAILD ");
         $rootScope.goToAuthorize(function() { changeLocation("/chatrooms"); });
     }
 
@@ -616,7 +598,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         $rootScope.hideMenu();
         $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
         success(function(data, status, headers, config) {
-            console.log("PRIVATE ROOM CREATE OK ");
 
             //$scope.goToDialogById(data);
             if (RoomsFactory.getCurrentRoom() == null)

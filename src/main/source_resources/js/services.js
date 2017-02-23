@@ -18,7 +18,7 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
             });
 
             stompClient = Stomp.over(cock);
-            //stompClient.debug = null
+            stompClient.debug = null
         },
         disconnect: function() {
             stompClient.disconnect();

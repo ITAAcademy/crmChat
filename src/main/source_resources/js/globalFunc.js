@@ -255,7 +255,6 @@ var curentDateInJavaFromat = function() {
 
     var datetime = currentdate.getFullYear() + "-" + mouth + "-" +
         day + " " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds() + ".0";
-    //console.log("------------------ " + datetime)
     return datetime;
 };
 
@@ -284,7 +283,6 @@ function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress) {
 
     //  обработчик для закачки
     xhr.upload.onprogress = function(event) {
-        //console.log(event.loaded + ' / ' + event.total);
         onProgress(event, xhr.upload.loaded);
     }
 
@@ -292,10 +290,8 @@ function uploadXhr(files, urlpath, successCallback, errorCallback, onProgress) {
     //  если status == 200, то это успех, иначе ошибка
     xhr.onload = xhr.onerror = function() {
         if (this.status == 200) {
-            console.log("SUCCESS:" + xhr.responseText);
             successCallback(xhr.responseText);
         } else {
-            console.log("error " + this.status);
             errorCallback(xhr);
         }
     };
@@ -324,7 +320,6 @@ function upload($http, files, urlpath) {
         },
         headers: { 'Content-Type': undefined }
     }).error(function(data, status) {
-        console.log("Error ... " + status);
     });
 }
 

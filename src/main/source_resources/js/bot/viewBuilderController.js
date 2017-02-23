@@ -99,10 +99,8 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
 
     $scope.updateView = function() {
         if ($scope.activeViewTab == 0 || $scope.activeViewTab === null) {
-            console.log("ignore activeViewTab == 0");
             return;
         }
-        console.log("updateView");
         $scope.$root.elementsListForLink = [];
         $scope.$root.models.selected = null;
         $scope.viewTabs[$scope.activeViewTab - 1].content[$scope.langForRender[$scope.activeViewTab - 1]] = null;
@@ -190,7 +188,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
 
     $scope.$root.dragoverCallback = "";
     $scope.dragoverCallback = function(event, index, external, type, parent) {
-        // console.log(parent.type);
         return true;
     };
 
@@ -206,7 +203,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
      * TOOLS FOR CONTROLL
      *****************************/
     var loadView = function loadView(data, status, headers, config) {
-        console.log("Load view: " + data);
         var lang = $scope.langForRender[$scope.activeViewTab - 1] ;
         if (lang==null) lang="ua";
         var tab = { "title": "№" + data[lang].idObject.id, "content": new Map(), "objects": new Map(), "items": data };
@@ -223,7 +219,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
     }
 
     $scope.updateViewByLang = function() {
-        console.log("Update view by lang: ");
         var tab = $scope.viewTabs[$scope.activeViewTab - 1];
         var lang = $scope.langForRender[$scope.activeViewTab - 1];
 
@@ -278,7 +273,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
             return map;
         }, {});
         initDialogItems(categoryId);
-        console.log('selectedBotCategoryForModalChanged:'+categoryId);
         $scope.categoryInputModel = categoryNamesMap[categoryId];
     }
 
@@ -312,7 +306,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botCategoriesIdsForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -331,7 +324,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botCategoriesIdsForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -342,7 +334,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botDialogItemsIdsForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -371,7 +362,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
             //return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botDialogItemsIdsForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -407,7 +397,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.categoriesNamesList = data;
-            console.log("get_categories_by_name:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -418,7 +407,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.dialogItemsDescriptionsList = data;
-            console.log("dialogItemsDescriptionsList:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -430,7 +418,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botCategoriesForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -443,7 +430,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         return $http.get(requestUrl, {}).
         success(function(data) {
             $scope.botDialogItemsForModal = data;
-            console.log("get_dialog_items_ids:" + data);
         }).
         error(function(data, status, headers, config) {});
     }
@@ -502,7 +488,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
         }
         //$scope.selectedBotCategoryForModal = $scope.botCategoriesForModal[0];
         //$scope.selectedBotCategoryForModal=getKeyByValue(modelValue,categoryNamesMap);
-        console.log(modelValue);
     }
     $scope.onDialogItemInputSelect = function(modelValue) {
         $scope.dialogElementInputModel = modelValue;
@@ -584,7 +569,6 @@ forumBuilderControllers.controller('ChatViewBuilderController', ['$routeParams',
             $scope.$root.elementsListForLink = [];
             $scope.viewTabs[$scope.activeViewTab - 1].content = result.getHTML($scope.$root, false);
         });
-        console.log("zigzag test:" + JSON.stringify(result));
     }
 
     $scope.compareType = function(elm,propertyName, type) {

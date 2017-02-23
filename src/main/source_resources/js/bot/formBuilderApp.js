@@ -16,7 +16,6 @@ forumBuilderControllers.config(['$routeProvider', function($routeProvider) {
         controller: "ChatBotFormBuilderController"
     });
     $routeProvider.otherwise({ redirectTo: '/' });
-    console.log("scope test");
 
 }]);
 

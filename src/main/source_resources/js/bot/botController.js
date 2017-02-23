@@ -57,7 +57,6 @@ springChatControllers.controller('ChatBotController', ['$routeParams', '$rootSco
     });
 
     $scope.enabledListener = function(scope, element) {
-        console.log("listner");
         scope.$watch('disabled', function() {
             if (scope.disabled) {
                 for (var i = 0; i < element[0].children.length; i++) {

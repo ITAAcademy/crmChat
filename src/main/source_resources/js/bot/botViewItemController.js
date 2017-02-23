@@ -14,7 +14,6 @@ function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, 
 
     };
     $scope.$on('$destroy', function() {
-        console.log("destroy");
 
         if ( $scope.$parent.mainScope == null ||  $scope.$parent.mainScope == undefined)
             return null;
@@ -78,7 +77,6 @@ function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, 
     $scope.getNewItem = function(answer, href) {
         //generation here data
         ///take message from parent scope
-        console.log('getNewItem func called');
         $scope.sendPostToUrl(href, answer);
     }
     $scope.sendPostToUrl = function(href, linkData) {
@@ -90,10 +88,8 @@ function chatViewItemControllerForView($routeParams, $rootScope, $scope, $http, 
          });*/
         $http.post(serverPrefix + '\\' + href, linkData). // + $scope.dialogName).
         success(function(data, status, headers, config) {
-            // console.log('room with bot created: ' + $scope.dialogName)
         }).
         error(function(data, status, headers, config) {
-            //console.log('creating room with bot failed ')
         });
     }
     $scope.sendPostToUrlRoom = function(href, linkData, roomId) {

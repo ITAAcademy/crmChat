@@ -234,7 +234,7 @@ function updateModelGet(http, requestUrl, callback) {
         method: 'GET',
         url: requestUrl
     }).then(callback, function errorCallback(response) {
-        console.log('updateModelGet():requestUrl:' + requestUrl + " failed");
+        console.warn('updateModelGet():requestUrl:' + requestUrl + " failed");
     });
 };
 
@@ -528,7 +528,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 } else {
                     $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
                     success(function(data, status, headers, config) {
-                        console.log("MESSAGE SEND OK " + data);
                         UserFactory.setMessageSended(true);
                     }).
                     error(function(data, status, headers, config) {
@@ -568,7 +567,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             $scope.$apply();
                         },
                         function(event, loaded) {
-                            console.log(event.loaded + ' / ' + event.totalSize);
                             $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
                             $scope.$apply();
 
@@ -870,7 +868,6 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     });
 
     roomsBlockModeChangeSubscription = $scope.$root.$on('rootScope:roomsBlockModeChange', function(event, data) {
-        console.log(data);
         $scope.mode = data;
         switch ($scope.mode) {
             case 1:

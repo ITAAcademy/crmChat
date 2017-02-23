@@ -22,8 +22,6 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     });
 
     $routeProvider.otherwise({ redirectTo: '/' });
-    console.log("scope test");
-
 }]);
 
 var chatControllerScope;
@@ -259,7 +257,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             toaster.clear();
             $location.path(url);
 
-            console.log("Change location:" + $location.path());
             // $scope.$apply();
         };
 
@@ -385,7 +382,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         };
 
         $scope.appendToSearchInput = function(value) {
-            console.log("searchInputValue:" + $scope.searchInputValue.email);
             $scope.searchInputValue.email = value;
             $scope.show_search_list = false;
         }
@@ -487,7 +483,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $rootScope.message_busy = false;
         $rootScope.loadOtherMessages = function() {
-            console.log('loadOtherMessages');
             if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
                 return;
             var urlTemplate = "/{0}/chat/loadOtherMessage";
@@ -495,14 +490,12 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 urlTemplate = "/{0}/chat/loadOtherMessageWithFiles";
             }
             $rootScope.message_busy = true;
-            console.log("TRY " + $scope.messages.length);
             var date = (RoomsFactory.getOldMessage() == null) ? null : RoomsFactory.getOldMessage().date;
             var payload = { 'date': date };
             if ($scope.messageSearchEnabled)
                 payload['searchQuery'] = $scope.messageSearchQuery.value;
             $http.post(serverPrefix + urlTemplate.format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
             success(function(data, status, headers, config) {
-                console.log("MESSAGE onLOAD OK " + data);
 
                 var objDiv = document.getElementById("messagesScroll");
                 var lastHeight = objDiv.scrollHeight;
@@ -526,7 +519,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 });
             }).
             error(function(data, status, headers, config) {
-                console.log('TEST');
                 if (status == "404" || status == "405") chatControllerScope.changeLocation("/");
                 //messageError("no other message");
             });
@@ -552,7 +544,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                     if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
-                        // console.log("room " + room.roomId + "==" + roomId + " currentRoom=" + $scope.currentRoom.roomId);
                         //room.date = curentDateInJavaFromat();
 
                         if ($scope.soundEnable)
@@ -586,8 +577,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 var value = undefined;
                 if (obj[keys[i]] != undefined)
                     value = obj[keys[i]];
-
-                console.log(i + ") " + keys[i] + " = " + value);
             }
         }
         $scope.getLength = function(obj) {

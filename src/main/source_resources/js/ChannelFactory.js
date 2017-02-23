@@ -20,14 +20,13 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
         },
         changeLocation: function(url) {
             $location.path(url);
-            console.log("Change location:" + $location.path());
+            //console.log("Change location:" + $location.path());
             /*   $rootScope.goToAuthorize(function() {
                    changeLocation("/chatrooms");
                });*/
         },
         subscribeToConnect: function(callBack){
             if (isInited == false) {
-                console.log("serverPrefix");
                 var onConnect = function(frame) {
                     callBack(socketSupport, frame)
                 };
