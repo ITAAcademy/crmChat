@@ -1,6 +1,8 @@
 package com.intita.wschat.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -50,7 +52,7 @@ public class RoomModelSimple {
 	private String lastMessageAuthorAvatar;
 	private Date lastMessageDate;
 	private int participantsCount;
-	private String avatars[];
+	private List<String> avatars;
 	private Long[] privateUserIds;
 	Integer userPermissions;
 
@@ -82,7 +84,7 @@ public class RoomModelSimple {
 		string = "";
 		nums = 0;
 		date = new Date().toString();
-		avatars = new String[4];
+		avatars = new ArrayList();
 	}
 
 	public Integer getUserPermissions() {
@@ -133,31 +135,38 @@ public class RoomModelSimple {
 				simpleModel.lastMessageAuthorAvatar = NO_AVATAR_IMAGE_NAME;
 		}
 		simpleModel.participantsCount = room.getParticipantsCount();
-		simpleModel.avatars = generateMultiImageLinks(room);
+		ArrayList<Long> excludeFromAvatars = new ArrayList<Long>();
+		excludeFromAvatars.add(user.getId());
+		simpleModel.avatars = generateMultiImageLinks(room,excludeFromAvatars);
 		return simpleModel;
 		//this.userCapabilities = roomService.getPermissions(room, user);
 	}
-	public static String[]	generateMultiImageLinks(Room room){
+	public static List<String>	generateMultiImageLinks(Room room,List<Long> ignoreChatUsers){
 		Set<ChatUser> roomUsers = room.getUsers();
-		int usersCount = roomUsers.size()+1;
-		if (usersCount<=0){
-			log.info("error, usersCount is "+usersCount);
-			return null;
-		}
-		int imagesCountInMultiImage = (usersCount <= MULTI_IMAGE_MAX_IMAGE_COUNT) ? usersCount : MULTI_IMAGE_MAX_IMAGE_COUNT;
-		String multiImageLinksArray[] = new String[imagesCountInMultiImage];
-		if(room.getAuthor().getIntitaUser() != null)
-			multiImageLinksArray[0]=room.getAuthor().getIntitaUser().getAvatar();
-		else
-			multiImageLinksArray[0] = NO_AVATAR_IMAGE_NAME;
+		roomUsers.add(room.getAuthor());
+		int usersCount = roomUsers.size();
 
-		for (int i = 1; i < imagesCountInMultiImage;i++){
-			ChatUser chatUser = room.getUsers().iterator().next();
-			User intitaUser = chatUser.getIntitaUser();
-			if (intitaUser != null)multiImageLinksArray[i]=intitaUser.getAvatar();
-			else {
-				multiImageLinksArray[i]=NO_AVATAR_IMAGE_NAME;
+		ArrayList<String> multiImageLinksArray = new ArrayList<String>();
+		int i = 0;
+		while(i<roomUsers.size() && multiImageLinksArray.size()<MULTI_IMAGE_MAX_IMAGE_COUNT){
+			ChatUser chatUser = roomUsers.iterator().next();
+			if( ignoreChatUsers.contains(chatUser.getId()) ){
+				i++;
+				continue;
 			}
+			User intitaUser = chatUser.getIntitaUser();
+			if (intitaUser != null && intitaUser.getAvatar() != null)multiImageLinksArray.add(intitaUser.getAvatar());
+			else {
+				multiImageLinksArray.add(NO_AVATAR_IMAGE_NAME);
+			}
+			i++;
+		}
+		if (multiImageLinksArray.isEmpty()){
+			if(room.getAuthor().getIntitaUser()==null || room.getAuthor().getIntitaUser().getAvatar()==null
+					|| room.getAuthor().getIntitaUser().getAvatar().length() < 1)
+				multiImageLinksArray.add(NO_AVATAR_IMAGE_NAME);
+			else
+				multiImageLinksArray.add(room.getAuthor().getIntitaUser().getAvatar());
 		}
 		return multiImageLinksArray;
 	}
@@ -194,11 +203,11 @@ public class RoomModelSimple {
 		this.lastMessageDate = lastMessageDate;
 	}
 
-	public String[] getAvatars() {
+	public List<String> getAvatars() {
 		return avatars;
 	}
 
-	public void setAvatars(String[] avatars) {
+	public void setAvatars(List<String> avatars) {
 		this.avatars = avatars;
 	}
 
