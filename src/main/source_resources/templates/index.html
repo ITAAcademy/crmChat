@@ -83,10 +83,10 @@
                     </div>
                 </div>
                 <div class="search_box" ng-if="messageSearchEnabled">
-                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-change="updateMessagesSearch()" type="text" th:placeholder="${lgPack.msgBox.searchPlaceHolder}"/>
+                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-change="updateMessagesSearch()" type="text" th:placeholder="${lgPack.msgBox.searchPlaceHolder}" ng-blur="focusMessagesSearchChange()"/>
                 </div>
                 <div class="search_box" ng-if="isRoomChangeModeEnabled">
-                    <input id="changeRoomNameInput" ng-model="newRoomName.value" class="search_input" type="text" th:placeholder="${lgPack.msgBox.renamePlaceHolder}" />
+                    <input id="changeRoomNameInput" ng-model="newRoomName.value" class="search_input" type="text" th:placeholder="${lgPack.msgBox.renamePlaceHolder}" ng-blur="focusNewRoomNameChange()" />
                 </div>
             </div>
             <div class="tools_dropdown_container">

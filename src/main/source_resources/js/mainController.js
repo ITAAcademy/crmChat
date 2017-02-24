@@ -688,6 +688,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.toggleRoomNameChangeMode = function(){
             if (!$scope.isRoomChangeModeEnabled){
                 $scope.newRoomName.value = $scope.getCurrentRoom().string;
+                setTimeout(function() { $("#changeRoomNameInput").focus(); }, 500);
             }else{
                 RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);         
             }
@@ -697,7 +698,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.isRoomChangeModeEnabled = false;
         }
          $scope.focusNewRoomNameChange = function(){
-             $scope.isRoomChangeModeEnabled = false;
+            if ($scope.newRoomName.value == $scope.getCurrentRoom().string)
+             $scope.disableRoomNameChangeMode();
          }
 
         $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
