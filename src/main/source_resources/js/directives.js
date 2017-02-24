@@ -736,9 +736,9 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
 
 
 
-angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse', notificable]);
+angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse','UserFactory', notificable]);
 
-function notificable($templateRequest, $sce, $compile, $parse) {
+function notificable($templateRequest, $sce, $compile, $parse,UserFactory) {
     //TODO finish rooms search
     return {
         restrict: 'EA',
@@ -748,12 +748,25 @@ function notificable($templateRequest, $sce, $compile, $parse) {
                 return;
             }
 
-            scope.itemClick = $parse(attrs.itemclick);
-
-            var getDataHandler = $parse(attrs.data);
-            scope.getData = function() {
-                return getDataHandler(scope)();
+            scope.getItems = UserFactory.getNotifications;
+            scope.notificationClick = function(item){
+                switch(item.type){
+                    case 'user_wait_tenant':
+                     userWaitTenantHandler(item);
+                     break;
+                    case 'alert':
+                    alertHandler();
+                    break;
+                }
             }
+            function userWaitTenantHandler(item){
+                UserFactory.confirmToHelp(item.chatUserId);
+            }
+            function alertHandler(){
+
+            }
+
+
             var templatePath = 'static_templates/' + attrs.template + '.html';
             var templateUrl = $sce.getTrustedResourceUrl(templatePath);
             $templateRequest(templateUrl).then(function(template) {

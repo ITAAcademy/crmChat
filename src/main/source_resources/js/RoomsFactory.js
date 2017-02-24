@@ -591,7 +591,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var goToPrivateDialogErr = function(data, status, headers, config) {
         toaster.pop('error', "PRIVATE ROOM CREATE FAILD", "", 3000);
         console.warn("PRIVATE ROOM CREATE FAILD ");
-        $rootScope.goToAuthorize(function() { changeLocation("/chatrooms"); });
+        $rootScope.goToAuthorize(function() { ChannelFactory.changeLocation("/chatrooms"); });
     }
 
     function goToPrivateDialog(intitaUserId) {

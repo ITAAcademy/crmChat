@@ -563,7 +563,7 @@ body {
     border-width: 2px;
 }
 
-.items_list_block .avatar>.user_image {
+.items_list_block .avatar>.user_image, .notification_menu .user_image{
     width: 40px;
     height: 40px;
     background-color: olive;
@@ -2050,9 +2050,9 @@ body.frame .window_icons_wrapper {
 
 .notification_menu {
     position: absolute;
-    width: 200px;
+    width: 230px;
     padding: 5px;
-    background-color: white;
+    background-color: #eaf0f3;
     right: 0px;
     border: 1px solid;
     border-top: 0px;
@@ -2061,6 +2061,16 @@ body.frame .window_icons_wrapper {
     max-height: 300px;
     visibility: hidden;
     padding: 0;
+}
+.notification_menu .title{
+    background-color: white;
+    padding: 19px 0px;
+    text-align: center;
+    background-color:#4b75a4;
+    color:white;
+}
+.notification_menu .title *{
+    color:black;
 }
 
 .notification_menu.shown {
@@ -2074,9 +2084,11 @@ body.frame .window_icons_wrapper {
     vertical-align: center;
 }
 
-.notification_menu .block_item {
+.notification_menu .item {
     cursor: pointer;
-    background-color: rgb(220, 220, 241);
+    padding:15px 0px;
+    padding-left:18px;
+    background-color:#eaf0f3;
 }
 
 .notification_menu .text_info {
@@ -2134,3 +2146,15 @@ svg {
 .file-extension-preview-wrapper{
     position:relative;
 }
+.notification_details{
+    height:60px;
+    display:inline-block;
+}
+.notification_menu .notification_title{
+font-weight: bold;
+color: #737e8a;
+}
+.notification_menu .notification_details{
+    color: #9fa9b3;
+}
+

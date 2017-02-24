@@ -252,16 +252,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             return msg;
         }
 
-
-        $scope.changeLocation = function changeLocation(url) {
-            //alert(url);
-            toaster.clear();
-            $location.path(url);
-
-            // $scope.$apply();
-        };
-
-        var changeLocation = $scope.changeLocation;
         //$scope.templateName = null;
         $rootScope.socketSupport = true;
         $rootScope.authorize = false;
@@ -325,7 +315,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (user.chatUserId == undefined || user.chatUserId == null) return null;
             $http.get(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true', {}).
             success(function(data, status, headers, config) {
-                changeLocation("/dialog_view/" + data);
+                ChannelFactory.changeLocation("/dialog_view/" + data);
             }).
             error(function(data, status, headers, config) {
 
@@ -520,7 +510,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 });
             }).
             error(function(data, status, headers, config) {
-                if (status == "404" || status == "405") chatControllerScope.changeLocation("/");
+                if (status == "404" || status == "405") ChannelFactory.changeLocation("/");
                 //messageError("no other message");
             });
         }
@@ -821,18 +811,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 return true;
             }
             $scope.getTenantIsFree = UserFactory.getTenantIsFree;
-            $scope.getRoomsRequiredTrainersLength = UserFactory.getRoomsRequiredTrainersLength;
-            $scope.getRoomsRequiredTrainers = UserFactory.getRoomsRequiredTrainers;
-
-            $scope.confirmToHelp = function(roomId) {
-                $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
-                success(function(data, status, headers, config) {
-                    changeLocation("/dialog_view/" + roomId);
-                }).
-                error(function(data, status, headers, config) {
-
-                });
-            }
 
             /*****************************
              ************CONFIG************

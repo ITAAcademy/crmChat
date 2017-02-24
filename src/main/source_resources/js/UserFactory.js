@@ -173,7 +173,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                                 break;
                             case Operations.add_room_on_login:
                                 $timeout(function() {
-                                    changeLocation("dialog_view/" + operationStatus.description);
+                                    ChannelFactory.changeLocation("dialog_view/" + operationStatus.description);
                                 }, 1000);
                                 break;
                             case Operations.add_room_from_tenant:
@@ -211,17 +211,15 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                         roomsRequiredTrainers = body;
                     });
                     chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.add".format(getChatUserId()), function(message) {
-                        var roomsMap = JSON.parse(message.body);
-                        for (var key in roomsMap) {
-                            if (roomsMap.hasOwnProperty(key)) {
-                                roomsRequiredTrainers[key] = roomsMap[key];
-                            }
-                        }
+                        var waitingUsers = JSON.parse(message.body);
+                        //TODO add room where waiting users
+                        notifyAboutUserDemandingRoom(waitingUsers);
 
                     });
                     chatSocket.subscribe("/topic/chat/room.private/room_require_trainer.remove", function(message) {
                         var idToRemove = JSON.parse(message.body);
-                        delete roomsRequiredTrainers[idToRemove];
+                        //TODO removing trainers from room
+                        removeNotificationAboutUserDemandingRoom(idToRemove);
 
                     });
 
@@ -412,6 +410,58 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
 
     }
+     var confirmToHelp = function(roomId) {
+                $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
+                success(function(data, status, headers, config) {
+                    ChannelFactory.changeLocation("/dialog_view/" + roomId);
+                }).
+                error(function(data, status, headers, config) {
+
+                });
+            }
+
+            var notifications = [];
+    var getNotifications = function(){
+        return notifications;
+    }
+    var notifyAboutUserDemandingRoom = function(demandingUser){
+        var currentType = 'user_wait_tenant';
+        var generateAvatarSrc = function(avatar){
+            return $rootScope.imagesPath+'/avatars/'+avatar
+        }
+        var notificationObject = {
+            'type':currentType,
+            'avatar':generateAvatarSrc(demandingUser.avatar),
+            'title':demandingUser.name,
+            'details':demandingUser.lastMessage,
+            'chatUserId':demandingUser.chatUserId,
+            'roomId':demandingUser.roomId
+        }
+        //check if user or room already present in white list
+        for (var i = 0; i < notifications.length; i++){
+            if ( notifications[i].type != currentType ) continue;
+            if ( notifications[i].chatUserId === demandingUser.chatUserId ||
+                notifications[i].roomId === demandingUser.roomId) return;
+        }
+
+        notifications.push(notificationObject);
+    }
+
+    var removeNotificationAboutUserDemandingRoom = function(chatUserId){
+         var currentType = 'user_wait_tenant';
+         var notificationIndexToRemove = null;
+       for (var i = 0; i < notifications.length; i++){
+            if ( notifications[i].type != currentType ) continue;
+            if ( notifications[i].chatUserId === chatUserId ) {
+                notificationIndexToRemove = i;
+                break;
+                }
+        } 
+        if (notificationIndexToRemove!=null) notifications.split(notificationIndexToRemove,1);
+    }
+
+
+
 
     var initIsUserTenant = function() {
         if (isUserTenantInited == false) {
@@ -469,6 +519,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         setMessageSended: setMessageSended,
         getRoomsRequiredTrainers: getRoomsRequiredTrainers,
         getRoomsRequiredTrainersLength: getRoomsRequiredTrainersLength,
+        confirmToHelp: confirmToHelp,
+        notifyAboutUserDemandingRoom: notifyAboutUserDemandingRoom,
+        getNotifications: getNotifications,
         isAdmin: function() {
             return isAdmin;
         },

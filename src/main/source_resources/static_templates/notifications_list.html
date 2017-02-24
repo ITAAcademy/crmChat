@@ -1,8 +1,19 @@
-<div  ng-repeat="(key, value) in getData()" class="block_item selectable"
-      ng-click="itemClick(key)">
+<div class="title">Сповіщення</div>
+<div  ng-repeat="item in getItems()" class="item selectable"
+      ng-click="notificationClick(item)">
+  <img class="notification_type user_image" ng-src="{{item.avatar}}" alt="" />
+  <div class="notification_details">
+        <div class="notification_title">{{item.title}}</div>
+        <div class="notification_details">{{item.details}}</div>
+    </div>
+
+    <!--
         <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{value.student.avatar}}" alt="" />
     <div class="text_info">
         <div class="user_name">{{value.student.nickName}}</div>
         <div class="user_presence">{{value.lastMessage == null ? 'Повідмлення відсутні' : $root.stripHtml(value.lastMessage)}}</div>
     </div>
+    -->
+    
+
 </div>

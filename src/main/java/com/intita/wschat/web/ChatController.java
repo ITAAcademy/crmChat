@@ -64,6 +64,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
+import com.intita.wschat.domain.UserWaitingForTrainer;
 import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
@@ -168,33 +169,31 @@ public class ChatController {
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 	
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
-	private HashMap<Long,HashMap<String,Object>> privateRoomsRequiredTrainers = new HashMap<>();//RoomId,ChatUserId of tenatn
+	private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();//RoomId,ChatUserId of tenatn
 
 	public  void tryRemoveChatUserRequiredTrainer(ChatUser chatUser){
-		Long roomId = getRoomOfChatUserRequiredTrainer(chatUser);
-		if (roomId != null){
-			removePrivateRoomRequiredTrainerFromList(roomId);
+		UserWaitingForTrainer userWaiting = null;
+		for (UserWaitingForTrainer user : usersRequiredTrainers){
+			if (Long.compare(user.getChatUserId(),chatUser.getId())==0){
+				userWaiting = user;
+				break;
+			}
 		}
-		if (roomId!=null){
+		if (userWaiting!=null){
+			usersRequiredTrainers.remove(userWaiting);
 			String subscriptionStr = "/topic/chat/room.private/room_require_trainer.remove";
-			simpMessagingTemplate.convertAndSend(subscriptionStr,roomId);
+			simpMessagingTemplate.convertAndSend(subscriptionStr,userWaiting.getChatUserId());
 		}
 	}
 
 	public void removePrivateRoomRequiredTrainerFromList(Long roomId){
-		privateRoomsRequiredTrainers.remove(roomId);
-	}
-
-	public Long getRoomOfChatUserRequiredTrainer(ChatUser chatUser){
-		Iterator it = privateRoomsRequiredTrainers.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry)it.next();
-			HashMap<String,Object> extraData = (HashMap<String, Object>) pair.getValue();
-			if (((LoginEvent)extraData.get("student")).getChatUserId().equals(chatUser.getId()))
-				return (Long) pair.getKey();
-			it.remove(); // avoids a ConcurrentModificationException
+		List<UserWaitingForTrainer> userWaitingRooms = new ArrayList<UserWaitingForTrainer>() ;
+		for (UserWaitingForTrainer user : usersRequiredTrainers){
+			if (Long.compare(user.getChatUserId(),roomId)==0){
+				userWaitingRooms.add(user);
+			}
 		}
-		return null;
+		usersRequiredTrainers.removeAll(userWaitingRooms);
 	}
 
 	public void addFieldToInfoMap(String key, Object value)
@@ -502,25 +501,20 @@ public class ChatController {
 		simpMessagingTemplate.convertAndSend("/topic/"+chatRoom.getAuthor().getId()+"/must/get.room.num/chat.message", payload);
 		addFieldToInfoMap("newMessage", roomId);
 	}
-	private void addRoomRequiredTenant(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
-		HashMap<String,Object> demandedRoomExtraData = new HashMap<String,Object>();
-		demandedRoomExtraData.put("trainer", new LoginEvent(chatUserTrainer));
+	private void addUserRequiredTrainer(Long roomId,ChatUser chatUserTrainer,ChatUser chatUser,String lastMessage){
 
 		LoginEvent studentLE = new LoginEvent(chatUser);
-		demandedRoomExtraData.put("student", studentLE);
-		demandedRoomExtraData.put("lastMessage", lastMessage);
+		UserWaitingForTrainer user = new UserWaitingForTrainer(roomId,lastMessage,studentLE);
 
-		privateRoomsRequiredTrainers.put(roomId, demandedRoomExtraData);
+		usersRequiredTrainers.add(user);
 
-		HashMap<Long,HashMap<String,Object>> roomRequiredTenant = new HashMap<>();
-		roomRequiredTenant.put(roomId,demandedRoomExtraData);
-		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", roomRequiredTenant);
+		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", user);
 		log.info("added room ("+roomId+") required trainer "+chatUserTrainer.getId());
 	}
 
 	@SubscribeMapping("/chat/room.private/room_require_trainer")
-	public HashMap<Long,HashMap<String,Object>> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
-		return privateRoomsRequiredTrainers;
+	public List<UserWaitingForTrainer> retrievePrivateRoomsRequiredTrainersSubscribeMapping(Principal principal) {
+		return usersRequiredTrainers;
 	}
 
 	@MessageMapping("/{room}/chat.message")
@@ -545,7 +539,7 @@ public class ChatController {
 		{
 			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
 			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,user,message.getMessage()); 
+				addUserRequiredTrainer(roomId,tenantIsWaitedByCurrentUser,user,message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 
@@ -564,9 +558,9 @@ public class ChatController {
 		ChatUser chatUser = chatUsersService.getChatUser(principal);
 		if (messageToSave!=null)
 		{
-			ChatUser tenantIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
-			if (tenantIsWaitedByCurrentUser!=null){
-				addRoomRequiredTenant(roomId,tenantIsWaitedByCurrentUser,chatUser,message.getMessage()); 
+			ChatUser trainerIsWaitedByCurrentUser = roomService.isRoomHasStudentWaitingForTrainer(roomId, chatUsersService.getChatUser(principal));
+			if (trainerIsWaitedByCurrentUser!=null){
+				addUserRequiredTrainer(roomId,trainerIsWaitedByCurrentUser,chatUser,message.getMessage()); 
 			}
 			addMessageToBuffer(roomId, messageToSave);
 			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);
