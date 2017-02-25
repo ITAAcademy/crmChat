@@ -34,6 +34,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.domain.ChatMessage;
+import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.BotAnswer;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
@@ -94,6 +95,7 @@ public class BotController {
 	@Autowired private ConsultationsService chatConsultationsService;
 	@Autowired private CourseService courseService;
 	@Autowired private BotAnswersService botAnswerService;
+	@Autowired private ParticipantRepository participantRepository;
 
 
 	@Autowired private RoomController roomControler;
@@ -436,36 +438,41 @@ public class BotController {
 
 		//List<Long> ff = chatTenantService.getTenantsBusy();	
 		if(room_0 == null)
-			return false;	
-
-		ChatTenant t_user = chatTenantService.getFreeTenantNotFromRoom(room_0);//       getRandomTenant();//choose method   789
-		if (t_user == null)
-		{
-			if (tempRoomAskTenant_wait.contains(room_0) == false) 
-			{
-				tempRoomAskTenant_wait.add(room_0);							//789				
-			}
-			runUsersAskTenantsTimer(room_0);	
 			return false;
-		}		
+		
 		Long roomId = room_0.getId();
+		
+		if(participantRepository.isOnline(room_0.getAuthor().getId()))
+		{
+			ChatTenant t_user = chatTenantService.getFreeTenantNotFromRoom(room_0);//       getRandomTenant();//choose method   789
+			if (t_user == null)
+			{
+				if (tempRoomAskTenant_wait.contains(room_0) == false) 
+				{
+					tempRoomAskTenant_wait.add(room_0);							//789				
+				}
+				runUsersAskTenantsTimer(room_0);	
+				return false;
+			}		
+			
 
-		Long tenantChatUserId = t_user.getChatUser().getId();	
+			Long tenantChatUserId = t_user.getChatUser().getId();	
 
-		chatTenantService.setTenantBusy(t_user);
+			chatTenantService.setTenantBusy(t_user);
 
-		Object[] obj = new Object[] {  tenantChatUserId, roomId };
+			Object[] obj = new Object[] {  tenantChatUserId, roomId };
 
-		askUser(t_user.getChatUser(),"Запит від неавторизізованого користувача?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
+			askUser(t_user.getChatUser(),"Запит від неавторизізованого користувача?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
 
-		waitConsultationUser(room_0);
-
+			waitConsultationUser(room_0);
+	
+		}
 		for (int i = 0; i < tempRoomAskTenant_wait.size(); i++)
 		{
 			if (tempRoomAskTenant_wait.get(i).getId().equals(roomId))
 				tempRoomAskTenant_wait.remove(i);
 		}
-
+		
 		if (tempRoomAskTenant_wait.size() > 0 && tempRoomAskTenant.size() > 0)
 		{			
 			/*Long nextUserId = askConsultationUsers.get(0);
