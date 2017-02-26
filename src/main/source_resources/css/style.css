@@ -2068,32 +2068,48 @@ body.frame .window_icons_wrapper {
     right: 0px;
     border: 1px solid;
     border-top: 0px;
-    overflow: hidden;
+    /* overflow: hidden; */
     text-overflow: ellipsis;
     max-height: 300px;
     visibility: hidden;
     padding: 0;
+    top: 40px;
 }
 
 .notification_menu .title {
     background-color: white;
-    padding: 19px 0px;
+    padding: 9px 0px;
     text-align: center;
-    background-color: #4b75a4;
+    background-color: #3598db;
     color: white;
+    font-size: 20px;
 }
 
 .notification_menu .title * {
     color: black;
 }
 
+.notification_menu:before{
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #3598db;
+  position: absolute;
+  content: ' ';
+  display: block;
+  top: -15px;
+  right: 19px;
+}
+
+
 .notification_menu.shown {
     visibility: visible;
 }
 
 .notification_menu .user_image {
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
     display: inline-block;
     vertical-align: center;
 }
@@ -2168,6 +2184,10 @@ svg {
 .notification_details {
     height: 60px;
     display: inline-block;
+    max-width: 140px;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .notification_menu .notification_title {
