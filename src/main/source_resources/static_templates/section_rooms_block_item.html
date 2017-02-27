@@ -17,7 +17,7 @@
         <div class="contact_control">
             <div ng-if="room.nums > 0 &amp;&amp; !createEnabled" class="budget">{{room.nums}}</div>
             <div ng-if="canBeAddedToRoom(room)" class="budget">+</div>
-            <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="addForCreatRoom(room)"></checkbox>
+            <checkbox ng-if="createEnabled" id="el" ng-model="include" ng-change="toggleForCreatRoom(room)"></checkbox>
         </div>
     </div>
 </div>

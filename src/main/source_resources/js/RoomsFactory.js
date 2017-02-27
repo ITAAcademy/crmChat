@@ -259,6 +259,16 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
+    var addTenantsToRoom = function(tenantsIdList) {
+        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).
+        success(function(data, status, headers, config) {
+            userAddedToRoom = true;
+        }).
+        error(function(data, status, headers, config) {
+            userAddedToRoom = true;
+        });
+    }
+
 
     var addUserToRoom = function(chatUserId) {
         $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.roomId, chatUserId), {}).

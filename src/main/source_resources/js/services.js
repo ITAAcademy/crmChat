@@ -52,38 +52,39 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
 
 }]);
 
-springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$http','$injector', function($rootScope,ngDialog,$timeout,$http,$injector) {
+springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '$http', '$injector', function($rootScope, ngDialog, $timeout, $http, $injector) {
     var hideAskTenantToTakeConsultation_tenantNotRespond;
     var tenantInviteDialog;
     var yesLink;
     var noLink;
 
-    this.setLinks = function(yesLinkArg,noLinkArg){
-        if (typeof yesLinkArg === "undefined")return;
+    this.setLinks = function(yesLinkArg, noLinkArg) {
+        if (typeof yesLinkArg === "undefined") return;
         yesLink = yesLinkArg;
-        if (typeof noLinkArg === "undefined")return;
+        if (typeof noLinkArg === "undefined") return;
         noLink = noLinkArg;
     };
-    this.setAskObject = function(obj){
+    this.setAskObject = function(obj) {
         $rootScope.askObject = obj;
         this.setLinks(obj.yesLink, obj.noLink);
     }
 
-    
-        this.showAskWindow = function() {
-            var UserFactory = $injector.get('UserFactory');
-         tenantInviteDialog = ngDialog.open({
-            template: 'askTenantToTakeConsultationWindow.html'/*,
-            height: 400*/
-        });
-            UserFactory.setTenantBusy();
 
-            $timeout.cancel(hideAskTenantToTakeConsultation_tenantNotRespond);
-            hideAskTenantToTakeConsultation_tenantNotRespond =
-                $timeout(function() {
-                    if (tenantInviteDialog!=null)
+    this.showAskWindow = function() {
+        var UserFactory = $injector.get('UserFactory');
+        tenantInviteDialog = ngDialog.open({
+            template: 'askTenantToTakeConsultationWindow.html'
+                /*,
+                            height: 400*/
+        });
+        UserFactory.setTenantBusy();
+
+        $timeout.cancel(hideAskTenantToTakeConsultation_tenantNotRespond);
+        hideAskTenantToTakeConsultation_tenantNotRespond =
+            $timeout(function() {
+                if (tenantInviteDialog != null)
                     tenantInviteDialog.close();
-                }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
+            }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
     };
 
     $rootScope.answerToTakeConsultation = function(value) {
@@ -97,8 +98,7 @@ springChatServices.service('AskWindow', ['$rootScope','ngDialog','$timeout','$ht
             });
         } else {
             $http.post(serverPrefix + noLink).
-            success(function(data, status, headers, config) {
-            }).
+            success(function(data, status, headers, config) {}).
             error(function(data, status, headers, config) {
                 alert("error : " + status)
             });

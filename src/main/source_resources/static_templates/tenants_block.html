@@ -1,6 +1,7 @@
 <div ng-init="hideEmpty = true" ng-show="!hideEmpty || getTenantsList().length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
-        <div class="block_controll"><img src="images/elements/add.png"/></div>
+        <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect()" ignore-id="['tenants_items']">
+        <i class="material-icons unfoldable_element">{{checked.length == 0 ? 'account_circle' : 'done'}}</i></div>
         <div ng-if="getTenantsList().length == 0" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
@@ -10,8 +11,8 @@
 </svg>
         </i>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
-        <div ng-click="addTenantToRoom(participant.chatUserId)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
+    <div id="tenants_items" class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+        <div ng-click="clickToUserEvent(participant)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
             <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + participant.avatar + ')'}"></div>
                 <div class="user_presence_icon"></div>
@@ -23,10 +24,8 @@
                 <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
             </div>
             <div class="contact_control">
-            </div>
+            <checkbox ng-if="selectForAsk &amp;&amp; !participant.isParticipant" id="el" ng-model="include" ng-change="toggleUserToAskList(participant)"></checkbox>
         </div>
-        <div class="block_item" ng-if="getTenantsList().length == 1 &amp;&amp; checkUserAdditionPermission()">
-            <div class="add_bg_btn">Додати нового учасника</div>
         </div>
     </div>
 </div>
