@@ -424,6 +424,11 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var getNotifications = function(){
         return notifications;
     }
+    function removeNotificationByValue(value){
+        var index = notifications.indexOf(value);
+        if (index!=-1)
+        notifications.splice(index,1);
+    }
     var notifyAboutUserDemandingRoom = function(demandingUser){
         var currentType = 'user_wait_tenant';
         var generateAvatarSrc = function(avatar){
@@ -522,6 +527,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         confirmToHelp: confirmToHelp,
         notifyAboutUserDemandingRoom: notifyAboutUserDemandingRoom,
         getNotifications: getNotifications,
+        removeNotificationByValue: removeNotificationByValue,
         isAdmin: function() {
             return isAdmin;
         },

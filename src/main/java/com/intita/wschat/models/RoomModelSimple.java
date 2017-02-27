@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
-import com.intita.wschat.web.ChatController;
-import com.mysql.fabric.xmlrpc.base.Array;
 @Component
 public class RoomModelSimple {
 	private final static Logger log = LoggerFactory.getLogger(RoomModelSimple.class);
@@ -148,8 +146,8 @@ public class RoomModelSimple {
 
 		ArrayList<String> multiImageLinksArray = new ArrayList<String>();
 		int i = 0;
-		while(i<roomUsers.size() && multiImageLinksArray.size()<MULTI_IMAGE_MAX_IMAGE_COUNT){
-			ChatUser chatUser = roomUsers.iterator().next();
+		for(ChatUser chatUser : roomUsers ){
+			if(multiImageLinksArray.size()>=MULTI_IMAGE_MAX_IMAGE_COUNT)break;
 			if( ignoreChatUsers.contains(chatUser.getId()) ){
 				i++;
 				continue;
