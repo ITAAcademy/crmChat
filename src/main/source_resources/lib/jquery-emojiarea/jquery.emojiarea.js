@@ -316,6 +316,7 @@
         }
         try { util.replaceSelection($img[0], this.$editor[0]); } catch (e) {}
         this.onChange();
+         this.$textarea.trigger('insert');
     };
 
     EmojiArea_WYSIWYG.prototype.val = function() {

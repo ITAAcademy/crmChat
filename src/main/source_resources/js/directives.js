@@ -360,12 +360,12 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
                     enableGroupMode();
                 }
             }
-            var enableGroupMode = function(){
+            var enableGroupMode = function() {
                 scope.blockName = lgPack.blockNames.groups;
                 scope.isGroupMode = true;
                 updateModelForGroups();
             }
-            var disableGroupMode = function(){
+            var disableGroupMode = function() {
                 scope.blockName = lgPack.blockNames.students;
                 scope.isGroupMode = false;
                 updateModelForStudents();
@@ -384,7 +384,7 @@ function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
         },
         templateUrl: 'static_templates/trainers_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = lgPack.blockNames.trainers; 
+            scope.blockName = lgPack.blockNames.trainers;
             scope.students = UserFactory.getStudentTrainerList;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
@@ -400,7 +400,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/participants_block.html',
-        scope:{},
+        scope: {},
         link: function(scope, element, attributes) {
             function updateModelForParticipants() {
 
@@ -462,34 +462,34 @@ function messagesBlock($http, RoomsFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory','$interval',messageInput
+    'UserFactory', 'ChannelFactory', '$interval', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory,$interval) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
             var sendingMessage = null;
             var typing = undefined;
-                        var getParticipants = RoomsFactory.getParticipants;
-             $scope.isAnyOneWriting = function(){
+            var getParticipants = RoomsFactory.getParticipants;
+            $scope.isAnyOneWriting = function() {
                 var participants = getParticipants();
-                for (var i = 0; i < participants.length; i++){
-                    if(participants[i].typing)return true;
+                for (var i = 0; i < participants.length; i++) {
+                    if (participants[i].typing) return true;
                 }
                 return false;
-             }
-            $scope.getWritingUsersInfo = function(){
-                var writingUsersNames=[];
+            }
+            $scope.getWritingUsersInfo = function() {
+                var writingUsersNames = [];
                 var participants = getParticipants();
-                for (var i = 0; i < participants.length; i++){
+                for (var i = 0; i < participants.length; i++) {
                     var participant = participants[i];
                     if (participant.typing) writingUsersNames.push(participant.username || participant.nickName);
                 }
                 //var notificationTemplate = writingUsersNames.length == 1 ? "{0} набирає повідомлення..." : "Користувачі {0}..."
-               // return notificationTemplate.format(writingUsersNames.join(","));
-               return writingUsersNames.join(",");
+                // return notificationTemplate.format(writingUsersNames.join(","));
+                return writingUsersNames.join(",");
             }
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
@@ -537,8 +537,14 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 };
                 if (message === undefined)
                     $scope.newMessage.value = '';
+                setTimeout(function() {
+                    $(".transparent_input.message_input").click();
+                }, 100);
+                //.hasAttr()
+
 
             };
+
             $scope.clearFiles = function() {
                 $scope.files = [];
             }
@@ -546,8 +552,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 $scope.files = files;
             }
 
-            $scope.removeFileFromUpload = function(index){
-                $scope.files.splice(index,1);
+            $scope.removeFileFromUpload = function(index) {
+                $scope.files.splice(index, 1);
             }
 
 
@@ -577,59 +583,57 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 return false;
             }
 
-            $scope.keyPress = function(event){
+            $scope.keyPress = function(event) {
                 $scope.startTyping(event);
-                if (event.keyCode == 13 && !event.shiftKey)
-                {
+                if (event.keyCode == 13 && !event.shiftKey) {
                     event.stopPropagation();
                     event.target.blur();
                     setTimeout(function() {
                         $scope.sendMessageAndFiles();
                     }, 0);
-                    
+
                 }
             }
 
 
-$scope.startTyping = function(event) {
-        //var keyCode = event.which || event.keyCode;
-        //var typedChar = String.fromCharCode(keyCode);
-        //if(typedChar==' ')$scope.onMessageInputClick();       
-        /*switch (specialInputMode) {
-            case INPUT_MODE.DOG_MODE:
-                processDogInput();
-                break;
-            case INPUT_MODE.COMMAND_MODE:
-                processCommandInput();
-                break;
-            case INPUT_MODE.TILDA_MODE:
-                processTildaInput();
-                break;
+            $scope.startTyping = function(event) {
+                //var keyCode = event.which || event.keyCode;
+                //var typedChar = String.fromCharCode(keyCode);
+                //if(typedChar==' ')$scope.onMessageInputClick();       
+                /*switch (specialInputMode) {
+                    case INPUT_MODE.DOG_MODE:
+                        processDogInput();
+                        break;
+                    case INPUT_MODE.COMMAND_MODE:
+                        processCommandInput();
+                        break;
+                    case INPUT_MODE.TILDA_MODE:
+                        processTildaInput();
+                        break;
 
-        }*/
-        //      Don't send notification if we are still typing or we are typing a private message
-        var needSend = true;
-        if ( typeof typing!="undefined")
-        {
-             $timeout.cancel(typing);
-            needSend = false;
-        }
+                }*/
+                //      Don't send notification if we are still typing or we are typing a private message
+                var needSend = true;
+                if (typeof typing != "undefined") {
+                    $timeout.cancel(typing);
+                    needSend = false;
+                }
 
-        typing = $timeout(function() {
-            $scope.stopTyping();
-        }, 1500);
-        if(needSend)
-            ChatSocket.send("/topic/{0}/chat.typing".format( RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
-    };
+                typing = $timeout(function() {
+                    $scope.stopTyping();
+                }, 1500);
+                if (needSend)
+                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
+            };
 
-    $scope.stopTyping = function() {
-        if (angular.isDefined(typing)) {
-            $timeout.cancel(typing);
-            typing = undefined;
-            ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: false }));
+            $scope.stopTyping = function() {
+                if (angular.isDefined(typing)) {
+                    $timeout.cancel(typing);
+                    typing = undefined;
+                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: false }));
 
-        }
-    };
+                }
+            };
 
             //$compile(element.contents())(scope);
         }
@@ -699,7 +703,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
             roomsBlockLinkFunction($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory);
             $scope.usersListSearched = [];
             $scope.isUserOnline = UserFactory.isUserOnline;
-            
+
 
             /*$scope.getUsersByEmail = function(query, deferred) {
                 var url = serverPrefix + "/get_users_like?login=" + query;
@@ -743,9 +747,9 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
 
 
 
-angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse','UserFactory', notificable]);
+angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse', 'UserFactory', notificable]);
 
-function notificable($templateRequest, $sce, $compile, $parse,UserFactory) {
+function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
     //TODO finish rooms search
     return {
         restrict: 'EA',
@@ -756,20 +760,22 @@ function notificable($templateRequest, $sce, $compile, $parse,UserFactory) {
             }
 
             scope.getItems = UserFactory.getNotifications;
-            scope.notificationClick = function(item){
-                switch(item.type){
+            scope.notificationClick = function(item) {
+                switch (item.type) {
                     case 'user_wait_tenant':
-                     userWaitTenantHandler(item);
-                     break;
+                        userWaitTenantHandler(item);
+                        break;
                     case 'alert':
-                    alertHandler();
-                    break;
+                        alertHandler();
+                        break;
                 }
             }
-            function userWaitTenantHandler(item){
+
+            function userWaitTenantHandler(item) {
                 UserFactory.confirmToHelp(item.chatUserId);
             }
-            function alertHandler(){
+
+            function alertHandler() {
 
             }
 
@@ -800,14 +806,14 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
     function addNewUser(chatUserId) {
         RoomsFactory.addUserToRoom(chatUserId);
     }
-       $scope.getOpponentIdFromRoom = function getOpponentIdFromRoom(room){
+    $scope.getOpponentIdFromRoom = function getOpponentIdFromRoom(room) {
         if (room.privateUserIds == null) return null;
-            var currentUserId = UserFactory.getChatUserId();
+        var currentUserId = UserFactory.getChatUserId();
         if (room.privateUserIds[0] == currentUserId)
-        return room.privateUserIds[1];
+            return room.privateUserIds[1];
         if (room.privateUserIds[1] == currentUserId)
-        return room.privateUserIds[0];
-        }
+            return room.privateUserIds[0];
+    }
 
     $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
@@ -819,10 +825,10 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
                 break;
             case 2:
                 var opponentUserId = $scope.getOpponentIdFromRoom(room);
-                if(opponentUserId!=null)
-                addNewUser(opponentUserId);
-            else
-                console.warn('opponentUserId is null');
+                if (opponentUserId != null)
+                    addNewUser(opponentUserId);
+                else
+                    console.warn('opponentUserId is null');
                 $scope.mode = 1;
                 break;
         }
@@ -861,12 +867,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
     $scope.tabState = "Contacts";
-    $scope.canBeAddedToRoom = function(room){
+    $scope.canBeAddedToRoom = function(room) {
         //TODO check if user can be added to room
         var opponentUserId = $scope.getOpponentIdFromRoom(room);
         if (opponentUserId == null) return null;
         return $scope.mode == 2 && !RoomsFactory.containsUserId(opponentUserId);
-        };
+    };
     /* $scope.stripHtml = function(html)
      {
          var tmp = document.createElement("DIV");
@@ -954,13 +960,13 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
             return room.avatars[1];
         return room.avatars[0];
     }
-    $scope.$on('dialog_view_route', function(){
-    $scope.showLastContacts();
-});
-   /* $scope.showLastContactItem = function(roomId) {
+    $scope.$on('dialog_view_route', function() {
         $scope.showLastContacts();
-        //TODO select specific last contact item
-    }*/
+    });
+    /* $scope.showLastContactItem = function(roomId) {
+         $scope.showLastContacts();
+         //TODO select specific last contact item
+     }*/
 
     $scope.addForCreatRoom = function(room) {
         // alert(chatUserId);
@@ -973,10 +979,10 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     }
     $scope.getRooms = function() {
-                if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
-                    return RoomsFactory.getRooms();
-                else return $scope.roomsListSearched;
-            }
+        if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
+            return RoomsFactory.getRooms();
+        else return $scope.roomsListSearched;
+    }
 
     var nice = $(".scroll");
     $scope.showLastContacts();
@@ -1071,9 +1077,9 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
             }
 
             var link = $parse(attributes.link)($scope);
-            if (attributes.removeCallback!=null){
-            $scope.removeItemCallback = $parse(attributes.removeCallback)($scope);
-            $scope.removable = true;
+            if (attributes.removeCallback != null) {
+                $scope.removeItemCallback = $parse(attributes.removeCallback)($scope);
+                $scope.removable = true;
             }
             //$scope.fileIndex = $parse(attributes.fileIndex)($scope);
             //use only name (not link)
@@ -1091,15 +1097,15 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
     };
 };
 
-fileMiniatureDirective.filter('fileNamesFilter',function(){
-            return function(files) {
-                if (files == null) return null;
-                var names = [];
-                for (var i = 0; i < files.length; i++) {
-                    names.push(files[i].name);
-                }
-                return names;
-            }
+fileMiniatureDirective.filter('fileNamesFilter', function() {
+    return function(files) {
+        if (files == null) return null;
+        var names = [];
+        for (var i = 0; i < files.length; i++) {
+            names.push(files[i].name);
+        }
+        return names;
+    }
 });
 
 
@@ -1110,7 +1116,7 @@ var compilable = function($compile, $parse) {
             scope.$watch(attr.content, function() {
                 var content = ($parse(attr.content)(scope)).replace(new RegExp("compilable", 'g'), "div");
                 content = content.replace(new RegExp("ng-bind", 'g'), "ha");
-                
+
                 element.html(content);
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();

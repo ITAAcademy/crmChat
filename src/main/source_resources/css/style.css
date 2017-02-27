@@ -112,6 +112,7 @@ body {
 
 .chat_emojja {
     width: 20px;
+    vertical-align: middle;
 }
 
 .consultant_wrapper * {

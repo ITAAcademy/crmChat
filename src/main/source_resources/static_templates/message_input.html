@@ -1,12 +1,11 @@
 <div class="user_write_message_notification_wrapper" ng-show="isAnyOneWriting()">
     <div class="user_write_message_notification">
-    {{getWritingUsersInfo()}} <i class="material-icons" >keyboard</i></div>
-    </div>
+        {{getWritingUsersInfo()}} <i class="material-icons">keyboard</i></div>
+</div>
 <hr/>
 <div class="transparent_input message_input" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
-
 <div class="files_input">
-    <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()"/>
+    <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
     <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>
 </div>
 <div class="controls_area">
@@ -23,11 +22,10 @@
         <div class="upload_file_form_container"></div>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
-        <div class="send_button" ng-click="sendMessageAndFiles()"><span  th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>
+        <div class="send_button" ng-click="sendMessageAndFiles()"><span th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>
         <!--- class="newMessage.value.trim().length==0"-->
     </div>
 </div>
-
 <script>
 $.emojiarea.path = 'lib/jquery-emojiarea/packs/basic/images';
 var $wysiwyg = $('.message_input').emojiarea({
@@ -35,8 +33,9 @@ var $wysiwyg = $('.message_input').emojiarea({
     button: $(".smiles")
 });
 
-$wysiwyg.on('change', function() {
-   
+$wysiwyg.on('insert', function() {
+    setTimeout(function() {
+        $(".transparent_input.message_input").click();
+    }, 100);
 });
-
 </script>
