@@ -1,11 +1,15 @@
 <div class="title">Сповіщення</div>
+<div class="separator"></div>
 <div  ng-repeat="item in getItems()" class="item selectable"
-      ng-click="notificationClick(item)">
+ng-click="notificationClick(item)">
+<div class="item_content_wrapper">
+<i class="discard_event material-icons" ng-click="cancelEventClick($event,item)">cancel</i>
   <img class="notification_type user_image" ng-src="{{item.avatar}}" alt="" />
   <div class="notification_details">
-        <div class="notification_title">{{item.title}}</div>
-        <div class="notification_details">{{item.details}}</div>
-    </div>
+    <div class="notification_title">{{item.title}}</div>
+    <div class="notification_details">{{item.details}}</div>
+  </div>
+</div>
 
     <!--
         <img class="user_image" ng-src="{{$root.imagesPath}}/avatars/{{value.student.avatar}}" alt="" />
@@ -13,7 +17,7 @@
         <div class="user_name">{{value.student.nickName}}</div>
         <div class="user_presence">{{value.lastMessage == null ? 'Повідмлення відсутні' : $root.stripHtml(value.lastMessage)}}</div>
     </div>
-    -->
-    
+  -->
 
+  <div class="separator"></div>
 </div>

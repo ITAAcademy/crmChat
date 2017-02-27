@@ -808,6 +808,11 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
                 }
             }
 
+            scope.cancelEventClick = function(event,item){
+                event.stopPropagation();
+                UserFactory.removeNotificationByValue(item);
+            }
+
             function userWaitTenantHandler(item) {
                 UserFactory.confirmToHelp(item.chatUserId);
             }
