@@ -1,3 +1,7 @@
+<div class="user_write_message_notification_wrapper" ng-show="isAnyOneWriting()">
+    <div class="user_write_message_notification">
+    {{getWritingUsersInfo()}} <i class="material-icons" >keyboard</i></div>
+    </div>
 <hr/>
 <div class="transparent_input message_input" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
 

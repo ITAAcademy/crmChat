@@ -2137,15 +2137,17 @@ svg {
 }
 
 .user_write_message_notification_wrapper {
-    height: 40px;
+    height: 30px;
     clear: both;
-    margin-left: 75px;
-    margin-right: 75px;
+    text-align: center;
+    overflow: hidden;
+    max-height: 30px;
+    white-space: nowrap;
 }
 
 .user_write_message_notification {
     color: grey;
-    padding: 10px;
+    /* padding: 10px; */
     /*background: #eeeeee;*/
     text-align: center;
     vertical-align: middle;

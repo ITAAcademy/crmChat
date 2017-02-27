@@ -471,7 +471,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
             var sendingMessage = null;
-            var typing;
+            var typing = undefined;
                         var getParticipants = RoomsFactory.getParticipants;
              $scope.isAnyOneWriting = function(){
                 var participants = getParticipants();
@@ -608,16 +608,23 @@ $scope.startTyping = function(event) {
 
         }*/
         //      Don't send notification if we are still typing or we are typing a private message
-        if ( typeof typing!="undefined") return;
-        typing = $interval(function() {
+        var needSend = true;
+        if ( typeof typing!="undefined")
+        {
+             $timeout.cancel(typing);
+            needSend = false;
+        }
+
+        typing = $timeout(function() {
             $scope.stopTyping();
         }, 1500);
-
-        ChatSocket.send("/topic/{0}/chat.typing".format( RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
+        if(needSend)
+            ChatSocket.send("/topic/{0}/chat.typing".format( RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
     };
+
     $scope.stopTyping = function() {
         if (angular.isDefined(typing)) {
-            $interval.cancel(typing);
+            $timeout.cancel(typing);
             typing = undefined;
             ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: false }));
 
