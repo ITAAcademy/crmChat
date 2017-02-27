@@ -140,7 +140,6 @@ public class RoomController {
 
 	@PostConstruct
 	private void postFunction() {
-		flyWayStategy.getFlyway().migrate();
 		// configService.getParam("chatBotEnable");
 	}
 

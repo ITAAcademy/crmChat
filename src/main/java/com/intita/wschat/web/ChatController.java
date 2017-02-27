@@ -62,6 +62,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
+import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.domain.UserWaitingForTrainer;
@@ -148,6 +149,8 @@ public class ChatController {
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private IntitaSubGtoupService subGroupService;
+	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
+	
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -313,6 +316,7 @@ public class ChatController {
 	@PostConstruct
 	public void onCreate()
 	{
+		flyWayStategy.getFlyway().migrate();
 		chatLangService.updateDataFromDatabase();
 	}
 
