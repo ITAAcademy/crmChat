@@ -12,7 +12,7 @@ body {
     margin: 0;
     /* background-color: rgba(237, 238, 240, 0.58); */
     background: none;
-    padding: 10px;
+    /* padding: 5px; */
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -66,15 +66,15 @@ body {
 
 .consultant_wrapper {
     max-width: 900px;
-    height: calc(100% - 10px);
+    height: calc(100% - 5px);
     margin: auto;
     position: relative;
-    top: 5px;
+    top: 2px;
     font-family: "Roboto";
     font-weight: 300;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 1px 3px 9px 0 rgb(49, 76, 107);
+    box-shadow: 1px 3px 6px 0 rgb(49, 76, 107);
 }
 
 .consultant_wrapper.normal {
@@ -256,6 +256,7 @@ body {
 
 .items_list_block .block_content {
     max-height: 65px;
+    min-height: 65px;
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
@@ -1234,7 +1235,7 @@ body {
 }
 
 .controls_area {
-    margin-top: 8px
+    margin-top: 6px;
 }
 
 .controls_area button {
@@ -1994,15 +1995,27 @@ body {
     body.frame .window_icons_wrapper .tenant_busy_control {
         display: none !important;
     }
-    body.frame {
-        padding: 5px;
-    }
+}
+
+body.frame {
+    padding: 5px;
 }
 
 body.frame .dnd-container .chat.full .window_panel,
 body.frame .window_icons_wrapper {
     position: absolute;
     height: 100%;
+}
+
+body.frame .ngdialog-overlay {
+    height: calc(100% - 40px);
+    width: calc(100% - 20px);
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin: auto;
+    max-width: 900px;
+    margin-top: 37px;
 }
 
 .files_input {
@@ -2119,19 +2132,18 @@ body.frame .window_icons_wrapper {
     color: black;
 }
 
-.notification_menu:before{
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #3598db;
-  position: absolute;
-  content: ' ';
-  display: block;
-  top: -15px;
-  right: 19px;
+.notification_menu:before {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #3598db;
+    position: absolute;
+    content: ' ';
+    display: block;
+    top: -15px;
+    right: 19px;
 }
-
 
 .notification_menu.shown {
     visibility: visible;
@@ -2145,13 +2157,15 @@ body.frame .window_icons_wrapper {
 }
 
 .notification_menu .item {
-    cursor: pointer;   
+    cursor: pointer;
     background-color: #eaf0f3;
 }
+
 .notification_menu .item_content_wrapper {
     padding: 15px 0px;
     padding-left: 18px;
 }
+
 .notification_menu .text_info {
     display: inline-block;
     width: 120px;
@@ -2234,11 +2248,13 @@ svg {
     display: inline-block;
     max-height: 100px;
 }
-.notification_menu .separator{
-    height:1px;
-    background-color:#a5afb8;
+
+.notification_menu .separator {
+    height: 1px;
+    background-color: #a5afb8;
 }
-.notification_menu .discard_event{
-   position:absolute;
-   right:10px; 
+
+.notification_menu .discard_event {
+    position: absolute;
+    right: 10px;
 }

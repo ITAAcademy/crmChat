@@ -259,13 +259,17 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
-    var addTenantsToRoom = function(tenantsIdList) {
-        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).
+    var addTenantsToRoom = function(tenantsIdList, msg, success, error) {
+        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{0}".format( currentRoom.roomId), {'msg':msg, 'tenantsIdList':  tenantsIdList}).
         success(function(data, status, headers, config) {
             userAddedToRoom = true;
+            if(success != undefined)
+                success();
         }).
         error(function(data, status, headers, config) {
             userAddedToRoom = true;
+            if(error != undefined)
+                error();
         });
     }
 
@@ -683,6 +687,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         isRoomGroup: isRoomGroup,
         isRoomConsultation: isRoomConsultation,
         addTenantToRoom: addTenantToRoom,
+        addTenantsToRoom: addTenantsToRoom,
         addUserToRoom: addUserToRoom,
         checkMessageAdditionPermission: checkMessageAdditionPermission,
         changeCurrentRoomName: changeCurrentRoomName,

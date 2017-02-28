@@ -1,4 +1,4 @@
-<div ng-init="hideEmpty = true" ng-show="!hideEmpty || getTenantsList().length > 0" class="items_list_block top_block">
+<div ng-if="isTrainer()" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
         <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect()" ignore-id="['tenants_items']">
         <i class="material-icons unfoldable_element">{{checked.length == 0 ? 'account_circle' : 'done'}}</i></div>

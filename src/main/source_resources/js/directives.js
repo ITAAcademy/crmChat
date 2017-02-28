@@ -250,6 +250,7 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
             scope.blockName = lgPack.blockNames.tenants;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
+            scope.isTrainer = UserFactory.isTrainer;
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.clickToUserEvent = function(user) {
                 if (scope.selectForAsk == false)
@@ -258,16 +259,18 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
 
 
             scope.toggleUserToAskList = function(user) {
-                addOrRemove(scope.checked, user);
+                addOrRemove(scope.checked, parseInt(user.chatUserId));
             }
             scope.toggleSelect = function() {
-                if (scope.selectForAsk == false) {} else if(scope.checked.length > 0){
+                if (scope.selectForAsk == false) {} else if (scope.checked.length > 0) {
                     (function() {
                         var checkedList = scope.checked;
                         var callBack = function() {
-                            tenantInviteDialog.close();
+                            scope.addTenantsToRoom(checkedList, $rootScope.askObject.param, function() {
+                                tenantInviteDialog.close();
+                            }, function() {});
                         };
-                        if($rootScope.askObject == undefined)
+                        if ($rootScope.askObject == undefined)
                             $rootScope.askObject = {};
                         $rootScope.askObject.callBack = callBack;
                         $rootScope.askObject.msg = "";
@@ -303,7 +306,7 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
                 scope.canSelectForAsk = resultList.length > 0;
                 return tenantsList;
             }
-            scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
+            scope.addTenantsToRoom = RoomsFactory.addTenantsToRoom;
         }
 
     };
@@ -808,7 +811,7 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
                 }
             }
 
-            scope.cancelEventClick = function(event,item){
+            scope.cancelEventClick = function(event, item) {
                 event.stopPropagation();
                 UserFactory.removeNotificationByValue(item);
             }

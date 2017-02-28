@@ -101,8 +101,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
-            if (isTrainer)
-                initSocketsSubscribes();
         };
 
         ChannelFactory.subscribeToConnect(function(socketSupport, frame) {
@@ -223,6 +221,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                         removeNotificationAboutUserDemandingRoom(idToRemove);
 
                     });
+
+                    if (isTrainer)
+                        initSocketsSubscribes();
 
 
                     chatSocket.subscribe("/topic/users/info", function(message) {
@@ -538,6 +539,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         },
         isTenant: function() {
             return isTenant;
+        },
+        isTrainer: function(){
+            return isTrainer;
         }
 
     };
