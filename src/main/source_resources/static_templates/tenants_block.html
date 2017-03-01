@@ -1,6 +1,6 @@
-<div ng-if="isTrainer()" class="items_list_block top_block">
+<div ng-if="isTrainer()" ng-show="getTenantsList().length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
-        <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect()" ignore-id="['tenants_items']">
+        <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect($event)" ignore-id="['tenants_items']">
         <i class="material-icons unfoldable_element">{{checked.length == 0 ? 'account_circle' : 'done'}}</i></div>
         <div ng-if="getTenantsList().length == 0" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>

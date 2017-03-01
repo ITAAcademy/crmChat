@@ -130,6 +130,7 @@ body {
     z-index: 1;
 }
 
+.left_panel .block_controll:hover i.material-icons,
 .left_panel div.material-icons:hover,
 .left_panel i.material-icons:hover {
     opacity: 0.5;
@@ -265,6 +266,21 @@ body {
     -webkit-transition-property: all;
     transition-property: all;
     overflow-y: scroll;
+}
+
+.items_list_block.ng-hide {
+    display: block !important;
+}
+
+.items_list_block.ng-hide .block_content {
+    background-image: url(../images/empty.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-origin: initial;
+    padding: 10px;
+    background-origin: content-box;
+    opacity: 0.3;
 }
 
 .items_list_block .block_content.unfolded {
@@ -423,6 +439,10 @@ body {
     color: #3e87b8;
     font-weight: 900;
     font-size: 25px;
+    -webkit-transition-property: -webkit-transform;
+    transition-property: -webkit-transform;
+    transition-property: transform;
+    transition-property: transform, -webkit-transform;
 }
 
 .items_list_block .dropdown_icon.unfolded {
@@ -2195,6 +2215,7 @@ svg {
 .items_list_block .block_content.collapsed {
     max-height: 0px;
     min-height: 0px;
+    padding: 0px;
 }
 
 .user_write_message_notification_wrapper {

@@ -140,6 +140,18 @@ var modaleToggle = function($compile, $parse, $rootScope) {
                 }
             } else
                 ignoredList.push(scope.ignoreId);
+
+            $(element).click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                scope.$apply(function() {
+                    var res = scope.callback();
+                    if (res == undefined)
+                        toggle = !toggle;
+                    else
+                        toggle = res;
+                });
+            });
             if (scope.callback != null) {
                 $(window).click(function(e) {
                     if (e.target.style.pointerEvents == "none")
