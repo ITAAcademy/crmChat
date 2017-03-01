@@ -400,7 +400,7 @@ public class RoomsService {
 		if(user == null)
 			return false;
 		//have premition?
-		if(room.getChatUsers().contains(user))
+		if(room.getChatUsers().contains(user) || room.getAuthor().getId().equals(user.getId()))
 			return false;
 
 		room.addUser(user);

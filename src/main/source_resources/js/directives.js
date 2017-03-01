@@ -712,6 +712,8 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                     deferred.resolve({ results: results });
                 }).bind(this, deferred));
             };*/
+            $scope.searchingRunning = false;
+
             $scope.participantsSort = UserFactory.participantsSort;
             $scope.updateChatUsersByEmail = function(email, delay) {
                 $timeout.cancel($scope.updatingUsersByEmailPromise);
@@ -721,9 +723,13 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                     return;
                 }
                 $scope.updatingUsersByEmailPromise = $timeout(function() {
+                    $scope.searchingRunning = true;
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
                     return $http.get(url, {}).success(function(data) { // send request
+                         $scope.searchingRunning = false;
                         $scope.usersListSearched = data;
+                    }).finally(function(){
+                      $scope.searchingRunning = false;  
                     });
                 }, delay);
             };
@@ -735,9 +741,13 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                     return;
                 }
                 $scope.updatingUsersByEmailPromise = $timeout(function() {
+                     $scope.searchingRunning = true;
                     var url = serverPrefix + "/get_rooms_containing_string?query=" + query;
                     return $http.get(url, {}).success(function(data) { // send request
+                         $scope.searchingRunning = false;
                         $scope.roomsListSearched = data;
+                    }).finally(function(){
+                      $scope.searchingRunning = false;  
                     });
                 }, delay);
             };

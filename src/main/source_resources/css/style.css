@@ -2213,3 +2213,8 @@ svg {
    position:absolute;
    right:10px; 
 }
+span.rooms_search_loader {
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+}
