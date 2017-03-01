@@ -118,7 +118,7 @@ public class RoomsService {
 		{
 			User intitaUser =roomUsers.get(i).getIntitaUser();
 			if (intitaUser!=null)
-			roomUsersIds.add(intitaUser.getId());
+				roomUsersIds.add(intitaUser.getId());
 		}
 		return roomUsersIds;
 	}
@@ -137,7 +137,7 @@ public class RoomsService {
 		ArrayList<Long> roomUsersIds = new  ArrayList<>();
 		for(int i = 0; i <  roomUsers.size(); i++)
 		{
-				roomUsersIds.add(roomUsers.get(i).getId());
+			roomUsersIds.add(roomUsers.get(i).getId());
 		}
 		return roomUsersIds;
 	}
@@ -321,7 +321,7 @@ public class RoomsService {
 		roomRepo.save(room);//@NEED_ASK@
 		return true;
 	}
-	
+
 	public List<RoomModelSimple> getRoomsContainingStringByOwner(String query, ChatUser user){
 		List<RoomModelSimple> list = getRoomsModelByChatUser(user);
 		List<RoomModelSimple> result = new ArrayList<RoomModelSimple>();
@@ -330,7 +330,7 @@ public class RoomsService {
 			String lastMessage = model.getLastMessage() == null ? "" : model.getLastMessage().toLowerCase();
 			String queryStr = query == null ? "" : query.toLowerCase();
 			if (title.indexOf(queryStr)!=-1 ||
-					 lastMessage.indexOf(queryStr)!=-1)
+					lastMessage.indexOf(queryStr)!=-1)
 				result.add(model);
 		}
 		return result;
@@ -341,7 +341,7 @@ public class RoomsService {
 		addUserToRoom(chatUserService.getChatUser(id), room);		
 		return true;
 	}
-	
+
 	public void replaceUsersInRoom(Room room, ArrayList<ChatUser> chatUserList) {
 		Set<ChatUser> roomUserList = room.getUsers();
 		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
@@ -354,7 +354,7 @@ public class RoomsService {
 			removeUserFromRoom(chatUser, room);
 		}
 	}
-	
+
 
 	public void setAuthor(ChatUser user, Room room)
 	{
@@ -400,7 +400,8 @@ public class RoomsService {
 		if(user == null)
 			return false;
 		//have premition?
-		if(room.getChatUsers().contains(user) || room.getAuthor().getId().equals(user.getId()))
+		if(room.cloneChatUsers().contains(user))
+
 			return false;
 
 		room.addUser(user);
@@ -417,7 +418,7 @@ public class RoomsService {
 			return false;
 		//have premition?
 		ArrayList<ChatUser> compareArray =  new  ArrayList<>(users);
-		compareArray.removeAll(room.getChatUsers());		
+		compareArray.removeAll(room.cloneChatUsers());		
 		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
 		System.out.println("QQQQQQQQQQQQQ " +  room.addUsers(compareArray));
 
@@ -527,20 +528,19 @@ public class RoomsService {
 	public ArrayList<Room> getRoomsByIds(ArrayList<Long> intitaUsersIds){
 		return roomRepo.findRoomsByIds(intitaUsersIds);
 	}
-	
+
 	@Transactional
-	public String updateRoomName(Long roomId, String roomName){
-		Room room = roomRepo.findById(roomId);
+	public String updateRoomName(Room room, String roomName){
 		String newName = roomName.trim();
-		if (newName.length()>0){
-		room.setName(newName);
-		roomRepo.save(room);
-		return newName;
+		if (newName.length()>0 || room == null){
+			room.setName(newName);
+			roomRepo.save(room);
+			return newName;
 		}
 		return room.getName();
-		
+
 	}
-	
+
 
 
 }

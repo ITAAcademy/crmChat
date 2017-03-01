@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,35 +90,56 @@ public class RoomController {
 	final String DIALOG_NAME_PREFIX = "DIALOG_";
 	private final static Logger log = LoggerFactory.getLogger(RoomController.class);
 
-	@Autowired(required = true) private HttpServletRequest request;
+	@Autowired(required = true)
+	private HttpServletRequest request;
 
-	@Autowired private ProfanityChecker profanityFilter;
+	@Autowired
+	private ProfanityChecker profanityFilter;
 
-	@Autowired private SessionProfanity profanity;
+	@Autowired
+	private SessionProfanity profanity;
 
-	@Autowired private ParticipantRepository participantRepository;
-	@Autowired private LecturesService lecturesService;
+	@Autowired
+	private ParticipantRepository participantRepository;
+	@Autowired
+	private LecturesService lecturesService;
 
-	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
-	@Autowired private ConsultationsService chatIntitaConsultationService;
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired
+	private ConsultationsService chatIntitaConsultationService;
 
-	@Autowired private RoomsService roomService;
-	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
-	@Autowired private UsersService userService;
-	@Autowired private UserMessageService userMessageService;
-	@Autowired private ChatUsersService chatUserServise;
-	@Autowired private ChatTenantService chatTenantService;
-	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	@Autowired
+	private RoomsService roomService;
+	@Autowired
+	private ChatUserLastRoomDateService chatLastRoomDateService;
+	@Autowired
+	private UsersService userService;
+	@Autowired
+	private UserMessageService userMessageService;
+	@Autowired
+	private ChatUsersService chatUserServise;
+	@Autowired
+	private ChatTenantService chatTenantService;
+	@Autowired
+	private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	// @Autowired private IntitaConsultationsService
 	// chatIntitaConsultationService;
-	@Autowired private ConfigParamService configService;
-	@Autowired private ChatController chatController;
+	@Autowired
+	private ConfigParamService configService;
+	@Autowired
+	private ChatController chatController;
 
-	@Autowired private BotCategoryService botCategoryService;
-	@Autowired private BotController botController;
-	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
-	@Autowired private RoomPermissionsService roomPermissionsService;
-	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
+	@Autowired
+	private BotCategoryService botCategoryService;
+	@Autowired
+	private BotController botController;
+	@Autowired
+	private FlywayMigrationStrategyCustom flyWayStategy;
+	@Autowired
+	private RoomPermissionsService roomPermissionsService;
+	@Autowired
+	private OfflineStudentsGroupService offlineStudentsGroupService;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -216,70 +238,78 @@ public class RoomController {
 	 * what doing with new auth user
 	 **********************/
 	@SubscribeMapping("/chat.login")
-	public Map<String, String> login(Principal principal){//Control user page after auth
-		return login(principal,null);
+	public Map<String, String> login(Principal principal) {// Control user page
+															// after auth
+		return login(principal, null);
 	}
+
 	@SubscribeMapping("/chat.login/{demandedChatUserId}")
-	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)//Control user page after auth
+	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)// Control
+																										// user
+																										// page
+																										// after
+																										// auth
 	{
 		Map<String, String> result = new HashMap<>();
 		ChatUser demandedChatUser = chatUserServise.getChatUser(demandedChatUserId);
-		//if (demandedChatUserId != null && demandedChatUser==null) return null;//return null if demanded user is not excist
+		// if (demandedChatUserId != null && demandedChatUser==null) return
+		// null;//return null if demanded user is not excist
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
 		User realIntitaUser = realChatUser.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : demandedChatUser;
 
-		if(activeChatUser == null || Long.compare(realChatUserId,demandedChatUserId)!=0)
-		{
-			//ChatUser user_real = chatUserServise.getChatUser(Long.parseLong(principal.getName()));
-			if(realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
+		if (activeChatUser == null || Long.compare(realChatUserId, demandedChatUserId) != 0) {
+			// ChatUser user_real =
+			// chatUserServise.getChatUser(Long.parseLong(principal.getName()));
+			if (realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
 				return null;
 		}
 		User activeIntitaUser = activeChatUser.getIntitaUser();
 
-		if(realIntitaUser == null)
-		{
+		if (realIntitaUser == null) {
 			Room room;
-			if(activeChatUser.getChatUserLastRoomDate().iterator().hasNext()){
+			if (activeChatUser.getChatUserLastRoomDate().iterator().hasNext()) {
 				room = realChatUser.getChatUserLastRoomDate().iterator().next().getLastRoom();
-			}
-			else
-			{
+			} else {
 				/*
 				 * ADD BOT TO CHAT
 				 */
-				//boolean botEnable = Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+				// boolean botEnable =
+				// Boolean.parseBoolean(configService.getParam("botEnable").getValue());
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
-				if(s_botEnable != null)
+				if (s_botEnable != null)
 					botEnable = Boolean.parseBoolean(s_botEnable.getValue());
-				if (botEnable){
-					room = createDialogWithBot("BotSys_" + realChatUser.getId() + "_" + new Date().toString(), principal);
-				}
-				else
+				if (botEnable) {
+					room = createDialogWithBot("BotSys_" + realChatUser.getId() + "_" + new Date().toString(),
+							principal);
+				} else
 					room = createRoomWithTenant(principal);
 
-				//test - no free tenant
-				//room = null;
+				// test - no free tenant
+				// room = null;
 
-				//send msg about go to guest room if you is tenant with current Id
-				/*if (room != null)
-					chatController.addFieldToInfoMap("newGuestRoom", room.getId());*/
+				// send msg about go to guest room if you is tenant with current
+				// Id
+				/*
+				 * if (room != null)
+				 * chatController.addFieldToInfoMap("newGuestRoom",
+				 * room.getId());
+				 */
 			}
-			//simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(), roomService.getRoomsModelByChatUser(user));
+			// simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." +
+			// user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			if (room != null)
 				result.put("nextWindow", room.getId().toString());
 			else
 				result.put("nextWindow", "-1");
-		}
-		else
-		{
-			//subscribedtoRoomsUsersBuffer.add(user);
+		} else {
+			// subscribedtoRoomsUsersBuffer.add(user);
 			result.put("nextWindow", "0");
-			result.put("chat_user_avatar",activeIntitaUser==null ? "noname.png" : activeIntitaUser.getAvatar());
+			result.put("chat_user_avatar", activeIntitaUser == null ? "noname.png" : activeIntitaUser.getAvatar());
 		}
 		String activeUsersJson = null;
 		Set<Long> activeUsers = participantRepository.getActiveUsers();
@@ -288,77 +318,72 @@ public class RoomController {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		result.put("onlineUsersIdsJson",activeUsersJson);
+		result.put("onlineUsersIdsJson", activeUsersJson);
 		result.put("chat_id", demandedChatUserId.toString());
 		result.put("chat_user_nickname", demandedChatUser.getNickName());
 
 		Integer role = 0;
-		if(activeIntitaUser != null )
-		{
+		if (activeIntitaUser != null) {
 			if (userService.isAdmin(activeIntitaUser.getId())) {
 				result.put("isAdmin", "true");
 				role |= ROLE.ADMIN;
-			}
-			else result.put("isAdmin", "false");
-			//check if tenant
+			} else
+				result.put("isAdmin", "false");
+			// check if tenant
 			if (userService.isTenant(activeIntitaUser.getId()))
 				result.put("isTenant", "true");
 			else
 				result.put("isTenant", "false");
-			//check if trainer
+			// check if trainer
 			if (userService.isTrainer(activeIntitaUser.getId()))
 				result.put("isTrainer", "true");
 			else
 				result.put("isTrainer", "false");
 
-			if (userService.isStudent(activeIntitaUser.getId()))
-			{
+			if (userService.isStudent(activeIntitaUser.getId())) {
 				result.put("isStudent", "true");
 				User iTrainer = userService.getTrainer(activeIntitaUser.getId());
 				result.put("trainer", null);
-				if(iTrainer != null)
-				{
+				if (iTrainer != null) {
 					ChatUser chatTrainer = chatUserServise.getChatUserFromIntitaUser(iTrainer, false);
-					if(chatTrainer != null)
+					if (chatTrainer != null)
 						try {
-							result.put("trainer", mapper.writeValueAsString(chatUserServise.getLoginEvent(chatTrainer)));
+							result.put("trainer",
+									mapper.writeValueAsString(chatUserServise.getLoginEvent(chatTrainer)));
 						} catch (JsonProcessingException e) {
 							e.printStackTrace();
 						}
 				}
-			}
-			else
+			} else
 				result.put("isStudent", "false");
 		}
 		result.put("chat_user_role", role.toString());
 
 		String rooms = "{}";
 		try {
-			rooms = mapper.writeValueAsString(new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(activeChatUser)));
+			rooms = mapper.writeValueAsString(
+					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(activeChatUser)));
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		result.put("chat_rooms", rooms);
-		Long activeIntitaUserId = null==activeIntitaUser ? null : activeIntitaUser.getId();
-		/*** @deprecated
-		 try {
-		 result.put("friends", mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
-		 } catch (JsonProcessingException e1) {
-		 // TODO Auto-generated catch block
-		 e1.printStackTrace();
-		 }
+		Long activeIntitaUserId = null == activeIntitaUser ? null : activeIntitaUser.getId();
+		/***
+		 * @deprecated try { result.put("friends",
+		 *             mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
+		 *             } catch (JsonProcessingException e1) { // TODO
+		 *             Auto-generated catch block e1.printStackTrace(); }
 		 */
-		if(userService.isTrainer(activeIntitaUserId))
-		{
-			ArrayList<LoginEvent> tenantsObjects =  userService.getAllFreeTenantsLoginEvent(activeChatUser.getId());
+		if (userService.isTrainer(activeIntitaUserId)) {
+			ArrayList<LoginEvent> tenantsObjects = userService.getAllFreeTenantsLoginEvent(activeChatUser.getId());
 			String tenantsJson = null;
 			try {
 				tenantsJson = mapper.writeValueAsString(tenantsObjects);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
-			result.put("tenants",tenantsJson );
+			result.put("tenants", tenantsJson);
 		}
 
 		return result;
@@ -432,7 +457,7 @@ public class RoomController {
 
 	@SubscribeMapping("/{room}/chat.participants/{lang}")
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room,
-																		@DestinationVariable("lang") String lang, SimpMessageHeaderAccessor headerAccessor, Principal principal) {// ONLY
+			@DestinationVariable("lang") String lang, SimpMessageHeaderAccessor headerAccessor, Principal principal) {// ONLY
 		// FOR
 		// TEST
 		// NEED
@@ -492,16 +517,24 @@ public class RoomController {
 		log.info("P&M:" + participantsAndMessages);
 		return participantsAndMessages;
 	}
-	
+
 	@RequestMapping(value = "/{room}/chat/set_name", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String setRoomName(@PathVariable("room") Long room,@RequestParam String newName, Principal principal)
+	public String setRoomName(@PathVariable("room") Long roomId, @RequestParam String newName, Principal principal)
 			throws JsonProcessingException {
+		Room room = roomService.getRoom(roomId);
+			
+		if(room == null)
+			throw new NullPointerException();
+		
+		log.info(room.getAuthor().getId().toString());
+		if(!(chatUserServise.getChatUser(principal) == room.getAuthor()))
+			throw new ExecutionException("Non author try change room name!!!");
+		
 		String nameAfterChanging = roomService.updateRoomName(room, newName);
 		log.info("Room name changed:" + newName);
 		return nameAfterChanging;
 	}
-	
 
 	@RequestMapping(value = "/{room}/chat/participants/update", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
@@ -631,8 +664,8 @@ public class RoomController {
 	@RequestMapping(value = "/chat/rooms/private/{userID}", method = RequestMethod.POST)
 	@ResponseBody
 	public String getPrivateRoomRequest(@PathVariable("userID") Long userId,
-										@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
-										Principal principal) throws JsonProcessingException {
+			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
+			Principal principal) throws JsonProcessingException {
 		log.info("getPrivateRoom");
 		ChatUser privateCharUser;
 		if (isChatId)
@@ -667,8 +700,8 @@ public class RoomController {
 	@RequestMapping(value = "/chat/go/rooms/private/{userId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Long goPrivateRoom(@PathVariable Long userId,
-								@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
-								Principal principal) throws JsonProcessingException {
+			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
+			Principal principal) throws JsonProcessingException {
 		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
 
 		ChatUser cUser = null;
@@ -783,7 +816,7 @@ public class RoomController {
 	@ResponseBody
 	// @SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)
 	public Long addRoomByAuthorLP(@RequestParam(name = "name") String roomName,
-								  @RequestBody(required = false) ArrayList<Long> userIds, Principal principal) {
+			@RequestBody(required = false) ArrayList<Long> userIds, Principal principal) {
 		boolean operationSuccess = true;
 		Room room = null;
 		Long chatUserId = Long.parseLong(principal.getName());
@@ -795,7 +828,11 @@ public class RoomController {
 		if (room == null)
 			operationSuccess = false;
 		else {
-			users.add(author);
+			// users.add(author);
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(),
+					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(author)));
+			addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+
 			for (ChatUser chatUser : users) {
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(),
 						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
@@ -809,7 +846,7 @@ public class RoomController {
 		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
 		// send to user that operation success
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-		return room==null ? null : room.getId();
+		return room == null ? null : room.getId();
 	}
 
 	/***************************
@@ -817,14 +854,15 @@ public class RoomController {
 	 ***************************/
 
 	boolean removeUserFromRoomFully(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
-		if (room_o.getType()==RoomType.STUDENTS_GROUP)return false;
+		if (room_o.getType() == RoomType.STUDENTS_GROUP)
+			return false;
 		ChatUser authorUser = chatUserServise.getChatUser(principal);
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean permitions = (roomPermissionsService.getPermissionsOfUser(room_o, authorUser)
 				& RoomPermissions.Permission.REMOVE_USER.getValue()) == RoomPermissions.Permission.REMOVE_USER
-				.getValue();
+						.getValue();
 		if (haveNullObj || isAuthor || (!(permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor) {
 			return false;
 		}
@@ -865,7 +903,8 @@ public class RoomController {
 	}
 
 	@Transactional
-	public boolean changeAuthor(ChatUser newAuthor, Room room, boolean savePreviusAuthorAsUser, Principal principal, boolean ignoreAuthor) {
+	public boolean changeAuthor(ChatUser newAuthor, Room room, boolean savePreviusAuthorAsUser, Principal principal,
+			boolean ignoreAuthor) {
 		if (room == null || newAuthor == null)
 			return false;
 		ChatUser author = room.getAuthor();
@@ -883,8 +922,7 @@ public class RoomController {
 			return false;
 		// remove room from cache author object
 		author.getRootRooms().remove(room);
-		if(savePreviusAuthorAsUser)
-		{
+		if (savePreviusAuthorAsUser) {
 			addUserToRoom(author, room, principal, true);
 			if (!contain) {
 				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(newAuthor));
@@ -896,16 +934,15 @@ public class RoomController {
 						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
 
 			}
-		}
-		else
-		{
+		} else {
 			chatLastRoomDateService.removeUserLastRoomDate(author, room);
 		}
 		return true;
 	}
 
 	boolean addUserToRoom(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
-		if (room_o.getType()==RoomType.STUDENTS_GROUP)return false;
+		if (room_o.getType() == RoomType.STUDENTS_GROUP)
+			return false;
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
@@ -943,25 +980,27 @@ public class RoomController {
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaEmail(nickName, false);
 		return addUserToRoom(user_o, room_o, principal, false);
 	}
+
 	boolean addChatUserToRoomFn(Long chatUserId, Long room, Principal principal, boolean ws) {
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUser(chatUserId);
-		return  addUserToRoom(user_o, room_o, principal, false);
+		return addUserToRoom(user_o, room_o, principal, false);
 	}
+
 	boolean addIntitaUserToRoomFn(Long intitaUserId, Long room, Principal principal, boolean ws) {
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUserFromIntitaId(intitaUserId, false);
 		return addUserToRoom(user_o, room_o, principal, false);
 	}
 
-
 	@RequestMapping(value = "/chat/rooms.{room}/user/add", method = RequestMethod.POST)
-	public @ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId, @RequestParam(name="chatId", required=false) Long chatId,
-												@RequestParam(name="email", required=false) String email, Principal principal, HttpRequest req)
+	public @ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId,
+			@RequestParam(name = "chatId", required = false) Long chatId,
+			@RequestParam(name = "email", required = false) String email, Principal principal, HttpRequest req)
 			throws InterruptedException, JsonProcessingException {
-		if(chatId != null)
+		if (chatId != null)
 			return mapper.writeValueAsString(addChatUserToRoomFn(chatId, roomId, principal, false));
-		if(email != null)
+		if (email != null)
 			return mapper.writeValueAsString(addUserToRoomFn(email, roomId, principal, false));
 		return null;
 	}
@@ -975,7 +1014,7 @@ public class RoomController {
 			return false;
 		if (room_o.getAuthor().getId().equals(user_o.getId())) {
 			room_o.setActive(true);
-			for (ChatUser user : room_o.getChatUsers()) {
+			for (ChatUser user : room_o.cloneChatUsers()) {
 				removeUserFromRoomFully(user, room_o, principal, false);
 			}
 			room_o.setActive(false);
@@ -1001,12 +1040,14 @@ public class RoomController {
 	@RequestMapping(value = "/chat/rooms.{room}/user.remove/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean removeUserFromRoomRequest(@PathVariable("id") Long id, @PathVariable("room") Long room,
-											 Principal principal) {
-		//TODO unsubscribe user from room
+			Principal principal) {
+		// TODO unsubscribe user from room
 		Room room_o = roomService.getRoom(room);
 		ChatUser user_o = chatUserServise.getChatUser(id);
-		boolean isRemoved = removeUserFromRoomFully(user_o, room_o, principal, false);;
-		if (isRemoved)simpMessagingTemplate.convertAndSend(String.format("/topic/chat/rooms/%s/remove_user/%s",room,id),"");
+		boolean isRemoved = removeUserFromRoomFully(user_o, room_o, principal, false);
+		;
+		if (isRemoved)
+			simpMessagingTemplate.convertAndSend(String.format("/topic/chat/rooms/%s/remove_user/%s", room, id), "");
 		return isRemoved;
 	}
 

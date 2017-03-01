@@ -1,4 +1,4 @@
-function inIframe () {
+function inIframe() {
     try {
         return window.self !== window.top;
     } catch (e) {
@@ -7,8 +7,9 @@ function inIframe () {
     return false;
 }
 
-if(inIframe())
+if (inIframe())
     $("body").addClass("frame");
+
 function toArray(object) {
     return angular.isArray(object) ? object : Object.keys(object).map(function(key) {
         return object[key];
@@ -319,8 +320,7 @@ function upload($http, files, urlpath) {
             return data;
         },
         headers: { 'Content-Type': undefined }
-    }).error(function(data, status) {
-    });
+    }).error(function(data, status) {});
 }
 
 
@@ -477,4 +477,15 @@ function htmlUnescape(str) {
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&amp;/g, '&');
+}
+
+
+function addOrRemove(array, value) {
+    var index = array.indexOf(value);
+
+    if (index === -1) {
+        array.push(value);
+    } else {
+        array.splice(index, 1);
+    }
 }

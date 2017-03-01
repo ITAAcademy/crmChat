@@ -101,7 +101,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
-            initSocketsSubscribes();
         };
 
         ChannelFactory.subscribeToConnect(function(socketSupport, frame) {
@@ -223,6 +222,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
 
                     });
 
+                    if (isTrainer)
+                        initSocketsSubscribes();
+
 
                     chatSocket.subscribe("/topic/users/info", function(message) {
                         var RoomsFactory = $injector.get('RoomsFactory');
@@ -292,23 +294,26 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
 
                     $rootScope.submitConsultation_processTenant(sendedConsultantId, roomId);
                 }
-                if (data["tenants.add"] != null) {
-                    //TODO tenant addition to list
-                    var tenantObjs = data["tenants.add"];
-                    for (var i = 0; i < tenantObjs.length; i++) {
-                        addTenantToList(tenantObjs[i]);
+                if (isTrainer) {
+                    if (data["tenants.add"] != null) {
+                        //TODO tenant addition to list
+                        var tenantObjs = data["tenants.add"];
+                        for (var i = 0; i < tenantObjs.length; i++) {
+                            addTenantToList(tenantObjs[i]);
+                        }
+
+
                     }
+                    if (data["tenants.remove"] != null) {
+                        //TODO renant removing from list
+                        var tenantObjs = data["tenants.remove"];
+                        for (var i = 0; i < tenantObjs.length; i++) {
+                            removeTenantFromList((tenantObjs[i]))
+                        }
 
-
-                }
-                if (data["tenants.remove"] != null) {
-                    //TODO renant removing from list
-                    var tenantObjs = data["tenants.remove"];
-                    for (var i = 0; i < tenantObjs.length; i++) {
-                        removeTenantFromList((tenantObjs[i]))
                     }
-
                 }
+
                 /* if (data["updateRoom"] != null && data["updateRoom"][0]["updateRoom"].roomId == $scope.currentRoom.roomId) {
                      
                      $scope.currentRoom = data["updateRoom"][0]["updateRoom"];;
@@ -344,7 +349,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         isStudent = mess_obj.isStudent == 'true';
         isAdmin = mess_obj.isAdmin == 'true';
         if (isStudent && mess_obj.trainer != undefined) {
-            
+
             studentTrainerList.push(JSON.parse(mess_obj.trainer));
         }
 
@@ -410,59 +415,60 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
 
     }
-     var confirmToHelp = function(roomId) {
-                $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
-                success(function(data, status, headers, config) {
-                    ChannelFactory.changeLocation("/dialog_view/" + roomId);
-                }).
-                error(function(data, status, headers, config) {
+    var confirmToHelp = function(roomId) {
+        $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
+        success(function(data, status, headers, config) {
+            ChannelFactory.changeLocation("/dialog_view/" + roomId);
+        }).
+        error(function(data, status, headers, config) {
 
-                });
-            }
+        });
+    }
 
-            var notifications = [];
-    var getNotifications = function(){
+    var notifications = [];
+    var getNotifications = function() {
         return notifications;
     }
-    function removeNotificationByValue(value){
+
+    function removeNotificationByValue(value) {
         var index = notifications.indexOf(value);
-        if (index!=-1)
-        notifications.splice(index,1);
+        if (index != -1)
+            notifications.splice(index, 1);
     }
-    var notifyAboutUserDemandingRoom = function(demandingUser){
+    var notifyAboutUserDemandingRoom = function(demandingUser) {
         var currentType = 'user_wait_tenant';
-        var generateAvatarSrc = function(avatar){
-            return $rootScope.imagesPath+'/avatars/'+avatar
+        var generateAvatarSrc = function(avatar) {
+            return $rootScope.imagesPath + '/avatars/' + avatar
         }
         var notificationObject = {
-            'type':currentType,
-            'avatar':generateAvatarSrc(demandingUser.avatar),
-            'title':demandingUser.name,
-            'details':demandingUser.lastMessage,
-            'chatUserId':demandingUser.chatUserId,
-            'roomId':demandingUser.roomId
-        }
-        //check if user or room already present in white list
-        for (var i = 0; i < notifications.length; i++){
-            if ( notifications[i].type != currentType ) continue;
-            if ( notifications[i].chatUserId === demandingUser.chatUserId ||
+                'type': currentType,
+                'avatar': generateAvatarSrc(demandingUser.avatar),
+                'title': demandingUser.name,
+                'details': demandingUser.lastMessage,
+                'chatUserId': demandingUser.chatUserId,
+                'roomId': demandingUser.roomId
+            }
+            //check if user or room already present in white list
+        for (var i = 0; i < notifications.length; i++) {
+            if (notifications[i].type != currentType) continue;
+            if (notifications[i].chatUserId === demandingUser.chatUserId ||
                 notifications[i].roomId === demandingUser.roomId) return;
         }
 
         notifications.push(notificationObject);
     }
 
-    var removeNotificationAboutUserDemandingRoom = function(chatUserId){
-         var currentType = 'user_wait_tenant';
-         var notificationIndexToRemove = null;
-       for (var i = 0; i < notifications.length; i++){
-            if ( notifications[i].type != currentType ) continue;
-            if ( notifications[i].chatUserId === chatUserId ) {
+    var removeNotificationAboutUserDemandingRoom = function(chatUserId) {
+        var currentType = 'user_wait_tenant';
+        var notificationIndexToRemove = null;
+        for (var i = 0; i < notifications.length; i++) {
+            if (notifications[i].type != currentType) continue;
+            if (notifications[i].chatUserId === chatUserId) {
                 notificationIndexToRemove = i;
                 break;
-                }
-        } 
-        if (notificationIndexToRemove!=null) notifications.split(notificationIndexToRemove,1);
+            }
+        }
+        if (notificationIndexToRemove != null) notifications.split(notificationIndexToRemove, 1);
     }
 
 
@@ -533,6 +539,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         },
         isTenant: function() {
             return isTenant;
+        },
+        isTrainer: function(){
+            return isTrainer;
         }
 
     };

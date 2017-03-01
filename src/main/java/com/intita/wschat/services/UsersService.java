@@ -255,7 +255,6 @@ public class UsersService {
 	 */
 	@Transactional
 	public ArrayList<ChatUser> getAllFreeTenants(Long... ignoreUsers){
-		ArrayList<ChatUser> result = new ArrayList<>();
 		ArrayList<Long> all = new ArrayList<Long>(Arrays.asList(usersRepo.findAllTenants()));//WTF
 		ArrayList<Long> free = new ArrayList<Long>();
 		List<Long> ignoreList = Arrays.asList(ignoreUsers);
@@ -265,8 +264,6 @@ public class UsersService {
 				free.add(chatUserId);
 
 		}
-		if(free == null)
-			return result;
 		return new ArrayList<>(chatUsersService.getUsers(free));
 	}
 

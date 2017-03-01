@@ -140,6 +140,18 @@ var modaleToggle = function($compile, $parse, $rootScope) {
                 }
             } else
                 ignoredList.push(scope.ignoreId);
+
+            $(element).click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                scope.$apply(function() {
+                    var res = scope.callback();
+                    if (res == undefined)
+                        toggle = !toggle;
+                    else
+                        toggle = res;
+                });
+            });
             if (scope.callback != null) {
                 $(window).click(function(e) {
                     if (e.target.style.pointerEvents == "none")
@@ -239,8 +251,7 @@ function updateModelGet(http, requestUrl, callback) {
 };
 
 
-
-var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
+angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope', 'ngDialog', '$http', 'mySettings', 'UserFactory', 'RoomsFactory', function($rootScope, ngDialog, $http, mySettings, UserFactory, RoomsFactory) {
     return {
         restrict: 'EA',
         scope: {
@@ -251,29 +262,67 @@ var tenantsBlock = function($http, mySettings, UserFactory, RoomsFactory) {
             scope.blockName = lgPack.blockNames.tenants;
             initFolded(scope, element);
             scope.isUserOnline = UserFactory.isUserOnline;
+            scope.isTrainer = UserFactory.isTrainer;
+            scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
+            scope.clickToUserEvent = function(user) {
+                if (scope.selectForAsk == false)
+                    RoomsFactory.goToPrivateDialog(user.intitaUserId);
+            };
+
+
+            scope.toggleUserToAskList = function(user) {
+                addOrRemove(scope.checked, parseInt(user.chatUserId));
+            }
+            scope.toggleSelect = function() {
+                if (scope.selectForAsk == false) {} else if (scope.checked.length > 0) {
+                    (function() {
+                        var checkedList = scope.checked;
+                        var callBack = function() {
+                            scope.addTenantsToRoom(checkedList, $rootScope.askObject.param, function(data) {
+                                tenantInviteDialog.close();
+                            }, function(data) {});
+                        };
+                        if ($rootScope.askObject == undefined)
+                            $rootScope.askObject = {};
+                        $rootScope.askObject.callBack = callBack;
+                        $rootScope.askObject.msg = "";
+                        var tenantInviteDialog = ngDialog.open({
+                            template: 'askTrainerMsgForTenant.html'
+                        });
+                    })();
+                }
+                scope.checked = [];
+                scope.selectForAsk = !scope.selectForAsk;
+                return scope.selectForAsk;
+            }
+            scope.checked = [];
+            scope.selectForAsk = false;
+            scope.canSelectForAsk = false;
+
             scope.getTenantsList = function() {
                 var tenantsList = UserFactory.getTenantsList();
                 var participantsList = RoomsFactory.getParticipants();
                 var resultList = [];
                 for (var i = 0; i < tenantsList.length; i++) {
-                    var isParticipant = true;
+                    var isParticipant = false;
                     for (var j = 0; j < participantsList.length; j++) {
                         if (tenantsList[i].chatUserId == participantsList[j].chatUserId) {
-                            isParticipant = false;
+                            isParticipant = true;
                             break;
                         }
                     }
-                    if (isParticipant) resultList.push(tenantsList[i]);
+                    if (!isParticipant) resultList.push(tenantsList[i]);
+                    tenantsList[i].isParticipant = isParticipant;
+                    //resultList.push(tenantsList[i]);
                 }
-                return resultList;
+                scope.canSelectForAsk = resultList.length > 0;
+                return tenantsList;
             }
-            scope.addTenantToRoom = RoomsFactory.addTenantToRoom;
+            scope.addTenantsToRoom = RoomsFactory.addTenantsToRoom;
         }
 
     };
-};
-
-angular.module('springChat.directives').directive('tenantsBlock', ['$http', 'mySettings', 'UserFactory', 'RoomsFactory', tenantsBlock]);
+}]);
 
 angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
@@ -537,9 +586,12 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 };
                 if (message === undefined)
                     $scope.newMessage.value = '';
-                setTimeout(function() {
+                //set focus
+                $scope.$$postDigest(function() {
+                    $(".transparent_input.message_input").focus();
                     $(".transparent_input.message_input").click();
-                }, 100);
+                });
+
                 //.hasAttr()
 
 
@@ -781,7 +833,7 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
                 }
             }
 
-            scope.cancelEventClick = function(event,item){
+            scope.cancelEventClick = function(event, item) {
                 event.stopPropagation();
                 UserFactory.removeNotificationByValue(item);
             }
@@ -983,13 +1035,15 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
          //TODO select specific last contact item
      }*/
 
-    $scope.addForCreatRoom = function(room) {
+    $scope.toggleForCreatRoom = function(room) {
         // alert(chatUserId);
         if (room.type == 1 && room.privateUserIds != undefined) {
             if (room.privateUserIds[0] == UserFactory.getChatUserId())
-                userListForAddedToNewRoom.push(room.privateUserIds[1]);
+            //userListForAddedToNewRoom.push(room.privateUserIds[1]);
+                addOrRemove(userListForAddedToNewRoom, room.privateUserIds[1]);
             if (room.privateUserIds[1] == UserFactory.getChatUserId())
-                userListForAddedToNewRoom.push(room.privateUserIds[0]);
+            //userListForAddedToNewRoom.push(room.privateUserIds[0]);
+                addOrRemove(userListForAddedToNewRoom, room.privateUserIds[0]);
         }
 
     }

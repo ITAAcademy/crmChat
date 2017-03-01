@@ -259,6 +259,20 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
+    var addTenantsToRoom = function(tenantsIdList, msg, success, error) {
+        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{0}".format(currentRoom.roomId), { 'msg': msg, 'tenantsIdList': tenantsIdList }).
+        success(function(data, status, headers, config) {
+            userAddedToRoom = true;
+            if (success != undefined)
+                success(data);
+        }).
+        error(function(data, status, headers, config) {
+            userAddedToRoom = true;
+            if (error != undefined)
+                error(data);
+        });
+    }
+
 
     var addUserToRoom = function(chatUserId) {
         $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.roomId, chatUserId), {}).
@@ -345,6 +359,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var changeCurrentRoomName = function(name) {
         return changeRoomName(currentRoom.roomId, name);
     }
+    var showChangeRoomNameErr = function() {
+        toaster.pop('warning', "Сталася помилка", "помилка зміни імені кімнати", 5000);
+    }
     var changeRoomName = function(roomId, name) {
         var currentUrl = serverPrefix + "/{0}/chat/set_name".format(roomId)
         ajaxRequestsForRoomLP.push(
@@ -355,7 +372,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 data: { 'newName': name },
                 success: function(data) {
                     $rootScope.$apply(function() {
-                        currentRoom.string = data;
+                        if (data != null)
+                            currentRoom.string = data;
+                        else
+                            showChangeRoomNameErr();
                     })
 
                 },
@@ -363,8 +383,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
                         //alert(14)
-                        toaster.pop('warning', "Сталася помилка", "помилка зміни імені кімнати", 5000);
+                        
                     }
+                    showChangeRoomNameErr();
                     //subscribeParticipantsLP();
                 }
             }));
@@ -673,6 +694,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         isRoomGroup: isRoomGroup,
         isRoomConsultation: isRoomConsultation,
         addTenantToRoom: addTenantToRoom,
+        addTenantsToRoom: addTenantsToRoom,
         addUserToRoom: addUserToRoom,
         checkMessageAdditionPermission: checkMessageAdditionPermission,
         changeCurrentRoomName: changeCurrentRoomName,

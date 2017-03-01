@@ -52,11 +52,15 @@
 }
 
 .dnd-container .chat.mini {
-    max-height: 55px;
+    max-height: 50px;
     max-width: 220px;
     margin-bottom: -5px;
     /*top: calc(100% - 53px) !important;
     left: calc(100% - 300px) !important;*/
+   /* top: initial !important;
+    left: initial !important;
+    right: 0 !important;
+    bottom: 0 !important;*/
 }
 
 .dnd-container .chat.full {
@@ -107,8 +111,8 @@
 
 .window_panel {
     position: absolute;
-    top: 15px;
-    right: 10px;
+    top: 7px;
+    right: 5px;
     width: 60px;
     height: 35px;
     background: none;
@@ -118,7 +122,7 @@
 
 .dnd-container .chat .handle {
     position: absolute;
-    top: 15px;
+    top: 7px;
     left: 50px;
     width: calc(100% - 160px);
     height: 35px;
@@ -141,8 +145,7 @@
 }
 
 .dnd-container .chat.full .window_panel {
-    top: 15px;
-    right: 10px;
+    right: 5px;
 }
 
 .dnd-container .material-icons {
@@ -164,7 +167,6 @@
 
 @media only screen and (min-width:900px) {
     .dnd-container .chat.full .window_panel {
-        top: 15px;
         right: 25px;
     }
 }

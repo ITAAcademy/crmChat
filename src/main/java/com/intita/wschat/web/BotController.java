@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +60,8 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.web.ChatController.ChatLangEnum;
+
+import utils.RandomString;
 
 @Service
 @Controller
@@ -423,7 +427,6 @@ public class BotController {
 
 	public void askUser(ChatUser chatUser, String msg, String yesLink, String noLink)
 	{
-
 		Map<String, Object> question = new HashMap<>();
 		question.put("yesLink", yesLink);
 		question.put("noLink", noLink);
@@ -439,9 +442,9 @@ public class BotController {
 		//List<Long> ff = chatTenantService.getTenantsBusy();	
 		if(room_0 == null)
 			return false;
-		
+
 		Long roomId = room_0.getId();
-		
+
 		if(participantRepository.isOnline(room_0.getAuthor().getId()))
 		{
 			ChatTenant t_user = chatTenantService.getFreeTenantNotFromRoom(room_0);//       getRandomTenant();//choose method   789
@@ -454,7 +457,7 @@ public class BotController {
 				runUsersAskTenantsTimer(room_0);	
 				return false;
 			}		
-			
+
 
 			Long tenantChatUserId = t_user.getChatUser().getId();	
 
@@ -465,14 +468,14 @@ public class BotController {
 			askUser(t_user.getChatUser(),"Запит від неавторизізованого користувача?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
 
 			waitConsultationUser(room_0);
-	
+
 		}
 		for (int i = 0; i < tempRoomAskTenant_wait.size(); i++)
 		{
 			if (tempRoomAskTenant_wait.get(i).getId().equals(roomId))
 				tempRoomAskTenant_wait.remove(i);
 		}
-		
+
 		if (tempRoomAskTenant_wait.size() > 0 && tempRoomAskTenant.size() > 0)
 		{			
 			/*Long nextUserId = askConsultationUsers.get(0);
@@ -495,19 +498,38 @@ public class BotController {
 	 * TRAINER SYSTEM
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
-	@ResponseBody boolean answerToAdd(@RequestParam(value="agree") boolean agree,@PathVariable Long roomId, Principal principal) {
+	@ResponseBody String answerToAdd(HttpServletResponse response, @RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @RequestParam(value="type", required=false) String type,  @PathVariable Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
+		if(!userService.isTenant(user.getId()))
+			return "-1";//is not tenant
+		
+		response.setContentType("text/html");
 		Room room = roomService.getRoom(roomId);
 		if(room == null)
-			return false;
+			return "-1";//roomNull
 		if(agree)
 		{
+			if(askId != null)
+			{
+				if(type.equals("onlyFirst"))
+				{
+					if(askIdStackForTenants.contains(askId))
+					{
+						askIdStackForTenants.remove(askId);
+					}
+					else
+					{
+						return "У розмову вже вступив інший консультант, або до Вас потрапив не вірний запит.";//haha you must be faster//LANG
+					}	
+				}				
+			}
+
 			roomControler.addUserToRoom(user, room, principal, true);
 			Object[] obj = new Object[] {roomId, user};
 			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
 			tenantSubmitToSpendConsultationWS(room, user.getId());
 		}
-		return true;
+		return "1";//OK
 	}
 
 	@RequestMapping(value = "/bot_operations/triner/confirmToHelp/{roomId}",  method = RequestMethod.POST)
@@ -546,6 +568,78 @@ public class BotController {
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
 		return true;
 	}
+
+	public static class TenantAskModelJS{
+		private String msg;
+		private ArrayList<Long> tenantsIdList;
+		public String getMsg() {
+			return msg;
+		}
+		public void setMsg(String msg) {
+			this.msg = msg;
+		}
+		public ArrayList<Long> getTenantsIdList() {
+			return tenantsIdList;
+		}
+		public void setTenantsIdList(ArrayList<Long> tenantsIdList) {
+			this.tenantsIdList = tenantsIdList;
+		}
+
+		@JsonCreator
+		public TenantAskModelJS(@JsonProperty("msg") String msg, @JsonProperty("tenantsIdList") String[] tenantsIdList)
+		{
+			this.msg = msg;
+			this.tenantsIdList = new ArrayList<>();
+			for(String tenantId : tenantsIdList)
+			{
+				this.tenantsIdList.add(Long.parseLong(tenantId));
+			}
+
+		}
+
+	}
+
+	private ArrayList<String> askIdStackForTenants = new ArrayList<>();
+
+	@RequestMapping(value = "/bot_operations/tenants/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
+	@ResponseBody
+	public boolean askToAddTenantsWithCustomMsg(@RequestBody TenantAskModelJS tenantAskModelJS, @PathVariable(value="roomId") Long roomId, Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		
+		if(!userService.isTrainer(user.getIntitaUser().getId()))
+			return false;//is not tenant
+		
+		ArrayList<ChatUser> tenants = chatUsersService.getUsers(tenantAskModelJS.getTenantsIdList());
+
+		if(tenants == null)
+			return false;
+		Room room = roomService.getRoom(roomId);
+		if(room == null)
+			return false;
+
+		RandomString randString = new RandomString(12);
+		String askId = randString.nextString();
+		askIdStackForTenants.add(askId);
+		new java.util.Timer().schedule( 
+				new java.util.TimerTask() {
+					@Override
+					public void run() {
+						askIdStackForTenants.remove(askId);
+					}
+				}, 
+				25000 
+				);
+
+		for(ChatUser tenant : tenants)
+		{
+			tenantSendBecomeBusy(tenant);
+			askUser(tenant, user.getNickName() + ":\n" + tenantAskModelJS.getMsg(),
+					"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=true&askId=" + askId, "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=false&askId=" + askId);
+		}
+		return true;
+	}
+
+
 
 	/**********************
 	 * TENANT SYSTEM

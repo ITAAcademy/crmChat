@@ -3,7 +3,7 @@
 </div>
 <div class="modal-content">{{askObject.msg}}</div>
 <div class="modal-footer">
-    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="answerToTakeConsultation (true)">Так</button>
-    <button id="createButton" type="button" class="btn btn-default" ng-click=" answerToTakeConsultation(false);">Ні</button>
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="answerToTakeConsultation (true)" th:text="${lgPack.chatGlobal.yes}">Так</button>
+    <button id="createButton" type="button" class="btn btn-default" ng-click=" answerToTakeConsultation(false);" th:text="${lgPack.chatGlobal.no}">Ні</button>
 </div>
 

@@ -150,7 +150,7 @@ public class WebSocketTraceChannelInterceptor extends ChannelInterceptorAdapter 
 			if (room==null) 
 				return result;
 			
-			if (room.getChatUsers().contains(chatUser) || room.getAuthor().getId().longValue() == userId.longValue())
+			if (room.cloneChatUsers().contains(chatUser) || room.getAuthor().getId().longValue() == userId.longValue())
 				result.correct=true;
 			else
 			{
