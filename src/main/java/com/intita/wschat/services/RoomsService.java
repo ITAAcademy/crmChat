@@ -400,7 +400,7 @@ public class RoomsService {
 		if(user == null)
 			return false;
 		//have premition?
-		if(room.getChatUsers().contains(user))
+		if(room.cloneChatUsers().contains(user))
 			return false;
 
 		room.addUser(user);
@@ -417,7 +417,7 @@ public class RoomsService {
 			return false;
 		//have premition?
 		ArrayList<ChatUser> compareArray =  new  ArrayList<>(users);
-		compareArray.removeAll(room.getChatUsers());		
+		compareArray.removeAll(room.cloneChatUsers());		
 		System.out.println("QQQQQQQQQQQQQ " +  room.getUsers().size());
 		System.out.println("QQQQQQQQQQQQQ " +  room.addUsers(compareArray));
 

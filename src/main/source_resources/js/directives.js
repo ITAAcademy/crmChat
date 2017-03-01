@@ -266,9 +266,9 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
                     (function() {
                         var checkedList = scope.checked;
                         var callBack = function() {
-                            scope.addTenantsToRoom(checkedList, $rootScope.askObject.param, function() {
+                            scope.addTenantsToRoom(checkedList, $rootScope.askObject.param, function(data) {
                                 tenantInviteDialog.close();
-                            }, function() {});
+                            }, function(data) {});
                         };
                         if ($rootScope.askObject == undefined)
                             $rootScope.askObject = {};

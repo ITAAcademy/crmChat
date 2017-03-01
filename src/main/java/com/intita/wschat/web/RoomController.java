@@ -792,10 +792,15 @@ public class RoomController {
 		if (userIds.size() == users.size())
 			room = roomService.register(roomName, author, users);
 
+		log.info("AAAAAAAAAAAAAAAA;" + String.valueOf(room.getUsers().size()));
 		if (room == null)
 			operationSuccess = false;
 		else {
-			users.add(author);
+			//users.add(author);
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(),
+					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(author)));
+			addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+			
 			for (ChatUser chatUser : users) {
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(),
 						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
@@ -975,7 +980,7 @@ public class RoomController {
 			return false;
 		if (room_o.getAuthor().getId().equals(user_o.getId())) {
 			room_o.setActive(true);
-			for (ChatUser user : room_o.getChatUsers()) {
+			for (ChatUser user : room_o.cloneChatUsers()) {
 				removeUserFromRoomFully(user, room_o, principal, false);
 			}
 			room_o.setActive(false);

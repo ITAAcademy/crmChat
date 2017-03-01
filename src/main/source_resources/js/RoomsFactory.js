@@ -264,12 +264,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         success(function(data, status, headers, config) {
             userAddedToRoom = true;
             if(success != undefined)
-                success();
+                success(data);
         }).
         error(function(data, status, headers, config) {
             userAddedToRoom = true;
             if(error != undefined)
-                error();
+                error(data);
         });
     }
 

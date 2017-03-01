@@ -140,7 +140,7 @@ public class RoomModelSimple {
 		//this.userCapabilities = roomService.getPermissions(room, user);
 	}
 	public static List<String>	generateMultiImageLinks(Room room,List<Long> ignoreChatUsers){
-		Set<ChatUser> roomUsers = room.getUsers();
+		Set<ChatUser> roomUsers = room.cloneChatUsers();
 		roomUsers.add(room.getAuthor());
 		int usersCount = roomUsers.size();
 

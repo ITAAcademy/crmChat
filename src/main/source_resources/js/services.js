@@ -18,7 +18,7 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
             });
 
             stompClient = Stomp.over(cock);
-            stompClient.debug = null
+            //stompClient.debug = null
         },
         disconnect: function() {
             stompClient.disconnect();
@@ -87,18 +87,43 @@ springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '
             }, TIME_FOR_WAITING_ANSWER_FROM_TENANT);
     };
 
+    function performeResponse(data) {
+        debugger;
+        if (parseInt(data) != NaN) {
+            if (data == -1)
+                ngDialog.open({
+                    template: '<div style="    padding: 30px; text-align: center;">Уппс щось пішло не так!!! Приносимо наші вибачення.</div>',
+                    plain: true
+                });
+        } else {
+            ngDialog.open({
+                template: '<div style="    padding: 30px; text-align: center;">' + data + '</div>',
+                plain: true
+            });
+        }
+    }
+
+    function response(data)
+    {
+        return data;
+    }
+
     $rootScope.answerToTakeConsultation = function(value) {
         $timeout.cancel(this.hideAskTenantToTakeConsultation_tenantNotRespond);
         tenantInviteDialog.close();
         if (value) {
-            $http.post(serverPrefix + yesLink). //$scope.chatUserId)
-            success(function(data, status, headers, config) {}).
+            $http.post(serverPrefix + yesLink, {}, { transformResponse: response }). //$scope.chatUserId)
+            success(function(data, status, headers, config) {
+                performeResponse(data);
+            }).
             error(function(data, status, headers, config) {
                 alert("error : " + status)
             });
         } else {
-            $http.post(serverPrefix + noLink).
-            success(function(data, status, headers, config) {}).
+            $http.post(serverPrefix + noLink, {}, { transformResponse: response }).
+            success(function(data, status, headers, config) {
+                performeResponse(data);
+            }).
             error(function(data, status, headers, config) {
                 alert("error : " + status)
             });

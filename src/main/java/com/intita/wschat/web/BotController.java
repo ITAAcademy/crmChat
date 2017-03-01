@@ -427,7 +427,6 @@ public class BotController {
 
 	public void askUser(ChatUser chatUser, String msg, String yesLink, String noLink)
 	{
-
 		Map<String, Object> question = new HashMap<>();
 		question.put("yesLink", yesLink);
 		question.put("noLink", noLink);
@@ -499,25 +498,38 @@ public class BotController {
 	 * TRAINER SYSTEM
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
-	@ResponseBody int answerToAdd(@RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @PathVariable Long roomId, Principal principal) {
+	@ResponseBody String answerToAdd(HttpServletResponse response, @RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @RequestParam(value="type", required=false) String type,  @PathVariable Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
+		if(!userService.isTenant(user.getIntitaUser().getId()))
+			return "-1";//is not tenant
+		
+		response.setContentType("text/html");
 		Room room = roomService.getRoom(roomId);
 		if(room == null)
-			return -1;//roomNull
+			return "-1";//roomNull
 		if(agree)
 		{
-			if(askIdStackForTenants.contains(askId))
+			if(askId != null)
 			{
-				askIdStackForTenants.remove(askId);
-				return -2;//haha you must be faster
+				if(type.equals("onlyFirst"))
+				{
+					if(askIdStackForTenants.contains(askId))
+					{
+						askIdStackForTenants.remove(askId);
+					}
+					else
+					{
+						return "У розмову вже вступив інший консультант, або до Вас потрапив не вірний запит.";//haha you must be faster//LANG
+					}	
+				}				
 			}
-			
+
 			roomControler.addUserToRoom(user, room, principal, true);
 			Object[] obj = new Object[] {roomId, user};
 			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
 			tenantSubmitToSpendConsultationWS(room, user.getId());
 		}
-		return 1;//OK
+		return "1";//OK
 	}
 
 	@RequestMapping(value = "/bot_operations/triner/confirmToHelp/{roomId}",  method = RequestMethod.POST)
@@ -593,6 +605,10 @@ public class BotController {
 	@ResponseBody
 	public boolean askToAddTenantsWithCustomMsg(@RequestBody TenantAskModelJS tenantAskModelJS, @PathVariable(value="roomId") Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
+		
+		if(!userService.isTrainer(user.getIntitaUser().getId()))
+			return false;//is not tenant
+		
 		ArrayList<ChatUser> tenants = chatUsersService.getUsers(tenantAskModelJS.getTenantsIdList());
 
 		if(tenants == null)
@@ -611,14 +627,14 @@ public class BotController {
 						askIdStackForTenants.remove(askId);
 					}
 				}, 
-				5000 
+				25000 
 				);
 
 		for(ChatUser tenant : tenants)
 		{
 			tenantSendBecomeBusy(tenant);
 			askUser(tenant, user.getNickName() + ":\n" + tenantAskModelJS.getMsg(),
-					"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true&askId" + askId, "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false&askId" + askId);
+					"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=true&askId=" + askId, "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=false&askId=" + askId);
 		}
 		return true;
 	}

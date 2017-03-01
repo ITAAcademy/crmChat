@@ -110,7 +110,7 @@ public class Room implements Serializable,Comparable<Room> {
 	public Set<ChatUser> getUsers() {
 		return users;
 	}
-	public Set<ChatUser> getChatUsers(){
+	public Set<ChatUser> cloneChatUsers(){
 		Set<ChatUser> chatUsers = new HashSet<ChatUser>();
 		for (ChatUser u : users){
 			chatUsers.add(u);

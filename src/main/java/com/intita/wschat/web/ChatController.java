@@ -1016,7 +1016,7 @@ public class ChatController {
 	@ResponseBody
 	public Set<LoginEvent>  getNickNamesLike(@RequestParam String nickName, @RequestParam Long room) throws JsonProcessingException {
 
-		Set<ChatUser>  users_set = roomService.getRoom(room).getChatUsers();
+		Set<ChatUser>  users_set = roomService.getRoom(room).cloneChatUsers();
 		List<ChatUser> users = new  ArrayList<ChatUser>();
 		users.addAll(users_set);
 
