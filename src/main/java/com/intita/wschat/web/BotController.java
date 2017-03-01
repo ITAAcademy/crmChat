@@ -500,7 +500,7 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody String answerToAdd(HttpServletResponse response, @RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @RequestParam(value="type", required=false) String type,  @PathVariable Long roomId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
-		if(!userService.isTenant(user.getIntitaUser().getId()))
+		if(!userService.isTenant(user.getId()))
 			return "-1";//is not tenant
 		
 		response.setContentType("text/html");

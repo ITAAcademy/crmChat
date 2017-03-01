@@ -1195,6 +1195,7 @@ body {
     padding-top: 15px;
     padding-left: 15px;
     padding-bottom: 19px;
+    overflow: hidden;
 }
 
 .user_message .message_details .top_details {
