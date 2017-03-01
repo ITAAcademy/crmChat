@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -27,7 +28,6 @@ import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
@@ -540,6 +540,7 @@ public class RoomsService {
 		return room.getName();
 		
 	}
+	
 
 
 }

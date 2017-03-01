@@ -1,16 +1,13 @@
 package com.intita.wschat.services;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonParser.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.IteratorUtils;
@@ -18,20 +15,21 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.web.BotController;
 import com.intita.wschat.web.ChatController;
@@ -56,6 +54,9 @@ public class UserMessageService {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private ChatUserLastRoomDateService chatLastRoomDateService;
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
@@ -283,10 +284,16 @@ public class UserMessageService {
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDateNotUser(Room room, Date date, ChatUser user)  {
-		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndAuthorNot(room, date, user);
+		ArrayList<UserMessage> messages =  userMessageRepository.findAllByDateAfter(date);
 		return  wrapBotMessages(messages);
 	}
-
+	
+	@Transactional(readOnly=true)
+	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date)  {
+		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
+		return  wrapBotMessages(messages);
+	}
+	
 	@Transactional(readOnly=true)
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);
@@ -306,5 +313,20 @@ public class UserMessageService {
 		ArrayList<UserMessage> result =  wrapBotMessages( new ArrayList<UserMessage>(messages));
         return new HashSet<UserMessage>(result);
 	}
+	
+	@Transactional
+	public Map<String,List<ChatMessage>> getAllUnreadedMessages(ChatUser user){
+		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
+		 Map<String,List<ChatMessage>> result = new  HashMap<String,List<ChatMessage>>();
+		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
+			Room room = lastRoomEntry.getRoom();
+			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room,lastRoomEntry.getLastLogout());
+			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
+			if(unreadedChatMessages.size()>0)
+			result.put(room.getName(),unreadedChatMessages);
+		}
+		return result;
+	}
+	
 
 }
