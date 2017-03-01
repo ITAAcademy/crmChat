@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -98,6 +97,7 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.CourseService;
+import com.intita.wschat.services.IntitaMailService;
 import com.intita.wschat.services.IntitaSubGtoupService;
 import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
@@ -150,6 +150,7 @@ public class ChatController {
 	@Autowired private ChatTenantService chatTenantService;
 	@Autowired private IntitaSubGtoupService subGroupService;
 	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
+	@Autowired private IntitaMailService mailService;
 	
 
 	private final Semaphore msgLocker =  new Semaphore(1);
@@ -1375,6 +1376,20 @@ public class ChatController {
 		//log.error("NumberFormatException handler executed");
 		return "NumberFormatException handler executed";
 	}
+	
+	@RequestMapping(value="/chat/user/send_new_messages_notification", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean getRoomMessagesContains(Principal principal) throws JsonProcessingException {
+		User user = userService.getUser(principal);
+		mailService.sendUnreadedMessageToIntitaUser(user);
+        return true;
+	}
+	
+	/*@Scheduled(fixedDelay=6000L)
+	public void notificateUsersByEmail(){
+	
+	}
+	*/
 
 
 }

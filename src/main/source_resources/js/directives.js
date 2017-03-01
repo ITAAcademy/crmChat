@@ -1026,7 +1026,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     }
     $scope.getRooms = function() {
-        if (!$scope.searchEnabled || $scope.roomsListSearched == null || $scope.roomsListSearched.length == 0)
+        if (!$scope.searchEnabled)
             return RoomsFactory.getRooms();
         else return $scope.roomsListSearched;
     }
