@@ -839,7 +839,7 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
             }
 
             function userWaitTenantHandler(item) {
-                UserFactory.confirmToHelp(item.chatUserId);
+                UserFactory.confirmToHelp(item.roomId);
             }
 
             function alertHandler() {
