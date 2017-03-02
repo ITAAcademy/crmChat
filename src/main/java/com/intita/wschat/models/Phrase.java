@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.web.ChatController;
 
 /**
@@ -59,7 +60,7 @@ public class Phrase implements Serializable,Comparable<ChatUser> {
 		}		
 	}
 	public String getText() {
-		return getText(ChatController.getCurrentLang());
+		return getText(ChatLangService.getCurrentLang());
 	}
 
 	public void setText(String text,String lang) {
@@ -75,7 +76,7 @@ public class Phrase implements Serializable,Comparable<ChatUser> {
 		}	
 	}
 	public void setText(String text) {
-		setText(text,ChatController.getCurrentLang());
+		setText(text, ChatLangService.getCurrentLang());
 	}
 
 	@Override
