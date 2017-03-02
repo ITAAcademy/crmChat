@@ -2128,26 +2128,29 @@ body.frame .ngdialog-overlay {
     position: absolute;
     width: 230px;
     padding: 5px;
-    background-color: #eaf0f3;
+    /* background-color: #eaf0f3; */
     right: 0px;
-    /* border: 1px solid; */
-    border-top: 0px;
-    /* overflow: hidden; */
     text-overflow: ellipsis;
-    max-height: 300px;
-    visibility: hidden;
     padding: 0;
-    top: 40px;
-    box-shadow: 0 0 4px 0px #3598db;
+    top: 34px;
+    max-height: 0px;
+    -webkit-transition: 1s;
+    transition: 1s;
+    -webkit-transition-property: max-height;
+    transition-property: max-height;
+    overflow: hidden;
+    border-radius: 10px;
+    /* border: #fff 1px solid; */
 }
 
 .notification_menu .title {
     background-color: white;
-    padding: 9px 0px;
+    padding: 5px 0px;
     text-align: center;
-    background-color: #3598db;
+    background-color: #4b75a4;
     color: white;
     font-size: 20px;
+    margin-top: 10px;
 }
 
 .notification_menu .title * {
@@ -2157,18 +2160,18 @@ body.frame .ngdialog-overlay {
 .notification_menu:before {
     width: 0;
     height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 15px solid #3598db;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #4b75a4;
     position: absolute;
     content: ' ';
     display: block;
-    top: -15px;
-    right: 19px;
+    top: 0px;
+    right: 24px;
 }
 
 .notification_menu.shown {
-    visibility: visible;
+    max-height: 300px;
 }
 
 .notification_menu .user_image {
@@ -2274,7 +2277,7 @@ svg {
 
 .notification_menu .separator {
     height: 1px;
-    background-color: #a5afb8;
+    background-color: #ffffff;
 }
 
 .notification_menu .discard_event {
