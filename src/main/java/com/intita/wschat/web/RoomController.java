@@ -653,7 +653,7 @@ public class RoomController {
 		return room;
 	}
 
-	@RequestMapping(value = "/chat/get/rooms/private/{userID}", method = RequestMethod.POST)
+	@RequestMapping(value = "/chat/get/rooms/private/{userID}", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public Long getPrivateRoomRequest(@PathVariable("userID") Long userId,
 			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
