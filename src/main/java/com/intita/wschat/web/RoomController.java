@@ -661,9 +661,9 @@ public class RoomController {
 		return room;
 	}
 
-	@RequestMapping(value = "/chat/rooms/private/{userID}", method = RequestMethod.POST)
+	@RequestMapping(value = "/chat/get/rooms/private/{userID}", method = RequestMethod.POST)
 	@ResponseBody
-	public String getPrivateRoomRequest(@PathVariable("userID") Long userId,
+	public Long getPrivateRoomRequest(@PathVariable("userID") Long userId,
 			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
 			Principal principal) throws JsonProcessingException {
 		log.info("getPrivateRoom");
@@ -674,7 +674,7 @@ public class RoomController {
 			privateCharUser = chatUserServise.getChatUserFromIntitaId(userId, false);
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		Room room = getPrivateRoom(chatUser, privateCharUser);
-		return mapper.writeValueAsString(room.getId());// @BAG@
+		return room.getId();// @BAG@
 	}
 
 	@RequestMapping(value = "/chat/go/rooms/private/trainer", method = RequestMethod.GET)
@@ -698,31 +698,13 @@ public class RoomController {
 	}
 
 	@RequestMapping(value = "/chat/go/rooms/private/{userId}", method = RequestMethod.GET)
-	@ResponseBody
-	public Long goPrivateRoom(@PathVariable Long userId,
+	public String goPrivateRoom(@PathVariable Long userId,
 			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
 			Principal principal) throws JsonProcessingException {
-		ChatUser principalChatUser = chatUserServise.getChatUser(principal);
-
-		ChatUser cUser = null;
-		if (isChatId != null && isChatId == true) {
-			cUser = chatUserServise.getChatUser(userId);
-		} else {
-			User iTargetUser = userService.getById(userId);
-			cUser = chatUserServise.getChatUserFromIntitaUser(iTargetUser, false);
-		}
-
-		try {
-			if (cUser == null) {
-				throw new RoomNotFoundException("target user not registered!!!");
-			}
-			return getPrivateRoom(cUser, principalChatUser).getId();
-		} catch (RoomNotFoundException ex) {
-			log.info("goPrivateRoomWithUser ::: " + ex.getMessage());
-			return null;
-		}
+		 Long id = getPrivateRoomRequest(userId, isChatId, principal);
+		return "redirect:/#/dialog_view/" + id;
 	}
-
+	
 	// @SubscribeMapping("/chat/rooms/user.{userId}")
 	public UpdateRoomsPacketModal getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { // 000
 		ChatUser user = chatUserServise.getChatUser(userId);

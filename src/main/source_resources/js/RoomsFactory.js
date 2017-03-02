@@ -623,7 +623,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     function goToPrivateDialog(intitaUserId) {
         $rootScope.hideMenu();
-        $http.post(serverPrefix + "/chat/rooms/private/" + intitaUserId).
+        $http.post(serverPrefix + "/chat/get/rooms/private/" + intitaUserId).
         success(function(data, status, headers, config) {
 
             //$scope.goToDialogById(data);
