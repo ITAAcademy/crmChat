@@ -420,13 +420,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             console.warn('loadMessagesContains failed duing to current room is not selected');
             return;
         }
-        $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery).
+        var deffered = $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery).
         success(function(data, status, headers, config) {
             loadMessagesFromArrayList(data);
         }).
         error(function(data, status, headers, config) {
 
         });
+        return deffered;
     }
 
     function loadMessagesFromArrayList(list) {

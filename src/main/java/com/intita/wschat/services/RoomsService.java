@@ -401,6 +401,7 @@ public class RoomsService {
 			return false;
 		//have premition?
 		if(room.cloneChatUsers().contains(user))
+
 			return false;
 
 		room.addUser(user);
