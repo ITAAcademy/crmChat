@@ -68,7 +68,7 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	private String avatar;
 
 	@Column(name="nickname")
-	private String nickname;
+	private String nickName;
 
 	@Column(name="firstname")
 	private String firstName;
@@ -219,20 +219,17 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	}
 
 	public String getNickName() {
+		if(nickName != null && !nickName.isEmpty())
+			return nickName;
+		
 		if(firstName != null && !firstName.isEmpty() && secondName != null && !secondName.isEmpty())
 			return firstName + " " + secondName;
-		
-		if(nickname == null || nickname.isEmpty())
-			return getLogin();
 
-		return nickname;
+		return getLogin();
 	}
-
-	public String getNickname() {
-		return nickname;
-	}
+	
 	public void setNickname(String nickname) {
-		this.nickname = nickname;
+		this.nickName = nickname;
 	}
 	public String getFirstName() {
 		return firstName;
