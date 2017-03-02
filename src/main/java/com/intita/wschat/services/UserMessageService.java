@@ -37,26 +37,14 @@ import com.intita.wschat.web.ChatController;
 @Service
 public class UserMessageService {
 
-	@Autowired
-	private UserMessageRepository userMessageRepository;
-
-	@Autowired 
-	private ChatUsersService chatUserService;
-
-	@Autowired
-	private RoomsService roomsService;
-
-	@Autowired
-	private BotCategoryService botCategoryService;
-
-	@Autowired
-	private BotItemContainerService botItemContainerService;
-
-	@Autowired
-	private SessionFactory sessionFactory;
-	
-	@Autowired
-	private ChatUserLastRoomDateService chatLastRoomDateService;
+	@Autowired private UserMessageRepository userMessageRepository;
+	@Autowired private ChatUsersService chatUserService;
+	@Autowired private RoomsService roomsService;
+	@Autowired private BotCategoryService botCategoryService;
+	@Autowired private BotItemContainerService botItemContainerService;
+	@Autowired private SessionFactory sessionFactory;
+	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
+	@Autowired private ChatLangService chatLangService;
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
@@ -160,7 +148,7 @@ public class UserMessageService {
 		return valid;
 	}
 	public ArrayList<UserMessage> wrapBotMessages(ArrayList<UserMessage> input_messages) {
-		String lang = ChatController.getCurrentLang();
+		String lang = chatLangService.getCurrentLang();
 		return wrapBotMessages(input_messages, lang);
 	}
 

@@ -51,6 +51,8 @@ import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.BotAnswersService;
 import com.intita.wschat.services.BotCategoryService;
 import com.intita.wschat.services.BotItemContainerService;
+import com.intita.wschat.services.ChatLangService;
+import com.intita.wschat.services.ChatLangService.ChatLangEnum;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -59,7 +61,6 @@ import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.web.ChatController.ChatLangEnum;
 
 import utils.RandomString;
 
@@ -100,6 +101,7 @@ public class BotController {
 	@Autowired private CourseService courseService;
 	@Autowired private BotAnswersService botAnswerService;
 	@Autowired private ParticipantRepository participantRepository;
+	@Autowired private ChatLangService chatLangService;
 
 
 	@Autowired private RoomController roomControler;
@@ -256,7 +258,7 @@ public class BotController {
 
 		Room room = roomService.getRoom(roomId);
 		ChatUser user = chatUsersService.getChatUser(principal);
-		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId,ChatController.getCurrentLang()));
+		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId, chatLangService.getCurrentLang()));
 
 		for(int i = 0; i < keys.size(); i++)
 		{
@@ -307,10 +309,10 @@ public class BotController {
 		Long nextNode = Long.parseLong((String) param.get("nextNode"));
 
 		if(toMainContainer) {
-			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode, chatLangService.getCurrentLang()));	
 		}
 		else {
-			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode,ChatController.getCurrentLang()));	
+			nextContainer = botItemContainerService.getByObjectId(new LangId(nextNode, chatLangService.getCurrentLang()));	
 		}
 
 		/*nextContainerToSave = new BotDialogItem(nextContainer);

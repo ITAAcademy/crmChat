@@ -1,9 +1,15 @@
 package com.intita.wschat.web;
 
 import java.security.Principal;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -11,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,20 +31,26 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.IntitaConsultation;
+import com.intita.wschat.models.Lectures;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.repositories.ChatLangRepository;
+import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.IntitaMailService;
+import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
+import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
 /**
  * Controller that handles WebSocket chat messages
@@ -78,8 +91,12 @@ public class ConsultationsController {
 	@Autowired private ChatUsersService chatUsersService;
 	@Autowired private ChatTenantService ChatTenantService;
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
-	@Autowired private ChatLangRepository chatLangRepository;
+	@Autowired private ChatLangService chatLangService;
 	@Autowired private ConsultationsService chatConsultationsService;
+	@Autowired private LecturesService lecturesService;
+	@Autowired private ConsultationsService chatIntitaConsultationService;
+	@Autowired private CommonController commonController;
+	@Autowired private RoomsService chatRoomsService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
@@ -170,6 +187,120 @@ public class ConsultationsController {
 		roomService.update(room);
 		chatConsultationsService.update(cons);
 	}
+	
+	@RequestMapping(value = "/chat/rooms/create/consultation/", method = RequestMethod.POST)
+	@ResponseBody
+	public void createConsultation(Principal principal, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
+			@RequestBody String time_begin, @RequestBody String time_end*/
+			) throws ParseException
+	{
+		String time_begin = param.get("begin");
+		String time_end = param.get("end");
+		String date_str = param.get("date");
+		String lection_title = param.get("lection");
+		String teacher_email = param.get("email");
+
+		IntitaConsultation consultation = new IntitaConsultation();	
+		Date date = commonController.getSqlDate(date_str);
+
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+		Time start_time = new Time(formatter.parse(time_begin).getTime());		
+		Time endTime = new Time(formatter.parse(time_end).getTime());
+
+		Lectures lecture = null;
+
+		int lang = chatLangService.getCurrentLangInt();
+
+		if (lang == lecturesService.EN)
+			lecture = lecturesService.getLectureByTitleEN(lection_title);
+		else
+			if (lang == lecturesService.RU)
+				lecture = lecturesService.getLectureByTitleRU(lection_title);
+		if (lang == lecturesService.UA)
+			lecture = lecturesService.getLectureByTitleUA(lection_title);
+
+		if (date == null)
+		{			
+			System.out.println("Date null!!!!!!");
+			return;
+		}
+
+		if (start_time == null)
+		{
+			System.out.println("start_time null!!!!!!");
+			return;
+		}
+
+		if (endTime == null)
+		{
+			System.out.println("endTime null!!!!!!");
+			return;
+		}
+
+		if (teacher_email == null)
+		{
+			System.out.println("teacher_email null!!!!!!");
+			return;
+		}
+
+		if (lecture == null)
+		{
+			System.out.println("lecture null!!!!!!");
+			return;
+		}
+
+		consultation.setDate(date);
+		consultation.setStartTime(start_time);
+		consultation.setFinishTime(endTime);
+		consultation.setAuthor(userService.getUser(principal));
+
+		User consultant = userService.getUser(teacher_email);
+
+		ChatUser chatUserTest = consultant.getChatUser();
+		if (chatUserTest == null)
+		{
+			chatUserTest = chatUsersService.getChatUserFromIntitaEmail(consultant.getEmail(), false);
+			consultant.setChatUser(chatUserTest);
+		}
+
+		consultation.setConsultant(consultant);
+		consultation.setLecture(lecture);
+
+		IntitaConsultation consultation_registered = chatIntitaConsultationService.registerConsultaion(consultation);
+
+		ChatConsultation chatConsultation = chatConsultationsService.getByIntitaConsultation(consultation_registered);
+
+		//Room room_consultation = chatConsultation.getRoom();		
+
+		Long chatUserId = Long.parseLong(principal.getName());	
+
+		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
+
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,
+				new RoomController.UpdateRoomsPacketModal (list,false));
+
+		//this said ti author that he nust update room`s list
+		ChatUser author = chatUsersService.getChatUser(principal);
+		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		//777
+	}
+	
+	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
+	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {
+		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
+		for (ConsultationRatings consultationRatings : retings) {
+			ConsultationRatings consultationRatingsCopy = new ConsultationRatings(consultationRatings);
+			String translate_rating_name = (String)ratingLang.get(consultationRatingsCopy.getName());
+			consultationRatingsCopy.setName(translate_rating_name);
+			//retings.add(consultationRatingsCopy);
+		}
+		model.addAttribute("ratingsPack", retings);
+		commonController.addLocolizationAndConfigParam(model,chatUsersService.getChatUser((principal)));
+		return commonController.getTeachersTemplate(request, "consultationTemplate", model,principal);
+	}	
+	
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
 	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
 		/*

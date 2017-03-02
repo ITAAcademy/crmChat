@@ -65,6 +65,7 @@ import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.BotCategoryService;
+import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
@@ -76,6 +77,7 @@ import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
+import com.intita.wschat.services.ChatLangService.ChatLangEnum;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -115,31 +117,21 @@ public class RoomController {
 	private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired
 	private UsersService userService;
-	@Autowired
-	private UserMessageService userMessageService;
-	@Autowired
-	private ChatUsersService chatUserServise;
-	@Autowired
-	private ChatTenantService chatTenantService;
-	@Autowired
-	private ChatUserLastRoomDateService chatUserLastRoomDateService;
+	@Autowired private UserMessageService userMessageService;
+	@Autowired private ChatUsersService chatUserServise;
+	@Autowired private ChatTenantService chatTenantService;
+	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	// @Autowired private IntitaConsultationsService
 	// chatIntitaConsultationService;
-	@Autowired
-	private ConfigParamService configService;
-	@Autowired
-	private ChatController chatController;
+	@Autowired private ConfigParamService configService;
+	@Autowired private ChatController chatController;
 
-	@Autowired
-	private BotCategoryService botCategoryService;
-	@Autowired
-	private BotController botController;
-	@Autowired
-	private FlywayMigrationStrategyCustom flyWayStategy;
-	@Autowired
-	private RoomPermissionsService roomPermissionsService;
-	@Autowired
-	private OfflineStudentsGroupService offlineStudentsGroupService;
+	@Autowired private BotCategoryService botCategoryService;
+	@Autowired private BotController botController;
+	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
+	@Autowired private RoomPermissionsService roomPermissionsService;
+	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
+	@Autowired private ChatLangService chatLangService;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -239,16 +231,16 @@ public class RoomController {
 	 **********************/
 	@SubscribeMapping("/chat.login")
 	public Map<String, String> login(Principal principal) {// Control user page
-															// after auth
+		// after auth
 		return login(principal, null);
 	}
 
 	@SubscribeMapping("/chat.login/{demandedChatUserId}")
 	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)// Control
-																										// user
-																										// page
-																										// after
-																										// auth
+	// user
+	// page
+	// after
+	// auth
 	{
 		Map<String, String> result = new HashMap<>();
 		ChatUser demandedChatUser = chatUserServise.getChatUser(demandedChatUserId);
@@ -513,7 +505,7 @@ public class RoomController {
 		if (struct == null)
 			return "{}";
 		String participantsAndMessages = mapper.writeValueAsString(
-				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), ChatController.getCurrentLang()));
+				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), chatLangService.getCurrentLang()));
 		log.info("P&M:" + participantsAndMessages);
 		return participantsAndMessages;
 	}
@@ -523,14 +515,14 @@ public class RoomController {
 	public String setRoomName(@PathVariable("room") Long roomId, @RequestParam String newName, Principal principal)
 			throws JsonProcessingException {
 		Room room = roomService.getRoom(roomId);
-			
+
 		if(room == null)
 			throw new NullPointerException();
-		
+
 		log.info(room.getAuthor().getId().toString());
 		if(!(chatUserServise.getChatUser(principal) == room.getAuthor()))
 			throw new ExecutionException("Non author try change room name!!!");
-		
+
 		String nameAfterChanging = roomService.updateRoomName(room, newName);
 		log.info("Room name changed:" + newName);
 		return nameAfterChanging;
@@ -701,10 +693,10 @@ public class RoomController {
 	public String goPrivateRoom(@PathVariable Long userId,
 			@RequestParam(required = false, name = "isChatId", defaultValue = "false") Boolean isChatId,
 			Principal principal) throws JsonProcessingException {
-		 Long id = getPrivateRoomRequest(userId, isChatId, principal);
+		Long id = getPrivateRoomRequest(userId, isChatId, principal);
 		return "redirect:/#/dialog_view/" + id;
 	}
-	
+
 	// @SubscribeMapping("/chat/rooms/user.{userId}")
 	public UpdateRoomsPacketModal getRoomsByAuthorSubscribe(Principal principal, @DestinationVariable Long userId) { // 000
 		ChatUser user = chatUserServise.getChatUser(userId);
@@ -844,7 +836,7 @@ public class RoomController {
 		boolean currentUserIsAuthor = authorUser.getId().longValue() == room_o.getAuthor().getId().longValue();
 		boolean permitions = (roomPermissionsService.getPermissionsOfUser(room_o, authorUser)
 				& RoomPermissions.Permission.REMOVE_USER.getValue()) == RoomPermissions.Permission.REMOVE_USER
-						.getValue();
+				.getValue();
 		if (haveNullObj || isAuthor || (!(permitions || currentUserIsAuthor) || !room_o.isActive()) && !ignoreAuthor) {
 			return false;
 		}
@@ -979,7 +971,7 @@ public class RoomController {
 	public @ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId,
 			@RequestParam(name = "chatId", required = false) Long chatId,
 			@RequestParam(name = "email", required = false) String email, Principal principal, HttpRequest req)
-			throws InterruptedException, JsonProcessingException {
+					throws InterruptedException, JsonProcessingException {
 		if (chatId != null)
 			return mapper.writeValueAsString(addChatUserToRoomFn(chatId, roomId, principal, false));
 		if (email != null)

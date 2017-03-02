@@ -18,8 +18,8 @@ import com.intita.wschat.web.ChatController;
 public class BotItemContainerService {
 	 int ID_GENERATION_ATTEMPTION = 4;
 	java.util.Random randomized = new java.util.Random();
-	@Autowired
-	BotItemContainerRepository botItemContainerRepository;
+	@Autowired private BotItemContainerRepository botItemContainerRepository;
+	@Autowired private ChatLangService chatLangService;
 	
 	public BotDialogItem getByObjectId(LangId idObject){
 		return botItemContainerRepository.findByIdAndLang(idObject.getId(), idObject.getLang());
@@ -28,7 +28,7 @@ public class BotItemContainerService {
 		return getLastId()+1L;
 	}
 	public BotDialogItem getById(Long id){
-		return botItemContainerRepository.findByIdAndLang(id,ChatController.getCurrentLang());
+		return botItemContainerRepository.findByIdAndLang(id, chatLangService.getCurrentLang());
 	}
 	public BotDialogItem getByIdAndLang(Long id, String lang){
 		return botItemContainerRepository.findByIdAndLang(id, lang);
