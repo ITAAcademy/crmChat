@@ -1215,7 +1215,7 @@ body {
 
 .bottom_details {
     white-space: pre-wrap;
-    word-break: break-all
+    word-break: break-word;
 }
 
 .message_date {
@@ -2285,7 +2285,16 @@ svg {
    right:10px; 
 }
 span.rooms_search_loader {
-    text-align: center;
-    width: 100%;
-    display: inline-block;
+  right: 50px;
+  position: absolute;
+  top: 0px;
+}
+.messages_search_loader img,
+span.rooms_search_loader img {
+    width:24px;
+    height:24px;
+}
+.messages_search_loader{
+    position:absolute;
+    right:0px;
 }
