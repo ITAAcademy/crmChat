@@ -588,8 +588,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.newMessage.value = '';
                 //set focus
                 $scope.$$postDigest(function() {
-                    $(".transparent_input.message_input").focus();
+                    
                     $(".transparent_input.message_input").click();
+                    $(".transparent_input.message_input").focus();
                 });
 
                 //.hasAttr()

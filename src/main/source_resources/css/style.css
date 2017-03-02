@@ -2130,7 +2130,7 @@ body.frame .ngdialog-overlay {
     padding: 5px;
     background-color: #eaf0f3;
     right: 0px;
-    border: 1px solid;
+    /* border: 1px solid; */
     border-top: 0px;
     /* overflow: hidden; */
     text-overflow: ellipsis;
@@ -2138,6 +2138,7 @@ body.frame .ngdialog-overlay {
     visibility: hidden;
     padding: 0;
     top: 40px;
+    box-shadow: 0 0 4px 0px #3598db;
 }
 
 .notification_menu .title {

@@ -313,7 +313,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $scope.onFriendClick = function(user) {
             if (user.chatUserId == undefined || user.chatUserId == null) return null;
-            $http.get(serverPrefix + '/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true', {}).
+            $http.get(serverPrefix + '/chat/get/rooms/private/' + user.chatUserId + '?isChatId=true', {}).
             success(function(data, status, headers, config) {
                 ChannelFactory.changeLocation("/dialog_view/" + data);
             }).
