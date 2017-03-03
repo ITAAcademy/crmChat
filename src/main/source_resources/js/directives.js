@@ -1328,6 +1328,7 @@ angular.module('springChat.directives').directive('checkbox', function() {
         restrict: 'EA',
         replace: true,
         template: '<a class="g-checkbox"><input id="{{id}}" type="checkbox" style="display: none" ng-checked="testModel"/></a>',
+        replace: true,
         scope: {
             id: '@',
             testModel: '=value',
