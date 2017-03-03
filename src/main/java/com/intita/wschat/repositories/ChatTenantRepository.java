@@ -3,6 +3,7 @@ package com.intita.wschat.repositories;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public interface ChatTenantRepository extends CrudRepository<ChatTenant, Long> {
 	   Long findIdByChatUser(ChatUser user);
 	   Page<ChatTenant> findAll(Pageable pageable);
 	   List<ChatTenant> findAll();
+	   Set<ChatTenant> findDistinctByEndDateAfterOrEndDateIsNull(Date date);
 	   @Query(value="select t from user_tenant t where t.chatUser.id in :usersIds")
 	   List<ChatTenant> findWhereChatUserIdInList(@Param("usersIds") ArrayList usersIds);
 	   ArrayList<ChatTenant> findAllByEndDateAfterOrEndDateIsNull(Date date);

@@ -22,7 +22,7 @@
           <tr>
             <!--CONTENT -->
             <div style="background-color:white">
-              <div style="color: #7F7F7F; font-family:Arial, sans-serif; font-size: 26px; line-height: 20px; -webkit-text-size-adjust:none; text-align:center;padding-bottom:20px; padding-top:10px">За час вашої відсутності зявилися такі повідомлення</div>
+              <div style="color: #7F7F7F; font-family:Arial, sans-serif; font-size: 26px; line-height: 20px; -webkit-text-size-adjust:none; text-align:center;padding-bottom:20px; padding-top:10px">За час вашої відсутності зявилися нові повідомлення</div>
                #set ($map = $roomMessages )
               #foreach ($mapEntry in $map.entrySet())
               #set ($messages = $mapEntry.value )

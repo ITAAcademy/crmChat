@@ -1,12 +1,12 @@
 package com.intita.wschat.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
+import javax.mail.SendFailedException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.velocity.app.VelocityEngine;
@@ -19,9 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.intita.wschat.domain.ChatMessage;
-import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
+import com.sun.mail.smtp.SMTPAddressFailedException;
 @Component
 public class IntitaMailService {
 	private JavaMailSenderImpl mailSender;
@@ -64,12 +63,12 @@ public class IntitaMailService {
         mailSender.setJavaMailProperties(mailProps);
 		
 	}
-	public void sendUnreadedMessageToIntitaUser(User to){
+	public void sendUnreadedMessageToIntitaUser(User to) throws Exception{
 		Map<String,List<ChatMessage>> unreadedRoomMessages = userMessageService.getAllUnreadedMessages(to.getChatUser());
 		mailSender.send(createPreparatorMessages(to,unreadedRoomMessages));
 	}
 	
-	private MimeMessagePreparator createPreparatorMessages(User to,Map<String,List<ChatMessage>> roomMessages){
+	private MimeMessagePreparator createPreparatorMessages(User to,Map<String,List<ChatMessage>> roomMessages) {
 		return  new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage);

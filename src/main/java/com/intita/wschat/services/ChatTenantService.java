@@ -74,6 +74,11 @@ public class ChatTenantService {
 		return chatTenantRepo.findAll();
 	}
 	@Transactional
+	public Set<ChatTenant> getUniqueTenants(){
+		return chatTenantRepo.findDistinctByEndDateAfterOrEndDateIsNull(new Date());
+	}
+	
+	@Transactional
 	public List<ChatTenant> getAllTenantsWhereChatUserIdInList(ArrayList<Long> usersIds){
 		return chatTenantRepo.findWhereChatUserIdInList(usersIds);
 	}

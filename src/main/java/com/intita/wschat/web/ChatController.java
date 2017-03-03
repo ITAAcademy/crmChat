@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
 import javax.annotation.PostConstruct;
+import javax.mail.SendFailedException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -54,6 +55,7 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotFoundException;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
+import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Course;
@@ -982,17 +984,46 @@ public class ChatController {
 
 	@RequestMapping(value="/chat/user/send_new_messages_notification", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean getRoomMessagesContains(Principal principal) throws JsonProcessingException {
+	public boolean sendNewMessageNotifications(Principal principal) throws JsonProcessingException {
 		User user = userService.getUser(principal);
+		log.info("sending email to:"+user.getEmail());	
+		try{
 		mailService.sendUnreadedMessageToIntitaUser(user);
+		}
+		catch(Exception e){
+			log.info("sending failed");	
+		}
+        return true;
+	}
+	
+	private void sendAllNewMessageNotificationsFromLast24Hours(){
+		Set<ChatTenant> tenants = chatTenantService.getUniqueTenants();
+		log.info("sending emails to users:");
+		for (ChatTenant tenant : tenants){
+			User user = tenant.getChatUser().getIntitaUser();
+			log.info("sending to "+user.getEmail());
+			try{
+			mailService.sendUnreadedMessageToIntitaUser(user);
+			}
+			catch(Exception e){
+				log.info("sending failed");
+			}
+		}
+		
+	}
+	
+	@RequestMapping(value="/chat/user/send_new_messages_notification_for_tenants", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean sendNewMessageNotificationsForTenant() throws JsonProcessingException {
+		sendAllNewMessageNotificationsFromLast24Hours();
         return true;
 	}
 	
 	/*@Scheduled(fixedDelay=6000L)
 	public void notificateUsersByEmail(){
+		sendAllNewMessageNotificationsFromLast24Hours();
+	}*/
 	
-	}
-	*/
 
 
 }
