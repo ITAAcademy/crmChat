@@ -222,4 +222,24 @@ public class CommonController {
 		addLocolizationAndConfigParam(model,chatUsersService.getChatUser(principal));
 		return page;
 	}
+	
+	
+	@RequestMapping(value="/chat/update/users/name", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean updateUserName(Principal principal) {
+		ChatUser cUser = chatUsersService.getChatUser(principal);
+		if(cUser == null)
+			return false;
+		
+		User iUser = cUser.getIntitaUser();
+		if(iUser == null)
+			return false;
+		
+		cUser.setNickName(iUser.getNickName());
+		chatUsersService.updateChatUserInfo(cUser);
+		return true;
+	}
+	
+	
+	
 }
