@@ -269,14 +269,27 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
                     RoomsFactory.goToPrivateDialog(user.intitaUserId);
             };
 
-
             scope.toggleUserToAskList = function(user) {
-                addOrRemove(scope.checked, parseInt(user.chatUserId));
+                //addOrRemove(scope.checked, parseInt(user.chatUserId));
+                var size = 0;
+                for (var key of Object.keys(scope.checked)) {
+                    if (scope.checked[key] === true)
+                        size++;
+
+                }
+                scope.checked.size = size;
+                console.log(size);
             }
+
             scope.toggleSelect = function() {
-                if (scope.selectForAsk == false) {} else if (scope.checked.length > 0) {
+                if (scope.selectForAsk == false) {} else if (scope.checked.size > 0) {
                     (function() {
-                        var checkedList = scope.checked;
+                        var checkedList = [];
+                        for (var key of Object.keys(scope.checked)) {
+                            if (scope.checked[key] === true)
+                                checkedList.push(key);
+
+                        }
                         var callBack = function() {
                             scope.addTenantsToRoom(checkedList, $rootScope.askObject.param, function(data) {
                                 tenantInviteDialog.close();
@@ -291,13 +304,31 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
                         });
                     })();
                 }
-                scope.checked = [];
+                cleanChecked();
+                scope.toggleAll.fs = false;
                 scope.selectForAsk = !scope.selectForAsk;
                 return scope.selectForAsk;
             }
-            scope.checked = [];
+
+            function cleanChecked() {
+                scope.checked = { size: 0 };
+            }
+            cleanChecked();
             scope.selectForAsk = false;
             scope.canSelectForAsk = false;
+
+            scope.toggleAll = { fs: false };
+
+            scope.toggleAllFunc = function() {
+                cleanChecked();
+                if (scope.toggleAll.fs) {
+                    for (var tenant of scope.getTenantsList()) {
+                        if (tenant.isParticipant == false) {
+                            scope.checked[tenant.chatUserId] = true;
+                        }
+                    }
+                }
+            };
 
             scope.getTenantsList = function() {
                 var tenantsList = UserFactory.getTenantsList();
@@ -588,7 +619,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.newMessage.value = '';
                 //set focus
                 $scope.$$postDigest(function() {
-                    
+
                     $(".transparent_input.message_input").click();
                     $(".transparent_input.message_input").focus();
                 });
@@ -779,10 +810,10 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                 $scope.updatingUsersByEmailPromise = $timeout(function() {
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
                     return $http.get(url, {}).success(function(data) { // send request
-                         $scope.searchingRunning = false;
+                        $scope.searchingRunning = false;
                         $scope.usersListSearched = data;
-                    }).finally(function(){
-                      $scope.searchingRunning = false;  
+                    }).finally(function() {
+                        $scope.searchingRunning = false;
                     });
                 }, delay);
             };
@@ -793,14 +824,14 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout) 
                     $scope.roomsListSearched = [];
                     return;
                 }
-                 $scope.searchingRunning = true;
+                $scope.searchingRunning = true;
                 $scope.updatingUsersByEmailPromise = $timeout(function() {
                     var url = serverPrefix + "/get_rooms_containing_string?query=" + query;
                     return $http.get(url, {}).success(function(data) { // send request
-                         $scope.searchingRunning = false;
+                        $scope.searchingRunning = false;
                         $scope.roomsListSearched = data;
-                    }).finally(function(){
-                      $scope.searchingRunning = false;  
+                    }).finally(function() {
+                        $scope.searchingRunning = false;
                     });
                 }, delay);
             };
@@ -1295,22 +1326,37 @@ angular.module('springChat.directives').directive('ngDraggable', ['$document', n
 angular.module('springChat.directives').directive('checkbox', function() {
     return {
         restrict: 'EA',
-        require: 'ngModel',
         replace: true,
-        template: '<a class="g-checkbox"><input id="{{id}}" type="checkbox" style="display: none" ng-checked="ngModel"/></a>',
+        template: '<a class="g-checkbox"><input id="{{id}}" type="checkbox" style="display: none" ng-checked="testModel"/></a>',
         scope: {
             id: '@',
-            ngModel: '=',
-            ngChange: '&'
+            testModel: '=value',
+            callback: '&callback'
         },
-        link: function(scope, element, attrs) {
+        transclude: false,
+        link: function(scope, element, attrs, ngModelCtrl) {
             element.removeAttr('id');
+            scope.$on('$destroy', function() {
+                unregister();
+            });
+
+            var unregister = scope.$watch('testModel', function(neww, old) {
+                console.log(neww);
+                if (neww == undefined && old == undefined)
+                    return;
+
+                if (neww)
+                    element.addClass('checked');
+                else
+                    element.removeClass('checked');
+                if (scope.callback != undefined)
+                    scope.callback();
+            });
+
             element.bind('click', function() {
-                element.toggleClass('checked');
-                scope.ngModel = !scope.ngModel;
-                if (scope.ngChange != undefined)
-                    scope.ngChange();
-                scope.$apply();
+                scope.$apply(function() {
+                    scope.testModel = !scope.testModel;
+                });
             })
         }
 
