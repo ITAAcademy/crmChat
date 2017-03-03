@@ -1,6 +1,6 @@
 <div ng-init="hideEmpty = true" ng-show="participants().length > 2 || (participants().length > 1 &amp;&amp; getChatUserId() != room.roomAuthorId)" class="items_list_block participants_block">
     <div class="block_head" ng-click="toggleFolded()">
-        <div ng-if="checkUserAdditionPermission()" class="block_controll unfoldable_element" modale-toggle="true" callback="toggleNewUser()" ignore-id="rooms-block"><img src="images/elements/add.png"/></div>
+        <div ng-if="checkUserAdditionPermission()" class="block_controll unfoldable_element" modale-toggle="true" callback="toggleNewUser()" ignore-id="['items_list_block','rooms_users_search_icon','users_search_input','user_contacts_menu_item']"><img src="images/elements/add.png"/></div>
         <div class="block_name">{{blockName}}</div>
         <div ng-show="participants().length > 2" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">

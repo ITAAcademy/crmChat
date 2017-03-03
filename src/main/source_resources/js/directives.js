@@ -939,7 +939,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         //TODO check if user can be added to room
         var opponentUserId = $scope.getOpponentIdFromRoom(room);
         if (opponentUserId == null) return null;
-        return $scope.mode == 2 && !RoomsFactory.containsUserId(opponentUserId);
+        return $scope.mode == 2 && !RoomsFactory.containsUserId(opponentUserId) && !$scope.createEnabled;
     };
     /* $scope.stripHtml = function(html)
      {
@@ -1009,8 +1009,8 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return true;
     }
     $scope.showLastContacts = function() {
-        if ($scope.mode == 2)
-            return;
+        /*if ($scope.mode == 2)
+            return;*/
 
         $scope.tabState = "LastContacts";
         $scope.sortBy = ['-nums', '-date'];

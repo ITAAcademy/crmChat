@@ -1,6 +1,6 @@
 <div class="contacts_menu_strip   ng-class:{ 'visible-search': searchEnabled, 'visible-create' : createEnabled}">
-    <div modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon"><i class="material-icons">search</i></div>
-    <div class="contacts_menu_item " ng-click="showContacts()" ng-class="{active: tabState == 'Contacts'}" th:text="${lgPack.roomBlock.contacts}">КОНТАКТИ</div>
+    <div modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
+    <div id="user_contacts_menu_item" class="contacts_menu_item " ng-click="showContacts()" ng-class="{active: tabState == 'Contacts'}" th:text="${lgPack.roomBlock.contacts}">КОНТАКТИ</div>
     <div class="last_contacts_menu_item" ng-click="showLastContacts()" ng-class="{active: tabState == 'LastContacts'}" th:text="${lgPack.roomBlock.lastContacts}">ОСТАННІ</div>
     <div modale-toggle="true" callback="toggleCreate()" ignore-id="['room_create_input', 'items_list_block']" class="group_icon"><i class="material-icons">group_add</i></div>
     <div id="create-btn" ng-hide="room_create_input.length == 0" ng-click="createNewRoom($event)" class="group_icon"><img src="images\\plus.svg" alt="" /></div>
