@@ -5,6 +5,7 @@
 var springChatServices = angular.module('springChat.services', []);
 springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
     var stompClient;
+    var reconnect = 0;
 
     var wrappedSocket = {
 
@@ -18,6 +19,12 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
             });
 
             stompClient = Stomp.over(cock);
+
+            cock.onclose = function(e) {
+                if (reconnect++ < 5) {
+                    this.init();
+                }
+            };
             //stompClient.debug = null
         },
         disconnect: function() {
@@ -47,6 +54,11 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
             stompClient.send(destination, headers, object);
         }
     }
+
+    $(window).on("beforeunload", function() {
+        wrappedSocket.disconnect()
+        return null;
+    })
 
     return wrappedSocket;
 
@@ -103,8 +115,7 @@ springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '
         }
     }
 
-    function response(data)
-    {
+    function response(data) {
         return data;
     }
 

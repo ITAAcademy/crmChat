@@ -1,7 +1,7 @@
 <div ng-if="isTrainer()" ng-show="getTenantsList().length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
         <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect($event)" ignore-id="['tenants_items']">
-        <i class="material-icons unfoldable_element">{{checked.length == 0 ? 'account_circle' : 'done'}}</i></div>
+            <i class="material-icons unfoldable_element">{{checked.size == 0 ? 'assignment_ind' : 'done'}}</i></div>
         <div ng-if="getTenantsList().length == 0" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
         <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
@@ -12,6 +12,12 @@
         </i>
     </div>
     <div id="tenants_items" class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+        <div ng-if="selectForAsk" class="block_item select-all">
+            Вибрати усіх
+            <div class="contact_control">
+                <checkbox value="toggleAll.fs" callback="toggleAllFunc()"></checkbox>
+            </div>
+        </div>
         <div ng-click="clickToUserEvent(participant)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in getTenantsList() | orderBy:participantsSort">
             <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + participant.avatar + ')'}"></div>
@@ -24,8 +30,8 @@
                 <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
             </div>
             <div class="contact_control">
-            <checkbox ng-if="selectForAsk &amp;&amp; !participant.isParticipant" id="el" ng-model="include" ng-change="toggleUserToAskList(participant)"></checkbox>
-        </div>
+                <checkbox class="user-check-tenant" ng-if="selectForAsk &amp;&amp; !participant.isParticipant" value="checked[participant.chatUserId]" callback="toggleUserToAskList(participant)"></checkbox>
+            </div>
         </div>
     </div>
 </div>
