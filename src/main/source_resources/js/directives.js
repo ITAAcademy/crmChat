@@ -917,7 +917,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
     $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
-        room.nums = 0;
+//        room.nums = 0;
         switch ($scope.mode) {
             case 1:
                 $scope.doGoToRoom(room.roomId);
