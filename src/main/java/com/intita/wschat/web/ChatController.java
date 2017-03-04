@@ -2,8 +2,10 @@ package com.intita.wschat.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +17,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
 import javax.annotation.PostConstruct;
-import javax.mail.SendFailedException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -1018,11 +1019,20 @@ public class ChatController {
 		sendAllNewMessageNotificationsFromLast24Hours();
         return true;
 	}
-	
-	/*@Scheduled(fixedDelay=6000L)
+	boolean isEmailSendingRequired = true;
+	@Scheduled(fixedDelay=3600000L)//every 1 hour
 	public void notificateUsersByEmail(){
+		Date date = new Date();   // given date
+		Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+		calendar.setTime(date);   // assigns calendar to given date 	
+		if (calendar.get(Calendar.HOUR_OF_DAY)>=0 && calendar.get(Calendar.HOUR_OF_DAY)<=4)
+		{
+		if (isEmailSendingRequired)
 		sendAllNewMessageNotificationsFromLast24Hours();
-	}*/
+		isEmailSendingRequired = false;
+		}
+		else isEmailSendingRequired = true;
+	}
 	
 
 
