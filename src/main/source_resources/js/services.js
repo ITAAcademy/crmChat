@@ -55,9 +55,9 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
         }
     }
 
-    $(window).on("beforeunload", function() {
+    $(window).on("beforeunload", function(event) {
+        event.preventDefault();
         wrappedSocket.disconnect()
-        return null;
     })
 
     return wrappedSocket;
