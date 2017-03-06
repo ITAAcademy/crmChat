@@ -1261,6 +1261,10 @@ font-style: normal;
     color: #949494;
     min-height: 65px;
 }
+.messages_input_area .message_input[contenteditable] {
+    overflow:auto;
+    max-height:300px;
+}
 
 .bottom_block {
     padding-bottom: 10px;

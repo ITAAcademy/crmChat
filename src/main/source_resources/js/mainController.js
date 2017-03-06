@@ -737,8 +737,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 var toolsAreaHeight = $('.tools_area').height();
                 var messagesInputHeight = $('.messages_input_area').height();
                 var messagesOutputHeight = containerHeight - toolsAreaHeight - messagesInputHeight - 10; //pading
-                if (messagesInputHeight > messagesOutputHeight)
-                    return;
+                /*if (messagesInputHeight > messagesOutputHeight)
+                    return;*/
                 saveScrollBottom();
                 //$('#messagesScroll').height(messagesOutputHeight);
                 //$('#messagesScroll').scrollTop(getScrollTopToPreserveScroll(messagesOutputHeight));
