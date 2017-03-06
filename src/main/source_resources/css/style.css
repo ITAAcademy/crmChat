@@ -1362,6 +1362,20 @@ font-style: normal;
     margin-bottom: 45px;
     bottom: 0px;
 }
+.attaches_area #help_dropdown {
+font-size: 14px;
+    position: absolute;
+    display: none;
+    margin-left: -43px;
+    margin-bottom: 45px;
+    bottom: 0px;
+    padding: 10px 10px;
+}
+
+.attaches_area #help_dropdown.shown {
+    display: block;
+    z-index: 2;
+}
 
 .tools_dropdown_container>#tools_dropdown.shown,
 #attaches_dropdown.shown {

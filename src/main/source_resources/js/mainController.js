@@ -763,6 +763,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.attaches_dropdown_click = function() {
             $('#attaches_dropdown').toggleClass('shown');
         }
+        $scope.help_dropdown_click = function() {
+            $('#help_dropdown').toggleClass('shown');
+        }
 
         messageAreaResizer();
 
