@@ -542,6 +542,14 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         },
         isTrainer: function(){
             return isTrainer;
+        },
+        getUser: function(){
+            return {
+                'id':chatUserId,
+                'nickName':chatUserNickname,
+                'avatar':chatUserAvatar
+
+            }
         }
 
     };

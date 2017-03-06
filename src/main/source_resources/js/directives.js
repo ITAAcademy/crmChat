@@ -354,7 +354,7 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
 
     };
 }]);
-
+angular.module('springChat.directives').directive('userBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', userBlock]);
 angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
@@ -455,6 +455,25 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
 
     };
 };
+
+
+function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory) {
+    return {
+        restrict: 'EA',
+        scope:{
+
+        },
+        templateUrl: 'static_templates/user_block.html',
+        link: function(scope, element, attributes) {
+            scope.blockName = 'Користувач';//lgPack.blockNames.students;
+            initFolded(scope, element);
+            scope.getUser = UserFactory.getUser;
+
+        }
+
+    };
+};
+
 
 function trainersBlock($http, mySettings, RoomsFactory, UserFactory) {
     return {
