@@ -3,10 +3,10 @@
 springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
-            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams','$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams,$rootScope) {
+            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope) {
                 if (!ChannelFactory.getIsInited()) return;
                 RoomsFactory.goToRoom($route.current.params.roomId);
-                 $rootScope.$broadcast('dialog_view_route');
+                $rootScope.$broadcast('dialog_view_route');
             }]
         }
     });
@@ -67,7 +67,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             }
         };
 
-        $scope.newMessage = {value:""};
+        $scope.newMessage = { value: "" };
 
         var roomElement = angular.element(document.getElementById("panel-body"));
         $scope.resizeRoomElement = function(oldSize, newSize) {
@@ -321,10 +321,10 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
             });
 
-          /*  if (user.chatUserId != undefined && user.chatUserId != null)
-                ChannelFactory.changeLocation('/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
-            else
-            ChannelFactory.changeLocation('#/chat/go/rooms/private/' + user.id + '?isChatId=false');*/
+            /*  if (user.chatUserId != undefined && user.chatUserId != null)
+                  ChannelFactory.changeLocation('/chat/go/rooms/private/' + user.chatUserId + '?isChatId=true');
+              else
+              ChannelFactory.changeLocation('#/chat/go/rooms/private/' + user.id + '?isChatId=false');*/
         }
 
         $rootScope.getUserSearchIndetify = function(item, searchInputValue) {
@@ -524,7 +524,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
-            
+
             for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
                 var room = RoomsFactory.getRooms()[roomIndex];
                 var newMessageInThisRoom = ($.inArray("" + room.roomId, roomIds));
@@ -598,7 +598,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         };
         $scope.messageSearchEnabled = false;
         $scope.enableMessagesSearch = function(event) {
-            
+
             event.stopPropagation();
             event.preventDefault();
             $scope.messageSearchQuery = { 'value': '' };
@@ -614,12 +614,15 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $rootScope.hideMenu = function() {
             $scope.showMenu = false;
-            
+
             $rootScope.__modaleToggle['menu'].restart();
             return $scope.showMenu;
         }
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
+        $scope.checkUserAdditionPermission = function() {
+            return RoomsFactory.checkUserAdditionPermission(UserFactory.getChatUserId());
+        }
 
         /* $interval(function(){
              if($scope.getNewMsgNumber() > 0)
@@ -636,12 +639,12 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.updateMessagesSearch = function() {
             if (updateMessagesSearchTimeout != undefined)
                 $timeout.cancel(updateMessagesSearchTimeout);
-              $scope.messagesSearching = true;
+            $scope.messagesSearching = true;
             updateMessagesSearchTimeout = $timeout(function() {
                 RoomsFactory.clearMessages();
                 var deffered = RoomsFactory.loadMessagesContains($scope.messageSearchQuery.value);
-                deffered.finally(function(){
-                     $scope.messagesSearching = false;
+                deffered.finally(function() {
+                    $scope.messagesSearching = false;
                 });
                 $rootScope.message_busy = false;
                 var objDiv = document.getElementById("messagesScroll");
@@ -678,24 +681,24 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
         $scope.isRoomChangeModeEnabled = false;
-        $scope.newRoomName = {'value':''};
+        $scope.newRoomName = { 'value': '' };
 
-        $scope.toggleRoomNameChangeMode = function(){
-            if (!$scope.isRoomChangeModeEnabled){
+        $scope.toggleRoomNameChangeMode = function() {
+            if (!$scope.isRoomChangeModeEnabled) {
                 $scope.newRoomName.value = $scope.getCurrentRoom().string;
                 setTimeout(function() { $("#changeRoomNameInput").focus(); }, 500);
-            }else{
-                RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);         
+            } else {
+                RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);
             }
             $scope.isRoomChangeModeEnabled = !$scope.isRoomChangeModeEnabled;
         }
-        $scope.disableRoomNameChangeMode = function(){
-        $scope.isRoomChangeModeEnabled = false;
+        $scope.disableRoomNameChangeMode = function() {
+            $scope.isRoomChangeModeEnabled = false;
         }
-         $scope.focusNewRoomNameChange = function(){
+        $scope.focusNewRoomNameChange = function() {
             if ($scope.newRoomName.value == $scope.getCurrentRoom().string)
-             $scope.disableRoomNameChangeMode();
-         }
+                $scope.disableRoomNameChangeMode();
+        }
 
         $scope.$on('$routeChangeStart', $scope.disableMessagesSearch(false));
         var savedDistanceToBottom;
@@ -755,7 +758,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         }
-    
+
 
         $scope.tools_dropdown_click = function() {
             $('#tools_dropdown').toggleClass('shown');

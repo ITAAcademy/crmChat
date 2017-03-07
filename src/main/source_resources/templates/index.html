@@ -80,7 +80,7 @@
                 </button>
                 <div class="room_info">
                     <div class="room_name">{{getCurrentRoom().string}}
-                    <i ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom()))" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
+                    <i ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
                     </div>
                 </div>
                 <div class="search_box" ng-if="messageSearchEnabled">
