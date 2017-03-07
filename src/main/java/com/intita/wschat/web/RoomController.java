@@ -424,10 +424,10 @@ public class RoomController {
 		return userList;
 	}
 
-	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o, String lang) {
+	public Map<String, Object> retrieveParticipantsSubscribeAndMessagesObj(Room room_o, String lang, ChatUser user) {
 
 		Queue<UserMessage> buff = chatController.getMessagesBuffer().get(room_o.getId());
-		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang);
+		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang,user);
 		if (buff != null)
 			userMessages.addAll(buff);
 		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
@@ -456,9 +456,8 @@ public class RoomController {
 		// FIX
 		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, principal, userService, chatUserServise,
 				roomService);
+		ChatUser o_object = chatUserServise.getChatUser(principal);
 		if (status == null) {
-
-			ChatUser o_object = chatUserServise.getChatUser(principal);
 			if (o_object != null) {
 				User iUser = o_object.getIntitaUser();
 
@@ -470,7 +469,7 @@ public class RoomController {
 		}
 
 		Room room_o = roomService.getRoom(room);
-		return retrieveParticipantsSubscribeAndMessagesObj(room_o, lang);
+		return retrieveParticipantsSubscribeAndMessagesObj(room_o, lang,o_object);
 	}
 
 	@MessageMapping("/{room}/chat.participants")
@@ -504,8 +503,9 @@ public class RoomController {
 				roomService);// Control room from LP
 		if (struct == null)
 			return "{}";
+		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		String participantsAndMessages = mapper.writeValueAsString(
-				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), chatLangService.getCurrentLang()));
+				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), chatLangService.getCurrentLang(),chatUser));
 		log.info("P&M:" + participantsAndMessages);
 		return participantsAndMessages;
 	}

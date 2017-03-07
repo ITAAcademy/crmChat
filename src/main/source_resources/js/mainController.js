@@ -801,6 +801,11 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }
+            $scope.clearHistory = function(){
+                RoomsFactory.clearHistory();
+                 RoomsFactory.clearMessages();
+                }
+
             $scope.showAllMessages = function(reloadMessages) {
                 if (reloadMessages === true) {
                     RoomsFactory.clearMessages();

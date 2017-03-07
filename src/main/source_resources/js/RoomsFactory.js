@@ -119,6 +119,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
         }
     }
+
+    var clearHistory = function(){
+       $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.roomId),""); 
+    }
+
     var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
 
     function calcPositionUnshift(msg) {
@@ -699,6 +704,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         addUserToRoom: addUserToRoom,
         checkMessageAdditionPermission: checkMessageAdditionPermission,
         changeCurrentRoomName: changeCurrentRoomName,
+        clearHistory: clearHistory,
         getUserAddedToRoom: function() {
             return userAddedToRoom;
         },
