@@ -74,6 +74,7 @@ import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.IntitaMailService;
 import com.intita.wschat.services.IntitaSubGtoupService;
+import com.intita.wschat.services.RoomHistoryService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
@@ -112,6 +113,8 @@ public class ChatController {
 	@Autowired private IntitaMailService mailService;
 	
 	@Autowired private CommonController commonController;
+	
+	@Autowired private RoomHistoryService roomHistoryService;
 	
 
 	private final Semaphore msgLocker =  new Semaphore(1);
@@ -360,7 +363,9 @@ public class ChatController {
         if( struct == null)
             throw new ChatUserNotInRoomException("");
         String searchQuery = json.get("searchQuery");
-        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,searchQuery,filesOnly,20);
+        ChatUser chatUser = chatUsersService.getChatUser(principal);
+        Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
+        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,clearDate,searchQuery,filesOnly,20);
         if(messages.size() == 0) return null;
         ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
 
@@ -977,9 +982,21 @@ public class ChatController {
 	@RequestMapping(value="/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<ChatMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,@RequestBody(required=false) String searchQuery, Principal principal) throws JsonProcessingException {
-		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null,searchQuery,false,20);
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
+		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
+		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null,clearDate,searchQuery,false,20);
         ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
         return chatMessages;
+	}
+	
+	@RequestMapping(value="/chat/room/{roomId}/clear_history", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean clearRoomHistory(@PathVariable("roomId") Long roomId, Principal principal) throws JsonProcessingException {
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
+		Room room = chatRoomsService.getRoom(roomId);
+//		if (room.getAuthor().equals(chatUser))
+		roomHistoryService.clearRoomHistory(room, chatUser);
+		return true;
 	}
 
 

@@ -45,6 +45,7 @@ public class UserMessageService {
 	@Autowired private SessionFactory sessionFactory;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private ChatLangService chatLangService;
+	@Autowired private RoomHistoryService roomHistoryService;
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
@@ -82,8 +83,12 @@ public class UserMessageService {
 	}
 
 	@Transactional(readOnly=true)
-	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang) {
-		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
+	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang,ChatUser user) {
+		Date clearDate = roomHistoryService.getHistoryClearDate(room.getId(), user.getId());
+		if (clearDate==null)
+			return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
+		else
+		return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndDateAfterOrderByIdDesc(room, clearDate), lang);
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
@@ -220,7 +225,7 @@ public class UserMessageService {
 	}
 
 	@Transactional
-	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate, String body,boolean filesOnly,int messagesCount){
+	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,Date afterDate, String body,boolean filesOnly,int messagesCount){
 		if (roomId==null) return new ArrayList<UserMessage>();
 		System.out.println("roomId:"+roomId);
 		ArrayList<UserMessage> messages;
@@ -232,6 +237,10 @@ public class UserMessageService {
 			if (beforeDate!=null) {
 				if (whereParam.length()>0) whereParam += " AND ";
 				whereParam +=  "m.date < :beforeDate";
+			}
+			if(afterDate != null) {
+				if(whereParam.length() > 0) whereParam += " AND ";
+				whereParam += "m.date > :afterDate";
 			}
 			if (body!=null){
 				if (whereParam.length()>0) whereParam += " AND ";
@@ -256,6 +265,8 @@ public class UserMessageService {
 				query.setLong("roomId",roomId);
 			if (beforeDate!=null)
 			query.setTimestamp("beforeDate", beforeDate);
+			if (afterDate!=null)
+				query.setTimestamp("afterDate", afterDate);
 		if (body!=null)
 			query.setString("body", "%"+body+"%");
 		if (filesOnly){
