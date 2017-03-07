@@ -828,8 +828,8 @@ public class RoomController {
 	 ***************************/
 
 	boolean removeUserFromRoomFully(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
-		if (room_o.getType() == RoomType.STUDENTS_GROUP)
-			return false;
+		/*if (room_o.getType() == RoomType.STUDENTS_GROUP)
+			return false;*/
 		ChatUser authorUser = chatUserServise.getChatUser(principal);
 		boolean haveNullObj = room_o == null || user_o == null;
 		boolean isAuthor = user_o.getId().longValue() == room_o.getAuthor().getId().longValue();
@@ -915,8 +915,8 @@ public class RoomController {
 	}
 
 	boolean addUserToRoom(ChatUser user_o, Room room_o, Principal principal, boolean ignoreAuthor) {
-		if (room_o.getType() == RoomType.STUDENTS_GROUP)
-			return false;
+		/*if (room_o.getType() == RoomType.STUDENTS_GROUP)
+			return false;*/
 		Long chatUserAuthorId = Long.parseLong(principal.getName());
 		ChatUser authorUser = chatUserServise.getChatUser(chatUserAuthorId);
 
