@@ -1,0 +1,10 @@
+<div class="modal-header">
+    Ви точно хочите видалити історію?
+</div>
+<div class="modal-content">
+    Ви втратите доступ до повідомлень, інші учасники продовжуть бачити повідомлення!!!
+</div>
+<div class="modal-footer">
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="clearHistory()" th:text="${lgPack.chatGlobal.yes}">Так</button>
+    <button type="button" class="btn btn-default" ng-click="closeThisDialog()" th:text="${lgPack.chatGlobal.no}">Ні</button>
+</div>

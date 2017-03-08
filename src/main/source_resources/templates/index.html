@@ -99,7 +99,7 @@
                     <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">
                             {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
                     <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()" th:text="${lgPack.msgBox.roomContextMenu.goOut}">Вийти з кімнати</a>
-                    <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="clearHistory()">Видалити історію</a>
+                    <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="askForClearHistory()">Видалити історію</a>
                 </div>
             </div>
             <hr/>

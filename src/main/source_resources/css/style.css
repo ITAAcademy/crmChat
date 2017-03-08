@@ -715,22 +715,15 @@ body {
     padding-bottom: 5px;
     /* position:absolute; */
 }
-.items_list_block .block_item.select-all
-{
-    
-overflow: hidden;
-    
-text-overflow: ellipsis;
-    
-word-wrap: initial;
-    
-font-size: 16px;
-    
-font-family: "Roboto";
-    
-font-weight: 500;
-    
-font-style: normal;
+
+.items_list_block .block_item.select-all {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: initial;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-weight: 500;
+    font-style: normal;
 }
 
 .left_panel_mini .items_list_block .block_item {
@@ -953,8 +946,8 @@ font-style: normal;
     top: calc(50% - 20px);
 }
 
-.select-all .contact_control{
-        top: calc(50% - 10px);
+.select-all .contact_control {
+    top: calc(50% - 10px);
 }
 
 .tools_area {
@@ -1261,9 +1254,10 @@ font-style: normal;
     color: #949494;
     min-height: 65px;
 }
+
 .messages_input_area .message_input[contenteditable] {
-    overflow:auto;
-    max-height:300px;
+    overflow: auto;
+    max-height: 300px;
 }
 
 .bottom_block {
@@ -1366,8 +1360,9 @@ font-style: normal;
     margin-bottom: 45px;
     bottom: 0px;
 }
+
 .attaches_area #help_dropdown {
-font-size: 14px;
+    font-size: 14px;
     position: absolute;
     display: none;
     margin-left: -43px;
@@ -1395,7 +1390,7 @@ font-size: 14px;
     position: absolute;
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg);
-    margin-left: 70px;
+    margin-left: 97px;
     margin-top: 4px;
 }
 
@@ -2323,21 +2318,25 @@ svg {
     position: absolute;
     right: 10px;
 }
+
 .notification_menu .discard_event {
-   position:absolute;
-   right:10px; 
+    position: absolute;
+    right: 10px;
 }
+
 span.rooms_search_loader {
-  right: 50px;
-  position: absolute;
-  top: 0px;
+    right: 50px;
+    position: absolute;
+    top: 0px;
 }
+
 .messages_search_loader img,
 span.rooms_search_loader img {
-    width:24px;
-    height:24px;
+    width: 24px;
+    height: 24px;
 }
-.messages_search_loader{
-    position:absolute;
-    right:0px;
+
+.messages_search_loader {
+    position: absolute;
+    right: 0px;
 }

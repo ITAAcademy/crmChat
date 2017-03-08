@@ -801,10 +801,20 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }
-            $scope.clearHistory = function(){
+
+            $scope.askForClearHistory = function() {
+                ngDialog.open({
+                    template: "askForDeleteHistory.html",
+                    showClose: true,
+                    scope: $scope
+                });
+            }
+
+            $scope.clearHistory = function() {
                 RoomsFactory.clearHistory();
-                 RoomsFactory.clearMessages();
-                }
+                RoomsFactory.clearMessages();
+                ngDialog.closeAll();
+            }
 
             $scope.showAllMessages = function(reloadMessages) {
                 if (reloadMessages === true) {
