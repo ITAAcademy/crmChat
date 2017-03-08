@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,12 @@ public class UsersService {
 
 	@Autowired
 	private ChatTenantService chatTenantService;
+	
+	@PersistenceContext
+	EntityManager entityManager;
+	
+	
+	
 
 	@PostConstruct
 	@Transactional
@@ -272,6 +281,32 @@ public class UsersService {
 		ArrayList<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
 		for(ChatUser user : tenants) loginEvents.add(chatUsersService.getLoginEvent(user));
 		return loginEvents;
+	}
+	
+	
+	@Transactional
+	public boolean checkRole(User user, User.Roles role){
+		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
+		Long userId = Long.parseLong(query.getSingleResult().toString());
+		return userId.equals(user.getId());
+		
+	}
+	@Transactional
+	public ArrayList<Long> getAllByRole(User.Roles role){
+		String userFieldName = "id_user";
+		if(role == User.Roles.TENANTS)
+			userFieldName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		List<Object> queryResults = query.getResultList();
+		
+		ArrayList<Long> resultArray = new ArrayList<>();
+		for(Object queryObject : queryResults)
+		{
+			Long userId = Long.parseLong(queryObject.toString());
+			resultArray.add(userId);
+		}
+		System.out.println("gdfgdfg^" + resultArray.size());
+		return resultArray;
 	}
 
 }

@@ -892,10 +892,10 @@ public class RoomController {
 			contain = true;
 		}
 		roomService.setAuthor(newAuthor, room);
-		if (!roomService.update(room))
+		if (roomService.update(room) == null)
 			return false;
 		// remove room from cache author object
-		author.getRootRooms().remove(room);
+		//author.getRootRooms().remove(room);
 		if (savePreviusAuthorAsUser) {
 			addUserToRoom(author, room, principal, true);
 			if (!contain) {

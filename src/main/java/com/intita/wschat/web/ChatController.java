@@ -111,11 +111,11 @@ public class ChatController {
 	@Autowired private IntitaSubGtoupService subGroupService;
 	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
 	@Autowired private IntitaMailService mailService;
-	
+
 	@Autowired private CommonController commonController;
-	
+
 	@Autowired private RoomHistoryService roomHistoryService;
-	
+
 
 	private final Semaphore msgLocker =  new Semaphore(1);
 
@@ -134,15 +134,15 @@ public class ChatController {
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
-	
+
 	ConcurrentHashMap<DeferredResult<String>,String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>,String>();
 	private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();//RoomId,ChatUserId of tenatn
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	public  void tryRemoveChatUserRequiredTrainer(ChatUser chatUser){
 		UserWaitingForTrainer userWaiting = null;
 		for (UserWaitingForTrainer user : usersRequiredTrainers){
@@ -233,7 +233,7 @@ public class ChatController {
 			groupCastAddTenantToList(tenantUser);
 		}		
 	}
-	
+
 	public void propagateRemovingTenantsFromList(ArrayList<ChatUser> usersIds){
 		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
 		if (usersIds.size()<=0)return;
@@ -253,7 +253,7 @@ public class ChatController {
 			groupCastRemoveTenantFromList(tenantUser);
 		}	
 	}
-	
+
 	public void addFieldToUserInfoMap(ChatUser user, String key, Object value){
 		if(user != null && !key.isEmpty())
 			addFieldToUserInfoMap(user.getId(), key, value);
@@ -281,7 +281,7 @@ public class ChatController {
 	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
 		return messagesBuffer;
 	}
-	
+
 	@PostConstruct
 	public void onCreate()
 	{
@@ -347,33 +347,33 @@ public class ChatController {
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<ChatMessage> loadOtherMessageMapping(@PathVariable("room") Long room, @RequestBody Map<String, String> json, Principal principal)  {
-    return loadOtherMessage(room,json,principal,false);
+		return loadOtherMessage(room,json,principal,false);
 	}
-    @RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
-    @ResponseBody
-    public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room, @RequestBody(required=false) Map<String, String> json, Principal principal)  {
-        return loadOtherMessage(room,json,principal,true);
-    }
-    public ArrayList<ChatMessage> loadOtherMessage(Long room, Map<String, String> json, Principal principal, boolean filesOnly){
-        String dateMsStr = json.get("date");
-        Long dateMs = null;
-        if (dateMsStr != null && dateMsStr.length() > 0) dateMs = Long.parseLong(dateMsStr);
-        Date date =(dateMs == null) ? null : new Date(dateMs);
-        CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, chatRoomsService);//Control room from LP
-        if( struct == null)
-            throw new ChatUserNotInRoomException("");
-        String searchQuery = json.get("searchQuery");
-        ChatUser chatUser = chatUsersService.getChatUser(principal);
-        Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
-        ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,clearDate,searchQuery,filesOnly,20);
-        if(messages.size() == 0) return null;
-        ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
+	@RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room, @RequestBody(required=false) Map<String, String> json, Principal principal)  {
+		return loadOtherMessage(room,json,principal,true);
+	}
+	public ArrayList<ChatMessage> loadOtherMessage(Long room, Map<String, String> json, Principal principal, boolean filesOnly){
+		String dateMsStr = json.get("date");
+		Long dateMs = null;
+		if (dateMsStr != null && dateMsStr.length() > 0) dateMs = Long.parseLong(dateMsStr);
+		Date date =(dateMs == null) ? null : new Date(dateMs);
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, principal, userService, chatUsersService, chatRoomsService);//Control room from LP
+		if( struct == null)
+			throw new ChatUserNotInRoomException("");
+		String searchQuery = json.get("searchQuery");
+		ChatUser chatUser = chatUsersService.getChatUser(principal);
+		Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
+		ArrayList<UserMessage> messages =userMessageService.getMessages(struct.getRoom().getId(), date,clearDate,searchQuery,filesOnly,20);
+		if(messages.size() == 0) return null;
+		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
 
-        if(messagesAfter.size() == 0)
-            return null;
+		if(messagesAfter.size() == 0)
+			return null;
 
-        return messagesAfter;
-    }
+		return messagesAfter;
+	}
 
 	public UserMessage filterMessage( Long roomStr,  ChatMessage message, Principal principal) {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, principal, userService, chatUsersService, chatRoomsService);//Control room from LP
@@ -633,20 +633,20 @@ public class ChatController {
 
 		return chatRoomsService.getSimpleModelByUserPermissionsForRoom(struct.user, 0 , new Date().toString(), room, userMessageService.getLastUserMessageByRoom(room));
 	}
-	
+
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
 	public RoomModelSimple userGoToDialogListenerLP(@PathVariable("roomId") Long roomid, Principal principal) {
 		return userGoToDialogListener(roomid, principal);
 	}
-	
+
 	@RequestMapping(value = "/chat/get_students/", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent> userGoToDialogListenerLP(Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
 		ArrayList<User> users=null;
 		User iUser = user.getIntitaUser();
-		
+
 		if(iUser != null)
 		{
 			Long intitaUserId = user.getIntitaUser().getId();
@@ -661,7 +661,7 @@ public class ChatController {
 			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  userList;
-	
+
 	}
 
 	/*
@@ -926,7 +926,7 @@ public class ChatController {
 		}
 		return usersData;
 	}
-	
+
 	@RequestMapping(value="/get_id_by_username",method = RequestMethod.GET)
 	@ResponseBody
 	public Long getIdByUsername(@RequestParam String intitaUsername){
@@ -934,7 +934,7 @@ public class ChatController {
 		if (user == null) throw new ChatUserNotFoundException("");
 		return user.getId();
 	}
-	
+
 	@RequestMapping(value="/get_course_alias_by_title",method = RequestMethod.GET)
 	@ResponseBody
 	public String getCourseAliasByTitle(@RequestParam String title,@RequestParam String lang){
@@ -969,7 +969,7 @@ public class ChatController {
 		}
 		return commonController.getTeachersTemplate(request, "chatTemplate", model, principal);
 	}
-	
+
 	@RequestMapping(value="/get_room_messages", method = RequestMethod.GET)
 	@ResponseBody
 	public String  getRoomMessages(@RequestParam Long roomId, Principal principal) throws JsonProcessingException {
@@ -985,16 +985,16 @@ public class ChatController {
 		ChatUser chatUser = chatUsersService.getChatUser(principal);
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null,clearDate,searchQuery,false,20);
-        ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
-        return chatMessages;
+		ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
+		return chatMessages;
 	}
-	
+
 	@RequestMapping(value="/chat/room/{roomId}/clear_history", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean clearRoomHistory(@PathVariable("roomId") Long roomId, Principal principal) throws JsonProcessingException {
 		ChatUser chatUser = chatUsersService.getChatUser(principal);
 		Room room = chatRoomsService.getRoom(roomId);
-//		if (room.getAuthor().equals(chatUser))
+		//		if (room.getAuthor().equals(chatUser))
 		roomHistoryService.clearRoomHistory(room, chatUser);
 		return true;
 	}
@@ -1006,14 +1006,14 @@ public class ChatController {
 		User user = userService.getUser(principal);
 		log.info("sending email to:"+user.getEmail());	
 		try{
-		mailService.sendUnreadedMessageToIntitaUser(user);
+			mailService.sendUnreadedMessageToIntitaUser(user);
 		}
 		catch(Exception e){
 			log.info("sending failed");	
 		}
-        return true;
+		return true;
 	}
-	
+
 	private void sendAllNewMessageNotificationsFromLast24Hours(){
 		Set<ChatTenant> tenants = chatTenantService.getUniqueTenants();
 		log.info("sending emails to users:");
@@ -1021,20 +1021,20 @@ public class ChatController {
 			User user = tenant.getChatUser().getIntitaUser();
 			log.info("sending to "+user.getEmail());
 			try{
-			mailService.sendUnreadedMessageToIntitaUser(user);
+				mailService.sendUnreadedMessageToIntitaUser(user);
 			}
 			catch(Exception e){
 				log.info("sending failed");
 			}
 		}
-		
+
 	}
-	
+
 	@RequestMapping(value="/chat/user/send_new_messages_notification_for_tenants", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean sendNewMessageNotificationsForTenant() throws JsonProcessingException {
 		sendAllNewMessageNotificationsFromLast24Hours();
-        return true;
+		return true;
 	}
 	boolean isEmailSendingRequired = true;
 	@Scheduled(fixedDelay=3600000L)//every 1 hour
@@ -1044,13 +1044,13 @@ public class ChatController {
 		calendar.setTime(date);   // assigns calendar to given date 	
 		if (calendar.get(Calendar.HOUR_OF_DAY)>=0 && calendar.get(Calendar.HOUR_OF_DAY)<=4)
 		{
-		if (isEmailSendingRequired)
-		sendAllNewMessageNotificationsFromLast24Hours();
-		isEmailSendingRequired = false;
+			if (isEmailSendingRequired)
+				sendAllNewMessageNotificationsFromLast24Hours();
+			isEmailSendingRequired = false;
 		}
 		else isEmailSendingRequired = true;
 	}
-	
+
 
 
 }

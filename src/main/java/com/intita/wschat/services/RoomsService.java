@@ -363,10 +363,11 @@ public class RoomsService {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean update(Room room){
-		roomRepo.save(room);
+	public Room update(Room room){
+		room = roomRepo.save(room);
 		Set<ChatUser> users = new HashSet<>(room.getUsers());
-		users.add(room.getAuthor());
+		if(room.getAuthor() != null)
+			users.add(room.getAuthor());
 		for (ChatUser chatUser : users) {
 			chatController.updateRoomByUser(chatUser, room);
 		}
@@ -384,7 +385,7 @@ public class RoomsService {
 			e.printStackTrace();
 		}
 		chatController.addFieldToInfoMap("updateRoom", sendedMap);*/
-		return true;
+		return room;
 	}
 
 	@Transactional(readOnly = false)

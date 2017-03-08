@@ -107,7 +107,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				log.info(e.getMessage());
 				}
 				if(intitaIdLong != null)
+				{
 					ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong , true).getId().toString();
+				}
 				else
 				{
 					Object obj_s = session.getAttribute("chatId");
