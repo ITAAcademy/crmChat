@@ -79,9 +79,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
         var evn = goToRoomEvn(roomId);
         //setFocus
-        setTimeout(function() {
-            $(".transparent_input.message_input").click();
-        }, 100);
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+            setTimeout(function() {
+                $(".transparent_input.message_input").click();
+            }, 100);
+        }
+
         return evn;
     };
 
@@ -120,8 +123,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
     }
 
-    var clearHistory = function(){
-       $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.roomId),""); 
+    var clearHistory = function() {
+        $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.roomId), "");
     }
 
     var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
@@ -388,7 +391,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                     if (xhr.status === 0 || xhr.readyState === 0) return;
                     if (xhr.status === 404 || xhr.status === 405) {
                         //alert(14)
-                        
+
                     }
                     showChangeRoomNameErr();
                     //subscribeParticipantsLP();
@@ -500,7 +503,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var checkUserAdditionPermission = function(chatUserId) {
         if (currentRoom == undefined)
             return false;
-       // if (isRoomGroup(currentRoom)) return false;
+        // if (isRoomGroup(currentRoom)) return false;
         var needPrivilege = USER_COPABILITIES_BY_ROOM.ADD_USER | USER_COPABILITIES_BY_ROOM.REMOVE_USER;
         var havePermitions = chatUserId == currentRoom.roomAuthorId;
         havePermitions = havePermitions || (currentRoom.userPermissions & needPrivilege) == needPrivilege

@@ -23,12 +23,10 @@ public class RedisService {
 
 	private Jedis jedis;
 	private JedisPool pool;
-
+	private JedisPoolConfig poolConfig = new JedisPoolConfig();
+	
 	@PostConstruct
 	public void AutoUpdate() {
-		
-		
-		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		poolConfig.setMaxTotal(5);
 		poolConfig.setTestOnBorrow(true);
 		poolConfig.setTestOnReturn(true);
@@ -61,6 +59,8 @@ public class RedisService {
 		{
 			/*jedis.close();
 			jedis.connect();*/
+			pool.close();
+			pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
 			jedis = pool.getResource();
 			return new String();
 		}
