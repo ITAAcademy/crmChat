@@ -66,8 +66,16 @@ public class RoomPermissions implements Serializable,Comparable<RoomPermissions>
 		 permissions |= permission.getValue();
 	 }
 	public enum Permission{	
+		//can add new user to room, such as sub author
 		ADD_USER(1),
-		REMOVE_USER(2);
+		
+		//can remove user to room, such as sub author
+		REMOVE_USER(2),
+		
+		//can remove user to room, such as sub author
+		INVITED_USER(4);
+		
+		//Tagged users can't be removed from room automatically, such as update groups, sub groups and so on.
 		private int value;
 		public static Map<String, Integer> getSupported(){
 			Map<String, Integer> aMap = new HashMap<>();

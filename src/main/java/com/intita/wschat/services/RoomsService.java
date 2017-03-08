@@ -28,6 +28,7 @@ import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatPhrasesRepository;
@@ -48,7 +49,6 @@ public class RoomsService {
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ParticipantRepository participantRepository;
-	@Autowired private RoomPermissionsRepository roomPermitiionsRepository;
 
 	@Autowired private ChatController chatController;
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
@@ -439,6 +439,7 @@ public class RoomsService {
 		//have premition?
 		chatLastRoomDateService.removeUserLastRoomDate(user, room);
 		room.removeUser(user);
+		roomPermissionsServcie.removePermissionsOfUser(room, user);
 		roomRepo.save(room);
 		return true;
 	}

@@ -13,22 +13,32 @@ import com.intita.wschat.repositories.RoomPermissionsRepository;
 
 @Service
 public class RoomPermissionsService {
-@Autowired RoomPermissionsRepository roomPermissionsRepository;
-@Transactional
-public void addPermissionsToUser(Room room, ChatUser chatUser, int permissions){
-	RoomPermissions roomPermissions = new RoomPermissions(room,chatUser,permissions);
-	roomPermissionsRepository.save(roomPermissions);
-}
+	@Autowired RoomPermissionsRepository roomPermissionsRepository;
 
-public Integer getPermissionsOfUser(Room room, ChatUser user)
-{
-	List<RoomPermissions> userPermitionsList = roomPermissionsRepository.getAllByRoomAndUser(room, user);
-	int permitions = 0;
-	for (RoomPermissions permition : userPermitionsList){
-		if (permition.isActual())
-		permitions |= permition.getPermissions();
+	@Transactional
+	public void addPermissionsToUser(Room room, ChatUser chatUser, int permissions){
+		RoomPermissions roomPermissions = new RoomPermissions(room,chatUser,permissions);
+		roomPermissionsRepository.save(roomPermissions);
 	}
-	return permitions;
-}
 
+	public Integer getPermissionsOfUser(Room room, ChatUser user)
+	{
+		List<RoomPermissions> userPermitionsList = roomPermissionsRepository.getAllByRoomAndUser(room, user);
+		int permitions = 0;
+		for (RoomPermissions permition : userPermitionsList){
+			if (permition.isActual())
+				permitions |= permition.getPermissions();
+		}
+		return permitions;
+	}
+	
+	public boolean removePermissionsOfUser(Room room, ChatUser user)
+	{
+		List<RoomPermissions> userPermitionsList = roomPermissionsRepository.getAllByRoomAndUser(room, user);
+		if(userPermitionsList.isEmpty())
+			return true;
+		
+		roomPermissionsRepository.delete(userPermitionsList);
+		return true;
+	}
 }
