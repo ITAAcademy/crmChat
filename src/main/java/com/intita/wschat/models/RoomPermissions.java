@@ -36,6 +36,7 @@ public class RoomPermissions implements Serializable,Comparable<RoomPermissions>
 		this.room = room;
 		this.chatUser = chatUser;
 		this.permissions = permissions;
+		this.start_date = new Date();
 	}
 	@ManyToOne
 	@NotNull
@@ -85,7 +86,7 @@ public class RoomPermissions implements Serializable,Comparable<RoomPermissions>
 			return aMap;
 		}
 		public  boolean checkNumberForThisPermission(Integer number){
-			return (number & getValue()) == Permission.ADD_USER.getValue();
+			return (number & getValue()) == getValue();
 		}
 		private Permission(int value){
 			this.value = value;

@@ -935,6 +935,11 @@ public class RoomController {
 		 * all.addAll(user_o.getRootRooms()); if(all.contains(room_o)) return
 		 * false;
 		 */
+		
+		if (room_o.getType() == RoomType.STUDENTS_GROUP)
+		{
+			roomPermissionsService.addPermissionsToUser(room_o, user_o, RoomPermissions.Permission.INVITED_USER.getValue());
+		}
 
 		if (roomService.addUserToRoom(user_o, room_o) == false)
 			return false;

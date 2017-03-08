@@ -14,6 +14,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.OfflineGroup;
 import com.intita.wschat.models.OfflineSubGroup;
 import com.intita.wschat.models.Room;
+import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.repositories.OfflineGroupRespository;
 import com.intita.wschat.repositories.OfflineStudentRespository;
 import com.intita.wschat.repositories.OfflineSubGroupRespository;
@@ -34,6 +35,7 @@ public class OfflineStudentsGroupService {
 	RoomsService roomService;
 	@Autowired
 	RoomController roomControler;
+	@Autowired RoomPermissionsService roomPermissionsService;
 
 	@PostConstruct
 	private void postFunction() {
@@ -69,6 +71,18 @@ public class OfflineStudentsGroupService {
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) 
 			chatUserList.add(chatUsersService.getChatUserFromIntitaId(list.get(i).longValue(), false));
+		
+		Set<ChatUser> roomUserList = room.getUsers();
+		for(ChatUser user : roomUserList)
+		{
+			Integer permissionBitSetPrimitive = roomPermissionsService.getPermissionsOfUser(room, user);
+			boolean ignore = RoomPermissions.Permission.INVITED_USER
+					.checkNumberForThisPermission(permissionBitSetPrimitive);
+			if(ignore)
+				chatUserList.add(user);
+			
+		}
+		
 		roomService.replaceUsersInRoom(room, chatUserList);
 		if(withGroup)
 			updateGroupRoom(subGroup.getGroup(), false);
@@ -100,6 +114,19 @@ public class OfflineStudentsGroupService {
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) 
 			chatUserList.add(chatUsersService.getChatUserFromIntitaId(list.get(i).longValue(), false));
+		
+		Set<ChatUser> roomUserList = room.getUsers();
+		for(ChatUser user : roomUserList)
+		{
+			Integer permissionBitSetPrimitive = roomPermissionsService.getPermissionsOfUser(room, user);
+			boolean ignore = RoomPermissions.Permission.INVITED_USER
+					.checkNumberForThisPermission(permissionBitSetPrimitive);
+			if(ignore)
+				chatUserList.add(user);
+			
+		}
+		
+		
 		roomService.replaceUsersInRoom(room, chatUserList);
 		if(withSubGroups)
 		{
