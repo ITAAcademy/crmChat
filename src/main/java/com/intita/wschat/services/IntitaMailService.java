@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.intita.wschat.domain.ChatMessage;
+import com.intita.wschat.models.ConfigParam;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 @Component
@@ -28,8 +30,8 @@ public class IntitaMailService {
 	@Autowired
 	private VelocityEngine velocityEngine;
 	
-	@Autowired
-	private UserMessageService userMessageService;
+	@Autowired private UserMessageService userMessageService;
+	@Autowired private ConfigParamService configParamService;
 	
 	 @Value("${chat.mail.username}")
 	 String mail_userName;
@@ -64,22 +66,29 @@ public class IntitaMailService {
 		
 	}
 	public void sendUnreadedMessageToIntitaUser(User to) throws Exception{
-		Map<String,List<ChatMessage>> unreadedRoomMessages = userMessageService.getAllUnreadedMessages(to.getChatUser());
+		Map<Room, List<ChatMessage>> unreadedRoomMessages = userMessageService.getAllUnreadedMessages(to.getChatUser());
 		mailSender.send(createPreparatorMessages(to,unreadedRoomMessages));
 	}
 	
-	private MimeMessagePreparator createPreparatorMessages(User to,Map<String,List<ChatMessage>> roomMessages) {
+	private MimeMessagePreparator createPreparatorMessages(User to,Map<Room, List<ChatMessage>> roomMessages) {
 		return  new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                 message.setTo(to.getEmail());//chatuser.getNickName());//destination email
+                //message.setTo("nico13051995@gmail.com");//chatuser.getNickName());//destination email
                 message.setFrom("zigzag2341@gmail.com"); // could be parameterized...
-                Map model = new HashMap();
-                model.put("user", to.getEmail());
+ 
+    			
+                Map<String, Object> model = new HashMap();
+                model.put("user", to);
+                ConfigParam baseUrl =  configParamService.getParam("baseUrl");
+                model.put("baseUrl", baseUrl.getValue());
                 model.put("roomMessages", roomMessages);
                 String text = VelocityEngineUtils.mergeTemplateIntoString(
-                        velocityEngine, "consultation_email.vm","UTF-8", model);
-                message.setText(text, true);
+						velocityEngine, "consultation_email.vm","UTF-8", model);
+                mimeMessage.setContent(text, "text/html; charset=utf-8");
+                mimeMessage.setSubject("Не прочитані повідомлення!!!","UTF-8");
+                //message.setText(text, true);
             }
         };
 	}

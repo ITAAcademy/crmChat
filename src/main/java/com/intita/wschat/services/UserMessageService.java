@@ -292,6 +292,11 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
 		return  wrapBotMessages(messages);
 	}
+	@Transactional(readOnly=true)
+	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date, String lang)  {
+		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
+		return  wrapBotMessages(messages, lang);
+	}
 	
 	@Transactional(readOnly=true)
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
@@ -314,15 +319,15 @@ public class UserMessageService {
 	}
 	
 	@Transactional
-	public Map<String,List<ChatMessage>> getAllUnreadedMessages(ChatUser user){
+	public Map<Room ,List<ChatMessage>> getAllUnreadedMessages(ChatUser user){
 		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
-		 Map<String,List<ChatMessage>> result = new  HashMap<String,List<ChatMessage>>();
+		 Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();
-			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room,lastRoomEntry.getLastLogout());
+			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastRoomEntry.getLastLogout(), "ua");
 			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
-			result.put(room.getName(),unreadedChatMessages);
+			result.put(room, unreadedChatMessages);
 		}
 		return result;
 	}

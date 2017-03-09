@@ -1019,12 +1019,12 @@ public class ChatController {
 		log.info("sending emails to users:");
 		for (ChatTenant tenant : tenants){
 			User user = tenant.getChatUser().getIntitaUser();
-			log.info("sending to "+user.getEmail());
+			log.info("sending to " + user.getEmail());
 			try{
 				mailService.sendUnreadedMessageToIntitaUser(user);
 			}
 			catch(Exception e){
-				log.info("sending failed");
+				log.info("sending failed: \n" + e.getMessage());
 			}
 		}
 
