@@ -680,6 +680,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             return RoomsFactory.getCurrentRoom().roomId == null;
         }
         $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
+        $scope.UserFactory = UserFactory;
         $scope.isRoomChangeModeEnabled = false;
         $scope.newRoomName = { 'value': '' };
 

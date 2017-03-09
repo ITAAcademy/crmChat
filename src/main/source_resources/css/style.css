@@ -1021,6 +1021,14 @@ body {
     content: 'attach_file';
 }
 
+.right_panel .tools_dropdown_container>#tools_dropdown .open_in_new_tab:before {
+    content: 'open_in_new';
+}
+.right_panel .tools_dropdown_container>#tools_dropdown .aspect_ratio:before {
+    content: 'aspect_ratio';
+}
+
+
 .right_panel .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
     content: 'volume_off';
 }
@@ -2071,6 +2079,15 @@ body.frame .ngdialog-overlay {
     margin: auto;
     max-width: 900px;
     margin-top: 42px;
+}
+
+.aspect_ratio,
+.open_in_new_tab{
+    display: none;
+}
+body.frame .aspect_ratio,
+body.frame .open_in_new_tab{
+    display: initial;
 }
 
 .files_input {

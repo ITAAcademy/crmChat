@@ -96,10 +96,13 @@
                 <div id="tools_dropdown" class="popup_dropdown">
                     <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.showAtachedFiles}">Показати додатки</a>
                     <a ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.hideAtachedFiles}">Показати всі повідомлення</a>
-                    <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">
-                            {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
                     <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()" th:text="${lgPack.msgBox.roomContextMenu.goOut}">Вийти з кімнати</a>
                     <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="askForClearHistory()">Видалити історію</a>
+                    <hr/>
+                    <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">
+                            {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
+                    <a ng-href="{{'#/dialog_view/' + getCurrentRoom().roomId}}"  target="_blank" class="dropdown_item open_in_new_tab">Відкрити в новій вкладці</a>
+                    <!--<a target="_blank" class="dropdown_item aspect_ratio">Зберігати стан</a>-->
                 </div>
             </div>
             <hr/>
