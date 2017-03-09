@@ -460,12 +460,12 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
 function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory) {
     return {
         restrict: 'EA',
-        scope:{
+        scope: {
 
         },
         templateUrl: 'static_templates/user_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = 'Користувач';//lgPack.blockNames.students;
+            scope.blockName = 'Користувач'; //lgPack.blockNames.students;
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
 
@@ -620,6 +620,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         }
                         if (UserFactory.isMessageSended()) return;
                         $scope.messageError();
+                        $scope.newMessage.value = message;
+                        $scope.files = attaches;
                         UserFactory.setMessageSended(true);
 
                     };
@@ -631,6 +633,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     }).
                     error(function(data, status, headers, config) {
                         $scope.messageError();
+                        $scope.newMessage.value = message;
+                        $scope.files = attaches;
                         UserFactory.setMessageSended(true);
                     });
                 };
@@ -936,7 +940,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
     $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
-//        room.nums = 0;
+        //        room.nums = 0;
         switch ($scope.mode) {
             case 1:
                 $scope.doGoToRoom(room.roomId);
