@@ -2,7 +2,9 @@
     <div class="user_write_message_notification">{{getWritingUsersInfo()}}</div>
 </div>
 <hr/>
+<div class="helper">для переведення курсору натисність Shift + Enter</div>
 <div  class="transparent_input message_input" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" content-editable="true" ng-keypress="keyPress($event)"></div>
+
 <div class="files_input">
     <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
     <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>

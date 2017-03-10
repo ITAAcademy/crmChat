@@ -1062,7 +1062,7 @@ body {
     font-size: 18px;
     padding-left: 17px;
     padding-bottom: 5px;
-    padding-top: 5px;
+    padding-top: 10px;
 }
 
 .search_input {
@@ -1283,6 +1283,21 @@ body {
     left: 0;
 }
 
+.messages_input_area .helper{
+    
+position: absolute;
+    
+right: 20px;
+    
+font-size: 10px;
+    
+opacity: 0.5;
+    
+user-select: none;
+    
+pointer-events: none;
+}
+
 .messages_input_area .message_input {
     width: calc(100% - 40px);
     margin-left: 19px;
@@ -1296,7 +1311,7 @@ body {
     content: attr(placeholder);
     position: absolute;
     left: 20px;
-    top: 7px;
+    top: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 100%;
