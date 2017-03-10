@@ -476,7 +476,7 @@ body {
 
 .items_list_block .block_item {
     padding-left: 10px;
-    padding-right: 0px;
+    padding-right: 10px;
     padding-top: 2.5px;
     padding-bottom: 2.5px;
     position: relative;
@@ -2542,7 +2542,8 @@ span.rooms_search_loader img {
     max-width: 250px;
     border-radius: 3px;
     opacity: 0;
-    transition: all 1s;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
 }
 
 .angular-tooltip.angular-tooltip-fade-in {

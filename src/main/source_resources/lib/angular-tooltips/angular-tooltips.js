@@ -9,21 +9,24 @@
                 (function(element) {
                     var element = element;
                     var tooltipElement;
+                    var cancel = null;
                     var createTooltip = function(event) {
                         if (attrs.title || attrs.tooltip) {
                             var direction = getDirection();
 
-                            // create the tooltip
-                            tooltipElement = angular.element('<div>')
-                                .addClass('angular-tooltip angular-tooltip-' + direction);
+                            if (tooltipElement == undefined) {
+                                // create the tooltip
+                                tooltipElement = angular.element('<div>')
+                                    .addClass('angular-tooltip angular-tooltip-' + direction);
 
-                            // append to the body
-                            angular.element(document).find('body').append(tooltipElement);
-
+                                // append to the body
+                                angular.element(document).find('body').append(tooltipElement);
+                            }
                             updateTooltip(attrs.title || attrs.tooltip);
 
                             // fade in
-                            tooltipElement.addClass('angular-tooltip-fade-in');
+                            cancel = setTimeout(function() { tooltipElement.addClass('angular-tooltip-fade-in') }, 300);
+
                         }
                     };
 
@@ -43,7 +46,8 @@
                     };
 
                     $scope.$watch(function() {
-                        return attrs.title || attrs.tooltip }, function(newTitle) {
+                        return attrs.title || attrs.tooltip
+                    }, function(newTitle) {
                         if (tooltipElement) {
                             updateTooltip(newTitle);
                         }
@@ -51,12 +55,18 @@
 
                     // removes all tooltips from the document to reduce ghosts
                     var removeTooltip = function() {
-                        var tooltip = angular.element(document.querySelectorAll('.angular-tooltip'));
-                        tooltip.removeClass('angular-tooltip-fade-in');
+                        /* var tooltip = angular.element(document.querySelectorAll('.angular-tooltip'));
+                         
 
-                        $timeout(function() {
-                            tooltip.remove();
-                        }, 300);
+                         $timeout(function() {
+                             tooltip.remove();
+                         }, 300);*/
+                        //tooltipElement.removeClass('angular-tooltip-fade-in');
+                        if(cancel != null)
+                            clearTimeout(cancel);
+                        tooltipElement.removeClass('angular-tooltip-fade-in');
+
+
                     };
 
                     // gets the current direction value
@@ -81,12 +91,12 @@
                                 };
                             case 'top-right':
                                 return {
-                                    left: elBounding.left - elBounding.width/2 + elBounding.width - arrow_padding + scrollLeft + 'px',
+                                    left: elBounding.left - elBounding.width / 2 + elBounding.width - arrow_padding + scrollLeft + 'px',
                                     top: elBounding.top - tooltipBounding.height - (arrow_padding / 2) + scrollTop + 'px',
                                 };
                             case 'right-top':
                                 return {
-                                    left: elBounding.left - elBounding.width/2 + elBounding.width + (arrow_padding / 2) + scrollLeft + 'px',
+                                    left: elBounding.left - elBounding.width / 2 + elBounding.width + (arrow_padding / 2) + scrollLeft + 'px',
                                     top: elBounding.top - tooltipBounding.height + arrow_padding + scrollTop + 'px',
                                 };
                             case 'right':
@@ -115,7 +125,7 @@
                                 };
                             case 'bottom-left':
                                 return {
-                                    left: elBounding.left + elBounding.width/2 - tooltipBounding.width + arrow_padding + scrollLeft + 'px',
+                                    left: elBounding.left + elBounding.width / 2 - tooltipBounding.width + arrow_padding + scrollLeft + 'px',
                                     top: elBounding.top + elBounding.height + (arrow_padding / 2) + scrollTop + 'px',
                                 };
                             case 'left-bottom':
@@ -137,7 +147,7 @@
                                 };
                             case 'top-left':
                                 return {
-                                    left: elBounding.left + elBounding.width/2 - tooltipBounding.width + arrow_padding + scrollLeft + 'px',
+                                    left: elBounding.left + elBounding.width / 2 - tooltipBounding.width + arrow_padding + scrollLeft + 'px',
                                     top: elBounding.top - tooltipBounding.height - (arrow_padding / 2) + scrollTop + 'px',
                                 };
                         }
@@ -145,12 +155,12 @@
 
                     if (attrs.title || attrs.tooltip) {
                         // attach events to show tooltip
-                        element.on('mouseover', createTooltip);
-                        element.on('mouseout', removeTooltip);
+                        element.on('mouseenter', createTooltip);
+                        element.on('mouseleave', removeTooltip);
                     } else {
                         // remove events
-                        element.off('mouseover', createTooltip);
-                        element.off('mouseout', removeTooltip);
+                        element.off('mouseenter', createTooltip);
+                        element.off('mouseleave', removeTooltip);
                     }
 
                     element.on('destroy', $scope.removeTooltip);

@@ -25,7 +25,7 @@
         <button modale-toggle="true" ignore-id="attaches_area" callback="help_dropdown_click()"><i class="material-icons">help_outline</i></button>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
-        <div tooltip="Відправлення повідомлення" title-direction="top-left" class="send_button" ng-click="sendMessageAndFiles()"><span th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>
+        <div class="send_button" ng-click="sendMessageAndFiles()"><span th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>
         <!--- class="newMessage.value.trim().length==0"-->
     </div>
 </div>
