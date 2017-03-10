@@ -54,11 +54,11 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
             stompClient.send(destination, headers, object);
         }
     }
-
+/*
     $(window).on("beforeunload", function(event) {
         event.preventDefault();
         wrappedSocket.disconnect()
-    })
+    })*/
 
     return wrappedSocket;
 
