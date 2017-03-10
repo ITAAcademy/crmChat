@@ -392,7 +392,7 @@ public class ChatController {
 		return messageToSave;
 	}
 
-	public synchronized void addMessageToBuffer(Long roomId, UserMessage message)
+	public synchronized void addMessageToBuffer(Long roomId, UserMessage message, ChatMessage cMessage)
 	{
 		synchronized (messagesBuffer)
 		{
@@ -403,11 +403,10 @@ public class ChatController {
 				messagesBuffer.put(roomId.toString(), list);
 			}
 			list.add(message);
-			log.info("ADD: " + list.size());
 		}
 
 		HashMap payload = new HashMap();
-		payload.put(roomId,message.getBody());
+		payload.put(roomId, cMessage);
 		Room chatRoom = chatRoomsService.getRoom(roomId);
 		//send message to WS users
 		for (ChatUser user : chatRoom.getUsers()){
@@ -454,7 +453,7 @@ public class ChatController {
 			if (tenantIsWaitedByCurrentUser!=null){
 				addUserRequiredTrainer(roomId,tenantIsWaitedByCurrentUser,user,message.getMessage()); 
 			}
-			addMessageToBuffer(roomId, messageToSave);
+			addMessageToBuffer(roomId, messageToSave, message);
 
 			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 			return message;
@@ -475,7 +474,7 @@ public class ChatController {
 			if (trainerIsWaitedByCurrentUser!=null){
 				addUserRequiredTrainer(roomId,trainerIsWaitedByCurrentUser,chatUser,message.getMessage()); 
 			}
-			addMessageToBuffer(roomId, messageToSave);
+			addMessageToBuffer(roomId, messageToSave, message);
 			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);
 		}
 	}
@@ -483,7 +482,7 @@ public class ChatController {
 	public void filterMessageBot( Long room,ChatMessage message, UserMessage to_save) {
 		if (to_save != null)
 		{
-			addMessageToBuffer(room, to_save);
+			addMessageToBuffer(room, to_save, message);
 			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
 		}
 	}

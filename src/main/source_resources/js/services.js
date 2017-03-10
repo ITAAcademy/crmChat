@@ -164,9 +164,8 @@ function rescrollToRoom(roomId) {
 if (Notification.permission !== "granted")
     Notification.requestPermission();
 
-
 function Notify(msg, title) {
-    if(title == undefined)
+    if (title == undefined)
         title = '';
     if (Notification.permission === "granted") {
         var notification = new Notification(title, {
@@ -175,8 +174,11 @@ function Notify(msg, title) {
         });
 
         notification.onclick = function() {
-
+            notification.close();
         };
-
+        setTimeout(function() {
+            notification
+                .close()
+        }, 6000);
     }
 }
