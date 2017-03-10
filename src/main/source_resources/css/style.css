@@ -1194,8 +1194,24 @@ body {
     margin-top: 39px
 }
 
-.user_message>* {
+.user_message > * {
     vertical-align: top
+}
+
+.user_message .message_state {
+    display: none;
+    /* display: inline-block; */
+    color: #929292;
+    font-size: 14px;
+    float: right;
+}
+
+.user_message.left .message_state {
+    float: right;
+}
+
+.user_message:last-child .message_state {
+    display: inline-block;
 }
 
 .user_message .message_author_avatar {
@@ -1230,7 +1246,11 @@ body {
 
 .user_message .message_details .top_details {
     margin-bottom: 12px;
-    max-width: calc(100% - 40px);
+    /* max-width: calc(100% - 40px); */
+}
+
+.user_message.left .message_details .top_details {
+    margin-bottom: 12px;
 }
 
 .user_message .message_details .messag_author_name {
@@ -1271,11 +1291,17 @@ body {
     min-height: 65px;
     position: relative;
 }
-.messages_input_area .message_input:empty:after{
+
+.messages_input_area .message_input:empty:after {
     content: attr(placeholder);
     position: absolute;
-    left: 35px;
+    left: 20px;
     top: 7px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    overflow: hidden;
+    max-width: calc(100% - 30px);
 }
 
 .messages_input_area .message_input[contenteditable] {
@@ -1615,7 +1641,6 @@ body {
     text-align: right;
     text-overflow: ellipsis;
     overflow: hidden;
-    margin-left: 45px;
 }
 
 .messages_output_area .answer.right .message_details .bottom_details {
@@ -1991,19 +2016,21 @@ body {
         margin-right: -6px;
     }
     .messages_output_area .answer.left .message_details .top_details {
-        text-align: right;
+        text-align: left;
+        margin-left: 50px;
     }
     .messages_output_area .answer.right .message_details .top_details {
-        text-align: left;
+        text-align: right;
+        margin-right: 45px;
     }
     .messages_output_area .answer.right .message_author_avatar {
         position: absolute;
-        left: 25px;
+        right: 20px;
         top: 10px;
     }
     .messages_output_area .answer.left .message_author_avatar {
         position: absolute;
-        right: 20px;
+        left: 25px;
     }
     .messages_output_area .answer.left .message_details:before,
     .messages_output_area .answer.right .message_details:before {
@@ -2292,20 +2319,51 @@ svg {
 }
 
 .user_write_message_notification_wrapper {
-    height: 45px;
+    /* height: 40px; */
     clear: both;
     text-align: center;
     overflow: hidden;
-    max-height: 45px;
-    white-space: nowrap;
+    /* max-height: 45px; */
+    /* white-space: nowrap; */
+    display: inline-block;
+    width: 100%;
 }
 
 .user_write_message_notification {
     color: grey;
-    /* padding: 10px; */
+    padding: 10px;
     /*background: #eeeeee;*/
     text-align: center;
     vertical-align: middle;
+    display: inline-block;
+    position: relative;
+}
+
+.user_write_message_notification:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+  animation: ellipsis steps(10,end) 1000ms infinite;
+  content: "..."; /* ascii code for the ellipsis character */
+  width: 0px;
+  position: absolute;
+  /* left: calc(100% - 8px); */
+  font-size: 25px;
+  bottom: 9px;
+  text-align: left;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;    
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.25em;    
+  }
 }
 
 .user_write_message_notification i {

@@ -546,13 +546,14 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$http', 'RoomsFactory', messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$http', 'RoomsFactory', 'UserFactory', messagesBlock]);
 
-function messagesBlock($http, RoomsFactory) {
+function messagesBlock($http, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
         link: function($scope, element, attributes) {
+            $scope.UserFactory = UserFactory;
             $scope.messages = RoomsFactory.getMessages;
             var nice = $(".scroll");
         }
@@ -586,9 +587,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     var participant = participants[i];
                     if (participant.typing) writingUsersNames.push(participant.username || participant.nickName);
                 }
-                //var notificationTemplate = writingUsersNames.length == 1 ? "{0} набирає повідомлення..." : "Користувачі {0}..."
-                // return notificationTemplate.format(writingUsersNames.join(","));
-                return writingUsersNames.join(",");
+                var notificationTemplate = writingUsersNames.length == 1 ? "{0} набирає" : "{0} набирають"
+                 return notificationTemplate.format(writingUsersNames.join(","));
+               // return writingUsersNames.join(",");
             }
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
