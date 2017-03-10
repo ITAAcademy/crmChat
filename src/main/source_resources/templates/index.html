@@ -72,7 +72,7 @@
         <div class="right_panel">
             <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
             <div ng-if="!currentRoomIsNull()" class="tools_area">
-                <button class="material_button" ng-click="enableMessagesSearch($event)" ng-if="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
+                <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-if="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
                 <button class="material_button" ng-click="disableMessagesSearch(true)" ng-if="!isRoomChangeModeEnabled &amp;&amp; messageSearchEnabled"><i class="material-icons">cancel</i></button>
                 <button class="material_button" ng-click="toggleRoomNameChangeMode()" ng-if="isRoomChangeModeEnabled"><i class="material-icons">done</i></button>
                 <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="material_button">
@@ -80,7 +80,7 @@
                 </button>
                 <div class="room_info">
                     <div class="room_name">{{getCurrentRoom().string}}
-                    <i ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
+                    <i  tooltip="Перейменувати розмову" title-direction="right" ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
                     </div>
                 </div>
                 <div class="search_box" ng-if="messageSearchEnabled">
@@ -137,6 +137,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.min.js"></script>
     <script src="lib/angularjs-toaster/toaster.js"></script>
+    <script src="lib/angular-tooltips/angular-tooltips.js"></script>
+    
     <script src="lib/angular-sanitize/angular-sanitize.js"></script>
     <script src="lib/ngDialog.min.js"></script>
     <script th:src="'lib/angular/i18n/angular-locale_'+ ${config.get('currentLang')}+'.js'"></script>

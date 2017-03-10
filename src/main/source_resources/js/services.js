@@ -150,9 +150,14 @@ springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '
 function rescrollToRoom(roomId) {
     setTimeout(function() {
         var elmnt = document.getElementById("room__" + roomId + "__");
+        if(elmnt == null)
+        {
+            rescrollToRoom(roomId);
+            return;
+        }
         var qElm = $(elmnt);
         var elTop = $(elmnt).offset().top - $('#rooms-block #items_list_block').offset().top;
         if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
             elmnt.scrollIntoView();
-    }, 0);
+    }, 10);
 }
