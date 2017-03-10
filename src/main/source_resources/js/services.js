@@ -104,7 +104,6 @@ springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '
     };
 
     function performeResponse(data) {
-        debugger;
         if (parseInt(data) != NaN) {
             if (data == -1)
                 ngDialog.open({
