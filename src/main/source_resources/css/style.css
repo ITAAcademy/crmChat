@@ -1269,6 +1269,13 @@ body {
     font-size: 15px;
     color: #949494;
     min-height: 65px;
+    position: relative;
+}
+.messages_input_area .message_input:empty:after{
+    content: attr(placeholder);
+    position: absolute;
+    left: 35px;
+    top: 7px;
 }
 
 .messages_input_area .message_input[contenteditable] {

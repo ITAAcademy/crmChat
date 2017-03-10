@@ -38,12 +38,12 @@ angular.module('angular-content-editable')
 
         // add editable class
         attrs.$addClass(options.editableClass);
-        elem.html(scope.placeholder);
+        //elem.html(scope.placeholder);
         // render always with model value
         ngModel.$render = function() {
-            if (ngModel.$modelValue == '')
+           /* if (ngModel.$modelValue == '')
                 elem.html(scope.placeholder);
-            else
+            else*/
                 elem.html(ngModel.$modelValue || '');
         }
 
@@ -59,8 +59,8 @@ angular.module('angular-content-editable')
         function onFocus(e) {
             // turn on the flag
             noEscape = true;
-            if (elem.html() == scope.placeholder)
-                elem.html('');
+           /* if (elem.html() == scope.placeholder)
+                elem.html('');*/
             // select all on focus
             if (options.focusSelect) {
                 var range = $window.document.createRange();
@@ -95,8 +95,8 @@ angular.module('angular-content-editable')
                 // get element content replacing html tag
                 html = elem.html().replace(/&nbsp;/g, ' ');
             }
-            if (elem.html() == '')
-                elem.html(scope.placeholder);
+           /* if (elem.html() == '')
+                elem.html(scope.placeholder);*/
             // if element value is
             // different from model value
             if (html != ngModel.$modelValue) {

@@ -415,7 +415,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
             //  $rootScope.showToasterWaitFreeTenant();
         }
-
+        rescrollToRoom($routeParams.roomId);
     }
     var confirmToHelp = function(roomId) {
         $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
