@@ -263,8 +263,8 @@ body {
     /* margin-right: -5px; */
     -webkit-transition: 1s ease-out;
     transition: 1s ease-out;
-    -webkit-transition-property: all;
-    transition-property: all;
+    -webkit-transition-property: max-height, min-height;
+    transition-property: max-height, min-height;
     overflow-y: scroll;
 }
 
@@ -281,6 +281,7 @@ body {
     padding: 10px;
     background-origin: content-box;
     opacity: 0.3;
+    transition-property: all;
 }
 
 .items_list_block .block_content.unfolded {
@@ -290,6 +291,7 @@ body {
     margin-right: 0px;
 }
 
+#user-block.items_list_block .block_content,
 #trainers-block.items_list_block .block_content {
     min-height: 65px;
     max-height: 65px;
@@ -1024,10 +1026,10 @@ body {
 .right_panel .tools_dropdown_container>#tools_dropdown .open_in_new_tab:before {
     content: 'open_in_new';
 }
+
 .right_panel .tools_dropdown_container>#tools_dropdown .aspect_ratio:before {
     content: 'aspect_ratio';
 }
-
 
 .right_panel .tools_dropdown_container>#tools_dropdown .sound_off_item:before {
     content: 'volume_off';
@@ -2082,11 +2084,12 @@ body.frame .ngdialog-overlay {
 }
 
 .aspect_ratio,
-.open_in_new_tab{
+.open_in_new_tab {
     display: none;
 }
+
 body.frame .aspect_ratio,
-body.frame .open_in_new_tab{
+body.frame .open_in_new_tab {
     display: initial;
 }
 
@@ -2267,6 +2270,7 @@ svg {
     background-color: #3c8cdb;
 }
 
+#user-block.items_list_block .block_content.collapsed,
 #trainers-block.items_list_block .block_content.collapsed,
 .items_list_block .block_content.collapsed {
     max-height: 0px;

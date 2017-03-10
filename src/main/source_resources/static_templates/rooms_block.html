@@ -11,7 +11,7 @@
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
     <!--IF (searchDisabled) Rooms Models list used in search -->
-    <div ng-if="!searchEnabled || tabState == 'LastContacts'" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : tabState) | orderBy:sortBy))" ng-include="'static_templates/section_rooms_block_item.html'">
+    <div ng-if="!searchEnabled || tabState == 'LastContacts'" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : tabState) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'">
       
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->

@@ -97,18 +97,20 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     function goToRoomEvn(id) {
-        if (currentRoom != undefined) {
-            updateNewMsgNumber(-currentRoom.nums);
-            currentRoom.nums = 0;
-            //push up previesly room
-            //currentRoom.date = curentDateInJavaFromat();
-        }
+        /* if (currentRoom != undefined) {
+             updateNewMsgNumber(-currentRoom.nums);
+             currentRoom.nums = 0;
+             //push up previesly room
+             //currentRoom.date = curentDateInJavaFromat();
+         }*/
         currentRoom = { roomId: id };
         changeRoom();
         var deferred = $q.defer();
         var room = getRoomById(rooms, id);
         if (room != undefined) {
             currentRoom = room;
+            updateNewMsgNumber(-currentRoom.nums);
+            currentRoom.nums = 0;
         } else {
             deferred.reject();
             return deferred.promise;
