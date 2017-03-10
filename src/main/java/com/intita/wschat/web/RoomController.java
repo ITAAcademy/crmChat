@@ -310,7 +310,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("onlineUsersIdsJson", activeUsersJson);
-		result.put("chat_id", activeChatUser.toString());
+		result.put("chat_id", activeChatUser.getId().toString());
 		result.put("chat_user_nickname", activeChatUser.getNickName());
 
 		Integer role = 0;

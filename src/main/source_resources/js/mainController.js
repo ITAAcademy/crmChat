@@ -7,6 +7,17 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
                 if (!ChannelFactory.getIsInited()) return;
                 RoomsFactory.goToRoom($route.current.params.roomId);
                 $rootScope.$broadcast('dialog_view_route');
+                /*$('#rooms-block #items_list_block').animate({
+                    scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
+                }, 2000);*/
+                setTimeout(function() {
+                    var elmnt = document.getElementById("room__" + $route.current.params.roomId + "__");
+                    var qElm = $(elmnt);
+                    var elTop = $(elmnt).offset().top - $('#rooms-block #items_list_block').offset().top;
+                    if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
+                        elmnt.scrollIntoView();
+                }, 1000);
+
             }]
         }
     });

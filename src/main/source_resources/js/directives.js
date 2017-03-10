@@ -983,9 +983,19 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
 
     $scope.myValueFunction = function(room) {
-        if(room.lastMessageDate == null)
-            return 99999999999999;
-        return room.lastMessageDate*-1;
+        if ($scope.tabState == "Contacts") {
+            return room.string;
+        } else {
+            if (room.nums != 0)
+                return -Number.MAX_VALUE + room.nums;
+
+            if (room.lastMessageDate == null)
+                return 99999999999999;
+            return room.lastMessageDate * -1;
+
+            //return new Date(room.date).getTime() * -1;
+        }
+
     };
 
     var userListForAddedToNewRoom = [];
@@ -1073,12 +1083,10 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
             return;*/
 
         $scope.tabState = "LastContacts";
-        $scope.sortBy = ['myValueFunction'];
         $scope.displayLetters = false;
     }
     $scope.showContacts = function() {
         $scope.tabState = "Contacts";
-        $scope.sortBy = ['string'];
         $scope.displayLetters = true;
     }
 
