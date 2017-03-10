@@ -243,16 +243,15 @@ public class RoomController {
 	// auth
 	{
 		Map<String, String> result = new HashMap<>();
-		ChatUser demandedChatUser = chatUserServise.getChatUser(demandedChatUserId);
 		// if (demandedChatUserId != null && demandedChatUser==null) return
 		// null;//return null if demanded user is not excist
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
 		User realIntitaUser = realChatUser.getIntitaUser();
-		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : demandedChatUser;
+		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
-		if (activeChatUser == null || Long.compare(realChatUserId, demandedChatUserId) != 0) {
+		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
 			// ChatUser user_real =
 			// chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 			if (realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
@@ -311,8 +310,8 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		result.put("onlineUsersIdsJson", activeUsersJson);
-		result.put("chat_id", demandedChatUserId.toString());
-		result.put("chat_user_nickname", demandedChatUser.getNickName());
+		result.put("chat_id", activeChatUser.toString());
+		result.put("chat_user_nickname", activeChatUser.getNickName());
 
 		Integer role = 0;
 		if (activeIntitaUser != null) {
@@ -385,6 +384,8 @@ public class RoomController {
 	@ResponseBody
 	public String retrieveParticipantsLP(Principal principal, @PathVariable("userId") Long userId)
 			throws JsonProcessingException {
+		if(userId == -1)
+			userId = null;
 		return mapper.writeValueAsString(login(principal, userId));
 	}
 

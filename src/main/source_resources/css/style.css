@@ -155,6 +155,10 @@ body {
     position: relative;
 }
 
+.right_panel #toast-container{
+    position: absolute;
+}
+
 #menu {
     position: absolute;
     top: 1px;
@@ -281,6 +285,7 @@ body {
     padding: 10px;
     background-origin: content-box;
     opacity: 0.3;
+    -webkit-transition-property: all;
     transition-property: all;
 }
 

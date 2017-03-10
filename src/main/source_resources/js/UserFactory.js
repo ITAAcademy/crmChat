@@ -98,6 +98,8 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             });
         }
         var onConnect = function(frame) {
+            if (frame.headers['user-name'] == undefined)
+                location.reload();
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
@@ -107,7 +109,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             if (socketSupport) {
                 onConnect(frame);
             } else {
-                $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
+                $http.post(serverPrefix + "/chat/login/-1", { message: 'true' }).
                 success(function(data, status, headers, config) {
                     var RoomsFactory = $injector.get('RoomsFactory');
                     login(data);
@@ -540,14 +542,14 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         isTenant: function() {
             return isTenant;
         },
-        isTrainer: function(){
+        isTrainer: function() {
             return isTrainer;
         },
-        getUser: function(){
+        getUser: function() {
             return {
-                'id':chatUserId,
-                'nickName':chatUserNickname,
-                'avatar':chatUserAvatar
+                'id': chatUserId,
+                'nickName': chatUserNickname,
+                'avatar': chatUserAvatar
 
             }
         }

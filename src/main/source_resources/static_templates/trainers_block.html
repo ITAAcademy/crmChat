@@ -1,5 +1,5 @@
 <div id="trainers-block" ng-if="students().length > 0" class="items_list_block top_block">
-    <div class="block_head">
+    <div class="block_head" ng-click="toggleFolded()">
         <div class="block_controll hide"></div>
         <div ng-if="students().length > 1" class="dropdown_icon material-icons">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>

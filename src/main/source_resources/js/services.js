@@ -6,59 +6,63 @@ var springChatServices = angular.module('springChat.services', []);
 springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
     var stompClient;
     var reconnect = 0;
+    var lastUrl = "";
+    var lastConnectFunc = null;
 
     var wrappedSocket = {
 
-        init: function(url) {
-            var cock = new SockJS(url, null, {
-                'transports': ['websocket', 'xdr-streaming', 'xhr-streaming',
-                    'iframe-eventsource', 'iframe-htmlfile',
-                    'xdr-polling', 'xhr-polling', 'iframe-xhr-polling',
-                    'jsonp-polling'
-                ]
-            });
+            init: function(url) {
+                lastUrl = url;
+                var cock = new SockJS(url, null, {
+                    'transports': ['websocket', 'xdr-streaming', 'xhr-streaming',
+                        'iframe-eventsource', 'iframe-htmlfile',
+                        'xdr-polling', 'xhr-polling', 'iframe-xhr-polling',
+                        'jsonp-polling'
+                    ]
+                });
 
-            stompClient = Stomp.over(cock);
-
-            cock.onclose = function(e) {
-                if (reconnect++ < 5) {
-                    this.init();
+                stompClient = Stomp.over(cock);
+                stompClient.debug = null
+            },
+            disconnect: function() {
+                stompClient.disconnect();
+            },
+            connect: function(successCallback, errorCallback) {
+                lastConnectFunc = function() {
+                    stompClient.connect({}, function(frame) {
+                        $rootScope.$apply(function() {
+                            successCallback(frame);
+                        });
+                    }, function(error) {
+                        $rootScope.$apply(function() {
+                            errorCallback(error);
+                          /*  if(error.indexOf("Lost connection") != -1)
+                            if (reconnect++ < 5) {
+                                wrappedSocket.init(lastUrl);
+                                lastConnectFunc();
+                            }*/
+                        });
+                    });
                 }
-            };
-            //stompClient.debug = null
-        },
-        disconnect: function() {
-            stompClient.disconnect();
-        },
-        connect: function(successCallback, errorCallback) {
-
-            stompClient.connect({}, function(frame) {
-                $rootScope.$apply(function() {
-                    successCallback(frame);
+                lastConnectFunc();
+            },
+            subscribe: function(destination, callback) {
+                var res = stompClient.subscribe(destination, function(message) {
+                    $rootScope.$apply(function() {
+                        callback(message);
+                    });
                 });
-            }, function(error) {
-                $rootScope.$apply(function() {
-                    errorCallback(error);
-                });
-            });
-        },
-        subscribe: function(destination, callback) {
-            var res = stompClient.subscribe(destination, function(message) {
-                $rootScope.$apply(function() {
-                    callback(message);
-                });
-            });
-            return res;
-        },
-        send: function(destination, headers, object) {
-            stompClient.send(destination, headers, object);
+                return res;
+            },
+            send: function(destination, headers, object) {
+                stompClient.send(destination, headers, object);
+            }
         }
-    }
-/*
-    $(window).on("beforeunload", function(event) {
-        event.preventDefault();
-        wrappedSocket.disconnect()
-    })*/
+        /*
+            $(window).on("beforeunload", function(event) {
+                event.preventDefault();
+                wrappedSocket.disconnect()
+            })*/
 
     return wrappedSocket;
 

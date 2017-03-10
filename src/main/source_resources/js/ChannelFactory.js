@@ -14,7 +14,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
         if (initialized && isInitedCallback!=null ) isInitedCallback();
 
     }
-    return {
+    var me = {
         isSocketSupport: function() {
             return socketSupport;
         },
@@ -26,7 +26,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                });*/
         },
         subscribeToConnect: function(callBack){
-            if (isInited == false) {
+            //if (isInited == false) {
                 var onConnect = function(frame) {
                     callBack(socketSupport, frame)
                 };
@@ -39,15 +39,23 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                         socketSupport = false;
                         callBack(socketSupport, {})
                     }
+                    else
+                    {
+                        toaster.pop('warning', 'Error', 'Conection lost. Try reconect', 99999); 
+                        setTimeout(function() {me.subscribeToConnect(callBack);}, 1000);   
+                        
+                    }
+                    
                 });
-            } else {
-                toaster.pop('error', 'Error', 'Websocket not supportet or server not exist' + error, 99999);
-                changeLocation("/");
-            }
+            /*} else {
+                toaster.pop('error', 'Error', 'Websocket not supportet or server not exist', 99999);
+           //     changeLocation("/");
+            }*/
         },
         getIsInited : getIsInited,
         setIsInited : setIsInited,
         setIsInitedCallback : setIsInitedCallback
     };
+    return me;
 
 }]);
