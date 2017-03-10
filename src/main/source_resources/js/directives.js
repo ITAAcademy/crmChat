@@ -611,7 +611,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 if (attaches == null)
                     attaches = [];
 
-                var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar() };
+                var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar(), chatUserId: UserFactory.getChatUserId };
                 if (ChannelFactory.isSocketSupport() == true) {
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {

@@ -545,6 +545,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         if ($scope.soundEnable)
                             new Audio('data/new_mess.mp3').play();
                         toaster.pop('note', "NewMessage in " + room.string, "", 2000);
+                        Notify(messagesMap[room.roomId], "Повідомлення від " + room.string);
                         break; // stop loop
                     }
                 }

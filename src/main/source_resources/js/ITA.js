@@ -15,14 +15,12 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
                 $scope.$apply(function() {
                     busy = true;
                 });
-                console.log('dragstart', arguments);
                 var res_elem = jQuery('.draggable');
                 res_elem.addClass("disable-animation");
                 jQuery("iframe").addClass("disable-mouse");
             };
 
             $scope.dragend = function() {
-                console.log('dragend', arguments);
                 if (!arguments[0]) this.dropped = false;
                 var res_elem = jQuery('.draggable');
                 res_elem.removeClass("disable-animation");
@@ -89,7 +87,7 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
                         y = elem.height();
                     }*/
                     var offset = res_elem.position();
-                    console.log(elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0);
+//                    console.log(elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0);
                     if (elem.height() < parseInt(y) + res_elem.height() || parseInt(y) < 0 || elem.width() < parseInt(x) + res_elem.width() || parseInt(x) < 0) {
                         if (elem.height() < parseInt(y) + res_elem.height()) {
                             res_elem.css({ top: 'initial', bottom: "0px" });
@@ -170,7 +168,6 @@ var chatIntITAMessenger = angular.module('chatIntITAMessenger', []).directive('i
 (function() {
     var attachEvent = document.attachEvent;
     var isIE = navigator.userAgent.match(/Trident/);
-    console.log(isIE);
     var requestFrame = (function() {
         var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
             function(fn) {

@@ -656,10 +656,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
     var newMsgNumber = 0;
     var updateNewMsgNumber = function(diff) {
-        if (diff != undefined) {
+        if (diff != undefined && !isNaN(diff) ) {
             newMsgNumber += diff;
             return;
         }
+        debugger;
         newMsgNumber = 0;
         for (var i = 0; i < rooms.length; i++) {
             newMsgNumber += rooms[i].nums;
