@@ -76,7 +76,7 @@ gulp.task('html-dev', ['inject', 'partials'], function() {
         .pipe(gulp.dest(conf.paths.devDist));
 });
 
-gulp.task('html-copy', ['inject', 'partials'], function() {
+gulp.task('html-copy', ['partials'], function() {
     return gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'))
         .pipe($.inject(partialsInjectFile, partialsInjectOptions))
         .pipe(gulp.dest(conf.paths.devDist));
@@ -130,7 +130,7 @@ gulp.task('watch-dev', [], function() {
     });
 
     gulp.watch(path.join(conf.paths.src, '/app/**/*.html'), function(event) {
-        gulp.run('html-dev', 'html-copy');
+        gulp.run('html-copy');
     });
 });
 

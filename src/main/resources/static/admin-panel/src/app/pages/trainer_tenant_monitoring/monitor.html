@@ -1,0 +1,89 @@
+<div class="ng-cloak monitor-head" ba-panel ba-panel-title="Filter" ba-panel-class=" ">
+    <div class="row datepicker">
+        <div class="col-md-3">
+            <div class="form-group ">
+                <ui-select ng-model="selected.tenant" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select tenant/trainer">
+                        {{selected.tenant.nickName}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="withSearchItem in getTrainersAndTenants($select.search) | filter:  $select.search">
+                        <span ng-bind-html="withSearchItem.nickName"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group ">
+                <ui-select ng-model="selected.student" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select student">
+                        {{selected.student.nickName}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="withSearchItem in getStudents($select.search) | filter: $select.search">
+                        <span ng-bind-html="withSearchItem.nickName"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+        <button style="float: right;margin-right: 15px;" ng-click="getPrivate()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+    </div>
+</div>
+</div>
+<div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
+    <uib-tabset class="tabs-right">
+        <uib-tab heading="List">
+            <div class="feed-messages-container" track-width="smallContainerWidth" min-width="360">
+                <div class="feed-message" ng-repeat="message in messages" ng-click="expandMessage(message)">
+                    <div class="message-icon">
+                        <img class="photo-icon" ng-src="{{::( message.chatUserAvatar | profilePicture )}}">
+                    </div>
+                    <div class="text-block text-message">
+                        <div class="message-header">
+                            <span class="author">{{ ::message.username}}</span>
+                        </div>
+                        <div class="message-content line-clamp" ng-class="{'line-clamp-2' : !message.expanded}">
+                            <span ng-if="message.preview">{{message.message}} </span>{{::message.message}}
+                        </div>
+                        <div ng-show="message.expanded" class="message-time">
+                            <div class="post-time">
+                                {{::message.date}}
+                            </div>
+                            <div class="ago-time">
+                                {{::message.date}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="Global">
+            <p>
+                You can't connect the dots looking forward; you can only connect them looking backwards. So you have to trust that the dots will somehow connect in your future. You have to trust in something--your gut, destiny, life, karma, whatever. This approach has never let me down, and it has made all the difference in my life.
+            </p>
+            <p>
+                The reason most people never reach their goals is that they don't define them, or ever seriously consider them as believable or achievable. Winners can tell you where they are going, what they plan to do along the way, and who will be sharing the adventure with them.
+            </p>
+        </uib-tab>
+        <uib-tab heading="Achieve">
+            <p>
+                Success is ... knowing your purpose in life, growing to reach your maximum potential, and sowing seeds that benefit others.
+            </p>
+            <p>Failure is the condiment that gives success its flavor.</p>
+        </uib-tab>
+    </uib-tabset>
+</div>

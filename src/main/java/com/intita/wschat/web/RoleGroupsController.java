@@ -92,7 +92,7 @@ public class RoleGroupsController {
 		roomsService.replaceUsersInRoom(room, cUsersList);
 	}
 
-	@PostConstruct
+	//@PostConstruct
 	private void updateRoomsForAllRoles(){
 		for(User.Roles role : User.Roles.values())
 		{

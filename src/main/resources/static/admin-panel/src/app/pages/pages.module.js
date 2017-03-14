@@ -8,7 +8,9 @@
   angular.module('BlurAdmin.pages', [
     'ui.router',
 
-    'BlurAdmin.pages.dashboard'
+    'BlurAdmin.pages.dashboard',
+    'BlurAdmin.pages.form',
+    'BlurAdmin.pages.trainer_tenant_monitoring'
   ])
       .config(routeConfig);
 

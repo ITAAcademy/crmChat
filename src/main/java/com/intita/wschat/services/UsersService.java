@@ -100,6 +100,13 @@ public class UsersService {
 	public List<User> getUsersFist5(String login){
 		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%");
 	}
+	
+	@Transactional
+	public List<User> getUsersFist5WithRole(String info, User.Roles role){
+		ArrayList<Long> list =  getAllByRole(role);
+		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list);
+	}
+	
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
 		List<User> users = getUsersFist5(login);
@@ -305,7 +312,6 @@ public class UsersService {
 			Long userId = Long.parseLong(queryObject.toString());
 			resultArray.add(userId);
 		}
-		System.out.println("gdfgdfg^" + resultArray.size());
 		return resultArray;
 	}
 

@@ -1,91 +1,47 @@
-package com.intita.wschat.web;
+package com.intita.wschat.admin;
 
+import java.io.Serializable;
 import java.security.Principal;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Semaphore;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.hibernate.Session;
+import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpRequest;
-import org.springframework.messaging.MessageDeliveryException;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
-import com.intita.wschat.domain.UserWaitingForTrainer;
-import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
-import com.intita.wschat.exception.ChatUserNotFoundException;
-import com.intita.wschat.exception.ChatUserNotInRoomException;
-import com.intita.wschat.exception.RoomNotFoundException;
-import com.intita.wschat.exception.TooMuchProfanityException;
-import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.ConfigParam;
-import com.intita.wschat.models.ConsultationRatings;
-import com.intita.wschat.models.Course;
-import com.intita.wschat.models.IntitaConsultation;
-import com.intita.wschat.models.Lectures;
-import com.intita.wschat.models.OperationStatus;
-import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -103,11 +59,9 @@ import com.intita.wschat.services.LecturesService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.util.ProfanityChecker;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
-
-import jsonview.Views;
+import com.intita.wschat.web.CommonController;
+import com.intita.wschat.web.RoomController;
 
 /**
  * Controller that handles WebSocket chat messages
@@ -119,7 +73,7 @@ import jsonview.Views;
 public class AdminPanelController {
 
 	private final static Logger log = LoggerFactory.getLogger(AdminPanelController.class);
-	
+
 	@Autowired ConfigParamService configParamService;
 	@Autowired private ProfanityChecker profanityFilter;
 	@Autowired private SessionProfanity profanity;
@@ -145,6 +99,9 @@ public class AdminPanelController {
 	@Autowired private FlywayMigrationStrategyCustom flyWayStategy;
 	@Autowired private IntitaMailService mailService;
 	@Autowired private CommonController commonController;
+	@Autowired private RoomController roomController;
+	
+	
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
@@ -161,4 +118,108 @@ public class AdminPanelController {
 		return "../static/admin-panel/dev-release/index";
 	}
 
+
+	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		List<User> users= new ArrayList<>();
+		User iUser = user.getIntitaUser();
+
+		if(iUser != null)
+		{
+			Long intitaUserId = user.getIntitaUser().getId();
+			for(User.Roles role : User.Roles.values())
+			{
+				if((role.getValue() & roles) == role.getValue())
+					users.addAll(userService.getUsersFist5WithRole(info, role));	
+			}
+
+		}
+		else return new  HashSet<LoginEvent>();
+
+		Set<LoginEvent> userList = new HashSet<>();
+		for(User u : users)
+		{
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
+			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
+		}
+		return  userList;
+
+	}
+
+
+	@RequestMapping(value = "/chat/msgHistory", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<ChatMessage> getMsgHistory(Principal principal, @RequestBody MsgRequestModel rqModel) {
+		ChatUser first = chatUsersService.getChatUser(rqModel.getUserIdFirst().longValue());
+		ChatUser second = chatUsersService.getChatUser(rqModel.getUserIdSecond().longValue());
+		
+		Date beforeDate = new Date(rqModel.getBeforeDate());
+		Date afterDate = new Date(rqModel.getAfterDate());
+		
+		Room privateRoom = roomController.getPrivateRoom(first, second);
+		if(first == null || second == null || beforeDate == null || afterDate == null || privateRoom == null)
+			throw new NullArgumentException("");
+		
+		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30);
+		ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
+		return chatMessages;
+	}
+
+	public static class MsgRequestModel implements Serializable
+	{
+
+	@JsonProperty("user_id_first")
+	private Long userIdFirst;
+	@JsonProperty("user_id_second")
+	private Long userIdSecond;
+	@JsonProperty("before_date")
+	private Long beforeDate;
+	@JsonProperty("after_date")
+	private Long afterDate;
+	private final static long serialVersionUID = -4461936499118564786L;
+
+	@JsonProperty("user_id_first")
+	public Long getUserIdFirst() {
+	return userIdFirst;
+	}
+
+	@JsonProperty("user_id_first")
+	public void setUserIdFirst(Long userIdFirst) {
+	this.userIdFirst = userIdFirst;
+	}
+
+
+	@JsonProperty("user_id_second")
+	public Long getUserIdSecond() {
+	return userIdSecond;
+	}
+
+	@JsonProperty("user_id_second")
+	public void setUserIdSecond(Long userIdSecond) {
+	this.userIdSecond = userIdSecond;
+	}
+
+	@JsonProperty("before_date")
+	public Long getBeforeDate() {
+	return beforeDate;
+	}
+
+	@JsonProperty("before_date")
+	public void setBeforeDate(Long beforeDate) {
+	this.beforeDate = beforeDate;
+	}
+
+	@JsonProperty("after_date")
+	public Long getAfterDate() {
+	return afterDate;
+	}
+
+	@JsonProperty("after_date")
+	public void setAfterDate(Long afterDate) {
+	this.afterDate = afterDate;
+	}
+	}
+	
 }

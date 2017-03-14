@@ -236,11 +236,11 @@ public class UserMessageService {
 		    whereParam += "m.room.id = :roomId";
 			if (beforeDate!=null) {
 				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam +=  "m.date < :beforeDate";
+				whereParam +=  "m.date <= :beforeDate";
 			}
 			if(afterDate != null) {
 				if(whereParam.length() > 0) whereParam += " AND ";
-				whereParam += "m.date > :afterDate";
+				whereParam += "m.date >= :afterDate";
 			}
 			if (body!=null){
 				if (whereParam.length()>0) whereParam += " AND ";

@@ -42,6 +42,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath 'io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE'
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
   //      classpath("ca.cutterslade.gradle:gradle-dependency-analyze:1.0.3") //dependency analization plugin
     }
 
@@ -64,6 +65,7 @@ ext {
 
 
 dependencies {
+	compile("org.springframework.boot:spring-boot-devtools")
 	compile("javax.mail:mail:1.4")
 	compile("org.springframework:spring-context-support:3.2.0.RELEASE")
 	compile("org.apache.velocity:velocity:1.7")
@@ -72,6 +74,7 @@ dependencies {
 	compile("com.zaxxer:HikariCP:2.4.3")
 	
 	compile("net.sourceforge.nekohtml:nekohtml:1.9.21")
+	
 	
 
 	compile("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")

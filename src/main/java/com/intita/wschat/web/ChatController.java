@@ -641,7 +641,31 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/get_students/", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<LoginEvent> userGoToDialogListenerLP(Principal principal) {
+	public Set<LoginEvent> getTrainerStudents(Principal principal) {
+		ChatUser user = chatUsersService.getChatUser(principal);
+		ArrayList<User> users=null;
+		User iUser = user.getIntitaUser();
+
+		if(iUser != null)
+		{
+			Long intitaUserId = user.getIntitaUser().getId();
+			users = userService.getStudents(intitaUserId);
+		}
+		else return new  HashSet<LoginEvent>();
+
+		Set<LoginEvent> userList = new HashSet<>();
+		for(User u : users)
+		{
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
+			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
+		}
+		return  userList;
+
+	}
+	
+	@RequestMapping(value = "/chat/get_students/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent> getTrainerStudentsById(@PathVariable Long trainerId, Principal principal) {
 		ChatUser user = chatUsersService.getChatUser(principal);
 		ArrayList<User> users=null;
 		User iUser = user.getIntitaUser();

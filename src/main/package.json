@@ -18,7 +18,9 @@
     "gulp-watch": "^4.3.11",
     "path": "^0.12.7"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "github:gulpjs/gulp#4.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

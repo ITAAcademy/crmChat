@@ -1,5 +1,5 @@
 'use strict';
-
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var path = require('path');
 var gulp = require('gulp');
 var conf = require('./conf');
@@ -33,13 +33,10 @@ function browserSyncInit(baseDir, browser) {
    *
    * For more details and option, https://github.com/chimurai/http-proxy-middleware/blob/v0.9.0/README.md
    */
-  // server.middleware = proxyMiddleware('/users', {target: 'http://jsonplaceholder.typicode.com', changeOrigin: true});
+ //  server.middleware = proxyMiddleware('/', {target: 'https://localhost:8080/crmChat/admin', rejectUnhauthorized : false, changeOrigin: true});
 
   browserSync.instance = browserSync.init({
-    startPath: '/',
-    server: server,
-    browser: browser,
-    ghostMode: false
+    server: server
   });
 }
 

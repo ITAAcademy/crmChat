@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var IMAGES_ROOT = 'admin-panel/dev-release/assets/img/';
+  var IMAGES_ROOT = 'admin-panel/release/assets/img/';
 
   angular.module('BlurAdmin.theme')
     .constant('layoutSizes', {
@@ -15,9 +15,9 @@
     .constant('layoutPaths', {
       images: {
         root: IMAGES_ROOT,
-        profile: IMAGES_ROOT + 'app/profile/',
-        amMap: IMAGES_ROOT +'theme/vendor/ammap//dist/ammap/images/',
-        amChart: IMAGES_ROOT + 'theme/vendor/amcharts/dist/amcharts/images/'
+        profile: globalConfig.imagesPath + '/avatars/',
+        amMap: 'admin-panel/release/assets/img/' +'theme/vendor/ammap//dist/ammap/images/',
+        amChart: 'admin-panel/release/assets/img/' + 'theme/vendor/amcharts/dist/amcharts/images/'
       }
     })
     .constant('colorHelper', {

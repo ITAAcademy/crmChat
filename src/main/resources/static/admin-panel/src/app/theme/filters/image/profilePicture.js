@@ -12,7 +12,7 @@
   function profilePicture(layoutPaths) {
     return function(input, ext) {
       ext = ext || 'png';
-      return layoutPaths.images.profile + input + '.' + ext;
+      return layoutPaths.images.profile + input;
     };
   }
 
