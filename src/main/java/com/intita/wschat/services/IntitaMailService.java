@@ -43,6 +43,10 @@ public class IntitaMailService {
 	 int mail_port;
 	 @Value("${chat.mail.protocol}")
 	 String mail_protocol;
+	 @Value("${chat.mail.smtp.auth}")
+	 String mail_smtp_auth;
+	 @Value("${chat.mail.smtp.starttls.enable}")
+	 String mail_smtp_starttls_enable;
 	
 	
 	@PostConstruct

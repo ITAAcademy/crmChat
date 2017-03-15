@@ -114,8 +114,8 @@ public class AdminPanelController {
 		configMap.put("currentLang", lang);
 		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
 		model.addAttribute("config", configMap);
-		//return "../static/admin-panel/release/index";
-		return "../static/admin-panel/dev-release/index";
+		return "../static/admin-panel/release/index";
+		//return "../static/admin-panel/dev-release/index";
 	}
 
 
