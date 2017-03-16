@@ -757,7 +757,9 @@ public class BotController {
 				break;
 			}
 
+		room_.setActive(true);
 		roomControler.changeAuthor(c_user, room_, true, principal, true);
+		
 		//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
 		Object[] obj = new Object[] {roomId, tenantChatUserId};

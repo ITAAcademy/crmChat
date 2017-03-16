@@ -71,6 +71,8 @@ public class IntitaMailService {
 	}
 	public void sendUnreadedMessageToIntitaUser(User to) throws Exception{
 		Map<Room, List<ChatMessage>> unreadedRoomMessages = userMessageService.getAllUnreadedMessages(to.getChatUser());
+		if(unreadedRoomMessages.size() == 0)
+			return;
 		mailSender.send(createPreparatorMessages(to,unreadedRoomMessages));
 	}
 	

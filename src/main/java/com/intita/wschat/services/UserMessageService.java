@@ -88,7 +88,7 @@ public class UserMessageService {
 		if (clearDate==null)
 			return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 		else
-		return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndDateAfterOrderByIdDesc(room, clearDate), lang);
+			return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndDateAfterOrderByIdDesc(room, clearDate), lang);
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
@@ -230,43 +230,43 @@ public class UserMessageService {
 		System.out.println("roomId:"+roomId);
 		ArrayList<UserMessage> messages;
 
-			String whereParam = "";
+		String whereParam = "";
 
-			// Construct WHERE part
-		    whereParam += "m.room.id = :roomId";
-			if (beforeDate!=null) {
-				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam +=  "m.date <= :beforeDate";
-			}
-			if(afterDate != null) {
-				if(whereParam.length() > 0) whereParam += " AND ";
-				whereParam += "m.date >= :afterDate";
-			}
-			if (body!=null){
-				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam += "lower(m.body) like lower(:body)";
-			}
-			if (filesOnly){
-				if (whereParam.length()>0) whereParam += " AND ";
-				whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson != :emptyJsonObject";
-			}
-			String wherePart = "WHERE "+ whereParam;
+		// Construct WHERE part
+		whereParam += "m.room.id = :roomId";
+		if (beforeDate!=null) {
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam +=  "m.date <= :beforeDate";
+		}
+		if(afterDate != null) {
+			if(whereParam.length() > 0) whereParam += " AND ";
+			whereParam += "m.date >= :afterDate";
+		}
+		if (body!=null){
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam += "lower(m.body) like lower(:body)";
+		}
+		if (filesOnly){
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson != :emptyJsonObject";
+		}
+		String wherePart = "WHERE "+ whereParam;
 		String orderPart = " ORDER BY m.date DESC,m.id";
 
 
-			String hql = "SELECT m FROM chat_user_message m " + " "+wherePart + orderPart;
+		String hql = "SELECT m FROM chat_user_message m " + " "+wherePart + orderPart;
 		System.out.println("hql:"+hql);
-			Session session = sessionFactory.getCurrentSession();
-			Query query = session.createQuery(hql);
-			query.setMaxResults(messagesCount);
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(hql);
+		query.setMaxResults(messagesCount);
 
 		//set params
-			if(roomId!=null)
-				query.setLong("roomId",roomId);
-			if (beforeDate!=null)
+		if(roomId!=null)
+			query.setLong("roomId",roomId);
+		if (beforeDate!=null)
 			query.setTimestamp("beforeDate", beforeDate);
-			if (afterDate!=null)
-				query.setTimestamp("afterDate", afterDate);
+		if (afterDate!=null)
+			query.setTimestamp("afterDate", afterDate);
 		if (body!=null)
 			query.setString("body", "%"+body+"%");
 		if (filesOnly){
@@ -286,7 +286,7 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByDateAfter(date);
 		return  wrapBotMessages(messages);
 	}
-	
+
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date)  {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
@@ -297,7 +297,7 @@ public class UserMessageService {
 		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
 		return  wrapBotMessages(messages, lang);
 	}
-	
+
 	@Transactional(readOnly=true)
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);
@@ -315,22 +315,20 @@ public class UserMessageService {
 	public Set<UserMessage> getMessagesByNotUser( ChatUser user) {
 		Set<UserMessage> messages = userMessageRepository.findAllByAuthorNot( user); 
 		ArrayList<UserMessage> result =  wrapBotMessages( new ArrayList<UserMessage>(messages));
-        return new HashSet<UserMessage>(result);
+		return new HashSet<UserMessage>(result);
 	}
-	
+
 	@Transactional
 	public Map<Room ,List<ChatMessage>> getAllUnreadedMessages(ChatUser user){
 		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
-		 Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
+		Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();
 			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastRoomEntry.getLastLogout(), "ua");
 			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
-			result.put(room, unreadedChatMessages);
+				result.put(room, unreadedChatMessages);
 		}
 		return result;
 	}
-	
-
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.ChatUser;
@@ -544,7 +545,11 @@ public class RoomsService {
 	}
 
 
-
+	public boolean isLastMsgReaded(Room room, UserMessage msg)
+	{
+		ChatUserLastRoomDate item = chatLastRoomDateService.findByRoomAndChatUserNotAndLast_logoutAfer(room, msg.getAuthor(), msg.getDate());
+		return item != null;
+	}
 }
 
 

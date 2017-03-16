@@ -1094,6 +1094,4 @@ public class ChatController {
 	}
 	
 
-
-
 }

@@ -47,6 +47,12 @@ public class ChatUserLastRoomDateService {
 		return chatUserLastRoomDateRepo.findByChatUser(user);
 
 	}
+	
+	@Transactional
+	public List<ChatUserLastRoomDate> getRoomLastRoomDates(Room room){
+		return chatUserLastRoomDateRepo.findByRoom(room);
+	}
+
 
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDatesInList(ChatUser user, ArrayList<Room> rooms){
@@ -95,6 +101,10 @@ public class ChatUserLastRoomDateService {
 			return false;
 		chatUserLastRoomDateRepo.delete(last.getId());
 		return true;
+	}
+	@Transactional
+    public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
+		return chatUserLastRoomDateRepo.findOneByRoomAndChatUserNotAndLastLogoutAfter(room, user, after);
 	}
 
 

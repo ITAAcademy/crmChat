@@ -1,6 +1,7 @@
 package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ public interface ChatUserLastRoomDateRepository extends CrudRepository<ChatUserL
 	   Page<ChatUserLastRoomDate> findAll(Pageable pageable);
 	   List<ChatUserLastRoomDate> findAll();
 	   List<ChatUserLastRoomDate> findByChatUser(ChatUser user);
+	   List<ChatUserLastRoomDate> findByRoom(Room user);
+	   ChatUserLastRoomDate findOneByRoomAndChatUserNotAndLastLogoutAfter(Room room, ChatUser user, Date after);
 	   List<ChatUserLastRoomDate> findByChatUserAndRoomIn(ChatUser user, ArrayList<Room> rooms);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);

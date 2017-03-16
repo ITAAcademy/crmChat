@@ -437,6 +437,7 @@ public class RoomController {
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
+		map.put("lastMsgIsReaded", roomService.isLastMsgReaded(room_o, userMessages.get(userMessages.size() - 1)));// 
 		try {
 			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
 		} catch (JsonProcessingException e) {
@@ -507,7 +508,7 @@ public class RoomController {
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		String participantsAndMessages = mapper.writeValueAsString(
 				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), chatLangService.getCurrentLang(),chatUser));
-		log.info("P&M:" + participantsAndMessages);
+		
 		return participantsAndMessages;
 	}
 

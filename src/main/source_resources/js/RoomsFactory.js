@@ -517,7 +517,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (currentRoom == undefined)
             return false;
         if (typeof currentRoom === "undefined") return false;
-        var resultOfChecking = currentRoom.active && $rootScope.isMyRoom && $rootScope.authorize;
+        var resultOfChecking = currentRoom.active && $rootScope.isMyRoom;
         return resultOfChecking;
     }
 
