@@ -141,21 +141,21 @@ public class UsersService {
 	}
 
 	@Transactional(readOnly = false)
-	public void register(String login, String email, String pass) {
+	public void register(String login, String pass) {
 		String passHash = new ShaPasswordEncoder().encodePassword(pass, null);
 		//encode(pass);
 		//String passHash = pass;
 
-		User u = new User(login, email.toLowerCase(), passHash);
+		User u = new User(login, passHash);
 
 
 		usersRepo.save(u);
 	}
 	@Transactional(readOnly = false)
-	public void register(String login, String email, String pass,Permissions permission) {
+	public void register(String login, String pass,Permissions permission) {
 		String passHash = new BCryptPasswordEncoder().encode(pass);
 		//String passHash = pass;
-		User u = new User(login, email.toLowerCase(), passHash);
+		User u = new User(login, passHash);
 		u.setPermission(permission);
 
 		usersRepo.save(u);

@@ -196,7 +196,7 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	}
 	
 
-	public User(String login, String email, String password) {
+	public User(String login, String password) {
 		this.login = login;
 		//this.email = email;
 		this.password = password;

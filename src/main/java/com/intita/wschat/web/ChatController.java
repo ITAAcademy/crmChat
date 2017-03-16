@@ -1065,7 +1065,7 @@ public class ChatController {
 		Date date = new Date();   // given date
 		Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
 		calendar.setTime(date);   // assigns calendar to given date 	
-		if (calendar.get(Calendar.HOUR_OF_DAY)>=0 && calendar.get(Calendar.HOUR_OF_DAY)<=4)
+		if (calendar.get(Calendar.HOUR_OF_DAY)>=13 && calendar.get(Calendar.HOUR_OF_DAY)<=16)
 		{
 			if (isEmailSendingRequired)
 				sendAllNewMessageNotificationsFromLast24Hours();
@@ -1073,6 +1073,26 @@ public class ChatController {
 		}
 		else isEmailSendingRequired = true;
 	}
+	
+	
+	@RequestMapping(value="/sendMail", method = RequestMethod.GET)
+	@ResponseBody
+	public String sad(@RequestParam("email") String email, Principal principal) throws JsonProcessingException {
+		User t = userService.getUser(principal);
+		if(t == null || userService.isAdmin(t.getId()) == false)
+			return "You must be admin";
+		
+		User user = new User(email, "fsdfsd");
+		try {
+			mailService.sendUnreadedMessageToIntitaUser(user);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "Succ";
+	}
+	
 
 
 

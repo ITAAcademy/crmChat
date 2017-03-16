@@ -170,8 +170,19 @@
         right: 25px;
     }
 }
-
-@media only screen and (min-width:300px) and (max-width:600px) {
+@media only screen and (min-height: :300px) and (max-height: 600px)  and (orientation: landscape ){
+    .dnd-container .chat {
+        height: 100% !important;
+        width: 100% !important;
+    }
+    .dnd-container .chat.mini .handle {}
+    .dnd-container .chat.mini {
+        bottom: 0px !important;
+        top: initial !important;
+        left: calc(50% - 110px) !important;
+    }
+}
+@media only screen and (min-width:300px) and (max-width:600px)  and (orientation: portrait) {
     /*  .dnd-container .chat {
      min-width: 100% !important;
      max-width: 100% !important;

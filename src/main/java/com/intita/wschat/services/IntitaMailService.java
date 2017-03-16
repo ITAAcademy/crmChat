@@ -59,8 +59,8 @@ public class IntitaMailService {
 		mailSender.setUsername(mail_userName);
 		mailSender.setPassword(mail_password);
 		Properties mailProps = new Properties();
-        mailProps.put("mail.smtp.auth", "true");
-        mailProps.put("mail.smtp.starttls.enable", "true");
+        mailProps.put("mail.smtp.auth", mail_smtp_auth);
+        mailProps.put("mail.smtp.starttls.enable", mail_smtp_starttls_enable);
        // mailProps.put("mail.smtp.starttls.required", "true");
        // mailProps.setProperty("mail.smtp.user", userName);
         //mailProps.setProperty("mail.smtp.password", password);
@@ -74,7 +74,7 @@ public class IntitaMailService {
 		mailSender.send(createPreparatorMessages(to,unreadedRoomMessages));
 	}
 	
-	private MimeMessagePreparator createPreparatorMessages(User to,Map<Room, List<ChatMessage>> roomMessages) {
+	private MimeMessagePreparator createPreparatorMessages(User to, Map<Room, List<ChatMessage>> roomMessages) {
 		return  new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
