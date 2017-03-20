@@ -980,6 +980,11 @@ body {
     width: 100%;
     height: 100%;
     right: 0;
+    pointer-events: none;
+}
+
+.right_panel .tools_dropdown_container > * {
+    pointer-events: all;
 }
 
 .popup_dropdown {
@@ -1283,25 +1288,16 @@ body {
     left: 0;
 }
 
-.messages_input_area .helper{
-    
-position: absolute;
-    
-right: 20px;
-    
-font-size: 10px;
-    
-opacity: 0.5;
-    
--webkit-user-select: none;
-    
-   -moz-user-select: none;
-    
+.messages_input_area .helper {
+    position: absolute;
+    right: 20px;
+    font-size: 10px;
+    opacity: 0.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
     -ms-user-select: none;
-    
-        user-select: none;
-    
-pointer-events: none;
+    user-select: none;
+    pointer-events: none;
 }
 
 .messages_input_area .message_input {
