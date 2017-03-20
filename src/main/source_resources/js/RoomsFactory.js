@@ -22,6 +22,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var roomType = -1;
     var ajaxRequestsForRoomLP = [];
     var userAddedToRoom = true;
+    var lastNonUserActivity = false;
     $rootScope.message_busy = true;
     var rooms = [];
     var oldMessage;
@@ -97,12 +98,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     function goToRoomEvn(id) {
-         if (currentRoom != undefined) {
-             updateNewMsgNumber(-currentRoom.nums);
-             currentRoom.nums = 0;
-             //push up previesly room
-             //currentRoom.date = curentDateInJavaFromat();
-         }
+        if (currentRoom != undefined) {
+            updateNewMsgNumber(-currentRoom.nums);
+            currentRoom.nums = 0;
+            //push up previesly room
+            //currentRoom.date = curentDateInJavaFromat();
+        }
         currentRoom = { roomId: id };
         changeRoom();
         var deferred = $q.defer();
@@ -116,13 +117,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return deferred.promise;
         }
 
-        if (ChannelFactory.isSocketSupport() === true) {
-            chatSocket.send("/app/chat.go.to.dialog/{0}".format(currentRoom.roomId), {}, JSON.stringify({}));
-            deferred.resolve();
-            return deferred.promise;
-        } else {
-            return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
-        }
+        return updateLastActivity();
+    }
+
+    function updateLastActivity() {
+        if (currentRoom == undefined || currentRoom == '')
+            return;
+
+        return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
     }
 
     var clearHistory = function() {
@@ -454,10 +456,22 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         resetOldMessageInfo();
     }
 
+    $rootScope.$on('roomRead', function(event, data) {
+        if(currentRoom.roomId == data.roomId)
+        {
+            var UserFactory = $injector.get('UserFactory');
+            if(UserFactory != undefined && UserFactory.getChatUserId() != data.chatUserId)
+            {
+                lastNonUserActivity = new Date();
+            }
+        }
+    });
+
     function loadSubscribeAndMessage(message) {
         roomType = message["type"];
 
         participants = message["participants"];
+        lastNonUserActivity = message["lastNonUserActivity"];
 
         if (typeof message["messages"] != 'undefined') {
             $rootScope.loadingSubscribesAndMessages = true;
@@ -565,9 +579,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
             if ($routeParams.roomId == null) return;
             goToRoom($routeParams.roomId).then(function(data) {
-                if (data != undefined && data != null) {
-                    currentRoom = data.data;
-                }
+                /* if (data != undefined && data != null) {
+                     currentRoom = data.data;
+                 }*/
             }, function() {
                 $rootScope.goToAuthorize();
                 toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
@@ -656,7 +670,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
     var newMsgNumber = 0;
     var updateNewMsgNumber = function(diff) {
-        if (diff != undefined && !isNaN(diff) ) {
+        if (diff != undefined && !isNaN(diff)) {
             newMsgNumber += diff;
             return;
         }
@@ -710,6 +724,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         checkMessageAdditionPermission: checkMessageAdditionPermission,
         changeCurrentRoomName: changeCurrentRoomName,
         clearHistory: clearHistory,
+        lastMsgIsReaded: function() {
+            return lastNonUserActivity > messages[messages.length - 1].date
+        },
         getUserAddedToRoom: function() {
             return userAddedToRoom;
         },
@@ -721,7 +738,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 if (participants[i].chatUserId == chatUserId) return true;
             }
             return false;
-        }
+        },
+        updateLastActivity: updateLastActivity
 
     };
 

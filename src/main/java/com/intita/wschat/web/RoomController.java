@@ -437,7 +437,7 @@ public class RoomController {
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
-		map.put("lastMsgIsReaded", roomService.isLastMsgReaded(room_o, userMessages.get(userMessages.size() - 1)));// 
+		map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));// 
 		try {
 			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
 		} catch (JsonProcessingException e) {
@@ -782,10 +782,6 @@ public class RoomController {
 			responseRoomBodyQueue.remove(modal.chatUser.getId());
 			subscribedtoRoomsUsersBuffer.remove(modal);
 		}
-		// System.out.println("responseRoomBodyQueue
-		// queue_count:"+responseRoomBodyQueue.size());
-		// subscribedtoRoomsUsersBuffer.clear();//!!!
-
 	}
 
 	@RequestMapping(value = "/chat/rooms/add", method = RequestMethod.POST)
@@ -814,8 +810,6 @@ public class RoomController {
 						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
 				addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(chatUser));
 			}
-			System.out.println("OkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkAdd");// @LOG@
-			System.out.println(principal.getName());// @LOG@
 		}
 		// send to user about room apearenced
 		OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM, operationSuccess, "ADD ROOM");
@@ -896,8 +890,7 @@ public class RoomController {
 		roomService.setAuthor(newAuthor, room);
 		if (roomService.update(room) == null)
 			return false;
-		// remove room from cache author object
-		//author.getRootRooms().remove(room);
+
 		if (savePreviusAuthorAsUser) {
 			addUserToRoom(author, room, principal, true);
 			if (!contain) {

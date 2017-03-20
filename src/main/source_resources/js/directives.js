@@ -554,6 +554,7 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
         templateUrl: 'static_templates/messages_block.html',
         link: function($scope, element, attributes) {
             $scope.UserFactory = UserFactory;
+            $scope.RoomsFactory = RoomsFactory;
             $scope.messages = RoomsFactory.getMessages;
             var nice = $(".scroll");
         }
@@ -573,6 +574,10 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var sendingMessage = null;
             var typing = undefined;
             var getParticipants = RoomsFactory.getParticipants;
+
+            $scope.onClick= function(){
+                RoomsFactory.updateLastActivity();
+            }
             $scope.isAnyOneWriting = function() {
                 var participants = getParticipants();
                 for (var i = 0; i < participants.length; i++) {

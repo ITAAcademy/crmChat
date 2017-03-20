@@ -232,8 +232,11 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                         var RoomsFactory = $injector.get('RoomsFactory');
                         var operationStatus = JSON.parse(message.body);
                         //operationStatus = JSON.parse(operationStatus);
-                        if (operationStatus["updateRoom"].roomId == RoomsFactory.currentRoom.roomId) {
+                        if (operationStatus["updateRoom"] != undefined && operationStatus["updateRoom"].roomId == RoomsFactory.currentRoom.roomId) {
                             RoomsFactory.currentRoom = operationStatus["updateRoom"];
+                        }
+                        if (operationStatus["type"] == "roomRead") {
+                            $rootScope.$broadcast('roomRead', operationStatus);
                         }
                         //
                     });
@@ -295,6 +298,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                     var sendedConsultantId = data["newConsultationWithTenant"][0][1];
 
                     $rootScope.submitConsultation_processTenant(sendedConsultantId, roomId);
+                }
+                if (data["roomRead"] != null) {
+                    $rootScope.$broadcast('roomRead', data["roomRead"]);
                 }
                 if (isTrainer) {
                     if (data["tenants.add"] != null) {

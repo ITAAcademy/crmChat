@@ -106,6 +106,11 @@ public class ChatUserLastRoomDateService {
     public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
 		return chatUserLastRoomDateRepo.findOneByRoomAndChatUserNotAndLastLogoutAfter(room, user, after);
 	}
+	
+	@Transactional
+    public ChatUserLastRoomDate getLastNotUserActivity(Room room, ChatUser user){
+		return chatUserLastRoomDateRepo.findOneByRoomAndChatUserNotOrderByLastLogout(room, user);
+	}
 
 
 }

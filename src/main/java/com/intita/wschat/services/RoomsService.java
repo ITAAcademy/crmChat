@@ -548,7 +548,18 @@ public class RoomsService {
 	public boolean isLastMsgReaded(Room room, UserMessage msg)
 	{
 		ChatUserLastRoomDate item = chatLastRoomDateService.findByRoomAndChatUserNotAndLast_logoutAfer(room, msg.getAuthor(), msg.getDate());
+		if(item != null)
+			System.out.println("IsLastMsgReaded: " + item.getChatUser().getNickName() + "  vs  " + msg.getAuthor().getNickName()); 
 		return item != null;
+	}
+	
+	public Date getLastMsgActivity(Room room, UserMessage msg)
+	{
+		ChatUserLastRoomDate item = chatLastRoomDateService.getLastNotUserActivity(room, msg.getAuthor());
+		if(item != null)
+			return item.getLastLogout();
+		
+		return null;
 	}
 }
 
