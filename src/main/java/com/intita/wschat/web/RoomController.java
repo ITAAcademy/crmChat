@@ -437,7 +437,8 @@ public class RoomController {
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesHistory);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
-		map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));// 
+		if(userMessages.isEmpty() == false)
+			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));// 
 		try {
 			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
 		} catch (JsonProcessingException e) {

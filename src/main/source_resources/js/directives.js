@@ -192,11 +192,22 @@ angular.module('springChat.directives').directive('starRating', starRating);
 function starRating() {
     return {
         restrict: 'EA',
-        template: '<ul class="star-rating" ng-class="{readonly: readonly}">' +
-            '  <li ng-repeat="star in stars" class="star" ng-class="{filled: star.filled}" ng-click="toggle($index)">' +
-            '    <i class="fa fa-star"></i>' + // or &#9733
-            '  </li>' +
-            '</ul>',
+        template: `<div class="rating large label-right star-svg" ng-class="containerClass">
+    <div class="label-value">{{ratingValue}}</div>
+    <div class="star-container">
+        <div ng-repeat="star in stars" ng-class="star.class" ng-click="toggle($event, $index)">
+            <svg class="star-filled">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/star-rating.icons.svg#star-filled"></use>
+            </svg>
+             <svg class="star-half">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/star-rating.icons.svg#star-half"></use>
+            </svg>
+             <svg class="star-empty">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/star-rating.icons.svg#star-empty"></use>
+            </svg>
+        </div>
+    </div>
+</div>`,
         scope: {
             ratingValue: '=ngModel',
             max: '=?', // optional (default is 5)
@@ -209,25 +220,47 @@ function starRating() {
                 attributes.onratingselect = function() {};
 
             if (scope.max == undefined) {
-                scope.max = 5;
+                scope.max = 10;
+            }
+            scope.stars = [];
+            scope.containerClass = 'value-0';
+            for (var i = 0; i < 5; i++) {
+                scope.stars.push({
+                    class: i < scope.ratingValue ? 'star empty' : 'star filled '
+                });
             }
 
-            function updateStars() {
-                scope.stars = [];
-                for (var i = 0; i < scope.max; i++) {
-                    scope.stars.push({
-                        filled: i < scope.ratingValue
-                    });
+            function updateStars(full) {
+                var value = (scope.ratingValue * 5) / scope.max;
+
+                for (var i = 0; i < 5; i++) {
+                    console.log(value);
+                    console.log("::" + i);
+                    scope.stars[i].class = i < value ?  !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
                 }
+                scope.containerClass = 'value-' + Math.round(value);
             };
-            scope.toggle = function(index) {
+            scope.toggle = function(event, index) {
+                var target = $(event.currentTarget);
+                var posX = target.offset().left,
+                    posY = target.offset().top;
+                //alert( (event.pageX - posX) + ' , ' + (event.pageY - posY));
+                var full = true;
+                if (event.pageX - posX < target.width() / 2)
+                    full = false;
+
+
                 if (scope.readonly == undefined || scope.readonly === false) {
-                    scope.ratingValue = index + 1;
+                    if (full == false)
+                        index -= 0.5;
+                    scope.ratingValue = ((index + 1) * scope.max) / 5;
+
                     //
-                    attributes.onratingselect({
-                        rating: index + 1
-                    });
-                    updateStars();
+                    if (scope.onRatingSelect != undefined)
+                        attributes.onratingselect({
+                            rating: scope.ratingValue
+                        });
+                    updateStars(full);
                 }
             };
             scope.ratingValue = 0;
@@ -563,10 +596,10 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', '$interval', messageInput
+    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
@@ -575,7 +608,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var typing = undefined;
             var getParticipants = RoomsFactory.getParticipants;
 
-            $scope.onClick= function(){
+            $scope.onClick = function() {
                 RoomsFactory.updateLastActivity();
             }
             $scope.isAnyOneWriting = function() {
@@ -593,8 +626,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     if (participant.typing) writingUsersNames.push(participant.username || participant.nickName);
                 }
                 var notificationTemplate = writingUsersNames.length == 1 ? "{0} набирає" : "{0} набирають"
-                 return notificationTemplate.format(writingUsersNames.join(","));
-               // return writingUsersNames.join(",");
+                return notificationTemplate.format(writingUsersNames.join(","));
+                // return writingUsersNames.join(",");
             }
             $scope.sendMessage = function(message, attaches, clearMessageInput) {
                 var isClearMessageInputNeeded = clearMessageInput == null || clearMessageInput === true ? true : false;
@@ -706,6 +739,21 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     }, 0);
 
                 }
+            }
+
+            function loadRatings() {
+                return $http.get(serverPrefix + "/getRatings");
+            }
+
+            $scope.askForRating = function() {
+                loadRatings().then(function(response) {
+                    $scope.ratings = response.data;
+                    ngDialog.open({
+                        template: 'askForRatingModal.html',
+                        scope: $scope
+                    });
+                }, function() {})
+
             }
 
 

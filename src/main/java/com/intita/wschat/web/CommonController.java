@@ -195,7 +195,7 @@ public class CommonController {
 		chatLangService.updateDataFromDatabase();
 		return true;
 	}
-	
+
 	@RequestMapping(value="/", method = RequestMethod.GET)
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);

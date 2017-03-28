@@ -1,0 +1,10 @@
+<div class="modal-header">
+    Оцініть розмову
+</div>
+<div class="modal-content">
+ <div ng-repeat="rating in ratings"><div>{{rating.name}}</div> <div><star-rating ng-model="rating.value"></star-rating></div></div>
+
+</div>
+<div class="modal-footer">
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="saveRatings()">Зберегти</button>
+</div>

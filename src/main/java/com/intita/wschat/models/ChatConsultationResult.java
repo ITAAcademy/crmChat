@@ -3,6 +3,7 @@ package com.intita.wschat.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,21 +39,19 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 	private Long id;
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	private ChatConsultation consultation;
-
+	private Room room;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
-	private ConsultationRatings rating;
+	private ChatUser chatUser;
 
-	private int value; 
+	@OneToMany(mappedBy="result", fetch=FetchType.LAZY)
+	private Set<ChatConsultationResultValues> values;
+	
+
+	
 
 	public ChatConsultationResult() {
 
-	}
-	public ChatConsultationResult(Long id, Integer val, ChatConsultation cons) {
-		value = val;
-		rating = new ConsultationRatings();
-		rating.setId(id);
-		consultation = cons;
 	}
 
 	/*
@@ -68,28 +67,31 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 		this.id = id;
 	}
 
-	public ChatConsultation getConsultation() {
-		return consultation;
+	public Room getRoom() {
+		return room;
 	}
 
-	public void setConsultation(ChatConsultation consultation) {
-		this.consultation = consultation;
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
-	public ConsultationRatings getRating() {
-		return rating;
+
+
+
+	public ChatUser getChatUser() {
+		return chatUser;
 	}
 
-	public void setRating(ConsultationRatings rating) {
-		this.rating = rating;
+	public void setChatUser(ChatUser chatUser) {
+		this.chatUser = chatUser;
 	}
 
-	public int getValue() {
-		return value;
+	public Set<ChatConsultationResultValues> getValues() {
+		return values;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
+	public void setValues(Set<ChatConsultationResultValues> values) {
+		this.values = values;
 	}
 
 

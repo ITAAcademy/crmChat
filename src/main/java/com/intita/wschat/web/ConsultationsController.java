@@ -7,9 +7,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -285,6 +288,23 @@ public class ConsultationsController {
 		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 		//777
 	}
+	
+	
+	@RequestMapping(value="/getRatings", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<ConsultationRatings>  getSuportedRatings(HttpServletRequest request) {
+		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+		Set<ConsultationRatings> retingsTran = new HashSet<>();
+		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
+		for (ConsultationRatings consultationRatings : retings) {
+			ConsultationRatings consultationRatingsCopy = new ConsultationRatings(consultationRatings);
+			String translate_rating_name = (String)ratingLang.get(consultationRatingsCopy.getName());
+			consultationRatingsCopy.setName(translate_rating_name);
+			retingsTran.add(consultationRatingsCopy);
+		}
+		return retingsTran;
+	}
+	
 	
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
 	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {

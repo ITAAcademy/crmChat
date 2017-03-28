@@ -45,5 +45,8 @@
   },
   "scripts": {
     "postinstall": "bower install"
+  },
+  "dependencies": {
+    "eslint-config-defaults": "^9.0.0"
   }
 }

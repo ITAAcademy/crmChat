@@ -68,9 +68,9 @@ public class ConsultationsService {
 	{
 		if(cons != null)
 		{
-			for (Long id: map.keySet()) {
-				chatConsultationResultRepository.save(new ChatConsultationResult(id, map.get(id), cons));
-			}
+			/*for (Long id: map.keySet()) {
+				chatConsultationResultRepository.save(new ChatConsultationResult(id, map.get(id), cons.getRoom()));
+			}*/
 		}
 	}
 

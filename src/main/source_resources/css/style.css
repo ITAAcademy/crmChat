@@ -2216,8 +2216,9 @@ body.frame .open_in_new_tab {
     font-size: 22px;
     color: white;
     height: 30px;
-    line-height: 30px;
-    width: 60px;
+    line-height: 10px;
+    min-width: 60px;
+    padding: 10px;
     text-align: center;
     margin-right: calc(25% - 32px);
     margin-left: calc(25% - 32px);

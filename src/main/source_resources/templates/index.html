@@ -7,6 +7,7 @@
     <title>IntITA Chat</title>
     <link rel="icon" href="favicon.ico" />
     <link href="css/style.css" rel="stylesheet" />
+    <link href="css/stars.css" rel="stylesheet" />
     <link href="css/loader.css" rel="stylesheet" />
     <link href="css/angular-szn-autocomplete.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
@@ -71,9 +72,9 @@
         <div class="right_panel">
             <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
             <div ng-if="!currentRoomIsNull()" class="tools_area">
-                <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-if="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
-                <button class="material_button" ng-click="disableMessagesSearch(true)" ng-if="!isRoomChangeModeEnabled &amp;&amp; messageSearchEnabled"><i class="material-icons">cancel</i></button>
-                <button class="material_button" ng-click="toggleRoomNameChangeMode()" ng-if="isRoomChangeModeEnabled"><i class="material-icons">done</i></button>
+                <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-show="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
+                <button class="material_button" ng-click="disableMessagesSearch(true)" ng-show="!isRoomChangeModeEnabled &amp;&amp; messageSearchEnabled"><i class="material-icons">cancel</i></button>
+                <button class="material_button" ng-click="toggleRoomNameChangeMode()" ng-show="isRoomChangeModeEnabled"><i class="material-icons">done</i></button>
                 <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="material_button">
                     <i class="material-icons">more_vert</i>
                 </button>
