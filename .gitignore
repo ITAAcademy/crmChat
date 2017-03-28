@@ -143,8 +143,5 @@ gulp.1
 build
 .tmp
 
-src/main/resources/static/admin-panel/src/release
-src/main/resources/static/admin-panel/dev-release
-src/main/resources/static/admin-panel/release
 bower_components
 
