@@ -42,7 +42,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                     else
                     {
                       //  toaster.clear();
-                        toaster.pop('warning', 'Error', 'Conection lost. Try reconect', 99999); 
+                        toaster.pop('warning', 'Error', 'Conection lost. Try reconect', 900); 
                         setTimeout(function() {me.subscribeToConnect(callBack);}, 1000);   
                     }
                     

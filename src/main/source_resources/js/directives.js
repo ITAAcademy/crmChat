@@ -236,7 +236,7 @@ function starRating() {
                 for (var i = 0; i < 5; i++) {
                     console.log(value);
                     console.log("::" + i);
-                    scope.stars[i].class = i < value ?  !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
+                    scope.stars[i].class = i < value ? !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
                 }
                 scope.containerClass = 'value-' + Math.round(value);
             };
@@ -596,10 +596,10 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', messageInput
+    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
@@ -681,7 +681,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.newMessage.value = '';
                 //set focus
                 $scope.$$postDigest(function() {
-
                     $(".transparent_input.message_input").click();
                     $(".transparent_input.message_input").focus();
                 });
@@ -745,6 +744,25 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 return $http.get(serverPrefix + "/getRatings");
             }
 
+            $scope.addRatings = function(close) {
+                //close();
+                var roomObj = RoomsFactory.getCurrentRoom();
+                var chatUserId = UserFactory.getChatUserId();
+                var ratings = $scope.ratings;
+                var results = {};
+                for(var rating of ratings)
+                {
+                    if(rating.value == undefined)
+                        ratings.value = 0;
+                    results[rating.id] = rating.value;
+                }
+                $http.post(serverPrefix + "/addRatingByRoom/" + roomObj.roomId, results).then(function(){
+                    toaster.pop('success',  lgPack.ratingModal.successTitle, lgPack.ratingModal.success, 6000);
+                }, function(){
+                    toaster.pop('error', lgPack.ratingModal.errorTitle, lgPack.ratingModal.error, 6000);
+                });
+            }
+
             $scope.askForRating = function() {
                 loadRatings().then(function(response) {
                     $scope.ratings = response.data;
@@ -757,7 +775,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             }
 
 
-            $scope.startTyping = function(event) {
+            $scope.startTyping = function(event) {//@Deprecated functionality
                 //var keyCode = event.which || event.keyCode;
                 //var typedChar = String.fromCharCode(keyCode);
                 //if(typedChar==' ')$scope.onMessageInputClick();       

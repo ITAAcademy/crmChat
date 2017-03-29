@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.admin.models.MsgRequestModel;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.ChatMessage;
@@ -114,8 +115,8 @@ public class AdminPanelController {
 		configMap.put("currentLang", lang);
 		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
 		model.addAttribute("config", configMap);
-		return "../static/admin-panel/release/index";
-		//return "../static/admin-panel/dev-release/index";
+		//return "../static/admin-panel/release/index";
+		return "../static/admin-panel/dev-release/index";
 	}
 
 
@@ -167,59 +168,6 @@ public class AdminPanelController {
 		return chatMessages;
 	}
 
-	public static class MsgRequestModel implements Serializable
-	{
-
-	@JsonProperty("user_id_first")
-	private Long userIdFirst;
-	@JsonProperty("user_id_second")
-	private Long userIdSecond;
-	@JsonProperty("before_date")
-	private Long beforeDate;
-	@JsonProperty("after_date")
-	private Long afterDate;
-	private final static long serialVersionUID = -4461936499118564786L;
-
-	@JsonProperty("user_id_first")
-	public Long getUserIdFirst() {
-	return userIdFirst;
-	}
-
-	@JsonProperty("user_id_first")
-	public void setUserIdFirst(Long userIdFirst) {
-	this.userIdFirst = userIdFirst;
-	}
-
-
-	@JsonProperty("user_id_second")
-	public Long getUserIdSecond() {
-	return userIdSecond;
-	}
-
-	@JsonProperty("user_id_second")
-	public void setUserIdSecond(Long userIdSecond) {
-	this.userIdSecond = userIdSecond;
-	}
-
-	@JsonProperty("before_date")
-	public Long getBeforeDate() {
-	return beforeDate;
-	}
-
-	@JsonProperty("before_date")
-	public void setBeforeDate(Long beforeDate) {
-	this.beforeDate = beforeDate;
-	}
-
-	@JsonProperty("after_date")
-	public Long getAfterDate() {
-	return afterDate;
-	}
-
-	@JsonProperty("after_date")
-	public void setAfterDate(Long afterDate) {
-	this.afterDate = afterDate;
-	}
-	}
+	
 	
 }

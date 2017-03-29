@@ -16,7 +16,8 @@
 
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-    $urlRouterProvider.otherwise('/dashboard');
+         $urlRouterProvider.otherwise('/monitor/msgs');
+
 /*
     baSidebarServiceProvider.addStaticItem({
       title: 'Pages',

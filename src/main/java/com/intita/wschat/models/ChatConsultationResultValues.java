@@ -38,24 +38,25 @@ public class ChatConsultationResultValues implements Serializable,Comparable<Cha
 	private Long id;
 
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@NotNull
+	@ManyToOne()
 	private ChatConsultationResult result;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private ConsultationRatings rating;
 
 	private int value; 
-	
-	
 
 	public ChatConsultationResultValues() {
 
 	}
+	public ChatConsultationResultValues(ConsultationRatings rating, int value) {
+		this.rating = rating;
+		this.value = value;
+	}
 	/*
 	 * GET/SET
 	 */
-
-
 
 	@Override
 	public int compareTo(ChatConsultationResultValues arg0) {

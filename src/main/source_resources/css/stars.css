@@ -39,6 +39,7 @@ Star element
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+    cursor:pointer;
     /*
   Fill states
   ==================================================================*/
@@ -58,6 +59,7 @@ Disabled
   Direction
   =================================================*/
 }
+
 
 .star svg, .star i {
     display: -webkit-box;

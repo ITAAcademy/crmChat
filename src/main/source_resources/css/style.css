@@ -21,6 +21,13 @@ body {
     cursor: pointer;
 }
 
+button::-moz-focus-inner {
+  border: 0;
+}
+button:focus {
+    outline: none;
+}
+
 * {
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -1350,7 +1357,6 @@ body {
     border: 0;
     background: 0;
     border: 0;
-    outline: 0;
     display: inline-block;
     margin-top: 4px;
     padding: 0;
@@ -2224,6 +2230,7 @@ body.frame .open_in_new_tab {
     margin-left: calc(25% - 32px);
     margin-top: 10px;
     outline: none;
+    text-transform: capitalize;
 }
 
 .modal-footer button.center {

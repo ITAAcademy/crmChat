@@ -5,6 +5,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +35,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.ParticipantRepository;
+import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.models.ChatConsultation;
+import com.intita.wschat.models.ChatConsultationResultValues;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.IntitaConsultation;
@@ -46,6 +51,7 @@ import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
+import com.intita.wschat.services.ConsultationsRatingsService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.IntitaMailService;
 import com.intita.wschat.services.LecturesService;
@@ -96,6 +102,7 @@ public class ConsultationsController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private ConsultationsService chatConsultationsService;
+	@Autowired private ConsultationsRatingsService chatConsultationsRatingsService;
 	@Autowired private LecturesService lecturesService;
 	@Autowired private ConsultationsService chatIntitaConsultationService;
 	@Autowired private CommonController commonController;
@@ -292,8 +299,8 @@ public class ConsultationsController {
 	
 	@RequestMapping(value="/getRatings", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<ConsultationRatings>  getSuportedRatings(HttpServletRequest request) {
-		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+	public Set<ConsultationRatings>  getSuportedRatingsWithTranslate(HttpServletRequest request) {
+		Set<ConsultationRatings> retings = chatConsultationsRatingsService.getAllSupportedRetings();
 		Set<ConsultationRatings> retingsTran = new HashSet<>();
 		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
@@ -305,10 +312,29 @@ public class ConsultationsController {
 		return retingsTran;
 	}
 	
+	@RequestMapping(value="/addRatingByRoom/{roomId}", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean addRatingByRoom(HttpServletRequest request, @PathVariable("roomId") Long roomId, @RequestBody Map<Long, Integer> ratingsValues, Principal principal) {
+		Room room = chatRoomsService.getRoom(roomId);
+		if(room == null)
+			throw new RoomNotFoundException("Room id is faild");
+		
+		ChatUser user = chatUsersService.getChatUser(principal);
+		
+		ArrayList<ChatConsultationResultValues> values = new ArrayList<>();
+		for(Long ratingId : ratingsValues.keySet())
+		{
+			ChatConsultationResultValues t = new ChatConsultationResultValues(new ConsultationRatings(ratingId), ratingsValues.get(ratingId));
+			values.add(t);
+		}
+		chatConsultationsRatingsService.addRetings(room, user, values);
+		return true;
+	}
+	
 	
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
 	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {
-		Set<ConsultationRatings> retings = chatConsultationsService.getAllSupportedRetings();
+		Set<ConsultationRatings> retings = chatConsultationsRatingsService.getAllSupportedRetings();
 		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
 			ConsultationRatings consultationRatingsCopy = new ConsultationRatings(consultationRatings);

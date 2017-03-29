@@ -1,4 +1,4 @@
-<div class="modal-header">
+<div class="modal-header" th:text="${lgPack.ratingModal.question}">
     Оцініть розмову
 </div>
 <div class="modal-content">
@@ -6,5 +6,5 @@
 
 </div>
 <div class="modal-footer">
-    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="saveRatings()">Зберегти</button>
+    <button id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="closeThisDialog(); addRatings();" th:text="${lgPack.chatGlobal.save}">Зберегти</button>
 </div>

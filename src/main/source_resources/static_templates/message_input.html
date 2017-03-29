@@ -24,7 +24,7 @@
         </ul>-->
         <div class="upload_file_form_container"></div>
         <!--<button modale-toggle="true" ignore-id="attaches_area" callback="help_dropdown_click()"><i class="material-icons">help_outline</i></button>-->
-        <button><i class="material-icons" ng-click="askForRating()">thumb_up</i></button>
+        <button ng-click="askForRating()"><i class="material-icons">thumb_up</i></button>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
         <div class="send_button" ng-click="sendMessageAndFiles()"><span th:text="${lgPack.inputArea.sendBtn + ' &#47;&gt;'}">ВІДПРАВИТИ &#47;&gt;</span><i class="material-icons">send</i></div>

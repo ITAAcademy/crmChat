@@ -3,6 +3,7 @@ package com.intita.wschat.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -45,15 +46,22 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 	private ChatUser chatUser;
 
 	@OneToMany(mappedBy="result", fetch=FetchType.LAZY)
-	private Set<ChatConsultationResultValues> values;
+	private List<ChatConsultationResultValues> values;
 	
 
-	
+	Date date;
 
 	public ChatConsultationResult() {
-
+		date = new Date();
 	}
 
+	public ChatConsultationResult(Room room, ChatUser user, List<ChatConsultationResultValues> values) {
+		date = new Date();
+		this.room = room;
+		this.chatUser = user;
+		this.values = values;
+	}
+	
 	/*
 	 * GET/SET
 	 */
@@ -86,14 +94,21 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 		this.chatUser = chatUser;
 	}
 
-	public Set<ChatConsultationResultValues> getValues() {
+	public List<ChatConsultationResultValues> getValues() {
 		return values;
 	}
 
-	public void setValues(Set<ChatConsultationResultValues> values) {
+	public void setValues(List<ChatConsultationResultValues> values) {
 		this.values = values;
 	}
 
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
 	/*
 	 * (non-Javadoc)

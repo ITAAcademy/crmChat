@@ -109,6 +109,7 @@ gulp.task('dev-copy-assets', ['inject', 'dev-copy-lib', 'dev-fonts'], function()
 gulp.task('dev-copy-assets-mini', [], function() {
     return gulp
         .src([conf.paths.src + '/app/**/*', path.join(conf.paths.tmp, '/serve/app/**/*')])
+        //.pipe($.filter((file) => { file.base = '.'; return file.event === 'change'; }))
         .pipe(gulp.dest(conf.paths.devDist + /app/));
 });
 

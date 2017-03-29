@@ -13,14 +13,37 @@
         $stateProvider
             .state('monitor', {
                 url: '/monitor',
+                abstract: true,
+                template: '<div ui-view  autoscroll="true" autoscroll-body-top></div>',
                 title: 'Monitor',
-                templateUrl: 'app/pages/trainer_tenant_monitoring/monitor.html',
-                controller: 'MonitorPageCtrl',
+                sidebarMeta: {
+                    icon: 'ion-stats-bars',
+                    order: 150,
+                },
+            });
+
+        $stateProvider
+            .state('monitor.msgs', {
+                url: '/msgs',
+                title: 'Messages',
+                templateUrl: 'app/pages/trainer_tenant_monitoring/messages/messages.html',
+                controller: 'MessagesPageCtrl',
+                sidebarMeta: {
+                    icon: 'fa fa fa-bar-chart-o',
+                    order: 0,
+                },
+            });
+
+        $stateProvider
+            .state('monitor.ratings', {
+                url: '/ratings',
+                title: 'Ratings',
+                templateUrl: 'app/pages/trainer_tenant_monitoring/messages/messages.html',
+                controller: 'MessagesPageCtrl',
                 sidebarMeta: {
                     icon: 'fa fa fa-bar-chart-o',
                     order: 0,
                 },
             });
     }
-
 })();

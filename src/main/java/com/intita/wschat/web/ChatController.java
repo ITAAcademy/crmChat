@@ -653,7 +653,7 @@ public class ChatController {
 	 */
 
 	@MessageMapping("/chat.go.to.dialog/{roomId}")
-	public void userGoToDialogListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
+	public boolean userGoToDialogListener(@DestinationVariable("roomId") Long roomId, Principal principal) {
 		// checkProfanityAndSanitize(message);
 		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, principal, userService, chatUsersService,
 				chatRoomsService);
@@ -682,12 +682,13 @@ public class ChatController {
 		// chatRoomsService.getSimpleModelByUserPermissionsForRoom(struct.user,
 		// 0 , new Date().toString(), room,
 		// userMessageService.getLastUserMessageByRoom(room));
+		return true;
 	}
 
 	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void userGoToDialogListenerLP(@PathVariable("roomId") Long roomid, Principal principal) {
-		userGoToDialogListener(roomid, principal);
+	public boolean userGoToDialogListenerLP(@PathVariable("roomId") Long roomid, Principal principal) {
+		return userGoToDialogListener(roomid, principal);
 	}
 
 	@RequestMapping(value = "/chat/get_students/", method = RequestMethod.GET)

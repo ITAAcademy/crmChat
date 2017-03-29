@@ -6,10 +6,10 @@
     'use strict';
 
     angular.module('BlurAdmin.pages.trainer_tenant_monitoring')
-        .controller('MonitorPageCtrl', MonitorPageCtrl);
+        .controller('MessagesPageCtrl', MessagesPageCtrl);
 
     /** @ngInject */
-    function MonitorPageCtrl($scope, $timeout, UserMonitorService, $http) {
+    function MessagesPageCtrl($scope, $timeout, UserMonitorService, $http) {
 
         function openStart() {
             $scope.opened.start = true;

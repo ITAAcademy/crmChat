@@ -80,13 +80,6 @@ public class ConsultationsService {
 		chatConsultationRepository.save(entity);
 	}
 
-
-	@Transactional
-	public Set<ConsultationRatings> getAllSupportedRetings()
-	{
-		return chatConsultationRatingsRepository.findAll();
-	}
-
 	@Transactional
 	public void getRoomByConsultation(ChatConsultation cons) {
 

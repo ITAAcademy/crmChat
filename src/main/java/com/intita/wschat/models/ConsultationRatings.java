@@ -28,8 +28,8 @@ import jsonview.Views;
 public class ConsultationRatings implements Serializable,Comparable<ConsultationRatings>, Cloneable  {
 
 	protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+		return super.clone();
+	}
 	@Id
 	@GeneratedValue
 	@JsonView(Views.Public.class)
@@ -39,6 +39,9 @@ public class ConsultationRatings implements Serializable,Comparable<Consultation
 
 	public ConsultationRatings() {
 		// TODO Auto-generated constructor stub
+	}
+	public ConsultationRatings(Long id) {
+		this.id = id;
 	}
 	public ConsultationRatings(ConsultationRatings source){
 		this.id=source.getId();

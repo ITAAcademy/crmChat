@@ -26,8 +26,8 @@ public interface ChatUserLastRoomDateRepository extends CrudRepository<ChatUserL
 	   List<ChatUserLastRoomDate> findAll();
 	   List<ChatUserLastRoomDate> findByChatUser(ChatUser user);
 	   List<ChatUserLastRoomDate> findByRoom(Room user);
-	   ChatUserLastRoomDate findOneByRoomAndChatUserNotAndLastLogoutAfter(Room room, ChatUser user, Date after);
-	   ChatUserLastRoomDate findOneByRoomAndChatUserNotOrderByLastLogout(Room room, ChatUser user);
+	   ChatUserLastRoomDate findFirstByRoomAndChatUserNotAndLastLogoutAfter(Room room, ChatUser user, Date after);
+	   ChatUserLastRoomDate findFirstByRoomAndChatUserNotOrderByLastLogout(Room room, ChatUser user);
 	   List<ChatUserLastRoomDate> findByChatUserAndRoomIn(ChatUser user, ArrayList<Room> rooms);
 	 /*  ChatTenant findOneByIntitaUser(User user);
 	   List<ChatTenant> findFirst10ByIdNotIn(List<Long> users);
