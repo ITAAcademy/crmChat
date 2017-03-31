@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var conf = require('./conf');
 
 var browserSync = require('browser-sync');
+const babel = require('gulp-babel');
 
 var $ = require('gulp-load-plugins')();
 
