@@ -63,7 +63,8 @@
 </div>
 </div>
 <div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
-    <uib-tabset class="tabs-right" active="activeTabIndex">
+    <div ng-show="ratingsInfoByCurrentRoom.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">Not found any ratings</div>
+    <uib-tabset ng-show="ratingsInfoByCurrentRoom.length > 0" class="tabs-right" active="activeTabIndex">
         <uib-tab heading="Table">
             <table class="table ratings">
                 <tr>
@@ -75,7 +76,7 @@
                 <tr ng-repeat="rating in ratingsInfoByCurrentRoom">
                     <td>{{::$index}}</td>
                     <td>{{::rating.user.nickName}}</td>
-                    <td>{{::rating.date | date:'MM/dd/yyyy @ h:mma'}}</td>
+                    <td>{{::rating.date | date:'MM/dd/yyyy hh:mm'}}</td>
                     <td class="values">
                         <table class="table">
                             <tr>

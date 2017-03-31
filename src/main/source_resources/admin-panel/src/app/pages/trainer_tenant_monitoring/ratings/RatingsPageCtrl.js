@@ -261,7 +261,7 @@
             $scope.roomsForSearch[0] = { key: 715 };
             $scope.loadRatingsInfoByRoom();
         }
-        initTest();
+      //  initTest();
 
 
     }
