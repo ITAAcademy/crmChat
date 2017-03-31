@@ -5,11 +5,37 @@
 (function() {
     'use strict';
 
-    angular.module('BlurAdmin.pages.trainer_tenant_monitoring', ['ui.select', 'ngSanitize', 'Intita.monitor.servises'])
+    angular.module('BlurAdmin.pages.trainer_tenant_monitoring', ['ui.select', 'ngSanitize', 'Intita.monitor.servises', 'springChat.directives'])
         .config(routeConfig);
 
     /** @ngInject */
-    function routeConfig($stateProvider) {
+    function routeConfig($stateProvider, ChartJsProvider, baConfigProvider) {
+
+        var layoutColors = baConfigProvider.colors;
+        // Configure all charts
+        ChartJsProvider.setOptions({
+            chartColors: [
+                layoutColors.primary, layoutColors.danger, layoutColors.warning, layoutColors.success, layoutColors.info, layoutColors.default, layoutColors.primaryDark, layoutColors.successDark, layoutColors.warningLight, layoutColors.successLight, layoutColors.primaryLight
+            ],
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2500
+            },
+            scale: {
+                gridLines: {
+                    color: layoutColors.border
+                },
+                scaleLabel: {
+                    fontColor: layoutColors.defaultText
+                },
+                ticks: {
+                    fontColor: layoutColors.defaultText,
+                    showLabelBackdrop: false
+                }
+            }
+        });
+
         $stateProvider
             .state('monitor', {
                 url: '/monitor',
@@ -38,8 +64,8 @@
             .state('monitor.ratings', {
                 url: '/ratings',
                 title: 'Ratings',
-                templateUrl: 'app/pages/trainer_tenant_monitoring/messages/messages.html',
-                controller: 'MessagesPageCtrl',
+                templateUrl: 'app/pages/trainer_tenant_monitoring/ratings/ratings.html',
+                controller: 'RatingsPageCtrl',
                 sidebarMeta: {
                     icon: 'fa fa fa-bar-chart-o',
                     order: 0,

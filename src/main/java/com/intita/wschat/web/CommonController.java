@@ -223,6 +223,11 @@ public class CommonController {
 		return page;
 	}
 	
+	@RequestMapping(value="/403", method = RequestMethod.GET)
+	public String  accessDeny(HttpRequest request) {
+		return "redirect:" + configParamService.getParam("baseUrl").getValue() + "/site/authorize";
+	}
+	
 	
 	@RequestMapping(value="/chat/update/users/name", method = RequestMethod.GET)
 	@ResponseBody

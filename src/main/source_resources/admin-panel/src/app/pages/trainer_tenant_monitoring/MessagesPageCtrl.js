@@ -37,6 +37,23 @@
 
         var wait = false
         var _infoStudent = '';
+        $scope.getStudents = function(info) {
+            if (_infoStudent != info && wait == false && info.trim() != '') {
+                $http.get(serverPrefix + "/chat/findStudent?info=" + info, {}).success(function(data, status, headers, config) {
+                    $scope.selectWithSearchItems = data;
+                    wait = false;
+                }).error(function(data, status, headers, config) {
+                    wait = false;
+                });
+                wait = true;
+                _infoStudent = info;
+            }
+
+            console.log(info);
+            return $scope.selectWithSearchItems;
+        }
+
+        var wait = false
 
         function getUsersInfo(roles, info, succ, error) {
             if (wait == false) {

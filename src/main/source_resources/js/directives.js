@@ -192,7 +192,7 @@ angular.module('springChat.directives').directive('starRating', starRating);
 function starRating() {
     return {
         restrict: 'EA',
-        template: `<div class="rating large label-right star-svg" ng-class="containerClass">
+        template: `<div class="rating label-right star-svg" ng-class="containerClass">
     <div class="label-value">{{ratingValue}}</div>
     <div class="star-container">
         <div ng-repeat="star in stars" ng-class="star.class" ng-click="toggle($event, $index)">
@@ -212,7 +212,8 @@ function starRating() {
             ratingValue: '=ngModel',
             max: '=?', // optional (default is 5)
             onRatingSelect: '&?',
-            readonly: '=?'
+            readonly: '=?',
+            ngClass: '@'
         },
         link: function(scope, element, attributes) {
 
@@ -223,24 +224,29 @@ function starRating() {
                 scope.max = 10;
             }
             scope.stars = [];
-            scope.containerClass = 'value-0';
+            scope.containerClass = scope.ngClass + ' value-0';
             for (var i = 0; i < 5; i++) {
                 scope.stars.push({
                     class: i < scope.ratingValue ? 'star empty' : 'star filled '
                 });
             }
 
+            scope.$watch('ratingValue', function(){
+                updateStars();
+            })
+
             function updateStars(full) {
                 var value = (scope.ratingValue * 5) / scope.max;
+                var full = scope.ratingValue%2 == 0;
 
                 for (var i = 0; i < 5; i++) {
-                    console.log(value);
-                    console.log("::" + i);
                     scope.stars[i].class = i < value ? !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
                 }
-                scope.containerClass = 'value-' + Math.round(value);
+                scope.containerClass = scope.ngClass + ' value-' + Math.round(value);
             };
             scope.toggle = function(event, index) {
+                if(scope.readonly === true)
+                    return;
                 var target = $(event.currentTarget);
                 var posX = target.offset().left,
                     posY = target.offset().top;
@@ -263,7 +269,8 @@ function starRating() {
                     updateStars(full);
                 }
             };
-            scope.ratingValue = 0;
+            if(scope.ratingValue == undefined)
+                scope.ratingValue = 0;
             /*scope.$watch('ratingValue', function(oldValue, newValue) {
               if (newValue) {
                 updateStars();

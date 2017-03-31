@@ -509,7 +509,7 @@ public class RoomController {
 		ChatUser chatUser = chatUserServise.getChatUser(principal);
 		String participantsAndMessages = mapper.writeValueAsString(
 				retrieveParticipantsSubscribeAndMessagesObj(struct.getRoom(), chatLangService.getCurrentLang(),chatUser));
-		
+
 		return participantsAndMessages;
 	}
 
@@ -931,7 +931,7 @@ public class RoomController {
 		 * all.addAll(user_o.getRootRooms()); if(all.contains(room_o)) return
 		 * false;
 		 */
-		
+
 		if (room_o.getType() == RoomType.STUDENTS_GROUP)
 		{
 			roomPermissionsService.addPermissionsToUser(room_o, user_o, RoomPermissions.Permission.INVITED_USER.getValue());
@@ -999,19 +999,6 @@ public class RoomController {
 
 	}
 
-	@RequestMapping(value = "/chat/user/friends", method = RequestMethod.POST)
-	@ResponseBody
-	public String userFriends(Principal principal) {
-		ChatUser user = chatUserServise.getChatUser(principal);
-		try {
-			return mapper.writeValueAsString(roomService.getPrivateLoginEvent(user));
-		} catch (JsonProcessingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return "{}";
-	}
-
 	@RequestMapping(value = "/chat/rooms.{room}/user.remove/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean removeUserFromRoomRequest(@PathVariable("id") Long id, @PathVariable("room") Long room,
@@ -1037,6 +1024,39 @@ public class RoomController {
 		}
 		return res;
 	}
+
+	/**
+	 * 
+	 * @return login events from private rooms by current user
+	 */
+	@RequestMapping(value = "/chat/user/friends", method = RequestMethod.POST)
+	@ResponseBody
+	public String userFriends(Principal principal) {
+		ChatUser user = chatUserServise.getChatUser(principal);
+		try {
+			return mapper.writeValueAsString(roomService.getPrivateRoomsLoginEvent(user));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return "{}";
+	}
+
+
+	@RequestMapping(value = "/chat/rooms/find", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> findRoomByName(@RequestParam(name="name") String nameLike, Principal principal) {
+		Map<Long, String> roomSimples = new HashMap<>();
+		
+		ArrayList<Room> rooms = roomService.getRoomsWithNameLike("%" + nameLike + "%");
+		for(Room room : rooms)
+		{
+			roomSimples.put(room.getId(), room.getName());
+		}
+		return roomSimples;
+	}
+
+
 
 	@MessageExceptionHandler
 	@SendToUser(value = "/exchange/amq.direct/errors", broadcast = false)

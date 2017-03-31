@@ -26,7 +26,7 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatConsultationResult;
-import com.intita.wschat.models.ChatConsultationResultValues;
+import com.intita.wschat.models.ChatConsultationResultValue;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.Room.RoomType;
@@ -68,13 +68,25 @@ public class ConsultationsRatingsService {
 	}
 	
 	@Transactional
-	public void addRetings(Room room, ChatUser user, List<ChatConsultationResultValues> values)
+	public void addRetings(Room room, ChatUser user, List<ChatConsultationResultValue> values)
 	{
 		ChatConsultationResult consultationResult = new ChatConsultationResult(room, user, values);
 		consultationResult = chatConsultationResultRepository.save(consultationResult);		
-		for(ChatConsultationResultValues value : values)
+		for(ChatConsultationResultValue value : values)
 			value.setResult(consultationResult);
 		chatConsultationResultValuesRepository.save(values);
+	}
+	
+	@Transactional
+	public ArrayList<ChatConsultationResult> getRetingsByRoomNameLike(String roomNameContains)
+	{
+		return chatConsultationResultRepository.findAllByRoomNameLike(roomNameContains);
+	}
+	
+	@Transactional
+	public ArrayList<ChatConsultationResult> getRetingsByRoomAndDates(Room room, Date before, Date after)
+	{
+		return chatConsultationResultRepository.findAllByRoomAndDateBeforeAndDateAfter(room, before, after);
 	}
 }
 

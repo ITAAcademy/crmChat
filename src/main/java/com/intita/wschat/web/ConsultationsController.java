@@ -37,7 +37,7 @@ import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.models.ChatConsultation;
-import com.intita.wschat.models.ChatConsultationResultValues;
+import com.intita.wschat.models.ChatConsultationResultValue;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConsultationRatings;
 import com.intita.wschat.models.IntitaConsultation;
@@ -321,10 +321,10 @@ public class ConsultationsController {
 		
 		ChatUser user = chatUsersService.getChatUser(principal);
 		
-		ArrayList<ChatConsultationResultValues> values = new ArrayList<>();
+		ArrayList<ChatConsultationResultValue> values = new ArrayList<>();
 		for(Long ratingId : ratingsValues.keySet())
 		{
-			ChatConsultationResultValues t = new ChatConsultationResultValues(new ConsultationRatings(ratingId), ratingsValues.get(ratingId));
+			ChatConsultationResultValue t = new ChatConsultationResultValue(new ConsultationRatings(ratingId), ratingsValues.get(ratingId));
 			values.add(t);
 		}
 		chatConsultationsRatingsService.addRetings(room, user, values);

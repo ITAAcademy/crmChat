@@ -9,14 +9,13 @@
     'ui.router',
 
     'BlurAdmin.pages.dashboard',
-    'BlurAdmin.pages.form',
     'BlurAdmin.pages.trainer_tenant_monitoring'
   ])
       .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-         $urlRouterProvider.otherwise('/monitor/msgs');
+         $urlRouterProvider.otherwise('/monitor/ratings');
 
 /*
     baSidebarServiceProvider.addStaticItem({
@@ -39,7 +38,7 @@
         blank: true
       }]
     });*/
-    baSidebarServiceProvider.addStaticItem({
+   /* baSidebarServiceProvider.addStaticItem({
       title: 'Menu Level 1',
       icon: 'ion-ios-more',
       subMenu: [{
@@ -52,7 +51,7 @@
           disabled: true
         }]
       }]
-    });
+    });*/
   }
 
 })();

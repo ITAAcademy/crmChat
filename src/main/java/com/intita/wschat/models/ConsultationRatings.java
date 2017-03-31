@@ -36,6 +36,7 @@ public class ConsultationRatings implements Serializable,Comparable<Consultation
 	private Long id;
 
 	private String name;
+	private Boolean active = true; 
 
 	public ConsultationRatings() {
 		// TODO Auto-generated constructor stub
@@ -50,6 +51,13 @@ public class ConsultationRatings implements Serializable,Comparable<Consultation
 	/*
 	 * GET/SET
 	 */
+	public Boolean isActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	
 	public Long getId() {
 		return id;
 	}

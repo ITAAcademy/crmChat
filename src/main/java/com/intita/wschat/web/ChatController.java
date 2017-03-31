@@ -1024,11 +1024,11 @@ public class ChatController {
 
 	@RequestMapping(value = "/get_users_nicknames_like_without_room", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<LoginEvent> getNickNamesLike2(@RequestParam String nickName) throws JsonProcessingException {
-		List<ChatUser> nicks = chatUsersService.getChatUsersLike(nickName);
+	public Set<LoginEvent> getNickNamesLike(@RequestParam String nickName) throws JsonProcessingException {
+		List<ChatUser> users = chatUsersService.getChatUsersLike(nickName);
 		Set<LoginEvent> usersData = new HashSet<LoginEvent>();
-		for (ChatUser nick : nicks) {
-			usersData.add(new LoginEvent(nick.getId(), nick.getNickName()));// participantRepository.isOnline(""+nick.getId())));
+		for (ChatUser user : users) {
+			usersData.add(new LoginEvent(user));// participantRepository.isOnline(""+nick.getId())));
 		}
 		return usersData;
 	}

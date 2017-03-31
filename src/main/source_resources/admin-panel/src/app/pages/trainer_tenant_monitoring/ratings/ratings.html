@@ -1,0 +1,133 @@
+<div class="ng-cloak monitor-head" ba-panel ba-panel-title="Filter" ba-panel-class=" ">
+    <div class="row datepicker">
+        <div class="col-md-2 row">
+            <div class="col-md-12">
+                <input id="user" name="user_room" ng-model="form.searchMode" value="user" type="radio" aria-label="...">
+                <label for="user">Find by users name</label>
+            </div>
+            <div class="col-md-12">
+                <input id="room" name="user_room" ng-model="form.searchMode" value="room" type="radio" aria-label="...">
+                <label for="room">Find by room name</label>
+            </div>
+        </div>
+        <div class="col-md-4 row">
+            <div ng-show="form.searchMode=='user'" class="form-group col-md-12">
+                <ui-select ng-model="usersForSearch[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select first user">
+                        {{usersForSearch[0].nickName}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="withSearchItem in findUsers($select.search) | filter:  $select.search">
+                        <span ng-bind-html="withSearchItem.nickName"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div ng-show="form.searchMode=='user'" class="form-group col-md-12">
+                <ui-select ng-model="usersForSearch[1]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select second user">
+                        {{usersForSearch[1].nickName}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="withSearchItem in findUsers($select.search) | filter:  $select.search">
+                        <span ng-bind-html="withSearchItem.nickName"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div ng-show="form.searchMode=='room'" class="form-group col-md-12">
+                <ui-select ng-model="roomsForSearch[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select room">
+                        {{roomsForSearch[0].name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="withSearchItem in findRooms($select.search) | filter:  $select.search">
+                        <span ng-bind-html="withSearchItem.name"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+        <button style="float: right;margin-right: 15px;" ng-click="loadRatingsInfoByRoom()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+    </div>
+</div>
+</div>
+<div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
+    <uib-tabset class="tabs-right" active="activeTabIndex">
+        <uib-tab heading="Table">
+            <table class="table ratings">
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Values</th>
+                </tr>
+                <tr ng-repeat="rating in ratingsInfoByCurrentRoom">
+                    <td>{{::$index}}</td>
+                    <td>{{::rating.user.nickName}}</td>
+                    <td>{{::rating.date | date:'MM/dd/yyyy @ h:mma'}}</td>
+                    <td class="values">
+                        <table class="table">
+                            <tr>
+                                <th>Rating</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr ng-repeat="(key, value) in rating.values">
+                                <td>{{::supportedRatings[key]}}</td>
+                                <td>
+                                    <star-rating ng-model="rating.values[key]" readonly=true></star-rating>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </uib-tab>
+        <uib-tab heading="Graph">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Title</div>
+                        <div class="panel-body">
+                            <div class="chartjs-canvas-holder-third-row">
+                                <canvas id="bar" class="chart chart-bar" chart-options="options" chart-dataset-override="datasetOverride" chart-data="data" chart-labels="labels" chart-series="labels">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Average Count</div>
+                        <div class="panel-body">
+                            <div class="chartjs-canvas-holder-first-row">
+                                <canvas id="doughnut" chart-options="optionsAverageCount" class="chart chart-doughnut" chart-data="dataAverageCount" chart-labels="labels">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Average Value</div>
+                        <div class="panel-body">
+                            <div class="chartjs-canvas-holder-third-row">
+                                <canvas id="bar" class="chart chart-bar" chart-options="optionsAverageValue" chart-data="dataAverageValue" chart-labels="labels">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </uib-tab>
+    </uib-tabset>
+    </div>

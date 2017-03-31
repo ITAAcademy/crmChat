@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -290,6 +291,22 @@ public class UsersService {
 		return loginEvents;
 	}
 	
+	
+	@Transactional
+	public boolean checkRoleByChatUser(Principal principal, User.Roles role){
+		User user = this.getUser(principal);
+		if(user == null)
+			return false;
+		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
+		try{
+			Long userId = Long.parseLong(query.getSingleResult().toString());
+			return userId.equals(user.getId());
+		}
+		catch (NoResultException e) {
+			return false;
+		}
+		
+	}
 	
 	@Transactional
 	public boolean checkRole(User user, User.Roles role){

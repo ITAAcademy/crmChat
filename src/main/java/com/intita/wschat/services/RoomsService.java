@@ -69,6 +69,13 @@ public class RoomsService {
 	public List<Room> getRooms(){
 		return (List<Room>) roomRepo.findAll(); 
 	}
+	
+	@Transactional
+	public ArrayList<Room> getRoomsWithNameLike(String like){
+		return roomRepo.findFirst10ByNameLike(like); 
+	}
+	
+	
 
 	@Transactional
 	public Room getRoom(Long id){
@@ -239,7 +246,7 @@ public class RoomsService {
 		return users;
 	}
 	@Transactional
-	public ArrayList<LoginEvent> getPrivateLoginEvent(ChatUser user) {
+	public ArrayList<LoginEvent> getPrivateRoomsLoginEvent(ChatUser user) {
 		ArrayList<LoginEvent> users = new ArrayList<>();
 		ArrayList<PrivateRoomInfo> infoList = getPrivateRoomsInfoByUser(user);
 		for (PrivateRoomInfo privateRoomInfo : infoList) {

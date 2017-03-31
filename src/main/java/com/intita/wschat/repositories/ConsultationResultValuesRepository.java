@@ -10,12 +10,12 @@ import org.springframework.data.repository.CrudRepository;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatConsultationResult;
-import com.intita.wschat.models.ChatConsultationResultValues;
+import com.intita.wschat.models.ChatConsultationResultValue;
 import com.intita.wschat.models.Lang;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 
 
-public interface ConsultationResultValuesRepository extends CrudRepository<ChatConsultationResultValues, Long> {
+public interface ConsultationResultValuesRepository extends CrudRepository<ChatConsultationResultValue, Long> {
 
 }

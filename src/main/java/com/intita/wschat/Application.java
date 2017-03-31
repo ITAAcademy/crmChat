@@ -32,6 +32,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestContextListener;
@@ -39,6 +41,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 
 @SpringBootApplication
@@ -125,5 +129,16 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
 	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf){
 		return hemf.getSessionFactory();
 	}
-
+	/**
+	 * Jackson configuration
+	 * @return
+	 */
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+	    MappingJackson2HttpMessageConverter converter = 
+	        new MappingJackson2HttpMessageConverter(mapper);
+	    return converter;
+	}
 }

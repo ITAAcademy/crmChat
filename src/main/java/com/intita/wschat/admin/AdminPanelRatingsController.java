@@ -35,12 +35,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.admin.models.MsgRequestModel;
+import com.intita.wschat.admin.models.MsgRequestRatingsModel;
+import com.intita.wschat.admin.models.MsgResponseRatingsModel;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
+import com.intita.wschat.exception.ChatUserNotFoundException;
+import com.intita.wschat.models.ChatConsultationResult;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.Room;
@@ -53,6 +57,7 @@ import com.intita.wschat.services.ChatTenantService;
 import com.intita.wschat.services.ChatUserLastRoomDateService;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
+import com.intita.wschat.services.ConsultationsRatingsService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.CourseService;
 import com.intita.wschat.services.IntitaMailService;
@@ -72,9 +77,10 @@ import com.intita.wschat.web.RoomController;
  */
 @Service
 @Controller
-public class AdminPanelController {
+@PreAuthorize("hasPermission(null, 'ADMIN')")
+public class AdminPanelRatingsController {
 
-	private final static Logger log = LoggerFactory.getLogger(AdminPanelController.class);
+	private final static Logger log = LoggerFactory.getLogger(AdminPanelRatingsController.class);
 
 	@Autowired ConfigParamService configParamService;
 	@Autowired private ProfanityChecker profanityFilter;
@@ -92,6 +98,7 @@ public class AdminPanelController {
 	@Autowired private ChatUserLastRoomDateService chatUserLastRoomDateService;
 	@Autowired private ChatLangRepository chatLangRepository;
 	@Autowired private ConsultationsService chatConsultationsService;
+	@Autowired private ConsultationsRatingsService consultationsRatingsService;	
 	@Autowired private CourseService courseService;
 	@Autowired private LecturesService lecturesService;
 	@Autowired private BotItemContainerService dialogItemService;
@@ -106,72 +113,34 @@ public class AdminPanelController {
 	
 
 	private final static ObjectMapper mapper = new ObjectMapper();
-
-
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
-	@RequestMapping(value="/admin", method = RequestMethod.GET)
-	public String  admin(HttpServletRequest request,Model model, Principal principal) {
+	
+	
+	@RequestMapping(value = "/chat/admin/ratingByRoom", method = RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<MsgResponseRatingsModel> ratingByRoom(Principal principal, @RequestBody MsgRequestRatingsModel rqModel) {
+		Room ratingRoom = null;
 		
-		chatUsersService.getChatUser(principal);
-		String lang = chatLangService.getCurrentLang();
-		List<ConfigParam> config =  configParamService.getParams();
-		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
-		configMap.put("currentLang", lang);
-		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
-		model.addAttribute("config", configMap);
-		//return "../static/admin-panel/release/index";
-		return "../static/admin-panel/dev-release/index";
-	}
-
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
-	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
-	@ResponseBody
-	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
-		List<User> users= new ArrayList<>();
-		User iUser = user.getIntitaUser();
-
-		if(iUser != null)
+		if(rqModel.getIsUser())
 		{
-			Long intitaUserId = user.getIntitaUser().getId();
-			for(User.Roles role : User.Roles.values())
-			{
-				if((role.getValue() & roles) == role.getValue())
-					users.addAll(userService.getUsersFist5WithRole(info, role));	
-			}
-
+			if(rqModel.getRoomUserIds().length < 2)
+				throw new ChatUserNotFoundException("dont enough ids, must be 2");
+			ChatUser first = chatUsersService.getChatUser(rqModel.getRoomUserIds()[0]);
+			ChatUser second = chatUsersService.getChatUser(rqModel.getRoomUserIds()[1]);
+			if(first == null || second == null)
+				throw new ChatUserNotFoundException("second or first user not found");
+			ratingRoom = roomService.getPrivateRoom(first, second);
 		}
-		else return new  HashSet<LoginEvent>();
-
-		Set<LoginEvent> userList = new HashSet<>();
-		for(User u : users)
-		{
-			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
-			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
+		else{
+			Long roomId = rqModel.getRoomUserIds()[0];
+			ratingRoom = roomService.getRoom(roomId);
 		}
-		return  userList;
-
-	}
-
-
-	@RequestMapping(value = "/chat/msgHistory", method = RequestMethod.POST)
-	@ResponseBody
-	public ArrayList<ChatMessage> getMsgHistory(Principal principal, @RequestBody MsgRequestModel rqModel) {
-		ChatUser first = chatUsersService.getChatUser(rqModel.getUserIdFirst().longValue());
-		ChatUser second = chatUsersService.getChatUser(rqModel.getUserIdSecond().longValue());
 		
 		Date beforeDate = new Date(rqModel.getBeforeDate());
 		Date afterDate = new Date(rqModel.getAfterDate());
 		
-		Room privateRoom = roomController.getPrivateRoom(first, second);
-		if(first == null || second == null || beforeDate == null || afterDate == null || privateRoom == null)
-			throw new NullArgumentException("");
+		 ArrayList<ChatConsultationResult> chatConsultationResults = consultationsRatingsService.getRetingsByRoomAndDates(ratingRoom, beforeDate, afterDate);
 		
-		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30);
-		ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
-		return chatMessages;
+		return MsgResponseRatingsModel.convertAllChatConsultationResults(chatConsultationResults);
 	}
-
-	
 	
 }

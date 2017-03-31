@@ -2,7 +2,7 @@
     Оцініть розмову
 </div>
 <div class="modal-content">
- <div ng-repeat="rating in ratings"><div>{{rating.name}}</div> <div><star-rating ng-model="rating.value"></star-rating></div></div>
+ <div ng-repeat="rating in ratings"><div>{{rating.name}}</div> <div><star-rating ng-class="large" ng-model="rating.value"></star-rating></div></div>
 
 </div>
 <div class="modal-footer">

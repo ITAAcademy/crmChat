@@ -13,7 +13,7 @@ angular.module('Intita', [
   "xeditable",
   'ui.slimscroll',
   'ngJsTree',
-  'angular-progress-button-styles',
+  'angular-progress-button-styles'
 ]);
 angular.module('Intita.monitor.servises', []);
 

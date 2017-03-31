@@ -14,7 +14,7 @@
         var isStudent = false;
         var _isAdmin = false;
         var studentTrainerList = [];
-        var chatUserNickname, chatUserRole, chatUserAvatar;
+        var chatUserNickname, chatUserRole, chatUserAvatar = null;//= "noname.png";
         var realChatUserId;
         var chatUserId = null;
         var isUserTenantInited = false;
@@ -25,9 +25,19 @@
         var onlineUsersIds = [];
         var messageSended = true;
 
-        this.getChatUserAvatar = function(){
-        	return chatUserAvatar;
+        this.getChatUserAvatar = function() {
+            return chatUserAvatar;
         }
+
+        
+
+        this.getChatUserWithNickNameLike = function(like) {
+            return $http.get(serverPrefix + "/get_users_nicknames_like_without_room?nickName=" + like);
+        }
+        this.getRoomsWithNameLike = function(like) {
+            return $http.get(serverPrefix + "/chat/rooms/find?name=" + like);
+        }
+
 
         function reInitForLP() {
             $http.post(serverPrefix + "/chat/login/-1", { message: 'true' }).success(function(data, status, headers, config) {

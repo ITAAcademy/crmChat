@@ -1,0 +1,17 @@
+table.ratings.table  td, table.ratings  table.table td{
+    vertical-align: middle;
+}
+table.ratings td.values{
+    border-left: 1px #dcdcdc solid;
+}
+
+table.ratings th, table.ratings  table.table th{
+ 	vertical-align: middle;   
+ 	text-align: center;
+}
+
+
+table.ratings tr:nth-child(2n), table.ratings  table.table tr:nth-child(2n){
+    background-color: #fefefe;
+
+}

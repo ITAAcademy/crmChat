@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.intita.wschat.domain.ChatMessage;
@@ -28,9 +29,8 @@ import jsonview.Views;
  * @author Nicolas Haiduchok
  */
 @Entity(name = "chat_consultations_results_values")
-public class ChatConsultationResultValues implements Serializable,Comparable<ChatConsultationResultValues>  {
-
-	private static final long serialVersionUID = 1L;
+public class ChatConsultationResultValue implements Serializable,Comparable<ChatConsultationResultValue>  {
+	private static final long serialVersionUID = -5795522170195997862L;
 
 	@Id
 	@GeneratedValue
@@ -39,7 +39,8 @@ public class ChatConsultationResultValues implements Serializable,Comparable<Cha
 
 	
 	@NotNull
-	@ManyToOne()
+	@ManyToOne
+	@JsonIgnore
 	private ChatConsultationResult result;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -47,10 +48,10 @@ public class ChatConsultationResultValues implements Serializable,Comparable<Cha
 
 	private int value; 
 
-	public ChatConsultationResultValues() {
+	public ChatConsultationResultValue() {
 
 	}
-	public ChatConsultationResultValues(ConsultationRatings rating, int value) {
+	public ChatConsultationResultValue(ConsultationRatings rating, int value) {
 		this.rating = rating;
 		this.value = value;
 	}
@@ -59,7 +60,7 @@ public class ChatConsultationResultValues implements Serializable,Comparable<Cha
 	 */
 
 	@Override
-	public int compareTo(ChatConsultationResultValues arg0) {
+	public int compareTo(ChatConsultationResultValue arg0) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -132,7 +133,7 @@ public class ChatConsultationResultValues implements Serializable,Comparable<Cha
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ChatConsultationResultValues other = (ChatConsultationResultValues) obj;
+		ChatConsultationResultValue other = (ChatConsultationResultValue) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

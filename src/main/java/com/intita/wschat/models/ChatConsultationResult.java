@@ -20,6 +20,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.intita.wschat.domain.ChatMessage;
@@ -30,6 +31,7 @@ import jsonview.Views;
  * @author Nicolas Haiduchok
  */
 @Entity(name = "chat_consultations_results")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ChatConsultationResult implements Serializable,Comparable<ChatConsultationResult>  {
 
 	private static final long serialVersionUID = 1L;
@@ -45,8 +47,8 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 	@ManyToOne(fetch=FetchType.LAZY)
 	private ChatUser chatUser;
 
-	@OneToMany(mappedBy="result", fetch=FetchType.LAZY)
-	private List<ChatConsultationResultValues> values;
+	@OneToMany(mappedBy="result", fetch=FetchType.EAGER)
+	private List<ChatConsultationResultValue> values;
 	
 
 	Date date;
@@ -55,7 +57,7 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 		date = new Date();
 	}
 
-	public ChatConsultationResult(Room room, ChatUser user, List<ChatConsultationResultValues> values) {
+	public ChatConsultationResult(Room room, ChatUser user, List<ChatConsultationResultValue> values) {
 		date = new Date();
 		this.room = room;
 		this.chatUser = user;
@@ -94,11 +96,11 @@ public class ChatConsultationResult implements Serializable,Comparable<ChatConsu
 		this.chatUser = chatUser;
 	}
 
-	public List<ChatConsultationResultValues> getValues() {
+	public List<ChatConsultationResultValue> getValues() {
 		return values;
 	}
 
-	public void setValues(List<ChatConsultationResultValues> values) {
+	public void setValues(List<ChatConsultationResultValue> values) {
 		this.values = values;
 	}
 
