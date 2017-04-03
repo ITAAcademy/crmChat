@@ -82,7 +82,7 @@ public class IntitaMailService {
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                 message.setTo(to.getEmail());//chatuser.getNickName());//destination email
                 //message.setTo("nico13051995@gmail.com");//chatuser.getNickName());//destination email
-                message.setFrom("zigzag2341@gmail.com"); // could be parameterized...
+                message.setFrom(configParamService.getParam("newsletterMail").getValue()); // could be parameterized...
  
     			
                 Map<String, Object> model = new HashMap();
