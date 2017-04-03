@@ -331,4 +331,24 @@ public class UserMessageService {
 		}
 		return result;
 	}
+	public Map<Room ,List<ChatMessage>> getAllUnreadedMessagesFrom24Hours(ChatUser user){
+		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
+		Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
+		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
+			Room room = lastRoomEntry.getRoom();
+			Date lastLogoutDate = lastRoomEntry.getLastLogout();
+			Date currentDateMinus24Hours = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+			if (lastLogoutDate.before(currentDateMinus24Hours))
+			{
+				lastLogoutDate = currentDateMinus24Hours;
+			}
+			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastLogoutDate, "ua");
+			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
+			if(unreadedChatMessages.size()>0)
+				result.put(room, unreadedChatMessages);
+		}
+		return result;
+	}
+	
+	
 }
