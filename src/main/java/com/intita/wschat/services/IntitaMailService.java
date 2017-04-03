@@ -69,7 +69,7 @@ public class IntitaMailService {
         mailSender.setJavaMailProperties(mailProps);
 		
 	}
-	public void sendUnreadedMessageToIntitaUser(User to) throws Exception{
+	public void sendUnreadedMessageToIntitaUserFrom24Hours(User to) throws Exception{
 		Map<Room, List<ChatMessage>> unreadedRoomMessages = userMessageService.getAllUnreadedMessages(to.getChatUser());
 		if(unreadedRoomMessages.size() == 0)
 			return;

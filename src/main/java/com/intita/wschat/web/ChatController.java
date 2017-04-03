@@ -1083,7 +1083,7 @@ public class ChatController {
 		User user = userService.getUser(principal);
 		log.info("sending email to:" + user.getEmail());
 		try {
-			mailService.sendUnreadedMessageToIntitaUser(user);
+			mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
 		} catch (Exception e) {
 			log.info("sending failed");
 		}
@@ -1097,7 +1097,7 @@ public class ChatController {
 			User user = tenant.getChatUser().getIntitaUser();
 			log.info("sending to " + user.getEmail());
 			try {
-				mailService.sendUnreadedMessageToIntitaUser(user);
+				mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
 			} catch (Exception e) {
 				log.info("sending failed: \n" + e.getMessage());
 			}

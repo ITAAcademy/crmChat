@@ -46,7 +46,7 @@ public class ChatConsultationResultValue implements Serializable,Comparable<Chat
 	@ManyToOne(fetch=FetchType.LAZY)
 	private ConsultationRatings rating;
 
-	private int value; 
+	private int value = 0; 
 
 	public ChatConsultationResultValue() {
 

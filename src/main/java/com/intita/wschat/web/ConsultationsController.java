@@ -402,7 +402,7 @@ public class ConsultationsController {
           if (intitaUser==null) return false;  
 		  
 	       try{ 
-	    	   mailService.sendUnreadedMessageToIntitaUser(intitaUser);     
+	    	   mailService.sendUnreadedMessageToIntitaUserFrom24Hours(intitaUser);     
 	       }
 	       catch(Exception e){
 	    	   System.out.println("EMAIL SENDING ERROR, MAYBE AUTH FAILED");
