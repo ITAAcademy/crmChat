@@ -782,13 +782,34 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.help_dropdown_click = function() {
             $('#help_dropdown').toggleClass('shown');
         }
+   function insertTextAtCursor(text) { 
+            var sel, range, html; 
+            sel = window.getSelection();
+            range = sel.getRangeAt(0); 
+            range.deleteContents(); 
+            var textNode = document.createTextNode(text);
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            sel.removeAllRanges();
+            sel.addRange(range); 
+            console.log("Inserted:"+text);       
+        }
 
         messageAreaResizer();
 
         $timeout(function() {
             //DOM has finished rendering
+            var contentEdiableMessageInput = document.getElementById('#message_input_editable');
             $(".messages_input_area").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
+            $('#message_input_editable').on('paste',function(e) {
+    e.preventDefault();
+    var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    var escapedHtml = htmlEscape(text);
+    insertTextAtCursor(escapedHtml);
+    //$scope.newMessage = text;
+
+});
         });
 
         $scope.$$postDigest(function() {
