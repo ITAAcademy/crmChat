@@ -1091,10 +1091,14 @@ public class ChatController {
 	}
 
 	private void sendAllNewMessageNotificationsFromLast24Hours() {
-		Set<ChatTenant> tenants = chatTenantService.getUniqueTenants();
-		log.info("sending emails to users:");
-		for (ChatTenant tenant : tenants) {
-			User user = tenant.getChatUser().getIntitaUser();
+		final int pageSize = 30;
+		int currentPage = 1;
+		 Page<User> intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+		 log.info("sending emails to users:");
+		 int pagesTotal = intitaUsersPage.getTotalPages();
+		while(currentPage<=pagesTotal){
+			 log.info("sending page "+currentPage+"/"+pagesTotal);
+		for (User user : intitaUsersPage.getContent()) {
 			log.info("sending to " + user.getEmail());
 			try {
 				mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
@@ -1102,7 +1106,10 @@ public class ChatController {
 				log.info("sending failed: \n" + e.getMessage());
 			}
 		}
-
+		currentPage++;
+		if (currentPage<=pagesTotal)
+		intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+		}
 	}
 
 	boolean isEmailSendingRequired = true;

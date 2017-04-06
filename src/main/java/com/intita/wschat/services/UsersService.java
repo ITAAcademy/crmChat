@@ -331,6 +331,12 @@ public class UsersService {
 		}
 		return resultArray;
 	}
+	
+	@Transactional
+	public Page<User> getChatUsers(int page, int pageSize){
+		return usersRepo.findAllChatUsers(new PageRequest(page-1, pageSize)); 
+
+	}
 
 }
 
