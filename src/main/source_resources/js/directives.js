@@ -769,15 +769,34 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     toaster.pop('error', lgPack.ratingModal.errorTitle, lgPack.ratingModal.error, 6000);
                 });
             }
-
+            $scope.askForRatingEnabled = true;
+             $scope.$on("RoomChanged", function (event, args) {
+                $scope.askForRatingEnabled = true;
+            });
             $scope.askForRating = function() {
+                  $scope.askForRatingEnabled = false;
                 loadRatings().then(function(response) {
+
+                    $scope.ratings = response.data;
+                    $http.get('askForRatingModal.html') .then(function (data) {
+                    var messageObj = {};
+                    messageObj.message = templateText;
+                    messageObj.username = "server";
+                    messageObj.chatUserAvatar="noname.png";
+                    messageObj.chatUserId = 1;
+                    messageObj.attachedFiles = [];
+                    RoomsFactory.calcPositionPush(messageObj);
+                  }, function (error) {
+                  });
+
+                }, function() {})
+                /*loadRatings().then(function(response) {
                     $scope.ratings = response.data;
                     ngDialog.open({
                         template: 'askForRatingModal.html',
                         scope: $scope
                     });
-                }, function() {})
+                }, function() {})*/
 
             }
 
@@ -966,7 +985,7 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
                         break;
                 }
             }
-
+       
             scope.cancelEventClick = function(event, item) {
                 event.stopPropagation();
                 UserFactory.removeNotificationByValue(item);

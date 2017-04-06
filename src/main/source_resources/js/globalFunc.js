@@ -489,3 +489,20 @@ function addOrRemove(array, value) {
         array.splice(index, 1);
     }
 }
+
+function readTextFileAndCallFunc(file,callback)
+{
+    var rawFile = getXmlHttp();
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                callback(rawFile.responseText);
+            }
+        }
+    }
+    rawFile.send(null);
+}

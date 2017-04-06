@@ -214,6 +214,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         // $rootScope.message_busy = false;
         $rootScope.$broadcast('RoomChanged', false);
 
+
         if (ChannelFactory.isSocketSupport() === true) {
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.roomId), function(message) {
@@ -739,7 +740,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
             return false;
         },
-        updateLastActivity: updateLastActivity
+        updateLastActivity: updateLastActivity,
+        calcPositionPush: calcPositionPush
 
     };
 
