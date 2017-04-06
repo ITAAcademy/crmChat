@@ -750,9 +750,10 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             function loadRatings() {
                 return $http.get(serverPrefix + "/getRatings");
             }
-
+            $scope.addRatingsButtonShowed = true;
             $scope.addRatings = function(close) {
                 //close();
+                $scope.addRatingsButtonShowed = false;
                 var roomObj = RoomsFactory.getCurrentRoom();
                 var chatUserId = UserFactory.getChatUserId();
                 var ratings = $scope.ratings;
@@ -772,15 +773,16 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             $scope.askForRatingEnabled = true;
              $scope.$on("RoomChanged", function (event, args) {
                 $scope.askForRatingEnabled = true;
+                $scope.addRatingsButtonShowed = true;
             });
             $scope.askForRating = function() {
                   $scope.askForRatingEnabled = false;
                 loadRatings().then(function(response) {
 
                     $scope.ratings = response.data;
-                    $http.get('askForRatingModal.html') .then(function (data) {
+                    $http.get('askForRatingModal.html') .then(function (response) {
                     var messageObj = {};
-                    messageObj.message = templateText;
+                    messageObj.message = response.data;
                     messageObj.username = "server";
                     messageObj.chatUserAvatar="noname.png";
                     messageObj.chatUserId = 1;
