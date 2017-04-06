@@ -131,7 +131,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.roomId), "");
     }
 
-    var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 10;
+    var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 60;
 
     function calcPositionUnshift(msg) {
         if (msg == null)
