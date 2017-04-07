@@ -8,11 +8,11 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 
 @Qualifier("IntitaConf") 
@@ -33,4 +33,6 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  Set<UserMessage> findAllByAuthorNot(ChatUser user);
 	  ArrayList<UserMessage> findAllByDateAfter(Date date);
 	  UserMessage findFirstByRoomOrderByDateDesc(Room room);
+	  @Query("select m.date from chat_user_message m where m.author.id=?1 and m.date >= ?2 and m.date <= ?3")
+	  List<Date> getMessagesDatesByChatUserAndDateBetween(Long userId,Date earlyDate,Date lastDate);
 }
