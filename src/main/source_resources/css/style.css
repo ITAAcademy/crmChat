@@ -1279,6 +1279,9 @@ button:focus {
     white-space: pre-wrap;
     word-break: break-word;
 }
+.bottom_details>*{
+    white-space:initial;
+}
 
 .message_date {
     color: #929292;
@@ -1672,6 +1675,7 @@ button:focus {
 .messages_output_area .answer.right .message_details .bottom_details {
     float: left;
     text-align: left;
+    width: 100%;
 }
 
 .messages_output_area .answer.left .message_details {
@@ -2180,6 +2184,9 @@ body.frame .open_in_new_tab {
     font-size: 16px;
     padding: 15px;
 }
+.user_message .modal-content{
+    padding:0px;
+}
 
 .modal-content textarea {
     resize: none;
@@ -2209,6 +2216,10 @@ body.frame .open_in_new_tab {
     margin-left: -20px;
     /* margin-top: -20px; */
     /* margin-bottom: 20px; */
+}
+.user_message .modal-header{
+    margin-left:0px;
+    width: 100%;
 }
 
 .bottom_details * {
