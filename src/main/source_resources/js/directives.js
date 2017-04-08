@@ -787,6 +787,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     messageObj.chatUserAvatar="noname.png";
                     messageObj.chatUserId = 1;
                     messageObj.attachedFiles = [];
+                    messageObj.date = new Date().getTime();
                     RoomsFactory.calcPositionPush(messageObj);
                   }, function (error) {
                   });
