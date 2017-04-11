@@ -1,0 +1,20 @@
+<div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
+    <div ng-show="userActivityDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">Not found any activity</div>
+    <uib-tabset ng-show="userActivityDataValue.length > 0" class="tabs-right" active="activeTabIndex">
+        <uib-tab heading="Graph">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Average Value</div>
+                        <div class="panel-body">
+                            <div class="chartjs-canvas-holder-third-row">
+                                <canvas id="bar" class="chart chart-bar" chart-options="userActivityChartOptions" chart-data="userActivityDataValue" chart-labels="labels">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+    </div>

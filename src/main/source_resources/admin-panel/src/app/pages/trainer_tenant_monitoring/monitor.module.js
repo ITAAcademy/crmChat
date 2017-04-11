@@ -71,5 +71,16 @@
                     order: 0,
                 },
             });
+            
+               $stateProvider.state('monitor.activity', {
+                url: '/activity',
+                title: 'Activity',
+                templateUrl: 'app/pages/trainer_tenant_monitoring/activity/activity.html',
+                controller: 'ActivityPageCtrl',
+                sidebarMeta: {
+                    icon: 'fa fa fa-bar-chart-o',
+                    order: 0,
+                },
+            });
     }
 })();
