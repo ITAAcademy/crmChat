@@ -210,7 +210,9 @@ function starRating() {
 </div>`,
         scope: {
             ratingValue: '=ngModel',
-            max: '=?', // optional (default is 5)
+            max: '=?', // optional (default is 10)
+            starsCount: '=?',
+            halfEnable: "=?",
             onRatingSelect: '&?',
             readonly: '=?',
             ngClass: '@'
@@ -223,43 +225,50 @@ function starRating() {
             if (scope.max == undefined) {
                 scope.max = 10;
             }
+
+            if (scope.starsCount == undefined) {
+                scope.starsCount = 5;
+            }
+            if (scope.halfEnable == undefined) {
+                scope.halfEnable = false;
+            }
             scope.stars = [];
             scope.containerClass = scope.ngClass + ' value-0';
-            for (var i = 0; i < 5; i++) {
+            for (var i = 0; i < scope.starsCount; i++) {
                 scope.stars.push({
                     class: i < scope.ratingValue ? 'star empty' : 'star filled '
                 });
             }
 
-            scope.$watch('ratingValue', function(){
+            scope.$watch('ratingValue', function() {
                 updateStars();
             })
 
-            function updateStars(full) {
-                var value = (scope.ratingValue * 5) / scope.max;
-                var full = scope.ratingValue%2 == 0;
+            function updateStars() {
+                var value = (scope.ratingValue * scope.starsCount) / scope.max;
+                var full = scope.ratingValue % 2 == 0 || !scope.halfEnable;
 
-                for (var i = 0; i < 5; i++) {
+                for (var i = 0; i < scope.starsCount; i++) {
                     scope.stars[i].class = i < value ? !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
                 }
                 scope.containerClass = scope.ngClass + ' value-' + Math.round(value);
             };
             scope.toggle = function(event, index) {
-                if(scope.readonly === true)
+                if (scope.readonly === true)
                     return;
                 var target = $(event.currentTarget);
                 var posX = target.offset().left,
                     posY = target.offset().top;
                 //alert( (event.pageX - posX) + ' , ' + (event.pageY - posY));
                 var full = true;
-                if (event.pageX - posX < target.width() / 2)
+                if (event.pageX - posX < target.width() / 2 &&  scope.halfEnable)
                     full = false;
 
 
                 if (scope.readonly == undefined || scope.readonly === false) {
                     if (full == false)
                         index -= 0.5;
-                    scope.ratingValue = ((index + 1) * scope.max) / 5;
+                    scope.ratingValue = ((index + 1) * scope.max) / scope.starsCount;
 
                     //
                     if (scope.onRatingSelect != undefined)
@@ -269,7 +278,7 @@ function starRating() {
                     updateStars(full);
                 }
             };
-            if(scope.ratingValue == undefined)
+            if (scope.ratingValue == undefined)
                 scope.ratingValue = 0;
             /*scope.$watch('ratingValue', function(oldValue, newValue) {
               if (newValue) {
@@ -758,53 +767,51 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 var chatUserId = UserFactory.getChatUserId();
                 var ratings = $scope.ratings;
                 var results = {};
-                for(var rating of ratings)
-                {
-                    if(rating.value == undefined)
+                for (var rating of ratings) {
+                    if (rating.value == undefined)
                         ratings.value = 0;
                     results[rating.id] = rating.value;
                 }
-                $http.post(serverPrefix + "/addRatingByRoom/" + roomObj.roomId, results).then(function(){
-                    toaster.pop('success',  lgPack.ratingModal.successTitle, lgPack.ratingModal.success, 6000);
-                }, function(){
+                $http.post(serverPrefix + "/addRatingByRoom/" + roomObj.roomId, results).then(function() {
+                    toaster.pop('success', lgPack.ratingModal.successTitle, lgPack.ratingModal.success, 6000);
+                }, function() {
                     toaster.pop('error', lgPack.ratingModal.errorTitle, lgPack.ratingModal.error, 6000);
                 });
             }
             $scope.askForRatingEnabled = true;
-             $scope.$on("RoomChanged", function (event, args) {
+            $scope.$on("RoomChanged", function(event, args) {
                 $scope.askForRatingEnabled = true;
                 $scope.addRatingsButtonShowed = true;
             });
             $scope.askForRating = function() {
-                  $scope.askForRatingEnabled = false;
+                $scope.askForRatingEnabled = false;
                 loadRatings().then(function(response) {
 
-                    $scope.ratings = response.data;
-                    $http.get('askForRatingModal.html') .then(function (response) {
-                    var messageObj = {};
-                    messageObj.message = response.data;
-                    messageObj.username = "server";
-                    messageObj.chatUserAvatar="noname.png";
-                    messageObj.chatUserId = 1;
-                    messageObj.attachedFiles = [];
-                    messageObj.date = new Date().getTime();
-                    RoomsFactory.calcPositionPush(messageObj);
-                  }, function (error) {
-                  });
+                        $scope.ratings = response.data;
+                        $http.get('askForRatingModal.html').then(function(response) {
+                            var messageObj = {};
+                            messageObj.message = response.data;
+                            messageObj.username = "server";
+                            messageObj.chatUserAvatar = "noname.png";
+                            messageObj.chatUserId = 1;
+                            messageObj.attachedFiles = [];
+                            messageObj.date = new Date().getTime();
+                            RoomsFactory.calcPositionPush(messageObj);
+                        }, function(error) {});
 
-                }, function() {})
-                /*loadRatings().then(function(response) {
-                    $scope.ratings = response.data;
-                    ngDialog.open({
-                        template: 'askForRatingModal.html',
-                        scope: $scope
-                    });
-                }, function() {})*/
+                    }, function() {})
+                    /*loadRatings().then(function(response) {
+                        $scope.ratings = response.data;
+                        ngDialog.open({
+                            template: 'askForRatingModal.html',
+                            scope: $scope
+                        });
+                    }, function() {})*/
 
             }
 
 
-            $scope.startTyping = function(event) {//@Deprecated functionality
+            $scope.startTyping = function(event) { //@Deprecated functionality
                 //var keyCode = event.which || event.keyCode;
                 //var typedChar = String.fromCharCode(keyCode);
                 //if(typedChar==' ')$scope.onMessageInputClick();       
@@ -988,7 +995,7 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory) {
                         break;
                 }
             }
-       
+
             scope.cancelEventClick = function(event, item) {
                 event.stopPropagation();
                 UserFactory.removeNotificationByValue(item);
