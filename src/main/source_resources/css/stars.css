@@ -142,29 +142,6 @@ Disabled
     color: #999;
 }
 
-.star.negative svg, .rating.value-1 .star-container .star svg, .rating.value-2 .star-container .star svg, .rating.value-0.half .star svg, .rating.value-1.half .star-container .rating.value-0.star:nth-child(2) .star svg, .rating.value-2.half .star-container .rating.value-0.star:nth-child(3) .star svg, .rating.value-3.half .star-container .rating.value-0.star:nth-child(4) .star svg, .rating.value-4.half .star-container .rating.value-0.star:nth-child(5) .star svg, .rating.value-5.half .star-container .rating.value-0.star:nth-child(6) .star svg {
-    fill: #f03c56;
-}
-
-.star.negative i, .rating.value-1 .star-container .star i, .rating.value-2 .star-container .star i, .rating.value-0.half .star i, .rating.value-1.half .star-container .rating.value-0.star:nth-child(2) .star i, .rating.value-2.half .star-container .rating.value-0.star:nth-child(3) .star i, .rating.value-3.half .star-container .rating.value-0.star:nth-child(4) .star i, .rating.value-4.half .star-container .rating.value-0.star:nth-child(5) .star i, .rating.value-5.half .star-container .rating.value-0.star:nth-child(6) .star i {
-    color: #f03c56;
-}
-
-.star.middle svg, .rating.value-3 .star-container .star svg {
-    fill: #ffc058;
-}
-
-.star.middle i, .rating.value-3 .star-container .star i {
-    color: #ffc058;
-}
-
-.star.positive svg, .rating.value-4 .star-container .star svg, .rating.value-5 .star-container .star svg, .rating.value-6 .star-container .star svg, .rating.value-7 .star-container .star svg, .rating.value-8 .star-container .star svg, .rating.value-9 .star-container .star svg, .rating.value-10 .star-container .star svg, .rating.value-11 .star-container .star svg, .rating.value-12 .star-container .star svg {
-    fill: #7ed321;
-}
-
-.star.positive i, .rating.value-4 .star-container .star i, .rating.value-5 .star-container .star i, .rating.value-6 .star-container .star i, .rating.value-7 .star-container .star i, .rating.value-8 .star-container .star i, .rating.value-9 .star-container .star i, .rating.value-10 .star-container .star i, .rating.value-11 .star-container .star i, .rating.value-12 .star-container .star i {
-    color: #7ed321;
-}
 
 .star.svg i, .rating.star-svg i {
     display: none;
@@ -197,8 +174,8 @@ Disabled
 }
 
 .star.medium, .rating.medium .star {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
 }
 
 .star.medium i, .rating.medium .star i {
