@@ -136,6 +136,7 @@ sh.exe.stackdump
 src/main/node_modules/
 src/main/resources/static/**
 src/main/resources/templates/**
+src/main/temp/**
 node_modules
 gulp.1
 build

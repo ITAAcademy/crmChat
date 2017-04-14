@@ -49,6 +49,7 @@
     "postinstall": "bower install"
   },
   "dependencies": {
+    "chartjs-plugin-zoom": "^0.4.5",
     "eslint-config-defaults": "^9.0.0"
   }
 }

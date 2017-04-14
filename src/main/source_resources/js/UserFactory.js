@@ -130,9 +130,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     function initForWS(reInit) {
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
             var mess_obj = JSON.parse(message.body);
-
+            console.log("Start::"+ new Date());
             login(mess_obj);
-
+            console.log("End::"+  new Date());
             if (reInit == false)
                 $timeout(function() {
                     chatSocket.subscribe("/topic/chat.login", function(message) {

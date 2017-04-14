@@ -1,5 +1,4 @@
-﻿
-@font-face {
+﻿@font-face {
     font-family: 'MyriadPro2';
     src: url('../font/myriadpro2/regular.eot');
     src: url('../fonts/myriadpro2/regular.eot?#iefix') format('embedded-opentype'), url('../fonts/myriadpro2/regular.woff') format('woff'), url('../fonts/myriadpro2/regular.ttf') format('truetype'), url('../fonts/myriadpro2/regular.eot#helveticaneuecyrbold') format('svg');
@@ -7,9 +6,9 @@
     font-style: normal;
 }
 
-*{
-   -webkit-transition: none !important;
-   transition: none !important;  
+* {
+    -webkit-transition: none !important;
+    transition: none !important;
 }
 
 body {
@@ -28,8 +27,9 @@ body {
 }
 
 button::-moz-focus-inner {
-  border: 0;
+    border: 0;
 }
+
 button:focus {
     outline: none;
 }
@@ -1285,8 +1285,11 @@ button:focus {
     white-space: pre-wrap;
     word-break: break-word;
 }
-.bottom_details .modal-content,.bottom_details .modal-header, .bottom_details .modal-footer{
-    white-space:initial;
+
+.bottom_details .modal-content,
+.bottom_details .modal-header,
+.bottom_details .modal-footer {
+    white-space: initial;
 }
 
 .message_date {
@@ -1312,8 +1315,8 @@ button:focus {
     -ms-user-select: none;
     user-select: none;
     pointer-events: none;
-    width:100%;
-    text-align:right;
+    width: 100%;
+    text-align: right;
     padding-right: 20px;
 }
 
@@ -2179,6 +2182,11 @@ body.frame .open_in_new_tab {
     top: 0;
     position: absolute;
     height: 100%;
+    display: none;
+}
+
+.loaded .window_icons_wrapper {
+    display: initial;
 }
 
 .modal-footer {
@@ -2190,8 +2198,9 @@ body.frame .open_in_new_tab {
     font-size: 16px;
     padding: 15px;
 }
-.user_message .modal-content{
-    padding:0px;
+
+.user_message .modal-content {
+    padding: 0px;
 }
 
 .modal-content textarea {
@@ -2223,8 +2232,9 @@ body.frame .open_in_new_tab {
     /* margin-top: -20px; */
     /* margin-bottom: 20px; */
 }
-.user_message .modal-header{
-    margin-left:0px;
+
+.user_message .modal-header {
+    margin-left: 0px;
     width: 100%;
 }
 

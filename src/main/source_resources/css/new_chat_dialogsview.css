@@ -5,7 +5,7 @@
     height: 100px;
     border-radius: 255px;
     overflow: hidden;
-// box-shadow: 0 0 2px rgba(0,0,0,0.5); /* Параметры тени */
+/* box-shadow: 0 0 2px rgba(0,0,0,0.5);*/
     border-bottom: 2px solid #4b70a3;
     border-top: 2px solid #4b70a3;
     border-left: 1px solid #4b70a3;
@@ -149,7 +149,6 @@
     /* W3C */
     display: block;
     /*box-pack:center*/
-;
     box-align: center;
 }
 
