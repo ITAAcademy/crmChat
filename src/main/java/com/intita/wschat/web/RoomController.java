@@ -397,19 +397,22 @@ public class RoomController {
 		Set<LoginEvent> userList = new HashSet<>();
 		Long intitaId = null;
 		String avatar = "noname.png";
+		String authorskype = "";
 		User iUser = room_o.getAuthor().getIntitaUser();
 		if (iUser != null) {
 			intitaId = iUser.getId();
 			avatar = iUser.getAvatar();
+			authorskype = iUser.getSkype();
 		}
 
 		LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
-				room_o.getAuthor().getNickName(), avatar);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
+				room_o.getAuthor().getNickName(), avatar,authorskype);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
 		userList.add(currentChatUserLoginEvent);
 		for (ChatUser user : room_o.getUsers()) {
 
 			intitaId = null;
 			avatar = "noname.png";
+			String skype="";
 			iUser = user.getIntitaUser();
 			// Bot avatar
 			if (user.getId() == BotParam.BOT_ID)
@@ -418,9 +421,10 @@ public class RoomController {
 			if (iUser != null) {
 				intitaId = iUser.getId();
 				avatar = iUser.getAvatar();
+				skype = iUser.getSkype();
 			}
 
-			userList.add(new LoginEvent(intitaId, user.getId(), user.getNickName(), avatar)); // participantRepository.isOnline(user.getId().toString())));
+			userList.add(new LoginEvent(intitaId, user.getId(), user.getNickName(), avatar,skype)); // participantRepository.isOnline(user.getId().toString())));
 		}
 		return userList;
 	}

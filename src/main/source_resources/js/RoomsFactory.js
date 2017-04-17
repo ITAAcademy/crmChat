@@ -708,6 +708,14 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getNewMsgNumber: function() {
             return newMsgNumber;
         },
+        getSkypeContacts: function(){
+            var skypes = [];
+              for (var participant of participants){
+                if (participant.skype == null || participant.skype.length < 1 )continue;
+                skypes.push(participant.skype );
+              }
+              return skypes;
+        },
         calcPositionUnshift: calcPositionUnshift,
         checkUserAdditionPermission: checkUserAdditionPermission,
         removeUserFromRoom: removeUserFromRoom,

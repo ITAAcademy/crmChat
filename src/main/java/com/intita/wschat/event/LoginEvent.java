@@ -20,6 +20,16 @@ public class LoginEvent {
 	private String avatar;
 	private int role;
 
+	public String getSkype() {
+		return skype;
+	}
+
+	public void setSkype(String skype) {
+		this.skype = skype;
+	}
+
+	private String skype;
+
 	public Long getIntitaUserId() {
 		return intitaUserId;
 	}
@@ -49,13 +59,14 @@ public class LoginEvent {
 		time = new Date();
 		typing = false;
 	}
-	public LoginEvent(Long intitaUserId, Long chatUserId,String username, String avatar) {
+	public LoginEvent(Long intitaUserId, Long chatUserId,String username, String avatar,String skype) {
 		this.intitaUserId = intitaUserId;
 		this.chatUserId=chatUserId;
 		this.username = username;
 		time = new Date();
 		typing = false;
 		this.avatar = avatar;
+		this.skype = skype;
 	}
 	public LoginEvent(ChatUser u){
 		if (u!=null){
@@ -66,10 +77,12 @@ public class LoginEvent {
 				this.avatar = intitaUser.getAvatar();
 				this.intitaUserId = intitaUser.getId();
 				this.username = intitaUser.getFullName();
+				this.skype = intitaUser.getSkype();
 			}
 		}
 		time = new Date();
 		typing = false;
+
 	}
 	public LoginEvent(User u,Long chatUserId){
 		this.chatUserId = chatUserId;
