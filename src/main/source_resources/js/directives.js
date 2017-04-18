@@ -1553,7 +1553,7 @@ angular.module('springChat.directives').directive("skypeUi", ['$parse',function(
             getcontacts: '&'
         },
         replace: true,
-        template: '<a href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
+        template: '<a ng-show="getContactsString().length>0" href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
         link: function($scope, element, attrs){
      
 
