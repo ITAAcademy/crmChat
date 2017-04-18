@@ -243,6 +243,7 @@ public class RoomController {
 	// auth
 	{
 		Map<String, String> result = new HashMap<>();
+		demandedChatUserId = (long) 48;
 		// if (demandedChatUserId != null && demandedChatUser==null) return
 		// null;//return null if demanded user is not excist
 
@@ -251,7 +252,7 @@ public class RoomController {
 		User realIntitaUser = realChatUser.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
-		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
+		if (activeChatUser == null || realChatUserId.longValue() != activeChatUser.getId().longValue()) {
 			// ChatUser user_real =
 			// chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 			if (realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
