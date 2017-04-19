@@ -16,9 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import com.intita.wschat.domain.*;
-import com.intita.wschat.dto.mapper.DTOMapper;
-import com.intita.wschat.dto.model.ChatUserDTO;
 import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +44,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
+import com.intita.wschat.domain.ChatMessage;
+import com.intita.wschat.domain.ChatRoomType;
+import com.intita.wschat.domain.LoginResponseData;
+import com.intita.wschat.domain.SessionProfanity;
+import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
@@ -77,12 +81,9 @@ import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
-import com.intita.wschat.services.ChatLangService.ChatLangEnum;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
-import com.intita.wschat.web.RoomController.ROLE;
-import com.intita.wschat.web.RoomController.UpdateRoomsPacketModal;
 
 import jsonview.Views;
 //import scala.annotation.meta.setter;
@@ -246,6 +247,7 @@ public class RoomController {
 	public LoginResponseData login(Principal principal, @DestinationVariable Long demandedChatUserId)
 	{
 		LoginResponseData responseData = new LoginResponseData();
+		long startTime = System.nanoTime();
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
@@ -309,7 +311,7 @@ public class RoomController {
 		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
 
 		if (activeIntitaUser != null) {
-	LoginEvent event = null;
+			LoginEvent event = null;
 			if (userRoles.contains(UserRole.STUDENT)) {
 				User iTrainer = userService.getTrainer(activeIntitaUser.getId());
 				if (iTrainer != null) {
@@ -338,6 +340,10 @@ public class RoomController {
 			responseData.setTenants(tenantsObjects);
 		}
 
+		long endTime = System.nanoTime();
+		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
+		log.info("Login duration: " + duration);
+		
 		return responseData;
 	}
 
@@ -1012,7 +1018,7 @@ public class RoomController {
 	@ResponseBody
 	public Map<Long, String> findRoomByName(@RequestParam(name="name") String nameLike, Principal principal) {
 		Map<Long, String> roomSimples = new HashMap<>();
-		
+
 		ArrayList<Room> rooms = roomService.getRoomsWithNameLike("%" + nameLike + "%");
 		for(Room room : rooms)
 		{
