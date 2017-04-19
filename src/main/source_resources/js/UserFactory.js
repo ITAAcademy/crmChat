@@ -352,10 +352,10 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chatUser.id;
-        isTenant = mess_obj.chatUser.roles.indexOf("TENANT");
-        isTrainer =mess_obj.chatUser.roles.indexOf("TRAINER");
-        isStudent = mess_obj.chatUser.roles.indexOf("STUDENT");
-        isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN");
+        isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
+        isTrainer =mess_obj.chatUser.roles.indexOf("TRAINER") != -1;
+        isStudent = mess_obj.chatUser.roles.indexOf("STUDENT") != -1;
+        isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN") != -1;
         if (isStudent && mess_obj.trainer != undefined) {
 
             studentTrainerList.push(mess_obj.trainer);

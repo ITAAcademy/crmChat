@@ -48,4 +48,14 @@ public class ChatUserDTO {
 
     private Set<UserRole> roles;
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+     String avatar;
+
 }
