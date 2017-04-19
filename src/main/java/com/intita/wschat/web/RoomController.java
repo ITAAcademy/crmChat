@@ -350,6 +350,15 @@ public class RoomController {
 		return mapper.writeValueAsString(login(principal, userId));
 	}
 
+	@RequestMapping(value = "/chat/rooms/all", method = RequestMethod.GET)
+	@ResponseBody
+	public List<RoomModelSimple> retrieveAllRooms(Principal principal)
+			throws JsonProcessingException {
+		ChatUser activeChatUser = chatUserServise.getChatUser(principal);
+		List<RoomModelSimple> roomModels = roomService.getRoomsModelByChatUser(activeChatUser);
+		return roomModels;
+	}
+
 	/***************************
 	 * GET PARTICIPANTS AND LOAD MESSAGE
 	 ***************************/

@@ -526,6 +526,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
 
 
+
         $rootScope.$on('MessageAreaScrollDownEvent', function() {
             var objDiv = document.getElementById("messagesScroll");
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
