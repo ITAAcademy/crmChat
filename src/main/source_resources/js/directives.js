@@ -623,6 +623,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var sendingMessage = null;
             var typing = undefined;
             var getParticipants = RoomsFactory.getParticipants;
+            $scope.getSkypeContacts = RoomsFactory.getSkypeContacts;
 
             $scope.onClick = function() {
                 RoomsFactory.updateLastActivity();
@@ -1544,3 +1545,33 @@ function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorde
 }
 
 angular.module('springChat.directives').directive('audioVideoRP', ['$http', 'RoomsFactory', audioVideoRP]); //
+
+angular.module('springChat.directives').directive("skypeUi", ['$parse',function($parse) {
+    return {
+        restrict: "EA",
+        scope:{
+            getcontacts: '&'
+        },
+        replace: true,
+        template: '<a href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
+        link: function($scope, element, attrs){
+     
+
+    $scope.$watch(function(){
+        return $scope.getcontacts().length;
+    },function(newValue,oldValue) {
+        console.log('skype contacts change WATCHED');
+        $scope.contacts = $scope.getContactsString();
+    });
+
+             $scope.getContactsString = function(){
+            var getContactsFunctionGetter = $scope.getcontacts();
+            var getContacts = getContactsFunctionGetter();
+            return getContacts.join();
+        }
+
+
+
+        }
+    };
+}]);

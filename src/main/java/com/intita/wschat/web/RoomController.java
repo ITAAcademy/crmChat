@@ -237,21 +237,17 @@ public class RoomController {
 
 	@SubscribeMapping("/chat.login/{demandedChatUserId}")
 	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)// Control
-	// user
-	// page
-	// after
-	// auth
 	{
+		long startTime = System.nanoTime();
+	
 		Map<String, String> result = new HashMap<>();
-		// if (demandedChatUserId != null && demandedChatUser==null) return
-		// null;//return null if demanded user is not excist
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
 		User realIntitaUser = realChatUser.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
-		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
+		if (activeChatUser == null || realChatUserId.longValue() != activeChatUser.getId().longValue()) {
 			// ChatUser user_real =
 			// chatUserServise.getChatUser(Long.parseLong(principal.getName()));
 			if (realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
@@ -377,6 +373,12 @@ public class RoomController {
 			result.put("tenants", tenantsJson);
 		}
 
+		long endTime = System.nanoTime();
+
+		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
+		log.info("Login duration: " + duration);
+
+		
 		return result;
 	}
 
@@ -397,19 +399,22 @@ public class RoomController {
 		Set<LoginEvent> userList = new HashSet<>();
 		Long intitaId = null;
 		String avatar = "noname.png";
+		String authorskype = "";
 		User iUser = room_o.getAuthor().getIntitaUser();
 		if (iUser != null) {
 			intitaId = iUser.getId();
 			avatar = iUser.getAvatar();
+			authorskype = iUser.getSkype();
 		}
 
 		LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
-				room_o.getAuthor().getNickName(), avatar);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
+				room_o.getAuthor().getNickName(), avatar,authorskype);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
 		userList.add(currentChatUserLoginEvent);
 		for (ChatUser user : room_o.getUsers()) {
 
 			intitaId = null;
 			avatar = "noname.png";
+			String skype="";
 			iUser = user.getIntitaUser();
 			// Bot avatar
 			if (user.getId() == BotParam.BOT_ID)
@@ -418,9 +423,10 @@ public class RoomController {
 			if (iUser != null) {
 				intitaId = iUser.getId();
 				avatar = iUser.getAvatar();
+				skype = iUser.getSkype();
 			}
 
-			userList.add(new LoginEvent(intitaId, user.getId(), user.getNickName(), avatar)); // participantRepository.isOnline(user.getId().toString())));
+			userList.add(new LoginEvent(intitaId, user.getId(), user.getNickName(), avatar,skype)); // participantRepository.isOnline(user.getId().toString())));
 		}
 		return userList;
 	}

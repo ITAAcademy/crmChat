@@ -7,10 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.intita.wschat.domain.ChatUserActivityStatistic;
 import com.intita.wschat.models.ChatUser;
@@ -26,15 +23,16 @@ ChatUsersService chatUserService;
 @Autowired
 UserMessageService userMessageService;
 
-	@RequestMapping(value = "/statistic/user/get_week_activity/{userId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/statistic/user/get_week_activity", method = RequestMethod.GET)
 	@ResponseBody
-	public ChatUserActivityStatistic getUserActivityMapping(@PathVariable("userId") Long userId) {
+	public ChatUserActivityStatistic getUserActivityMapping(@RequestParam("userId") Long userId,
+															@RequestParam(value="days",required = false,defaultValue = "1") Integer days) {
 		final long MS_IN_DAY = 24 * 60 * 60 * 1000;
 		final long ACTIVITY_DOORATION_MS = 5000;
 		
 		Date currentTime = new Date();
 		Date weekAgoTime = new Date();
-		weekAgoTime.setTime(currentTime.getTime()-MS_IN_DAY*24);
+		weekAgoTime.setTime(currentTime.getTime()-MS_IN_DAY*days);
 		List<Date> activityDates = userMessageService.getMessagesDatesByChatUserAndDate(userId,weekAgoTime,currentTime);
 		List<Long> datesLong = new ArrayList<Long>();
 		for (Date date : activityDates){
@@ -47,9 +45,9 @@ UserMessageService userMessageService;
 	
 	@RequestMapping(value = "/statistic/user/get_week_activity_current_user", method = RequestMethod.GET)
 	@ResponseBody
-	public ChatUserActivityStatistic getCurrentUserActivityMapping(Principal principal){
+	public ChatUserActivityStatistic getCurrentUserActivityMapping(@RequestParam(value="days",required = false,defaultValue = "1") Integer days, Principal principal){
 		ChatUser user = chatUserService.getChatUser(principal);
-		return getUserActivityMapping(user.getId());
+		return getUserActivityMapping(user.getId(),days);
 	}
 	
 }

@@ -30,6 +30,11 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
+springChatControllers.config(['$compileProvider', function ($compileProvider) {
+$compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
+}]);
+
+
 var chatControllerScope;
 
 springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore',
@@ -70,7 +75,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (event.buttons == 1) {
 
             }
-        };
+        };  
 
         $scope.newMessage = { value: "" };
 

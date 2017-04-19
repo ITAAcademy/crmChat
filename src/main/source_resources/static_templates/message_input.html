@@ -10,8 +10,7 @@
 </div>
 <div class="controls_area">
     <div class="multimedia_conversation_controls">
-        <button class="skype"><i class="material-icons">videocam</i></button>
-        <button class="microphone"><i class="material-icons">mic</i></button>
+        <skype-ui id="SkypeButton_Call_mike_1" class="microphone" getcontacts="getSkypeContacts"></skype-ui>
     </div>
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">
@@ -24,6 +23,7 @@
         </ul>-->
         <div class="upload_file_form_container"></div>
         <!--<button modale-toggle="true" ignore-id="attaches_area" callback="help_dropdown_click()"><i class="material-icons">help_outline</i></button>-->
+
         <button ng-show="askForRatingEnabled" ng-click="askForRating()"><i class="material-icons">thumb_up</i></button>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
