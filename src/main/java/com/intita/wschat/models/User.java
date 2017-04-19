@@ -84,6 +84,16 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	@Column(name="role")
 	private int role;
 
+	public String getSkype() {
+		return skype;
+	}
+
+	public void setSkype(String skype) {
+		this.skype = skype;
+	}
+
+	private String skype;
+
 
 
 	/*@OneToMany(mappedBy = "teacher_id", fetch = FetchType.LAZY)
