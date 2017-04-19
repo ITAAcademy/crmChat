@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.domain.ChatRoomType;
+import com.intita.wschat.domain.UserRole;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,12 +74,12 @@ public class RoleGroupsController {
 
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
-	private void updateRoomForRole(User.Roles role){
+	private void updateRoomForRole(UserRole role){
 
 		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(role.getValue());
 		if(info == null)
 		{
-			Room room = roomsService.register(role.name(), chatUsersService.getChatUser(BotParam.BOT_ID), Room.RoomType.ROLES_GROUP);
+			Room room = roomsService.register(role.name(), chatUsersService.getChatUser(BotParam.BOT_ID), ChatRoomType.ROLES_GROUP);
 			info = roomRolesRepository.save(new RoomRoleInfo(room, role.getValue()));
 		}
 
@@ -85,7 +87,7 @@ public class RoleGroupsController {
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
 		room = roomsService.update(room);
 		ArrayList<ChatUser> cUsersList = null;
-		if(role == User.Roles.TENANTS)
+		if(role == UserRole.TENANTS)
 			cUsersList = chatUsersService.getUsers(usersService.getAllByRole(role));
 		else
 			cUsersList = chatUsersService.getChatUsersFromIntitaIds(usersService.getAllByRole(role));
@@ -94,7 +96,7 @@ public class RoleGroupsController {
 
 	//@PostConstruct
 	private void updateRoomsForAllRoles(){
-		for(User.Roles role : User.Roles.values())
+		for(UserRole role : UserRole.values())
 		{
 			updateRoomForRole(role);
 		}
@@ -106,7 +108,7 @@ public class RoleGroupsController {
 		ChatUser cUser = chatUsersService.getChatUser(principal);
 		User iUser = usersService.getUser(principal);
 
-		if(usersService.checkRole(iUser, User.Roles.ADMIN))
+		if(usersService.checkRole(iUser, UserRole.ADMIN))
 			updateRoomsForAllRoles();
 		
 		return true;

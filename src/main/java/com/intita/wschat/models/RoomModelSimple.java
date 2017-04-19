@@ -5,12 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.intita.wschat.domain.ChatRoomType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 @Component
@@ -95,7 +95,7 @@ public class RoomModelSimple {
 
 	public static RoomModelSimple buildSimpleModelForRoom(RoomsService roomService, ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
 		RoomModelSimple simpleModel = new RoomModelSimple();
-		if(room.getType() == RoomType.PRIVATE)
+		if(room.getType() == ChatRoomType.PRIVATE.getValue())
 		{
 			try {
 				PrivateRoomInfo info = roomService.getPrivateRoomInfo(room);

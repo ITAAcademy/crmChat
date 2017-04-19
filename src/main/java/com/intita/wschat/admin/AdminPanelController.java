@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.domain.UserRole;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +135,7 @@ public class AdminPanelController {
 		if(iUser != null)
 		{
 			Long intitaUserId = user.getIntitaUser().getId();
-			for(User.Roles role : User.Roles.values())
+			for(UserRole role : UserRole.values())
 			{
 				if((role.getValue() & roles) == role.getValue())
 					users.addAll(userService.getUsersFist5WithRole(info, role));	

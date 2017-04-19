@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.intita.wschat.domain.ChatRoomType;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,6 @@ import com.intita.wschat.models.ChatConsultation;
 import com.intita.wschat.models.ChatConsultationResult;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.ConsultationRatingsRepository;
@@ -128,7 +128,7 @@ public class ConsultationsService {
 			ChatUser author = chatUsersService.getChatUserFromIntitaUser(iCons.getAuthor(), false);			
 
 			Room consultationRoom = new Room();
-			consultationRoom.setType((short) RoomType.CONSULTATION);
+			consultationRoom.setType((short) ChatRoomType.CONSULTATION.getValue());
 			consultationRoom.setAuthor(consultant);
 			consultationRoom.setName("Consultation_" + new Date().toString());
 			consultationRoom.setActive(false);

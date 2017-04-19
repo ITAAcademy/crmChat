@@ -16,6 +16,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.domain.*;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
 import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +47,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
-import com.intita.wschat.domain.ChatMessage;
-import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
@@ -59,7 +60,6 @@ import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
@@ -132,6 +132,7 @@ public class RoomController {
 	@Autowired private RoomPermissionsService roomPermissionsService;
 	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 	@Autowired private ChatLangService chatLangService;
+	@Autowired private DTOMapper dtoMapper;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -230,21 +231,21 @@ public class RoomController {
 	 * what doing with new auth user
 	 **********************/
 	@SubscribeMapping("/chat.login")
-	public Map<String, String> login(Principal principal) {// Control user page
+	public LoginResponseData login(Principal principal) {// Control user page
 		// after auth
 		return login(principal, null);
 	}
 
+	/**
+	 * Returns chat rooms, user, user authorities
+	 * @param principal
+	 * @param demandedChatUserId
+	 * @return
+	 */
 	@SubscribeMapping("/chat.login/{demandedChatUserId}")
-	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)// Control
-	// user
-	// page
-	// after
-	// auth
+	public LoginResponseData login(Principal principal, @DestinationVariable Long demandedChatUserId)
 	{
-		Map<String, String> result = new HashMap<>();
-		// if (demandedChatUserId != null && demandedChatUser==null) return
-		// null;//return null if demanded user is not excist
+		LoginResponseData responseData = new LoginResponseData();
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
@@ -252,14 +253,14 @@ public class RoomController {
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
 		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
-			// ChatUser user_real =
-			// chatUserServise.getChatUser(Long.parseLong(principal.getName()));
-			if (realIntitaUser == null || !userService.isAdmin(realIntitaUser.getId()))
+			if (!userService.isAdmin(realIntitaUser))
 				return null;
 		}
 		User activeIntitaUser = activeChatUser.getIntitaUser();
 
-		if (realIntitaUser == null) {
+		boolean userIsNotAuthorized = realIntitaUser == null;
+
+		if (userIsNotAuthorized) {
 			Room room;
 			if (activeChatUser.getChatUserLastRoomDate().iterator().hasNext()) {
 				room = realChatUser.getChatUserLastRoomDate().iterator().next().getLastRoom();
@@ -294,90 +295,50 @@ public class RoomController {
 			// user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			if (room != null)
-				result.put("nextWindow", room.getId().toString());
+				responseData.setNextWindow(room.getId().toString());
 			else
-				result.put("nextWindow", "-1");
+				responseData.setNextWindow("-1");
 		} else {
 			// subscribedtoRoomsUsersBuffer.add(user);
-			result.put("nextWindow", "0");
-			result.put("chat_user_avatar", activeIntitaUser == null ? "noname.png" : activeIntitaUser.getAvatar());
+			responseData.setNextWindow("0");
 		}
-		String activeUsersJson = null;
+		ChatUserDTO chatUserDTO = dtoMapper.map(activeChatUser);
 		Set<Long> activeUsers = participantRepository.getActiveUsers();
-		try {
-			activeUsersJson = mapper.writeValueAsString(activeUsers);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		result.put("onlineUsersIdsJson", activeUsersJson);
-		result.put("chat_id", activeChatUser.getId().toString());
-		result.put("chat_user_nickname", activeChatUser.getNickName());
+		responseData.setActiveUsers(activeUsers);
 
-		Integer role = 0;
+		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
+
 		if (activeIntitaUser != null) {
-			if (userService.isAdmin(activeIntitaUser.getId())) {
-				result.put("isAdmin", "true");
-				role |= ROLE.ADMIN;
-			} else
-				result.put("isAdmin", "false");
-			// check if tenant
-			if (userService.isTenant(activeIntitaUser.getId()))
-				result.put("isTenant", "true");
-			else
-				result.put("isTenant", "false");
-			// check if trainer
-			if (userService.isTrainer(activeIntitaUser.getId()))
-				result.put("isTrainer", "true");
-			else
-				result.put("isTrainer", "false");
-
-			if (userService.isStudent(activeIntitaUser.getId())) {
-				result.put("isStudent", "true");
+	LoginEvent event = null;
+			if (userRoles.contains(UserRole.STUDENT)) {
 				User iTrainer = userService.getTrainer(activeIntitaUser.getId());
-				result.put("trainer", null);
 				if (iTrainer != null) {
 					ChatUser chatTrainer = chatUserServise.getChatUserFromIntitaUser(iTrainer, false);
-					if (chatTrainer != null)
-						try {
-							result.put("trainer",
-									mapper.writeValueAsString(chatUserServise.getLoginEvent(chatTrainer)));
-						} catch (JsonProcessingException e) {
-							e.printStackTrace();
-						}
-				}
-			} else
-				result.put("isStudent", "false");
-		}
-		result.put("chat_user_role", role.toString());
+					if (chatTrainer != null) {
+						ChatUserDTO chatTrainerDTO = dtoMapper.map(chatTrainer);
+						responseData.setTrainer(chatTrainerDTO);
+					}
 
-		String rooms = "{}";
-		try {
-			rooms = mapper.writeValueAsString(
-					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(activeChatUser)));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				}
+			}
 		}
-		result.put("chat_rooms", rooms);
-		Long activeIntitaUserId = null == activeIntitaUser ? null : activeIntitaUser.getId();
+		chatUserDTO.setRoles(userService.getAllRoles(activeIntitaUser));
+		responseData.setChatUser(chatUserDTO);
+		List<RoomModelSimple> roomModels = roomService.getRoomsModelByChatUser(activeChatUser,5);
+		responseData.setRoomModels(roomModels);
 		/***
 		 * @deprecated try { result.put("friends",
 		 *             mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
 		 *             } catch (JsonProcessingException e1) { // TODO
 		 *             Auto-generated catch block e1.printStackTrace(); }
 		 */
-		if (userService.isTrainer(activeIntitaUserId)) {
-			ArrayList<LoginEvent> tenantsObjects = userService.getAllFreeTenantsLoginEvent(activeChatUser.getId());
+		if (userRoles.contains(UserRole.TRAINER)) {
+			ArrayList<ChatUserDTO> tenantsObjects = userService.getAllFreeTenantsDTO(activeChatUser.getId());
 			String tenantsJson = null;
-			try {
-				tenantsJson = mapper.writeValueAsString(tenantsObjects);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			result.put("tenants", tenantsJson);
+			responseData.setTenants(tenantsObjects);
 		}
 
-		return result;
+		return responseData;
 	}
 
 	@RequestMapping(value = "/chat/login/{userId}", method = RequestMethod.POST)
@@ -778,7 +739,7 @@ public class RoomController {
 							roomService.getRoomsModelByChatUser(modal.chatUser), modal.replace));
 				else
 					str = mapper.writeValueAsString(new UpdateRoomsPacketModal(
-							roomService.getRoomsByChatUserAndList(modal.chatUser, modal.roomsForUpdate),
+							roomService.getRoomsByChatUserAndList(modal.chatUser, modal.roomsForUpdate,null),
 							modal.replace));
 
 				if (!response.isSetOrExpired())
@@ -852,7 +813,7 @@ public class RoomController {
 		if (user_o.getId() == BotParam.BOT_ID)
 			return false;
 		// check for private room
-		if (room_o.getType() == RoomType.PRIVATE) {
+		if (room_o.getTypeEnum() == ChatRoomType.PRIVATE) {
 			PrivateRoomInfo info = roomService.getPrivateRoomInfo(room_o);
 			if (user_o == info.getFirtsUser() || user_o == info.getSecondUser())
 				return false;
@@ -936,7 +897,7 @@ public class RoomController {
 		 * false;
 		 */
 
-		if (room_o.getType() == RoomType.STUDENTS_GROUP)
+		if (room_o.getTypeEnum() == ChatRoomType.STUDENTS_GROUP)
 		{
 			roomPermissionsService.addPermissionsToUser(room_o, user_o, RoomPermissions.Permission.INVITED_USER.getValue());
 		}

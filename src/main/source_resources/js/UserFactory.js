@@ -351,21 +351,21 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     function login(mess_obj) {
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
-        chatUserId = mess_obj.chat_id;
-        isTenant = mess_obj.isTenant == 'true';
-        isTrainer = mess_obj.isTrainer == 'true';
-        isStudent = mess_obj.isStudent == 'true';
-        isAdmin = mess_obj.isAdmin == 'true';
+        chatUserId = mess_obj.chatUser.id;
+        isTenant = mess_obj.chatUser.roles.indexOf("TENANT");
+        isTrainer =mess_obj.chatUser.roles.indexOf("TRAINER");
+        isStudent = mess_obj.chatUser.roles.indexOf("STUDENT");
+        isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN");
         if (isStudent && mess_obj.trainer != undefined) {
 
-            studentTrainerList.push(JSON.parse(mess_obj.trainer));
+            studentTrainerList.push(mess_obj.trainer);
         }
 
-        chatUserNickname = mess_obj.chat_user_nickname;
-        chatUserRole = mess_obj.chat_user_role;
-        chatUserAvatar = mess_obj.chat_user_avatar
+        chatUserNickname = mess_obj.chatUser.nickName;
+        chatUserRole = mess_obj.chatUser.role;
+        chatUserAvatar = mess_obj.chatUser.avatar;
 
-        var onlineUserIds = JSON.parse(mess_obj.onlineUsersIdsJson);
+        var onlineUserIds = mess_obj.activeUsers;
         setOnlineUsersIds(onlineUserIds);
 
         if (mess_obj.nextWindow == -1) {
@@ -373,10 +373,10 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             return;
         }
         if (ChannelFactory.isSocketSupport() == false) {
-            RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
+            RoomsFactory.setRooms(mess_obj.roomModels);
         } else {
             initIsUserTenant();
-            var rooms = JSON.parse(mess_obj.chat_rooms).list;
+            var rooms = mess_obj.roomModels;
             RoomsFactory.setRooms(rooms);
             if ($routeParams.roomId == null && rooms.length > 0) {
                 if (isStudent && mess_obj.trainer != undefined) {
@@ -389,8 +389,8 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 }
             }
         }
-        tenants = typeof mess_obj["tenants"] == "undefined" ? [] : JSON.parse(mess_obj["tenants"]);
-        friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
+        tenants = typeof mess_obj["tenants"] == "undefined" ? [] : mess_obj["tenants"];
+        friends = typeof mess_obj["friends"] == "undefined" ? [] : mess_obj["friends"];
 
         ChannelFactory.setIsInited(true);
 

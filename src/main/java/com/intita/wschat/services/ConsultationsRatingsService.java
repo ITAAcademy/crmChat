@@ -29,7 +29,6 @@ import com.intita.wschat.models.ChatConsultationResult;
 import com.intita.wschat.models.ChatConsultationResultValue;
 import com.intita.wschat.models.IntitaConsultation;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.User.Permissions;
 import com.intita.wschat.repositories.ConsultationRatingsRepository;

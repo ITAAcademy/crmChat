@@ -297,40 +297,4 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 		return true;
 	}
 
-	
-	public enum Roles{	
-		ADMIN(1 << 0, "user_admin"),
-		STUDENT(1 << 1, "user_student"),
-		SUPER_VISOR(1 << 2, "user_super_visor"),
-		TEACHER_CONSULTANT(1 << 3, "user_teacher_consultant"),
-		ACCOUNTANT(1 << 4, "user_accountant"),
-		CONSULTANT(1 << 5, "user_consultant"),
-		TENANTS(1 << 6, "user_tenant"),
-		TRAINER(1 << 7, "user_trainer");		
-
-		private int value;
-		private String tableName;
-		
-		public static Map<String, Integer> getSupported(){
-			Map<String, Integer> aMap = new HashMap<>();
-			for (Permission permission : Permission.values()){
-				aMap.put(permission.toString(),permission.getValue());
-			}
-			return aMap;
-		}
-		public  boolean checkNumberForThisPermission(Integer number){
-			return (number & getValue()) == getValue();
-		}
-		private Roles(int value, String tableName){
-			this.value = value;
-			this.tableName = tableName;
-		}
-		public int getValue(){
-			return value;
-		}
-		public String getTableName() {
-			return tableName;
-		}
-		
-	}	
 }
