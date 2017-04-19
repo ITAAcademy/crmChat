@@ -237,15 +237,10 @@ public class RoomController {
 
 	@SubscribeMapping("/chat.login/{demandedChatUserId}")
 	public Map<String, String> login(Principal principal, @DestinationVariable Long demandedChatUserId)// Control
-	// user
-	// page
-	// after
-	// auth
 	{
+		long startTime = System.nanoTime();
+	
 		Map<String, String> result = new HashMap<>();
-		demandedChatUserId = (long) 48;
-		// if (demandedChatUserId != null && demandedChatUser==null) return
-		// null;//return null if demanded user is not excist
 
 		Long realChatUserId = Long.parseLong(principal.getName());
 		ChatUser realChatUser = chatUserServise.getChatUser(realChatUserId);
@@ -378,6 +373,12 @@ public class RoomController {
 			result.put("tenants", tenantsJson);
 		}
 
+		long endTime = System.nanoTime();
+
+		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
+		log.info("Login duration: " + duration);
+
+		
 		return result;
 	}
 
