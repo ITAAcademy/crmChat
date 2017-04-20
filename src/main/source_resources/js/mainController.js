@@ -5,13 +5,19 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
             load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope) {
-                if (!ChannelFactory.getIsInited()) return;
-                RoomsFactory.goToRoom($route.current.params.roomId);
+                if (!ChannelFactory.getIsInited() || $rootScope.roomChanging) return;
+                $rootScope.roomChanging = true;
+                console.log('room changing start');
+                RoomsFactory.goToRoom($route.current.params.roomId).then(function(){
+                $rootScope.roomChanging = false;
                 $rootScope.$broadcast('dialog_view_route');
                 /*$('#rooms-block #items_list_block').animate({
                     scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
                 }, 2000);*/
                 rescrollToRoom($route.current.params.roomId);
+                console.log('room changing end');
+                });
+
             }]
         }
     });
