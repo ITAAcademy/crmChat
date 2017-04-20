@@ -1,10 +1,7 @@
 package com.intita.wschat.services;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -12,6 +9,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +41,8 @@ public class UsersService {
 	
 	@PersistenceContext
 	EntityManager entityManager;
+
+	@Autowired private DTOMapper dtoMapper;
 	
 	
 	
@@ -103,7 +105,7 @@ public class UsersService {
 	}
 	
 	@Transactional
-	public List<User> getUsersFist5WithRole(String info, User.Roles role){
+	public List<User> getUsersFist5WithRole(String info, UserRole role){
 		ArrayList<Long> list =  getAllByRole(role);
 		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list);
 	}
@@ -182,30 +184,39 @@ public class UsersService {
 	}
 	@Transactional
 	public boolean isAdmin(Long id){
+		if (id==null) return false;
 		if(usersRepo.findInAdminTable(id) != null)
 			return true;
 		return false;
-	}	
+	}
+	public boolean isAdmin(User u){
+		if (u==null) return false;
+		return isAdmin(u.getId());
+	}
 	@Transactional
 	public boolean isSuperVisor(Long id){
+		if (id==null) return false;
 		if(usersRepo.findInSupervisorTable(id) != null)
 			return true;
 		return false;
 	}
 	@Transactional
 	public boolean isTenant(Long id){
+		if (id==null) return false;
 		if(usersRepo.findInTenantTable(id) != null)
 			return true;
 		return false;
 	}
 	@Transactional
 	public boolean isTrainer(Long id){
+		if (id==null) return false;
 		if(usersRepo.findInTrainerTable(id) != null)
 			return true;
 		return false;
 	}
 	@Transactional
 	public boolean isStudent(Long id){
+		if (id==null) return false;
 		if(usersRepo.findInStudentTable(id) != null)
 			return true;
 		return false;
@@ -290,14 +301,24 @@ public class UsersService {
 		for(ChatUser user : tenants) loginEvents.add(chatUsersService.getLoginEvent(user));
 		return loginEvents;
 	}
+
+	public ArrayList<ChatUserDTO> getAllFreeTenantsDTO(Long... ignoreUsers){
+		ArrayList<ChatUser> tenants = getAllFreeTenants(ignoreUsers);
+		ArrayList<ChatUserDTO> loginEvents = new ArrayList<ChatUserDTO>();
+		for(ChatUser user : tenants) loginEvents.add(dtoMapper.map(user));
+		return loginEvents;
+	}
 	
 	
 	@Transactional
-	public boolean checkRoleByChatUser(Principal principal, User.Roles role){
-		User user = this.getUser(principal);
+	public boolean checkRoleByUser(User user, UserRole role){
 		if(user == null)
 			return false;
-		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
+		String tableName = role.getTableName();
+		String columnUserName = "id_user";
+		if (tableName.equals("user_tenant"))
+			columnUserName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT "+columnUserName+" FROM " + tableName + " WHERE " +columnUserName+" = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
 		try{
 			Long userId = Long.parseLong(query.getSingleResult().toString());
 			return userId.equals(user.getId());
@@ -307,18 +328,36 @@ public class UsersService {
 		}
 		
 	}
+	@Transactional
+	public boolean checkRoleByPrincipal(Principal principal, UserRole role){
+		User user = this.getUser(principal);
+		return checkRoleByUser(user,role);
+
+	}
+
+
+	public Set<UserRole> getAllRoles(User user){
+		Set<UserRole> roles = new HashSet<UserRole>();
+		for(UserRole role : UserRole.values()){
+			if (checkRoleByUser(user,role))
+				roles.add(role);
+		}
+		return roles;
+	}
+
+
 	
 	@Transactional
-	public boolean checkRole(User user, User.Roles role){
+	public boolean checkRole(User user, UserRole role){
 		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
 		Long userId = Long.parseLong(query.getSingleResult().toString());
 		return userId.equals(user.getId());
 		
 	}
 	@Transactional
-	public ArrayList<Long> getAllByRole(User.Roles role){
+	public ArrayList<Long> getAllByRole(UserRole role){
 		String userFieldName = "id_user";
-		if(role == User.Roles.TENANTS)
+		if(role == UserRole.TENANTS)
 			userFieldName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = query.getResultList();

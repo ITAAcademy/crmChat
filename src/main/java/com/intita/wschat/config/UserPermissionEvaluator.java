@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.util.Collection;
 
+import com.intita.wschat.domain.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.PermissionEvaluator;
@@ -22,7 +23,7 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 	@Autowired UsersService userService;
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
- 		return userService.checkRoleByChatUser(authentication,  User.Roles.valueOf((String) permission));
+ 		return userService.checkRoleByPrincipal(authentication,  UserRole.valueOf((String) permission));
 	}
 
 	@Override

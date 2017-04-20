@@ -792,7 +792,7 @@ public class ChatController {
 				.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(),
 				new RoomController.UpdateRoomsPacketModal(
-						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate), false));
+						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
 	}
 
 	public void updateRoomByUser(ChatUser user, Room room) {

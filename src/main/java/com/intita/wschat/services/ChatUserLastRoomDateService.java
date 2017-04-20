@@ -17,6 +17,7 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,9 +46,15 @@ public class ChatUserLastRoomDateService {
 	@Transactional
 	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user){
 		return chatUserLastRoomDateRepo.findByChatUser(user);
-
 	}
-	
+	@Transactional
+	public List<ChatUserLastRoomDate> getUserLastRoomDates(ChatUser user,Pageable pageable){
+		if(pageable==null)
+			return chatUserLastRoomDateRepo.findByChatUser(user);
+		else
+			return chatUserLastRoomDateRepo.findByChatUser(user,pageable);
+	}
+
 	@Transactional
 	public List<ChatUserLastRoomDate> getRoomLastRoomDates(Room room){
 		return chatUserLastRoomDateRepo.findByRoom(room);
@@ -103,12 +110,12 @@ public class ChatUserLastRoomDateService {
 		return true;
 	}
 	@Transactional
-    public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
+	public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
 		return chatUserLastRoomDateRepo.findFirstByRoomAndChatUserNotAndLastLogoutAfter(room, user, after);
 	}
-	
+
 	@Transactional
-    public ChatUserLastRoomDate getLastNotUserActivity(Room room, ChatUser user){
+	public ChatUserLastRoomDate getLastNotUserActivity(Room room, ChatUser user){
 		return chatUserLastRoomDateRepo.findFirstByRoomAndChatUserNotOrderByLastLogout(room, user);
 	}
 

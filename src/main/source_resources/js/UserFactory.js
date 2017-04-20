@@ -351,46 +351,44 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     function login(mess_obj) {
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
-        chatUserId = mess_obj.chat_id;
-        isTenant = mess_obj.isTenant == 'true';
-        isTrainer = mess_obj.isTrainer == 'true';
-        isStudent = mess_obj.isStudent == 'true';
-        isAdmin = mess_obj.isAdmin == 'true';
+        chatUserId = mess_obj.chatUser.id;
+        isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
+        isTrainer = mess_obj.chatUser.roles.indexOf("TRAINER") != -1;
+        isStudent = mess_obj.chatUser.roles.indexOf("STUDENT") != -1;
+        isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN") != -1;
         if (isStudent && mess_obj.trainer != undefined) {
 
-            studentTrainerList.push(JSON.parse(mess_obj.trainer));
+            studentTrainerList.push(mess_obj.trainer);
         }
 
-        chatUserNickname = mess_obj.chat_user_nickname;
-        chatUserRole = mess_obj.chat_user_role;
-        chatUserAvatar = mess_obj.chat_user_avatar
+        chatUserNickname = mess_obj.chatUser.nickName;
+        chatUserRole = mess_obj.chatUser.role;
+        chatUserAvatar = mess_obj.chatUser.avatar;
 
-        var onlineUserIds = JSON.parse(mess_obj.onlineUsersIdsJson);
+        var onlineUserIds = mess_obj.activeUsers;
         setOnlineUsersIds(onlineUserIds);
 
         if (mess_obj.nextWindow == -1) {
             toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             return;
         }
-        if (ChannelFactory.isSocketSupport() == false) {
-            RoomsFactory.setRooms(JSON.parse(mess_obj.chat_rooms).list);
-        } else {
-            initIsUserTenant();
-            var rooms = JSON.parse(mess_obj.chat_rooms).list;
-            RoomsFactory.setRooms(rooms);
-            if ($routeParams.roomId == null && rooms.length > 0) {
-                if (isStudent && mess_obj.trainer != undefined) {
-                    RoomsFactory.goToPrivateDialog(studentTrainerList[0].intitaUserId);
-                } else {
-                    rooms.sort(function(obj1, obj2) {
-                        return new Date(obj1.date) - new Date(obj2.date);
-                    })
-                    ChannelFactory.changeLocation("/dialog_view/" + rooms[rooms.length - 1].roomId);
-                }
+
+        initIsUserTenant();
+        var rooms = mess_obj.roomModels;
+        RoomsFactory.setRooms(rooms);
+        if ($routeParams.roomId == null && rooms.length > 0) {
+            if (isStudent && mess_obj.trainer != undefined) {
+                RoomsFactory.goToPrivateDialog(studentTrainerList[0].intitaUserId);
+            } else {
+                rooms.sort(function(obj1, obj2) {
+                    return new Date(obj1.date) - new Date(obj2.date);
+                })
+                ChannelFactory.changeLocation("/dialog_view/" + rooms[rooms.length - 1].roomId);
             }
         }
-        tenants = typeof mess_obj["tenants"] == "undefined" ? [] : JSON.parse(mess_obj["tenants"]);
-        friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
+
+        tenants = typeof mess_obj["tenants"] == "undefined" ? [] : mess_obj["tenants"];
+        friends = typeof mess_obj["friends"] == "undefined" ? [] : mess_obj["friends"];
 
         ChannelFactory.setIsInited(true);
 
@@ -486,14 +484,13 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         if (isUserTenantInited == false) {
             $http.post(serverPrefix + "/bot_operations/tenant/did_am_busy_tenant").
             success(function(data, status, headers, config) {
-
                 isTenant = data[0];
                 if (data[0])
                     isTenantFree = !data[1];
                 isUserTenantInited = true;
             }).
             error(function(data, status, headers, config) {
-                alert("did_am_wait_tenant: server error")
+
             });
         }
     };

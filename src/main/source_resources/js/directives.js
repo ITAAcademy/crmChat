@@ -1090,7 +1090,15 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
-
+    $scope.otherRoomsLoaded = false;
+    $scope.loadOtherRooms = function(){   
+      var url = serverPrefix + "/chat/rooms/all";
+      $http.get(url).success(function(data){
+       RoomsFactory.setRooms(data);
+       $scope.otherRoomsLoaded = true;
+      }
+     );
+    }
     $scope.myValueFunction = function(room) {
         if ($scope.tabState == "Contacts") {
             return room.string;
@@ -1553,7 +1561,7 @@ angular.module('springChat.directives').directive("skypeUi", ['$parse',function(
             getcontacts: '&'
         },
         replace: true,
-        template: '<a href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
+        template: '<a ng-show="getContactsString().length>0" href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
         link: function($scope, element, attrs){
      
 

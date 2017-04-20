@@ -25,6 +25,7 @@ public interface ChatUserLastRoomDateRepository extends CrudRepository<ChatUserL
 	   Page<ChatUserLastRoomDate> findAll(Pageable pageable);
 	   List<ChatUserLastRoomDate> findAll();
 	   List<ChatUserLastRoomDate> findByChatUser(ChatUser user);
+		List<ChatUserLastRoomDate> findByChatUser(ChatUser user,Pageable pageable);
 	   List<ChatUserLastRoomDate> findByRoom(Room user);
 	   ChatUserLastRoomDate findFirstByRoomAndChatUserNotAndLastLogoutAfter(Room room, ChatUser user, Date after);
 	   ChatUserLastRoomDate findFirstByRoomAndChatUserNotOrderByLastLogout(Room room, ChatUser user);

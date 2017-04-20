@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityExistsException;
 import javax.transaction.Transactional;
 
+import com.intita.wschat.domain.ChatRoomType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,7 @@ public class OfflineStudentsGroupService {
 			return false;
 
 		if (room == null) {
-			room = roomService.register(subGroup.getGroup().getName() + subGroup.getName(), author, Room.RoomType.STUDENTS_GROUP);
+			room = roomService.register(subGroup.getGroup().getName() + subGroup.getName(), author, ChatRoomType.STUDENTS_GROUP);
 			subGroup.setChatRoom(room);
 			offlineSubGroupRespository.save(subGroup);
 		}
@@ -96,7 +97,7 @@ public class OfflineStudentsGroupService {
 			return;
 		
 		if (room == null) {
-			room = roomService.register(group.getName(), author, Room.RoomType.STUDENTS_GROUP);
+			room = roomService.register(group.getName(), author, ChatRoomType.STUDENTS_GROUP);
 			group.setChatRoom(room);
 			offlineGroupRespository.save(group);
 		}

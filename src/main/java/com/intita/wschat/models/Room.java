@@ -26,6 +26,7 @@ import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.intita.wschat.domain.ChatRoomType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -82,16 +83,6 @@ public class Room implements Serializable,Comparable<Room> {
 	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "room")
 	PrivateRoomInfo privateInfo;
-
-	public static class RoomType
-	{
-		public static final short DEFAULT = 0;
-		public static final short PRIVATE = 1;
-		public static final short CONSULTATION = 2;
-		public static final short STUDENTS_GROUP = 4;
-		public static final short ROLES_GROUP = 8;
-	}
-
 	/*
 	 * GET/SET
 	 */
@@ -190,6 +181,12 @@ public class Room implements Serializable,Comparable<Room> {
 	}
 	public short getType() {
 		return type;
+	}
+	public ChatRoomType getTypeEnum(){
+		return ChatRoomType.values()[type];
+	}
+	public void setType(ChatRoomType type) {
+		this.type = (short)type.getValue();
 	}
 	public void setType(short type) {
 		this.type = type;

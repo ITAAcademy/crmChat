@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import com.intita.wschat.domain.ChatRoomType;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,6 @@ import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Phrase;
 import com.intita.wschat.models.PrivateRoomInfo;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.Room.RoomType;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
@@ -69,13 +69,13 @@ public class RoomsService {
 	public List<Room> getRooms(){
 		return (List<Room>) roomRepo.findAll(); 
 	}
-	
+
 	@Transactional
 	public ArrayList<Room> getRoomsWithNameLike(String like){
 		return roomRepo.findFirst10ByNameLike(like); 
 	}
-	
-	
+
+
 
 	@Transactional
 	public Room getRoom(Long id){
@@ -103,7 +103,7 @@ public class RoomsService {
 	@Transactional
 	public PrivateRoomInfo getPrivateRoomInfo(Room room) {
 		PrivateRoomInfo info = privateRoomInfoRepo.findByRoom(room);
-		if(info == null && room.getType() == Room.RoomType.PRIVATE)
+		if(info == null && room.getTypeEnum() == ChatRoomType.PRIVATE)
 		{
 			removeRoom(room);
 			throw(new NullPointerException());
@@ -169,7 +169,7 @@ public class RoomsService {
 	}
 	@Transactional
 	public ChatUser isRoomHasStudentWaitingForTrainer(Room room,ChatUser currentUser){
-		if (room.getType() == RoomType.PRIVATE){
+		if (room.getTypeEnum() == ChatRoomType.PRIVATE){
 			PrivateRoomInfo privateRoomInfo = getPrivateRoomInfo(room);
 			ChatUser chatUser1 = privateRoomInfo.getFirtsUser();
 			ChatUser chatUser2 = privateRoomInfo.getSecondUser();
@@ -288,10 +288,10 @@ public class RoomsService {
 		return r;
 	}
 	@Transactional(readOnly = false)
-	public Room register(String name, ChatUser author, short type) {
-		if(type == RoomType.PRIVATE)
+	public Room register(String name, ChatUser author, ChatRoomType type) {
+		if(type == ChatRoomType.PRIVATE)
 		{
-			throw new IllegalArgumentException("use register private function for Room with type ==" + RoomType.PRIVATE);
+			throw new IllegalArgumentException("use register private function for Room with type ==" + ChatRoomType.PRIVATE);
 		}
 		Room r = new Room();
 		r.setAuthor(author);
@@ -303,7 +303,7 @@ public class RoomsService {
 	}
 	@Transactional(readOnly = false)
 	public Room register(String name, ChatUser author) {
-		return register(name, author, (short)0);
+		return register(name, author, ChatRoomType.DEFAULT);
 	}
 
 	@Transactional(readOnly = false)
@@ -311,7 +311,7 @@ public class RoomsService {
 		Room r = new Room();
 		r.setAuthor(first);
 		r.setName(first.getNickName() + "_" + second.getNickName());
-		r.setType(RoomType.PRIVATE);
+		r.setType(ChatRoomType.PRIVATE);
 		r = roomRepo.save(r);
 		chatLastRoomDateService.addUserLastRoomDateInfo(first, r);
 		if (first.getId()!= second.getId())
@@ -481,28 +481,33 @@ public class RoomsService {
 		}
 		return phrases;	
 	}
-
-
 	@Transactional
 	public List<RoomModelSimple> getRoomsModelByChatUser(ChatUser currentUser) {
-		return getRoomsByChatUserAndList(currentUser, null);				
+		return getRoomsByChatUserAndList(currentUser, null,null);
+	}
+
+	@Transactional
+	public List<RoomModelSimple> getRoomsModelByChatUser(ChatUser currentUser, Integer count) {
+		return getRoomsByChatUserAndList(currentUser, null,count);
 	}
 
 	@Transactional
 	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser, ArrayList<Room> list) {
-		return getRoomsByChatUserAndList(currentUser, list);				
+		return getRoomsByChatUserAndList(currentUser, list,null);
 	}
 
 	@Transactional
-	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms) {
+	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms, Integer count) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		List<RoomModelSimple> result = new ArrayList <RoomModelSimple> ();
 
 		List<ChatUserLastRoomDate> rooms_lastd = null;
+		PageRequest pageRequest =null;
+		if (count !=null) pageRequest = new PageRequest(0,count);
 		if(sourseRooms == null)
-			rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser);
+			rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser,pageRequest);
 		else
 			rooms_lastd = chatLastRoomDateService.getUserLastRoomDatesInList(currentUser, sourseRooms);
 
@@ -520,7 +525,6 @@ public class RoomsService {
 			sb = extendSimpleModelByUserPermissionsForRoom(sb, currentUser, entry.getLastRoom());
 			result.add(sb);
 		}
-		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
 	}
 	@Transactional
@@ -559,13 +563,13 @@ public class RoomsService {
 			System.out.println("IsLastMsgReaded: " + item.getChatUser().getNickName() + "  vs  " + msg.getAuthor().getNickName()); 
 		return item != null;
 	}
-	
+
 	public Date getLastMsgActivity(Room room, UserMessage msg)
 	{
 		ChatUserLastRoomDate item = chatLastRoomDateService.getLastNotUserActivity(room, msg.getAuthor());
 		if(item != null)
 			return item.getLastLogout();
-		
+
 		return null;
 	}
 }

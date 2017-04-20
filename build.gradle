@@ -101,8 +101,11 @@ dependencies {
     compile("org.apache.commons:commons-pool2:$commonsPoolVersion")
     compile("org.thymeleaf:thymeleaf-spring4")
     compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 
-    
+
+
     ////////////////
     //			OLD
     ////////////////
