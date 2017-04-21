@@ -141,7 +141,7 @@ function zoomAreaChart() {
 
 
         function updateCurrentUserActivity(){
-    $http.get(serverPrefix + "/statistic/user/get_week_activity?userId={0}&days={1}".format(14,360)).success(function(data, status, headers, config) {
+    $http.get(serverPrefix + "/statistic/user/get_week_activity_current_user?days={0}".format(360)).success(function(data, status, headers, config) {
                   var receivedData =  data.activityAtTime;
         var processedData = generateFullChartDataAndLabels(receivedData,data.activityDurationMs,layoutColors.info);
         convertChartDataLongToDate(processedData);
