@@ -57,7 +57,7 @@
         _isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN") != -1;
 
             if (isStudent && mess_obj.trainer != undefined) {
-                studentTrainerList.push(JSON.parse(mess_obj.trainer));
+                studentTrainerList.push(mess_obj.trainer);
             }
 
         chatUserNickname = mess_obj.chatUser.nickName;

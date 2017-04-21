@@ -11,24 +11,58 @@
 function generateFullChartDataAndLabels(receivedData,activityCooldown,lineColor){
     var resultObjects = [];
 for (var i = 0; i < receivedData.length; i++){
+         var currentItem = receivedData[i];
+  if(i>0){
+          var zeroActivityFinishObject = {};
+       zeroActivityFinishObject.status = 0;
+        zeroActivityFinishObject.when=(currentItem-1);
+         zeroActivityFinishObject.lineColor = lineColor;
+        resultObjects.push(zeroActivityFinishObject);
+        console.log('({0},{1}) added to chart data'.format(zeroActivityFinishObject.when,zeroActivityFinishObject.status));
+  }
+              var presenceActivityObj = {};
+        
+      presenceActivityObj.when=currentItem;
+      presenceActivityObj.status=1;
+      presenceActivityObj.lineColor = lineColor;
+      resultObjects.push(presenceActivityObj);
+      console.log('({0},{1}) added to chart data'.format(presenceActivityObj.when,presenceActivityObj.status));
+
+
             if(i!=receivedData.length-1){
-                var presenceActivityObj = {};
-                let nextItem = receivedData[i+1];
-                let currentItem = receivedData[i];
-        presenceActivityObj.when=currentItem;
-        presenceActivityObj.status=1;
-        presenceActivityObj.lineColor = lineColor;
-        resultObjects.push(presenceActivityObj);
-                if (currentItem+activityCooldown < nextItem ){
-                    var zeroActivityObject = {};
+              var nextItem = receivedData[i+1];
+      if (currentItem+activityCooldown < nextItem ){
+        var presenceFinishedObj = {};
+        presenceFinishedObj.when = currentItem+activityCooldown-1;
+        presenceFinishedObj.status = 1;
+        presenceFinishedObj.lineColor = lineColor;
+        resultObjects.push(presenceFinishedObj);
+        console.log('({0},{1}) added to chart data'.format(presenceFinishedObj.when,presenceFinishedObj.status));
+
+
+      var zeroActivityObject = {};
        zeroActivityObject.status = 0;
-        zeroActivityObject.when=(currentItem+activityCooldown+1);
+        zeroActivityObject.when=(currentItem+activityCooldown);
          zeroActivityObject.lineColor = lineColor;
         resultObjects.push(zeroActivityObject);
+        console.log('({0},{1}) added to chart data'.format(zeroActivityObject.when,zeroActivityObject.status));
+
         }
 
         
             }
+
+            else {
+              if (receivedData.length>0){
+                var presenceFinishedObj = {};
+        presenceFinishedObj.when = currentItem+activityCooldown-1;
+        presenceFinishedObj.status = 1;
+        presenceFinishedObj.lineColor = lineColor;
+        resultObjects.push(presenceFinishedObj);
+        console.log('({0},{1}) added to chart data'.format(presenceFinishedObj.when,presenceFinishedObj.status));
+              }
+            }
+
            
         }
         return resultObjects;
@@ -53,23 +87,6 @@ for (var i = 0; i < fullChartData.length; i++ ){
       type: 'serial',
       theme: 'blur',
       color: layoutColors.defaultText,
-      dataProvider: [
-        {
-          lineColor: layoutColors.info,
-          when: new Date(),
-          status: 1
-        },
-         {
-          lineColor: layoutColors.info,
-          when: new Date(),
-          status: 0
-        },
-         {
-          lineColor: layoutColors.info,
-          when: new Date(),
-          status: 1
-        }
-      ],
       balloon: {
         cornerRadius: 6,
         horizontalPadding: 15,
@@ -85,6 +102,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
       ],
       graphs: [
         {
+          id: 'gl',
           bullet: 'square',
           bulletBorderAlpha: 1,
           bulletBorderThickness: 1,
@@ -96,52 +114,49 @@ for (var i = 0; i < fullChartData.length; i++ ){
           valueField: 'status'
         }
       ],
+      chartScrollbar: {
+        "graph": "g1",
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount": true,
+        "color": "#AAAAAA"
+      },
 
       chartCursor: {
         categoryBalloonDateFormat: 'YYYY MMM DD',
         cursorAlpha: 0,
         fullWidth: true
       },
-      dataDateFormat: 'YYYY-MM-DD',
       categoryField: 'when',
       categoryAxis: {
-        dateFormats: [
-          {
-            period: 'DD',
-            format: 'DD'
-          },
-          {
-            period: 'WW',
-            format: 'MMM DD'
-          },
-          {
-            period: 'MM',
-            format: 'MMM'
-          },
-          {
-            period: 'YYYY',
-            format: 'YYYY'
-          }
-        ],
+       minPeriod: "ss",
         parseDates: true,
+      //  parseDates: true,
         gridAlpha: 0.5,
         gridColor: layoutColors.border,
+        minorGridEnabled: true
       },
       export: {
         enabled: true
       },
       pathToImages: layoutPaths.images.amChart
     });
-    /*areaChart.addListener('dataUpdated', zoomAreaChart);
+    areaChart.addListener('dataUpdated', zoomAreaChart);
 
 function zoomAreaChart() {
-      areaChart.zoomToDates(new Date(2012, 0, 3), new Date(2012, 0, 11));
-    }*/
+       areaChart.zoomToIndexes($scope.userActivityDataValue.length/2 - $scope.userActivityDataValue.length /4, $scope.userActivityDataValue.length/2 + $scope.userActivityDataValue.length /4);
+    }
 
 
 
         function updateCurrentUserActivity(){
-    $http.get(serverPrefix + "/statistic/user/get_week_activity_current_user?days={0}".format(360)).success(function(data, status, headers, config) {
+    $http.get(serverPrefix + "/statistic/user/get_week_activity_current_user?days={0}".format(350)).success(function(data, status, headers, config) {
                   var receivedData =  data.activityAtTime;
         var processedData = generateFullChartDataAndLabels(receivedData,data.activityDurationMs,layoutColors.info);
         convertChartDataLongToDate(processedData);
