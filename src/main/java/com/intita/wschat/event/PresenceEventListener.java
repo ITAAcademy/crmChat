@@ -27,7 +27,7 @@ import com.intita.wschat.web.ChatController;
  * @author Nicolas
  */
 public class PresenceEventListener {
-	
+
 	@Autowired
 	private ParticipantRepository participantRepository;
 	@Autowired 
@@ -36,19 +36,19 @@ public class PresenceEventListener {
 	private ChatTenantService chatTenantService;
 	@Autowired
 	private ChatController chatController;
-	
+
 	private SimpMessagingTemplate messagingTemplate;
-	
+
 	private String loginDestination;
-	
+
 	private String logoutDestination;
-	
+
 	public PresenceEventListener(SimpMessagingTemplate messagingTemplate, ParticipantRepository participantRepository) {
 		this.messagingTemplate = messagingTemplate;
 	}
-		
+
 	private final static Logger log = LoggerFactory.getLogger(PresenceEventListener.class);
-/*	void afterConnectionClosed(WebSocketSession session,
+	/*	void afterConnectionClosed(WebSocketSession session,
             CloseStatus closeStatus)
      throws Exception{
 		ChatUser user =chatUsersService.getChatUser(User.getCurrentUserId());
@@ -64,6 +64,9 @@ public class PresenceEventListener {
 	@EventListener
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
+		if(headers.getUser() == null)
+			return;
+		
 		String chatIdStr = headers.getUser().getName();
 		Long chatId = Long.parseLong(chatIdStr);
 		if (chatId==null){
@@ -72,7 +75,7 @@ public class PresenceEventListener {
 
 		LoginEvent loginEvent = new LoginEvent(chatId, "test");//,participantRepository.isOnline(chatId));
 		messagingTemplate.convertAndSend(loginDestination, loginEvent);
-		
+
 		// We store the session as we need to be idempotent in the disconnect event processing
 		Principal principal = headers.getUser();
 		participantRepository.addParticipantPresenceByConnections(chatId);
@@ -83,10 +86,10 @@ public class PresenceEventListener {
 			chatController.tryAddTenantInListToTrainerLP(user);
 		}
 	}
-	
+
 	@EventListener
 	private void handleSessionDisconnect(SessionDisconnectEvent event) {
-		
+
 		/*Optional.ofNullable(participantRepository.getParticipant(event.getSessionId()))
 				.ifPresent(login -> {
 					messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(login.getUsername()));
@@ -94,20 +97,21 @@ public class PresenceEventListener {
 				});*/
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		Principal principal = headers.getUser();
-		String chatIdStr = principal.getName();
-		Long chatId = Long.parseLong(chatIdStr);
-		ChatUser user = chatUsersService.getChatUser(principal);
-		participantRepository.invalidateParticipantPresence(chatId,true);
-		if(!participantRepository.isOnline(chatId)){
-		messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatIdStr));
-		//remove user from tenant list if tenant
-		if (chatTenantService.isTenant(user.getId()))
-		messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user));
-		chatController.propagateRemovingTenantFromListToTrainer(user);
-		chatController.tryRemoveChatUserRequiredTrainer(user);
+		if(principal != null)
+		{
+			String chatIdStr = principal.getName();
+			Long chatId = Long.parseLong(chatIdStr);
+			ChatUser user = chatUsersService.getChatUser(principal);
+			participantRepository.invalidateParticipantPresence(chatId,true);
+			if(!participantRepository.isOnline(chatId)){
+				messagingTemplate.convertAndSend(logoutDestination, new LogoutEvent(chatIdStr));
+				//remove user from tenant list if tenant
+				if (chatTenantService.isTenant(user.getId()))
+					messagingTemplate.convertAndSend("/topic/chat.tenants.remove",new LoginEvent(user));
+				chatController.propagateRemovingTenantFromListToTrainer(user);
+				chatController.tryRemoveChatUserRequiredTrainer(user);	
+			}
 		}
-		
-				
 	}
 
 	public void setLoginDestination(String loginDestination) {

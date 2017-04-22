@@ -205,7 +205,11 @@ public class CommonController {
 			return "redirect:"+ before;
 		}
 		if(auth != null)
-			addLocolizationAndConfigParam(model, chatUsersService.getChatUser(auth));
+		{
+			ChatUser cUser = chatUsersService.getChatUser(auth);
+			addLocolizationAndConfigParam(model, cUser);
+			log.info("Index login: "  + cUser.getId().toString());
+		}
 		return "index";
 	}
 	

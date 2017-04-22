@@ -69,13 +69,13 @@ public class RoomsService {
 	public List<Room> getRooms(){
 		return (List<Room>) roomRepo.findAll(); 
 	}
-	
+
 	@Transactional
 	public ArrayList<Room> getRoomsWithNameLike(String like){
 		return roomRepo.findFirst10ByNameLike(like); 
 	}
-	
-	
+
+
 
 	@Transactional
 	public Room getRoom(Long id){
@@ -497,7 +497,7 @@ public class RoomsService {
 	}
 
 	@Transactional
-	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms,Integer count) {
+	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms, Integer count) {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
 		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
@@ -505,7 +505,7 @@ public class RoomsService {
 
 		List<ChatUserLastRoomDate> rooms_lastd = null;
 		PageRequest pageRequest =null;
-		if (count !=null)pageRequest = new PageRequest(0,count);
+		if (count !=null) pageRequest = new PageRequest(0,count);
 		if(sourseRooms == null)
 			rooms_lastd = chatLastRoomDateService.getUserLastRoomDates(currentUser,pageRequest);
 		else
@@ -525,7 +525,6 @@ public class RoomsService {
 			sb = extendSimpleModelByUserPermissionsForRoom(sb, currentUser, entry.getLastRoom());
 			result.add(sb);
 		}
-		System.out.println(">>>>>>>>>>>>>  " + new Date());
 		return result;				
 	}
 	@Transactional
@@ -564,13 +563,13 @@ public class RoomsService {
 			System.out.println("IsLastMsgReaded: " + item.getChatUser().getNickName() + "  vs  " + msg.getAuthor().getNickName()); 
 		return item != null;
 	}
-	
+
 	public Date getLastMsgActivity(Room room, UserMessage msg)
 	{
 		ChatUserLastRoomDate item = chatLastRoomDateService.getLastNotUserActivity(room, msg.getAuthor());
 		if(item != null)
 			return item.getLastLogout();
-		
+
 		return null;
 	}
 }
