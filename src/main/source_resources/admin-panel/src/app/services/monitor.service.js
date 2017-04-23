@@ -4,7 +4,7 @@
 (function() {
     'use strict';
 
-    angular.module('Intita.monitor.servises', [])
+    angular.module('Intita.monitor.servises')
         .service('UserMonitorService', userMonitor);
 
     /** @ngInject */
@@ -31,10 +31,10 @@
 
         
 
-        this.getChatUserWithNickNameLike = function(like) {
+        this.fetchChatUserWithNickNameLike = function(like) {
             return $http.get(serverPrefix + "/get_users_nicknames_like_without_room?nickName=" + like);
         }
-        this.getRoomsWithNameLike = function(like) {
+        this.fetchRoomsWithNameLike = function(like) {
             return $http.get(serverPrefix + "/chat/rooms/find?name=" + like);
         }
 

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.intita.wschat.admin.models.MsgRequestRatingsModel;
+import com.intita.wschat.domain.requestdata.UserActivityRequestData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,31 +25,27 @@ ChatUsersService chatUserService;
 @Autowired
 UserMessageService userMessageService;
 
-	@RequestMapping(value = "/statistic/user/get_week_activity", method = RequestMethod.GET)
+	@RequestMapping(value = "/statistic/user/get_activity", method = RequestMethod.POST)
 	@ResponseBody
-	public ChatUserActivityStatistic getUserActivityMapping(@RequestParam("userId") Long userId,
-															@RequestParam(value="days",required = false,defaultValue = "1") Integer days) {
-		final long MS_IN_DAY = 24 * 60 * 60 * 1000;
+	public ChatUserActivityStatistic getUserActivityMapping(@RequestBody UserActivityRequestData activityRequestData) {
 		final long ACTIVITY_DOORATION_MS = 5000;
-		
-		Date currentTime = new Date();
-		Date weekAgoTime = new Date();
-		weekAgoTime.setTime(currentTime.getTime()-MS_IN_DAY*days);
-		List<Date> activityDates = userMessageService.getMessagesDatesByChatUserAndDate(userId,weekAgoTime,currentTime);
+		Date early = new Date(activityRequestData.getBeforeDate());
+		Date late = new Date(activityRequestData.getAfterDate());
+		List<Date> activityDates = userMessageService.getMessagesDatesByChatUserAndDate(activityRequestData.getChatUserId(),early,late);
 		List<Long> datesLong = new ArrayList<Long>();
 		for (Date date : activityDates){
 			datesLong.add(date.getTime());
 		}
-		ChatUserActivityStatistic statistic = ChatUserActivityStatistic.createFromActiveTimeAndDuration(userId,ACTIVITY_DOORATION_MS, datesLong);
+		ChatUserActivityStatistic statistic = ChatUserActivityStatistic.createFromActiveTimeAndDuration(activityRequestData.getChatUserId(),ACTIVITY_DOORATION_MS, datesLong);
 		
-		return statistic;	
+		return statistic;
 	}
 	
-	@RequestMapping(value = "/statistic/user/get_week_activity_current_user", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/statistic/user/get_week_activity_current_user", method = RequestMethod.GET)
 	@ResponseBody
 	public ChatUserActivityStatistic getCurrentUserActivityMapping(@RequestParam(value="days",required = false,defaultValue = "1") Integer days, Principal principal){
 		ChatUser user = chatUserService.getChatUser(principal);
 		return getUserActivityMapping(user.getId(),days);
-	}
+	}*/
 	
 }

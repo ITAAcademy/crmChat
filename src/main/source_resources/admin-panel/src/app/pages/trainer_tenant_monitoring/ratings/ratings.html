@@ -1,3 +1,4 @@
+Test: {{test}}
 <div class="ng-cloak monitor-head" ba-panel ba-panel-title="Filter" ba-panel-class=" ">
     <div class="row datepicker">
         <div class="col-md-2 row">
@@ -11,32 +12,32 @@
             </div>
         </div>
         <div class="col-md-4 row">
-            <div ng-show="form.searchMode=='user'" class="form-group col-md-12">
-                <ui-select ng-model="usersForSearch[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+            <div minimum-input-length="1" ng-show="form.searchMode=='user'" class="form-group col-md-12">
+                <ui-select ng-model="selected.users[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select first user">
-                        {{usersForSearch[0].nickName}}
+                        {{selected.users[0].nickName}}
                     </ui-select-match>
-                    <ui-select-choices repeat="withSearchItem in findUsers($select.search) | filter:  $select.search">
+                    <ui-select-choices  refresh="fetchUsers($select.search)"  repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <div ng-show="form.searchMode=='user'" class="form-group col-md-12">
-                <ui-select ng-model="usersForSearch[1]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+            <div minimum-input-length="1" ng-show="form.searchMode=='user'" class="form-group col-md-12">
+                <ui-select ng-model="selected.users[1]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select second user">
-                        {{usersForSearch[1].nickName}}
+                        {{selected.users[1].nickName}}
                     </ui-select-match>
-                    <ui-select-choices repeat="withSearchItem in findUsers($select.search) | filter:  $select.search">
+                    <ui-select-choices refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <div ng-show="form.searchMode=='room'" class="form-group col-md-12">
-                <ui-select ng-model="roomsForSearch[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+            <div minimum-input-length="1"  ng-show="form.searchMode=='room'" class="form-group col-md-12">
+                <ui-select ng-model="selected.room" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select room">
-                        {{roomsForSearch[0].name}}
+                        {{selected.room.name}}
                     </ui-select-match>
-                    <ui-select-choices repeat="withSearchItem in findRooms($select.search) | filter:  $select.search">
+                    <ui-select-choices refresh="fetchRooms($select.search)" repeat="withSearchItem in roomsList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.name"></span>
                     </ui-select-choices>
                 </ui-select>
@@ -46,21 +47,20 @@
             <p class="input-group">
                 <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
                 <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
-          </span>
+                    <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
             </p>
         </div>
         <div class="col-md-3">
             <p class="input-group">
                 <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
                 <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
-          </span>
+                    <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
             </p>
         </div>
         <button style="float: right;margin-right: 15px;" ng-click="loadRatingsInfoByRoom()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
     </div>
-</div>
 </div>
 <div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
     <div ng-show="ratingsInfoByCurrentRoom.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">Not found any ratings</div>
@@ -86,7 +86,7 @@
                             <tr ng-repeat="(key, value) in rating.values">
                                 <td>{{::supportedRatings[key]}}</td>
                                 <td>
-                                    <star-rating ng-model="rating.values[key]" readonly=true></star-rating>
+                                <star-rating ng-model="rating.values[key]" readonly="true"></star-rating>
                                 </td>
                             </tr>
                         </table>
@@ -132,4 +132,4 @@
             </div>
         </uib-tab>
     </uib-tabset>
-    </div>
+</div>

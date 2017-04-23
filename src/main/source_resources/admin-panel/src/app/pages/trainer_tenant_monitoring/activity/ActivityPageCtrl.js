@@ -8,8 +8,42 @@
     angular.module('BlurAdmin.pages.trainer_tenant_monitoring')
         .controller('ActivityPageCtrl', ActivityPageCtrl);
 
+    /** @ngInject */
+    function ActivityPageCtrl($scope, $timeout, ActivityPageService, $http, $window,baConfig,$element,layoutPaths,UserMonitorService, CommonOperationsService) {
+
+$scope.test="ROMA this is test";
+$scope.usersList = [];
+
+   $scope.dates = { start: new Date(), end: new Date() }
+        $scope.dates.start.setMinutes(0); $scope.dates.start.setHours(0);
+        $scope.dates.end.setMinutes(59); $scope.dates.end.setHours(23);
+   // var searchBefore = '';
+    var fetchUsers = function(info) {
+            return CommonOperationsService.fetchUsers(info).then(function(payload){
+             $scope.usersList = payload.data;
+            })
+        };
+      $scope.fetchUsers = fetchUsers;
+      $scope.selected = {user:null};
+
+
+     function openStart() {
+            $scope.opened.start = true;
+        }
+
+        function openEnd() {
+            $scope.opened.end = true;
+        }
+
+         $scope.openStart = openStart;
+          $scope.openEnd = openEnd;
+          $scope.opened = { start: false, end: false };
+
+
 function generateFullChartDataAndLabels(receivedData,activityCooldown,lineColor){
+
     var resultObjects = [];
+
 for (var i = 0; i < receivedData.length; i++){
          var currentItem = receivedData[i];
   if(i>0){
@@ -18,7 +52,6 @@ for (var i = 0; i < receivedData.length; i++){
         zeroActivityFinishObject.when=(currentItem-1);
          zeroActivityFinishObject.lineColor = lineColor;
         resultObjects.push(zeroActivityFinishObject);
-        console.log('({0},{1}) added to chart data'.format(zeroActivityFinishObject.when,zeroActivityFinishObject.status));
   }
               var presenceActivityObj = {};
         
@@ -26,8 +59,6 @@ for (var i = 0; i < receivedData.length; i++){
       presenceActivityObj.status=1;
       presenceActivityObj.lineColor = lineColor;
       resultObjects.push(presenceActivityObj);
-      console.log('({0},{1}) added to chart data'.format(presenceActivityObj.when,presenceActivityObj.status));
-
 
             if(i!=receivedData.length-1){
               var nextItem = receivedData[i+1];
@@ -37,21 +68,15 @@ for (var i = 0; i < receivedData.length; i++){
         presenceFinishedObj.status = 1;
         presenceFinishedObj.lineColor = lineColor;
         resultObjects.push(presenceFinishedObj);
-        console.log('({0},{1}) added to chart data'.format(presenceFinishedObj.when,presenceFinishedObj.status));
-
 
       var zeroActivityObject = {};
        zeroActivityObject.status = 0;
         zeroActivityObject.when=(currentItem+activityCooldown);
          zeroActivityObject.lineColor = lineColor;
         resultObjects.push(zeroActivityObject);
-        console.log('({0},{1}) added to chart data'.format(zeroActivityObject.when,zeroActivityObject.status));
 
         }
-
-        
             }
-
             else {
               if (receivedData.length>0){
                 var presenceFinishedObj = {};
@@ -59,7 +84,6 @@ for (var i = 0; i < receivedData.length; i++){
         presenceFinishedObj.status = 1;
         presenceFinishedObj.lineColor = lineColor;
         resultObjects.push(presenceFinishedObj);
-        console.log('({0},{1}) added to chart data'.format(presenceFinishedObj.when,presenceFinishedObj.status));
               }
             }
 
@@ -77,12 +101,8 @@ for (var i = 0; i < fullChartData.length; i++ ){
 }
 
 
-
-    /** @ngInject */
-    function ActivityPageCtrl($scope, $timeout, ActivityPageService, $http, $window,baConfig,$element,layoutPaths) {
-
         var layoutColors = baConfig.colors;
-    var id = $element[0].getAttribute('id');
+    var id = 'areaChart';//$element[0].getAttribute('id');
  var areaChart = AmCharts.makeChart(id, {
       type: 'serial',
       theme: 'blur',
@@ -138,7 +158,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
        minPeriod: "ss",
         parseDates: true,
       //  parseDates: true,
-        gridAlpha: 0.5,
+        gridAlpha: 0.15,
         gridColor: layoutColors.border,
         minorGridEnabled: true
       },
@@ -147,27 +167,37 @@ for (var i = 0; i < fullChartData.length; i++ ){
       },
       pathToImages: layoutPaths.images.amChart
     });
-    areaChart.addListener('dataUpdated', zoomAreaChart);
+    /*areaChart.addListener('dataUpdated', zoomAreaChart);
 
 function zoomAreaChart() {
        areaChart.zoomToIndexes($scope.userActivityDataValue.length/2 - $scope.userActivityDataValue.length /4, $scope.userActivityDataValue.length/2 + $scope.userActivityDataValue.length /4);
-    }
+    }*/
+$scope.updateUserActivity = updateUserActivity;
 
-
-
-        function updateCurrentUserActivity(){
-    $http.get(serverPrefix + "/statistic/user/get_week_activity_current_user?days={0}".format(350)).success(function(data, status, headers, config) {
-                  var receivedData =  data.activityAtTime;
+        function updateUserActivity(){
+          var requestPayload = {
+            chatUserId: $scope.selected.user.chatUserId,
+            beforeDate: $scope.dates.start.getTime(),
+            afterDate: $scope.dates.end.getTime()
+          }
+    $http.post(serverPrefix + "/statistic/user/get_activity",requestPayload).success(function(data, status, headers, config) {
+        var receivedData =  data.activityAtTime;
         var processedData = generateFullChartDataAndLabels(receivedData,data.activityDurationMs,layoutColors.info);
         convertChartDataLongToDate(processedData);
         areaChart.dataProvider = processedData;
         areaChart.validateData();
         $scope.userActivityDataValue = processedData;
-            }).error(function(data, status, headers, config) {});
+            });
 }
 
-      
-updateCurrentUserActivity();
+ angular.element(document).ready(function () {
+        console.log('Hello World');
+    });
+
+    
+
+
+
 
 
     }
