@@ -1366,7 +1366,7 @@ button:focus {
     margin-top: 6px;
 }
 
-.controls_area a,
+.controls_area .multimedia_conversation_controls a,
 .controls_area button {
     border: 0;
     background: 0;
@@ -2151,7 +2151,7 @@ body.frame .open_in_new_tab {
     width: 230px;
     padding: 5px;
     /* background-color: #eaf0f3; */
-    right: 0px;
+    right: -25px;
     text-overflow: ellipsis;
     padding: 0;
     top: 34px;
@@ -2189,7 +2189,7 @@ body.frame .open_in_new_tab {
     content: ' ';
     display: block;
     top: 0px;
-    right: 24px;
+    right: 25px;
 }
 
 .notification_menu.shown {

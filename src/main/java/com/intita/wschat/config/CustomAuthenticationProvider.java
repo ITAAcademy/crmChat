@@ -75,13 +75,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					{
 						if(cook.getName().equals("JSESSIONID"))
 						{
-							System.out.println("URAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-							System.out.println(cook.getValue());
 							value = cook.getValue();
 							session.setAttribute("id", value);
 							String phpSession = redisService.getKeyValue(value);
 							System.out.println("cook value: " + phpSession);
-
 
 							if(phpSession != null)
 							{
@@ -119,6 +116,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 						session.setAttribute("intitaId", intitaIdLong);
 					}
 					else{
+						System.out.println("CREATE GUEST");
 						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
 						ChatId = c_u_temp.getId().toString();
 						session.removeAttribute("intitaId");
@@ -151,11 +149,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	{
 		if(SecurityContextHolder.getContext().getAuthentication() != null && authenticationProvider != null)
 		{
-			System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
-			//if(!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
 			Authentication auth = authenticationProvider.authenticate(SecurityContextHolder.getContext().getAuthentication());
 			SecurityContextHolder.getContext().setAuthentication(auth);
-
 			return auth;
 		}
 		else

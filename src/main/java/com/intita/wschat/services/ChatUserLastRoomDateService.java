@@ -52,9 +52,9 @@ public class ChatUserLastRoomDateService {
 		if(pageable==null)
 			return chatUserLastRoomDateRepo.findByChatUser(user);
 		else
-		return chatUserLastRoomDateRepo.findByChatUser(user,pageable);
+			return chatUserLastRoomDateRepo.findByChatUser(user,pageable);
 	}
-	
+
 	@Transactional
 	public List<ChatUserLastRoomDate> getRoomLastRoomDates(Room room){
 		return chatUserLastRoomDateRepo.findByRoom(room);
@@ -110,12 +110,12 @@ public class ChatUserLastRoomDateService {
 		return true;
 	}
 	@Transactional
-    public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
+	public ChatUserLastRoomDate findByRoomAndChatUserNotAndLast_logoutAfer(Room room, ChatUser user, Date after){
 		return chatUserLastRoomDateRepo.findFirstByRoomAndChatUserNotAndLastLogoutAfter(room, user, after);
 	}
-	
+
 	@Transactional
-    public ChatUserLastRoomDate getLastNotUserActivity(Room room, ChatUser user){
+	public ChatUserLastRoomDate getLastNotUserActivity(Room room, ChatUser user){
 		return chatUserLastRoomDateRepo.findFirstByRoomAndChatUserNotOrderByLastLogout(room, user);
 	}
 
