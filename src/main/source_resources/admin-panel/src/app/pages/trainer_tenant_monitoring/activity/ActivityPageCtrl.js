@@ -3,7 +3,7 @@
  * created on 16.12.2015
  */
 (function() {
-    'use strict';
+    
 
     angular.module('BlurAdmin.pages.trainer_tenant_monitoring')
         .controller('ActivityPageCtrl', ActivityPageCtrl);
@@ -97,7 +97,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
 
 
         var layoutColors = baConfig.colors;
-    var id = $element[0].getAttribute('id');
+    var chartId = $element[0].getAttribute('id');
     var testProvider = function(){
       var datesAndValues  = [];
       var currentDateLong = (new Date()).getTime();
@@ -112,7 +112,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
       }
       return datesAndValues;
     }
- var areaChart = AmCharts.makeChart(id, {
+    var chartConfig = {
       type: 'serial',
       theme: 'blur',
       color: layoutColors.defaultText,
@@ -175,7 +175,10 @@ for (var i = 0; i < fullChartData.length; i++ ){
         enabled: true
       },
       pathToImages: layoutPaths.images.amChart
-    });
+    };
+
+
+
     /*areaChart.addListener('dataUpdated', zoomAreaChart);
 
 function zoomAreaChart() {
@@ -194,15 +197,16 @@ $scope.updateUserActivity = updateUserActivity;
         var receivedData =  data.activityAtTime;
         var processedData = generateFullChartDataAndLabels(receivedData,data.activityDurationMs,layoutColors.info);
         convertChartDataLongToDate(processedData);
-        areaChart.dataProvider = processedData;
+        $scope.areaChart.dataProvider = processedData;
         $scope.userActivityDataValue = processedData;
-        areaChart.validateData(processedData);
+        $scope.areaChart.validateData();
             });
 }
 
 
  //TEST
-
+      var chartId = 'areaChart';
+        $scope.areaChart = AmCharts.makeChart(chartId, chartConfig);
     
 
 
