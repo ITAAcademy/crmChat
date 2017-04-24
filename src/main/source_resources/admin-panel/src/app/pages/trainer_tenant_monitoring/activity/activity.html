@@ -1,22 +1,5 @@
      <div id="areaChart" class="admin-chart"></div>
-<div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
-    <uib-tabset class="tabs-right" active="activeTabIndex" >
-
-        <uib-tab>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Графік активності</div>
-                        <div class="panel-body">
-                            <div ng-show="userActivityDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">Активність в заданому проміжку не знайдена</div>
-                       
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-                <div class="row datepicker">
+               <div class="row datepicker">
                 <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select first user">
                         {{selected.user.nickName}}
@@ -43,12 +26,7 @@
                     </p>
                 </div>
                 <!--//Date  pickers -->
+                   <button style="float: right;margin-right: 15px;" ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
                 
-                <button style="float: right;margin-right: 15px;" ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
             </div>
-            
-
-        </uib-tab>
-
-    </uib-tabset>
-</div>
+  
