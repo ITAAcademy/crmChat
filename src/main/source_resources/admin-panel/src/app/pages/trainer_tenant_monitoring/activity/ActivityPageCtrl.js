@@ -40,7 +40,7 @@ $scope.usersList = [];
           $scope.opened = { start: false, end: false };
 
 
-function generateFullChartDataAndLabels(receivedData,activityCooldown,lineColor){
+function generateFullChartDataAndLabels(receivedData,activityCooldown){
 
     var resultObjects = [];
 
@@ -50,14 +50,12 @@ for (var i = 0; i < receivedData.length; i++){
           var zeroActivityFinishObject = {};
        zeroActivityFinishObject.status = 0;
         zeroActivityFinishObject.when=(currentItem-1);
-         zeroActivityFinishObject.lineColor = lineColor;
         resultObjects.push(zeroActivityFinishObject);
   }
               var presenceActivityObj = {};
         
       presenceActivityObj.when=currentItem;
       presenceActivityObj.status=1;
-      presenceActivityObj.lineColor = lineColor;
       resultObjects.push(presenceActivityObj);
 
             if(i!=receivedData.length-1){
@@ -66,13 +64,11 @@ for (var i = 0; i < receivedData.length; i++){
         var presenceFinishedObj = {};
         presenceFinishedObj.when = currentItem+activityCooldown-1;
         presenceFinishedObj.status = 1;
-        presenceFinishedObj.lineColor = lineColor;
         resultObjects.push(presenceFinishedObj);
 
       var zeroActivityObject = {};
        zeroActivityObject.status = 0;
         zeroActivityObject.when=(currentItem+activityCooldown);
-         zeroActivityObject.lineColor = lineColor;
         resultObjects.push(zeroActivityObject);
 
         }
@@ -82,7 +78,6 @@ for (var i = 0; i < receivedData.length; i++){
                 var presenceFinishedObj = {};
         presenceFinishedObj.when = currentItem+activityCooldown-1;
         presenceFinishedObj.status = 1;
-        presenceFinishedObj.lineColor = lineColor;
         resultObjects.push(presenceFinishedObj);
               }
             }
@@ -102,11 +97,26 @@ for (var i = 0; i < fullChartData.length; i++ ){
 
 
         var layoutColors = baConfig.colors;
-    var id = 'areaChart';//$element[0].getAttribute('id');
+    var id = $element[0].getAttribute('id');
+    var testProvider = function(){
+      var datesAndValues  = [];
+      var currentDateLong = (new Date()).getTime();
+      var startTime = currentDateLong - 360 * 24 * 60 * 60 * 1000;
+      var currentTime = startTime;
+      for (var i = 0; i < 3; i++){
+        var obj = {};
+        obj.when = new Date(currentTime);
+        obj.status =  Math.floor(Math.random() * 9) % 2; //random 1 or 0
+        datesAndValues.push(obj);
+        currentTime += Math.random()*30000+1;
+      }
+      return datesAndValues;
+    }
  var areaChart = AmCharts.makeChart(id, {
       type: 'serial',
       theme: 'blur',
       color: layoutColors.defaultText,
+      dataProvider: testProvider(),
       balloon: {
         cornerRadius: 6,
         horizontalPadding: 15,
@@ -157,7 +167,6 @@ for (var i = 0; i < fullChartData.length; i++ ){
       categoryAxis: {
        minPeriod: "ss",
         parseDates: true,
-      //  parseDates: true,
         gridAlpha: 0.15,
         gridColor: layoutColors.border,
         minorGridEnabled: true
@@ -180,19 +189,19 @@ $scope.updateUserActivity = updateUserActivity;
             beforeDate: $scope.dates.start.getTime(),
             afterDate: $scope.dates.end.getTime()
           }
-    $http.post(serverPrefix + "/statistic/user/get_activity",requestPayload).success(function(data, status, headers, config) {
+    $http.post(serverPrefix + "/statistic/user/get_activity",requestPayload).then(function(payload, status, headers, config) {
+        var data = payload.data;
         var receivedData =  data.activityAtTime;
         var processedData = generateFullChartDataAndLabels(receivedData,data.activityDurationMs,layoutColors.info);
         convertChartDataLongToDate(processedData);
         areaChart.dataProvider = processedData;
-        areaChart.validateData();
         $scope.userActivityDataValue = processedData;
+        areaChart.validateData(processedData);
             });
 }
 
- angular.element(document).ready(function () {
-        console.log('Hello World');
-    });
+
+ //TEST
 
     
 
