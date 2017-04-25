@@ -1,8 +1,7 @@
-package com.intita.wschat.domain;
+package com.intita.wschat.domain.responsedata;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class ChatUserActivityStatistic {

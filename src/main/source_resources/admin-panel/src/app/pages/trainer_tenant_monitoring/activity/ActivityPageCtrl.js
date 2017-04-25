@@ -186,6 +186,72 @@ for (var i = 0; i < fullChartData.length; i++ ){
       pathToImages: layoutPaths.images.amChart
     };
 
+    var barChartConfig = {
+      type: 'serial',
+      theme: 'blur',
+      color: layoutColors.defaultText,
+      balloon: {
+        cornerRadius: 6,
+        horizontalPadding: 15,
+        verticalPadding: 10
+      },
+      valueAxes: [
+        {
+            max: 1,
+            min: 0,
+          gridAlpha: 0.5,
+          gridColor: layoutColors.border,
+        }
+      ],
+      graphs: [
+        {
+          id: 'gl',
+          bullet: 'square',
+          bulletBorderAlpha: 1,
+          bulletBorderThickness: 1,
+          fillAlphas: 0.5,
+          fillColorsField: 'lineColor',
+          legendValueText: '[[value]]',
+          lineColorField: 'lineColor',
+          title: 'Був активний',
+          valueField: 'status',
+          type:'column'
+        }
+      ],
+      chartScrollbar: {
+        "graph": "g1",
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount": true,
+        "color": "#AAAAAA"
+      },
+
+      chartCursor: {
+        categoryBalloonDateFormat: 'YYYY MMM DD',
+        cursorAlpha: 0,
+        fullWidth: true
+      },
+      categoryField: 'when',
+      categoryAxis: {
+       minPeriod: "ss",
+        parseDates: true,
+        gridAlpha: 0.15,
+        gridColor: layoutColors.border,
+        minorGridEnabled: true,
+        tickLength: 20
+      },
+      export: {
+        enabled: true
+      },
+      pathToImages: layoutPaths.images.amChart
+    };
+
 
 
     /*areaChart.addListener('dataUpdated', zoomAreaChart);
@@ -194,13 +260,19 @@ function zoomAreaChart() {
        areaChart.zoomToIndexes($scope.userActivityDataValue.length/2 - $scope.userActivityDataValue.length /4, $scope.userActivityDataValue.length/2 + $scope.userActivityDataValue.length /4);
     }*/
 $scope.updateUserActivity = updateUserActivity;
+$scope.updateUserActivityPerDay = updateUserActivityPerDay;
 
-        function updateUserActivity(){
-          var requestPayload = {
+function generateRequestPayload(){
+   var requestPayload = {
             chatUserId: $scope.selected.user.chatUserId,
             beforeDate: $scope.dates.start.getTime(),
             afterDate: $scope.dates.end.getTime()
           }
+          return requestPayload;
+}
+
+        function updateUserActivity(){
+          var requestPayload = generateRequestPayload();
     $http.post(serverPrefix + "/statistic/user/get_activity",requestPayload).then(function(payload, status, headers, config) {
         var data = payload.data;
         var receivedData =  data.activityAtTime;
@@ -212,10 +284,38 @@ $scope.updateUserActivity = updateUserActivity;
             });
 }
 
+function updateUserActivityPerDay(){
+     var requestPayload = generateRequestPayload();
+    $http.post(serverPrefix + "/statistic/user/get_activity_per_day",requestPayload).then(function(payload, status, headers, config) {
+        var payloadContent = payload.data;
+        var activityMap =  payloadContent.data;
+        var processedData = convertMapToActivityObjects(activityMap);
+        $scope.barChart.dataProvider = processedData;
+        $scope.userActivityPerDayDataValue = processedData;
+        $scope.barChart.validateData();
+            });
+}
+function convertMapToActivityObjects(mapObj){
+  var result = [];
+for (var key in mapObj) {
+  if (mapObj.hasOwnProperty(key)) {
+    var msOfActivity = mapObj[key];
+    var minutesOfActivity = msOfActivity / 1000 / 60;
+    result.push({
+      when:new Date(parseInt(key)),
+      status: minutesOfActivity
+    })
+  }
+}
+return result;
+}
+
 
  //TEST
       var chartId = 'areaChart';
+      var barChartId = 'barChart';
         $scope.areaChart = AmCharts.makeChart(chartId, chartConfig);
+        $scope.barChart = AmCharts.makeChart(barChartId, barChartConfig);
     
 
 
