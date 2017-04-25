@@ -190,65 +190,35 @@ for (var i = 0; i < fullChartData.length; i++ ){
       type: 'serial',
       theme: 'blur',
       color: layoutColors.defaultText,
-      balloon: {
-        cornerRadius: 6,
-        horizontalPadding: 15,
-        verticalPadding: 10
-      },
-      valueAxes: [
-        {
-            max: 1,
-            min: 0,
-          gridAlpha: 0.5,
-          gridColor: layoutColors.border,
-        }
-      ],
-      graphs: [
-        {
-          id: 'gl',
-          bullet: 'square',
-          bulletBorderAlpha: 1,
-          bulletBorderThickness: 1,
-          fillAlphas: 0.5,
-          fillColorsField: 'lineColor',
-          legendValueText: '[[value]]',
-          lineColorField: 'lineColor',
-          title: 'Був активний',
-          valueField: 'status',
-          type:'column'
-        }
-      ],
-      chartScrollbar: {
-        "graph": "g1",
-        "scrollbarHeight": 80,
-        "backgroundAlpha": 0,
-        "selectedBackgroundAlpha": 0.1,
-        "selectedBackgroundColor": "#888888",
-        "graphFillAlpha": 0,
-        "graphLineAlpha": 0.5,
-        "selectedGraphFillAlpha": 0,
-        "selectedGraphLineAlpha": 1,
-        "autoGridCount": true,
-        "color": "#AAAAAA"
-      },
-
-      chartCursor: {
-        categoryBalloonDateFormat: 'YYYY MMM DD',
-        cursorAlpha: 0,
-        fullWidth: true
-      },
-      categoryField: 'when',
-      categoryAxis: {
-       minPeriod: "ss",
-        parseDates: true,
-        gridAlpha: 0.15,
-        gridColor: layoutColors.border,
-        minorGridEnabled: true,
-        tickLength: 20
-      },
-      export: {
-        enabled: true
-      },
+       "valueAxes": [ {
+      "gridColor": "#FFFFFF",
+      "gridAlpha": 0.2,
+      "dashLength": 0
+    } ],
+    "gridAboveGraphs": true,
+    "startDuration": 1,
+    "graphs": [ {
+      "balloonText": "[[category]]: <b>[[value]]</b>",
+      "fillAlphas": 0.8,
+      "lineAlpha": 0.2,
+      "type": "column",
+      "valueField": "status"
+    } ],
+    "chartCursor": {
+      "categoryBalloonEnabled": false,
+      "cursorAlpha": 0,
+      "zoomable": false
+    },
+    "categoryField": "when",
+    "categoryAxis": {
+      "gridPosition": "start",
+      "gridAlpha": 0,
+      "tickPosition": "start",
+      "tickLength": 20
+    },
+    "export": {
+      "enabled": true
+    },
       pathToImages: layoutPaths.images.amChart
     };
 
@@ -280,6 +250,7 @@ function generateRequestPayload(){
         convertChartDataLongToDate(processedData);
         $scope.areaChart.dataProvider = processedData;
         $scope.userActivityDataValue = processedData;
+        $scope.userActivityPerDayDataValue = [];
         $scope.areaChart.validateData();
             });
 }
@@ -292,6 +263,7 @@ function updateUserActivityPerDay(){
         var processedData = convertMapToActivityObjects(activityMap);
         $scope.barChart.dataProvider = processedData;
         $scope.userActivityPerDayDataValue = processedData;
+           $scope.userActivityDataValue = [];
         $scope.barChart.validateData();
             });
 }
