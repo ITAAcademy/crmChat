@@ -33,6 +33,6 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  Set<UserMessage> findAllByAuthorNot(ChatUser user);
 	  ArrayList<UserMessage> findAllByDateAfter(Date date);
 	  UserMessage findFirstByRoomOrderByDateDesc(Room room);
-	  @Query("select m.date from chat_user_message m where m.author.id=?1 and m.date >= ?2 and m.date <= ?3")
+	  @Query("select m.date from chat_user_message m where m.author.id=?1 and Date(m.date) >= Date(?2) and Date(m.date) <= Date(?3)")
 	  List<Date> getMessagesDatesByChatUserAndDateBetween(Long userId,Date earlyDate,Date lastDate);
 }

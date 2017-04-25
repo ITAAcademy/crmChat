@@ -43,40 +43,49 @@ $scope.usersList = [];
 function generateFullChartDataAndLabels(receivedData,activityCooldown){
 
     var resultObjects = [];
-
+  var activityFinishedIdle = false;
 for (var i = 0; i < receivedData.length; i++){
          var currentItem = receivedData[i];
-  if(i>0){
+  //end idle interval
+
+  if(i>0 && activityFinishedIdle){
           var zeroActivityFinishObject = {};
        zeroActivityFinishObject.status = 0;
-        zeroActivityFinishObject.when=(currentItem-1);
+        zeroActivityFinishObject.when=(currentItem);
         resultObjects.push(zeroActivityFinishObject);
   }
+  //start activity interval
               var presenceActivityObj = {};
         
       presenceActivityObj.when=currentItem;
       presenceActivityObj.status=1;
       resultObjects.push(presenceActivityObj);
 
+  //end activity interval
             if(i!=receivedData.length-1){
               var nextItem = receivedData[i+1];
       if (currentItem+activityCooldown < nextItem ){
         var presenceFinishedObj = {};
-        presenceFinishedObj.when = currentItem+activityCooldown-1;
+        presenceFinishedObj.when = currentItem+activityCooldown;
         presenceFinishedObj.status = 1;
         resultObjects.push(presenceFinishedObj);
 
+  //start idle interval
       var zeroActivityObject = {};
        zeroActivityObject.status = 0;
         zeroActivityObject.when=(currentItem+activityCooldown);
         resultObjects.push(zeroActivityObject);
-
+        activityFinishedIdle = true;
+        }
+        else{
+           activityFinishedIdle = false;
         }
             }
+            //end activity interval for last point
             else {
               if (receivedData.length>0){
                 var presenceFinishedObj = {};
-        presenceFinishedObj.when = currentItem+activityCooldown-1;
+        presenceFinishedObj.when = currentItem+activityCooldown;
         presenceFinishedObj.status = 1;
         resultObjects.push(presenceFinishedObj);
               }
