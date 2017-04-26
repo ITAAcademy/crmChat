@@ -587,6 +587,9 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                     scope.$root.$emit('rootScope:roomsBlockModeChange', 1);
                 return toggleNewUser;
             }
+            scope.getUserProfileLink = function(id){
+                return mySettings.baseUrl + '/profile/' + id;
+            }
             initFolded(scope, element);
         }
 

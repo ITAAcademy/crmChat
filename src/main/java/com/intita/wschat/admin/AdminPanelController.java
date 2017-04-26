@@ -109,7 +109,7 @@ public class AdminPanelController {
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
+	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String  admin(HttpServletRequest request,Model model, Principal principal) {
 		
@@ -120,11 +120,11 @@ public class AdminPanelController {
 		configMap.put("currentLang", lang);
 		model.addAttribute("lgPack", chatLangService.getLocalizationMap().get(lang));
 		model.addAttribute("config", configMap);
-		//return "../static/admin-panel/release/index";
-		return "../static/admin-panel/dev-release/index";
+		return "../static/admin-panel/release/index";
+		//return "../static/admin-panel/dev-release/index";
 	}
 
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
+	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
