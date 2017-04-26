@@ -9,7 +9,16 @@
         .controller('RatingsPageCtrl', RatingsPageCtrl);
 
     /** @ngInject */
-    function RatingsPageCtrl($scope, $timeout, UserMonitorService, RatingsPageService, $http, baConfig, $window) {
+    function RatingsPageCtrl($scope, $timeout, UserMonitorService, RatingsPageService, $http, baConfig, $window,CommonOperationsService) {
+        var fetchUsers = function(info) {
+             CommonOperationsService.fetchUsers(info).then(function(payload){
+                $scope.usersList.length = 0;
+            // $scope.usersList = payload.data == null ? null : payload.data[userIndex];
+             $scope.usersList.push.apply($scope.usersList,payload.data);
+            });
+        }
+        $scope.fetchUsers = fetchUsers;
+        $scope.test = "test OK";
 
         function openStart() {
             $scope.opened.start = true;
@@ -19,8 +28,9 @@
             $scope.opened.end = true;
         }
 
-        $scope.usersForSearch = [];
-        $scope.roomsForSearch = [];
+        $scope.usersList = [];
+        $scope.roomsList = [];
+        $scope.selected = { users: [], room: null };
 
 
         $scope.dates = { start: new Date(), end: new Date() }
@@ -38,81 +48,31 @@
         $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.format = $scope.formats[0];
 
-        var UsersList = [];
-        var RoomsList = [];
-        var searchBefore = '';
-        var wait = false
 
-        $scope.findUsers = function(info) {
-            if (searchBefore != info && info.trim() != '' && getUsersInfoWithoutRole(info, function(data) {
-                    UsersList = data
-                })) {
-                searchBefore = info;
-            }
-            return UsersList;
-        }
-
-        $scope.findRooms = function(info) {
-            if (searchBefore != info && info.trim() != '' && getRoomsInfo(info, function(data) {
-                    RoomsList = [];
-                    for (var key of Object.keys(data)) {
-                        RoomsList.push({ key: key, name: data[key] })
+        $scope.fetchRooms = function(info) {
+           return fetchRoomsInfo(info).then(function(payload){
+            var data = payload.data;
+                    $scope.roomsList.length=0;
+                    var keys = Object.keys(data);
+                    for (var i = 0; i < keys.length; i++) {
+                        var key = keys[i];
+                        $scope.roomsList.push({ key: key, name: data[key] })
                     }
-                })) {
-                searchBefore = info;
+           });
+                
             }
-            return RoomsList;
-        }
 
-
-
-        function waitFunction(callBack, succ, error) {
-            if (wait == false) {
-                callBack.success(function(data, status, headers, config) {
-                    if (succ != undefined)
-                        succ(data, status, headers, config);
-                    wait = false;
-                }).error(function(data, status, headers, config) {
-                    wait = false;
-                    if (error != undefined)
-                        error(data, status, headers, config);
-                });
-                wait = true;
-                return true
-            }
-            return false;
-        }
-
-        function getUsersInfo(roles, info, succ, error) {
-            if (wait == false) {
-                $http.get(serverPrefix + "/chat/findUsersWithRoles?info=" + info + "&roles=" + roles, {}).success(function(data, status, headers, config) {
-                    if (succ != undefined)
-                        succ(data, status, headers, config);
-                    wait = false;
-                }).error(function(data, status, headers, config) {
-                    wait = false;
-                    if (error != undefined)
-                        error(data, status, headers, config);
-                });
-                wait = true;
-                return true
-            }
-            return false;
-        }
-
-        function getUsersInfoWithoutRole(info, succ, error) {
-            return waitFunction(UserMonitorService.getChatUserWithNickNameLike(info), succ, error)
-        }
-
-        function getRoomsInfo(info, succ, error) {
-            return waitFunction(UserMonitorService.getRoomsWithNameLike(info), succ, error);
+        function fetchRoomsInfo(info) {
+            return UserMonitorService.fetchRoomsWithNameLike(info);
         }
 
         $scope.supportedRatings = null;
         RatingsPageService.loadRatings().then(function(response) {
             $scope.supportedRatings = {};
             $scope.labels = [];
-            for (var rating of response.data) {
+            var ratings = response.data;
+            for (var i = 0; i < ratings.length; i++) {
+                var rating = ratings[i];
                 $scope.supportedRatings[rating.id] = rating.name;
                 $scope.labels.push(rating.name); // init graphs labels
             }
@@ -127,14 +87,14 @@
                 case "user":
                     {
                         is_user = true;
-                        for (var i = 0; i < $scope.usersForSearch.length; i++) {
-                            idList.push($scope.usersForSearch[i].chatUserId);
+                        for (var i = 0; i < $scope.selected.users.length; i++) {
+                            idList.push( $scope.selected.users[i].chatUserId);
                         }
                         break;
                     }
                 case "room":
                     {
-                        idList = [$scope.roomsForSearch[0].key];
+                        idList = [$scope.selected.room.key];
                     }
             }
 
@@ -198,7 +158,9 @@
             var averageRatingsCount = {};
             var averageRatingsValue = {};
             debugger;
-            for (var rating of ratings) {
+
+            for (var i = 0; i < ratings.length; i++) {
+                var rating = ratings[i];
                 for (var id in rating.values) {
                     if (averageRatingsCount[id] == undefined) {
                         averageRatingsCount[id] = 0;

@@ -727,6 +727,10 @@ button:focus {
     color: #425569;
 }
 
+*[participants-block="true"] .items_list_block .text_info>a.user_name:hover {
+    color: #3598db;
+}
+
 . .items_list_block.middle_block .block_item {
     margin-top: 14px
 }

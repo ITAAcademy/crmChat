@@ -9,7 +9,7 @@
         .controller('MessagesPageCtrl', MessagesPageCtrl);
 
     /** @ngInject */
-    function MessagesPageCtrl($scope, $timeout, UserMonitorService, $http) {
+    function MessagesPageCtrl($scope, $timeout, UserMonitorService, $http,CommonOperationsService) {
 
         function openStart() {
             $scope.opened.start = true;
@@ -18,7 +18,7 @@
         function openEnd() {
             $scope.opened.end = true;
         }
-
+        
         $scope.dates = { start: new Date(), end: new Date() }
         $scope.dates.start.setMinutes(0); $scope.dates.start.setHours(0);
         $scope.dates.end.setMinutes(59); $scope.dates.end.setHours(23);
@@ -32,28 +32,15 @@
             showWeeks: false
         };
 
+        $scope.studentsList = [];
+        $scope.trainersAndTenantsList = [];
+
 
         $scope.selectWithSearchItems = []; //UserMonitorService.findTenants();
 
-        var wait = false
         var _infoStudent = '';
 
-        function getUsersInfo(roles, info, succ, error) {
-            if (wait == false) {
-                $http.get(serverPrefix + "/chat/findUsersWithRoles?info=" + info + "&roles=" + roles, {}).success(function(data, status, headers, config) {
-                    if (succ != undefined)
-                        succ(data, status, headers, config);
-                    wait = false;
-                }).error(function(data, status, headers, config) {
-                    wait = false;
-                    if (error != undefined)
-                        error(data, status, headers, config);
-                });
-                wait = true;
-                return true
-            }
-            return false;
-        }
+
         $scope.selected = { tenant: null, student: null };
         $scope.messages = [];
 
@@ -76,22 +63,24 @@
 
         var _infoStudent = '';
         var StudentList = [];
-        $scope.getStudents = function(info) {
+        $scope.fetchStudents = function(info) {
             var roles = 1 << 1
-            if (_infoStudent != info && info.trim() != '' && getUsersInfo(roles, info, function(data) { StudentList = data })) {
-                _infoStudent = info;
-            }
-            return StudentList;
+            if (info.trim() != '')
+                return CommonOperationsService.fetchUsersInfo(roles, info).then(function(payload){
+                    $scope.studentsList = payload.data;
+                });
+            return $.Deferred().resolve();
         }
 
         var _infoTenantAndTrainersList = '';
         var TenantAndTrainersList = [];
-        $scope.getTrainersAndTenants = function(info) {
+        $scope.fetchTrainersAndTenants = function(info) {
             var roles = (1 << 6 | 1 << 7);
-            if (_infoTenantAndTrainersList != info && info.trim() != '' && getUsersInfo(roles, info, function(data) { TenantAndTrainersList = data })) {
-                _infoTenantAndTrainersList = info;
-            }
-            return TenantAndTrainersList;
+            if (info.trim() != '')
+                return CommonOperationsService.fetchUsersInfo(roles, info).then(function(payload){
+                    $scope.trainersAndTenantsList = payload.data;
+                });
+            return $.Deferred().resolve();
         }
 
         $scope.expandMessage = function(message) {

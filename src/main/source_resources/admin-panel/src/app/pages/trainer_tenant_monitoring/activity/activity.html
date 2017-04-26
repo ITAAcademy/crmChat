@@ -1,17 +1,43 @@
-<div ba-panel ba-panel-class="tabs-panel viewport100 with-scroll">
-    <div ng-show="userActivityDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">Активність в заданому проміжку не знайдена</div>
-    <uib-tabset ng-show="userActivityDataValue.length > 0" class="tabs-right" active="activeTabIndex">
-        <uib-tab heading="Graph">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Графік активності</div>
-                        <div class="panel-body">
-                            <div id="areaChart" class="admin-chart" ng-controller="ActivityPageCtrl"></div>
-                        </div>
-                    </div>
+        <div ng-show="ratingsInfoByCurrentRoom.length == 0 &amp;&amp; userActivityPerDayDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">В заданому проміжку активності не було</div>
+     <div id="areaChart" ng-show="userActivityDataValue.length>0" class="admin-chart"></div>
+     <div id="barChart" ng-show="userActivityPerDayDataValue.length>0" class="admin-chart"></div>
+
+               <div class="row datepicker">
+                <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select first user">
+                        {{selected.user.nickName}}
+                    </ui-select-match>
+                    <ui-select-choices minimum-input-length="1" refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
+                        <span ng-bind-html="withSearchItem.nickName"></span>
+                    </ui-select-choices>
+                </ui-select>
+                <!--Date  pickers -->
+                <div class="col-md-3">
+                    <p class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
                 </div>
+                <div class="col-md-3">
+                    <p class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+                <!--//Date  pickers -->
+                <div>
+                    Переглянути статистику активності
+                   <button  ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+                </div>
+
+                <div>
+                    Переглянути статистику робочих годин по дням (хв/день)
+                   <button  ng-click="updateUserActivityPerDay()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+                </div>
+                
             </div>
-        </uib-tab>
-    </uib-tabset>
-    </div>
+  
