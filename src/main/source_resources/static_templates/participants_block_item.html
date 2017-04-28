@@ -4,7 +4,7 @@
     <div class="user_presence_icon_wraper"></div>
 </div>
 <div class="text_info">
-    <a ng-href="{{getUserProfileLink(participant.intitaUserId)}}" target="_parent" class="user_name">{{participant.username || participant.nickName}}</a>
+    <a ng-href="{{getUserProfileLink(participant.intitaUserId)}}" target="_blank" class="user_name">{{participant.username || participant.nickName}}</a>
     <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
     <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
 </div>
