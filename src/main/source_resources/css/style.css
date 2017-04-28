@@ -1397,6 +1397,9 @@ button:focus {
     float: right;
     margin-right: 10px;
 }
+.attaches_area_wrapper {
+    display: inline-block; 
+}
 
 .send_button {
     font-family: MyriadPro2;
@@ -2723,6 +2726,35 @@ span.rooms_search_loader img {
 .angular-tooltip.angular-tooltip-top-left:after {
     margin-left: -5px;
     border-top-color: #4b75a4
+}
+
+@media (max-height: 200px) {
+    .messages_input_area {
+        top: 0px;
+        bottom: 0px;
+        background-color: white;
+        z-index: 7777;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+        margin: 0px;
+        position: fixed;
+        padding: 0px;
+    }
+
+    .messages_input_area .message_input {
+        height:100%;
+        width: calc(100% - 140px);
+    }
+    .attaches_area{
+       position: absolute;
+    right: 0px;
+    width: 90px;
+    text-align: center;
+    margin: 0px;
+    bottom: 0px;
+    }
+
 }
 
 @media (max-width: 769px) {

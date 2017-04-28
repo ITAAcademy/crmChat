@@ -750,14 +750,34 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
             $scope.keyPress = function(event) {
                 $scope.startTyping(event);
-                if (event.keyCode == 13 && !event.shiftKey) {
+                var isPhone = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (event.keyCode == 13 && !event.shiftKey && !isPhone) {
                     event.stopPropagation();
                     event.target.blur();
                     setTimeout(function() {
                         $scope.sendMessageAndFiles();
                     }, 0);
-
                 }
+                if (event.keyCode == 13 && isPhone){
+                          if(getSelection().modify) {     /* chrome */
+          var selection = window.getSelection(),
+            range = selection.getRangeAt(0),
+            br = document.createElement('br');
+          range.deleteContents();
+          range.insertNode(br);
+          range.setStartAfter(br);
+          range.setEndAfter(br);
+          range.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(range);       /* end chrome */
+        } else {
+          document.createTextNode('\n');    /* internet explorer */
+          var range = getSelection().getRangeAt(0);
+          range.surroundContents(newline);
+          range.selectNode(newline.nextSibling);   /* end Internet Explorer 11 */
+        }
+                }
+
             }
 
             function loadRatings() {
