@@ -2746,13 +2746,15 @@ span.rooms_search_loader img {
         height:100%;
         width: calc(100% - 140px);
     }
-    .attaches_area{
-       position: absolute;
-    right: 0px;
-    width: 90px;
-    text-align: center;
-    margin: 0px;
-    bottom: 0px;
+    .send_button{
+     margin: auto;
+     position: absolute;
+     top: 0;
+     bottom: 0;
+     right: 10px;
+     width: 40px;
+     height: 70px;
+     text-align: center;
     }
 
 }
