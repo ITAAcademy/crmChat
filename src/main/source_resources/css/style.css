@@ -2071,6 +2071,7 @@ body.frame .open_in_new_tab {
     top: 0;
     position: absolute;
     height: 100%;
+    display: none;
 }
 
 .modal-footer {
@@ -2362,6 +2363,9 @@ span.rooms_search_loader {
     top: 0px;
 }
 
+.loaded .window_icons_wrapper{
+    display: block;
+}
 .messages_search_loader img,
 span.rooms_search_loader img {
     width: 24px;
