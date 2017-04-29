@@ -748,6 +748,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
             return false;
         },
+        isCurrentRoomPrivate: function(){
+            return isRoomPrivate(currentRoom);
+        },
         updateLastActivity: updateLastActivity,
         calcPositionPush: calcPositionPush
 

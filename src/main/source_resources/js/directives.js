@@ -631,6 +631,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             $scope.onClick = function() {
                 RoomsFactory.updateLastActivity();
             }
+            $scope.isCurrentRoomPrivate = RoomsFactory.isCurrentRoomPrivate;
             $scope.isAnyOneWriting = function() {
                 var participants = getParticipants();
                 for (var i = 0; i < participants.length; i++) {
