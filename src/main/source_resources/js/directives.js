@@ -623,6 +623,16 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
+            $("[contenteditable='true']").on('focus', function(){
+    var $this = $(this);
+    $this.html( $this.html() + '<br>' );  // firefox hack
+  });
+
+  $("[contenteditable='true']").on('blur', function(){
+    var $this = $(this);
+    $this.text( $this.text().replace('<.*?>', '') );
+  });
+  
             var sendingMessage = null;
             var typing = undefined;
             var getParticipants = RoomsFactory.getParticipants;
