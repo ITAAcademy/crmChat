@@ -11,7 +11,7 @@
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
         <div class="block_item" ng-repeat="student in students() | orderBy:participantsSort" ng-click="goToPrivateDialog(student.intitaUserId)">
-            <div class="avatar ng-class:{offline:!isUserOnline(student.chatUserId), online:isUserOnline(student.chatUserId)}">
+            <div class="avatar ng-class:{offline:!isUserOnline(student.chatUser.id), online:isUserOnline(student.chatUser.id)}">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + student.avatar + ')'}"></div>
                 <div class="user_presence_icon"></div>
                 <div class="user_presence_icon_wraper"></div>

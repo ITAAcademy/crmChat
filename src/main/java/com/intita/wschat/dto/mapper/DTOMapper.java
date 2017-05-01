@@ -20,6 +20,7 @@ public class DTOMapper {
     PropertyMap<ChatUser, ChatUserDTO> chatUserMap = new PropertyMap<ChatUser, ChatUserDTO>() {
         protected void configure() {
             map().setAvatar(source.getIntitaUser().getAvatar());
+            map().setIntitaUserId(source.getIntitaUser().getId());
         }
     };
     DTOMapper(){

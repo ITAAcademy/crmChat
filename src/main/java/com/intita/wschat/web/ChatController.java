@@ -464,6 +464,8 @@ public class ChatController {
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
 			Principal principal) {
+
+		if(!message.isContentVisible()) return null;
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService,
 				chatRoomsService);// Control room from LP
 		if (struct == null)
