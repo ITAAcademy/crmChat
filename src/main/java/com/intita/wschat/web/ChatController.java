@@ -414,9 +414,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj(ChatUser chatUser, ChatMessage message, Room room) {
-		if (!room.isActive() || (message.getMessage().trim().isEmpty() && message.getAttachedFiles().isEmpty()))// cant
-																												// add
-																												// msg
+		if (!room.isActive() || (!message.isContentVisible() && message.getAttachedFiles().isEmpty()))
 			return null;
 
 		UserMessage messageToSave = new UserMessage(chatUser, room, message);
@@ -465,7 +463,6 @@ public class ChatController {
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
 			Principal principal) {
 
-		if(!message.isContentVisible()) return null;
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService,
 				chatRoomsService);// Control room from LP
 		if (struct == null)
