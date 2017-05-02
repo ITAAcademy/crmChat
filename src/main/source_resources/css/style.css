@@ -2174,6 +2174,7 @@ body.frame .open_in_new_tab {
     transition-property: max-height;
     overflow: hidden;
     border-radius: 10px;
+    right:0px;
     /* border: #fff 1px solid; */
 }
 

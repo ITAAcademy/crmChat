@@ -26,8 +26,8 @@
                 <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
                     <i class="material-icons">notifications</i>
                     <div class="text"></div>
+                    <div id="notification_container" class="notification_menu"></div>
                 </div>
-                <div id="notification_container" class="notification_menu"></div>
                 <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
                     <i class="material-icons ">chat_bubble_outline</i>
                     <div class="text" ng-bind="getNewMsgNumber()"></div>
