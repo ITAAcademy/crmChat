@@ -634,6 +634,18 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
     text = text.replace(/<br>$/, "");
     $this.html(text);
   });
+
+    //DOM has finished rendering
+    $('#message_input_editable').on('paste', function(e) {
+        e.preventDefault();
+        var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        var escapedHtml = htmlEscape(text);
+
+        var linkified = linkifyStr(escapedHtml, {});
+        pasteHtmlAtCaret(linkified);
+        //$scope.newMessage = text;
+
+    });
   
             var sendingMessage = null;
             var typing = undefined;
