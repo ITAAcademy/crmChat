@@ -98,18 +98,18 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     function goToRoomEvn(id) {
-        if (currentRoom != undefined) {
-            updateNewMsgNumber(-currentRoom.nums);
-            currentRoom.nums = 0;
-            //push up previesly room
-            //currentRoom.date = curentDateInJavaFromat();
-        }
         currentRoom = { roomId: id };
         changeRoom();
         var deferred = $q.defer();
         var room = getRoomById(rooms, id);
         if (room != undefined) {
             currentRoom = room;
+            if (currentRoom != undefined) {
+                updateNewMsgNumber(-currentRoom.nums);
+                currentRoom.nums = 0;
+                //push up previesly room
+                //currentRoom.date = curentDateInJavaFromat();
+            }
             /*updateNewMsgNumber(-currentRoom.nums);
             currentRoom.nums = 0;*/
         } else {
@@ -458,11 +458,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     $rootScope.$on('roomRead', function(event, data) {
-        if(currentRoom.roomId == data.roomId)
-        {
+        if (currentRoom.roomId == data.roomId) {
             var UserFactory = $injector.get('UserFactory');
-            if(UserFactory != undefined && UserFactory.getChatUserId() != data.chatUserId)
-            {
+            if (UserFactory != undefined && UserFactory.getChatUserId() != data.chatUserId) {
                 lastNonUserActivity = new Date();
             }
         }
@@ -708,13 +706,13 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         getNewMsgNumber: function() {
             return newMsgNumber;
         },
-        getSkypeContacts: function(){
+        getSkypeContacts: function() {
             var skypes = [];
-              for (var participant of participants){
-                if (participant.skype == null || participant.skype.length < 1 )continue;
-                skypes.push(participant.skype );
-              }
-              return skypes;
+            for (var participant of participants) {
+                if (participant.skype == null || participant.skype.length < 1) continue;
+                skypes.push(participant.skype);
+            }
+            return skypes;
         },
         calcPositionUnshift: calcPositionUnshift,
         checkUserAdditionPermission: checkUserAdditionPermission,
@@ -748,7 +746,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
             return false;
         },
-        isCurrentRoomPrivate: function(){
+        isCurrentRoomPrivate: function() {
             return isRoomPrivate(currentRoom);
         },
         updateLastActivity: updateLastActivity,

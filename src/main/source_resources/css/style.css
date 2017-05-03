@@ -166,6 +166,8 @@ button:focus {
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .right_panel #toast-container {
@@ -1302,7 +1304,7 @@ button:focus {
 }
 
 .messages_input_area {
-    position: absolute;
+    /*position: absolute;*/
     bottom: 0px;
     background-color: white;
     padding-bottom: 10px;
@@ -1346,11 +1348,13 @@ button:focus {
     max-width: calc(100% - 30px);
     pointer-events: none;
 }
-@-moz-document url-prefix() { 
-  .messages_input_area .message_input:empty:before {
-      content: none;
-  }
+
+@-moz-document url-prefix() {
+    .messages_input_area .message_input:empty:before {
+        content: none;
+    }
 }
+
 .messages_input_area .message_input[contenteditable] {
     overflow: auto;
     max-height: 300px;
@@ -1401,8 +1405,9 @@ button:focus {
     float: right;
     margin-right: 10px;
 }
+
 .attaches_area_wrapper {
-    display: inline-block; 
+    display: inline-block;
 }
 
 .send_button {
@@ -2363,9 +2368,10 @@ span.rooms_search_loader {
     top: 0px;
 }
 
-.loaded .window_icons_wrapper{
+.loaded .window_icons_wrapper {
     display: block;
 }
+
 .messages_search_loader img,
 span.rooms_search_loader img {
     width: 24px;
@@ -2750,22 +2756,20 @@ span.rooms_search_loader img {
         padding: 0px;
         box-shadow: inset 1px 2px 8px 0px #0c3e61;
     }
-
     .messages_input_area .message_input {
-        height:100%;
+        height: 100%;
         width: calc(100% - 140px);
     }
-    .send_button{
-     margin: auto;
-     position: absolute;
-     top: 0;
-     bottom: 0;
-     right: 10px;
-     width: 40px;
-     height: 70px;
-     text-align: center;
+    .send_button {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 10px;
+        width: 40px;
+        height: 70px;
+        text-align: center;
     }
-
 }
 
 @media (max-width: 769px) {

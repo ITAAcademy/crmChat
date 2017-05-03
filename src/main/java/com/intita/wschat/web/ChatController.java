@@ -669,6 +669,9 @@ public class ChatController {
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 		
+		/*
+		 * send info about some user enter to current room
+		 */
 		Map <String, Object> result = new HashMap<>(); 
 		result.put("roomId", roomId);
 		result.put("chatUserId", user.getId());
