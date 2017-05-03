@@ -630,7 +630,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
   $("[contenteditable='true']").on('blur', function(){
     var $this = $(this);
-    $this.text( $this.text().replace('<.*?>', '') );
+    var text = $this.html();
+    text = text.replace(/<br>$/, "");
+    $this.html(text);
   });
   
             var sendingMessage = null;
