@@ -92,7 +92,7 @@ public class StudentsGroupsController {
 			return false;
 		
 		OfflineGroup subGroup = offlineStudentsGroupService.getGroup(groupId);
-		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
+		if(subGroup == null || (!usersService.isSuperVisor(intitaUser.getId()) && !usersService.isAdmin(intitaUser.getId())))
 			return false;
 		
 		offlineStudentsGroupService.updateGroupRoom(subGroup, true);

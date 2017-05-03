@@ -92,7 +92,7 @@ public class OfflineStudentsGroupService {
 
 	public void updateGroupRoom(OfflineGroup group, boolean withSubGroups) {
 		Room room = group.getChatRoom();
-		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
+		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCurator(), false);
 		if (author == null)
 			return;
 		

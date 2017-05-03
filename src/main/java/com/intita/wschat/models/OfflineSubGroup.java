@@ -35,9 +35,6 @@ public class OfflineSubGroup implements Serializable {
 	@Column(name = "id_user_created")
 	private Long idUserCreated;
 
-	@Column(name = "id_user_curator", nullable=true)
-	private Long idUserCurator;
-
 	private String name;
 
 	// bi-directional many-to-one association to OfflineStudent
@@ -88,14 +85,6 @@ public class OfflineSubGroup implements Serializable {
 
 	public void setIdUserCreated(Long idUserCreated) {
 		this.idUserCreated = idUserCreated;
-	}
-
-	public Long getIdUserCurator() {
-		return idUserCurator;
-	}
-
-	public void setIdUserCurator(Long idUserCurator) {
-		this.idUserCurator = idUserCurator;
 	}
 
 	public String getName() {
