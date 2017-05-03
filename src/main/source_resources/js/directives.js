@@ -261,7 +261,7 @@ function starRating() {
                     posY = target.offset().top;
                 //alert( (event.pageX - posX) + ' , ' + (event.pageY - posY));
                 var full = true;
-                if (event.pageX - posX < target.width() / 2 &&  scope.halfEnable)
+                if (event.pageX - posX < target.width() / 2 && scope.halfEnable)
                     full = false;
 
 
@@ -587,7 +587,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                     scope.$root.$emit('rootScope:roomsBlockModeChange', 1);
                 return toggleNewUser;
             }
-            scope.getUserProfileLink = function(id){
+            scope.getUserProfileLink = function(id) {
                 return mySettings.baseUrl + '/profile/' + id;
             }
             initFolded(scope, element);
@@ -623,18 +623,18 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
-            $("[contenteditable='true']").on('focus', function(){
-    var $this = $(this);
-    $this.html( $this.html() + '<br>' );  // firefox hack
-  });
+            /*$("[contenteditable='true']").on('focus', function() {
+                var $this = $(this);
+                $this.html($this.html() + '<br>'); // firefox hack
+            });
 
-  $("[contenteditable='true']").on('blur', function(){
-    var $this = $(this);
-    var text = $this.html();
-    text = text.replace(/<br>$/, "");
-    $this.html(text);
-  });
-  
+            $("[contenteditable='true']").on('blur', function() {
+                var $this = $(this);
+                var text = $this.html();
+                text = text.replace(/<br>$/, "");
+                $this.html(text);
+            });
+*/
             var sendingMessage = null;
             var typing = undefined;
             var getParticipants = RoomsFactory.getParticipants;
@@ -771,24 +771,24 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         $scope.sendMessageAndFiles();
                     }, 0);
                 }
-                if (event.keyCode == 13 && isPhone){
-                          if(getSelection().modify) {     /* chrome */
-          var selection = window.getSelection(),
-            range = selection.getRangeAt(0),
-            br = document.createElement('br');
-          range.deleteContents();
-          range.insertNode(br);
-          range.setStartAfter(br);
-          range.setEndAfter(br);
-          range.collapse(false);
-          selection.removeAllRanges();
-          selection.addRange(range);       /* end chrome */
-        } else {
-          document.createTextNode('\n');    /* internet explorer */
-          var range = getSelection().getRangeAt(0);
-          range.surroundContents(newline);
-          range.selectNode(newline.nextSibling);   /* end Internet Explorer 11 */
-        }
+                if (event.keyCode == 13 && isPhone) {
+                    if (getSelection().modify) { /* chrome */
+                        var selection = window.getSelection(),
+                            range = selection.getRangeAt(0),
+                            br = document.createElement('br');
+                        range.deleteContents();
+                        range.insertNode(br);
+                        range.setStartAfter(br);
+                        range.setEndAfter(br);
+                        range.collapse(false);
+                        selection.removeAllRanges();
+                        selection.addRange(range); /* end chrome */
+                    } else {
+                        document.createTextNode('\n'); /* internet explorer */
+                        var range = getSelection().getRangeAt(0);
+                        range.surroundContents(newline);
+                        range.selectNode(newline.nextSibling); /* end Internet Explorer 11 */
+                    }
                 }
 
             }
@@ -1127,13 +1127,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
     $scope.otherRoomsLoaded = false;
-    $scope.loadOtherRooms = function(){   
-      var url = serverPrefix + "/chat/rooms/all";
-      $http.get(url).success(function(data){
-       RoomsFactory.setRooms(data);
-       $scope.otherRoomsLoaded = true;
-      }
-     );
+    $scope.loadOtherRooms = function() {
+        var url = serverPrefix + "/chat/rooms/all";
+        $http.get(url).success(function(data) {
+            RoomsFactory.setRooms(data);
+            $scope.otherRoomsLoaded = true;
+        });
     }
     $scope.myValueFunction = function(room) {
         if ($scope.tabState == "Contacts") {
@@ -1590,29 +1589,29 @@ function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorde
 
 angular.module('springChat.directives').directive('audioVideoRP', ['$http', 'RoomsFactory', audioVideoRP]); //
 
-angular.module('springChat.directives').directive("skypeUi", ['$parse',function($parse) {
+angular.module('springChat.directives').directive("skypeUi", ['$parse', function($parse) {
     return {
         restrict: "EA",
-        scope:{
+        scope: {
             getcontacts: '&'
         },
         replace: true,
         template: '<a ng-show="getContactsString().length>0" href="tel://{{getContactsString()}}?chat"><i class="material-icons">mic</i></a>',
-        link: function($scope, element, attrs){
-     
+        link: function($scope, element, attrs) {
 
-    $scope.$watch(function(){
-        return $scope.getcontacts().length;
-    },function(newValue,oldValue) {
-        console.log('skype contacts change WATCHED');
-        $scope.contacts = $scope.getContactsString();
-    });
 
-             $scope.getContactsString = function(){
-            var getContactsFunctionGetter = $scope.getcontacts();
-            var getContacts = getContactsFunctionGetter();
-            return getContacts.join();
-        }
+            $scope.$watch(function() {
+                return $scope.getcontacts().length;
+            }, function(newValue, oldValue) {
+                console.log('skype contacts change WATCHED');
+                $scope.contacts = $scope.getContactsString();
+            });
+
+            $scope.getContactsString = function() {
+                var getContactsFunctionGetter = $scope.getcontacts();
+                var getContacts = getContactsFunctionGetter();
+                return getContacts.join();
+            }
 
 
 
