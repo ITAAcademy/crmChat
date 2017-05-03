@@ -183,7 +183,7 @@ public class Room implements Serializable,Comparable<Room> {
 		return type;
 	}
 	public ChatRoomType getTypeEnum(){
-		return ChatRoomType.values()[type];
+		return ChatRoomType.valueOf(type);
 	}
 	public void setType(ChatRoomType type) {
 		this.type = (short)type.getValue();

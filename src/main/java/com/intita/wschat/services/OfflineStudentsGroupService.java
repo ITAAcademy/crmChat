@@ -85,14 +85,19 @@ public class OfflineStudentsGroupService {
 		}
 		
 		roomService.replaceUsersInRoom(room, chatUserList);
+		OfflineGroup group = subGroup.getGroup();
+		//add group curator as sub author 
+		ChatUser sub_author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCurator(), false);
+		roomService.addUserToRoom(sub_author, room);
+		roomPermissionsService.addPermissionsToUser(room, sub_author, RoomPermissions.Permission.ADD_USER.getValue() | RoomPermissions.Permission.REMOVE_USER.getValue());
 		if(withGroup)
-			updateGroupRoom(subGroup.getGroup(), false);
+			updateGroupRoom(group, false);
 		return true;
 	}
 
 	public void updateGroupRoom(OfflineGroup group, boolean withSubGroups) {
 		Room room = group.getChatRoom();
-		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
+		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCurator(), false);
 		if (author == null)
 			return;
 		
