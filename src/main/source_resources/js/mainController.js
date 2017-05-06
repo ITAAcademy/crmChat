@@ -49,8 +49,8 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     }
 ]);
 
-var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory',
-    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', 'ActiveWindow',
+    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory, ActiveWindow) {
         //Imports from Services
         //Imports/>
 
@@ -554,15 +554,16 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
                         //room.date = curentDateInJavaFromat();
+                        if (ActiveWindow.isActive()) {
+                            if ($scope.soundEnable)
+                                new Audio('data/new_mess.mp3').play();
 
-                        if ($scope.soundEnable)
-                            new Audio('data/new_mess.mp3').play();
 
-
-                        var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
-                        if (room.string == msg.username)
-                            title = "Нове повідомлення від " + messagesMap[room.roomId].username;
-                        Notify(msg.message, title);
+                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
+                            if (room.string == msg.username)
+                                title = "Нове повідомлення від " + messagesMap[room.roomId].username;
+                            Notify(msg.message, title);
+                        }
                         toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop
                     }
@@ -812,8 +813,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         $timeout(function() {
             //DOM has finished rendering
-        $(".messages_input_area").resize(messageAreaResizer);
-        $(window).resize(messageAreaResizer);
+            $(".messages_input_area").resize(messageAreaResizer);
+            $(window).resize(messageAreaResizer);
         });
 
         $scope.$$postDigest(function() {
