@@ -414,9 +414,7 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessageWithoutFakeObj(ChatUser chatUser, ChatMessage message, Room room) {
-		if (!room.isActive() || (message.getMessage().trim().isEmpty() && message.getAttachedFiles().isEmpty()))// cant
-																												// add
-																												// msg
+		if (!room.isActive() || (!message.isContentVisible() && message.getAttachedFiles().isEmpty()))
 			return null;
 
 		UserMessage messageToSave = new UserMessage(chatUser, room, message);
@@ -464,6 +462,7 @@ public class ChatController {
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
 			Principal principal) {
+
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, principal, userService, chatUsersService,
 				chatRoomsService);// Control room from LP
 		if (struct == null)
@@ -670,6 +669,9 @@ public class ChatController {
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 		
+		/*
+		 * send info about some user enter to current room
+		 */
 		Map <String, Object> result = new HashMap<>(); 
 		result.put("roomId", roomId);
 		result.put("chatUserId", user.getId());

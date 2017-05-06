@@ -317,6 +317,7 @@ public class RoomsService {
 		if (first.getId()!= second.getId())
 			addUserToRoom(second, r);
 		PrivateRoomInfo info = privateRoomInfoRepo.save(new PrivateRoomInfo(r, first, second));
+		roomPermissionsServcie.addPermissionsToUser(r, second, RoomPermissions.Permission.ADD_USER.getValue() | RoomPermissions.Permission.REMOVE_USER.getValue());
 		return r;
 	}
 
@@ -410,7 +411,6 @@ public class RoomsService {
 			return false;
 		//have premition?
 		if(room.cloneChatUsers().contains(user))
-
 			return false;
 
 		room.addUser(user);

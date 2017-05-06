@@ -36,7 +36,9 @@ public class ChatUserDTO {
     }
 
     private Long id;
+    private Long intitaUserId;
     private String nickName;
+    String avatar;
 
     public Set<UserRole> getRoles() {
         return roles;
@@ -56,6 +58,12 @@ public class ChatUserDTO {
         this.avatar = avatar;
     }
 
-     String avatar;
+    public Long getIntitaUserId() {
+        return intitaUserId;
+    }
+
+    public void setIntitaUserId(Long intitaUserId) {
+        this.intitaUserId = intitaUserId;
+    }
 
 }

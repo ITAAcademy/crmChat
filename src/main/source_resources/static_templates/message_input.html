@@ -2,7 +2,7 @@
     <div class="user_write_message_notification">{{getWritingUsersInfo()}}</div>
 </div>
 <hr/>
-<div class="transparent_input message_input" id="message_input_editable" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" ng-click="onClick()" content-editable="true" ng-keypress="keyPress($event)"></div>
+<div class="transparent_input message_input" id="message_input_editable" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" ng-click="onClick()" content-editable="true" ng-keydown="keyPress($event)"></div>
 <div class="helper">для переведення курсору натисність Shift + Enter</div>
 <div class="files_input">
     <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
@@ -10,7 +10,7 @@
 </div>
 <div class="controls_area">
     <div class="multimedia_conversation_controls">
-        <skype-ui id="SkypeButton_Call_mike_1" class="microphone" getcontacts="getSkypeContacts"></skype-ui>
+        <skype-ui ng-if="isCurrentRoomPrivate()" id="SkypeButton_Call_mike_1" class="microphone" getcontacts="getSkypeContacts"></skype-ui>
     </div>
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">

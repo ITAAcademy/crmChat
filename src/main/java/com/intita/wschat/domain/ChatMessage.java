@@ -7,6 +7,7 @@ import java.util.Queue;
 
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.util.HtmlUtility;
 
 /**
  * 
@@ -81,6 +82,9 @@ public class ChatMessage {
 	}
 	public void setChatUserAvatar(String chatUserAvatar) {
 		this.chatUserAvatar = chatUserAvatar;
+	}
+	public boolean isContentVisible(){
+		return HtmlUtility.removeAllBrAndTrim(message).length()>0;
 	}
 	
 }

@@ -26,5 +26,10 @@ public class HtmlUtility {
 		  String unescaped[] = {"\\'","\\\""};
 		 return StringUtils.replaceEach(str, escaped,unescaped);
 	}
+	public static String removeAllBrAndTrim(String source){
+		String withoutBr = source.replace("<br>","");
+		String trimmed = withoutBr.trim();
+		return trimmed;
+	}
 	
 }

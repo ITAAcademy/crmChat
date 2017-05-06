@@ -8,14 +8,14 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
                 if (!ChannelFactory.getIsInited() || $rootScope.roomChanging) return;
                 $rootScope.roomChanging = true;
                 console.log('room changing start');
-                RoomsFactory.goToRoom($route.current.params.roomId).then(function(){
-                $rootScope.roomChanging = false;
-                $rootScope.$broadcast('dialog_view_route');
-                /*$('#rooms-block #items_list_block').animate({
-                    scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
-                }, 2000);*/
-                rescrollToRoom($route.current.params.roomId);
-                console.log('room changing end');
+                RoomsFactory.goToRoom($route.current.params.roomId).then(function() {
+                    $rootScope.roomChanging = false;
+                    $rootScope.$broadcast('dialog_view_route');
+                    /*$('#rooms-block #items_list_block').animate({
+                        scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
+                    }, 2000);*/
+                    rescrollToRoom($route.current.params.roomId);
+                    console.log('room changing end');
                 });
 
             }]
@@ -36,8 +36,8 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-springChatControllers.config(['$compileProvider', function ($compileProvider) {
-$compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
+springChatControllers.config(['$compileProvider', function($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
 }]);
 
 
@@ -49,8 +49,8 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     }
 ]);
 
-var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory',
-    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', 'ActiveWindow',
+    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory, ActiveWindow) {
         //Imports from Services
         //Imports/>
 
@@ -81,7 +81,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (event.buttons == 1) {
 
             }
-        };  
+        };
 
         $scope.newMessage = { value: "" };
 
@@ -554,15 +554,16 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
                         //room.date = curentDateInJavaFromat();
+                        if (ActiveWindow.isActive()) {
+                            if ($scope.soundEnable)
+                                new Audio('data/new_mess.mp3').play();
 
-                        if ($scope.soundEnable)
-                            new Audio('data/new_mess.mp3').play();
-                        
 
-                        var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
-                        if(room.string == msg.username)
-                            title = "Нове повідомлення від " + messagesMap[room.roomId].username;
-                        Notify(msg.message, title);
+                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
+                            if (room.string == msg.username)
+                                title = "Нове повідомлення від " + messagesMap[room.roomId].username;
+                            Notify(msg.message, title);
+                        }
                         toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop
                     }
@@ -771,10 +772,10 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 //$('#messagesScroll').height(messagesOutputHeight);
                 //$('#messagesScroll').scrollTop(getScrollTopToPreserveScroll(messagesOutputHeight));
 
-                $('#messagesScroll').stop(true).animate({
-                    height: messagesOutputHeight,
-                    scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
-                }, 1000);
+                /* $('#messagesScroll').stop(true).animate({
+                     height: messagesOutputHeight,
+                     scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
+                 }, 1000);*/
             }, 200);
         }
 
@@ -794,82 +795,26 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.help_dropdown_click = function() {
             $('#help_dropdown').toggleClass('shown');
         }
-   function insertTextAtCursor(text) { 
-            var sel, range, html; 
+
+        function insertTextAtCursor(text) {
+            var sel, range, html;
             sel = window.getSelection();
-            range = sel.getRangeAt(0); 
-            range.deleteContents(); 
+            range = sel.getRangeAt(0);
+            range.deleteContents();
             var textNode = document.createTextNode(text);
             range.insertNode(textNode);
             range.setStartAfter(textNode);
             sel.removeAllRanges();
-            sel.addRange(range); 
-            console.log("Inserted:"+text);       
+            sel.addRange(range);
+            console.log("Inserted:" + text);
         }
-function pasteHtmlAtCaret(html, selectPastedContent) {
-    var sel, range;
-    if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-
-            // Range.createContextualFragment() would be useful here but is
-            // only relatively recently standardized and is not supported in
-            // some browsers (IE9, for one)
-            var el = document.createElement("div");
-            el.innerHTML = html;
-            var frag = document.createDocumentFragment(), node, lastNode;
-            while ( (node = el.firstChild) ) {
-                lastNode = frag.appendChild(node);
-            }
-            var firstNode = frag.firstChild;
-            range.insertNode(frag);
-
-            // Preserve the selection
-            if (lastNode) {
-                range = range.cloneRange();
-                range.setStartAfter(lastNode);
-                if (selectPastedContent) {
-                    range.setStartBefore(firstNode);
-                } else {
-                    range.collapse(true);
-                }
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-    } else if ( (sel = document.selection) && sel.type != "Control") {
-        // IE < 9
-        var originalRange = sel.createRange();
-        originalRange.collapse(true);
-        sel.createRange().pasteHTML(html);
-        if (selectPastedContent) {
-            range = sel.createRange();
-            range.setEndPoint("StartToStart", originalRange);
-            range.select();
-        }
-    }
-}
 
         messageAreaResizer();
 
         $timeout(function() {
             //DOM has finished rendering
-            var contentEdiableMessageInput = document.getElementById('#message_input_editable');
             $(".messages_input_area").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
-            $('#message_input_editable').on('paste',function(e) {
-    e.preventDefault();
-    var text = (e.originalEvent || e).clipboardData.getData('text/plain');
-    var escapedHtml = htmlEscape(text);
-
-    var linkified = linkifyStr(escapedHtml, {});
-    pasteHtmlAtCaret(linkified);
-    //$scope.newMessage = text;
-
-});
         });
 
         $scope.$$postDigest(function() {

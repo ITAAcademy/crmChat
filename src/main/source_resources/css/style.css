@@ -166,6 +166,8 @@ button:focus {
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .right_panel #toast-container {
@@ -1302,7 +1304,7 @@ button:focus {
 }
 
 .messages_input_area {
-    position: absolute;
+    /*position: absolute;*/
     bottom: 0px;
     background-color: white;
     padding-bottom: 10px;
@@ -1334,7 +1336,7 @@ button:focus {
     word-break: break-word;
 }
 
-.messages_input_area .message_input:empty:after {
+.messages_input_area .message_input:empty:before {
     content: attr(placeholder);
     position: absolute;
     left: 20px;
@@ -1345,6 +1347,12 @@ button:focus {
     overflow: hidden;
     max-width: calc(100% - 30px);
     pointer-events: none;
+}
+
+@-moz-document url-prefix() {
+    .messages_input_area .message_input:empty:before {
+        content: none;
+    }
 }
 
 .messages_input_area .message_input[contenteditable] {
@@ -1396,6 +1404,10 @@ button:focus {
     display: inline-block;
     float: right;
     margin-right: 10px;
+}
+
+.attaches_area_wrapper {
+    display: inline-block;
 }
 
 .send_button {
@@ -2064,6 +2076,7 @@ body.frame .open_in_new_tab {
     top: 0;
     position: absolute;
     height: 100%;
+    display: none;
 }
 
 .modal-footer {
@@ -2166,6 +2179,7 @@ body.frame .open_in_new_tab {
     transition-property: max-height;
     overflow: hidden;
     border-radius: 10px;
+    right:0px;
     /* border: #fff 1px solid; */
 }
 
@@ -2353,6 +2367,10 @@ span.rooms_search_loader {
     right: 50px;
     position: absolute;
     top: 0px;
+}
+
+.loaded .window_icons_wrapper {
+    display: block;
 }
 
 .messages_search_loader img,
@@ -2723,6 +2741,36 @@ span.rooms_search_loader img {
 .angular-tooltip.angular-tooltip-top-left:after {
     margin-left: -5px;
     border-top-color: #4b75a4
+}
+
+@media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {
+    .messages_input_area {
+        top: 0px;
+        bottom: 0px;
+        background-color: white;
+        z-index: 7777;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+        margin: 0px;
+        position: fixed;
+        padding: 0px;
+        box-shadow: inset 1px 2px 8px 0px #0c3e61;
+    }
+    .messages_input_area .message_input {
+        height: 100%;
+        width: calc(100% - 140px);
+    }
+    .send_button {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 10px;
+        width: 40px;
+        height: 70px;
+        text-align: center;
+    }
 }
 
 @media (max-width: 769px) {
