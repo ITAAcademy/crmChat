@@ -703,7 +703,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             sendingMessage = null;
                         }
                         if (UserFactory.isMessageSended()) return;
-                        $scope.messageError();
+                        //$scope.messageError();
                         $scope.newMessage.value = message;
                         $scope.files = attaches;
                         UserFactory.setMessageSended(true);
