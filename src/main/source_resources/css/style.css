@@ -165,7 +165,7 @@ button:focus {
     width: calc(100% - 301px);
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
-    position: relative;
+    /*position: relative;*/
     display: flex;
     flex-direction: column;
 }
