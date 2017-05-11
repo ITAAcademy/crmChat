@@ -159,7 +159,6 @@ button:focus {
 }
 
 .right_panel {
-    overflow: hidden;
     float: right;
     height: calc(100% - 35px);
     width: calc(100% - 301px);
