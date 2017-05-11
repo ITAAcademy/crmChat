@@ -11,7 +11,7 @@
         </div>
         <div class="text_info">
             <div class="user_name">{{room.string}}</div>
-            <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : stripHtml(room.lastMessage)}}</div>
+            <div class="user_presence">{{room.lastMessage == null ? lgPack.lables.roomListView.noMessage : stripHtml(room.lastMessage)}}</div>
         </div>
         <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
         <div class="contact_control">

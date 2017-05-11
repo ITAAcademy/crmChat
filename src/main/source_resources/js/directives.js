@@ -1138,6 +1138,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory)
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory) {
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
+    $scope.lgPack = lgPack;
     $scope.otherRoomsLoaded = false;
     $scope.loadOtherRooms = function() {
         var url = serverPrefix + "/chat/rooms/all";
