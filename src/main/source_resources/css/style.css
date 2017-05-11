@@ -159,12 +159,12 @@ button:focus {
 }
 
 .right_panel {
+    overflow: hidden;
     float: right;
     height: calc(100% - 35px);
     width: calc(100% - 301px);
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
-    /*position: relative;*/
     display: flex;
     flex-direction: column;
 }
