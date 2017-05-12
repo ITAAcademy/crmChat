@@ -637,6 +637,11 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             $scope.showMenu = !$scope.showMenu;
             return $scope.showMenu;
         }
+        $scope.showMenuFunc = function() {
+            $scope.showMenu = true;
+            return $scope.showMenu;
+        }
+
         $rootScope.hideMenu = function() {
             $scope.showMenu = false;
 
