@@ -167,8 +167,14 @@ var formatDateWithLast = function(date, short, withoutTime, max_time) {
                         return hours + hourName[globalConfig.lang] + endName[globalConfig.lang];
                 } else {
                     var days = Math.ceil(hours / 24);
-                    if (days > 1)
+                    var lastDigitOfDay = days % 10;
+                    //1 день, 2-4,22-24 дні,32-34 5-20 днів,21 день, 
+                    if (days > 1){
+                        if (lastDigitOfDay>=2 && lastDigitOfDay <= 4 && globalConfig.lang=="ua")
+                        return days + " дні" + endName[globalConfig.lang];
+                        else
                         return days + daysName[globalConfig.lang] + endName[globalConfig.lang];
+                    }
                     else
                         return days + dayName[globalConfig.lang] + endName[globalConfig.lang];
                 }
