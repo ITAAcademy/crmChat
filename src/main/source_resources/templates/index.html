@@ -48,8 +48,8 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <div rooms-block-mini="true" ng-swipe-right="showMenuFunc()" class="left_panel_mini noselect" ng></div>
-        <div id="left_panel" ng-swipe-left="hideMenu()" class="left_panel noselect ng-class:{active: showMenu}">
+        <div rooms-block-mini="true" ng-swipe-right="showMenu()" class="left_panel_mini noselect" ng></div>
+        <div id="left_panel" ng-show="isMenuVisible" ng-swipe-left="hideMenu()" class="left_panel noselect ng-class:{active: isMenuShow}">
             <div class="mainContent">
                 <div class="workplace_outter">
                     <div class="workplace_inner">

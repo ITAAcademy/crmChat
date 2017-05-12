@@ -632,21 +632,27 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
 
         }
-        $scope.showMenu = false;
+        $scope.isMenuShow = false;
+
         $scope.toggleMenu = function() {
-            $scope.showMenu = !$scope.showMenu;
-            return $scope.showMenu;
+            $scope.isMenuShow = !$scope.isMenuShow;
+            return $scope.isMenuShow;
         }
-        $scope.showMenuFunc = function() {
-            $scope.showMenu = true;
-            return $scope.showMenu;
+        $scope.showMenu = function() {
+            $scope.isMenuShow = true;
+            return $scope.isMenuShow;
+        }
+        $scope.isMenuVisible = function(){
+            var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+            if (width>1300) return true;
+            return $scope.isMenuShow;
         }
 
         $rootScope.hideMenu = function() {
-            $scope.showMenu = false;
+            $scope.isMenuShow = false;
 
             $rootScope.__modaleToggle['menu'].restart();
-            return $scope.showMenu;
+            return $scope.isMenuShow;
         }
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
