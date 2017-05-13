@@ -150,7 +150,6 @@ function randomString(length) {
 }
 springChatServices.service('ActiveWindow', ['$rootScope', 'ngDialog', '$timeout', '$http', '$injector', 'UserFactory', function($rootScope, ngDialog, $timeout, $http, $injector, UserFactory) {
     var pageId = randomString(10);
-    debugger;
     if (UserFactory.getChatUserId() != undefined)
         pageId += UserFactory.getChatUserId();
 
