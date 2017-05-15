@@ -98,13 +98,13 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ChatUser))
 			return false;
 		ChatUser other = (ChatUser) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (id.longValue() != other.getId().longValue())
 			return false;
 		return true;
 	}
