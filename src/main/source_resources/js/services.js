@@ -172,7 +172,8 @@ function rescrollToRoom(roomId) {
         var qElm = $(elmnt);
         var elTop = $(elmnt).offset().top - $('#rooms-block #items_list_block').offset().top;
         if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
-            elmnt.scrollIntoView();
+          //  elmnt.scrollIntoView();
+        elmnt.parentNode.scrollTop = elmnt.offsetTop;
     }, 10);
 }
 
