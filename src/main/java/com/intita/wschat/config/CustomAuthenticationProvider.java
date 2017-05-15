@@ -56,82 +56,76 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		Authentication token = (Authentication) authentication;
-		List<GrantedAuthority> authorities = "ADMIN".equals(token.getCredentials()) ? 
-				AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
-				ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		Authentication auth;
+		synchronized (this) {
+			Authentication token = (Authentication) authentication;
+			List<GrantedAuthority> authorities = "ADMIN".equals(token.getCredentials()) ?
+					AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
+			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 
-				Cookie[] array = attr.getRequest().getCookies();
-				HttpSession session = attr.getRequest().getSession();
-				RequestContextHolder.currentRequestAttributes().getSessionId();				//session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
-				session.setMaxInactiveInterval(3600*12);
+			Cookie[] array = attr.getRequest().getCookies();
+			HttpSession session = attr.getRequest().getSession();
+			RequestContextHolder.currentRequestAttributes().getSessionId();                //session.getServletContext().getSessionCookieConfig().setName("CHAT_SESSION");
+			session.setMaxInactiveInterval(3600 * 12);
 
-				String value = null;
-				String IntitaId = null;
-				String IntitaLg = "ua";
-				String ChatId = null;
-				if(array != null)
-					for(Cookie cook : array)
-					{
-						if(cook.getName().equals("JSESSIONID"))
-						{
-							value = cook.getValue();
-							session.setAttribute("id", value);
-							String phpSession = redisService.getKeyValue(value);
-							System.out.println("cook value: " + phpSession);
+			String value = null;
+			String IntitaId = null;
+			String IntitaLg = "ua";
+			String ChatId = null;
+			if (array != null)
+				for (Cookie cook : array) {
+					if (cook.getName().equals("JSESSIONID")) {
+						value = cook.getValue();
+						session.setAttribute("id", value);
+						String phpSession = redisService.getKeyValue(value);
+						System.out.println("cook value: " + phpSession);
 
-							if(phpSession != null)
-							{
-								try {
-									System.out.println(phpSession);
-									serializedPhpParser = new SerializedPhpParser(phpSession);
-									IntitaId = (String)serializedPhpParser.findPatern(redisId);
-									IntitaLg = (String)serializedPhpParser.find("lg");
-									System.out.println("cook intitaID: " + IntitaId);
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+						if (phpSession != null) {
+							try {
+								System.out.println(phpSession);
+								serializedPhpParser = new SerializedPhpParser(phpSession);
+								IntitaId = (String) serializedPhpParser.findPatern(redisId);
+								IntitaLg = (String) serializedPhpParser.find("lg");
+								System.out.println("cook intitaID: " + IntitaId);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-							break;
 						}
+						break;
 					}
-				Long intitaIdLong = null;
-				try{
-					intitaIdLong = Long.parseLong(IntitaId);
 				}
-				catch(NumberFormatException e){
-					log.info(e.getMessage());
-				}
+			Long intitaIdLong = null;
+			try {
+				intitaIdLong = Long.parseLong(IntitaId);
+			} catch (NumberFormatException e) {
+				log.info(e.getMessage());
+			}
 
 
-				Object obj_s = session.getAttribute("chatId");
-				Long intitaIdSession =  (Long) session.getAttribute("intitaId");
-				if(obj_s == null || intitaIdLong != intitaIdSession)
-				{
-					System.out.println("CREATE NEW SESSION");
-					if(intitaIdLong != null)
-					{
-						ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong , false).getId().toString();
-						session.setAttribute("intitaId", intitaIdLong);
-					}
-					else{
-						System.out.println("CREATE GUEST");
-						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
-						ChatId = c_u_temp.getId().toString();
-						session.removeAttribute("intitaId");
-					}
-					session.setAttribute("chatId", ChatId);
+			Object obj_s = session.getAttribute("chatId");
+			Long intitaIdSession = (Long) session.getAttribute("intitaId");
+			if (obj_s == null || intitaIdLong != intitaIdSession) {
+				System.out.println("CREATE NEW SESSION");
+				if (intitaIdLong != null) {
+					ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false).getId().toString();
+					session.setAttribute("intitaId", intitaIdLong);
+				} else {
+					System.out.println("CREATE GUEST");
+					ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
+					ChatId = c_u_temp.getId().toString();
+					session.removeAttribute("intitaId");
 				}
-				else
-				{
-					System.out.println("SESSION OK " + (String)obj_s);
-					ChatId = (String) obj_s;
-				}
+				session.setAttribute("chatId", ChatId);
+			} else {
+				System.out.println("SESSION OK " + (String) obj_s);
+				ChatId = (String) obj_s;
+			}
 
-				session.setAttribute("chatLg", IntitaLg);
-				Authentication auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
-				//	auth.setAuthenticated(true);
+			session.setAttribute("chatLg", IntitaLg);
+			 auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
+			//	auth.setAuthenticated(true);
+		}
 				return auth;
 	}
 
