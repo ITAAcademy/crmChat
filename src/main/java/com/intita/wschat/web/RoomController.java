@@ -859,9 +859,8 @@ public class RoomController {
 		if (room == null || newAuthor == null)
 			return false;
 		ChatUser author = room.getAuthor();
-		if (author.equals(newAuthor))
-			return true;
 
+		System.out.println("author id:"+author.getId()+" newAuthor id:"+newAuthor.getId());
 		boolean contain = false;
 		if (room.getUsers().contains(newAuthor)) {
 			// delete from LIST of add users && check for remove from update
@@ -884,7 +883,7 @@ public class RoomController {
 						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
 
 			}
-		} else {
+		} else if( !author.equals(newAuthor)) {
 			chatLastRoomDateService.removeUserLastRoomDate(author, room);
 		}
 		return true;
