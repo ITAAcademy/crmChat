@@ -65,8 +65,7 @@ ext {
 
 
 dependencies {
-    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2'
-    compile("org.springframework.boot:spring-boot-devtools")
+	compile("org.springframework.boot:spring-boot-devtools")
 	compile("javax.mail:mail:1.4")
 	compile("org.springframework:spring-context-support:3.2.0.RELEASE")
 	compile("org.apache.velocity:velocity:1.7")

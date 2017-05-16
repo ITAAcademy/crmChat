@@ -5,8 +5,8 @@
 </div>
 <div class="text_info">
     <a ng-href="{{getUserProfileLink(participant.intitaUserId)}}" target="_blank" class="user_name">{{participant.username || participant.nickName}}</a>
-    <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)">Онлайн</div>
-    <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)">Оффлайн</div>
+    <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)"><span th:text="${lgPack.usersBlock.online}">Онлайн</span></div>
+    <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)"><span th:text="${lgPack.usersBlock.offline}">Офлайн</span></div>
 </div>
 <div class="contact_control">
     <img class="delete-user-icon" ng-if="checkUserRemovingPermission(participant)" ng-click="removeUserFromRoom(participant.chatUserId)" src="images\cross13x15.png" alt="" />

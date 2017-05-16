@@ -2,7 +2,6 @@ package com.intita.wschat.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -19,8 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.web.filter.GenericFilterBean;
-
 /**
  * 
  * @author Nicolas Haiduchok
@@ -37,8 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private CustomAuthenticationProvider authenticationProvider;
 	@Autowired
 	private CustomFilter authenticationTokenFilter;
-	@Autowired
-	private GenericFilterBean ssoFilter;
 	
 	/*@Autowired
 	private RequestContextFilter requestContextFilter;*/
@@ -64,15 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	@Autowired
 	AuditEventConfiguration sdfsd;
-
-	@Bean
-	public FilterRegistrationBean oauth2ClientFilterRegistration(
-			OAuth2ClientContextFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
-		registration.setFilter(filter);
-		registration.setOrder(-100);
-		return registration;
-	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -94,10 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		//.logoutSuccessUrl("/index.html")
 		.permitAll()
 		.and()
-		.antMatcher("/**")
-		.addFilterBefore(ssoFilter,BasicAuthenticationFilter.class)
 		.authorizeRequests()
-		.antMatchers("/login","/static_templates/**", "/js/**", "/lib/**", "/images/**", "/fonts/**", "/data/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**","/wss/**").permitAll()
+		.antMatchers("/static_templates/**", "/js/**", "/lib/**", "/images/**", "/fonts/**", "/data/**", "/css/**","/chatFrame.html", "/index.html", "/","/getusersemails","/ws/**","/wss/**").permitAll()
 		.antMatchers("/websocket").hasRole("ADMIN")
 		.anyRequest().authenticated();
 
