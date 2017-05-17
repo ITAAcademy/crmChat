@@ -356,6 +356,13 @@ public class RoomController {
 		return mapper.writeValueAsString(login(principal, userId));
 	}
 
+	@RequestMapping(value = "/chat/logintest", method = RequestMethod.POST)
+	@ResponseBody
+	public String loginTest(Principal principal)
+			throws JsonProcessingException {
+		return mapper.writeValueAsString(login(principal, null));
+	}
+
 	@RequestMapping(value = "/chat/rooms/all", method = RequestMethod.GET)
 	@ResponseBody
 	public List<RoomModelSimple> retrieveAllRooms(Principal principal)

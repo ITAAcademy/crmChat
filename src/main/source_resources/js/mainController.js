@@ -676,13 +676,14 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (updateMessagesSearchTimeout != undefined)
                 $timeout.cancel(updateMessagesSearchTimeout);
             $scope.messagesSearching = true;
+           
             updateMessagesSearchTimeout = $timeout(function() {
                 RoomsFactory.clearMessages();
+                $rootScope.message_busy = false;
                 var deffered = RoomsFactory.loadMessagesContains($scope.messageSearchQuery.value);
                 deffered.finally(function() {
                     $scope.messagesSearching = false;
                 });
-                $rootScope.message_busy = false;
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }, 500);

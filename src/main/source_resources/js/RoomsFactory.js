@@ -429,13 +429,15 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     function loadMessagesContains(searchQuery) {
         // /chat/room/{roomId}/get_messages_contains
+        $rootScope.message_busy = true;
         if (currentRoom == null) {
             console.warn('loadMessagesContains failed duing to current room is not selected');
             return;
         }
-        var deffered = $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery).
-        success(function(data, status, headers, config) {
+        var deffered = $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery);
+        deffered.success(function(data, status, headers, config) {
             loadMessagesFromArrayList(data);
+            $rootScope.message_busy = false;
         }).
         error(function(data, status, headers, config) {
 
