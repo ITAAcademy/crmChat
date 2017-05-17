@@ -1,7 +1,7 @@
 .emoji-wysiwyg-editor {
-	border: 1px solid #d0d0d0;
+	/*border: 1px solid #d0d0d0;
 	overflow: auto;
-	outline: none;
+	outline: none;*/
 }
 .emoji-wysiwyg-editor img {
 	width: 20px;
@@ -10,6 +10,8 @@
 	margin: -3px 0 0 0;
 }
 .emoji-menu {
+	top: initial !important;
+	bottom:0px;
 	position: absolute;
 	z-index: 999;
 	width: 200px;
