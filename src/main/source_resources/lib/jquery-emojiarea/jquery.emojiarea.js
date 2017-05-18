@@ -89,11 +89,19 @@
 
     util.replaceSelection = (function() {
         if (window.getSelection) {
-            return function(content) {
+            return function(content,allowElementParentClass) {
                 var range, sel = window.getSelection();
+        //range.startContainer.parentNode.hasClass('emoji-wysiwyg-editor');
+        
                 var node = typeof content === 'string' ? document.createTextNode(content) : content;
                 if (sel.getRangeAt && sel.rangeCount) {
                     range = sel.getRangeAt(0);
+
+                    var elm = document.selection != null ? range.parentElement() : range.startContainer.parentNode;
+        var isAllowedElement = $(range.startContainer.parentNode).hasClass(allowElementParentClass);
+        var isWysiwigEditor = $(range.startContainer.parentNode).hasClass('emoji-wysiwyg-editor');
+        if ( !(isAllowedElement || isWysiwigEditor) ) return false;
+
                     range.deleteContents();
                     range.insertNode(document.createTextNode(' '));
                     range.insertNode(node);
@@ -293,7 +301,7 @@
         if (this.selection) {
             util.restoreSelection(this.selection);
         }
-        try { util.replaceSelection($img[0]); } catch (e) {}
+        try { util.replaceSelection($img[0],this.options.allowElementParentClass); } catch (e) {}
         this.onChange();
     };
 

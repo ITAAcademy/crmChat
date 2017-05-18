@@ -36,7 +36,8 @@ $.emojiarea.path = 'lib/jquery-emojiarea/packs/basic/images';
 var $wysiwyg = $('.message_input').emojiarea({
     wysiwyg: true,
     button: $(".smiles"),
-    buttonPosition: 'after'
+    buttonPosition: 'after',
+    allowElementParentClass: 'messages_input_area'
 });
 
 $wysiwyg.on('insert', function() {
