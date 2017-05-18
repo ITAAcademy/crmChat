@@ -1419,8 +1419,9 @@ var compilable = function($compile, $parse) {
             scope.$watch(attr.content, function() {
                 var content = ($parse(attr.content)(scope)).replace(new RegExp("compilable", 'g'), "div");
                 content = content.replace(new RegExp("ng-bind", 'g'), "ha");
-
+                //$.ajaxSetup({cache:true});
                 element.html(content);
+                //$.ajaxSetup({});
                 if (typeof attr.callback != 'undefined') {
                     var callBackFunction = new Function("return " + attr.callback)();
                     if (typeof callBackFunction != 'undefined')
