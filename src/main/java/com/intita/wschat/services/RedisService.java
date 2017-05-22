@@ -3,6 +3,9 @@ package com.intita.wschat.services;
 
 import javax.annotation.PostConstruct;
 
+import com.intita.wschat.web.RoomController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +23,8 @@ public class RedisService {
 	public ConfigurationClassPostProcessor importRegistry() {
 		return new ConfigurationClassPostProcessor();
 	}*/
+	private final static Logger log = LoggerFactory.getLogger(RedisService.class);
 
-	private Jedis jedis;
 	private JedisPool pool;
 	private JedisPoolConfig poolConfig = new JedisPoolConfig();
 	
@@ -32,17 +35,13 @@ public class RedisService {
 		poolConfig.setTestOnReturn(true);
 		// this(poolConfig, host, port, timeout, password, Protocol.DEFAULT_DATABASE, null);
 		pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
-		try {
-			jedis = pool.getResource();
-			System.out.println("@@@_REDIS_OK@@@");
-		} catch (Exception e) {
-			System.out.println("@@@_REDIS_ERR@@@");
-			System.out.println(e.getMessage());
-		}
 	}
 
 
 	public String getKeyValue(String key) {
+
+		try (Jedis jedis = pool.getResource()){
+
 		if(!jedis.isConnected())
 		{
 			//jedis.close();
@@ -59,16 +58,21 @@ public class RedisService {
 		{
 			/*jedis.close();
 			jedis.connect();*/
-			pool.close();
+			log.info("Jedis error:"+ex.getStackTrace());
+			/*pool.close();
 			pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
 			jedis = pool.getResource();
-			return new String();
+			return new String();*/
+		}
+		return null;
 		}
 	}
 	
 	public void setValueByKey(String key, String value) {
-		if(jedis != null)
-			jedis.set(key, value);
+		try (Jedis jedis = pool.getResource()) {
+			if (jedis != null)
+				jedis.set(key, value);
+		}
 	}
 
 }

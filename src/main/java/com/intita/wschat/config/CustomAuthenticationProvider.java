@@ -77,6 +77,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					for (Cookie cook : array) {
 						if (cook.getName().equals("JSESSIONID")) {
 							value = cook.getValue();
+							log.info("redis search cook:"+value);
 							session.setAttribute("id", value);
 							String phpSession = redisService.getKeyValue(value);
 							System.out.println("cook value: " + phpSession);
@@ -106,7 +107,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 
 				Object obj_s = session.getAttribute("chatId");
 				Long intitaIdSession = (Long) session.getAttribute("intitaId");
-				if (obj_s == null || intitaIdLong != intitaIdSession) {
+				if (obj_s == null || (intitaIdLong!=null && !intitaIdLong.equals(intitaIdSession))) {
 					System.out.println("CREATE NEW SESSION");
 					if (intitaIdLong != null) {
 						ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false).getId().toString();

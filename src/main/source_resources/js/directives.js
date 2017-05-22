@@ -478,6 +478,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
                     scope.groupRooms = responseObj.data || [];
                 });
             }
+
             scope.isUserOnline = UserFactory.isUserOnline;
             scope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
             scope.participantsSort = UserFactory.participantsSort;
@@ -561,6 +562,10 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                         return true;
                 }
                 return false;
+            }
+            scope.validateAvatar = function(avatar) {
+            if (avatar == null) return "noname.png";
+            return avatar;
             }
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = lgPack.blockNames.participants;
