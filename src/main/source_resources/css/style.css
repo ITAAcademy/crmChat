@@ -2742,6 +2742,22 @@ span.rooms_search_loader img {
     border-top-color: #4b75a4
 }
 
+.block_item .login_button{
+   text-align: center;
+    font-size: 25px;
+    font-family: MyriadPro2;
+    height: 55px;
+}
+.block_item .login_button .login_button_text_wrapper{
+    margin-top: -20px;
+    top: 50%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-decoration: none;
+    color: white;
+}
+
 @media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {
     .messages_input_area {
         top: 0px;

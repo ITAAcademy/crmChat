@@ -518,6 +518,7 @@ function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory)
             scope.blockName = 'Користувач'; //lgPack.blockNames.students;
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
+            scope.mySettings = mySettings;
 
         }
 

@@ -9,7 +9,7 @@
         </i>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
-        <div class="block_item">
+        <div class="block_item" ng-if="$root.authorize">
             <div class="avatar online">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + getUser().avatar + ')'}"></div>
                 <div class="user_presence_icon"></div>
@@ -18,6 +18,14 @@
             <div class="text_info">
                 <div class="user_name">{{getUser().nickName}}</div>
                 <!--<div class="user_presence">Остання активність</div>-->
+            </div>
+        </div>
+        <div class="block_item">
+            <div class="login_button">
+                <a class="login_button_text_wrapper" ng-href="{{mySettings.baseUrl}}">
+                <span>Увійти</span>
+                <span>/&gt;</span>
+                </a>
             </div>
         </div>
     </div>
