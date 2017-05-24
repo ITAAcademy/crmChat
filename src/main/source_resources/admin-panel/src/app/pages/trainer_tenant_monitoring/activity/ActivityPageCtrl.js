@@ -174,7 +174,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
       },
       categoryField: 'when',
       categoryAxis: {
-       minPeriod: "ss",
+       minPeriod: "mm",
         parseDates: true,
         gridAlpha: 0.15,
         gridColor: layoutColors.border,
@@ -211,10 +211,12 @@ for (var i = 0; i < fullChartData.length; i++ ){
     },
     "categoryField": "when",
     "categoryAxis": {
+      "minPeriod": "mm",
       "gridPosition": "start",
       "gridAlpha": 0,
       "tickPosition": "start",
-      "tickLength": 20
+      "tickLength": 20,
+      "parseDates": true
     },
     "export": {
       "enabled": true

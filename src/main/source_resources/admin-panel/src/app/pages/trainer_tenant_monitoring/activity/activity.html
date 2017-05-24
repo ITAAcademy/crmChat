@@ -2,7 +2,8 @@
      <div id="areaChart" ng-show="userActivityDataValue.length>0" class="admin-chart"></div>
      <div id="barChart" ng-show="userActivityPerDayDataValue.length>0" class="admin-chart"></div>
 
-               <div class="row datepicker">
+               <div class="row">
+               <div class="col-md-3">
                 <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select first user">
                         {{selected.user.nickName}}
@@ -11,6 +12,7 @@
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
+                </div>
                 <!--Date  pickers -->
                 <div class="col-md-3">
                     <p class="input-group">
@@ -28,16 +30,24 @@
                         </span>
                     </p>
                 </div>
-                <!--//Date  pickers -->
-                <div>
-                    Переглянути статистику активності
+                <!--//Date  pickers -->             
+            </div>
+
+            <div class="row">
+            <div class="col-md-6">
+                
+                        <div>
                    <button  ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+                   <span>Переглянути статистику активності</span>
                 </div>
 
                 <div>
-                    Переглянути статистику робочих годин по дням (хв/день)
                    <button  ng-click="updateUserActivityPerDay()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+                   <span> Переглянути статистику робочих годин по дням (хв/день)</span>
+                        
                 </div>
-                
+
+            </div>
+             
             </div>
   
