@@ -15,7 +15,7 @@ import com.intita.wschat.services.UserMessageService;
 
 @Controller
 public class StatisticController {
-	final long ACTIVITY_DOORATION_MS = 5000;
+	final long ACTIVITY_DOORATION_MS = 5*60*1000;
 @Autowired
 ChatUsersService chatUserService;
 
