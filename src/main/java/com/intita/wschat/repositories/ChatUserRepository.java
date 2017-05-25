@@ -42,4 +42,6 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	ChatUser findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(ArrayList<Room> room, ArrayList<Room> room2, Long user_id);
 	@Query("select u from chat_user u where u.intitaUser.id in ?1")
 	ArrayList<ChatUser> findChatUsersByIntitaUsers(ArrayList<Long> intitaUsersIds);
+	@Query("select u from chat_user u where u.nickName like %?1% or (u.intitaUser is not null and (u.intitaUser.nickName like %?1% or u.intitaUser.firstName like %?1% or u.intitaUser.secondName like %?1% or u.intitaUser.login like %?1%))")
+	ArrayList<ChatUser> findChatUserByNameAndEmail(String name);
 }

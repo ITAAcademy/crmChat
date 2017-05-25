@@ -176,6 +176,10 @@ public class ChatUsersService {
 	public List<ChatUser> getChatUsersLike(String nickName){
 		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
 	}
+	@Transactional
+	public List<ChatUser> getChatUsersByEmailAndName(String queryParam){
+		return chatUsersRepo.findChatUserByNameAndEmail(queryParam);
+	}
 
 	@Transactional
 	public ChatUser isMyRoom(String roomId, String userId){
