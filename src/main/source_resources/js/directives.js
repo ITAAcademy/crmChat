@@ -403,7 +403,7 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
 
     };
 }]);
-angular.module('springChat.directives').directive('userBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', userBlock]);
+angular.module('springChat.directives').directive('userBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory','$rootScope','ngDialog', userBlock]);
 angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
@@ -507,7 +507,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
 };
 
 
-function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory) {
+function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory,$rootScope,ngDialog) {
     return {
         restrict: 'EA',
         scope: {
@@ -518,7 +518,17 @@ function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory)
             scope.blockName = 'Користувач'; //lgPack.blockNames.students;
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
-            scope.mySettings = mySettings;
+            scope.mySettings = mySettings;   
+            scope.showUserProfileByChatUserId = function(chatId){
+                $rootScope['popupData']=[];
+ $http.get(serverPrefix+'/user_by_chat_id?chatUserId='+chatId).then(function(response) {
+            $rootScope.popupData.user = response.data;
+        }, function(error) {});
+
+var userProfileDialog = ngDialog.open({
+                            template: 'user_profile_popup.html'
+                        });
+            }
 
         }
 

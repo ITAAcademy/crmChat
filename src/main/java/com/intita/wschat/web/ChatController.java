@@ -20,6 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.IntitaUserDTO;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +134,10 @@ public class ChatController {
 
 	@Autowired
 	private RoomHistoryService roomHistoryService;
+
+	@Autowired
+	private DTOMapper dtoMapper;
+
 
 	private final Semaphore msgLocker = new Semaphore(1);
 
@@ -1034,6 +1040,15 @@ public class ChatController {
 		}
 		return usersData;
 	}
+
+	@RequestMapping(value = "/user_by_chat_id", method = RequestMethod.GET)
+	@ResponseBody
+	public IntitaUserDTO getNickNamesLike(@RequestParam Long chatUserId) throws JsonProcessingException {
+		User intitaUser = userService.getUserFromChat(chatUserId);
+		IntitaUserDTO userDTO = dtoMapper.map(intitaUser);
+		return userDTO;
+	}
+
 
 	@RequestMapping(value = "/chatTemplate.html", method = RequestMethod.GET)
 	public String getChatTemplate(HttpRequest request, Model model, Principal principal) {

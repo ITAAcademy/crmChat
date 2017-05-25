@@ -8,7 +8,7 @@
 </svg>
         </i>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}" ng-click="showUserProfileByChatUserId(getUser().id)">
         <div class="block_item" ng-if="$root.authorize">
             <div class="avatar online">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + getUser().avatar + ')'}"></div>
@@ -22,7 +22,7 @@
         </div>
         <div class="block_item" ng-if="!$root.authorize">
             <div class="login_button">
-                <a class="login_button_text_wrapper" ng-href="{{mySettings.baseUrl}}/site/authorize">
+                <a class="login_button_text_wrapper" ng-href="{{mySettings.baseUrl}}/site/authorize?redirect_uri={{mySettings.baseUrl}}">
                 <span>Увійти</span>
                 <span>/&gt;</span>
                 </a>
