@@ -201,6 +201,21 @@ Disabled
     fill: #999;
 }
 
+.star-container.horrible .star svg,
+.star-container .star.horrible svg {
+    fill: #f03c56;
+}
+
+.star-container.bad .star svg,
+.star-container .star.bad svg {
+    fill: #ffc058;
+}
+
+.star-container.good .star svg,
+.star-container .star.good svg {
+    fill: #7ed321;
+}
+
 .star.default i,
 .star-container .star i {
     color: #999;
@@ -311,6 +326,8 @@ Label Element
 .label-value {
     font-size: 18px;
     line-height: 18px;
+    min-width: 2ex;
+    text-align: center;
     /*
   Sizes
   =================================================================*/
@@ -448,7 +465,7 @@ Rating Component
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     /*Rating Value
   ====================================================*/
     /*Half stars
