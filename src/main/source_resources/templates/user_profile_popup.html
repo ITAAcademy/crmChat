@@ -1,0 +1,36 @@
+<div class="modal-header">
+    Профіль користувача
+</div>
+<div class="modal-content">
+	<div class="user_profile_record" ng-if="popupData.user.firstName.length>0">
+    <span>Імя:</span>
+    <span>{{popupData.user.firstName}}</span>
+    </div>
+   	
+   	<div class="user_profile_record" ng-if="popupData.user.lastName.length>0">
+    <span>Прізвище:</span>
+    <span>{{popupData.user.lastName}}</span>
+    </div>
+    
+    <div class="user_profile_record" ng-if="popupData.user.nickname.length>0">
+    <span>Нікнейм:</span>
+    <span>{{popupData.user.nickname}}</span>
+    </div>
+    
+    <div class="user_profile_record" ng-if="popupData.user.email.length>0">
+    <span>Пошта:</span>
+    <span>{{popupData.user.email}}</span>
+    </div>
+    
+    <div class="user_profile_record" ng-if="popupData.user.skype.length>0">
+    <span>Skype:</span>
+    <span>{{popupData.user.skype}}</span>
+    </div>
+
+	<div class="user_profile_record" ng-if="popupData.user.avatar.length>0">
+    <img class="user_profile_avatar" ng-src="{{$root.imagesPath + '/avatars/' + popupData.user.avatar}}" alt="">
+    </div>
+
+</div>
+<div class="modal-footer">
+</div>
