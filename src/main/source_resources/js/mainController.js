@@ -111,6 +111,20 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         break
                 }
             }
+
+            $scope.showUserProfileByChatUserId = function(chatId){
+                $rootScope['popupData']=[];
+ $http.get(serverPrefix+'/user_by_chat_id?chatUserId='+chatId).then(function(response) {
+            $rootScope.popupData.user = response.data;
+        }, function(error) {});
+
+var userProfileDialog = ngDialog.open({
+                            template: 'user_profile_popup.html'
+                        });
+            }
+
+
+
             /***************
             ***********STATE
             *

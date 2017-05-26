@@ -2758,6 +2758,10 @@ span.rooms_search_loader img {
     color: white;
 }
 
+.user_profile_avatar{
+width:100%;
+}
+
 @media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {
     .messages_input_area {
         top: 0px;

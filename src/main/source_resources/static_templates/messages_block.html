@@ -21,7 +21,7 @@
     <div class="line"></div>
 </div>
 <div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end="">
-    <div class="message_author_avatar" ng-if="!message.position">
+    <div class="message_author_avatar" ng-if="!message.position" ng-click="$parent.showUserProfileByChatUserId(message.chatUserId)">
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
     </div>
     <div class="message_details">
@@ -36,7 +36,7 @@
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
     </div>
-    <div class="message_author_avatar" ng-if="message.position">
+    <div class="message_author_avatar" ng-if="message.position" ng-click="$parent.showUserProfileByChatUserId(message.chatUserId)">
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
     </div>
 </div>

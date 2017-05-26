@@ -84,7 +84,27 @@ public class IntitaUserDTO {
 
     private String nickName;
     private String firstName;
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    private String lastName;
     private String secondName;
     private int role;
     private String skype;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    private String email;
 }
