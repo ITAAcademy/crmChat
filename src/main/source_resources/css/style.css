@@ -2911,6 +2911,13 @@ span.rooms_search_loader img {
     }
 }
 
+@media only screen and (max-height: 1024px) {
+    .consultant_wrapper{
+        padding: 0;
+    }
+}
+
+
 @media only screen and (max-width: 300px) {
     body.frame .head .logo {
         position: absolute;
