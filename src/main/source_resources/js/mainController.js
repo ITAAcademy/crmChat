@@ -36,11 +36,6 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-springChatControllers.config(['$compileProvider', function($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
-}]);
-
-
 var chatControllerScope;
 
 springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore',
@@ -53,7 +48,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
     function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory, ActiveWindow) {
         //Imports from Services
         //Imports/>
-
         ChannelFactory.setIsInited(false);
         $rootScope.baseurl = globalConfig["baseUrl"];
         $rootScope.imagesPath = globalConfig["imagesPath"];
@@ -92,48 +86,53 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
 
         $scope.getStateClass = function() {
-                switch ($scope.state) {
-                    case 0:
-                        $(".consultant_wrapper").removeClass("drag-disable");
-                        return "normal";
-                        break;
-                    case 1:
-                        $(".consultant_wrapper").removeClass("drag-disable");
-                        return "minimize";
-                        break;
-                    case 2:
-                        $(".consultant_wrapper").removeAttr("style");
-                        $(".consultant_wrapper").addClass("drag-disable");
-                        return "fullScreen";
-                        break;
-                    case -1:
-                        return "closed";
-                        break
-                }
+            switch ($scope.state) {
+                case 0:
+                    $(".consultant_wrapper").removeClass("drag-disable");
+                    return "normal";
+                    break;
+                case 1:
+                    $(".consultant_wrapper").removeClass("drag-disable");
+                    return "minimize";
+                    break;
+                case 2:
+                    $(".consultant_wrapper").removeAttr("style");
+                    $(".consultant_wrapper").addClass("drag-disable");
+                    return "fullScreen";
+                    break;
+                case -1:
+                    return "closed";
+                    break
             }
+        }
 
-            $scope.showUserProfileByChatUserId = function(chatId){
-                $rootScope['popupData']=[];
- $http.get(serverPrefix+'/user_by_chat_id?chatUserId='+chatId).then(function(response) {
-            $rootScope.popupData.user = response.data;
-        }, function(error) {});
+        $scope.showUserProfileByChatUserId = function(chatId) {
+            $rootScope['popupData'] = [];
+            $http.get(serverPrefix + '/user_by_chat_id?chatUserId=' + chatId).then(function(response) {
+                //$rootScope.popupData.user = response.data;
+                var scope = $scope.$new(true);
+                scope.user = response.data;
+                scope.trust = $sce.trustAsHtml;                
+                var userProfileDialog = ngDialog.open({
+                    template: 'user_profile_popup.html',
+                    scope: scope
+                });
+            }, function(error) {});
 
-var userProfileDialog = ngDialog.open({
-                            template: 'user_profile_popup.html'
-                        });
-            }
+
+        }
 
 
 
-            /***************
-            ***********STATE
-            *
-            0 - normal
-            1 - mini
-            2 - full
-            -1 - close
+        /***************
+        ***********STATE
+        *
+        0 - normal
+        1 - mini
+        2 - full
+        -1 - close
 
-            */
+        */
 
 
         $rootScope.goToUserPage = function(username) {
@@ -656,9 +655,9 @@ var userProfileDialog = ngDialog.open({
             $scope.isMenuShow = true;
             return $scope.isMenuShow;
         }
-        $scope.isMenuVisible = function(){
+        $scope.isMenuVisible = function() {
             var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-            if (width>1300) return true;
+            if (width > 1300) return true;
             return $scope.isMenuShow;
         }
 
@@ -690,7 +689,7 @@ var userProfileDialog = ngDialog.open({
             if (updateMessagesSearchTimeout != undefined)
                 $timeout.cancel(updateMessagesSearchTimeout);
             $scope.messagesSearching = true;
-           
+
             updateMessagesSearchTimeout = $timeout(function() {
                 RoomsFactory.clearMessages();
                 $rootScope.message_busy = false;
