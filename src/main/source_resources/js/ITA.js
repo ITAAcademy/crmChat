@@ -213,7 +213,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         jQuery(document).ready(reinitElemPos);
         jQuery(window).resize(reinitElemPos);
-        window.addResizeListener(elm[0], reinitElemPos);
+        var myElement = document.getElementById('chat_mini');
+        window.addResizeListener(myElement, reinitElemPos);
 
 
         jQuery("iframe").on('load', function() {
