@@ -16,7 +16,12 @@ public enum UserRole{
     ACCOUNTANT(1 << 4, "user_accountant"),
     CONSULTANT(1 << 5, "user_consultant"),
     TENANTS(1 << 6, "user_tenant"),
-    TRAINER(1 << 7, "user_trainer");
+    TRAINER(1 << 7, "user_trainer"),
+    AUDITOR(1 << 8, "user_auditor"),
+    AUTHOR(1 << 9, "user_author"),
+    DIRECTOR(1 << 10, "user_director");
+
+
 
     private int value;
     private String tableName;
@@ -28,6 +33,14 @@ public enum UserRole{
         }
         return aMap;
     }
+    public static UserRole getByTableName(String tableName){
+        for (UserRole role : UserRole.values()){
+            if (role.getTableName().equals(tableName))
+            return role;
+        }
+        return null;
+    }
+
     public  boolean checkNumberForThisPermission(Integer number){
         return (number & getValue()) == getValue();
     }

@@ -350,7 +350,13 @@ public class UsersService {
 	@Transactional
 	public boolean checkRole(User user, UserRole role){
 		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
-		Long userId = Long.parseLong(query.getSingleResult().toString());
+		Long userId = null;
+		try {
+			userId = Long.parseLong(query.getSingleResult().toString());
+		}
+		catch(Exception e){
+			return false;
+		}
 		return userId.equals(user.getId());
 		
 	}
@@ -362,6 +368,23 @@ public class UsersService {
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = query.getResultList();
 		
+		ArrayList<Long> resultArray = new ArrayList<>();
+		for(Object queryObject : queryResults)
+		{
+			Long userId = Long.parseLong(queryObject.toString());
+			resultArray.add(userId);
+		}
+		return resultArray;
+	}
+
+	@Transactional
+	public ArrayList<Long> getAllByRoleValue(int roleValue,String tableName){
+		String userFieldName = "id_user";
+		if(roleValue == UserRole.TENANTS.getValue())
+			userFieldName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		List<Object> queryResults = query.getResultList();
+
 		ArrayList<Long> resultArray = new ArrayList<>();
 		for(Object queryObject : queryResults)
 		{

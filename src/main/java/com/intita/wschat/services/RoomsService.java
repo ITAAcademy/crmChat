@@ -1,18 +1,23 @@
 package com.intita.wschat.services;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.domain.ChatRoomType;
+import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.models.*;
+import com.intita.wschat.repositories.*;
+import com.intita.wschat.util.HtmlUtility;
+import com.intita.wschat.web.BotController;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -23,19 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ChatUserLastRoomDate;
-import com.intita.wschat.models.Phrase;
-import com.intita.wschat.models.PrivateRoomInfo;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.repositories.ChatPhrasesRepository;
-import com.intita.wschat.repositories.PrivateRoomInfoRepository;
-import com.intita.wschat.repositories.RoomPermissionsRepository;
-import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
 @Service
@@ -53,10 +45,35 @@ public class RoomsService {
 
 	@Autowired private ChatController chatController;
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
+	@Autowired private RoomRolesRepository roomRolesRepository;
+
+	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
+
+	@Autowired
+	private Environment env;
+
+	//@Value("${crmchat.roles.tableNames}")
+	private List<String> rolesTablesNames;
+	//@Value("${crmchat.roles.names}")
+	private List<String> rolesNames;
 
 	@PostConstruct
-	@Transactional
-	public void createDefRoom() {
+	public void initParams() {
+		String rolesTablesNamePropertyValue =  env.getProperty("crmchat.roles.tableNames");
+		String rolesNamesProperyValue =  env.getProperty("crmchat.roles.names");
+		if (rolesTablesNamePropertyValue==null || rolesNamesProperyValue==null){
+			log.error("crmchat.roles.tableNames or crmchat.roles.names not defined");
+			return;
+		}
+
+		String[] rolesTablesNameArr =rolesTablesNamePropertyValue.split(",");
+		rolesTablesNameArr = HtmlUtility.trimAllStrings(rolesTablesNameArr);
+		rolesTablesNames = Arrays.asList(rolesTablesNameArr);
+
+		String[] rolesNamesArr =  rolesNamesProperyValue.split(",");
+		rolesNamesArr = HtmlUtility.trimAllStrings(rolesNamesArr);
+		rolesNames = Arrays.asList(rolesNamesArr);
+
 	}
 
 	@Transactional
@@ -572,6 +589,31 @@ public class RoomsService {
 
 		return null;
 	}
+	@Transactional
+	public boolean updateRoomForRoleTable(String tableName){
+		int indexOfTable = rolesTablesNames.indexOf(tableName);
+		if (indexOfTable == -1) return false;
+		String roleName = rolesNames.get(indexOfTable);
+		int roleInt = 1 << indexOfTable;
+		UserRole role = UserRole.getByTableName(tableName);
+		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(roleInt);
+		if(info == null)
+		{
+			Room room = register(roleName, chatUserService.getChatUser(BotController.BotParam.BOT_ID), ChatRoomType.ROLES_GROUP);
+			info = roomRolesRepository.save(new RoomRoleInfo(room, roleInt));
+		}
+		Room room = info.getRoom();
+		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
+		room = update(room);
+		ArrayList<ChatUser> cUsersList = null;
+		if(role == UserRole.TENANTS)
+			cUsersList = chatUserService.getUsers(userService.getAllByRoleValue(roleInt,tableName));
+		else
+			cUsersList = chatUserService.getChatUsersFromIntitaIds(userService.getAllByRoleValue(roleInt,tableName));
+		replaceUsersInRoom(room, cUsersList);
+		return true;
+	}
+
 }
 
 
