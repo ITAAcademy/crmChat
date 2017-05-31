@@ -1045,6 +1045,8 @@ public class ChatController {
 	@ResponseBody
 	public IntitaUserDTO getNickNamesLike(@RequestParam Long chatUserId) throws JsonProcessingException {
 		User intitaUser = userService.getUserFromChat(chatUserId);
+		if(intitaUser == null)
+			return null;
 		IntitaUserDTO userDTO = dtoMapper.map(intitaUser);
 		return userDTO;
 	}
