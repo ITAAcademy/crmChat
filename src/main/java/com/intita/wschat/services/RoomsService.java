@@ -48,6 +48,8 @@ public class RoomsService {
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
 	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
+	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
+	private String defaultRoleNames = "адміністратор,студент,супервізор,викладач-консультант,бухгалтер,консультант,тенант,тренер,аудитор,автор,директор";
 
 	@Autowired
 	private Environment env;
@@ -61,6 +63,10 @@ public class RoomsService {
 	public void initParams() {
 		String rolesTablesNamePropertyValue =  env.getProperty("crmchat.roles.tableNames");
 		String rolesNamesProperyValue =  env.getProperty("crmchat.roles.names");
+		if(rolesTablesNamePropertyValue==null)rolesTablesNamePropertyValue=defaultTableNames;
+		if(rolesNamesProperyValue==null)rolesNamesProperyValue=defaultRoleNames;
+
+
 		if (rolesTablesNamePropertyValue==null || rolesNamesProperyValue==null){
 			log.error("crmchat.roles.tableNames or crmchat.roles.names not defined");
 			return;

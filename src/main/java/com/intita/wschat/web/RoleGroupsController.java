@@ -105,7 +105,7 @@ public class RoleGroupsController {
 		ChatUser cUser = chatUsersService.getChatUser(principal);
 		User iUser = usersService.getUser(principal);
 
-		if(!usersService.checkRole(iUser, UserRole.ADMIN)) {
+		if(usersService.checkRole(iUser, UserRole.ADMIN)) {
 			if(tableName==null) {
 				updateRoomsForAllRoles();
 			}
