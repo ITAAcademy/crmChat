@@ -31,5 +31,11 @@ public class HtmlUtility {
 		String trimmed = withoutBr.trim();
 		return trimmed;
 	}
+	public static String[] trimAllStrings(String[] values){
+		for(int i = 0; i < values.length; i++){
+			values[i] = values[i].trim();
+		}
+		return values;
+	}
 	
 }
