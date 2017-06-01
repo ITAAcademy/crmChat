@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
@@ -112,8 +113,7 @@ public class AdminPanelController {
 	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String  admin(HttpServletRequest request,Model model, Principal principal) {
-		
-		chatUsersService.getChatUser(principal);
+
 		String lang = chatLangService.getCurrentLang();
 		List<ConfigParam> config =  configParamService.getParams();
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
@@ -128,9 +128,11 @@ public class AdminPanelController {
 	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser user = chatPrincipal.getChatUser();
 		List<User> users= new ArrayList<>();
-		User iUser = user.getIntitaUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser != null)
 		{

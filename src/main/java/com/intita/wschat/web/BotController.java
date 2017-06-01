@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -231,7 +234,8 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/{roomId}/submit_dialog_item/{containerId}/next_item/{nextContainerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public String getSequence(@PathVariable Long roomId,@PathVariable Long containerId, @PathVariable Long nextContainerId, HttpServletRequest request, Authentication auth) throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		/*Iterator it = params.entrySet().iterator();
 		while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
@@ -257,7 +261,7 @@ public class BotController {
 		ArrayList<String> keys = new ArrayList<String>(obj.keySet());
 
 		Room room = roomService.getRoom(roomId);
-		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatUser user = chatPrincipal.getChatUser();
 		BotDialogItem item = botItemContainerService.getByObjectId(new LangId(containerId, chatLangService.getCurrentLang()));
 
 		for(int i = 0; i < keys.size(); i++)
@@ -270,7 +274,7 @@ public class BotController {
 		Map<String,Object> param = new HashMap<String, Object>();
 		param.put("nextNode", nextContainerId.toString());//@BAD
 
-		sendNextContainer(roomId, containerId, param, principal);
+		sendNextContainer(roomId, containerId, param, auth);
 
 		return "good";
 	}
@@ -290,7 +294,7 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param, Principal principal) throws JsonProcessingException {
+	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param, Authentication auth) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		ChatUser bot = chatUsersService.getChatUser(BotParam.BOT_ID);
@@ -328,9 +332,11 @@ public class BotController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
-		UserMessage msg = new UserMessage(chatUsersService.getChatUser(principal), room, "You answer: " + nextContainer.getIdObject().getId());
-		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), principal);
+
+		UserMessage msg = new UserMessage(chatPrincipal.getChatUser(), room, "You answer: " + nextContainer.getIdObject().getId());
+		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), auth);
 
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
 		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
@@ -500,8 +506,10 @@ public class BotController {
 	 * TRAINER SYSTEM
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/answerToAddToRoom/{roomId}",  method = RequestMethod.POST)
-	@ResponseBody String answerToAdd(HttpServletResponse response, @RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @RequestParam(value="type", required=false) String type,  @PathVariable Long roomId, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
+	@ResponseBody String answerToAdd(HttpServletResponse response, @RequestParam(value="agree") boolean agree, @RequestParam(value="askId", required=false) String askId, @RequestParam(value="type", required=false) String type,  @PathVariable Long roomId, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser user = chatPrincipal.getChatUser();
 		if(!userService.isTenant(user.getId()))
 			return "-1";//is not tenant
 		
@@ -526,7 +534,7 @@ public class BotController {
 				}				
 			}
 
-			roomControler.addUserToRoom(user, room, principal, true);
+			roomControler.addUserToRoom(user, room, auth, true);
 			Object[] obj = new Object[] {roomId, user};
 			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
 			tenantSubmitToSpendConsultationWS(room, user.getId());
@@ -535,15 +543,16 @@ public class BotController {
 	}
 
 	@RequestMapping(value = "/bot_operations/triner/confirmToHelp/{roomId}",  method = RequestMethod.POST)
-	public ResponseEntity<String> confirmToHelp(@PathVariable(value="roomId") Long roomId, Principal principal) {
-		ChatUser trainer = chatUsersService.getChatUser(principal);
-		User iTrainer = trainer.getIntitaUser();
+	public ResponseEntity<String> confirmToHelp(@PathVariable(value="roomId") Long roomId, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser trainer = chatPrincipal.getChatUser();
+		User iTrainer = chatPrincipal.getIntitaUser();
 		if(userService.isTrainer(iTrainer.getId()))
 		{
 			Room room = roomService.getRoom(roomId);
 			if(room == null)
 				return new ResponseEntity<>("user is not trainer!!!", HttpStatus.BAD_REQUEST);
-			roomControler.addUserToRoom(trainer, room, principal, true);
+			roomControler.addUserToRoom(trainer, room, auth, true);
 			//TODO
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.ADD);
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.REMOVE);
@@ -556,8 +565,8 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenant/{tenantId}/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
-
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatUser user = chatPrincipal.getChatUser();
 		ChatUser tenant = chatUsersService.getChatUser(tenantId);
 		if(tenant == null)
 			return false;
@@ -606,9 +615,11 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenants/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean askToAddTenantsWithCustomMsg(@RequestBody TenantAskModelJS tenantAskModelJS, @PathVariable(value="roomId") Long roomId, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser user = chatPrincipal.getChatUser();
 		
-		if(!userService.isTrainer(user.getIntitaUser().getId()))
+		if(!userService.isTrainer(chatPrincipal.getIntitaUser().getId()))
 			return false;//is not tenant
 		
 		ArrayList<ChatUser> tenants = chatUsersService.getUsers(tenantAskModelJS.getTenantsIdList());
@@ -649,14 +660,17 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeFree(Principal principal) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
 		chatTenantService.setTenantFree(principal);
-		chatController.groupCastAddTenantToList(chatUsersService.getChatUser(principal));
+		chatController.groupCastAddTenantToList(chatPrincipal.getChatUser());
 	}	
 
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
 	public void tenantSendBecomeBusy(Principal principal) {
-		ChatUser tenant = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatUser tenant = chatPrincipal.getChatUser();
 		tenantSendBecomeBusy(tenant);
 	}
 	public void tenantSendBecomeBusy(ChatUser tenant) {
@@ -722,8 +736,9 @@ public class BotController {
 
 	@RequestMapping(value = "/bot/operations/tenant/free/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendFree( @PathVariable Long roomId, Principal principal) {
-		Long tenantChatUserId = Long.parseLong(principal.getName());
+	public void tenantSendFree( @PathVariable Long roomId, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
+		Long tenantChatUserId = chatPrincipal.getChatUser().getId();
 
 		Timer timer = waitConsultationUsersTimers.get(roomId);
 		timer.cancel();
@@ -758,7 +773,7 @@ public class BotController {
 			}
 
 		room_.setActive(true);
-		roomControler.changeAuthor(c_user, room_, true, principal, true);
+		roomControler.changeAuthor(c_user, room_, true, auth, true);
 		
 		//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
@@ -868,16 +883,18 @@ public class BotController {
 	public static class BotParam{
 		public static final long BOT_ID = 0;
 		public static final String BOT_AVATAR = "noname.png";
-		public static Principal getBotPrincipal()
+		public static Authentication getBotAuthentication()
 		{
-			return new Principal() {
+
+			Principal principal = new Principal() {
 
 				@Override
 				public String getName() {
 					return String.valueOf(BOT_ID);
 				}
 			};
-
+			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal,null);
+			return auth;
 		}
 	}
 }

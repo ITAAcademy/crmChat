@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.apache.commons.collections4.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,12 +223,14 @@ public class ChatTenantService {
 	}
 
 	public void setTenantFree(Principal principal) {
-		Long chatUserId = Long.parseLong(principal.getName());
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		Long chatUserId = chatPrincipal.getChatUser().getId();
 		setTenantFree(chatUserId);
 	}
 
 	public void setTenantBusy(Principal principal) {
-		Long chatUserId = Long.parseLong(principal.getName());
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		Long chatUserId = chatPrincipal.getChatUser().getId();
 		setTenantBusy(chatUserId);
 	}
 

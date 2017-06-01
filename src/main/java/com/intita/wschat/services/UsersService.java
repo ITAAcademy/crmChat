@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
@@ -72,17 +73,8 @@ public class UsersService {
 	
 	@Transactional
 	public User getUser(Principal principal){
-		String chatUserIdStr = principal.getName();
-		Long chatUserId = 0L;
-		try{
-			chatUserId = Long.parseLong(chatUserIdStr);
-		}
-		catch(NumberFormatException e){
-			System.out.println(e);
-			return null;
-		}
-		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
-		return user;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		return chatPrincipal.getIntitaUser();
 	}
 	@Transactional
 	public List<User> getUsersFist5(String login, List<Long> logins){

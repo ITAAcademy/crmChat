@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,8 +111,9 @@ public class FileController {
 				}
 				return;
 			}
+			ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
 			String mainDir = ""+roomId;
-			String subDir = principal.getName();
+			String subDir = ""+chatPrincipal.getChatUser().getId();
 			String realPathtoUploads =  uploadDir+File.separator+mainDir+File.separator+subDir+File.separator;
 			File dir = new File(realPathtoUploads);
 			boolean exists = dir.exists();
@@ -132,7 +134,7 @@ public class FileController {
 
 			}
 			String hostPart = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-			String downloadLink =  hostPart+"/"+ String.format("download_file?owner_id=%1$s&room_id=%2$s&file_name=%3$s",principal.getName(),roomId,orgName);
+			String downloadLink =  hostPart+"/"+ String.format("download_file?owner_id=%1$s&room_id=%2$s&file_name=%3$s",chatPrincipal.getChatUser().getId(),roomId,orgName);
 			downloadLinks.add(downloadLink);
 			log.info("downloadLink:"+downloadLink);
 		}

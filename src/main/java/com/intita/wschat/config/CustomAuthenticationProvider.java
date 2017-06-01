@@ -8,6 +8,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
+import com.intita.wschat.models.User;
+import com.intita.wschat.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +51,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	RedisService redisService; 
 	@Autowired
 	ChatUsersService chatUserServise;
+	@Autowired
+	UsersService intitaUsersService;
+	@Autowired
+	DTOMapper dtoMapper;
 
 
 
@@ -72,7 +80,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				String value = null;
 				String IntitaId = null;
 				String IntitaLg = "ua";
-				String ChatId = null;
+				ChatUser chatUser = null;
 				if (array != null)
 					for (Cookie cook : array) {
 						if (cook.getName().equals("JSESSIONID")) {
@@ -110,22 +118,28 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				if (obj_s == null || (intitaIdLong!=null && !intitaIdLong.equals(intitaIdSession))) {
 					System.out.println("CREATE NEW SESSION");
 					if (intitaIdLong != null) {
-						ChatId = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false).getId().toString();
+						chatUser = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false);
 						session.setAttribute("intitaId", intitaIdLong);
 					} else {
 						System.out.println("CREATE GUEST");
 						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
-						ChatId = c_u_temp.getId().toString();
+						chatUser = c_u_temp;
 						session.removeAttribute("intitaId");
 					}
-					session.setAttribute("chatId", ChatId);
+					session.setAttribute("chatId", chatUser.getId());
 				} else {
-					System.out.println("SESSION OK " + (String) obj_s);
-					ChatId = (String) obj_s;
+					System.out.println("SESSION OK " + obj_s);
+					String chatIdStr = obj_s.toString();
+					if(chatIdStr!=null)
+					{
+						Long chatId = Long.parseLong(chatIdStr);
+						chatUser = chatUserServise.getChatUser(chatId);
+					}
 				}
+				User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
+				ChatPrincipal principal = new ChatPrincipal(chatUser,intitaUser);
 
-				session.setAttribute("chatLg", IntitaLg);
-				auth = new UsernamePasswordAuthenticationToken(ChatId, token.getCredentials(), authorities);
+				auth = new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
 				//	auth.setAuthenticated(true);
 				return auth;
 	}

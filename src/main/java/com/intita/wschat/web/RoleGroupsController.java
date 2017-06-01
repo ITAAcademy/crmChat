@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import org.apache.velocity.app.VelocityEngine;
@@ -102,8 +103,9 @@ public class RoleGroupsController {
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
 	private boolean updateRoomsForAllRolesRequest(Principal principal,@RequestParam(name="table",required=false) String tableName){
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = usersService.getUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(usersService.checkRole(iUser, UserRole.ADMIN)) {
 			if(tableName==null) {

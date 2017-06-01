@@ -16,11 +16,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -115,9 +117,11 @@ public class ConsultationsController {
 		/*
 		 * Authorization
 		 */
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
 		Map <String, Object>result = new HashMap<>();
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = cUser.getIntitaUser();
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser == null)
 		{
@@ -281,9 +285,10 @@ public class ConsultationsController {
 
 		ChatConsultation chatConsultation = chatConsultationsService.getByIntitaConsultation(consultation_registered);
 
-		//Room room_consultation = chatConsultation.getRoom();		
+		//Room room_consultation = chatConsultation.getRoom();
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
 
-		Long chatUserId = Long.parseLong(principal.getName());	
+		Long chatUserId = chatPrincipal.getChatUser().getId();
 
 		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
 
@@ -291,7 +296,7 @@ public class ConsultationsController {
 				new RoomController.UpdateRoomsPacketModal (list,false));
 
 		//this said ti author that he nust update room`s list
-		ChatUser author = chatUsersService.getChatUser(principal);
+		ChatUser author = chatPrincipal.getChatUser();
 		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 		//777
 	}
@@ -318,8 +323,9 @@ public class ConsultationsController {
 		Room room = chatRoomsService.getRoom(roomId);
 		if(room == null)
 			throw new RoomNotFoundException("Room id is faild");
-		
-		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser user = chatPrincipal.getChatUser();
 		
 		ArrayList<ChatConsultationResultValue> values = new ArrayList<>();
 		for(Long ratingId : ratingsValues.keySet())
@@ -333,7 +339,8 @@ public class ConsultationsController {
 	
 	
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
-	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {
+	public String  getConsultationTemplate(HttpRequest request, Model model,Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
 		Set<ConsultationRatings> retings = chatConsultationsRatingsService.getAllSupportedRetings();
 		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
@@ -343,8 +350,8 @@ public class ConsultationsController {
 			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
-		commonController.addLocolizationAndConfigParam(model,chatUsersService.getChatUser((principal)));
-		return commonController.getTeachersTemplate(request, "consultationTemplate", model,principal);
+		commonController.addLocolizationAndConfigParam(model,chatPrincipal.getChatUser());
+		return commonController.getTeachersTemplate(request, "consultationTemplate", model,auth);
 	}	
 	
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
@@ -353,8 +360,10 @@ public class ConsultationsController {
 		 * Authorization
 		 */
 		Map <String, Object>result = new HashMap<>();
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = cUser.getIntitaUser();
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser == null)
 		{
@@ -396,9 +405,11 @@ public class ConsultationsController {
 	@ResponseBody 
 	@RequestMapping(value = "/chat/consultation/get_mail/{id}", method = RequestMethod.GET)
 	  private boolean sendConsultationEmail(final ChatConsultation chatConsultation,Principal principal,@PathVariable("id") Long consultationId) {
-		  ChatUser chatuser = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser chatuser = chatPrincipal.getChatUser();
 		  ChatConsultation consultation = chatConsultationsService.getByIntitaConsultationId(consultationId);
-		  User intitaUser = chatuser.getIntitaUser();
+		  User intitaUser = chatPrincipal.getIntitaUser();
           if (intitaUser==null) return false;  
 		  
 	       try{ 

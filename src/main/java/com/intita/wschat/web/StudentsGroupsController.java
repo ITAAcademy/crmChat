@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,9 +71,11 @@ public class StudentsGroupsController {
 	
 	@RequestMapping(value = "sub_group_operations/update/{subGroupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean subGroupUpdate(@PathVariable Integer subGroupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
-		ChatUser user = chatUsersService.getChatUser(principal);
-		User intitaUser = user.getIntitaUser();
+	public boolean subGroupUpdate(@PathVariable Integer subGroupId,  HttpServletRequest request, Authentication auth) throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser user = chatPrincipal.getChatUser();
+		User intitaUser = chatPrincipal.getIntitaUser();
 		if(intitaUser == null)
 			return false;
 		
@@ -79,15 +83,16 @@ public class StudentsGroupsController {
 		if(subGroup == null || !usersService.isSuperVisor(intitaUser.getId()))
 			return false;
 		
-		offlineStudentsGroupService.updateSubGroupRoom(subGroup, true);
+		offlineStudentsGroupService.updateSubGroupRoom(subGroup, true,auth);
 		return true;
 	}
 	
 	@RequestMapping(value = "group_operations/update/{groupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean groupUpdate(@PathVariable Integer groupId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
-		ChatUser user = chatUsersService.getChatUser(principal);
-		User intitaUser = user.getIntitaUser();
+	public boolean groupUpdate(@PathVariable Integer groupId,  HttpServletRequest request, Authentication auth) throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser user = chatPrincipal.getChatUser();
+		User intitaUser =chatPrincipal.getIntitaUser();
 		if(intitaUser == null)
 			return false;
 		
@@ -95,7 +100,7 @@ public class StudentsGroupsController {
 		if(subGroup == null || (!usersService.isSuperVisor(intitaUser.getId()) && !usersService.isAdmin(intitaUser.getId())))
 			return false;
 		
-		offlineStudentsGroupService.updateGroupRoom(subGroup, true);
+		offlineStudentsGroupService.updateGroupRoom(subGroup, true,auth);
 		
 		return true;
 	}

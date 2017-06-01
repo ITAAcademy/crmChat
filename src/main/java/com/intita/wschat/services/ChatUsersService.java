@@ -9,6 +9,7 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,20 +44,8 @@ public class ChatUsersService {
 	@Transactional
 	public ChatUser getChatUser(Principal principal){
 		if (principal==null)return null;
-		String chatUserIdStr = principal.getName();
-		Long chatUserId = 0L;
-		try{
-			chatUserId = Long.parseLong(chatUserIdStr);
-		}
-		catch(NumberFormatException e){
-			System.out.println(e);
-			return null;
-		}
-		if(chatUserId < 0)
-			return null;
-		
-		ChatUser user = getChatUser(chatUserId);
-		return user;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		return chatPrincipal.getChatUser();
 	}
 
 	@Transactional
