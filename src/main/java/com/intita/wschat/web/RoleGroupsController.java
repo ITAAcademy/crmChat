@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import org.apache.velocity.app.VelocityEngine;
@@ -25,11 +26,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.velocity.VelocityEngineUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,6 +71,7 @@ public class RoleGroupsController {
 
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
+
 	private void updateRoomForRole(UserRole role){
 
 		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(role.getValue());
@@ -104,13 +102,24 @@ public class RoleGroupsController {
 
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
-	private boolean updateRoomsForAllRolesRequest(Principal principal){
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = usersService.getUser(principal);
+	private boolean updateRoomsForAllRolesRequest(Principal principal,@RequestParam(name="table",required=false) String tableName){
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
-		if(usersService.checkRole(iUser, UserRole.ADMIN))
-			updateRoomsForAllRoles();
-		
-		return true;
+		if(usersService.checkRole(iUser, UserRole.ADMIN)) {
+			if(tableName==null) {
+				updateRoomsForAllRoles();
+			}
+			else {
+				boolean updated = roomsService.updateRoomForRoleTable(tableName);
+				if (!updated) return false;
+			}
+
+			return true;
+		}
+		return false;
 	}
+
+
 }

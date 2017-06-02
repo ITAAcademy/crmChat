@@ -98,9 +98,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             });
         }
         var onConnect = function(frame) {
-            if (frame.headers['user-name'] == undefined)
-                location.reload();
-            setChatUserId(frame.headers['user-name']);
+            //if (frame.headers['user-name'] == undefined)
+              //  location.reload();
+            //setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
         };
@@ -352,6 +352,11 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chatUser.id;
+        //ZIGZAG
+        if (chatUserId==null){
+             location.reload();
+        }
+        setChatUserId(chatUserId);
         isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
         isTrainer = mess_obj.chatUser.roles.indexOf("TRAINER") != -1;
         isStudent = mess_obj.chatUser.roles.indexOf("STUDENT") != -1;

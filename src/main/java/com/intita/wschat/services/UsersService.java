@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,18 +73,9 @@ public class UsersService {
 	}
 	
 	@Transactional
-	public User getUser(Principal principal){
-		String chatUserIdStr = principal.getName();
-		Long chatUserId = 0L;
-		try{
-			chatUserId = Long.parseLong(chatUserIdStr);
-		}
-		catch(NumberFormatException e){
-			System.out.println(e);
-			return null;
-		}
-		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
-		return user;
+	public User getUser(Authentication auth){
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		return chatPrincipal.getIntitaUser();
 	}
 	@Transactional
 	public List<User> getUsersFist5(String login, List<Long> logins){
@@ -329,9 +322,9 @@ public class UsersService {
 		
 	}
 	@Transactional
-	public boolean checkRoleByPrincipal(Principal principal, UserRole role){
-		User user = this.getUser(principal);
-		return checkRoleByUser(user,role);
+	public boolean checkRoleByAuthentication(Authentication auth, UserRole role){
+		ChatPrincipal principal = (ChatPrincipal)auth.getPrincipal();
+		return checkRoleByUser(principal.getIntitaUser(),role);
 
 	}
 
@@ -350,7 +343,13 @@ public class UsersService {
 	@Transactional
 	public boolean checkRole(User user, UserRole role){
 		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
-		Long userId = Long.parseLong(query.getSingleResult().toString());
+		Long userId = null;
+		try {
+			userId = Long.parseLong(query.getSingleResult().toString());
+		}
+		catch(Exception e){
+			return false;
+		}
 		return userId.equals(user.getId());
 		
 	}
@@ -362,6 +361,23 @@ public class UsersService {
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = query.getResultList();
 		
+		ArrayList<Long> resultArray = new ArrayList<>();
+		for(Object queryObject : queryResults)
+		{
+			Long userId = Long.parseLong(queryObject.toString());
+			resultArray.add(userId);
+		}
+		return resultArray;
+	}
+
+	@Transactional
+	public ArrayList<Long> getAllByRoleValue(int roleValue,String tableName){
+		String userFieldName = "id_user";
+		if(roleValue == UserRole.TENANTS.getValue())
+			userFieldName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		List<Object> queryResults = query.getResultList();
+
 		ArrayList<Long> resultArray = new ArrayList<>();
 		for(Object queryObject : queryResults)
 		{

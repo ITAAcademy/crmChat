@@ -30,7 +30,7 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 			String [] permitionsAnd = permitionsOr.split("&");
 			for(String permition : permitionsAnd)
 			{
-				has = has && userService.checkRoleByPrincipal(authentication,  UserRole.valueOf(permition));
+				has = has && userService.checkRoleByAuthentication(authentication,  UserRole.valueOf(permition));
 			}
 			if(has)
 				break;

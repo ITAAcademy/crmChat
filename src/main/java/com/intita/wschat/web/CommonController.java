@@ -25,6 +25,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.intita.wschat.config.ChatPrincipal;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,15 +201,15 @@ public class CommonController {
 	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
 		//chatLangService.updateDataFromDatabase();
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		if(before != null)
 		{
 			return "redirect:"+ before;
 		}
 		if(auth != null)
 		{
-			ChatUser cUser = chatUsersService.getChatUser(auth);
-			addLocolizationAndConfigParam(model, cUser);
-			log.info("Index login: "  + cUser.getId().toString());
+			addLocolizationAndConfigParam(model, chatPrincipal.getChatUser());
+			log.info("Index login: "  + chatPrincipal.getChatUser().getId().toString());
 		}
 		return "index";
 	}
@@ -221,9 +222,11 @@ public class CommonController {
 	}
 
 	@RequestMapping(value="/{page}.html", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Principal principal) {
+	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Authentication auth) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
-		addLocolizationAndConfigParam(model,chatUsersService.getChatUser(principal));
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		addLocolizationAndConfigParam(model,chatPrincipal.getChatUser());
 		return page;
 	}
 	
@@ -236,11 +239,13 @@ public class CommonController {
 	@RequestMapping(value="/chat/update/users/name", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean updateUserName(Principal principal) {
-		ChatUser cUser = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+
+		ChatUser cUser = chatPrincipal.getChatUser();
 		if(cUser == null)
 			return false;
 		
-		User iUser = cUser.getIntitaUser();
+		User iUser = chatPrincipal.getIntitaUser();
 		if(iUser == null)
 			return false;
 		
