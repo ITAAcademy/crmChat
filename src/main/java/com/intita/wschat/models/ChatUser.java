@@ -69,14 +69,6 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	
-	public Set<Room> getRootRooms() {
-		return rooms;
-	}
-
-	public Set<Room> getRoomsFromUsers() {
-		return roomsFromUsers;
-	}
-
 	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
 		return chatUserLastRoomDate;
 	}

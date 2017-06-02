@@ -1581,7 +1581,6 @@ angular.module('springChat.directives').directive('checkbox', function() {
             });
 
             var unregister = scope.$watch('testModel', function(neww, old) {
-                console.log(neww);
                 if (neww == undefined && old == undefined)
                     return;
 
@@ -1653,7 +1652,6 @@ angular.module('springChat.directives').directive("skypeUi", ['$parse', function
             $scope.$watch(function() {
                 return $scope.getcontacts().length;
             }, function(newValue, oldValue) {
-                console.log('skype contacts change WATCHED');
                 $scope.contacts = $scope.getContactsString();
             });
 

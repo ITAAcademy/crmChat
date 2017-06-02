@@ -7,7 +7,6 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
             load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope) {
                 if (!ChannelFactory.getIsInited() || $rootScope.roomChanging) return;
                 $rootScope.roomChanging = true;
-                console.log('room changing start');
                 RoomsFactory.goToRoom($route.current.params.roomId).then(function() {
                     $rootScope.roomChanging = false;
                     $rootScope.$broadcast('dialog_view_route');
@@ -15,7 +14,6 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
                         scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
                     }, 2000);*/
                     rescrollToRoom($route.current.params.roomId);
-                    console.log('room changing end');
                 });
 
             }]

@@ -6,11 +6,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
 import org.apache.commons.collections4.IteratorUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -105,6 +107,18 @@ public class ChatUsersService {
 	@Transactional
 	public ChatUser getChatUser(Long id){
 		return chatUsersRepo.findOne(id);
+	}
+	@Transactional
+	ChatUser finishLazy(ChatUser cUser){
+		if(cUser != null)
+		{
+			Hibernate.initialize(cUser);
+		}
+		return cUser;
+	}
+	@Transactional
+	public ChatUser getChatUserWithoutLazy(Long id){
+		return finishLazy(chatUsersRepo.findOne(id));
 	}
 	@Transactional
 	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){

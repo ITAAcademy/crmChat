@@ -344,8 +344,7 @@ public class ChatController {
 		if (o_user == null)
 			return null;
 
-		Set<Room> all = o_user.getRoomsFromUsers();
-		all.addAll(o_user.getRootRooms());
+		Set<Room> all = chat_room_service.getAllRoomByUsersAndAuthor(o_user);
 
 		if (!all.contains(o_room))
 			return null;

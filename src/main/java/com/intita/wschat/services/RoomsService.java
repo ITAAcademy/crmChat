@@ -293,6 +293,15 @@ public class RoomsService {
 
 		return roomRepo.findByAuthor(user);
 	}
+	@Transactional
+	public Set<Room> getAllRoomByUsersAndAuthor(ChatUser user) {
+		return roomRepo.findByAuthorOrUsersContaining(user, user);
+	}
+	@Transactional
+	public ArrayList<Room> getRoomByUser(ChatUser user) {
+
+		return roomRepo.findByUsersContaining(user);
+	}
 
 
 	@Transactional(readOnly = false)
@@ -347,11 +356,11 @@ public class RoomsService {
 	@Transactional(readOnly = false)
 	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);
-		if(!author.getRootRooms().contains(room))
+	//	if(!author.getRootRooms().contains(room))
 			return false;
-		room.setActive(false);
+		/*room.setActive(false);
 		roomRepo.save(room);//@NEED_ASK@
-		return true;
+		return true;*/
 	}
 
 	public List<RoomModelSimple> getRoomsContainingStringByOwner(String query, ChatUser user){

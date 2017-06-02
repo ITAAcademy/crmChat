@@ -2,6 +2,7 @@ package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,8 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
 	
 	Room findByAuthorAndTypeAndUsersContaining(ChatUser author, short type, ChatUser privateUser);
 	ArrayList<Room> findByAuthor(ChatUser author);
+	ArrayList<Room> findByUsersContaining(ChatUser user);
+	Set<Room> findByAuthorOrUsersContaining(ChatUser user, ChatUser author);
 	
 	ArrayList<Room> findFirst10ByNameLike(String like);
 	

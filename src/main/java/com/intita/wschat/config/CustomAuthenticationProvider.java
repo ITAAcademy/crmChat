@@ -137,14 +137,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					if(chatIdStr!=null)
 					{
 						Long chatId = Long.parseLong(chatIdStr);
-						chatUser = chatUserServise.getChatUser(chatId);
+						chatUser = chatUserServise.getChatUserWithoutLazy(chatId);
 					}
 				}
 				User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
 
-				Hibernate.initialize(chatUser);
-				Hibernate.initialize(chatUser.getRoomsFromUsers());
-				Hibernate.initialize(chatUser.getRootRooms());
+		
 				
 				if(intitaUser != null)
 					Hibernate.initialize(intitaUser);
