@@ -459,7 +459,7 @@ public class RoomController {
 	public Map<String, Object> retrieveParticipantsSubscribeAndMessages(@DestinationVariable("room") Long room,
 			@DestinationVariable("lang") String lang, SimpMessageHeaderAccessor headerAccessor, Authentication auth) {// ONLY
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, chatPrincipal, userService, chatUserServise,
+		CurrentStatusUserRoomStruct status = ChatController.isMyRoom(room, chatPrincipal,
 				roomService);
 		ChatUser o_object = chatPrincipal.getChatUser();
 		if (status == null) {
@@ -509,7 +509,7 @@ public class RoomController {
 			throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal, userService, chatUserServise,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal,
 				roomService);// Control room from LP
 		if (struct == null)
 			return "{}";
@@ -551,7 +551,7 @@ public class RoomController {
 		if (queue == null) {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal, userService, chatUserServise,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal,
 				roomService);// Control room from LP
 		if (struct != null) {
 			responseBodyQueueForParticipents.put(room.toString(), queue);
@@ -614,7 +614,7 @@ public class RoomController {
 	@ResponseBody
 	public String getRoomInfo(@PathVariable("roomID") Long roomId, Authentication auth) throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal, userService, chatUserServise,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
 				roomService);// Control room from LP
 		if (struct == null)
 			return "{}";

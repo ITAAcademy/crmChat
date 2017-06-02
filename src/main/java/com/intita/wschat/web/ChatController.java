@@ -334,8 +334,7 @@ public class ChatController {
 		}
 	}
 
-	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal, UsersService user_service,
-			ChatUsersService chat_user_service, RoomsService chat_room_service) {
+	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal , RoomsService chat_room_service) {
 		long startTime = System.currentTimeMillis();
 		Room o_room = chat_room_service.getRoom(roomId);
 		if (o_room == null)
@@ -389,7 +388,7 @@ public class ChatController {
 		if (dateMsStr != null && dateMsStr.length() > 0)
 			dateMs = Long.parseLong(dateMsStr);
 		Date date = (dateMs == null) ? null : new Date(dateMs);
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal, userService, chatUsersService,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room, chatPrincipal,
 				chatRoomsService);// Control room from LP
 		if (struct == null)
 			throw new ChatUserNotInRoomException("");
@@ -410,7 +409,7 @@ public class ChatController {
 
 	public UserMessage filterMessage(Long roomStr, ChatMessage message, Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, chatPrincipal, userService, chatUsersService,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, chatPrincipal,
 				chatRoomsService);// Control room from LP
 		if (struct == null || !struct.room.isActive() || message.getMessage().trim().isEmpty())// cant
 																								// add
@@ -471,7 +470,7 @@ public class ChatController {
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
 									   Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal, userService, chatUsersService,
+		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
 				chatRoomsService);// Control room from LP
 		if (struct == null)
 			return null;
@@ -663,7 +662,7 @@ public class ChatController {
 	public boolean userGoToDialogListenerLP(@PathVariable("roomId") Long roomId, Authentication auth) {
 		// checkProfanityAndSanitize(message);
 		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal, userService, chatUsersService,
+		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal,
 				chatRoomsService);
 		if (struct == null)
 			throw new ChatUserNotInRoomException("CurrentStatusUserRoomStruct struct is null");
@@ -750,7 +749,7 @@ public class ChatController {
 			@RequestBody Map<String, Object> params) {
 		// checkProfanityAndSanitize(message);
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal, userService, chatUsersService,
+		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal,
 				chatRoomsService);
 		if (struct == null)
 			return;
@@ -939,8 +938,7 @@ public class ChatController {
 		ArrayList<Room> roomsResult = subGroupService.getTrainerGroupRooms(intitaUser.getId());
 		ArrayList<RoomModelSimple> roomsModels = new ArrayList<RoomModelSimple>();
 		for (Room room : roomsResult) {
-			CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room.getId(), chatPrincipal, userService,
-					chatUsersService, chatRoomsService);
+			CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(room.getId(), chatPrincipal, chatRoomsService);
 			RoomModelSimple sb = chatRoomsService.getSimpleModelByUserPermissionsForRoom(struct.getUser(), 0,
 					new Date().toString(), struct.getRoom(),
 					userMessageService.getLastUserMessageByRoom(struct.getRoom()));
