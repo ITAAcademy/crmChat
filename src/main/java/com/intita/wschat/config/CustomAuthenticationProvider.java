@@ -115,39 +115,30 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} catch (NumberFormatException e) {
 					log.info(e.getMessage());
 				}
-
-
+				ChatPrincipal principal = (ChatPrincipal) session.getAttribute("chatUserObj");
 				Object obj_s = session.getAttribute("chatId");
+				
 				Long intitaIdSession = (Long) session.getAttribute("intitaId");
-				if (obj_s == null || (intitaIdLong!=null && !intitaIdLong.equals(intitaIdSession))) {
+				if (principal == null || obj_s == null || (intitaIdLong!=null && !intitaIdLong.equals(intitaIdSession))) {
 					System.out.println("CREATE NEW SESSION");
 					if (intitaIdLong != null) {
 						chatUser = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false);
+						User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
 						session.setAttribute("intitaId", intitaIdLong);
+						principal = new ChatPrincipal(chatUser, intitaUser);
+						
 					} else {
 						System.out.println("CREATE GUEST");
 						ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
 						chatUser = c_u_temp;
 						session.removeAttribute("intitaId");
+						principal = new ChatPrincipal(chatUser, null);
 					}
 					session.setAttribute("chatId", chatUser.getId());
+					session.setAttribute("chatUserObj", principal);
 				} else {
 					System.out.println("SESSION OK " + obj_s);
-					String chatIdStr = obj_s.toString();
-					if(chatIdStr!=null)
-					{
-						Long chatId = Long.parseLong(chatIdStr);
-						chatUser = chatUserServise.getChatUserWithoutLazy(chatId);
-					}
 				}
-				User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
-
-		
-				
-				if(intitaUser != null)
-					Hibernate.initialize(intitaUser);
-				
-				ChatPrincipal principal = new ChatPrincipal(chatUser, intitaUser);
 
 				auth = new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
 				//	auth.setAuthenticated(true);

@@ -238,8 +238,8 @@ public class CommonController {
 	
 	@RequestMapping(value="/chat/update/users/name", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean updateUserName(Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public Boolean updateUserName(Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser cUser = chatPrincipal.getChatUser();
 		if(cUser == null)

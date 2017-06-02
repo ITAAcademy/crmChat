@@ -35,6 +35,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                     /***************************************
                      * TRY LONG POLING LOGIN
                      **************************************/
+
                     if (isInited == false) {
                         socketSupport = false;
                         callBack(socketSupport, {})
