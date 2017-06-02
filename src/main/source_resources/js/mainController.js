@@ -466,6 +466,10 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         // $rootScope.messageSended = true;
         $scope.userAddedToRoom = true;
         $rootScope.isConectedWithFreeTenant = false;
+        $rootScope.validateAvatar = function(avatar) {
+                if (avatar == null) return "noname.png";
+                return avatar;
+            }
 
 
         /*************************************

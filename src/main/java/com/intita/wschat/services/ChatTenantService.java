@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,14 +223,14 @@ public class ChatTenantService {
 		return tenant.getId();
 	}
 
-	public void setTenantFree(Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public void setTenantFree(Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		Long chatUserId = chatPrincipal.getChatUser().getId();
 		setTenantFree(chatUserId);
 	}
 
-	public void setTenantBusy(Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public void setTenantBusy(Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		Long chatUserId = chatPrincipal.getChatUser().getId();
 		setTenantBusy(chatUserId);
 	}

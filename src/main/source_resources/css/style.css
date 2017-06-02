@@ -2760,7 +2760,8 @@ span.rooms_search_loader img {
 }
 
 .user_profile_avatar {
-    width: 100%;
+    width: 200px;
+    border-radius:50%;
 }
 
 @media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {

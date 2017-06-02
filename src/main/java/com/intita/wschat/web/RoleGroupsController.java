@@ -24,6 +24,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.web.bind.annotation.*;
@@ -102,8 +103,8 @@ public class RoleGroupsController {
 
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
-	private boolean updateRoomsForAllRolesRequest(Principal principal,@RequestParam(name="table",required=false) String tableName){
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	private boolean updateRoomsForAllRolesRequest(Authentication auth, @RequestParam(name="table",required=false) String tableName){
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser cUser = chatPrincipal.getChatUser();
 		User iUser = chatPrincipal.getIntitaUser();
 

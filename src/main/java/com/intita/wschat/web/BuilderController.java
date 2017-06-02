@@ -150,8 +150,8 @@ public class BuilderController {
 
 
 	@RequestMapping(value="/getForm/{id}", method = RequestMethod.GET)
-	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir,Principal principal) {
-		commonController.getIndex(request, null, model,principal);
+	public String  getTeachersTemplate(HttpServletRequest request, @PathVariable("id") Long id, @RequestParam(value = "lang", required = false) String lang, Model model, RedirectAttributes redir,Authentication auth) {
+		commonController.getIndex( null, model);
 		BotDialogItem item;
 		if(lang != null)
 			item = dialogItemService.getByIdAndLang(id, lang);
@@ -174,7 +174,7 @@ public class BuilderController {
 	}
 
 	@RequestMapping(value="/builder", method = RequestMethod.GET)
-	public String  getFormEditorTemplate(HttpServletRequest request,Model model, Principal principal) {
+	public String  getFormEditorTemplate(HttpServletRequest request,Model model) {
 		String lang = chatLangService.getCurrentLang();
 		List<ConfigParam> config =  configParamService.getParams();
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);

@@ -163,7 +163,7 @@ public class BotController {
 	}
 	@RequestMapping(value = "bot_operations/get_bot_dialog_item/{dialogItemId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBotDialogItem(@PathVariable Long dialogItemId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public String getBotDialogItem(@PathVariable Long dialogItemId,  HttpServletRequest request) throws JsonProcessingException {
 		Map<String, BotDialogItem> array = new HashMap<>();
 		for(String lang : ChatLangEnum.LANGS)
 		{
@@ -174,27 +174,27 @@ public class BotController {
 	}
 	@RequestMapping(value = "bot_operations/get_bot_category_names_having_string_first5/{categoryName}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBotCategoryNamesHavingString(@PathVariable String categoryName,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public String getBotCategoryNamesHavingString(@PathVariable String categoryName,  HttpServletRequest request) throws JsonProcessingException {
 		//TODO
 		ArrayList<BotCategory> category = botCategoryService.getBotCategoriesHavingName(categoryName,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT);
 		return objectMapper.writeValueAsString(category);
 	}
 	@RequestMapping(value = "bot_operations/get_bot_dialog_items_descriptions_having_string_first5/{categoryId}/{description}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBotDialogItemNamesHavingString(@PathVariable Long categoryId,@PathVariable String description,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public String getBotDialogItemNamesHavingString(@PathVariable Long categoryId,@PathVariable String description,  HttpServletRequest request) throws JsonProcessingException {
 		//TODO
 		return objectMapper.writeValueAsString(botItemContainerService.getBotDialogItemsHavingDescription(description,categoryId,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT));
 	}
 	@RequestMapping(value = "bot_operations/get_bot_dialog_items_descriptions_having_string_first5/{categoryId}/", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBotDialogItems(@PathVariable Long categoryId,  HttpServletRequest request, Principal principal) throws JsonProcessingException {
+	public String getBotDialogItems(@PathVariable Long categoryId,  HttpServletRequest request) throws JsonProcessingException {
 		//TODO
 		return objectMapper.writeValueAsString(botItemContainerService.getBotDialogItems(categoryId,TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT));
 	}
 
 	@RequestMapping(value = "bot_operations/create_bot_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
-	public String addBotDialogItem( HttpServletRequest request, HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws JsonProcessingException {
+	public String addBotDialogItem( HttpServletRequest request, HttpServletResponse response,@RequestBody BotDialogItem payload) throws JsonProcessingException {
 		if(payload == null)
 		{
 			log.error("send params (object) faild!");//@LANG@
@@ -224,7 +224,7 @@ public class BotController {
 
 	@RequestMapping(value = "bot_operations/save_dialog_item", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response, Principal principal,@RequestBody BotDialogItem payload) throws Exception {
+	public boolean saveBotDialogItem(HttpServletRequest request,HttpServletResponse response,@RequestBody BotDialogItem payload) throws Exception {
 		if(payload == null || payload.getCategory() == null || botCategoryService.getById(payload.getCategory().getId()) == null)
 			throw (new Exception(objectMapper.writeValueAsString(payload) +  "	payload not valid"));
 
@@ -365,7 +365,7 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/close/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean giveTenant(@PathVariable Long roomId, Principal principal) throws JsonProcessingException {
+	public boolean giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
 
 		Room room_0 = roomService.getRoom(roomId);
 		if(room_0 == null)
@@ -564,8 +564,8 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/tenant/{tenantId}/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId, Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public boolean askToAdd(@PathVariable(value="tenantId") Long tenantId, @PathVariable(value="roomId") Long roomId,Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser user = chatPrincipal.getChatUser();
 		ChatUser tenant = chatUsersService.getChatUser(tenantId);
 		if(tenant == null)
@@ -614,8 +614,8 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/tenants/askToAddToRoom/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean askToAddTenantsWithCustomMsg(@RequestBody TenantAskModelJS tenantAskModelJS, @PathVariable(value="roomId") Long roomId, Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public boolean askToAddTenantsWithCustomMsg(@RequestBody TenantAskModelJS tenantAskModelJS, @PathVariable(value="roomId") Long roomId, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser user = chatPrincipal.getChatUser();
 		
@@ -659,17 +659,17 @@ public class BotController {
 	 *********************/
 	@RequestMapping(value = "/bot_operations/tenant/becomeFree",  method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendBecomeFree(Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public void tenantSendBecomeFree(Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
-		chatTenantService.setTenantFree(principal);
+		chatTenantService.setTenantFree(auth);
 		chatController.groupCastAddTenantToList(chatPrincipal.getChatUser());
 	}	
 
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
 	@ResponseBody
-	public void tenantSendBecomeBusy(Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public void tenantSendBecomeBusy(Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser tenant = chatPrincipal.getChatUser();
 		tenantSendBecomeBusy(tenant);
 	}
@@ -687,7 +687,7 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean isUserWaitTenant(@PathVariable Long roomId,Principal principal) {	
+	public boolean isUserWaitTenant(@PathVariable Long roomId) {
 		for (Room room : tempRoomAskTenant)
 			if (room.getId().equals(roomId))
 				return true;
@@ -696,12 +696,13 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_busy_tenant",  method = RequestMethod.POST)
 	@ResponseBody
-	public Object[]  isTenantBusy(Principal principal) {
-		//ChatUser user = chatUsersService.getChatUser(principal);	
-		Long vhatUserId = Long.parseLong(principal.getName());
+	public Object[]  isTenantBusy(Authentication auth) {
+		//ChatUser user = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
+		Long chatUserId = chatPrincipal.getChatUser().getId();
 
-		boolean isTenant = chatTenantService.isTenant(vhatUserId);
-		boolean isTenantBusy = chatTenantService.isTenantBusy(vhatUserId);	
+		boolean isTenant = chatTenantService.isTenant(chatUserId);
+		boolean isTenantBusy = chatTenantService.isTenantBusy(chatUserId);
 
 		Object[] obj = new Object[] {isTenant, isTenantBusy};
 		return obj;
@@ -719,7 +720,7 @@ public class BotController {
 	}	
 	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
 	@ResponseBody
-	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId, Principal principal) {	
+	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId) {
 
 		Timer timer = waitConsultationUsersTimers.get(roomId);
 		timer.cancel();

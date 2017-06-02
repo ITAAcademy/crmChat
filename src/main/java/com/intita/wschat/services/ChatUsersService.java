@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,9 +45,9 @@ public class ChatUsersService {
 	}
 
 	@Transactional
-	public ChatUser getChatUser(Principal principal){
-		if (principal==null)return null;
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public ChatUser getChatUser(Authentication auth){
+		if (auth==null)return null;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		return chatPrincipal.getChatUser();
 	}
 
