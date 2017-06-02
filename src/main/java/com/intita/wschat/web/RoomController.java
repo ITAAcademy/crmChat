@@ -224,8 +224,9 @@ public class RoomController {
 		// roomService.addUserToRoom(guest, room);
 
 		// send to user about room apearenced
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + guest.getId(),
-				getRoomsByAuthorSubscribe(auth, chatPrincipal.getChatUser().getId()));
+		UpdateRoomsPacketModal packetModal = getRoomsByAuthorSubscribe(auth, chatPrincipal.getChatUser().getId());
+		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + guest.getId(),packetModal
+				);
 		// this said ti author that he nust update room`s list
 		addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(guest));
 		botController.register(room, guest.getId());
@@ -718,7 +719,7 @@ public class RoomController {
 	public UpdateRoomsPacketModal getRoomsByAuthorSubscribe(Authentication auth, @DestinationVariable Long userId) { // 000
 		ChatUser user = chatUserServise.getChatUser(userId);
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		if (user == null || chatPrincipal.getChatUser() != user) {
+		if (user == null || !chatPrincipal.getChatUser().equals(user)) {
 			ChatUser user_real = chatPrincipal.getChatUser();
 			if (chatPrincipal.getIntitaUser() == null || !userService.isAdmin(chatPrincipal.getIntitaUser().getId()))
 				return null;
