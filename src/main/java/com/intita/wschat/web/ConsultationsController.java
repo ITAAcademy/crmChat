@@ -204,7 +204,7 @@ public class ConsultationsController {
 	
 	@RequestMapping(value = "/chat/rooms/create/consultation/", method = RequestMethod.POST)
 	@ResponseBody
-	public void createConsultation(Principal principal, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
+	public void createConsultation(Authentication auth, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
 			@RequestBody String time_begin, @RequestBody String time_end*/
 			) throws ParseException
 	{
@@ -263,11 +263,12 @@ public class ConsultationsController {
 			System.out.println("lecture null!!!!!!");
 			return;
 		}
+		ChatPrincipal principal = (ChatPrincipal)auth.getPrincipal();
 
 		consultation.setDate(date);
 		consultation.setStartTime(start_time);
 		consultation.setFinishTime(endTime);
-		consultation.setAuthor(userService.getUser(principal));
+		consultation.setAuthor(principal.getIntitaUser());
 
 		User consultant = userService.getUser(teacher_email);
 
@@ -319,11 +320,11 @@ public class ConsultationsController {
 	
 	@RequestMapping(value="/addRatingByRoom/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean addRatingByRoom(HttpServletRequest request, @PathVariable("roomId") Long roomId, @RequestBody Map<Long, Integer> ratingsValues, Principal principal) {
+	public boolean addRatingByRoom(HttpServletRequest request, @PathVariable("roomId") Long roomId, @RequestBody Map<Long, Integer> ratingsValues, Authentication auth) {
 		Room room = chatRoomsService.getRoom(roomId);
 		if(room == null)
 			throw new RoomNotFoundException("Room id is faild");
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser user = chatPrincipal.getChatUser();
 		
@@ -355,12 +356,12 @@ public class ConsultationsController {
 	}	
 	
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Authentication auth, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */
 		Map <String, Object>result = new HashMap<>();
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser cUser = chatPrincipal.getChatUser();
 		User iUser = chatPrincipal.getIntitaUser();

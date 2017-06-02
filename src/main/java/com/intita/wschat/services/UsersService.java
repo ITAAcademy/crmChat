@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,8 +73,8 @@ public class UsersService {
 	}
 	
 	@Transactional
-	public User getUser(Principal principal){
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public User getUser(Authentication auth){
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		return chatPrincipal.getIntitaUser();
 	}
 	@Transactional
@@ -321,9 +322,9 @@ public class UsersService {
 		
 	}
 	@Transactional
-	public boolean checkRoleByPrincipal(Principal principal, UserRole role){
-		User user = this.getUser(principal);
-		return checkRoleByUser(user,role);
+	public boolean checkRoleByAuthentication(Authentication auth, UserRole role){
+		ChatPrincipal principal = (ChatPrincipal)auth.getPrincipal();
+		return checkRoleByUser(principal.getIntitaUser(),role);
 
 	}
 
