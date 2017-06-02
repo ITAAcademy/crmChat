@@ -281,8 +281,9 @@ public class RoomController {
 
 		if (userIsNotAuthorized) {
 			Room room;
-			if (activeChatUser.getChatUserLastRoomDate().iterator().hasNext()) {
-				room = realChatUser.getChatUserLastRoomDate().iterator().next().getLastRoom();
+			
+			if (chatLastRoomDateService.getUserLastRoomDates(activeChatUser).iterator().hasNext()) {
+				room = chatLastRoomDateService.getUserLastRoomDates(realChatUser).iterator().next().getLastRoom();
 			} else {
 				/*
 				 * ADD BOT TO CHAT
