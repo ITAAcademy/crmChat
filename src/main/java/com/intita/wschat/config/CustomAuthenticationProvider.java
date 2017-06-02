@@ -12,6 +12,8 @@ import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.models.User;
 import com.intita.wschat.services.UsersService;
+
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +139,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					}
 				}
 				User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
-				ChatPrincipal principal = new ChatPrincipal(chatUser,intitaUser);
+				Hibernate.initialize(chatUser);
+				if(intitaUser != null)
+					Hibernate.initialize(intitaUser);
+				ChatPrincipal principal = new ChatPrincipal(chatUser, intitaUser);
 
 				auth = new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
 				//	auth.setAuthenticated(true);

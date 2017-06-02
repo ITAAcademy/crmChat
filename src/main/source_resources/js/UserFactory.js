@@ -98,9 +98,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             });
         }
         var onConnect = function(frame) {
-            //if (frame.headers['user-name'] == undefined)
-              //  location.reload();
-            //setChatUserId(frame.headers['user-name']);
+            if (frame.headers['user-name'] == undefined)
+              location.reload();
+            setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
         };
