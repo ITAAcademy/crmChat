@@ -17,13 +17,6 @@ public class ChatPrincipal implements Principal {
 
 	}
 
-	@Override
-	public int hashCode() {
-		int result = intitaUser.hashCode();
-		result = 31 * result + chatUser.hashCode();
-		return result;
-	}
-
 	public ChatPrincipal(ChatUser chatUser, User intitaUser){
 		this.chatUser = chatUser;
 		this.intitaUser = intitaUser;
@@ -45,14 +38,34 @@ public class ChatPrincipal implements Principal {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((chatUser == null) ? 0 : chatUser.hashCode());
+		result = prime * result + ((intitaUser == null) ? 0 : intitaUser.hashCode());
+		return result;
+	}
 
-		ChatPrincipal that = (ChatPrincipal) o;
-
-		if (intitaUser != null ? !intitaUser.equals(that.intitaUser) : that.intitaUser != null) return false;
-		return chatUser.equals(that.chatUser);
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChatPrincipal other = (ChatPrincipal) obj;
+		if (chatUser == null) {
+			if (other.chatUser != null)
+				return false;
+		} else if (!chatUser.equals(other.chatUser))
+			return false;
+		if (intitaUser == null) {
+			if (other.intitaUser != null)
+				return false;
+		} else if (!intitaUser.equals(other.intitaUser))
+			return false;
+		return true;
 	}
 
 	private User intitaUser;

@@ -69,13 +69,6 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	
-	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
-		return chatUserLastRoomDate;
-	}
-	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
-		this.chatUserLastRoomDate = chatUserLastRoomDate;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
