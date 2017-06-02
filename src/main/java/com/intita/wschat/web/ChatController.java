@@ -658,8 +658,9 @@ public class ChatController {
 	 * Go into room
 	 */
 
-	@MessageMapping("/chat.go.to.dialog/{roomId}")
-	public boolean userGoToDialogListener(@DestinationVariable("roomId") Long roomId, Authentication auth) {
+	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean userGoToDialogListenerLP(@PathVariable("roomId") Long roomId, Authentication auth) {
 		// checkProfanityAndSanitize(message);
 		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
 		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal,
@@ -693,12 +694,6 @@ public class ChatController {
 		// 0 , new Date().toString(), room,
 		// userMessageService.getLastUserMessageByRoom(room));
 		return true;
-	}
-
-	@RequestMapping(value = "/chat.go.to.dialog/{roomId}", method = RequestMethod.POST)
-	@ResponseBody
-	public boolean userGoToDialogListenerLP(@PathVariable("roomId") Long roomid, Authentication auth) {
-		return userGoToDialogListener(roomid, auth);
 	}
 
 	@RequestMapping(value = "/chat/get_students/", method = RequestMethod.GET)
@@ -1051,6 +1046,8 @@ public class ChatController {
 	@ResponseBody
 	public IntitaUserDTO getNickNamesLike(@RequestParam Long chatUserId) throws JsonProcessingException {
 		User intitaUser = userService.getUserFromChat(chatUserId);
+		if(intitaUser == null)
+			return null;
 		IntitaUserDTO userDTO = dtoMapper.map(intitaUser);
 		return userDTO;
 	}

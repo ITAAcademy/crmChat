@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.net.InterfaceAddress;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,8 @@ import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.models.User;
 import com.intita.wschat.services.UsersService;
+
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.RedisService;
 import com.intita.wschat.util.SerializedPhpParser;
@@ -137,7 +141,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					}
 				}
 				User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
-				ChatPrincipal principal = new ChatPrincipal(chatUser,intitaUser);
+
+				Hibernate.initialize(chatUser);
+				Hibernate.initialize(chatUser.getRoomsFromUsers());
+				Hibernate.initialize(chatUser.getRootRooms());
+				
+				if(intitaUser != null)
+					Hibernate.initialize(intitaUser);
+				
+				ChatPrincipal principal = new ChatPrincipal(chatUser, intitaUser);
 
 				auth = new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);
 				//	auth.setAuthenticated(true);

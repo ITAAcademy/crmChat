@@ -2178,7 +2178,7 @@ body.frame .open_in_new_tab {
     transition-property: max-height;
     overflow: hidden;
     border-radius: 10px;
-    right:0px;
+    right: 0px;
     /* border: #fff 1px solid; */
 }
 
@@ -2742,13 +2742,14 @@ span.rooms_search_loader img {
     border-top-color: #4b75a4
 }
 
-.block_item .login_button{
-   text-align: center;
+.block_item .login_button {
+    text-align: center;
     font-size: 25px;
     font-family: MyriadPro2;
     height: 55px;
 }
-.block_item .login_button .login_button_text_wrapper{
+
+.block_item .login_button .login_button_text_wrapper {
     margin-top: -20px;
     top: 50%;
     position: absolute;
@@ -2758,8 +2759,8 @@ span.rooms_search_loader img {
     color: white;
 }
 
-.user_profile_avatar{
-width:100%;
+.user_profile_avatar {
+    width: 100%;
 }
 
 @media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {
@@ -2794,7 +2795,7 @@ width:100%;
 
 @media (max-width: 769px) {
     .left_panel {
-        z-index: 222222;
+        z-index: 9999;
         max-width: 0;
         -webkit-transition: max-width .5s ease-in-out;
         -webkit-transition: max-width 0.5s ease-in-out;
@@ -2883,6 +2884,19 @@ width:100%;
     }
 }
 
+.user_profile_record span:first-child {
+    min-width: 70px;
+    width: 1px;
+    display: inline-block;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.user_profile_record a {
+    color: #1e8eda;
+    text-decoration: none;
+}
+
 @media only screen and (min-width:1350px) {
     .items_list_block .block_content {
         min-height: 130px;
@@ -2896,6 +2910,13 @@ width:100%;
         max-height: 65px;
     }
 }
+
+@media only screen and (max-height: 1024px) {
+    .consultant_wrapper{
+        padding: 0;
+    }
+}
+
 
 @media only screen and (max-width: 300px) {
     body.frame .head .logo {

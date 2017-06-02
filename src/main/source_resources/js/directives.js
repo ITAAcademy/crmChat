@@ -194,7 +194,7 @@ function starRating() {
         restrict: 'EA',
         template: `<div class="rating label-right star-svg" ng-class="containerClass">
     <div class="label-value">{{ratingValue}}</div>
-    <div class="star-container">
+    <div class="star-container" ng-class="getColor()">
         <div ng-repeat="star in stars" ng-class="star.class" ng-click="toggle($event, $index)">
             <svg class="star-filled">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/star-rating.icons.svg#star-filled"></use>
@@ -207,12 +207,14 @@ function starRating() {
             </svg>
         </div>
     </div>
-</div>`,
+</div>`/*<textarea ng-if="ratingValue < marks.good" placeholder="{{::placeholder}}" />`*/,
         scope: {
             ratingValue: '=ngModel',
             max: '=?', // optional (default is 10)
             starsCount: '=?',
             halfEnable: "=?",
+            placeholder: "@?",
+            marks: "=?",
             onRatingSelect: '&?',
             readonly: '=?',
             ngClass: '@'
@@ -222,8 +224,33 @@ function starRating() {
             if (attributes.onratingselect == "angular.noop")
                 attributes.onratingselect = function() {};
 
+
+            if (scope.marks == undefined) {
+                scope.marks = {};
+            }
+
+
             if (scope.max == undefined) {
                 scope.max = 10;
+            }
+            scope.marks.bad = scope.marks.bad || Math.floor(scope.max * 0.4);
+            scope.marks.good = scope.marks.good || Math.floor(scope.max * 0.8);
+            scope.getColor = function(index) {
+                /*if (index > scope.ratingValue)
+                    return '';
+
+                if (index > scope.marks.good)
+                    return 'good';
+                if (index > scope.marks.bad)
+                    return 'bad';
+                 return 'horrible';*/
+                if (scope.ratingValue == 0)
+                    return '';
+                if (scope.ratingValue >= scope.marks.good)
+                    return 'good';
+                if (scope.ratingValue >= scope.marks.bad)
+                    return 'bad';
+                return 'horrible';
             }
 
             if (scope.starsCount == undefined) {
@@ -250,6 +277,7 @@ function starRating() {
 
                 for (var i = 0; i < scope.starsCount; i++) {
                     scope.stars[i].class = i < value ? !full && i + 1 > value ? 'star half' : 'star filled' : 'star empty';
+                    //scope.stars[i].class += ' ' + scope.getColor(i + 1);
                 }
                 scope.containerClass = scope.ngClass + ' value-' + Math.round(value);
             };
@@ -403,7 +431,7 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
 
     };
 }]);
-angular.module('springChat.directives').directive('userBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory','$rootScope','ngDialog', userBlock]);
+angular.module('springChat.directives').directive('userBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', '$rootScope', 'ngDialog', userBlock]);
 angular.module('springChat.directives').directive('studentsBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', 'ChannelFactory', studentsBlock]);
 angular.module('springChat.directives').directive('trainersBlock', ['$http', 'mySettings', 'RoomsFactory', 'UserFactory', trainersBlock]);
 
@@ -507,7 +535,7 @@ function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFact
 };
 
 
-function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory,$rootScope,ngDialog) {
+function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory, $rootScope, ngDialog) {
     return {
         restrict: 'EA',
         scope: {
@@ -518,7 +546,7 @@ function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory,
             scope.blockName = 'Користувач'; //lgPack.blockNames.students;
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
-            scope.mySettings = mySettings;   
+            scope.mySettings = mySettings;
         }
 
     };
@@ -564,8 +592,8 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 return false;
             }
             scope.validateAvatar = function(avatar) {
-            if (avatar == null) return "noname.png";
-            return avatar;
+                if (avatar == null) return "noname.png";
+                return avatar;
             }
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = lgPack.blockNames.participants;
@@ -640,17 +668,17 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
     $this.html(text);
   });*/
 
-    //DOM has finished rendering
-    $('#message_input_editable').on('paste', function(e) {
-        e.preventDefault();
-        var text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        var escapedHtml = htmlEscape(text);
+            //DOM has finished rendering
+            $('#message_input_editable').on('paste', function(e) {
+                e.preventDefault();
+                var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+                var escapedHtml = htmlEscape(text);
 
-        var linkified = linkifyStr(escapedHtml, {});
-        pasteHtmlAtCaret(linkified);
-        //$scope.newMessage = text;
+                var linkified = linkifyStr(escapedHtml, {});
+                pasteHtmlAtCaret(linkified);
+                //$scope.newMessage = text;
 
-    });
+            });
 
             var sendingMessage = null;
             var typing = undefined;
@@ -842,6 +870,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 loadRatings().then(function(response) {
 
                         $scope.ratings = response.data;
+                        for (var i = 0; i < $scope.ratings.length; i++) {
+                            $scope.ratings[i].value = 10;
+                        }
                         $http.get('askForRatingModal.html').then(function(response) {
                             var messageObj = {};
                             messageObj.message = response.data;
