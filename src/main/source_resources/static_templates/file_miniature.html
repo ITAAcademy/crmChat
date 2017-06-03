@@ -1,5 +1,5 @@
  <div class="file-extension-preview-wrapper">
-    	<a  ng-if="link!=null" ng-href="{{link}}" ><img class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/></a>
+    	<a  ng-if="link!=null" target="_blank" ng-href="{{link}}" ><img class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/></a>
      <img  ng-if="link==null"  class="file-extension-preview" ng-src="{{imageSrc}}" alt=""/>
      <i class="material-icons remove_file_icon" ng-if="removable" ng-click="removeItemCallback($index)">delete</i>
  </div>
