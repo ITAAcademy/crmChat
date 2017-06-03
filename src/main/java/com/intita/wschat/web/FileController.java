@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +69,7 @@ public class FileController {
 	@RequestMapping(method = RequestMethod.POST, value = "/upload_file/{roomId}")
 	@ResponseBody
 	public void saveFile(MultipartHttpServletRequest request,
-						 HttpServletResponse response, Authentication auth, @PathVariable("roomId") Long roomId) {
+			HttpServletResponse response, Authentication auth,@PathVariable("roomId") Long roomId) {
 		//0. notice, we have used MultipartHttpServletRequest
 		int maxFileLength = convertFileSizeStringToBytes(MaxFileSizeString);
 		//String contentLengthStr = request.getHeader("content-length");

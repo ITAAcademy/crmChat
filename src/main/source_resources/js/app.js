@@ -9,7 +9,7 @@ var springChat = angular.module('springChat', ['springChat.controllers', //'spri
 var springChatControllers = angular.module('springChat.controllers', ['tooltips', 'ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
 
 springChat.config(['$compileProvider', function($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https|http|ftp|mailto|callto|skype):/);
 }]);
 
 springChat.filter('unique', function ($parse) {

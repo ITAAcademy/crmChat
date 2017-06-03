@@ -199,11 +199,11 @@
     }
 }
 </style>
-<div id="chat_mini" ng-show="init" class="draggable disable-animation chat mini ng-class:{mini: state==1, full: state==2}" ng-click="">
-    <iframe style="width: 100%;height: 100%;border: none;" ng-src="{{crm_path}}"></iframe>
+<div id="chat_mini" ng-show="init" class="draggable disable-animation chat mini">
+    <iframe style="width: 100%;height: 100%;border: none;"></iframe>
     <div class="window_panel ignore" style="">
-        <div id="minimize_btn" class="material-icons" ng-click="minimizete()">remove</div>
-        <div id="fullscreen_btn" class="material-icons" ng-click="fullScreen()">web_asset</div>
+        <div id="minimize_btn" class="material-icons">remove</div>
+        <div id="fullscreen_btn" class="material-icons">web_asset</div>
     </div>
-    <div class="handle" ng-mouseup="minimizeteMin()" style=""></div>
+    <div class="handle" style=""></div>
 </div>
