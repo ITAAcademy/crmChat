@@ -384,6 +384,7 @@ public class RoomsService {
 	}
 
 	public void replaceUsersInRoom(Room room, ArrayList<ChatUser> chatUserList) {
+		if(chatUserList==null)return;
 		Set<ChatUser> roomUserList = room.getUsers();
 		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
 		add.removeAll(roomUserList);
@@ -530,8 +531,6 @@ public class RoomsService {
 
 	@Transactional
 	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms, Integer count) {
-		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
-		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		List<RoomModelSimple> result = new ArrayList <RoomModelSimple> ();
 
@@ -604,6 +603,13 @@ public class RoomsService {
 
 		return null;
 	}
+
+	public void updateRoomsForAllRoles() {
+		for (String table : rolesTablesNames){
+			updateRoomForRoleTable(table);
+		}
+	}
+
 	@Transactional
 	public boolean updateRoomForRoleTable(String tableName){
 		int indexOfTable = rolesTablesNames.indexOf(tableName);

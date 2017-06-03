@@ -94,12 +94,6 @@ public class RoleGroupsController {
 	}
 
 	//@PostConstruct
-	private void updateRoomsForAllRoles(){
-		for(UserRole role : UserRole.values())
-		{
-			updateRoomForRole(role);
-		}
-	}
 
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
@@ -110,7 +104,7 @@ public class RoleGroupsController {
 
 		if(usersService.checkRole(iUser, UserRole.ADMIN)) {
 			if(tableName==null) {
-				updateRoomsForAllRoles();
+				roomsService.updateRoomsForAllRoles();
 			}
 			else {
 				boolean updated = roomsService.updateRoomForRoleTable(tableName);
