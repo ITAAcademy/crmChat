@@ -116,6 +116,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 //$rootScope.popupData.user = response.data;
                 var scope = $scope.$new(true);
                 scope.user = response.data;
+                debugger;
                 scope.trust = $sce.trustAsHtml;                
                 var userProfileDialog = ngDialog.open({
                     template: 'user_profile_popup.html',

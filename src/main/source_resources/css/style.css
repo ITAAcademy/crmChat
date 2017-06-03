@@ -165,8 +165,13 @@ button:focus {
     width: calc(100% - 301px);
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
 }
 
 .right_panel #toast-container {
@@ -2914,10 +2919,10 @@ user profile popup
 
 .profile_container {
     height: 300px;
-    width:550px;
+    width: 100%;
     position: relative;
-    padding-top: 10px;
-    padding-left: 10px;
+    /* padding-top: 10px; */
+    /* padding-left: 10px; */
 }
 .profile_container .left_block {
     float:left;
@@ -2926,6 +2931,7 @@ user profile popup
 .profile_container .right_block {
     margin-left: 200px;
     height: 100%;
+    position: relative;
 }
 .profile_container .avatar_container img {
     width:170px;
@@ -2935,21 +2941,24 @@ user profile popup
 .profile_container .user_common_info{
 
 }
-.profile_container .user_common_info:after{
+.profile_container .details:after{
+    /* position: absolute; */
     display:block;
     content:'';
     height:2px;
     width:70%;
     margin-left:auto;
     margin-right:auto;
-    background-color: #e7e7e7 ;
-    margin-top:7px
+    background-color: #e7e7e7;
+    margin-top: 5px;
 }
 .profile_container .details{
-    margin-top: 10px;
+    /* margin-top: 10px; */
+    margin-bottom: 10px;
     width:auto;
     height:auto;
     text-align:center;
+    position: relative;
 }
 
 .profile_container .full_name {
@@ -2997,10 +3006,13 @@ color: #808288;
 }
 .user_contact_buttons a{
     text-decoration:none;
-    user-select:none;
+    -webkit-user-select:none;
+       -moz-user-select:none;
+        -ms-user-select:none;
+            user-select:none;
 }
 
-.user_contact_buttons{position: relative;bottom: 0px;}
+.user_contact_buttons{position: absolute;width: 100%;bottom: 0px;}
 
 .user_detail_record{
     padding-top: 10px;
@@ -3010,11 +3022,14 @@ color: #808288;
     cursor: pointer;
 }
 .social_buttons_container .social_button_item a{
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 .social_buttons_container {
     text-align: center;
-    padding-top: 10px;
+    padding-top: 5px;
 }
 .user_detailed_info {}
 /*user profile popup end*/
@@ -3084,7 +3099,7 @@ color: #808288;
     }
     .profile_container .right_block{
        position:initial;
-       display:inline-block;
+       /* display:inline-block; */
        margin-left:0px;
     }
      .profile_container .left_block{
@@ -3108,11 +3123,15 @@ color: #808288;
 
     .social_buttons_container{
         display:inline-block;
+        vertical-align: top;
+        text-align: center;
+        width: calc(100% - 125px);
+        margin-top: 5px;
     }
     
     .profile_container .profile_btn {
-        width:150px;
-        display:inline-block
+        width: calc(50% - 2.5px);
+        display:inline-block;
     }
 
 
