@@ -242,6 +242,8 @@ public class CommonController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser cUser = chatPrincipal.getChatUser();
+		//update new info about intitaUser
+		chatPrincipal.setIntitaUser(userService.getById(chatPrincipal.getIntitaUser().getId()));
 		if(cUser == null)
 			return false;
 		
