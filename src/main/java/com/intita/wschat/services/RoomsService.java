@@ -49,7 +49,7 @@ public class RoomsService {
 
 	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
 	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
-	private String defaultRoleNames = "адміністратор,студент,супервізор,викладач-консультант,бухгалтер,консультант,тенант,тренер,аудитор,автор,директор";
+	private String defaultRoleNames = "Administrators, Students, Supervisors, Teachers and consultants, Accountants, Consultants, Tenants, Trainers, Auditors, Authors, Directors";
 
 	@Autowired
 	private Environment env;
