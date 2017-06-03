@@ -2898,6 +2898,118 @@ span.rooms_search_loader img {
     text-decoration: none;
 }
 
+/*
+user profile popup
+*/
+.ngdialog-theme-default.user_profile_dialog .ngdialog-content{
+    width:570px !important ;
+    height:380px;
+}
+
+.profile_container {
+    height: 300px;
+    width:550px;
+    position: relative;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+.profile_container .left_block {
+    float:left;
+    height: 100%;
+}
+.profile_container .right_block {
+    margin-left: 200px;
+    height: 100%;
+}
+.profile_container .avatar_container img {
+    width:170px;
+    height:170px;
+    border-radius:50%;
+}
+.profile_container .user_common_info{
+
+}
+.profile_container .user_common_info:after{
+    display:block;
+    content:'';
+    height:2px;
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    background-color: #e7e7e7 ;
+    margin-top:7px
+}
+.profile_container .details{
+    margin-top: 10px;
+    width:auto;
+    height:auto;
+    text-align:center;
+}
+
+.profile_container .full_name {
+color: #1e8eda;
+font-size:20px;
+font-weight:bold;
+}
+.profile_container .nick_name {
+color: #808288;
+}
+.user_detail_record .key,
+.user_detail_record .value{
+    vertical-align: top;
+}
+
+.user_detail_record .key{font-weight: bold;width: 80px;display: inline-block;}
+.user_detail_record .value{
+    display: inline-block;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    width:240px;
+    white-space:nowrap;
+}
+.profile_container .profile_btn {
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    width: 200px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.profile_container .view_profile_btn{
+    background-color: #3598db;
+    
+    color: white;
+
+}
+.chatting_btn{
+    background-color: #4b75a4;
+    color: white;
+}
+.user_contact_buttons a{
+    text-decoration:none;
+    user-select:none;
+}
+
+.user_contact_buttons{position: relative;bottom: 0px;}
+
+.user_detail_record{
+    padding-top: 10px;
+}
+.social_buttons_container .social_button_item {
+    display:inline-block;
+    cursor: pointer;
+}
+.social_buttons_container .social_button_item a{
+    user-select: none;
+}
+.social_buttons_container {
+    text-align: center;
+    padding-top: 10px;
+}
+.user_detailed_info {}
+/*user profile popup end*/
+
 @media only screen and (min-width:1350px) {
     .items_list_block .block_content {
         min-height: 130px;

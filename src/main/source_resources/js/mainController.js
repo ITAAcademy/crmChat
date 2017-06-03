@@ -47,6 +47,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         //Imports from Services
         //Imports/>
         ChannelFactory.setIsInited(false);
+        $rootScope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
         $rootScope.baseurl = globalConfig["baseUrl"];
         $rootScope.imagesPath = globalConfig["imagesPath"];
         $scope.baseurl = globalConfig["baseUrl"];
@@ -60,6 +61,11 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 return true;
             return isSameDay(curr, prev);
         };
+        $rootScope.goToUserProfile = function(userId){
+            ChannelFactory.changeLocation($rootScope.baseurl+'/profile/'+userId);
+        }
+
+       
         $rootScope.getNameFromUrl = getNameFromUrl;
         $rootScope.getNameFromRandomizedUrl = getNameFromRandomizedUrl;
         $scope.state = 2;
@@ -113,7 +119,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 scope.trust = $sce.trustAsHtml;                
                 var userProfileDialog = ngDialog.open({
                     template: 'user_profile_popup.html',
-                    scope: scope
+                    scope: scope,
+                    className:'ngdialog-theme-default user_profile_dialog'
                 });
             }, function(error) {});
 
