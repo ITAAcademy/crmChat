@@ -355,7 +355,6 @@ angular.module('springChat.directives').directive('tenantsBlock', ['$rootScope',
 
                 }
                 scope.checked.size = size;
-                console.log(size);
             }
 
             scope.toggleSelect = function() {

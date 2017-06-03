@@ -171,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 
         var reinitElemPos = function() {
-            console.log("test");
             var elem = jQuery(".dnd-container");
             var res_elem = jQuery('.draggable');
             var x = localStorage.getItem("chatX");

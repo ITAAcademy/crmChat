@@ -5,9 +5,7 @@
     <div class="profile_container">
         <div class="left_block">
             <div class="user_common_info">
-                <div class="avatar_container">
-                    <img ng-src="{{$root.imagesPath + '/avatars/' + user.avatar}}">
-                </div>
+                <div class="avatar_container" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + $root.validateAvatar(user.avatar) + ')'}"></div>
             </div>
             <div class="social_buttons_container">
                 <div class="details">
@@ -73,6 +71,4 @@
             </div>
         </div>
     </div>
-</div>
-<div class="modal-footer">
 </div>

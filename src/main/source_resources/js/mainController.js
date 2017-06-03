@@ -116,7 +116,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 //$rootScope.popupData.user = response.data;
                 var scope = $scope.$new(true);
                 scope.user = response.data;
-                debugger;
                 scope.trust = $sce.trustAsHtml;                
                 var userProfileDialog = ngDialog.open({
                     template: 'user_profile_popup.html',
@@ -841,7 +840,6 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             range.setStartAfter(textNode);
             sel.removeAllRanges();
             sel.addRange(range);
-            console.log("Inserted:" + text);
         }
 
         messageAreaResizer();
