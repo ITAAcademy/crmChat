@@ -3054,7 +3054,9 @@ user profile popup
 }
 
 .user_detailed_info {}
-
+.emoji-menu{
+    bottom: 50px !important;
+}
 
 /*user profile popup end*/
 
