@@ -591,10 +591,6 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory) {
                 }
                 return false;
             }
-            scope.validateAvatar = function(avatar) {
-                if (avatar == null) return "noname.png";
-                return avatar;
-            }
             scope.participants = RoomsFactory.getParticipants;
             scope.blockName = lgPack.blockNames.participants;
             scope.currentRoom = RoomsFactory.getCurrentRoom;

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -117,7 +118,7 @@ public class AdminPanelRatingsController {
 	
 	@RequestMapping(value = "/chat/admin/ratingByRoom", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<MsgResponseRatingsModel> ratingByRoom(Principal principal, @RequestBody MsgRequestRatingsModel rqModel) {
+	public ArrayList<MsgResponseRatingsModel> ratingByRoom(@RequestBody MsgRequestRatingsModel rqModel) {
 		Room ratingRoom = null;
 		
 		if(rqModel.getIsUser())

@@ -198,7 +198,7 @@ public class CommonController {
 	}
 
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public String  getIndex(HttpServletRequest request, @RequestParam(required = false) String before,  Model model,Principal principal) {
+	public String  getIndex( @RequestParam(required = false) String before,  Model model) {
 		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
 		//chatLangService.updateDataFromDatabase();
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();

@@ -18,6 +18,71 @@ public class IntitaUserDTO {
     private String login;
     private String avatar;
 
+    public String getGoogleplus() {
+        return googleplus;
+    }
+
+    public void setGoogleplus(String googleplus) {
+        this.googleplus = googleplus;
+    }
+
+    public String getLinkedin() {
+        return linkedin;
+    }
+
+    public void setLinkedin(String linkedin) {
+        this.linkedin = linkedin;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
+    public String getInterests() {
+        return interests;
+    }
+
+    public void setInterests(String interests) {
+        this.interests = interests;
+    }
+
+    private String googleplus;
+    private String linkedin;
+    private String twitter;
+    private String phone;
+    private String address;
+    private String education;
+    private String interests;
+
+
     public Long getId() {
         return id;
     }

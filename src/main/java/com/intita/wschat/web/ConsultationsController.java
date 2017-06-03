@@ -113,11 +113,11 @@ public class ConsultationsController {
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/chat/consultation/info/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Principal principal) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Authentication auth) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		Map <String, Object>result = new HashMap<>();
 		ChatUser cUser = chatPrincipal.getChatUser();
@@ -186,7 +186,7 @@ public class ConsultationsController {
 		return mapper.writeValueAsString(result);
 	}
 	@RequestMapping(value = "/chat/consultation/fromRoom/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId) throws InterruptedException, JsonProcessingException {
 		ChatConsultation cons = chatConsultationsService.getConsultationByRoom(new Room(roomId));
 		if(cons != null) 
 			return mapper.writeValueAsString(cons.getIntitaConsultation().getId());
@@ -405,8 +405,8 @@ public class ConsultationsController {
 	
 	@ResponseBody 
 	@RequestMapping(value = "/chat/consultation/get_mail/{id}", method = RequestMethod.GET)
-	  private boolean sendConsultationEmail(final ChatConsultation chatConsultation,Principal principal,@PathVariable("id") Long consultationId) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	  private boolean sendConsultationEmail(final ChatConsultation chatConsultation,Authentication auth,@PathVariable("id") Long consultationId) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser chatuser = chatPrincipal.getChatUser();
 		  ChatConsultation consultation = chatConsultationsService.getByIntitaConsultationId(consultationId);

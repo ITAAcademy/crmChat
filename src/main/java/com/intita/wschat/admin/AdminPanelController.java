@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -112,7 +113,7 @@ public class AdminPanelController {
 
 	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
-	public String  admin(HttpServletRequest request,Model model, Principal principal) {
+	public String  admin(HttpServletRequest request,Model model) {
 
 		String lang = chatLangService.getCurrentLang();
 		List<ConfigParam> config =  configParamService.getParams();
@@ -127,8 +128,8 @@ public class AdminPanelController {
 	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser user = chatPrincipal.getChatUser();
 		List<User> users= new ArrayList<>();
@@ -159,7 +160,7 @@ public class AdminPanelController {
 
 	@RequestMapping(value = "/chat/msgHistory", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> getMsgHistory(Principal principal, @RequestBody MsgRequestModel rqModel) {
+	public ArrayList<ChatMessage> getMsgHistory(@RequestBody MsgRequestModel rqModel) {
 		ChatUser first = chatUsersService.getChatUser(rqModel.getUserIdFirst().longValue());
 		ChatUser second = chatUsersService.getChatUser(rqModel.getUserIdSecond().longValue());
 		
