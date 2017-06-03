@@ -7,6 +7,7 @@
 }
 
 * {
+    -webkit-transition: none !important;
     transition: none !important;
 }
 
@@ -164,13 +165,8 @@ button:focus {
     width: calc(100% - 301px);
     background-color: #fff;
     /* border-left: 2px solid #c5c5c5; */
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    flex-direction: column;
 }
 
 .right_panel #toast-container {
@@ -283,7 +279,9 @@ button:focus {
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
+    -webkit-transition: 1s ease-out;
     transition: 1s ease-out;
+    -webkit-transition-property: max-height, min-height;
     transition-property: max-height, min-height;
     overflow-y: scroll;
 }
@@ -301,6 +299,7 @@ button:focus {
     padding: 10px;
     background-origin: content-box;
     opacity: 0.3;
+    -webkit-transition-property: all;
     transition-property: all;
     pointer-events: none;
 }
@@ -457,10 +456,12 @@ button:focus {
     width: 25px;
     height: 25px;
     top: 0px;
+    -webkit-transition: 1s ease-in-out;
     transition: 1s ease-in-out;
     color: #3e87b8;
     font-weight: 900;
     font-size: 25px;
+    -webkit-transition-property: -webkit-transform;
     transition-property: -webkit-transform;
     transition-property: transform;
     transition-property: transform, -webkit-transform;
@@ -911,6 +912,8 @@ button:focus {
     left: 0;
     border: 0;
     padding: 0;
+    -webkit-transition: all ease-out .5s;
+    -webkit-transition: all ease-out 0.5s;
     transition: all ease-out 0.5s;
     background-color: #fff;
 }
@@ -1093,6 +1096,7 @@ button:focus {
     font-family: "Roboto";
     display: inline-block;
     font-weight: 500;
+    -webkit-transition: visibility 0s, opacity .5s linear;
     transition: visibility 0s, opacity .5s linear;
 }
 
@@ -1536,6 +1540,7 @@ button:focus {
     background-color: #125096;
     -webkit-transform: skew(0deg, 25deg);
     transform: skew(0deg, 25deg);
+    -webkit-transition: .5s ease-in-out;
     transition: .5s ease-in-out
 }
 
@@ -1549,6 +1554,7 @@ button:focus {
     background-color: #125096;
     -webkit-transform: skew(0deg, -25deg);
     transform: skew(0deg, -25deg);
+    -webkit-transition: .5s ease-in-out;
     transition: .5s ease-in-out
 }
 
@@ -2172,7 +2178,9 @@ body.frame .open_in_new_tab {
     padding: 0;
     top: 34px;
     max-height: 0px;
+    -webkit-transition: 1s;
     transition: 1s;
+    -webkit-transition-property: max-height;
     transition-property: max-height;
     overflow: hidden;
     border-radius: 10px;
@@ -2488,6 +2496,7 @@ span.rooms_search_loader img {
     max-width: 250px;
     border-radius: 3px;
     opacity: 0;
+    -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
@@ -2795,6 +2804,8 @@ span.rooms_search_loader img {
     .left_panel {
         z-index: 9999;
         max-width: 0;
+        -webkit-transition: max-width .5s ease-in-out;
+        -webkit-transition: max-width 0.5s ease-in-out;
         transition: max-width 0.5s ease-in-out;
     }
     .left_panel.active {
@@ -2966,10 +2977,10 @@ color: #808288;
     text-align: center;
     cursor: pointer;
     -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    width: 200px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
     padding: 10px;
     margin-top: 10px;
 }
@@ -2986,10 +2997,7 @@ color: #808288;
 }
 .user_contact_buttons a{
     text-decoration:none;
-    -webkit-user-select:none;
-       -moz-user-select:none;
-        -ms-user-select:none;
-            user-select:none;
+    user-select:none;
 }
 
 .user_contact_buttons{position: relative;bottom: 0px;}
@@ -3002,10 +3010,7 @@ color: #808288;
     cursor: pointer;
 }
 .social_buttons_container .social_button_item a{
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
 }
 .social_buttons_container {
     text-align: center;
@@ -3051,65 +3056,4 @@ color: #808288;
     body.frame .window_icons_wrapper .tenant_busy_control {
         display: none !important;
     }
-  
-}
-
-@media only screen and (max-width: 540px) {
-  .profile_container .avatar_container img{
-        width: 120px;
-        height: 120px;
-        display: inline-block;
-    }
-    .profile_container .right_block{
-     margin-left:160px;   
-    }
-
-    .user_detail_record .value {
-        width:200px;
-    }
-
-
-}
-
-@media only screen and (max-width: 500px) {
-    
-  .profile_container .avatar_container img{
-        width: 120px;
-        height: 120px;
-        display: inline-block;
-    }
-    .profile_container .right_block{
-       position:initial;
-       display:inline-block;
-       margin-left:0px;
-    }
-     .profile_container .left_block{
-       float:none;
-       width:100%;
-       height:120px;
-    }
-
-    .user_detail_record .value {
-        width:200px;
-    }
-    .profile_container{
-        width:100%
-    }
-     .profile_container .user_common_info{
-         display:inline-block;
-     }
-    .profile_container .user_common_info:after{
-    display:none;
-    }
-
-    .social_buttons_container{
-        display:inline-block;
-    }
-    
-    .profile_container .profile_btn {
-        width:150px;
-        display:inline-block
-    }
-
-
 }
