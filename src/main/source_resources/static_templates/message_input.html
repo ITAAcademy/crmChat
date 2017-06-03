@@ -5,8 +5,8 @@
 <div class="transparent_input message_input" id="message_input_editable" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" ng-click="onClick()" content-editable="true" ng-keydown="keyPress($event)"></div>
 <div class="helper"><span th:text="${lgPack.helpers.newLineHint}">для переведення курсору натисність Shift + Enter</span></div>
 <div class="files_input">
-    <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
-    <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>
+    <img ng-if="files!=null &amp;&amp; files.length>0" class="clear-file" src="images/X.svg" alt="" ng-click="clearFiles()" />
+    <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" name="file.name" link="file.data" remove-callback="removeFileFromUpload"></div>
 </div>
 <div class="controls_area">
     <div class="multimedia_conversation_controls">
@@ -23,7 +23,6 @@
         </ul>-->
         <div class="upload_file_form_container"></div>
         <!--<button modale-toggle="true" ignore-id="attaches_area" callback="help_dropdown_click()"><i class="material-icons">help_outline</i></button>-->
-
         <button ng-show="askForRatingEnabled" ng-click="askForRating()"><i class="material-icons">thumb_up</i></button>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>

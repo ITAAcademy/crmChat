@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +69,7 @@ public class FileController {
 	@RequestMapping(method = RequestMethod.POST, value = "/upload_file/{roomId}")
 	@ResponseBody
 	public void saveFile(MultipartHttpServletRequest request,
-			HttpServletResponse response,Principal principal,@PathVariable("roomId") Long roomId) {
+			HttpServletResponse response, Authentication auth,@PathVariable("roomId") Long roomId) {
 		//0. notice, we have used MultipartHttpServletRequest
 		int maxFileLength = convertFileSizeStringToBytes(MaxFileSizeString);
 		//String contentLengthStr = request.getHeader("content-length");
@@ -111,7 +113,7 @@ public class FileController {
 				}
 				return;
 			}
-			ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
+			ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 			String mainDir = ""+roomId;
 			String subDir = ""+chatPrincipal.getChatUser().getId();
 			String realPathtoUploads =  uploadDir+File.separator+mainDir+File.separator+subDir+File.separator;

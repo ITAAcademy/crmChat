@@ -207,7 +207,7 @@ function starRating() {
             </svg>
         </div>
     </div>
-</div>`/*<textarea ng-if="ratingValue < marks.good" placeholder="{{::placeholder}}" />`*/,
+</div>` /*<textarea ng-if="ratingValue < marks.good" placeholder="{{::placeholder}}" />`*/ ,
         scope: {
             ratingValue: '=ngModel',
             max: '=?', // optional (default is 10)
@@ -656,6 +656,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
+            $scope.files = [];
             /*$("[contenteditable='true']").on('focus', function() {
                 var $this = $(this);
                 $this.html($this.html() + '<br>'); // firefox hack
@@ -771,8 +772,45 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             $scope.clearFiles = function() {
                 $scope.files = [];
             }
-            $scope.selectFiles = function(files) {
-                $scope.files = files;
+            document.onpaste = function(event) {
+                var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+                var files = [];
+                for (var index = 0; index < items.length; index++) {
+                    var item = items[index];
+                    if (item.kind === 'file' && item.type.indexOf('image/') != -1) {
+                        var blob = item.getAsFile();
+                        files.push(new File([blob], "file" + $scope.files.length + '.png', { type: "image/png" }));
+                    }
+                    $scope.selectFiles(files, true);
+                }
+            }
+
+            $scope.selectFiles = function(files, ignoreClean) {
+                if (ignoreClean === true) {
+
+                } else {
+                    $scope.files = [];
+                }
+                for (var i = 0; i < files.length; i++) {
+                    (function() {
+                        var file = files[i];
+                        var reader = new FileReader();
+
+                        function onload() {
+                            file.data = reader.result;
+                            $scope.files.push(file);
+                            $scope.$apply();
+                        }
+                        reader.onloadend = onload
+                        if (file.type.indexOf('image/') != -1) {
+                            reader.readAsDataURL(file);
+                        } else
+                            $scope.files.push(file);
+                    })()
+
+                }
+
+                //  debugger;
             }
 
             $scope.removeFileFromUpload = function(index) {
@@ -1330,91 +1368,97 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 var fileMiniatureDirective = angular.module('springChat.directives').directive('fileMiniature', ['$http', 'RoomsFactory', 'ChannelFactory', '$parse', fileMiniature]);
 
 function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
+    var supportedExtensions = ['aac',
+        'ai', , 'aiff',
+        'asp',
+        'avi',
+        'bmp',
+        'c',
+        'cpp',
+        'css',
+        'dat',
+        'dmg',
+        'doc',
+        'docx',
+        'dot',
+        'dotx',
+        'dwg',
+        'dxf',
+        'eps',
+        'exe',
+        'flv',
+        'gif',
+        'h',
+        'html',
+        'ics',
+        'iso',
+        'java',
+        'jpg',
+        'js',
+        'key',
+        'less',
+        'm4v',
+        'mid',
+        'mov',
+        'mp3',
+        'mp4',
+        'mpg',
+        'odp',
+        'ods',
+        'odt',
+        'otp',
+        'ots',
+        'ott',
+        'pdf',
+        'php',
+        'png',
+        'pps',
+        'ppt',
+        'psd',
+        'py',
+        'qt',
+        'rar',
+        'rb',
+        'rtf',
+        'sass',
+        'scss',
+        'sql',
+        'tga',
+        'tgz',
+        'tiff',
+        'txt',
+        'wav',
+        'xls',
+        'xlsx',
+        'xml',
+        'yml',
+        'zip'
+    ];
+
+    var imageExtensions = ['png', 'gif', 'jpg'];
+    var getFileExtensionByName = function(name) {
+        return name.split('.').pop();
+    }
+    var isExtensionSupported = function(extension) {
+        if (supportedExtensions.indexOf(extension.toLowerCase()) != -1) return true;
+        else return false;
+    }
+    var isImageExtensions = function(extension) {
+        if (imageExtensions.indexOf(extension.toLowerCase()) != -1) return true;
+        else return false;
+    }
+    var getImageByExtension = function(ext, link) {
+        var lowerCaseExtension = ext.toLowerCase();
+        var urlTemplate = "images/svg-file-icons/{0}.svg";
+        if (isImageExtensions(lowerCaseExtension)) return link;
+        if (isExtensionSupported(lowerCaseExtension)) return urlTemplate.format(lowerCaseExtension);
+        else return urlTemplate.format('nopreview');
+    }
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/file_miniature.html',
         link: function($scope, element, attributes) {
             //TODO filesMiniature
-            var supportedExtensions = ['aac',
-                'ai', , 'aiff',
-                'asp',
-                'avi',
-                'bmp',
-                'c',
-                'cpp',
-                'css',
-                'dat',
-                'dmg',
-                'doc',
-                'docx',
-                'dot',
-                'dotx',
-                'dwg',
-                'dxf',
-                'eps',
-                'exe',
-                'flv',
-                'gif',
-                'h',
-                'html',
-                'ics',
-                'iso',
-                'java',
-                'jpg',
-                'js',
-                'key',
-                'less',
-                'm4v',
-                'mid',
-                'mov',
-                'mp3',
-                'mp4',
-                'mpg',
-                'odp',
-                'ods',
-                'odt',
-                'otp',
-                'ots',
-                'ott',
-                'pdf',
-                'php',
-                'png',
-                'pps',
-                'ppt',
-                'psd',
-                'py',
-                'qt',
-                'rar',
-                'rb',
-                'rtf',
-                'sass',
-                'scss',
-                'sql',
-                'tga',
-                'tgz',
-                'tiff',
-                'txt',
-                'wav',
-                'xls',
-                'xlsx',
-                'xml',
-                'yml',
-                'zip'
-            ];
-            var getFileExtensionByName = function(name) {
-                return name.split('.').pop();
-            }
-            var isExtensionSupported = function(extension) {
-                if (supportedExtensions.indexOf(extension.toLowerCase()) != -1) return true;
-                else return false;
-            }
-            var getImageByExtension = function(ext) {
-                var lowerCaseExtension = ext.toLowerCase();
-                var urlTemplate = "images/svg-file-icons/{0}.svg";
-                if (isExtensionSupported(lowerCaseExtension)) return urlTemplate.format(lowerCaseExtension);
-                else return urlTemplate.format('nopreview');
-            }
-
             var link = $parse(attributes.link)($scope);
             if (attributes.removeCallback != null) {
                 $scope.removeItemCallback = $parse(attributes.removeCallback)($scope);
@@ -1425,11 +1469,16 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
             var nameOnly = typeof attributes.nameonly == "undefined" || attributes.nameonly == 'false' ? false : true;
             var derandomaziedName = nameOnly ? link : $scope.getNameFromRandomizedUrl(link);
 
+            var fileName = $parse(attributes.name)($scope);
+            if (fileName != undefined) {
+                derandomaziedName = fileName;
+            }
+
             var extension = getFileExtensionByName(derandomaziedName);
             $scope.fileName = derandomaziedName;
             if (!nameOnly)
                 $scope.link = link;
-            $scope.imageSrc = getImageByExtension(extension);
+            $scope.imageSrc = getImageByExtension(extension, link);
         }
 
 

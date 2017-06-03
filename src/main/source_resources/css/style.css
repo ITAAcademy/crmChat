@@ -1355,7 +1355,8 @@ button:focus {
 }
 
 .messages_input_area .message_input[contenteditable] {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     max-height: 300px;
 }
 
@@ -1877,7 +1878,7 @@ button:focus {
 }
 
 img.file-extension-preview {
-    width: 40px;
+    height: 60px;
 }
 
 .display-file-container {
@@ -2068,6 +2069,11 @@ body.frame .open_in_new_tab {
 .files_input {
     padding: 5px;
     padding-top: 0px;
+}
+.files_input .remove_file_icon:hover,
+.files_input .clear-file:hover{
+    cursor: pointer;
+    opacity: 0.5;
 }
 
 .window_icons_wrapper {
