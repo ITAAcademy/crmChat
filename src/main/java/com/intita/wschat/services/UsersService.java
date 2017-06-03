@@ -342,6 +342,7 @@ public class UsersService {
 	
 	@Transactional
 	public boolean checkRole(User user, UserRole role){
+		if (user==null)return false;
 		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
 		Long userId = null;
 		try {

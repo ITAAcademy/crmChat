@@ -126,9 +126,17 @@ public class ChatUsersService {
 		User currentUser = userService.getById(id);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
-	@Transactional
+
 	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){
-		return chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);
+		if(intitaUsersIds==null)return new ArrayList<ChatUser>();
+		ArrayList<ChatUser> resultSet = null;
+		try{
+			resultSet = chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);
+		}
+		catch(Exception e){
+
+		}
+		return resultSet;
 	}
 	@Transactional
 	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){

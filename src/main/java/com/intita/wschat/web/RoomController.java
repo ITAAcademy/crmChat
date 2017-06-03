@@ -753,7 +753,7 @@ public class RoomController {
 	public DeferredResult<String> getRooms(Authentication auth) {
 		if (auth == null)
 			return null;
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		Long timeOut = 1000000L;
 		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");

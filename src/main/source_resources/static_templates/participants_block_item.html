@@ -1,5 +1,5 @@
 <div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
-    <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + validateAvatar(participant.avatar) + ')'}"></div>
+    <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + $root.validateAvatar(participant.avatar) + ')'}"></div>
     <div class="user_presence_icon"></div>
     <div class="user_presence_icon_wraper"></div>
 </div>
