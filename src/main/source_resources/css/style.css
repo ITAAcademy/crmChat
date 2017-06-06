@@ -3134,6 +3134,7 @@ user profile popup
         padding-top: 10px;
         padding-left: 10px;
         padding-right: 10px;
+        top: 30px;
     }
     .profile_container .avatar_container img {
         width: 120px;
