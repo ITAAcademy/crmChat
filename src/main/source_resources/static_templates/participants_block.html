@@ -11,7 +11,7 @@
         <div class="block_head_diveded"></div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
-        <div ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort" ng-include="'static_templates/participants_block_item.html'">
+        <div ng-click="$root.showUserProfileByChatUserId(participant.chatUserId)" ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort" ng-include="'static_templates/participants_block_item.html'">
         </div>
     </div>
 </div>

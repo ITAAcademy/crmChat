@@ -11,10 +11,10 @@
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
     <!--IF (searchDisabled) Rooms Models list used in search -->
-    <div id="room__{{room.roomId}}__" ng-if="!searchEnabled || tabState == 'LastContacts'" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : tabState) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'">
+    <div id="room__{{room.roomId}}__" ng-if="!searchEnabled || tabState == 'LastContacts'" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : tabState) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'" ng-click="clickToRoomEvent(room)">
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->
-    <div id="items_list_block_search" ng-if="searchEnabled &amp;&amp; tabState != 'LastContacts'" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'">
+    <div id="items_list_block_search" ng-if="searchEnabled &amp;&amp; tabState != 'LastContacts'" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'" ng-click="clickToUserEvent(user)">
     </div>
     <!-- <button ng-show="!otherRoomsLoaded" ng-click="loadOtherRooms()">Load other</button> -->
 </div>

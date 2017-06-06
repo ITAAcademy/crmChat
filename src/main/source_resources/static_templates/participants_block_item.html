@@ -1,10 +1,10 @@
-<div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}">
+<div class="avatar ng-class:{offline:!isUserOnline(participant.chatUserId), online:isUserOnline(participant.chatUserId)}" >
     <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + $root.validateAvatar(participant.avatar) + ')'}"></div>
     <div class="user_presence_icon"></div>
     <div class="user_presence_icon_wraper"></div>
 </div>
 <div class="text_info">
-    <a ng-href="{{getUserProfileLink(participant.intitaUserId)}}" target="_blank" class="user_name">{{participant.username || participant.nickName}}</a>
+    <span target="_blank" class="user_name">{{participant.username || participant.nickName}}</span>
     <div class="user_presence" ng-show="isUserOnline(participant.chatUserId)"><span th:text="${lgPack.usersBlock.online}">Онлайн</span></div>
     <div class="user_presence" ng-show="!isUserOnline(participant.chatUserId)"><span th:text="${lgPack.usersBlock.offline}">Офлайн</span></div>
 </div>
