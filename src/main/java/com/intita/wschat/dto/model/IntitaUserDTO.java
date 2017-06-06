@@ -81,7 +81,15 @@ public class IntitaUserDTO {
     private String address;
     private String education;
     private String interests;
+    private String facebook;
 
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
 
     public Long getId() {
         return id;

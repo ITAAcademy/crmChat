@@ -16,21 +16,21 @@
                         {{user.nickname}}
                     </div>
                 </div>
-                <div class="social_button_item">
+                <div class="social_button_item"  ng-class="{ 'inactive_button': user.email.length < 1 }">
                     <a ng-href="mailto:{{user.email}}"><img src="images/profile_email.ico" alt=""></a>
                 </div>
-                <div class="social_button_item">
-                    <a ng-href="{{user.facebook}}">
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.facebook.length < 1 }">
+                    <a ng-href="{{user.facebook}}" target="_blank">
                         <img src="images/profile_facebook.ico" alt="">
                     </a>
                 </div>
-                <div class="social_button_item">
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.skype.length < 1 }">
                     <a ng-href="skype:{{user.skype}}">
                         <img src="images/profile_skype.ico" alt="">
                     </a>
                 </div>
-                <div class="social_button_item">
-                    <a ng-href="{{user.twitter}}">
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.twitter.length < 1 }">
+                    <a ng-href="{{user.twitter}}" target="_blank">
                         <img src="images/profile_twitter.ico" alt="">
                     </a>
                 </div>

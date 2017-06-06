@@ -2979,6 +2979,9 @@ user profile popup
     color: #1e8eda;
     font-size: 20px;
     font-weight: bold;
+    max-width:170px;
+    text-overflow:ellipsis;
+    overflow:hidden;
 }
 
 .profile_container .nick_name {
@@ -3062,6 +3065,13 @@ user profile popup
 }
 
 .user_detailed_info {}
+
+.inactive_button{
+   opacity: 0.4;
+   filter: alpha(opacity=40);
+   pointer-events: none;
+   cursor: default;
+}
 
 
 /*user profile popup end*/
