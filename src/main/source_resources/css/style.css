@@ -3150,6 +3150,7 @@ user profile popup
         float: none;
         width: 100%;
         height: 120px;
+        text-align:center;
     }
     .user_detail_record .value {
         width: 200px;
@@ -3164,14 +3165,21 @@ user profile popup
         display: none;
     }
     .social_buttons_container {
-        display: inline-block;
+        /*display: inline-block;*/
         vertical-align: top;
         text-align: center;
         width: calc(100% - 125px);
         margin-top: 5px;
+        display:block;
+            margin-left: auto;
+    margin-right: auto;
     }
     .profile_container .profile_btn {
         width: calc(50% - 2.5px);
         display: inline-block;
+    }
+    .ngdialog-theme-default.user_profile_dialog .ngdialog-content {
+    width: 100% !important;
+    height: 100%;
     }
 }
