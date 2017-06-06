@@ -139,8 +139,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 				} else {
 					System.out.println("SESSION OK " + obj_s);
 					chatUser = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false);
-					User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
-					principal = new ChatPrincipal(chatUser, intitaUser);
+					if(chatUser!=null){
+						User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
+						principal = new ChatPrincipal(chatUser, intitaUser);
+					}
 				}
 
 				auth = new UsernamePasswordAuthenticationToken(principal, token.getCredentials(), authorities);

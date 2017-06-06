@@ -8,8 +8,8 @@
 </svg>
         </i>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}" ng-click="$parent.showUserProfileByChatUserId(getUser().id)">
-        <div class="block_item" ng-if="$root.authorize">
+    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}" >
+        <div  class="block_item" ng-if="$root.authorize" ng-click="$parent.showUserProfileByChatUserId(getUser().id)">
             <div class="avatar online">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + getUser().avatar + ')'}"></div>
                 <div class="user_presence_icon"></div>
