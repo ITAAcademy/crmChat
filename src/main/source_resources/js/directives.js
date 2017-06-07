@@ -612,7 +612,8 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory,StateFac
             return newUserModeEnabled;
             }
             var newUserModeEnabled = false;
-            scope.toggleNewUser = function() {
+            scope.toggleNewUser = function($event) {
+                $event.stopPropagation();
                 newUserModeEnabled = !newUserModeEnabled;
                 if (newUserModeEnabled)
                     scope.$root.$emit('rootScope:roomsBlockModeChange', 2);
@@ -1176,20 +1177,9 @@ function addNewUser(chatUserId) {
     $scope.clickToRoomEvent = function(room) {
         if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
             return;
-        //        room.nums = 0;
         if ($scope.isDefaultRoomBlockMode()){
                 $scope.doGoToRoom(room.roomId);
         }
-        /*else if ($scope.isCreateRoomBlockMode()){
-                         var opponentUserId = $scope.getOpponentIdFromRoom(room);
-                if (opponentUserId != null)
-                    addNewUser(opponentUserId);
-                else
-                    console.warn('opponentUserId is null');
-                StateFactory.setDefaultRoomBlockMode(); */  
-        }
-        
-        $scope.$root.hideMenu();
     }
     $scope.clickToUserEvent = function(user) {
         switch ($scope.getRoomBlockMode()) {
