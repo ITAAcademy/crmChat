@@ -16,8 +16,8 @@
         <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
         <div class="contact_control">
             <div ng-if="room.nums > 0 &amp;&amp; !createEnabled &amp;&amp; getCurrentRoom().roomId != room.roomId" class="budget">{{room.nums}}</div>
-            <div ng-if="canBeAddedToRoom(room)" class="budget">+</div>
-            <checkbox ng-if="createEnabled" id="el" value="include" callback="toggleForCreatRoom(room)"></checkbox>
+            <checkbox id="addUserCheckbox" ng-if="createEnabled" id="el" value="include" callback="toggleForCreatRoom(room)"></checkbox>
+            <checkbox id="addUserCheckbox2" ng-if="canBeAddedToRoom(room)" value="include" callback="toggleForAddUser(room)"></checkbox>
         </div>
     </div>
 </div>

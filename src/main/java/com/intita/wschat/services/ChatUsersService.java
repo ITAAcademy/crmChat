@@ -53,7 +53,7 @@ public class ChatUsersService {
 
 	@Transactional
 	public Page<ChatUser> getChatUsers(int page, int pageSize){
-		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); 
+		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize));
 
 	}
 	@Transactional
