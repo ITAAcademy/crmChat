@@ -982,6 +982,14 @@ public class RoomController {
 		ChatUser user_o = chatUserServise.getChatUser(chatUserId);
 		return addUserToRoom(user_o, room_o, auth, false);
 	}
+	boolean addChatUsersToRoomFn(List<Long> chatUserIds, Long room, Authentication auth, boolean ws) {
+		Room room_o = roomService.getRoom(room);
+		List<ChatUser> users = chatUserServise.getUsers(chatUserIds);
+		for (ChatUser user : users){
+			boolean result = addUserToRoom(user, room_o, auth, false);
+		}
+		return true;
+	}
 
 	boolean addIntitaUserToRoomFn(Long intitaUserId, Long room, Authentication auth, boolean ws) {
 		Room room_o = roomService.getRoom(room);
@@ -998,6 +1006,13 @@ public class RoomController {
 			return mapper.writeValueAsString(addChatUserToRoomFn(chatId, roomId, auth, false));
 		if (email != null)
 			return mapper.writeValueAsString(addUserToRoomFn(email, roomId, auth, false));
+		return null;
+	}
+	@RequestMapping(value = "/chat/rooms.{room}/user/add_all", method = RequestMethod.POST)
+	public @ResponseBody String addUserToRoomLP(@PathVariable("room") Long roomId,Authentication auth,
+												@RequestBody List<Long> chatUserIds)
+			throws InterruptedException, JsonProcessingException {
+		addChatUsersToRoomFn(chatUserIds,roomId,auth,false);
 		return null;
 	}
 

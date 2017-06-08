@@ -3100,6 +3100,9 @@ user profile popup
     pointer-events: none;
     cursor: default;
 }
+.done_adding_users{
+    color:white;
+}
 
 
 /*user profile popup end*/
