@@ -40,14 +40,14 @@ public class UsersService {
 
 	@Autowired
 	private ChatTenantService chatTenantService;
-	
+
 	@PersistenceContext
 	EntityManager entityManager;
 
 	@Autowired private DTOMapper dtoMapper;
-	
-	
-	
+
+
+
 
 	@PostConstruct
 	@Transactional
@@ -62,7 +62,7 @@ public class UsersService {
 		return usersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
-	
+
 	@Transactional
 	public ArrayList<User> getUsers(List<Long> ids){
 		return usersRepo.findAllByIdIn(ids);
@@ -71,7 +71,7 @@ public class UsersService {
 	public ArrayList<Long> getUsersIds(List<Long> ids){
 		return usersRepo.findAllIdsByIdIn(ids);
 	}
-	
+
 	@Transactional
 	public User getUser(Authentication auth){
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
@@ -79,7 +79,8 @@ public class UsersService {
 	}
 	@Transactional
 	public List<User> getUsersFistNWhereUserNotIn(String login, List<Long> logins, int count){
-		return  usersRepo.findByLoginLikeAndNotInCustom(login + "%", logins, new PageRequest(0, count));
+		String loginLike = "%" + login + "%";
+		return  usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndNotInCustom(loginLike, loginLike, loginLike,loginLike, logins, new PageRequest(0, count));
 	}
 
 	@Transactional
@@ -94,15 +95,17 @@ public class UsersService {
 
 	@Transactional
 	public List<User> getUsersFistN(String login, int count){
-		return usersRepo.findByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%", new PageRequest(0, count));
+		String loginLike = "%" + login + "%";
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike( loginLike,loginLike,loginLike,loginLike, new PageRequest(0, count));
 	}
-	
+
 	@Transactional
 	public List<User> getUsersFistNWithRole(String info, UserRole role, int count){
 		ArrayList<Long> list =  getAllByRole(role);
-		return usersRepo.findByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list, new PageRequest(0, count));
+		String loginLike = "%" + info + "%";
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(loginLike,loginLike,loginLike,loginLike, list, new PageRequest(0, count));
 	}
-	
+
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
 		List<User> users = getUsersFistN(login, 5);
@@ -301,8 +304,8 @@ public class UsersService {
 		for(ChatUser user : tenants) loginEvents.add(dtoMapper.map(user));
 		return loginEvents;
 	}
-	
-	
+
+
 	@Transactional
 	public boolean checkRoleByUser(User user, UserRole role){
 		if(user == null)
@@ -319,7 +322,7 @@ public class UsersService {
 		catch (NoResultException e) {
 			return false;
 		}
-		
+
 	}
 	@Transactional
 	public boolean checkRoleByAuthentication(Authentication auth, UserRole role){
@@ -339,7 +342,7 @@ public class UsersService {
 	}
 
 
-	
+
 	@Transactional
 	public boolean checkRole(User user, UserRole role){
 		if (user==null)return false;
@@ -352,7 +355,7 @@ public class UsersService {
 			return false;
 		}
 		return userId.equals(user.getId());
-		
+
 	}
 	@Transactional
 	public ArrayList<Long> getAllByRole(UserRole role){
@@ -361,7 +364,7 @@ public class UsersService {
 			userFieldName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = query.getResultList();
-		
+
 		ArrayList<Long> resultArray = new ArrayList<>();
 		for(Object queryObject : queryResults)
 		{
@@ -387,7 +390,7 @@ public class UsersService {
 		}
 		return resultArray;
 	}
-	
+
 	@Transactional
 	public Page<User> getChatUsers(int page, int pageSize){
 		return usersRepo.findAllChatUsers(new PageRequest(page-1, pageSize)); 
