@@ -78,13 +78,13 @@ public class UsersService {
 		return chatPrincipal.getIntitaUser();
 	}
 	@Transactional
-	public List<User> getUsersFist5(String login, List<Long> logins){
-		return  usersRepo.findFirst5ByLoginLikeCustom(login + "%", logins, new PageRequest(0, 5));
+	public List<User> getUsersFistNWhereUserNotIn(String login, List<Long> logins, int count){
+		return  usersRepo.findByLoginLikeAndNotInCustom(login + "%", logins, new PageRequest(0, count));
 	}
 
 	@Transactional
-	public List<String> getUsersEmailsFist5(String login, List<Long> logins){
-		List<User> users = getUsersFist5(login, logins);
+	public List<String> getUsersEmailsFist5WhereUserNotIn(String login, List<Long> logins){
+		List<User> users = getUsersFistNWhereUserNotIn(login, logins, 5);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)
 			emails.add(users.get(i).getEmail());
@@ -93,19 +93,19 @@ public class UsersService {
 	}
 
 	@Transactional
-	public List<User> getUsersFist5(String login){
-		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%");
+	public List<User> getUsersFistN(String login, int count){
+		return usersRepo.findByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%", new PageRequest(0, count));
 	}
 	
 	@Transactional
-	public List<User> getUsersFist5WithRole(String info, UserRole role){
+	public List<User> getUsersFistNWithRole(String info, UserRole role, int count){
 		ArrayList<Long> list =  getAllByRole(role);
-		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list);
+		return usersRepo.findByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list, new PageRequest(0, count));
 	}
 	
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
-		List<User> users = getUsersFist5(login);
+		List<User> users = getUsersFistN(login, 5);
 		//System.out.println("FFFFFFFFFFFFFFFFFFF  " + login + " " + users);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)

@@ -97,12 +97,14 @@ public class RoleGroupsController {
 
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
-	private boolean updateRoomsForAllRolesRequest(Authentication auth, @RequestParam(name="table",required=false) String tableName){
+	@CrossOrigin(maxAge = 3600, origins = "http://localhost:80")
+	private boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser cUser = chatPrincipal.getChatUser();
 		User iUser = chatPrincipal.getIntitaUser();
-
-		if(usersService.checkRole(iUser, UserRole.ADMIN)) {
+		String name = String.valueOf(request.getRemoteHost());
+		boolean intitaSide = request.getRemoteHost().equals("0:0:0:0:0:0:0:1"); 
+		if(usersService.checkRole(iUser, UserRole.ADMIN) || intitaSide) {
 			if(tableName==null) {
 				roomsService.updateRoomsForAllRoles();
 			}

@@ -75,6 +75,7 @@ import com.intita.wschat.web.RoomController;
  */
 @Service
 @Controller
+@PreAuthorize("hasPermission(null, 'DIRECTOR, SUPER_ADMIN')")
 public class AdminPanelController {
 
 	private final static Logger log = LoggerFactory.getLogger(AdminPanelController.class);
@@ -111,7 +112,7 @@ public class AdminPanelController {
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 
-	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
+	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String  admin(HttpServletRequest request,Model model) {
 
@@ -125,7 +126,6 @@ public class AdminPanelController {
 		//return "../static/admin-panel/dev-release/index";
 	}
 
-	@PreAuthorize("hasPermission(null, 'ADMIN, SUPER_VISOR')")
 	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
 	@ResponseBody
 	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Authentication auth) {
@@ -141,7 +141,7 @@ public class AdminPanelController {
 			for(UserRole role : UserRole.values())
 			{
 				if((role.getValue() & roles) == role.getValue())
-					users.addAll(userService.getUsersFist5WithRole(info, role));	
+					users.addAll(userService.getUsersFistNWithRole(info, role, 10));	
 			}
 
 		}

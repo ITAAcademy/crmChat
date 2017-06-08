@@ -4622,7 +4622,7 @@ button:focus {
     border: 0;
     display: inline-block;
     margin-top: 4px;
-    padding: 0 3px;
+    padding: 0 4px;
 }
 
 .controls_area a > i,

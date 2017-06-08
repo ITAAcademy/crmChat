@@ -872,7 +872,7 @@ public class ChatController {
 				if (i_user != null)
 					room_emails.add(i_user.getId());
 			}
-			emails = userService.getUsersEmailsFist5(login, room_emails);
+			emails = userService.getUsersEmailsFist5WhereUserNotIn(login, room_emails);
 		} else
 			emails = userService.getUsersEmailsFist5(login);
 
@@ -889,9 +889,9 @@ public class ChatController {
 		ArrayList<User> usersResult = null;
 		if (eliminate_users_of_current_room) {
 			ArrayList<Long> roomUsers = chatRoomsService.getRoomUsersIds(room);
-			usersResult = new ArrayList(userService.getUsersFist5(login, roomUsers));
+			usersResult = new ArrayList(userService.getUsersFistNWhereUserNotIn(login, roomUsers, 10));
 		} else
-			usersResult = new ArrayList(userService.getUsersFist5(login));
+			usersResult = new ArrayList(userService.getUsersFistN(login, 10));
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = mapper.writerWithView(Views.Public.class).writeValueAsString(usersResult);
 		return jsonInString;
@@ -904,9 +904,9 @@ public class ChatController {
 		ArrayList<User> usersResult = null;
 		if (eliminate_users_of_current_room) {
 			ArrayList<Long> roomUsers = chatRoomsService.getRoomUsersIds(room);
-			usersResult = new ArrayList(userService.getUsersFist5(login, roomUsers));
+			usersResult = new ArrayList(userService.getUsersFistNWhereUserNotIn(login, roomUsers, 10));
 		} else
-			usersResult = new ArrayList(userService.getUsersFist5(login));
+			usersResult = new ArrayList(userService.getUsersFistN(login, 10));
 		ArrayList<LoginEvent> loginEvents = new ArrayList<>();
 		for (User u : usersResult)
 			loginEvents.add(new LoginEvent(u, chatUsersService.getChatUserFromIntitaUser(u, false).getId()));

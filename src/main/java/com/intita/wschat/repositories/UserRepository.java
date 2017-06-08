@@ -34,11 +34,11 @@ public interface UserRepository extends CrudRepository<User, Long> {
   Page<User> findAllChatUsers(Pageable pageable);
   
   @Query("select u from User u where (u.firstName like ?1 or u.secondName like ?1 or u.login like ?1) and u.id not in ?2")
-  List<User> findFirst5ByLoginLikeCustom( String login, List<Long> users, Pageable pageable);
+  List<User> findByLoginLikeAndNotInCustom( String login, List<Long> users, Pageable pageable);
   
-  List<User> findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(String login, String login1, String login2);
+  List<User> findByLoginLikeOrFirstNameLikeOrSecondNameLike(String login, String login1, String login2, Pageable pageable);
   
-  List<User> findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(String login, String login1, String login2, List<Long> listIds);
+  List<User> findByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(String login, String login1, String login2, List<Long> listIds, Pageable pageable);
   //
   
   @Query(value = "SELECT * FROM user_super_visor WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)
