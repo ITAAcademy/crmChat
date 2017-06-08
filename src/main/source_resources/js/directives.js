@@ -608,21 +608,17 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory,StateFac
                     scope.checkUserAdditionPermission() && participant.chatUserId &&
                     scope.currentRoom().roomAuthorId != participant.chatUserId;
             }
-            scope.isNewUserMode = function(){
-            return newUserModeEnabled;
-            }
-            var newUserModeEnabled = false;
+            scope.isNewUserMode = StateFactory.isAddUserToDialogRoomBlockMode;
+
             scope.toggleNewUser = function($event) {
                 $event.stopPropagation();
-                newUserModeEnabled = !newUserModeEnabled;
-                if (newUserModeEnabled)
-                    scope.$root.$emit('rootScope:roomsBlockModeChange', 2);
-                else
+                StateFactory.toggleAddUserToDialogRoomBlockMode();
+                if (!StateFactory.isAddUserToDialogRoomBlockMode())
                 {
-                    scope.$root.$emit('rootScope:roomsBlockModeChange', 1);
-                    RoomsFactory.addUsersToRoom();
+                     var usersIdsList = StateFactory.getUserListForAddedToCurrentRoom();
+                    RoomsFactory.addUsersToRoom(usersIdsList);
                 }
-                return newUserModeEnabled;
+                return StateFactory.isAddUserToDialogRoomBlockMode();
             }
             scope.getUserProfileLink = function(id) {
                 return mySettings.baseUrl + '/profile/' + id;
@@ -1000,11 +996,11 @@ angular.module('springChat.directives').directive('emHeightSource', function() {
 
 });
 angular.module('springChat.directives').directive('roomsBlockMini', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory','StateFactory', roomsBlockMini]);
-var roomsBlockFilter = function(RoomsFactory) {
+var roomsBlockFilter = function(RoomsFactory,RoomsBlockTabState) {
     return function(fields, state) {
         if (fields) { // added check for safe code
             var arrayFields = [];
-            if (state == 2) {
+            if (state == RoomsBlockTabState.lastrooms) {
                 return fields;
             }
             /**
@@ -1020,7 +1016,7 @@ var roomsBlockFilter = function(RoomsFactory) {
         }
     };
 };
-angular.module('springChat.directives').directive('roomsBlock', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', '$timeout','StateFactory',roomsBlock]).filter('roomsBlockFilter', ['RoomsFactory', roomsBlockFilter]);
+angular.module('springChat.directives').directive('roomsBlock', ['$http', 'RoomsFactory', 'ChannelFactory', 'UserFactory', '$timeout','StateFactory',roomsBlock]).filter('roomsBlockFilter', ['RoomsFactory','RoomsBlockTabState', roomsBlockFilter]);
 
 var roomsBlockLinkFunction;
 var initRoomsFunctions;
@@ -1175,8 +1171,6 @@ function addNewUser(chatUserId) {
     }
 
     $scope.clickToRoomEvent = function(room) {
-        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
-            return;
         if ($scope.isDefaultRoomBlockMode()){
                 $scope.doGoToRoom(room.roomId);
         }
@@ -1197,7 +1191,7 @@ function addNewUser(chatUserId) {
     }
 
     $scope.doGoToRoom = function(roomId) {
-        if ($scope.createEnabled) //if ($scope.searchEnabled || $scope.createEnabled)
+        if (StateFactory.isCreateRoomBlockMode())
             return;
         $scope.loadOnlyFilesInfiniteScrollMode = false;
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
@@ -1210,7 +1204,10 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
     $scope.lgPack = lgPack;
     $scope.otherRoomsLoaded = false;
-
+    $scope.isRoomCreateEnabled = StateFactory.isCreateRoomBlockMode;
+    $scope.isTabStateContacts = StateFactory.isTabStateContacts;
+    $scope.isTabStateLastRooms = StateFactory.isTabStateLastRooms;
+    $scope.getTabState = StateFactory.getTabState;
 
     $scope.getRoomBlockMode = StateFactory.getRoomBlockMode;
     $scope.isDefaultRoomBlockMode = StateFactory.isDefaultRoomBlockMode;
@@ -1225,7 +1222,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         });
     }
     $scope.myValueFunction = function(room) {
-        if ($scope.tabState == "Contacts") {
+        if (StateFactory.isTabStateContacts()) {
             return room.string;
         } else {
             if (room.nums != 0)
@@ -1240,19 +1237,18 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
 
     };
 
-    var userListForAddedToNewRoom = [];
 
     $scope.isUserOnline = UserFactory.isUserOnline;
     $scope.rooms = RoomsFactory.getRooms;
     $scope.searchEnabled = false;
-    $scope.createEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
-    $scope.tabState = "Contacts";
+
     $scope.canBeAddedToRoom = function(room) {
         //TODO check if user can be added to room
+        if(StateFactory.isCreateRoomBlockMode()) return true;
         var opponentUserId = $scope.getOpponentIdFromRoom(room);
         if (opponentUserId == null) return null;
-        return $scope.isCreateRoomBlockMode() && !RoomsFactory.containsUserId(opponentUserId);
+        return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(opponentUserId);
     };
     /* $scope.stripHtml = function(html)
      {
@@ -1299,7 +1295,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return $scope.searchEnabled;
     }
     $scope.createNewRoom = function($event) {
-        RoomsFactory.addDialog($scope.room_create_input, userListForAddedToNewRoom).success(function(data, status, headers, config) {
+        RoomsFactory.addDialog($scope.room_create_input, StateFactory.getUserListForAddedToCurrentRoom()).success(function(data, status, headers, config) {
             $scope.$root.hideMenu();
             ChannelFactory.changeLocation("/dialog_view/" + data);
         });
@@ -1307,12 +1303,13 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
 
     $scope.toggleCreate = function() {
-        $scope.createEnabled = !$scope.createEnabled;
-        if ($scope.createEnabled == false) {
-            userListForAddedToNewRoom = [];
-            $scope.room_create_input = "";
-        } else {
+       StateFactory.toggleCreateRoomBlockMode();
+        if (StateFactory.isCreateRoomBlockMode()) {
             $scope.showContacts();
+        } else {
+           var newUsersArr = StateFactory.getUserListForAddedToCurrentRoom();
+           newUsersArr.splice(0,newUsersArr.length);
+            $scope.room_create_input = "";
         }
     }
 
@@ -1324,12 +1321,11 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.showLastContacts = function() {
         /*if ($scope.mode == 2)
             return;*/
-
-        $scope.tabState = "LastContacts";
+        StateFactory.setTabStateLastRooms();
         $scope.displayLetters = false;
     }
     $scope.showContacts = function() {
-        $scope.tabState = "Contacts";
+       StateFactory.setTabStateContacts();
         $scope.displayLetters = true;
     }
 
@@ -1347,25 +1343,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
          //TODO select specific last contact item
      }*/
 
-    $scope.toggleForCreatRoom = function(room) {
-        // alert(chatUserId);
-        if (room.type == 1 && room.privateUserIds != undefined) {
-            if (room.privateUserIds[0] == UserFactory.getChatUserId())
-            //userListForAddedToNewRoom.push(room.privateUserIds[1]);
-                addOrRemove(userListForAddedToNewRoom, room.privateUserIds[1]);
-            if (room.privateUserIds[1] == UserFactory.getChatUserId())
-            //userListForAddedToNewRoom.push(room.privateUserIds[0]);
-                addOrRemove(userListForAddedToNewRoom, room.privateUserIds[0]);
-        }
-
-    }
-
     $scope.toggleForAddUser = function(room) {
          if (room.privateUserIds != undefined) {
             if (room.privateUserIds[0] == UserFactory.getChatUserId())
-                addOrRemove(RoomsFactory.getUserListForAddedToCurrentRoom(), room.privateUserIds[1]);
+                addOrRemove(StateFactory.getUserListForAddedToCurrentRoom(), room.privateUserIds[1]);
             if (room.privateUserIds[1] == UserFactory.getChatUserId())
-                addOrRemove(RoomsFactory.getUserListForAddedToCurrentRoom(), room.privateUserIds[0]);
+                addOrRemove(StateFactory.getUserListForAddedToCurrentRoom(), room.privateUserIds[0]);
         }
     }
 

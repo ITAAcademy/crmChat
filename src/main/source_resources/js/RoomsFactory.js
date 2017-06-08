@@ -26,11 +26,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     $rootScope.message_busy = true;
     var rooms = [];
     var oldMessage;
-    var userListForAddedToCurrentRoom = [];
-
-    function getUserListForAddedToCurrentRoom(){
-        return userListForAddedToCurrentRoom;
-    }
 
     function isRoomPrivate(room) {
         if (room != null && room.type === 1) return true;
@@ -302,8 +297,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
-    var addUsersToRoom = function(chatUserIdsArray) {
-        $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.roomId), userListForAddedToCurrentRoom).
+    var addUsersToRoom = function(usersIds) {
+       
+        if(usersIds == null || usersIds.length<1){
+            return;
+        }
+        $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.roomId), usersIds).
         success(function(data, status, headers, config) {
 
         }).
@@ -768,7 +767,6 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         },
         updateLastActivity: updateLastActivity,
         calcPositionPush: calcPositionPush,
-        getUserListForAddedToCurrentRoom: getUserListForAddedToCurrentRoom,
         addUsersToRoom: addUsersToRoom
 
     };
