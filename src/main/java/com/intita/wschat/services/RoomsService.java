@@ -605,8 +605,13 @@ public class RoomsService {
 	}
 
 	public void updateRoomsForAllRoles() {
-		for (String table : rolesTablesNames){
-			updateRoomForRoleTable(table);
+		try {
+			for (String table : rolesTablesNames) {
+				updateRoomForRoleTable(table);
+			}
+		}
+		catch(Exception e){
+
 		}
 	}
 
@@ -627,10 +632,16 @@ public class RoomsService {
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
 		room = update(room);
 		ArrayList<ChatUser> cUsersList = null;
-		if(role == UserRole.TENANTS)
-			cUsersList = chatUserService.getUsers(userService.getAllByRoleValue(roleInt,tableName));
-		else
-			cUsersList = chatUserService.getChatUsersFromIntitaIds(userService.getAllByRoleValue(roleInt,tableName));
+
+		ArrayList<Long> intitaUsers = userService.getAllByRoleValue(roleInt, tableName);
+		if (intitaUsers.size()==0) return false;
+
+			if (role == UserRole.TENANTS)
+				cUsersList = chatUserService.getUsers(intitaUsers);
+			else {
+				cUsersList = chatUserService.getChatUsersFromIntitaIds(intitaUsers);
+			}
+
 		replaceUsersInRoom(room, cUsersList);
 		return true;
 	}
