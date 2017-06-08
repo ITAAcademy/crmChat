@@ -3,8 +3,7 @@
         <div class="block_controll hide"></div>
         <div class="block_name">{{blockName}}</div>
         <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons unfolded" ng-class="{'detach':collapsed}">
-            <svg style="width:22px;height:24px" viewBox="0 0 24 24">
-    <path fill="#000000" d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" />
+            {{collapsed ? '+' : '&#8722'}}
 </svg>
         </i>
     </div>

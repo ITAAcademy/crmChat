@@ -19,7 +19,8 @@ public enum UserRole{
     TRAINER(1 << 7, "user_trainer"),
     AUDITOR(1 << 8, "user_auditor"),
     AUTHOR(1 << 9, "user_author"),
-    DIRECTOR(1 << 10, "user_director");
+    DIRECTOR(1 << 10, "user_director"),
+    SUPER_ADMIN(1 << 11, "user_super_admin");
 
 
 

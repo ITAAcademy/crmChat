@@ -297,6 +297,20 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         });
     }
 
+    var addUsersToRoom = function(usersIds) {
+       
+        if(usersIds == null || usersIds.length<1){
+            return;
+        }
+        $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.roomId), usersIds).
+        success(function(data, status, headers, config) {
+
+        }).
+        error(function(data, status, headers, config) {
+
+        });
+    }
+
     var removeUserFromRoom = function(userId) {
             $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
             success(function(data, status, headers, config) {
@@ -752,7 +766,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             return isRoomPrivate(currentRoom);
         },
         updateLastActivity: updateLastActivity,
-        calcPositionPush: calcPositionPush
+        calcPositionPush: calcPositionPush,
+        addUsersToRoom: addUsersToRoom
 
     };
 

@@ -15,8 +15,8 @@
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">
             <a class="dropdown_item attaches_item ngf_select" ngf-select="true" ngf-change="selectFiles(&#36;files)" multiple="true" th:text="${lgPack.inputArea.attaches.doc}">Документ</a>
-            <a class="dropdown_item video_item" th:text="${lgPack.inputArea.attaches.video}">Відео</a>
-            <a class="dropdown_item audio_item" th:text="${lgPack.inputArea.attaches.audio}">Аудіо</a>
+            <a class="dropdown_item video_item disabled" th:text="${lgPack.inputArea.attaches.video}">Відео</a>
+            <a class="dropdown_item audio_item disabled" th:text="${lgPack.inputArea.attaches.audio}">Аудіо</a>
         </ul>
         <!--<ul id="help_dropdown" class="popup_dropdown">
             shift+enter - нова стрічка

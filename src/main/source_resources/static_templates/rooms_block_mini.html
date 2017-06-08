@@ -1,5 +1,5 @@
 <div id="items_list_block_mini" class="items_list_block bottom_block scroll contacts_list">
-    <div class="section" ng-repeat="room in (roomsF = ((rooms() | roomsBlockFilter : tabState) | orderBy:myValueFunction))">
+    <div class="section" ng-repeat="room in (roomsF = ((rooms() | roomsBlockFilter : getTabState()) | orderBy:myValueFunction))">
         <div class="section_content">
             <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="doGoToRoom(room.roomId)">
                 <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
