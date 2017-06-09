@@ -1,6 +1,7 @@
 package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,5 +68,16 @@ public interface UserRepository extends CrudRepository<User, Long> {
   
   @Query(value = "SELECT chat_user_id FROM user_tenant WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL)", nativeQuery = true)
   Long[] findAllTenants();
+  
+  /*
+   * Birthday queries
+   */
+  
+  
+  @Query(value = "SELECT id FROM user WHERE DAY(birthday) = DAY(CURDATE()) AND MONTH(birthday) = MONTH(CURDATE())", nativeQuery = true)
+  Long[] findAllByBirthdayToday();
+  
+  ArrayList<Long> findAllByBirthday(Date date, Pageable page);
+  ArrayList<Long> findAllByBirthdayAndIdIn(Date date, List<Long> users, Pageable page);
  
 }

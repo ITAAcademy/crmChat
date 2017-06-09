@@ -2,9 +2,12 @@ package com.intita.wschat.domain;
 
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.models.RoomModelSimple;
+import com.intita.wschat.services.NotificationsService.ChatNotification;
 
 import java.util.List;
 import java.util.Set;
+
+import javax.management.Notification;
 
 /**
  * Created by roma on 18.04.17.
@@ -62,12 +65,21 @@ public class LoginResponseData {
         this.tenants = tenants;
     }
 
-    String nextWindow;
+    public List<ChatNotification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<ChatNotification> notifications) {
+		this.notifications = notifications;
+	}
+
+	String nextWindow;
     String userAvatar;
     Set<Long> activeUsers;
     ChatUserDTO chatUser;
     List<RoomModelSimple> roomModels;
     List<ChatUserDTO> tenants;
+    List<ChatNotification> notifications;
     ChatUserDTO trainer;
 
 }
