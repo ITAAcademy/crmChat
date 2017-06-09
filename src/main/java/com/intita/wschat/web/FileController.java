@@ -195,7 +195,6 @@ public class FileController {
 			// set to binary type if MIME mapping not found
 			mimeType = "application/octet-stream";
 		}
-		System.out.println("MIME type: " + mimeType);
 
 		// set content attributes for the response
 		response.setContentType(mimeType);
