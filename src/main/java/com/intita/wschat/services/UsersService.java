@@ -327,6 +327,9 @@ public class UsersService {
 			Long userId = Long.parseLong(userIdStr);
 			return userId.equals(user.getId());
 		}
+		catch (NoResultException e) {
+			return false;
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return false;
