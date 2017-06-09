@@ -415,6 +415,9 @@ public class UsersService {
 		return usersRepo.findAllChatUsers(new PageRequest(page-1, pageSize)); 
 
 	}
+	public Long getUsersCount(){
+		return usersRepo.count();
+	}
 
 }
 

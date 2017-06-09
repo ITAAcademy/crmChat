@@ -2,6 +2,7 @@ package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -44,4 +45,14 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	ArrayList<ChatUser> findChatUsersByIntitaUsers(ArrayList<Long> intitaUsersIds);
 	@Query("select u from chat_user u where u.nickName like %?1% or (u.intitaUser is not null and (u.intitaUser.nickName like %?1% or u.intitaUser.firstName like %?1% or u.intitaUser.secondName like %?1% or u.intitaUser.login like %?1%))")
 	ArrayList<ChatUser> findChatUserByNameAndEmail(String name);
+	@Query(value = "\tSELECT COUNT(id) FROM `chat_user` AS cu WHERE cu.id IN (SELECT author_id FROM chat_user_message AS m WHERE m.author_id=cu.id AND m.date > DATE_SUB(NOW(), INTERVAL 1 DAY)  )",nativeQuery = true)
+	Integer countChatUserByMessagesDateAfter();
+
+
+	/*Raw queries
+	//get active users
+	SELECT * FROM `chat_user` AS cu WHERE (cu.id IN (SELECT id FROM chat_user_message AS m WHERE m.author_id=cu.id AND m.date > DATE_SUB(NOW(), INTERVAL 1 DAY) ) )
+	//count active users
+	SELECT COUNT(id) FROM `chat_user` AS cu WHERE cu.id IN (SELECT author_id FROM chat_user_message AS m WHERE m.author_id=cu.id AND m.date > DATE_SUB(NOW(), INTERVAL 1 DAY)  )
+	 */
 }

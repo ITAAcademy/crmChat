@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.intita.wschat.domain.requestdata.UserActivityRequestData;
 import com.intita.wschat.domain.responsedata.ChatUserActivityPerDayStatistic;
+import com.intita.wschat.domain.responsedata.StatisticResponseActiveUsers;
+import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,9 @@ public class StatisticController {
 	final long ACTIVITY_DOORATION_MS = 5*60*1000;
 @Autowired
 ChatUsersService chatUserService;
+
+	@Autowired
+	UsersService usersService;
 
 @Autowired
 UserMessageService userMessageService;
@@ -55,6 +60,17 @@ UserMessageService userMessageService;
 		}
 		ChatUserActivityPerDayStatistic resultStatistic = new ChatUserActivityPerDayStatistic(msOfActivityPerDay);
 		return resultStatistic;
+	}
+	@RequestMapping(value = "/statistic/user/count_active_users_today", method = RequestMethod.GET)
+	@ResponseBody
+	public StatisticResponseActiveUsers getActiveChatUsersCountToday(@RequestParam(required = false) String requestId){
+		long totalUsers = usersService.getUsersCount();
+		long activeUsers =  chatUserService.getActiveUsersCountToday();
+		StatisticResponseActiveUsers activeUsersData = new StatisticResponseActiveUsers();
+		activeUsersData.setTotalUsers(totalUsers);
+		activeUsersData.setActiveUsers(activeUsers);
+		activeUsersData.setRequestId(requestId);
+		return activeUsersData;
 	}
 
 	
