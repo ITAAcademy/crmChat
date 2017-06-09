@@ -3106,8 +3106,8 @@ user profile popup
 
 @media only screen and (min-width:1350px) {
     .items_list_block .block_content {
-        min-height: 130px;
-        max-height: 130px;
+        min-height: 120px;
+        max-height: 120px;
     }
 }
 
