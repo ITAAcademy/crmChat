@@ -113,7 +113,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             }
         }
 
-        $rootScope.showUserProfileByChatUserId = function(chatId) {
+        $rootScope.showUserProfileByChatUserId = function(chatId,$event) {
+            if ($event != null) $event.stopPropagation();
             $rootScope['popupData'] = [];
             $http.get(serverPrefix + '/user_by_chat_id?chatUserId=' + chatId).then(function(response) {
                 //$rootScope.popupData.user = response.data;

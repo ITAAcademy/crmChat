@@ -137,6 +137,7 @@ for (var i = 0; i < fullChartData.length; i++ ){
             min: 0,
           gridAlpha: 0.5,
           gridColor: layoutColors.border,
+          title: "Статус активності"
         }
       ],
       graphs: [
@@ -178,7 +179,8 @@ for (var i = 0; i < fullChartData.length; i++ ){
         parseDates: true,
         gridAlpha: 0.15,
         gridColor: layoutColors.border,
-        minorGridEnabled: true
+        minorGridEnabled: true,
+        title: "Дата"
       },
       export: {
         enabled: true
@@ -193,8 +195,36 @@ for (var i = 0; i < fullChartData.length; i++ ){
        "valueAxes": [ {
       "gridColor": "#FFFFFF",
       "gridAlpha": 0.2,
-      "dashLength": 0
+      "dashLength": 0,
+      "title": "Робочі хвилини"
     } ],
+     graphs: [
+        {
+          id: 'gl',
+          bullet: 'square',
+          bulletBorderAlpha: 1,
+          bulletBorderThickness: 1,
+          fillAlphas: 0.5,
+          fillColorsField: 'lineColor',
+          legendValueText: '[[value]]',
+          lineColorField: 'lineColor',
+          title: 'Був активний',
+          valueField: 'status'
+        }
+      ],
+      chartScrollbar: {
+        "graph": "g1",
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount": true,
+        "color": "#AAAAAA"
+      },
     "gridAboveGraphs": true,
     "startDuration": 1,
     "graphs": [ {
@@ -207,16 +237,19 @@ for (var i = 0; i < fullChartData.length; i++ ){
     "chartCursor": {
       "categoryBalloonEnabled": false,
       "cursorAlpha": 0,
-      "zoomable": false
+      "zoomable": true,
+      fullWidth: true,
+      categoryBalloonDateFormat: 'YYYY MMM DD',
     },
     "categoryField": "when",
     "categoryAxis": {
-      "minPeriod": "mm",
+      "minPeriod": "DD",
       "gridPosition": "start",
       "gridAlpha": 0,
       "tickPosition": "start",
       "tickLength": 20,
-      "parseDates": true
+      "parseDates": true,
+      "title": "Дні"
     },
     "export": {
       "enabled": true
