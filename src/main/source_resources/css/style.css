@@ -15,12 +15,34 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
+    padding: 5px;
     /* background-color: rgba(237, 238, 240, 0.58); */
     background: none;
     /* padding: 5px; */
     overflow: hidden;
     box-sizing: border-box;
     font-family: "MyriadPro2";
+}
+
+body.frame .ngdialog-overlay {
+    height: calc(100% - 50px);
+    width: calc(100% - 10px);
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin: auto;
+    max-width: 900px;
+    margin-top: 42px;
+}
+
+.aspect_ratio,
+.open_in_new_tab {
+    display: none;
+}
+
+body.frame .aspect_ratio,
+body.frame .open_in_new_tab {
+    display: initial;
 }
 
 .material-icons:hover {
@@ -2067,31 +2089,6 @@ body {
                                   not supported by any browser */
 }
 
-body.frame {
-    padding: 5px;
-}
-
-body.frame .ngdialog-overlay {
-    height: calc(100% - 50px);
-    width: calc(100% - 10px);
-    border-radius: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    margin: auto;
-    max-width: 900px;
-    margin-top: 42px;
-}
-
-.aspect_ratio,
-.open_in_new_tab {
-    display: none;
-}
-
-body.frame .aspect_ratio,
-body.frame .open_in_new_tab {
-    display: initial;
-}
-
 .files_input {
     padding: 5px;
     padding-top: 0px;
@@ -2836,7 +2833,6 @@ span.rooms_search_loader img {
 
 @media (max-width: 769px) {
     .left_panel {
-        z-index: 9999;
         max-width: 0;
         -webkit-transition: max-width .5s ease-in-out;
         -webkit-transition: max-width 0.5s ease-in-out;
