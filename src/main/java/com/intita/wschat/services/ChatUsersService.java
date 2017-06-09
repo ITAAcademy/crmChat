@@ -128,7 +128,7 @@ public class ChatUsersService {
 	}
 
 	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){
-		if(intitaUsersIds==null)return new ArrayList<ChatUser>();
+		if(intitaUsersIds==null || intitaUsersIds.size()<1)return new ArrayList<ChatUser>();
 		ArrayList<ChatUser> resultSet = null;
 		try{
 			resultSet = chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);

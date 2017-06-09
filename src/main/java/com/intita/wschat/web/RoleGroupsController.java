@@ -109,8 +109,14 @@ public class RoleGroupsController {
 				roomsService.updateRoomsForAllRoles();
 			}
 			else {
-				boolean updated = roomsService.updateRoomForRoleTable(tableName);
-				if (!updated) return false;
+				try {
+					boolean updated = roomsService.updateRoomForRoleTable(tableName);
+					if (!updated) return false;
+				}
+				catch(Exception e){
+					//e.printStackTrace();
+					return false;
+				}
 			}
 
 			return true;

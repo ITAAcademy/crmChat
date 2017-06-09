@@ -14,6 +14,8 @@ import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import org.apache.commons.collections4.IteratorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,8 @@ import com.intita.wschat.repositories.UserRepository;
 
 @Service
 public class UsersService {
+
+	private final static Logger log = LoggerFactory.getLogger(UsersService.class);
 
 	@Autowired
 	private UserRepository usersRepo;
@@ -316,10 +320,15 @@ public class UsersService {
 			columnUserName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT "+columnUserName+" FROM " + tableName + " WHERE " +columnUserName+" = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
 		try{
-			Long userId = Long.parseLong(query.getSingleResult().toString());
+			Object queryResult = query.getSingleResult();
+			String userIdStr = queryResult.toString();
+			if (userIdStr.length()<1)
+				return false;
+			Long userId = Long.parseLong(userIdStr);
 			return userId.equals(user.getId());
 		}
-		catch (NoResultException e) {
+		catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 
@@ -380,7 +389,14 @@ public class UsersService {
 		if(roleValue == UserRole.TENANTS.getValue())
 			userFieldName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
-		List<Object> queryResults = query.getResultList();
+		List<Object> queryResults = null;
+		try{
+			queryResults = query.getResultList();
+		}
+		catch(Exception e) {
+			//e.printStackTrace();
+			return new ArrayList<Long>();
+		}
 
 		ArrayList<Long> resultArray = new ArrayList<>();
 		for(Object queryObject : queryResults)
