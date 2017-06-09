@@ -56,7 +56,7 @@ gulp.task('partials', function() {
             module: 'BlurAdmin',
             root: 'app'
         }))
-        .pipe(prefix("admin-panel/dev-release", null, '{{'))
+        .pipe(prefix("admin-panel/release", null, '{{'))
         .pipe(gulp.dest(conf.paths.tmp + '/partials/'));
 });
 
@@ -72,7 +72,7 @@ gulp.task('html-dev', ['inject', 'partials'], function() {
 
     return gulp.src(path.join(conf.paths.tmp, '/serve/*.html'))
         .pipe($.inject(partialsInjectFile, partialsInjectOptions))
-        .pipe(prefix("admin-panel/dev-release", null, '{{'))
+        .pipe(prefix("admin-panel/release", null, '{{'))
         .pipe(gulp.dest(conf.paths.devDist));
 });
 
@@ -86,14 +86,14 @@ gulp.task('html-copy', ['partials'], function() {
 gulp.task('dev-css-replace', ['dev-copy-assets'], function() {
     return gulp.src(path.join(conf.paths.devDist, '*.html'))
         .pipe($.replace(/<link rel="stylesheet" href="\.\.\/bower_components\/.*\/(.*)"\s*?\/>/g, '<link rel="stylesheet" href="lib/$1" >'))
-        .pipe(prefix("admin-panel/dev-release", null, '{{'))
+        .pipe(prefix("admin-panel/release", null, '{{'))
         .pipe(gulp.dest(conf.paths.devDist));
 });
 
 gulp.task('dev-js-replace', ['dev-copy-assets'], function() {
     return gulp.src(path.join(conf.paths.devDist, '.html'))
         .pipe($.replace(/<script src="\.\.\/bower_components\/.*\/(.*)"\s*?>/g, '<script src="lib/$1">'))
-        .pipe(prefix("admin-panel/dev-release", null, '{{'))
+        .pipe(prefix("admin-panel/release", null, '{{'))
         .pipe(gulp.dest(conf.paths.devDist));
 });
 
