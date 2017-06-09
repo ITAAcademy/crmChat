@@ -1053,15 +1053,18 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout,S
             $scope.searchingRunning = false;
 
             $scope.participantsSort = UserFactory.participantsSort;
+            var updatingUsersByEmailPromise = undefined;
             $scope.updateChatUsersByEmail = function(email, delay) {
-                $timeout.cancel($scope.updatingUsersByEmailPromise);
+                $timeout.cancel(updatingUsersByEmailPromise);
+                $scope.searchingRunning = false;
                 if (email == null || email.length < 1) {
-                    $scope.updatingUsersByEmailPromise = undefined;
+                    updatingUsersByEmailPromise = undefined;
                     $scope.usersListSearched = [];
                     return;
                 }
-                $scope.searchingRunning = true;
-                $scope.updatingUsersByEmailPromise = $timeout(function() {
+
+                updatingUsersByEmailPromise = $timeout(function() {
+                        $scope.searchingRunning = true;
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
                     return $http.get(url, {}).success(function(data) { // send request
                         $scope.searchingRunning = false;
@@ -1072,14 +1075,14 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout,S
                 }, delay);
             };
             $scope.updateRoomsByQuery = function(query, delay) {
-                $timeout.cancel($scope.updatingUsersByEmailPromise);
+                $timeout.cancel(updatingUsersByEmailPromise);
                 if (query == null || query.length < 1) {
-                    $scope.updatingUsersByEmailPromise = undefined;
+                    updatingUsersByEmailPromise = undefined;
                     $scope.roomsListSearched = [];
                     return;
                 }
-                $scope.searchingRunning = true;
-                $scope.updatingUsersByEmailPromise = $timeout(function() {
+                updatingUsersByEmailPromise = $timeout(function() {
+                    $scope.searchingRunning = true;
                     var url = serverPrefix + "/get_rooms_containing_string?query=" + query;
                     return $http.get(url, {}).success(function(data) { // send request
                         $scope.searchingRunning = false;
