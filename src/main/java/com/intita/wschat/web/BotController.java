@@ -560,7 +560,7 @@ public class BotController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		else{
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("user is not trainer!!!", HttpStatus.BAD_REQUEST);
 		}
 
 	}

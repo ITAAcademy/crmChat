@@ -14,7 +14,7 @@
             <div class="user_presence">{{isUserOnline(user.chatUserId) ? 'Онлайн' :'Офлайн'}}</div>
         </div>
         <div class="contact_control">
-            <div ng-if="getRoomBlockMode() == 2" class="budget">+</div>
+            <div ng-click="addNewUser(user.chatUserId)" ng-if="canBeUserAddedToRoom(user.chatUserId)" class="budget">+</div>
         </div>
     </div>
 </div>
