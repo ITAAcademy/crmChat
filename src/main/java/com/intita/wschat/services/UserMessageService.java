@@ -354,6 +354,7 @@ public class UserMessageService {
 	public List<Date> getMessagesDatesByChatUserAndDate(Long chatUserId,Date early, Date late){
 		return userMessageRepository.getMessagesDatesByChatUserAndDateBetween(chatUserId, early, late);
 	}
+
 	
 	
 }

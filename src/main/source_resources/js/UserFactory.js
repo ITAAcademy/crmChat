@@ -446,7 +446,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
     var addNotifications = function(_notifications) {
         // notifications = notifications.concat(_notifications);
-        debugger;
         for (var i = 0; i < _notifications.length; i++) {
             var index = ignoreNotifications.indexOf(_notifications[i].details + _notifications[i].title + _notifications[i].type);
             if (index == -1) {
@@ -456,7 +455,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     function removeNotificationByValue(value) {
-        debugger;
         var index = notifications.indexOf(value);
         if (index != -1)
             notifications.splice(index, 1);

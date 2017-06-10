@@ -1,7 +1,5 @@
 package com.intita.wschat.services;
 
-import static org.hamcrest.CoreMatchers.not;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Principal;

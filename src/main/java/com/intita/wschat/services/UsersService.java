@@ -415,7 +415,9 @@ public class UsersService {
 		return usersRepo.findAllChatUsers(new PageRequest(page-1, pageSize)); 
 
 	}
-	
+	public Long getUsersCount(){
+		return usersRepo.count();
+	}	
 	/*
 	 * Birthday functionality
 	 */
@@ -432,6 +434,5 @@ public class UsersService {
 	public ArrayList<Long> getAllUserWithBirthdayAndInList(Date date, List<Long> users){
 		return usersRepo.findAllByBirthdayAndIdIn(date, users, null);
 	}
-
 }
 

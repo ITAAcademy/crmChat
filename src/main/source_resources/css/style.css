@@ -7,8 +7,8 @@
 }
 
 * {
-    -webkit-transition: none !important;
-    transition: none !important;
+    /*-webkit-transition: none !important;
+    transition: none !important;*/
 }
 
 body {
@@ -507,10 +507,10 @@ button:focus {
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
-    -webkit-transition: 1s ease-out;
+    /*-webkit-transition: 1s ease-out;
     transition: 1s ease-out;
     -webkit-transition-property: max-height, min-height;
-    transition-property: max-height, min-height;
+    transition-property: max-height, min-height;*/
     overflow-y: scroll;
 }
 
@@ -527,8 +527,8 @@ button:focus {
     padding: 10px;
     background-origin: content-box;
     opacity: 0.3;
-    -webkit-transition-property: all;
-    transition-property: all;
+    /*-webkit-transition-property: all;
+    transition-property: all;*/
     pointer-events: none;
 }
 
@@ -1140,9 +1140,9 @@ button:focus {
     left: 0;
     border: 0;
     padding: 0;
-    -webkit-transition: all ease-out .5s;
-    -webkit-transition: all ease-out 0.5s;
-    transition: all ease-out 0.5s;
+    -webkit-transition: all ease-out .3s;
+    -webkit-transition: all ease-out 0.3s;
+    transition: all ease-out 0.3s;
     background-color: #fff;
 }
 
@@ -2390,20 +2390,20 @@ body.frame .window_icons_wrapper {
 .notification_menu {
     position: absolute;
     width: 300px;
-    padding: 5px;
-    /* background-color: #eaf0f3; */
     right: -22px;
     text-overflow: ellipsis;
     padding: 0;
     top: 34px;
-    max-height: 0px;
-    -webkit-transition: 1s;
-    transition: 1s;
+    max-height: 0;
+    -webkit-transition: .5s;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
     -webkit-transition-property: max-height;
     transition-property: max-height;
     overflow: hidden;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     /* border: #fff 1px solid; */
+    box-shadow: 2px 3px 7px 0px rgba(138, 151, 167, 0.76);
 }
 
 .notification_menu .title {
@@ -2434,9 +2434,16 @@ body.frame .window_icons_wrapper {
 }
 
 .notification_menu.shown {
-    max-height: none;
+    max-height: 500px;
 }
-
+.notification_menu .notification_items_container{
+    
+max-height: 300px;
+    
+overflow: auto;
+    
+background-color: #fafcfd;
+}
 .notification_menu .user_image {
     width: 50px;
     height: 50px;
@@ -2447,8 +2454,9 @@ body.frame .window_icons_wrapper {
 
 .notification_menu .item {
     cursor: pointer;
-    background-color: #fafcfd;
 }
+.notification_menu .item:hover {background-color: #f2f4f5;}
+
 
 .notification_menu .item_content_wrapper {
     padding: 15px 15px;

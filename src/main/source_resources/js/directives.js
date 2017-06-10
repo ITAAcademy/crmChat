@@ -1097,9 +1097,9 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout, 
 
 
 
-angular.module('springChat.directives').directive('notificable', ['$templateRequest', '$sce', '$compile', '$parse', 'UserFactory', 'RoomsFactory', notificable]);
+angular.module('springChat.directives').directive('notificable', ['$timeout', '$templateRequest', '$sce', '$compile', '$parse', 'UserFactory', 'RoomsFactory', notificable]);
 
-function notificable($templateRequest, $sce, $compile, $parse, UserFactory, RoomsFactory) {
+function notificable($timeout, $templateRequest, $sce, $compile, $parse, UserFactory, RoomsFactory) {
     //TODO finish rooms search
     return {
         restrict: 'EA',
@@ -1111,19 +1111,22 @@ function notificable($templateRequest, $sce, $compile, $parse, UserFactory, Room
 
             scope.getItems = UserFactory.getNotifications;
             scope.notificationClick = function(item) {
-                debugger;
                 switch (item.type) {
                     case 'user_wait_tenant':
                         userWaitTenantHandler(item);
                         break;
                     case 'BIRTHDAY':
-                        UserFactory.removeNotificationByValue(item);
+                        
                         RoomsFactory.goToPrivateDialog(item.params.chatId, true);
                         break;
                     case 'alert':
                         alertHandler();
                         break;
                 }
+                $timeout(function(){
+                    UserFactory.removeNotificationByValue(item);
+                }, 500)
+                
             }
 
             scope.cancelEventClick = function(event, item) {

@@ -1,16 +1,12 @@
 package com.intita.wschat.services;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,6 +195,12 @@ public class ChatUsersService {
 		roomList.add(new Room(Long.parseLong(roomId)));
 		return chatUsersRepo.findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(roomList, roomList, Long.parseLong(userId));
 	}
+
+
+	public int getActiveUsersCountToday(){
+		return chatUsersRepo.countChatUserByMessagesDateAfter();
+	}
+
 	/*public ChatUser getById(Long id){
 		return usersRepo.findOne(id);
 	}*/
