@@ -99,7 +99,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
         var onConnect = function(frame) {
             if (frame.headers['user-name'] == undefined)
-              location.reload();
+                location.reload();
             setChatUserId(frame.headers['user-name']);
             initForWS(false);
             setRealChatUserId(getChatUserId());
@@ -353,8 +353,8 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chatUser.id;
         //ZIGZAG
-        if (chatUserId==null){
-             location.reload();
+        if (chatUserId == null) {
+            location.reload();
         }
         setChatUserId(chatUserId);
         isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
@@ -369,7 +369,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         chatUserNickname = mess_obj.chatUser.nickName;
         chatUserRole = mess_obj.chatUser.role;
         chatUserAvatar = mess_obj.chatUser.avatar;
-
+        addNotifications(mess_obj.notifications);
         var onlineUserIds = mess_obj.activeUsers;
         setOnlineUsersIds(onlineUserIds);
 
@@ -437,14 +437,33 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     var notifications = [];
+    var ignoreNotifications = JSON.parse(localStorage.getItem("ignoreNotifications"));
+    if (ignoreNotifications == null)
+        ignoreNotifications = [];
+
     var getNotifications = function() {
         return notifications;
+    }
+    var addNotifications = function(_notifications) {
+        // notifications = notifications.concat(_notifications);
+        for (var i = 0; i < _notifications.length; i++) {
+            var index = ignoreNotifications.indexOf(_notifications[i].details + _notifications[i].title + _notifications[i].type);
+            if (index == -1) {
+                notifications.push(_notifications[i]);
+            }
+        }
     }
 
     function removeNotificationByValue(value) {
         var index = notifications.indexOf(value);
         if (index != -1)
             notifications.splice(index, 1);
+        var ID = value.details + value.title + value.type;
+        var index = ignoreNotifications.indexOf(ID);
+        if (index == -1) {
+            ignoreNotifications.push(ID);
+        }
+        localStorage.setItem("ignoreNotifications", JSON.stringify(ignoreNotifications));
     }
     var notifyAboutUserDemandingRoom = function(demandingUser) {
         var currentType = 'user_wait_tenant';
@@ -453,9 +472,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
         var notificationObject = {
                 'type': currentType,
-                'avatar': generateAvatarSrc(demandingUser.avatar),
-                'title': demandingUser.name,
-                'details': demandingUser.lastMessage,
+                'imageUrl': generateAvatarSrc(demandingUser.avatar),
+                'title': "Потребують вашої уваги!!!",
+                'details': demandingUser.name + ' : ' + demandingUser.lastMessage,
                 'chatUserId': demandingUser.chatUserId,
                 'roomId': demandingUser.roomId
             }

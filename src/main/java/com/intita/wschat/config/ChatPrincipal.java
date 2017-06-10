@@ -13,6 +13,11 @@ import java.util.Collection;
  * Created by roma on 01.06.17.
  */
 public class ChatPrincipal implements Principal {
+
+	private User intitaUser;
+	private ChatUser chatUser;
+	
+
 	public ChatPrincipal(){
 
 	}
@@ -67,11 +72,6 @@ public class ChatPrincipal implements Principal {
 			return false;
 		return true;
 	}
-
-	private User intitaUser;
-	private ChatUser chatUser;
-
-
 
 	@Override
 	public String toString(){

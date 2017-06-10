@@ -47,6 +47,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         //Imports from Services
         //Imports/>
         ChannelFactory.setIsInited(false);
+        $scope.haveNotify = function(){
+            return UserFactory.getNotifications().length > 0;
+        }
         $rootScope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
         $rootScope.baseurl = globalConfig["baseUrl"];
         $rootScope.imagesPath = globalConfig["imagesPath"];

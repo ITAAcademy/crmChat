@@ -76,15 +76,18 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 
 	@Column(name="firstname")
 	private String firstName;
-	
+
 	@Column(name="secondname")
 	private String secondName;
 
 
 	@Column(name="role")
 	private int role;
+	
+	@Column(nullable=true)
+	private Date birthday;
 
-	private String facebook;
+	
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -158,7 +161,7 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 		this.interests = interests;
 	}
 
-
+	private String facebook;
 	private String googleplus;
 	private String linkedin;
 	private String twitter;
@@ -166,8 +169,18 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	private String address;
 	private String education;
 	private String interests;
+	
+	
 
 
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
 
 	public String getSkype() {
 		return skype;
@@ -289,7 +302,7 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 		// do nothing because anonimus user is considered authorized too
 		return "anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
-	
+
 
 	public User(String login, String password) {
 		this.login = login;
@@ -320,13 +333,13 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	public String getNickName() {
 		if(nickName != null && !nickName.isEmpty())
 			return nickName;
-		
+
 		if(firstName != null && !firstName.isEmpty() && secondName != null && !secondName.isEmpty())
 			return firstName + " " + secondName;
 
 		return getLogin();
 	}
-	
+
 	public void setNickname(String nickname) {
 		this.nickName = nickname;
 	}

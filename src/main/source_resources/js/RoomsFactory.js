@@ -660,9 +660,10 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         $rootScope.goToAuthorize(function() { ChannelFactory.changeLocation("/chatrooms"); });
     }
 
-    function goToPrivateDialog(intitaUserId) {
+    function goToPrivateDialog(intitaUserId, isChatId) {
         $rootScope.hideMenu();
-        $http.post(serverPrefix + "/chat/get/rooms/private/" + intitaUserId).
+        var _isChatId = isChatId === true ? '?isChatId=true' : '';
+        $http.post(serverPrefix + "/chat/get/rooms/private/" + intitaUserId + _isChatId).
         success(function(data, status, headers, config) {
 
             //$scope.goToDialogById(data);

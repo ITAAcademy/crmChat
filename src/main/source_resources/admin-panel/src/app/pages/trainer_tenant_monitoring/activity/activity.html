@@ -1,53 +1,45 @@
-        <div ng-show="ratingsInfoByCurrentRoom.length == 0 &amp;&amp; userActivityPerDayDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">В заданому проміжку активності не було</div>
-     <div id="areaChart" ng-show="userActivityDataValue.length>0" class="admin-chart"></div>
-     <div id="barChart" ng-show="userActivityPerDayDataValue.length>0" class="admin-chart"></div>
-
-               <div class="row">
-               <div class="col-md-3">
-                <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
-                    <ui-select-match placeholder="Select first user">
-                        {{selected.user.nickName}}
-                    </ui-select-match>
-                    <ui-select-choices minimum-input-length="1" refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
-                        <span ng-bind-html="withSearchItem.nickName"></span>
-                    </ui-select-choices>
-                </ui-select>
-                </div>
-                <!--Date  pickers -->
-                <div class="col-md-3">
-                    <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
-                        <span class="input-group-btn">
+<div ng-show="ratingsInfoByCurrentRoom.length == 0 &amp;&amp; userActivityPerDayDataValue.length == 0" style="width: 100%; text-align: center; height: 100%; padding-top: 30px;">В заданому проміжку активності не було</div>
+<div class="row  ">
+    <div id="areaChart" ng-show="userActivityDataValue.length>0" class="admin-chart"></div>
+    <div id="barChart" ng-show="userActivityPerDayDataValue.length>0" class="admin-chart"></div>
+</div>
+<div class="row  ">
+    <div class="col-md-4">
+        <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+            <ui-select-match placeholder="Select first user">
+                {{selected.user.nickName}}
+            </ui-select-match>
+            <ui-select-choices minimum-input-length="1" refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
+                <span ng-bind-html="withSearchItem.nickName"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    <!--Date  pickers -->
+    <div class="col-md-4 datepicker">
+        <p class="input-group">
+            <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.start" is-open="opened.start" datepicker-options="options" ng-required="true" close-text="Close" />
+            <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openStart()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
-                    </p>
-                </div>
-                <div class="col-md-3">
-                    <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
-                        <span class="input-group-btn">
+        </p>
+    </div>
+    <div class="col-md-4 datepicker">
+        <p class="input-group">
+            <input type="text" class="form-control" uib-datepicker-popup ng-model="dates.end" is-open="opened.end" datepicker-options="options" ng-required="true" close-text="Close" />
+            <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="openEnd()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
-                    </p>
-                </div>
-                <!--//Date  pickers -->             
-            </div>
-
-            <div class="row">
-            <div class="col-md-6">
-                
-                        <div>
-                   <button  ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
-                   <span>Переглянути статистику активності</span>
-                </div>
-
-                <div>
-                   <button  ng-click="updateUserActivityPerDay()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
-                   <span> Переглянути статистику робочих годин по дням (хв/день)</span>
-                        
-                </div>
-
-            </div>
-             
-            </div>
-  
+        </p>
+    </div>
+    <!--//Date  pickers -->
+</div>
+<div class="row col-xs-12 datepicker">
+    <div class="col-md-6">
+        <button ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+        <span>Переглянути статистику активності</span>
+    </div>
+    <div class="col-md-6">
+        <button ng-click="updateUserActivityPerDay()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+        <span> Переглянути статистику робочих годин по дням (хв/день)</span>
+    </div>
+</div>

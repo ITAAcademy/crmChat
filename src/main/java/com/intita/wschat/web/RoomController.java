@@ -79,9 +79,11 @@ import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.ConfigParamService;
 import com.intita.wschat.services.ConsultationsService;
 import com.intita.wschat.services.LecturesService;
+import com.intita.wschat.services.NotificationsService;
 import com.intita.wschat.services.OfflineStudentsGroupService;
 import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
+import com.intita.wschat.services.UserBirthdayService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
@@ -136,6 +138,8 @@ public class RoomController {
 	@Autowired private RoomPermissionsService roomPermissionsService;
 	@Autowired private OfflineStudentsGroupService offlineStudentsGroupService;
 	@Autowired private ChatLangService chatLangService;
+	@Autowired private NotificationsService notificationsService;
+	
 	@Autowired private DTOMapper dtoMapper;
 
 	public static class ROLE {
@@ -326,6 +330,7 @@ public class RoomController {
 		ChatUserDTO chatUserDTO = dtoMapper.map(activeChatUser);
 		Set<Long> activeUsers = participantRepository.getActiveUsers();
 		responseData.setActiveUsers(activeUsers);
+		responseData.setNotifications(notificationsService.generationNotification());
 
 		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
 

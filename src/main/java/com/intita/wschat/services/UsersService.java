@@ -417,7 +417,22 @@ public class UsersService {
 	}
 	public Long getUsersCount(){
 		return usersRepo.count();
+	}	
+	/*
+	 * Birthday functionality
+	 */
+	@Transactional
+	public Long[] getAllUserWithBirthdayToday(){
+		return usersRepo.findAllByBirthdayToday();
 	}
-
+	
+	@Transactional
+	public ArrayList<Long> getAllUserWithBirthday(Date date){
+		return usersRepo.findAllByBirthday(date, null);
+	}
+	@Transactional
+	public ArrayList<Long> getAllUserWithBirthdayAndInList(Date date, List<Long> users){
+		return usersRepo.findAllByBirthdayAndIdIn(date, users, null);
+	}
 }
 

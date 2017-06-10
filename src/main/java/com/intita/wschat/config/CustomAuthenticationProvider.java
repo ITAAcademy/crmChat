@@ -141,7 +141,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 					chatUser = chatUserServise.getChatUserFromIntitaId(intitaIdLong, false);
 					if(chatUser!=null){
 						User intitaUser = intitaUsersService.getUserFromChat(chatUser.getId());
-						principal = new ChatPrincipal(chatUser, intitaUser);
+						principal.setChatUser(chatUser);
+						principal.setIntitaUser(intitaUser);
 					}
 				}
 

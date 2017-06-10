@@ -60,7 +60,7 @@ public class ChatUsersService {
 			User user = userService.getUser((long)userIdOfTrainer);
 			ChatUser chatUser = user.getChatUser();
 			if (chatUser != null)
-			trainers.add(chatUser);
+				trainers.add(chatUser);
 		}
 		return trainers;
 	}
@@ -124,13 +124,13 @@ public class ChatUsersService {
 	}
 
 	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){
-		if(intitaUsersIds==null || intitaUsersIds.size()<1)return new ArrayList<ChatUser>();
-		ArrayList<ChatUser> resultSet = null;
-		try{
-			resultSet = chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);
-		}
-		catch(Exception e){
+		ArrayList<ChatUser> resultSet = new ArrayList<ChatUser>();
+		if(intitaUsersIds==null || intitaUsersIds.size()<1)
+			return resultSet;
 
+		for(Long intitaId : intitaUsersIds)
+		{
+			resultSet.add(getChatUserFromIntitaId(intitaId, false));
 		}
 		return resultSet;
 	}
