@@ -459,6 +459,7 @@ button:focus {
     margin-left: 3px;
     margin-top: -41px;
     text-align:center;
+    font-size:10px;
 }
 
 .head .logo {
