@@ -105,7 +105,7 @@ public class RoleGroupsController {
 		ChatUser cUser = chatPrincipal.getChatUser();
 		User iUser = chatPrincipal.getIntitaUser();
 		String name = String.valueOf(request.getRemoteHost());
-		boolean intitaSide = request.getRemoteHost().equals("0:0:0:0:0:0:0:1"); 
+		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1");
 		if(usersService.checkRole(iUser, UserRole.ADMIN) || intitaSide) {
 			if(tableName==null) {
 				roomsService.updateRoomsForAllRoles();
