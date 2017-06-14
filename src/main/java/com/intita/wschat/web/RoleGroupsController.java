@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.annotations.ServerAccess;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
@@ -98,6 +99,7 @@ public class RoleGroupsController {
 	@RequestMapping(value = "roles_operations/update", method = RequestMethod.GET)
 	@ResponseBody
 	@CrossOrigin(maxAge = 3600, origins = "http://localhost:80")
+	@ServerAccess
 	private boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser cUser = chatPrincipal.getChatUser();
