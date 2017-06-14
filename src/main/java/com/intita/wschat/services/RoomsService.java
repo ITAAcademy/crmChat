@@ -405,13 +405,13 @@ public class RoomsService {
 	}
 
 	@Transactional(readOnly = false)
-	public Room update(Room room){
+	public Room update(Room room,boolean notify){
 		room = roomRepo.save(room);
 		Set<ChatUser> users = new HashSet<>(room.getUsers());
 		if(room.getAuthor() != null)
 			users.add(room.getAuthor());
 		for (ChatUser chatUser : users) {
-			chatController.updateRoomByUser(chatUser, room);
+			chatController.updateRoomByUser(chatUser, room,notify);
 		}
 		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));
@@ -604,10 +604,10 @@ public class RoomsService {
 		return null;
 	}
 
-	public void updateRoomsForAllRoles() {
+	public void updateRoomsForAllRoles(boolean notifyUsers) {
 		try {
 			for (String table : rolesTablesNames) {
-				updateRoomForRoleTable(table);
+				updateRoomForRoleTable(table,notifyUsers);
 			}
 		}
 		catch(Exception e){
@@ -616,7 +616,7 @@ public class RoomsService {
 	}
 
 	@Transactional
-	public boolean updateRoomForRoleTable(String tableName){
+	public boolean updateRoomForRoleTable(String tableName,boolean notifyUsers){
 		int indexOfTable = rolesTablesNames.indexOf(tableName);
 		if (indexOfTable == -1) return false;
 		String roleName = rolesNames.get(indexOfTable);
@@ -630,7 +630,7 @@ public class RoomsService {
 		}
 		Room room = info.getRoom();
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
-		room = update(room);
+		room = update(room,notifyUsers);
 		ArrayList<ChatUser> cUsersList = null;
 
 		ArrayList<Long> intitaUsers = userService.getAllByRoleValue(roleInt, tableName);

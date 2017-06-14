@@ -556,7 +556,7 @@ public class BotController {
 			//TODO
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.ADD);
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.REMOVE);
-			roomService.update(room);
+			roomService.update(room,true);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		else{

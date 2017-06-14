@@ -74,10 +74,10 @@ public class RoleGroupsController {
 
 	@PostConstruct
 	private void autoUpdate(){
-		updateRoomsForAllRoles(null);
+		updateRoomsForAllRoles(null,false);
 	}
 
-	private void updateRoomForRole(UserRole role){
+	private void updateRoomForRole(UserRole role,boolean notifyUsers){
 
 		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(role.getValue());
 		if(info == null)
@@ -88,7 +88,7 @@ public class RoleGroupsController {
 
 		Room room = info.getRoom();
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
-		room = roomsService.update(room);
+		room = roomsService.update(room,notifyUsers);
 		ArrayList<ChatUser> cUsersList = null;
 		if(role == UserRole.TENANTS)
 			cUsersList = chatUsersService.getUsers(usersService.getAllByRole(role));
@@ -115,18 +115,18 @@ public class RoleGroupsController {
 		String name = request.getRemoteHost();
 		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1"); 
 		if(intitaSide || usersService.checkRole(iUser, UserRole.ADMIN) ) {
-			return updateRoomsForAllRoles(tableName);
+			return updateRoomsForAllRoles(tableName,true);
 		}
 		return false;
 	}
 	
-	private boolean updateRoomsForAllRoles(String tableName){
+	private boolean updateRoomsForAllRoles(String tableName,boolean notifyUsers){
 		if(tableName==null) {
-			roomsService.updateRoomsForAllRoles();
+			roomsService.updateRoomsForAllRoles(notifyUsers);
 		}
 		else {
 			try {
-				boolean updated = roomsService.updateRoomForRoleTable(tableName);
+				boolean updated = roomsService.updateRoomForRoleTable(tableName,notifyUsers);
 				if (!updated) return false;
 			}
 			catch(Exception e){

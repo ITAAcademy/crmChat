@@ -801,9 +801,10 @@ public class ChatController {
 						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
 	}
 
-	public void updateRoomByUser(ChatUser user, Room room) {
+	public void updateRoomByUser(ChatUser user, Room room,boolean notify) {
 		ArrayList<Room> roomForUpdate = new ArrayList<>();
 		roomForUpdate.add(room);
+		if(notify)
 		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
 	}
 
