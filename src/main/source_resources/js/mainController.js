@@ -564,6 +564,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
 
+        var msgAudioNotify = new Audio('data/new_mess.mp3');
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
@@ -582,9 +583,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         //room.date = curentDateInJavaFromat();
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
-                                new Audio('data/new_mess.mp3').play();
-
-
+                                msgAudioNotify.play();
                             var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
                             if (room.string == msg.username)
                                 title = "Нове повідомлення від " + messagesMap[room.roomId].username;
