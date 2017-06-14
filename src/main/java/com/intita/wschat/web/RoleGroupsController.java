@@ -72,6 +72,10 @@ public class RoleGroupsController {
 
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
+	@PostConstruct
+	private void autoUpdate(){
+		updateRoomsForAllRoles(null);
+	}
 
 	private void updateRoomForRole(UserRole role){
 
@@ -99,30 +103,41 @@ public class RoleGroupsController {
 	@ResponseBody
 	@CrossOrigin(maxAge = 3600, origins = "http://localhost:80")
 	private boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		ChatUser cUser = chatPrincipal.getChatUser();
-		User iUser = chatPrincipal.getIntitaUser();
-		String name = String.valueOf(request.getRemoteHost());
-		boolean intitaSide = request.getRemoteHost().equals("0:0:0:0:0:0:0:1"); 
-		if(usersService.checkRole(iUser, UserRole.ADMIN) || intitaSide) {
-			if(tableName==null) {
-				roomsService.updateRoomsForAllRoles();
-			}
-			else {
-				try {
-					boolean updated = roomsService.updateRoomForRoleTable(tableName);
-					if (!updated) return false;
-				}
-				catch(Exception e){
-					//e.printStackTrace();
-					return false;
-				}
-			}
 
-			return true;
+		ChatUser cUser = null;
+		User iUser = null;
+		if(auth != null)
+		{
+			ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+			cUser = chatPrincipal.getChatUser();
+			iUser = chatPrincipal.getIntitaUser();	
+		}
+		String name = request.getRemoteHost();
+		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1"); 
+		if(intitaSide || usersService.checkRole(iUser, UserRole.ADMIN) ) {
+			return updateRoomsForAllRoles(tableName);
 		}
 		return false;
 	}
+	
+	private boolean updateRoomsForAllRoles(String tableName){
+		if(tableName==null) {
+			roomsService.updateRoomsForAllRoles();
+		}
+		else {
+			try {
+				boolean updated = roomsService.updateRoomForRoleTable(tableName);
+				if (!updated) return false;
+			}
+			catch(Exception e){
+				//e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
 
 
 }
