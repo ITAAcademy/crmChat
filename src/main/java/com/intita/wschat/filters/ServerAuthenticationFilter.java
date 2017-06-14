@@ -4,6 +4,7 @@ import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -34,7 +35,11 @@ public class ServerAuthenticationFilter extends GenericFilterBean{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws java.io.IOException,  ServletException
 	{
 		//authenticationProvider.autorization(authenticationProvider);
-		Authentication auth =  authenticationProvider.autorization(authenticationProvider);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("CALL custom filter");
+		if(auth == null)
+			auth =  authenticationProvider.autorization(authenticationProvider);
+		//SecurityContextHolder.getContext().setAuthentication(auth);
 		//chatLangService.updateDataFromDatabase();
 		//ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		chain.doFilter(request, response);

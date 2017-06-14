@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomAuthenticationProvider authenticationProvider;
 	@Autowired
-	private CustomFilter authenticationTokenFilter;
+	private ServerAuthenticationFilter authenticationTokenFilter;
 	@Autowired
 	private ApplicationContext appContext;
 	
@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.csrf().disable()
 		//.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
-		//.addFilterBefore( authenticationTokenFilter, SecurityContextPersistenceFilter.class)
+		.addFilterBefore( authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
 
 		.formLogin()
 		.loginPage("/")
@@ -128,13 +128,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public FilterRegistrationBean registration(ServerAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
-		List<String> urlPatterns = getUrlPatternsForServerAccess();
-		registration.setUrlPatterns(urlPatterns);
-		registration.setEnabled(false);
-		return registration;
-	}
+	  public FilterRegistrationBean registration(ServerAuthenticationFilter filter) {
+	    FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	    ArrayList<String> urlPatterns = new ArrayList(getUrlPatternsForServerAccess());
+	    registration.setUrlPatterns(urlPatterns);
+	    registration.setEnabled(true);
+	    registration.setOrder(3);
+	    return registration;
+	  }
 
 
 	public List<String> getUrlPatternsForServerAccess(){
@@ -147,7 +148,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 					RequestMapping requestMappingAnnotation = m.getAnnotation(RequestMapping.class);
 					if (requestMappingAnnotation==null) continue;
 					String MappingPath = requestMappingAnnotation.value()[0];
-					urlParameters.add(MappingPath);
+					urlParameters.add("/" + MappingPath + "/*");
 				}
 			}
 		return urlParameters;
