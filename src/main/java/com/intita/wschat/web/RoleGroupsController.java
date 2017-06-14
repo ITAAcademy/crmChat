@@ -73,8 +73,12 @@ public class RoleGroupsController {
 
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
+	@PostConstruct
+	private void autoUpdate(){
+		updateRoomsForAllRoles(null,false);
+	}
 
-	private void updateRoomForRole(UserRole role){
+	private void updateRoomForRole(UserRole role,boolean notifyUsers){
 
 		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(role.getValue());
 		if(info == null)
@@ -85,7 +89,7 @@ public class RoleGroupsController {
 
 		Room room = info.getRoom();
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
-		room = roomsService.update(room);
+		room = roomsService.update(room,notifyUsers);
 		ArrayList<ChatUser> cUsersList = null;
 		if(role == UserRole.TENANTS)
 			cUsersList = chatUsersService.getUsers(usersService.getAllByRole(role));
@@ -101,30 +105,40 @@ public class RoleGroupsController {
 	@CrossOrigin(maxAge = 3600, origins = "http://localhost:80")
 	@ServerAccess
 	private boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		ChatUser cUser = chatPrincipal.getChatUser();
-		User iUser = chatPrincipal.getIntitaUser();
-		String name = String.valueOf(request.getRemoteHost());
-		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1");
-		if(usersService.checkRole(iUser, UserRole.ADMIN) || intitaSide) {
-			if(tableName==null) {
-				roomsService.updateRoomsForAllRoles();
-			}
-			else {
-				try {
-					boolean updated = roomsService.updateRoomForRoleTable(tableName);
-					if (!updated) return false;
-				}
-				catch(Exception e){
-					//e.printStackTrace();
-					return false;
-				}
-			}
-
-			return true;
+		ChatUser cUser = null;
+		User iUser = null;
+		if(auth != null)
+		{
+			ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+			cUser = chatPrincipal.getChatUser();
+			iUser = chatPrincipal.getIntitaUser();	
+		}
+		String name = request.getRemoteHost();
+		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1"); 
+		if(intitaSide || usersService.checkRole(iUser, UserRole.ADMIN) ) {
+			return updateRoomsForAllRoles(tableName,true);
 		}
 		return false;
 	}
+	
+	private boolean updateRoomsForAllRoles(String tableName,boolean notifyUsers){
+		if(tableName==null) {
+			roomsService.updateRoomsForAllRoles(notifyUsers);
+		}
+		else {
+			try {
+				boolean updated = roomsService.updateRoomForRoleTable(tableName,notifyUsers);
+				if (!updated) return false;
+			}
+			catch(Exception e){
+				//e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
 
 
 }

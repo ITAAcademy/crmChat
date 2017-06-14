@@ -913,7 +913,7 @@ public class RoomController {
 			contain = true;
 		}
 		roomService.setAuthor(newAuthor, room);
-		if (roomService.update(room) == null)
+		if (roomService.update(room,true) == null)
 			return false;
 
 		if (savePreviusAuthorAsUser) {
@@ -1035,7 +1035,7 @@ public class RoomController {
 				removeUserFromRoomFully(user, room_o, auth, false);
 			}
 			room_o.setActive(false);
-			roomService.update(room_o);
+			roomService.update(room_o,true);
 		}
 		return removeUserFromRoomFullyWithoutCheckAuthorization(user_o, room_o);
 
