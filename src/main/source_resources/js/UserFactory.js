@@ -437,6 +437,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     var notifications = [];
+
     var ignoreNotifications = JSON.parse(localStorage.getItem("ignoreNotifications"));
     if (ignoreNotifications == null)
         ignoreNotifications = [];
@@ -444,12 +445,24 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var getNotifications = function() {
         return notifications;
     }
+    var isNotificationAlreadyExcist = function(notification){
+        for (var i = 0; i < notifications.length; i++) {
+             var currentNotification = notifications[i];
+             if (isEquivalent(currentNotification,notification)){
+                return true;
+             }
+        }
+        return false;
+    }
+
     var addNotifications = function(_notifications) {
         // notifications = notifications.concat(_notifications);
         for (var i = 0; i < _notifications.length; i++) {
+            if (isNotificationAlreadyExcist(_notifications[i]))continue;
             var index = ignoreNotifications.indexOf(_notifications[i].details + _notifications[i].title + _notifications[i].type);
+            var currentNotification = _notifications[i];
             if (index == -1) {
-                notifications.push(_notifications[i]);
+                notifications.push(currentNotification);
             }
         }
     }

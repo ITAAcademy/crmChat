@@ -21,18 +21,24 @@
  <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <div class="head">
             <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
-            <i class="logo material-icons">chat</i><i class="logo-text" th:text="${lgPack.chatGlobal.title}">Онлайн чат</i>
+             <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
+                    <i class="material-icons ">chat_bubble_outline</i>
+                    <div class="text" ng-bind="getNewMsgNumber()"></div>
+                    <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
+             </div>
+            <i class="logo material-icons">chat</i>
+            <i class="logo-text" th:text="${lgPack.chatGlobal.title}">Онлайн чат</i>
             <div class="window_icons_wrapper" ng-if="$root.authorize">
                 <div class="window_icon notification" ng-class="{active: haveNotify() }" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
                     <i class="material-icons">notifications</i>
                     <div class="info"></div>
                     <div id="notification_container" class="notification_menu"></div>
                 </div>
-                <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
-                    <i class="material-icons ">chat_bubble_outline</i>
-                    <div class="text" ng-bind="getNewMsgNumber()"></div>
-                    <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
-                </div>
+                    <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification_right ng-hide">
+                        <i class="material-icons ">chat_bubble_outline</i>
+                        <div class="text" ng-bind="getNewMsgNumber()"></div>
+                <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
+                    </div>
                 <span ng-if="isUserTenant()">
                         <div class="window_icon tenant_busy_control ng-hide" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                             <i class="material-icons ">hourglass_empty</i>
