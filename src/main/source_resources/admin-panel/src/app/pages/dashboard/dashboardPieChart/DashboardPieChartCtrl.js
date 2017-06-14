@@ -70,6 +70,7 @@
          var chart =  $('#'+$scope.chartIdPrefix+responseId);
         var totalCount = responseData[chartModelForResponseId.totalCountFieldName];
         var currentCount = responseData[chartModelForResponseId.currentCountFieldName];
+        chartModelForResponseId.stats = currentCount;
        var easyPie =  chart.easyPieChart({
           easing: 'easeOutBounce',
           onStep: function (from, to, percent) {

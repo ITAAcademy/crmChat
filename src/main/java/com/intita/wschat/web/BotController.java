@@ -557,8 +557,11 @@ public class BotController {
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.ADD);
 			//room.getPermissions().get(trainer).addPermission(trainer, RoomPermissions.Permission.REMOVE);
 			roomService.update(room);
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		else{
+			return new ResponseEntity<>("user is not trainer!!!", HttpStatus.BAD_REQUEST);
+		}
 
 	}
 

@@ -1171,6 +1171,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory,
     function addNewUser(chatUserId) {
         RoomsFactory.addUserToRoom(chatUserId);
     }
+    $scope.addNewUser = addNewUser;
 
     $scope.getOpponentIdFromRoom = function getOpponentIdFromRoom(room) {
         if (room.privateUserIds == null) return null;
@@ -1253,7 +1254,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     $scope.rooms = RoomsFactory.getRooms;
     $scope.searchEnabled = false;
     $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
-
+    $scope.isAddUserToDialogRoomBlockMode = StateFactory.isAddUserToDialogRoomBlockMode;
     $scope.canBeAddedToRoom = function(room) {
         //TODO check if user can be added to room
         if (StateFactory.isCreateRoomBlockMode()) return true;
@@ -1261,6 +1262,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         if (opponentUserId == null) return null;
         return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(opponentUserId);
     };
+    $scope.canBeUserAddedToRoom = function(userId){
+        var currentUserId = UserFactory.getChatUserId();
+        if(userId==null || userId == currentUserId)return false;
+        if (StateFactory.isCreateRoomBlockMode()) return true;
+        return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
+    }
     /* $scope.stripHtml = function(html)
      {
          var tmp = document.createElement("DIV");
