@@ -36,7 +36,7 @@ public class ServerAuthenticationFilter extends GenericFilterBean{
 	{
 		//authenticationProvider.autorization(authenticationProvider);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("CALL custom filter");
+		//System.out.println("CALL custom filter");
 		if(auth == null)
 			auth =  authenticationProvider.autorization(authenticationProvider);
 		//SecurityContextHolder.getContext().setAuthentication(auth);
