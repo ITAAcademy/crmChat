@@ -736,7 +736,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
-        $scope.isMessageInputAvailable = RoomsFactory.checkMessageAdditionPermission;
+        $scope.isMessageInputAvailable = function() {
+           return RoomsFactory.checkMessageAdditionPermission() || UserFactory.isTemporaryGuest();
+        }
         $scope.currentRoomIsNull = function() {
             if (RoomsFactory.getCurrentRoom() == null) return true;
             return RoomsFactory.getCurrentRoom().roomId == null;

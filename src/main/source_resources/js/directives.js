@@ -647,10 +647,10 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster', messageInput
+    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster','$window', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster,$window) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
@@ -818,8 +818,22 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
 
             $scope.sendMessageAndFiles = function() {
-                var files = $scope.files;
+
+                 var files = $scope.files;
                 var textOfMessage = $scope.newMessage.value == null || $scope.newMessage.value.length < 1 ? " " : $scope.newMessage.value;
+
+                if(UserFactory.isTemporaryGuest()){
+                    $http.post(serverPrefix + "/chat/persist_temporary_guest",textOfMessage).then(function(response) {
+                        /*var roomId = response.data;
+                           $scope.doGoToRoom(roomId);*/
+                                  $window.location.reload();
+                }, function() {
+                    console.log('temporary guest user activation failed');
+                });
+                    return;
+                }
+
+               
                 if (files != null && files.length > 0) {
                     uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                         function successCallback(data) {

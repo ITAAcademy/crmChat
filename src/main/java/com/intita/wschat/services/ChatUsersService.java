@@ -32,6 +32,27 @@ public class ChatUsersService {
 	@Autowired
 	private UsersService userService;
 
+	private Map<String,ChatUser> guestUsers = new HashMap<String,ChatUser>();
+
+	public ChatUser generateNewGuest(){
+		String nickName = generateRandomNickName();
+		ChatUser chatUser = new ChatUser(nickName,null);
+		guestUsers.put(nickName,chatUser);
+		return chatUser;
+	}
+
+	public ChatUser persistGuest(String nickName){
+		ChatUser chatUser = guestUsers.get(nickName);
+		if (chatUser==null) return null;
+		guestUsers.remove(chatUser.getNickName());
+		return chatUsersRepo.save(chatUser);
+	}
+
+	private String generateRandomNickName(){
+		return "Guest_" + new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), new BCryptPasswordEncoder());
+	}
+
+
 	@PostConstruct
 	@Transactional
 	public void createAdminUser() {

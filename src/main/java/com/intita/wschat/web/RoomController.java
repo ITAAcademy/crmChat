@@ -2,14 +2,7 @@ package com.intita.wschat.web;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -276,7 +269,7 @@ public class RoomController {
 		User realIntitaUser = chatPrincipal.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
-		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
+		if (activeChatUser == null || !Objects.equals(realChatUserId,activeChatUser.getId()) ) {
 			if (!userService.isAdmin(realIntitaUser))
 				return null;
 		}
@@ -285,16 +278,13 @@ public class RoomController {
 		boolean userIsNotAuthorized = realIntitaUser == null;
 
 		if (userIsNotAuthorized) {
+			/*
 			Room room;
 			
 			if (chatLastRoomDateService.getUserLastRoomDates(activeChatUser).iterator().hasNext()) {
 				room = chatLastRoomDateService.getUserLastRoomDates(realChatUser).iterator().next().getLastRoom();
 			} else {
-				/*
-				 * ADD BOT TO CHAT
-				 */
-				// boolean botEnable =
-				// Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
 				if (s_botEnable != null)
@@ -305,24 +295,13 @@ public class RoomController {
 				} else
 					room = createRoomWithTenant(auth);
 
-				// test - no free tenant
-				// room = null;
-
-				// send msg about go to guest room if you is tenant with current
-				// Id
-				/*
-				 * if (room != null)
-				 * chatController.addFieldToInfoMap("newGuestRoom",
-				 * room.getId());
-				 */
 			}
-			// simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." +
-			// user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			if (room != null)
 				responseData.setNextWindow(room.getId().toString());
 			else
 				responseData.setNextWindow("-1");
+				*/
 		} else {
 			// subscribedtoRoomsUsersBuffer.add(user);
 			responseData.setNextWindow("0");
@@ -350,7 +329,7 @@ public class RoomController {
 		}
 		chatUserDTO.setRoles(userService.getAllRoles(activeIntitaUser));
 		responseData.setChatUser(chatUserDTO);
-		List<RoomModelSimple> roomModels = roomService.getRoomsModelByChatUser(activeChatUser);
+		List<RoomModelSimple> roomModels = activeChatUser.getId()==null ? new ArrayList<RoomModelSimple>() : roomService.getRoomsModelByChatUser(activeChatUser);
 		responseData.setRoomModels(roomModels);
 		/***
 		 * @deprecated try { result.put("friends",
@@ -764,7 +743,7 @@ public class RoomController {
 		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");
 		Long chatUserId = chatPrincipal.getChatUser().getId();
 
-		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);
+		ConcurrentLinkedQueue<DeferredResult<String>> queue = chatUserId==null ? null : responseRoomBodyQueue.get(chatUserId);
 		if (queue == null) {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}

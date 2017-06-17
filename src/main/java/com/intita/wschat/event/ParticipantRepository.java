@@ -36,6 +36,7 @@ public class ParticipantRepository {
 	private ConcurrentHashMap<Long,IPresentOnForum> activeSessions = new ConcurrentHashMap<Long,IPresentOnForum>();
 	//put null to distinguish WS from LP sessions. We need no last action time for Web Sockets
 	public void addParticipantPresenceByConnections(Long chatId) {
+		if(chatId==null) return;
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum presence = activeSessions.get(chatId);
 			presence.addConnectionsCount(1);
@@ -49,6 +50,7 @@ public class ParticipantRepository {
 		
 	}
 	public void addParticipantPresenceByLastConnectionTime(Long chatId){
+		if (chatId==null)return;
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum presence = activeSessions.get(chatId);
 			presence.setLastPresenceTime(new Date());
@@ -63,6 +65,7 @@ public class ParticipantRepository {
 	}
 
 	public boolean isOnline(Long chatId) {
+		if (chatId==null) return false;
 		boolean containsKey = activeSessions.containsKey(chatId);
 		boolean isPresent = containsKey ? activeSessions.get(chatId).isPresent() : false;
 		//System.out.println("isOnline "+chatId+" ? "+ online);
@@ -75,6 +78,7 @@ public class ParticipantRepository {
 	 */
 	public boolean invalidateParticipantPresence(Long chatId,boolean invalidateWS) {
 		//log.info(String.format("Participant %s presence invalidating...",chatId));
+		if (chatId == null) return false;
 		if (activeSessions.containsKey(chatId)){
 			IPresentOnForum userPresent = activeSessions.get(chatId);
 			if (invalidateWS && userPresent.isConnectionBased())

@@ -140,6 +140,8 @@ public class ChatController {
 	@Autowired
 	private DTOMapper dtoMapper;
 
+	@Autowired UserMessageService messageService;
+
 
 	private final Semaphore msgLocker = new Semaphore(1);
 
@@ -335,13 +337,13 @@ public class ChatController {
 	}
 
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal , RoomsService chat_room_service) {
+		if(roomId == null) return null;
 		long startTime = System.currentTimeMillis();
 		Room o_room = chat_room_service.getRoom(roomId);
 		if (o_room == null)
 			return null;
 		ChatUser o_user = chatPrincipal.getChatUser();
-		if (o_user == null)
-			return null;
+		if (o_user == null || o_user.getId()==null) return null;
 
 		Set<Room> all = chat_room_service.getAllRoomByUsersAndAuthor(o_user);
 
@@ -1098,6 +1100,19 @@ public class ChatController {
 		Room room = chatRoomsService.getRoom(roomId);
 		// if (room.getAuthor().equals(chatUser))
 		roomHistoryService.clearRoomHistory(room, chatUser);
+		return true;
+	}
+
+	@RequestMapping(value = "/chat/persist_temporary_guest", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean persistTemporaryUser(Authentication auth,@RequestBody String firstMessage)
+			throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		ChatUser persistedUser = chatUsersService.persistGuest(chatUser.getNickName());
+		Room room = chatRoomsService.register(chatUser.getNickName(),chatUser);
+		messageService.addMessage(persistedUser,room,firstMessage);
+		if (persistedUser==null)return false;
 		return true;
 	}
 

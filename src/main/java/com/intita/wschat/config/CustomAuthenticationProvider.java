@@ -117,7 +117,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		try {
 			intitaIdLong = Long.parseLong(IntitaId);
 		} catch (NumberFormatException e) {
-			log.info(e.getMessage());
+			//log.info(e.getMessage());
 		}
 		ChatPrincipal principal = (ChatPrincipal) session.getAttribute("chatUserObj");
 		Object obj_s = session.getAttribute("chatId");
@@ -132,11 +132,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				principal = new ChatPrincipal(chatUser, intitaUser);
 
 			} else {
-				System.out.println("CREATE GUEST");
-				ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
-				chatUser = c_u_temp;
-				session.removeAttribute("intitaId");
-				principal = new ChatPrincipal(chatUser, null);
+				if (principal==null) {
+					System.out.println("CREATE GUEST");
+					//ChatUser c_u_temp = chatUserServise.getChatUserFromIntitaId((long) -1, true);
+					ChatUser tempGuest = chatUserServise.generateNewGuest();
+					chatUser = tempGuest;
+					session.removeAttribute("intitaId");
+					principal = new ChatPrincipal(chatUser, null);
+				}
+				ChatUser persistedChatUser = chatUserServise.getChatUser(principal.getChatUser().getNickName());
+				if (persistedChatUser!=null)
+				principal.setChatUser(persistedChatUser);
+				chatUser = principal.getChatUser();
 			}
 			session.setAttribute("chatId", chatUser.getId());
 			session.setAttribute("chatUserObj", principal);

@@ -15,6 +15,15 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var friends;
     var onlineUsersIds = [];
     var messageSended = true;
+    var isUserTemporaryGuest = false;
+    var isUserGuest = false;
+
+    var isTemporaryGuest = function () {
+        return isUserTemporaryGuest;
+    }
+    var isGuest = function () {
+        return isUserGuest;
+    }
 
     var roomsRequiredTrainers = new Map();
 
@@ -100,9 +109,14 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         var onConnect = function(frame) {
             if (frame.headers['user-name'] == undefined)
                 location.reload();
-            setChatUserId(frame.headers['user-name']);
+            var chatUserId = frame.headers['user-name'];
+            if (chatUserId=="null"){
+                isUserTemporaryGuest = true;
+                chatUserId = null;
+            }
+            setChatUserId(chatUserId);
             initForWS(false);
-            setRealChatUserId(getChatUserId());
+            setRealChatUserId(chatUserId);
         };
 
         ChannelFactory.subscribeToConnect(function(socketSupport, frame) {
@@ -127,7 +141,11 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         })
     };
 
-    function initForWS(reInit) {
+    function initForWS(reInit) {       
+        if (isUserTemporaryGuest) {
+            loginTemporaryGuest();
+            return;
+        }
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
             var mess_obj = JSON.parse(message.body);
 
@@ -346,7 +364,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             if (tenantObj != null && tenants[i] != null && tenantObj.id == tenants[i].id) tenants.splice(i, 1); //tenant is already excist in list
         }
     }
-
+     function loginTemporaryGuest(){
+         $('body').addClass('loaded');
+     }
 
     function login(mess_obj) {
         $('body').addClass('loaded');
@@ -576,6 +596,8 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         notifyAboutUserDemandingRoom: notifyAboutUserDemandingRoom,
         getNotifications: getNotifications,
         removeNotificationByValue: removeNotificationByValue,
+        isTemporaryGuest,
+        isGuest,
         isAdmin: function() {
             return isAdmin;
         },

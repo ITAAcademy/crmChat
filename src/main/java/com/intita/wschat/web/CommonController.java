@@ -209,7 +209,7 @@ public class CommonController {
 		if(auth != null)
 		{
 			addLocolizationAndConfigParam(model, chatPrincipal.getChatUser());
-			log.info("Index login: "  + chatPrincipal.getChatUser().getId().toString());
+			log.info("Index login: "  + chatPrincipal.getChatUser().getId());
 		}
 		return "index";
 	}
