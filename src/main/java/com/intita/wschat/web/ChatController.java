@@ -156,19 +156,19 @@ public class ChatController {
 
 	private volatile Map<String, Queue<UserMessage>> messagesBuffer = Collections
 			.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key
-																					// =>
-																					// roomId
+	// =>
+	// roomId
 	private final Map<String, Queue<DeferredResult<String>>> responseBodyQueue = new ConcurrentHashMap<String, Queue<DeferredResult<String>>>();// key
-																																				// =>
-																																				// roomId
+	// =>
+	// roomId
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 
 	ConcurrentHashMap<DeferredResult<String>, String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>, String>();
 	private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();// RoomId,ChatUserId
-																					// of
-																					// tenatn
+	// of
+	// tenatn
 
 	public void tryRemoveChatUserRequiredTrainer(ChatUser chatUser) {
 		UserWaitingForTrainer userWaiting = null;
@@ -414,8 +414,8 @@ public class ChatController {
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, chatPrincipal,
 				chatRoomsService);// Control room from LP
 		if (struct == null || !struct.room.isActive() || message.getMessage().trim().isEmpty())// cant
-																								// add
-																								// msg
+			// add
+			// msg
 			return null;
 
 		UserMessage messageToSave = new UserMessage(struct.user, struct.room, message);
@@ -448,7 +448,7 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend("/topic/" + user.getId() + "/must/get.room.num/chat.message", payload);
 		}
 		simpMessagingTemplate
-				.convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
+		.convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
 		addFieldToInfoMap("newMessage", roomId);
 	}
 
@@ -470,7 +470,7 @@ public class ChatController {
 
 	@MessageMapping("/{room}/chat.message")
 	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
-									   Authentication auth) {
+			Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
 				chatRoomsService);// Control room from LP
@@ -478,15 +478,15 @@ public class ChatController {
 			return null;
 
 		ChatUser chatUser = chatPrincipal.getChatUser(); // chatUsersService.isMyRoom(roomStr,
-																			// principal.getName());
+		// principal.getName());
 		if (chatUser == null)
 
 			return null;
 
 		Room o_room = struct.getRoom();
 		UserMessage messageToSave = filterMessageWithoutFakeObj(chatUser, message, o_room);// filterMessage(roomStr,
-																						// message,
-																						// principal);
+		// message,
+		// principal);
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL, true,
 				"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
@@ -555,11 +555,11 @@ public class ChatController {
 				try {
 					str = mapper.writeValueAsString(ChatMessage
 							.getAllfromUserMessages(userMessageService.wrapBotMessages(new ArrayList<>(array), "ua")));// @BAG@//dont
-																														// save
-																														// user
-																														// lang
-																														// for
-																														// bot
+					// save
+					// user
+					// lang
+					// for
+					// bot
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -627,7 +627,7 @@ public class ChatController {
 				}
 			}
 			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId);// ,
-																					// participantRepository.isOnline(chatId));
+			// participantRepository.isOnline(chatId));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 			if (!nextUser.isSetOrExpired() && result != "{}")// @BAD@
 				nextUser.setResult(result);
@@ -678,7 +678,7 @@ public class ChatController {
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room, user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
-		
+
 		/*
 		 * send info about some user enter to current room
 		 */
@@ -686,7 +686,7 @@ public class ChatController {
 		result.put("roomId", roomId);
 		result.put("chatUserId", user.getId());
 		result.put("type", "roomRead");
-		
+
 		addFieldToInfoMap("roomRead", result);
 		simpMessagingTemplate.convertAndSend("/topic/users/info", result);
 
@@ -797,7 +797,7 @@ public class ChatController {
 
 	public void sendMessageForUpdateRoomsByUser(ChatUser user, ArrayList<Room> roomForUpdate) {
 		RoomController
-				.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
+		.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(),
 				new RoomController.UpdateRoomsPacketModal(
 						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
@@ -807,7 +807,7 @@ public class ChatController {
 		ArrayList<Room> roomForUpdate = new ArrayList<>();
 		roomForUpdate.add(room);
 		if(notify)
-		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
+			sendMessageForUpdateRoomsByUser(user, roomForUpdate);
 	}
 
 	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)
@@ -1110,9 +1110,10 @@ public class ChatController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		ChatUser persistedUser = chatUsersService.persistGuest(chatUser.getNickName());
+		if (persistedUser==null)return false;
+		chatPrincipal.setChatUser(chatUser);
 		Room room = chatRoomsService.register(chatUser.getNickName(),chatUser);
 		messageService.addMessage(persistedUser,room,firstMessage);
-		if (persistedUser==null)return false;
 		return true;
 	}
 
@@ -1133,22 +1134,22 @@ public class ChatController {
 	private void sendAllNewMessageNotificationsFromLast24Hours() {
 		final int pageSize = 30;
 		int currentPage = 1;
-		 Page<User> intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
-		 log.info("sending emails to users:");
-		 int pagesTotal = intitaUsersPage.getTotalPages();
+		Page<User> intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+		log.info("sending emails to users:");
+		int pagesTotal = intitaUsersPage.getTotalPages();
 		while(currentPage<=pagesTotal){
-			 log.info("sending page "+currentPage+"/"+pagesTotal);
-		for (User user : intitaUsersPage.getContent()) {
-			log.info("sending to " + user.getEmail());
-			try {
-				mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
-			} catch (Exception e) {
-				log.info("sending failed: \n" + e.getMessage());
+			log.info("sending page "+currentPage+"/"+pagesTotal);
+			for (User user : intitaUsersPage.getContent()) {
+				log.info("sending to " + user.getEmail());
+				try {
+					mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
+				} catch (Exception e) {
+					log.info("sending failed: \n" + e.getMessage());
+				}
 			}
-		}
-		currentPage++;
-		if (currentPage<=pagesTotal)
-		intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+			currentPage++;
+			if (currentPage<=pagesTotal)
+				intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
 		}
 	}
 
@@ -1158,8 +1159,8 @@ public class ChatController {
 	public void notificateUsersByEmail() {
 		Date date = new Date(); // given date
 		Calendar calendar = GregorianCalendar.getInstance(); // creates a new
-																// calendar
-																// instance
+		// calendar
+		// instance
 		calendar.setTime(date); // assigns calendar to given date
 		if (calendar.get(Calendar.HOUR_OF_DAY) >= 0 && calendar.get(Calendar.HOUR_OF_DAY) <= 4) {
 			if (isEmailSendingRequired)
