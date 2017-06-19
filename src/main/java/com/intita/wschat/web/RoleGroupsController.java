@@ -73,8 +73,12 @@ public class RoleGroupsController {
 
 	@Autowired private RoomRolesRepository roomRolesRepository;
 
+	@Value("${crmchat.roles.autoupdate:true}")
+	Boolean autoUpdateRoles;
+
 	@PostConstruct
 	private void autoUpdate(){
+		if (autoUpdateRoles)
 		updateRoomsForAllRoles(null,false);
 	}
 
