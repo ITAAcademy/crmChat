@@ -27,6 +27,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
         },
         subscribeToConnect: function(callBack){
             //if (isInited == false) {
+                chatSocket.disconnect();
                 var onConnect = function(frame) {
                     callBack(socketSupport, frame)
                 };

@@ -140,9 +140,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					session.removeAttribute("intitaId");
 					principal = new ChatPrincipal(chatUser, null);
 				}
-				ChatUser persistedChatUser = chatUserServise.getChatUser(principal.getChatUser().getNickName());
+			/*	ChatUser persistedChatUser = chatUserServise.getChatUser(principal.getChatUser().getNickName());
 				if (persistedChatUser!=null)
-				principal.setChatUser(persistedChatUser);
+				principal.setChatUser(persistedChatUser);*/
 				chatUser = principal.getChatUser();
 			}
 			session.setAttribute("chatId", chatUser.getId());

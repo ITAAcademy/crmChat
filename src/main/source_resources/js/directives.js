@@ -647,10 +647,10 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster','$window', messageInput
+    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster', '$window', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster,$window) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster, $window) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
@@ -819,41 +819,42 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
 
             $scope.sendMessageAndFiles = function() {
 
-                 var files = $scope.files;
+                var files = $scope.files;
                 var textOfMessage = $scope.newMessage.value == null || $scope.newMessage.value.length < 1 ? " " : $scope.newMessage.value;
 
-                if(UserFactory.isTemporaryGuest()){
-                    $http.post(serverPrefix + "/chat/persist_temporary_guest",textOfMessage).then(function(response) {
-                        /*var roomId = response.data;
-                           $scope.doGoToRoom(roomId);*/
-                                  $window.location.reload();
-                }, function() {
-                    console.log('temporary guest user activation failed');
-                });
+                var sendMessageResFunction = function() {
+                    if (files != null && files.length > 0) {
+                        uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
+                            function successCallback(data) {
+                                $scope.uploadProgress = 0;
+                                $scope.sendMessage(textOfMessage, JSON.parse(data), true);
+                                $scope.$apply();
+                            },
+                            function(xhr) {
+                                $scope.messageError();
+                                $scope.uploadProgress = 0;
+                                $scope.$apply();
+                            },
+                            function(event, loaded) {
+                                $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
+                                $scope.$apply();
+
+                            });
+                    } else {
+                        $scope.sendMessage(textOfMessage, undefined, true);
+                    }
+                }
+                if (UserFactory.isTemporaryGuest()) {
+                    $http.post(serverPrefix + "/chat/persist_temporary_guest", textOfMessage).then(function(response) {
+                        UserFactory.initStompClient(function() {
+                            sendMessageResFunction();
+                        });
+                    }, function() {
+                        console.log('temporary guest user activation failed');
+                    });
                     return;
                 }
-
-               
-                if (files != null && files.length > 0) {
-                    uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
-                        function successCallback(data) {
-                            $scope.uploadProgress = 0;
-                            $scope.sendMessage(textOfMessage, JSON.parse(data), true);
-                            $scope.$apply();
-                        },
-                        function(xhr) {
-                            $scope.messageError();
-                            $scope.uploadProgress = 0;
-                            $scope.$apply();
-                        },
-                        function(event, loaded) {
-                            $scope.uploadProgress = Math.floor((event.loaded / event.totalSize) * 100);
-                            $scope.$apply();
-
-                        });
-                } else {
-                    $scope.sendMessage(textOfMessage, undefined, true);
-                }
+                sendMessageResFunction();
                 return false;
             }
 
@@ -1077,7 +1078,7 @@ function roomsBlock($http, RoomsFactory, ChannelFactory, UserFactory, $timeout, 
                 }
 
                 updatingUsersByEmailPromise = $timeout(function() {
-                        $scope.searchingRunning = true;
+                    $scope.searchingRunning = true;
                     var url = serverPrefix + "/get_users_log_events_like?login=" + email;
                     return $http.get(url, {}).success(function(data) { // send request
                         $scope.searchingRunning = false;
@@ -1130,17 +1131,17 @@ function notificable($timeout, $templateRequest, $sce, $compile, $parse, UserFac
                         userWaitTenantHandler(item);
                         break;
                     case 'BIRTHDAY':
-                        
+
                         RoomsFactory.goToPrivateDialog(item.params.chatId, true);
                         break;
                     case 'alert':
                         alertHandler();
                         break;
                 }
-                $timeout(function(){
+                $timeout(function() {
                     UserFactory.removeNotificationByValue(item);
                 }, 500)
-                
+
             }
 
             scope.cancelEventClick = function(event, item) {
@@ -1276,22 +1277,22 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         if (opponentUserId == null) return null;
         return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(opponentUserId);
     };
-    $scope.canBeUserAddedToRoom = function(userId){
-        var currentUserId = UserFactory.getChatUserId();
-        if(userId==null || userId == currentUserId)return false;
-        if (StateFactory.isCreateRoomBlockMode()) return true;
-        return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
-    }
-    /* $scope.stripHtml = function(html)
-     {
-         var tmp = document.createElement("DIV");
-         tmp.innerHTML = html;
-         return tmp.textContent || tmp.innerText || "";
-     }*/
-    /****
-     * 1 - default
-     * 2 - add new user
-     */
+    $scope.canBeUserAddedToRoom = function(userId) {
+            var currentUserId = UserFactory.getChatUserId();
+            if (userId == null || userId == currentUserId) return false;
+            if (StateFactory.isCreateRoomBlockMode()) return true;
+            return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
+        }
+        /* $scope.stripHtml = function(html)
+         {
+             var tmp = document.createElement("DIV");
+             tmp.innerHTML = html;
+             return tmp.textContent || tmp.innerText || "";
+         }*/
+        /****
+         * 1 - default
+         * 2 - add new user
+         */
     initRoomsFunctions($scope, ChannelFactory, UserFactory, RoomsFactory, StateFactory);
 
     var roomsBlockModeChangeSubscription;
