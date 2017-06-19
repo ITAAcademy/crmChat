@@ -473,7 +473,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var isNotificationAlreadyExcist = function(notification) {
         for (var i = 0; i < notifications.length; i++) {
             var currentNotification = notifications[i];
-            if (isEquivalent(currentNotification, notification)) {
+            if (isEquivalent(currentNotification, notification,["$$hashKey"])) {
                 return true;
             }
         }
