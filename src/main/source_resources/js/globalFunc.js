@@ -135,7 +135,9 @@ function isEquivalent(a, b) {
 
         // If values of same property are not equal,
         // objects are not equivalent
-        if ((a[propName]!=null && typeof a[propName] !== 'object') && a[propName] !== b[propName]) {
+         var isObject = (a[propName]!=null && typeof a[propName] === 'object');
+
+        if (!isObject && a[propName] !== b[propName]) {
             return false;
         }
     }
