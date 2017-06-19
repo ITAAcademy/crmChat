@@ -806,7 +806,7 @@ public class ChatController {
 	public void updateRoomByUser(ChatUser user, Room room,boolean notify) {
 		ArrayList<Room> roomForUpdate = new ArrayList<>();
 		roomForUpdate.add(room);
-		if(notify)
+		if( notify && participantRepository.isOnline( user.getId() ) )
 			sendMessageForUpdateRoomsByUser(user, roomForUpdate);
 	}
 
