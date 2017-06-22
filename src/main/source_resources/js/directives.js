@@ -732,7 +732,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     id: UserFactory.getChatUserId(),
                     nickName: UserFactory.getChatUserNickname()
                 }
-                var msgObj = { body: textOfMessage, author: author, attachedFiles: attaches };
+                var msgObj = { body: textOfMessage, author: author, attachedFiles: attaches, date: new Date() };
                 if (ChannelFactory.isSocketSupport() == true) {
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {

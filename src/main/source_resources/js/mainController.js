@@ -539,7 +539,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
 
                 for (var index = 0; index < data.length; index++) {
-                    if (data[index].hasOwnProperty("message")) {
+                    if (data[index].hasOwnProperty("body")) {
                         RoomsFactory.calcPositionUnshift(data[index]);
                     }
                 }
