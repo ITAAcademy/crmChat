@@ -27,15 +27,15 @@
                         #foreach ($message in $messages)
                         <a href="$baseUrl/crmChat/#/dialog_view/$room.id" class="message" style="padding-left: 10px;padding-bottom: 5px; display: block; cursor: pointer; color: #333;">
                             <div class="message_author_avatar" style="box-sizing: border-box;display: inline-block;font-family: Roboto;font-weight: 300;text-align:left;vertical-align:top">
-                                <div style="background-position: 50% 50%;    box-sizing: border-box;    display: inline-block;    height: 45px;    text-align: left;    width: 45px;    perspective-origin: 22.5px 22.5px;    transform-origin: 22.5px 22.5px;    background: rgb(242, 101, 34) url('$baseUrl/images/avatars/$message.chatUserAvatar') no-repeat scroll 50% 50% / cover padding-box border-box;    border-radius: 50% 50% 50% 50%;    font: normal normal 300 normal 16px / normal Roboto;">
+                                <div style="background-position: 50% 50%;    box-sizing: border-box;    display: inline-block;    height: 45px;    text-align: left;    width: 45px;    perspective-origin: 22.5px 22.5px;    transform-origin: 22.5px 22.5px;    background: rgb(242, 101, 34) url('$baseUrl/images/avatars/$message.author.avatar') no-repeat scroll 50% 50% / cover padding-box border-box;    border-radius: 50% 50% 50% 50%;    font: normal normal 300 normal 16px / normal Roboto;">
                                 </div>
                             </div>
                             <div class="message-details" style="box-sizing:border-box;display:inline-block;min-height:55px;text-align:left;vertical-align:top;width:444px;background:rgb(199,237,252) none repeat scroll 0% 0%/auto padding-box border-box;border-radius:5px 5px 5px 5px;font:normal normal 300 normal 16px/normal Roboto;overflow:hidden;padding:15px 20px 19px 15px;margin-left: 5px;">
                                 <div class="top_details" style="box-sizing: border-box;    height: 38px;    max-width: calc(-40px + 100%);    text-align: left;    width: 369px;    perspective-origin: 184.5px 19px;    transform-origin: 184.5px 19px;    font: normal normal 300 normal 16px / normal Roboto; ">
-                                    <b>$message.username</b>
+                                    <b>$message.author.nickName</b>
                                 </div>
                                 <div class="bottom_details" style="box-sizing: border-box;    text-align: left;    white-space: pre-wrap;    word-break: break-word;    font: normal normal 300 normal 16px / normal Roboto;padding-bottom:5px;">
-                                    $message.message
+                                    $message.body
                                 </div>
                             </div>
                         </a>

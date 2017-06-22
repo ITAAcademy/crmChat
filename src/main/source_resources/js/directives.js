@@ -933,9 +933,11 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         $http.get('askForRatingModal.html').then(function(response) {
                             var messageObj = {};
                             messageObj.body = response.data;
-                            messageObj.username = "server";
-                            messageObj.chatUserAvatar = "noname.png";
-                            messageObj.author.id = 1;
+                            messageObj.author={
+                                id:1,
+                                nickName: "server",
+                                avatar: "noname.png"
+                            };
                             messageObj.attachedFiles = [];
                             messageObj.date = new Date().getTime();
                             RoomsFactory.calcPositionPush(messageObj);
