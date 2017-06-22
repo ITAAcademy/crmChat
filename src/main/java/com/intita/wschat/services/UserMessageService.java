@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.UserMessageDTO;
 import org.apache.commons.collections4.IteratorUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -23,7 +25,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
@@ -32,7 +33,6 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.web.BotController;
-import com.intita.wschat.web.ChatController;
 
 @Service
 public class UserMessageService {
@@ -46,6 +46,7 @@ public class UserMessageService {
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private RoomHistoryService roomHistoryService;
+	@Autowired private DTOMapper dtoMapper;
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
@@ -319,21 +320,21 @@ public class UserMessageService {
 	}
 
 	@Transactional
-	public Map<Room ,List<ChatMessage>> getAllUnreadedMessages(ChatUser user){
+	public Map<Room ,List<UserMessageDTO>> getAllUnreadedMessages(ChatUser user){
 		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
-		Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
+		Map<Room, List<UserMessageDTO>> result = new  HashMap<Room, List<UserMessageDTO>>();
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();
 			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastRoomEntry.getLastLogout(), "ua");
-			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
+			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapList(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
 				result.put(room, unreadedChatMessages);
 		}
 		return result;
 	}
-	public Map<Room ,List<ChatMessage>> getAllUnreadedMessagesFrom24Hours(ChatUser user){
+	public Map<Room ,List<UserMessageDTO>> getAllUnreadedMessagesFrom24Hours(ChatUser user){
 		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
-		Map<Room, List<ChatMessage>> result = new  HashMap<Room, List<ChatMessage>>();
+		Map<Room, List<UserMessageDTO>> result = new  HashMap<Room, List<UserMessageDTO>>();
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();
 			Date lastLogoutDate = lastRoomEntry.getLastLogout();
@@ -343,7 +344,7 @@ public class UserMessageService {
 				lastLogoutDate = currentDateMinus24Hours;
 			}
 			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastLogoutDate, "ua");
-			List<ChatMessage> unreadedChatMessages = ChatMessage.getAllfromUserMessages(unreadedMessages);
+			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapList(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
 				result.put(room, unreadedChatMessages);
 		}

@@ -1,15 +1,16 @@
 package com.intita.wschat.web;
 
 import java.io.Serializable;
-import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.dto.model.UserMessageDTO;
 import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.LoginResponseData;
 import com.intita.wschat.domain.SessionProfanity;
@@ -55,7 +54,6 @@ import com.intita.wschat.exception.TooMuchProfanityException;
 import com.intita.wschat.models.BotCategory;
 import com.intita.wschat.models.BotDialogItem;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ConfigParam;
 import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
 import com.intita.wschat.models.PrivateRoomInfo;
@@ -76,7 +74,6 @@ import com.intita.wschat.services.NotificationsService;
 import com.intita.wschat.services.OfflineStudentsGroupService;
 import com.intita.wschat.services.RoomPermissionsService;
 import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.UserBirthdayService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
@@ -195,7 +192,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		UserMessage msg = new UserMessage(bot, room, containerString);
-		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotAuthentication());
+		chatController.filterMessageWS(room.getId(), dtoMapper.map(msg), BotParam.getBotAuthentication());
 
 		return room;
 	}
@@ -242,9 +239,6 @@ public class RoomController {
 
 	/**
 	 * Returns chat rooms, user, user authorities
-	 * @param principal
-	 * @param demandedChatUserId
-	 * @return
 	 */
 	@SubscribeMapping("/chat.login/{demandedChatUserIdStr}")
 	public LoginResponseData loginMapping(Authentication authentication, @DestinationVariable String demandedChatUserIdStr){
@@ -422,14 +416,15 @@ public class RoomController {
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang,user);
 		if (buff != null)
 			userMessages.addAll(buff);
-		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
+		List<UserMessageDTO> messagesDTO = dtoMapper.mapList(userMessages);
+		//ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
 
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
-		map.put("messages", messagesHistory);
+		map.put("messages", messagesDTO);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
 		if(userMessages.isEmpty() == false)
-			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));// 
+			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));//
 		try {
 			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
 		} catch (JsonProcessingException e) {

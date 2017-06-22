@@ -19,6 +19,46 @@ import java.util.Set;
  */
 public class ChatRoomDTO {
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
+        return chatUserLastRoomDate;
+    }
+
+    public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
+        this.chatUserLastRoomDate = chatUserLastRoomDate;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public short getType() {
+        return type;
+    }
+
+    public void setType(short type) {
+        this.type = type;
+    }
+
     private Long id;
 
     List< ChatUserLastRoomDate> chatUserLastRoomDate;

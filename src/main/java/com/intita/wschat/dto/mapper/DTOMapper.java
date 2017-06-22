@@ -1,15 +1,17 @@
 package com.intita.wschat.dto.mapper;
 
+import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
+import com.intita.wschat.models.UserMessage;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by roma on 18.04.17.
@@ -23,12 +25,10 @@ public class DTOMapper {
             map().setIntitaUserId(source.getIntitaUser().getId());
         }
     };
+
     DTOMapper(){
         modelMapper.addMappings(chatUserMap);
     }
-
-
-
 
 
 
@@ -39,4 +39,15 @@ public class DTOMapper {
     public ChatUserDTO map(ChatUser chatUser) {
         return modelMapper.map(chatUser, ChatUserDTO.class);
     }
+    public UserMessageDTO map(UserMessage userMessage) {
+        return modelMapper.map(userMessage, UserMessageDTO.class);
+    }
+
+    public List<UserMessageDTO> mapList(List<UserMessage> userMessages){
+        List<UserMessageDTO> messagesDTO = userMessages.stream()
+                .map(message -> map(message))
+                .collect(Collectors.toList());
+        return messagesDTO;
+    }
+
 }

@@ -2,7 +2,6 @@ package com.intita.wschat.models;
 
 import java.io.Serializable;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,14 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.intita.wschat.domain.ChatMessage;
 
 import jsonview.Views;
 

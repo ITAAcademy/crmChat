@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.dto.mapper.DTOMapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.BotAnswer;
 import com.intita.wschat.models.BotCategory;
@@ -47,7 +47,6 @@ import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.LangId;
 import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomPermissions;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
@@ -76,6 +75,9 @@ public class BotController {
 
 	@Autowired
 	BotItemContainerService botItemContainerService;
+
+	@Autowired
+	DTOMapper dtoMapper;
 
 	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
 
@@ -336,12 +338,12 @@ public class BotController {
 
 
 		UserMessage msg = new UserMessage(chatPrincipal.getChatUser(), room, "You answer: " + nextContainer.getIdObject().getId());
-		chatController.filterMessageLP(room.getId(), new ChatMessage(msg), auth);
+		chatController.filterMessageLP(room.getId(), dtoMapper.map(msg), auth);
 
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
 		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
 
-		chatController.filterMessageBot(room.getId(), new ChatMessage(qmsg), messageToSave);
+		chatController.filterMessageBot(room.getId(), dtoMapper.map(qmsg), messageToSave);
 		return objectMapper.writeValueAsString(botCategory);
 	}
 

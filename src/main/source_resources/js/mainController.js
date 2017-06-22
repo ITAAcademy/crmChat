@@ -575,9 +575,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 if (newMessageInThisRoom != -1) {
                     $rootScope.roomForUpdate[room.roomId] = true;
                     var msg = messagesMap[room.roomId];
-                    room.lastMessage = msg.message;
+                    room.lastMessage = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
-                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.chatUserId != UserFactory.getChatUserId()) {
+                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
                         //room.date = curentDateInJavaFromat();
@@ -587,7 +587,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                             var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
                             if (room.string == msg.username)
                                 title = "Нове повідомлення від " + messagesMap[room.roomId].username;
-                            Notify(msg.message, title);
+                            Notify(msg.body, title);
                         }
                         toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop

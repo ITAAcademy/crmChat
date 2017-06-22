@@ -12,15 +12,14 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intita.wschat.dto.model.UserMessageDTO;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.intita.wschat.domain.ChatMessage;
 
 import jsonview.Views;
-import org.hibernate.validator.constraints.Length;
 
 @Entity(name = "chat_user_message")
 public class UserMessage implements Serializable,Comparable<UserMessage>  {
@@ -28,12 +27,12 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	public UserMessage(){
 		this.date= new Date();
 	}
-	public UserMessage(ChatUser author, Room room, ChatMessage chatMessage){	
+	public UserMessage(ChatUser author, Room room, UserMessageDTO userMessage){
 	this.author = author;
 	this.room = room;
-	this.body = chatMessage.getMessage();
+	this.body = userMessage.getBody();
 	this.date= new Date();
-	this.setAttachedFiles(chatMessage.getAttachedFiles());
+	this.setAttachedFiles(userMessage.getAttachedFiles());
 	}
 	public UserMessage(ChatUser author, Room room, String body){	
 		this.author = author;

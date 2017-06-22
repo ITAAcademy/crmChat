@@ -727,7 +727,12 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 if (attaches == null)
                     attaches = [];
 
-                var msgObj = { message: textOfMessage, username: UserFactory.getChatUserNickname(), attachedFiles: attaches, chatUserAvatar: UserFactory.getChatuserAvatar(), chatUserId: UserFactory.getChatUserId() };
+                var author = {
+                    avatar: UserFactory.getChatuserAvatar(),
+                    id: UserFactory.getChatUserId(),
+                    nickName: UserFactory.getChatUserNickname()
+                }
+                var msgObj = { body: textOfMessage, author: author, attachedFiles: attaches };
                 if (ChannelFactory.isSocketSupport() == true) {
                     ChatSocket.send(destination, {}, JSON.stringify(msgObj));
                     var myFunc = function() {
@@ -927,10 +932,10 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         }
                         $http.get('askForRatingModal.html').then(function(response) {
                             var messageObj = {};
-                            messageObj.message = response.data;
+                            messageObj.body = response.data;
                             messageObj.username = "server";
                             messageObj.chatUserAvatar = "noname.png";
-                            messageObj.chatUserId = 1;
+                            messageObj.author.id = 1;
                             messageObj.attachedFiles = [];
                             messageObj.date = new Date().getTime();
                             RoomsFactory.calcPositionPush(messageObj);
@@ -975,7 +980,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.stopTyping();
                 }, 1500);
                 if (needSend)
+                {
                     ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
+                }
             };
 
             $scope.stopTyping = function() {
