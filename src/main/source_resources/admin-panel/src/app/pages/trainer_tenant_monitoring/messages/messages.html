@@ -50,14 +50,14 @@
             <div class="feed-messages-container" track-width="smallContainerWidth" min-width="360">
                 <div class="feed-message" ng-repeat="message in messages" ng-click="expandMessage(message)">
                     <div class="message-icon">
-                        <img class="photo-icon" ng-src="{{::( message.chatUserAvatar | profilePicture )}}">
+                        <img class="photo-icon" ng-src="{{::( message.author.avatar | profilePicture )}}">
                     </div>
                     <div class="text-block text-message">
                         <div class="message-header">
-                            <span class="author">{{ ::message.username}}</span>
+                            <span class="author">{{ ::message.author.nickName}}</span>
                         </div>
                         <div class="message-content line-clamp" ng-class="{'line-clamp-2' : !message.expanded}">
-                            <span ng-if="message.preview">{{message.message}} </span>{{::message.message}}
+                            <span ng-if="message.preview">{{message.body}} </span>{{::message.body}}
                         </div>
                         <div ng-show="message.expanded" class="message-time">
                             <div class="post-time">
