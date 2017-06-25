@@ -644,6 +644,14 @@ public class RoomsService {
 		return true;
 	}
 
+	public boolean isRoomParticipant(Long chatUserId, Long roomId) {
+		ChatUser participant = ChatUser.forId(chatUserId);
+		Room room = Room.forId(roomId);
+		Long count = roomRepo.countByAuthorOrInUsers(participant,room);
+		return count > 0;
+	}
+
+
 }
 
 

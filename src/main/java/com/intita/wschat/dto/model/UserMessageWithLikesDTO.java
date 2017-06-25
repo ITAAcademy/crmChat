@@ -4,12 +4,11 @@ import com.intita.wschat.dto.interfaces.DataTransferObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by roma on 22.06.17.
  */
-public class UserMessageDTO implements DataTransferObject {
+public class UserMessageWithLikesDTO implements DataTransferObject {
     private ChatUserDTO author;
 
     public ChatUserDTO getAuthor() {
@@ -56,5 +55,24 @@ public class UserMessageDTO implements DataTransferObject {
     private Date date;
     private ArrayList<String> attachedFiles;
     private Long id;
+
+    public Long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
+    public Long getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(Long dislikes) {
+        this.dislikes = dislikes;
+    }
+
+    private Long likes;
+    private Long dislikes;
 
 }

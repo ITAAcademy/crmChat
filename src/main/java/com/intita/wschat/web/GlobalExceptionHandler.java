@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.intita.wschat.exception.TooMuchProfanityException;
 
+import javax.naming.OperationNotSupportedException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -48,4 +50,7 @@ public class GlobalExceptionHandler {
 	public String handleProfanity(TooMuchProfanityException e) {
 		return e.getMessage();
 	}
+
+
+
 }

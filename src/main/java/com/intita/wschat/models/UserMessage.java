@@ -40,6 +40,12 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 		this.body = body;
 		this.date= new Date();
 		}
+
+		public static UserMessage forId(Long id){
+		UserMessage message = new UserMessage();
+		message.setId(id);
+		return message;
+		}
 	
 	@Id
 	@GeneratedValue

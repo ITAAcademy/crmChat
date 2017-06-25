@@ -326,7 +326,7 @@ public class UserMessageService {
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();
 			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastRoomEntry.getLastLogout(), "ua");
-			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapList(unreadedMessages);
+			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapListUserMessage(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
 				result.put(room, unreadedChatMessages);
 		}
@@ -344,7 +344,7 @@ public class UserMessageService {
 				lastLogoutDate = currentDateMinus24Hours;
 			}
 			List<UserMessage> unreadedMessages = getMessagesByRoomDate(room, lastLogoutDate, "ua");
-			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapList(unreadedMessages);
+			List<UserMessageDTO> unreadedChatMessages = dtoMapper.mapListUserMessage(unreadedMessages);
 			if(unreadedChatMessages.size()>0)
 				result.put(room, unreadedChatMessages);
 		}
@@ -354,6 +354,10 @@ public class UserMessageService {
 	@Transactional
 	public List<Date> getMessagesDatesByChatUserAndDate(Long chatUserId,Date early, Date late){
 		return userMessageRepository.getMessagesDatesByChatUserAndDateBetween(chatUserId, early, late);
+	}
+
+	public boolean isAuthor(Long messageId, Long chatUserId) {
+		return userMessageRepository.countByIdAndAuthorId(messageId,chatUserId) > 0;
 	}
 
 	

@@ -35,9 +35,16 @@
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
+
+        <div class="like_wrapper">
+      <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">Like</a><span >{{message.likes}}</span>
+      <a ng-click="dislikeMessage(message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}">Unlike</a><span>{{message.dislikes}}</span>
+        </div>
+
     </div>
     <div class="message_author_avatar" ng-if="message.position" ng-click="$root.showUserProfileByChatUserId(message.author.id)">
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.author.avatar + ')'}"></div>
     </div>
+
 </div>
 <!-- //Сьогоднішні повідомлення -->

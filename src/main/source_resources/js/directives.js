@@ -640,6 +640,10 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
             $scope.UserFactory = UserFactory;
             $scope.RoomsFactory = RoomsFactory;
             $scope.messages = RoomsFactory.getMessages;
+            $scope.isMessageLiked = RoomsFactory.isMessageLiked;
+            $scope.isMessageDisliked = RoomsFactory.isMessageDisliked;
+            $scope.likeMessage = RoomsFactory.likeMessage;
+            $scope.dislikeMessage = RoomsFactory.dislikeMessage;
             var nice = $(".scroll");
         }
 

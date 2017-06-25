@@ -3330,7 +3330,17 @@ user profile popup
     z-index: 88888;
     visibility: hidden;
 }
+.like_wrapper{
+text-align:right;
+}
 
+.like_wrapper .like_button{
+
+}
+
+a.like_button.selected {
+    color: blue;
+}
 
 /*user profile popup end*/
 

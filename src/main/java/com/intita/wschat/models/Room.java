@@ -220,4 +220,11 @@ public class Room implements Serializable,Comparable<Room> {
 			return false;
 		return true;
 	}
+
+	public static Room forId(Long id){
+		Room room = new Room();
+		room.id = id;
+		return room;
+	}
+
 }

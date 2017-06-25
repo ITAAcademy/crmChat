@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.models.*;
+import com.intita.wschat.services.*;
 import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,31 +53,7 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
-import com.intita.wschat.models.BotCategory;
-import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
-import com.intita.wschat.models.PrivateRoomInfo;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.services.BotCategoryService;
-import com.intita.wschat.services.ChatLangService;
-import com.intita.wschat.services.ChatTenantService;
-import com.intita.wschat.services.ChatUserLastRoomDateService;
-import com.intita.wschat.services.ChatUsersService;
-import com.intita.wschat.services.ConfigParamService;
-import com.intita.wschat.services.ConsultationsService;
-import com.intita.wschat.services.LecturesService;
-import com.intita.wschat.services.NotificationsService;
-import com.intita.wschat.services.OfflineStudentsGroupService;
-import com.intita.wschat.services.RoomPermissionsService;
-import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.UserMessageService;
-import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -131,6 +109,7 @@ public class RoomController {
 	@Autowired private NotificationsService notificationsService;
 	
 	@Autowired private DTOMapper dtoMapper;
+	@Autowired private ChatLikeStatusService chatLikeStatusService;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -416,12 +395,17 @@ public class RoomController {
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang,user);
 		if (buff != null)
 			userMessages.addAll(buff);
-		List<UserMessageDTO> messagesDTO = dtoMapper.mapList(userMessages);
+		List<UserMessageWithLikesDTO> messagesDTO = dtoMapper.mapListUserMessagesWithLikes(userMessages);
 		//ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
+		Set<Long> likedMessages = chatLikeStatusService.getLikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
+		Set<Long> dislikedMessages = chatLikeStatusService.getDislikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
+
 
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
 		map.put("messages", messagesDTO);
+		map.put("likedMessagesIds",likedMessages);
+		map.put("dislikedMessagesIds",dislikedMessages);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
 		if(userMessages.isEmpty() == false)
 			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));//

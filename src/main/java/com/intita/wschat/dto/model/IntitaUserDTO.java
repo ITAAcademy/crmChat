@@ -2,6 +2,7 @@ package com.intita.wschat.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.intita.wschat.dto.interfaces.DataTransferObject;
 import com.intita.wschat.models.ChatUser;
 import jsonview.Views;
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,7 +13,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by roma on 18.04.17.
  */
-public class IntitaUserDTO {
+public class IntitaUserDTO implements DataTransferObject {
 
     private Long id;
     private String login;

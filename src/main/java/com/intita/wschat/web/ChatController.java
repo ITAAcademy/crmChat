@@ -23,11 +23,14 @@ import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.services.*;
 import com.intita.wschat.util.HtmlUtility;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -69,18 +72,6 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.services.ChatLangService;
-import com.intita.wschat.services.ChatTenantService;
-import com.intita.wschat.services.ChatUserLastRoomDateService;
-import com.intita.wschat.services.ChatUsersService;
-import com.intita.wschat.services.ConfigParamService;
-import com.intita.wschat.services.CourseService;
-import com.intita.wschat.services.IntitaMailService;
-import com.intita.wschat.services.IntitaSubGtoupService;
-import com.intita.wschat.services.RoomHistoryService;
-import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.UserMessageService;
-import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
@@ -140,6 +131,12 @@ public class ChatController {
 	private DTOMapper dtoMapper;
 
 	@Autowired UserMessageService messageService;
+
+	@Autowired
+	ChatLikeStatusService chatLikeStatusService;
+
+	@Value("${crmchat.send_unreaded_messages_email:true}")
+	private Boolean sendUnreadedMessagesToEmail;
 
 
 	private final Semaphore msgLocker = new Semaphore(1);
@@ -369,19 +366,19 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserMessageDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
+	public List<UserMessageWithLikesDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
 																	 @RequestBody Map<String, String> json, Authentication auth) {
 		return loadOtherMessage(room, json, auth, false);
 	}
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserMessageDTO> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
-																			  @RequestBody(required = false) Map<String, String> json, Authentication auth) {
+	public List<UserMessageWithLikesDTO> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
+																		  @RequestBody(required = false) Map<String, String> json, Authentication auth) {
 		return loadOtherMessage(room, json, auth, true);
 	}
 
-	public List<UserMessageDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
+	public List<UserMessageWithLikesDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
 															  boolean filesOnly) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		String dateMsStr = json.get("date");
@@ -400,7 +397,7 @@ public class ChatController {
 				searchQuery, filesOnly, 20);
 		if (messages.size() == 0)
 			return null;
-		List<UserMessageDTO> messagesAfter = dtoMapper.mapList(messages);
+		List<UserMessageWithLikesDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages);
 
 		if (messagesAfter.size() == 0)
 			return null;
@@ -553,7 +550,7 @@ public class ChatController {
 				String str = "";
 				try {
 					ArrayList<UserMessage> userMessages = (userMessageService.wrapBotMessages(new ArrayList<>(array), "ua"));
-					str = mapper.writeValueAsString(dtoMapper.mapList(userMessages));// @BAG@//dont
+					str = mapper.writeValueAsString(dtoMapper.mapListUserMessage(userMessages));// @BAG@//dont
 					// save
 					// user
 					// lang
@@ -740,6 +737,31 @@ public class ChatController {
 		return userList;
 
 	}
+
+
+	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean likeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = chatLikeStatusService.likeMessage(messageId,chatUser);
+		if (!result) {
+			throw new Exception("can't like user");
+		}
+		return true;
+	}
+	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean dislikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = chatLikeStatusService.dislikeMessage(messageId,chatUser);
+		if (!result) {
+			throw new Exception("can't unlike user");
+		}
+		return true;
+	}
+
 
 	/*
 	 * Out from room
@@ -1078,14 +1100,14 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserMessageDTO> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
+	public List<UserMessageWithLikesDTO> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
 																	 @RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
 				false, 20);
-		List<UserMessageDTO> chatMessages = dtoMapper.mapList(userMessages);
+		List<UserMessageWithLikesDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages);
 		return chatMessages;
 	}
 
@@ -1155,6 +1177,7 @@ public class ChatController {
 
 	@Scheduled(fixedDelay = 3600000L) // every 1 hour
 	public void notificateUsersByEmail() {
+		if (!sendUnreadedMessagesToEmail)return;
 		Date date = new Date(); // given date
 		Calendar calendar = GregorianCalendar.getInstance(); // creates a new
 		// calendar

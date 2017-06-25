@@ -165,7 +165,7 @@ public class AdminPanelController {
 			throw new NullArgumentException("");
 		
 		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30);
-		List< UserMessageDTO > messagesDTO = dtoMapper.mapList(userMessages);
+		List< UserMessageDTO > messagesDTO = dtoMapper.mapListUserMessage(userMessages);
 		return messagesDTO;
 	}
 
