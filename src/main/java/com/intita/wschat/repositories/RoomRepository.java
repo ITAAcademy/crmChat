@@ -39,4 +39,7 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("update ChatRoom r set r.name = ?2 where r.id = ?1")
 	void setRoomName(Long roomId, String roomName);
+
+	@Query(value="SELECT count(room) FROM ChatRoom room WHERE room = ?2 AND ((room.author = ?1) OR (?1 IN (SELECT users FROM room.users users)))")
+	Long countByAuthorOrInUsers(ChatUser participant,Room room);
 }

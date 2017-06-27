@@ -36,4 +36,5 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  @Query("select m.date from chat_user_message m where m.author.id=?1 and Date(m.date) >= Date(?2) and Date(m.date) <= Date(?3)")
 	  List<Date> getMessagesDatesByChatUserAndDateBetween(Long userId,Date earlyDate,Date lastDate);
 
+	  Long countByIdAndAuthorId(Long messageId,Long authorId);
 }

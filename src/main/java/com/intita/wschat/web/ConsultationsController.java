@@ -198,7 +198,7 @@ public class ConsultationsController {
 		cons.setFinishDate(new Date());
 		Room room = cons.getRoom();
 		room.setActive(false);
-		roomService.update(room);
+		roomService.update(room,true);
 		chatConsultationsService.update(cons);
 	}
 	
@@ -385,7 +385,7 @@ public class ConsultationsController {
 					return new ResponseEntity<String>(HttpStatus.METHOD_NOT_ALLOWED);
 				
 				room.setActive(true);//activate room
-				roomService.update(room);
+				roomService.update(room,true);
 				cons.setStartDate(new Date());
 				chatConsultationsService.update(cons);
 				return new ResponseEntity<String>(HttpStatus.OK);

@@ -104,6 +104,7 @@ public class PresenceEventListener {
 
 			ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 			Long chatId = chatPrincipal.getChatUser().getId();
+			if (chatId==null)return;
 
 			ChatUser user = chatPrincipal.getChatUser();
 			participantRepository.invalidateParticipantPresence(chatId,true);

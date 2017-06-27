@@ -1,15 +1,7 @@
 package com.intita.wschat.web;
 
 import java.io.Serializable;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -17,6 +9,10 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.models.*;
+import com.intita.wschat.services.*;
 import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +27,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +42,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.LoginResponseData;
 import com.intita.wschat.domain.SessionProfanity;
@@ -59,33 +53,7 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
 import com.intita.wschat.exception.TooMuchProfanityException;
-import com.intita.wschat.models.BotCategory;
-import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ConfigParam;
-import com.intita.wschat.models.OperationStatus;
 import com.intita.wschat.models.OperationStatus.OperationType;
-import com.intita.wschat.models.PrivateRoomInfo;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.services.BotCategoryService;
-import com.intita.wschat.services.ChatLangService;
-import com.intita.wschat.services.ChatTenantService;
-import com.intita.wschat.services.ChatUserLastRoomDateService;
-import com.intita.wschat.services.ChatUsersService;
-import com.intita.wschat.services.ConfigParamService;
-import com.intita.wschat.services.ConsultationsService;
-import com.intita.wschat.services.LecturesService;
-import com.intita.wschat.services.NotificationsService;
-import com.intita.wschat.services.OfflineStudentsGroupService;
-import com.intita.wschat.services.RoomPermissionsService;
-import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.UserBirthdayService;
-import com.intita.wschat.services.UserMessageService;
-import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.BotController.BotParam;
 import com.intita.wschat.web.ChatController.CurrentStatusUserRoomStruct;
@@ -141,6 +109,7 @@ public class RoomController {
 	@Autowired private NotificationsService notificationsService;
 	
 	@Autowired private DTOMapper dtoMapper;
+	@Autowired private ChatLikeStatusService chatLikeStatusService;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
@@ -202,7 +171,7 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		UserMessage msg = new UserMessage(bot, room, containerString);
-		chatController.filterMessageWS(room.getId(), new ChatMessage(msg), BotParam.getBotAuthentication());
+		chatController.filterMessageWS(room.getId(), dtoMapper.map(msg), BotParam.getBotAuthentication());
 
 		return room;
 	}
@@ -249,9 +218,6 @@ public class RoomController {
 
 	/**
 	 * Returns chat rooms, user, user authorities
-	 * @param principal
-	 * @param demandedChatUserId
-	 * @return
 	 */
 	@SubscribeMapping("/chat.login/{demandedChatUserIdStr}")
 	public LoginResponseData loginMapping(Authentication authentication, @DestinationVariable String demandedChatUserIdStr){
@@ -276,7 +242,7 @@ public class RoomController {
 		User realIntitaUser = chatPrincipal.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
-		if (activeChatUser == null || realChatUserId.equals(activeChatUser.getId()) == false) {
+		if (activeChatUser == null || !Objects.equals(realChatUserId,activeChatUser.getId()) ) {
 			if (!userService.isAdmin(realIntitaUser))
 				return null;
 		}
@@ -285,16 +251,13 @@ public class RoomController {
 		boolean userIsNotAuthorized = realIntitaUser == null;
 
 		if (userIsNotAuthorized) {
+			/*
 			Room room;
 			
 			if (chatLastRoomDateService.getUserLastRoomDates(activeChatUser).iterator().hasNext()) {
 				room = chatLastRoomDateService.getUserLastRoomDates(realChatUser).iterator().next().getLastRoom();
 			} else {
-				/*
-				 * ADD BOT TO CHAT
-				 */
-				// boolean botEnable =
-				// Boolean.parseBoolean(configService.getParam("botEnable").getValue());
+
 				boolean botEnable = true;
 				ConfigParam s_botEnable = configService.getParam("chatBotEnable");
 				if (s_botEnable != null)
@@ -305,24 +268,13 @@ public class RoomController {
 				} else
 					room = createRoomWithTenant(auth);
 
-				// test - no free tenant
-				// room = null;
-
-				// send msg about go to guest room if you is tenant with current
-				// Id
-				/*
-				 * if (room != null)
-				 * chatController.addFieldToInfoMap("newGuestRoom",
-				 * room.getId());
-				 */
 			}
-			// simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." +
-			// user.getId(), roomService.getRoomsModelByChatUser(user));
 
 			if (room != null)
 				responseData.setNextWindow(room.getId().toString());
 			else
 				responseData.setNextWindow("-1");
+				*/
 		} else {
 			// subscribedtoRoomsUsersBuffer.add(user);
 			responseData.setNextWindow("0");
@@ -350,7 +302,7 @@ public class RoomController {
 		}
 		chatUserDTO.setRoles(userService.getAllRoles(activeIntitaUser));
 		responseData.setChatUser(chatUserDTO);
-		List<RoomModelSimple> roomModels = roomService.getRoomsModelByChatUser(activeChatUser);
+		List<RoomModelSimple> roomModels = activeChatUser.getId()==null ? new ArrayList<RoomModelSimple>() : roomService.getRoomsModelByChatUser(activeChatUser);
 		responseData.setRoomModels(roomModels);
 		/***
 		 * @deprecated try { result.put("friends",
@@ -443,14 +395,20 @@ public class RoomController {
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang,user);
 		if (buff != null)
 			userMessages.addAll(buff);
-		ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
+		List<UserMessageWithLikesDTO> messagesDTO = dtoMapper.mapListUserMessagesWithLikes(userMessages);
+		//ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
+		Set<Long> likedMessages = chatLikeStatusService.getLikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
+		Set<Long> dislikedMessages = chatLikeStatusService.getDislikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
+
 
 		HashMap<String, Object> map = new HashMap();
 		map.put("participants", GetParticipants(room_o));
-		map.put("messages", messagesHistory);
+		map.put("messages", messagesDTO);
+		map.put("likedMessagesIds",likedMessages);
+		map.put("dislikedMessagesIds",dislikedMessages);
 		map.put("type", room_o.getType());// 0-add; 1-private; 2-not my
 		if(userMessages.isEmpty() == false)
-			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));// 
+			map.put("lastNonUserActivity", roomService.getLastMsgActivity(room_o, userMessages.get(0)));//
 		try {
 			map.put("bot_param", mapper.writerWithView(Views.Public.class).writeValueAsString(room_o.getBotAnswers()));
 		} catch (JsonProcessingException e) {
@@ -764,7 +722,7 @@ public class RoomController {
 		DeferredResult<String> deferredResult = new DeferredResult<String>(timeOut, "NULL");
 		Long chatUserId = chatPrincipal.getChatUser().getId();
 
-		ConcurrentLinkedQueue<DeferredResult<String>> queue = responseRoomBodyQueue.get(chatUserId);
+		ConcurrentLinkedQueue<DeferredResult<String>> queue = chatUserId==null ? null : responseRoomBodyQueue.get(chatUserId);
 		if (queue == null) {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 		}
@@ -913,7 +871,7 @@ public class RoomController {
 			contain = true;
 		}
 		roomService.setAuthor(newAuthor, room);
-		if (roomService.update(room) == null)
+		if (roomService.update(room,true) == null)
 			return false;
 
 		if (savePreviusAuthorAsUser) {
@@ -1035,7 +993,7 @@ public class RoomController {
 				removeUserFromRoomFully(user, room_o, auth, false);
 			}
 			room_o.setActive(false);
-			roomService.update(room_o);
+			roomService.update(room_o,true);
 		}
 		return removeUserFromRoomFullyWithoutCheckAuthorization(user_o, room_o);
 

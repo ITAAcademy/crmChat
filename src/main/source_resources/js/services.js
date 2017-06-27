@@ -25,7 +25,9 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
                 stompClient.debug = null
             },
             disconnect: function() {
-                stompClient.disconnect();
+                if(stompClient != undefined)
+                    stompClient.disconnect();
+                stompClient = undefined;
             },
             connect: function(successCallback, errorCallback) {
                 lastConnectFunc = function() {

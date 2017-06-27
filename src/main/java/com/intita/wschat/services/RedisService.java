@@ -7,6 +7,7 @@ import com.intita.wschat.web.RoomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.Jedis;
@@ -27,14 +28,27 @@ public class RedisService {
 
 	private JedisPool pool;
 	private JedisPoolConfig poolConfig = new JedisPoolConfig();
-	
+
+	@Value("${redis.host}")
+	private String hostConfig;
+
+	@Value("${redis.port}")
+	private Integer portConfig;
+
+	@Value("${redis.password}")
+	private String passConfig;
+
+
+
+
+
 	@PostConstruct
 	public void AutoUpdate() {
 		poolConfig.setMaxTotal(5);
 		poolConfig.setTestOnBorrow(true);
 		poolConfig.setTestOnReturn(true);
 		// this(poolConfig, host, port, timeout, password, Protocol.DEFAULT_DATABASE, null);
-		pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
+		pool = new JedisPool(poolConfig, hostConfig, portConfig, Protocol.DEFAULT_TIMEOUT, passConfig);
 	}
 
 
@@ -42,32 +56,32 @@ public class RedisService {
 
 		try (Jedis jedis = pool.getResource()){
 
-		if(!jedis.isConnected())
-		{
-			//jedis.close();
-			jedis.connect();
-			return new String();
-		}
-		try{
-		if(jedis != null)
-			return  jedis.get(key);
-		else
-			return new String();
-		}
-		catch(JedisConnectionException ex)
-		{
-			/*jedis.close();
+			if(!jedis.isConnected())
+			{
+				//jedis.close();
+				jedis.connect();
+				return new String();
+			}
+			try{
+				if(jedis != null)
+					return  jedis.get(key);
+				else
+					return new String();
+			}
+			catch(JedisConnectionException ex)
+			{
+				/*jedis.close();
 			jedis.connect();*/
-			log.info("Jedis error:"+ex.getStackTrace());
-			/*pool.close();
+				log.info("Jedis error:"+ex.getStackTrace());
+				/*pool.close();
 			pool = new JedisPool(poolConfig, "localhost", 6379, Protocol.DEFAULT_TIMEOUT, "1234567");
 			jedis = pool.getResource();
 			return new String();*/
-		}
-		return null;
+			}
+			return null;
 		}
 	}
-	
+
 	public void setValueByKey(String key, String value) {
 		try (Jedis jedis = pool.getResource()) {
 			if (jedis != null)

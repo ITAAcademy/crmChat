@@ -2,6 +2,7 @@ package com.intita.wschat.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.dto.interfaces.DataTransferObject;
 import com.intita.wschat.models.*;
 import jsonview.Views;
 import org.hibernate.SessionFactory;
@@ -17,7 +18,7 @@ import java.util.Set;
 /**
  * Created by roma on 18.04.17.
  */
-public class ChatUserDTO {
+public class ChatUserDTO implements DataTransferObject {
 
     public Long getId() {
         return id;

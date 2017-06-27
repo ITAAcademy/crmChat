@@ -1,6 +1,5 @@
 package com.intita.wschat.web;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,10 +22,15 @@ import javax.persistence.PersistenceContext;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.IntitaUserDTO;
+import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.services.*;
+import com.intita.wschat.util.HtmlUtility;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -51,7 +55,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.domain.UserWaitingForTrainer;
 import com.intita.wschat.domain.interfaces.IPresentOnForum;
@@ -60,7 +63,6 @@ import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotFoundException;
 import com.intita.wschat.exception.ChatUserNotInRoomException;
 import com.intita.wschat.exception.RoomNotFoundException;
-import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.ChatUserLastRoomDate;
 import com.intita.wschat.models.Course;
@@ -70,18 +72,6 @@ import com.intita.wschat.models.Room;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.services.ChatLangService;
-import com.intita.wschat.services.ChatTenantService;
-import com.intita.wschat.services.ChatUserLastRoomDateService;
-import com.intita.wschat.services.ChatUsersService;
-import com.intita.wschat.services.ConfigParamService;
-import com.intita.wschat.services.CourseService;
-import com.intita.wschat.services.IntitaMailService;
-import com.intita.wschat.services.IntitaSubGtoupService;
-import com.intita.wschat.services.RoomHistoryService;
-import com.intita.wschat.services.RoomsService;
-import com.intita.wschat.services.UserMessageService;
-import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
 import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
@@ -140,6 +130,14 @@ public class ChatController {
 	@Autowired
 	private DTOMapper dtoMapper;
 
+	@Autowired UserMessageService messageService;
+
+	@Autowired
+	ChatLikeStatusService chatLikeStatusService;
+
+	@Value("${crmchat.send_unreaded_messages_email:true}")
+	private Boolean sendUnreadedMessagesToEmail;
+
 
 	private final Semaphore msgLocker = new Semaphore(1);
 
@@ -154,19 +152,19 @@ public class ChatController {
 
 	private volatile Map<String, Queue<UserMessage>> messagesBuffer = Collections
 			.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key
-																					// =>
-																					// roomId
+	// =>
+	// roomId
 	private final Map<String, Queue<DeferredResult<String>>> responseBodyQueue = new ConcurrentHashMap<String, Queue<DeferredResult<String>>>();// key
-																																				// =>
-																																				// roomId
+	// =>
+	// roomId
 
 	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
 
 	ConcurrentHashMap<DeferredResult<String>, String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>, String>();
 	private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();// RoomId,ChatUserId
-																					// of
-																					// tenatn
+	// of
+	// tenatn
 
 	public void tryRemoveChatUserRequiredTrainer(ChatUser chatUser) {
 		UserWaitingForTrainer userWaiting = null;
@@ -335,13 +333,13 @@ public class ChatController {
 	}
 
 	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal , RoomsService chat_room_service) {
+		if(roomId == null) return null;
 		long startTime = System.currentTimeMillis();
 		Room o_room = chat_room_service.getRoom(roomId);
 		if (o_room == null)
 			return null;
 		ChatUser o_user = chatPrincipal.getChatUser();
-		if (o_user == null)
-			return null;
+		if (o_user == null || o_user.getId()==null) return null;
 
 		Set<Room> all = chat_room_service.getAllRoomByUsersAndAuthor(o_user);
 
@@ -368,20 +366,20 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> loadOtherMessageMapping(@PathVariable("room") Long room,
-			@RequestBody Map<String, String> json, Authentication auth) {
+	public List<UserMessageWithLikesDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
+																	 @RequestBody Map<String, String> json, Authentication auth) {
 		return loadOtherMessage(room, json, auth, false);
 	}
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
-			@RequestBody(required = false) Map<String, String> json, Authentication auth) {
+	public List<UserMessageWithLikesDTO> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
+																		  @RequestBody(required = false) Map<String, String> json, Authentication auth) {
 		return loadOtherMessage(room, json, auth, true);
 	}
 
-	public ArrayList<ChatMessage> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
-			boolean filesOnly) {
+	public List<UserMessageWithLikesDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
+															  boolean filesOnly) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		String dateMsStr = json.get("date");
 		Long dateMs = null;
@@ -399,7 +397,7 @@ public class ChatController {
 				searchQuery, filesOnly, 20);
 		if (messages.size() == 0)
 			return null;
-		ArrayList<ChatMessage> messagesAfter = ChatMessage.getAllfromUserMessages(messages);
+		List<UserMessageWithLikesDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages);
 
 		if (messagesAfter.size() == 0)
 			return null;
@@ -407,28 +405,28 @@ public class ChatController {
 		return messagesAfter;
 	}
 
-	public UserMessage filterMessage(Long roomStr, ChatMessage message, Authentication auth) {
+	public UserMessage filterMessage(Long roomStr, UserMessageDTO messageDTO, Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, chatPrincipal,
 				chatRoomsService);// Control room from LP
-		if (struct == null || !struct.room.isActive() || message.getMessage().trim().isEmpty())// cant
-																								// add
-																								// msg
+		if (struct == null || !struct.room.isActive() || messageDTO.getBody().trim().isEmpty())// cant
+			// add
+			// msg
 			return null;
 
-		UserMessage messageToSave = new UserMessage(struct.user, struct.room, message);
+		UserMessage messageToSave = new UserMessage(struct.user, struct.room, messageDTO);
 		return messageToSave;
 	}
 
-	public UserMessage filterMessageWithoutFakeObj(ChatUser chatUser, ChatMessage message, Room room) {
-		if (!room.isActive() || (!message.isContentVisible() && message.getAttachedFiles().isEmpty()))
+	public UserMessage filterMessageWithoutFakeObj(ChatUser chatUser, UserMessageDTO message, Room room) {
+		if (!room.isActive() || (!HtmlUtility.isContentVisible(message.getBody()) && message.getAttachedFiles().isEmpty()))
 			return null;
 
 		UserMessage messageToSave = new UserMessage(chatUser, room, message);
 		return messageToSave;
 	}
 
-	public synchronized void addMessageToBuffer(Long roomId, UserMessage message, ChatMessage cMessage) {
+	public synchronized void addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
 		synchronized (messagesBuffer) {
 			Queue<UserMessage> list = messagesBuffer.get(roomId.toString());
 			if (list == null) {
@@ -439,14 +437,14 @@ public class ChatController {
 		}
 
 		HashMap payload = new HashMap();
-		payload.put(roomId, cMessage);
+		payload.put(roomId, messageDTO);
 		Room chatRoom = chatRoomsService.getRoom(roomId);
 		// send message to WS users
 		for (ChatUser user : chatRoom.getUsers()) {
 			simpMessagingTemplate.convertAndSend("/topic/" + user.getId() + "/must/get.room.num/chat.message", payload);
 		}
 		simpMessagingTemplate
-				.convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
+		.convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
 		addFieldToInfoMap("newMessage", roomId);
 	}
 
@@ -467,8 +465,8 @@ public class ChatController {
 	}
 
 	@MessageMapping("/{room}/chat.message")
-	public ChatMessage filterMessageWS(@DestinationVariable("room") Long roomId, @Payload ChatMessage message,
-									   Authentication auth) {
+	public UserMessageDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
+												  Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
 				chatRoomsService);// Control room from LP
@@ -476,15 +474,15 @@ public class ChatController {
 			return null;
 
 		ChatUser chatUser = chatPrincipal.getChatUser(); // chatUsersService.isMyRoom(roomStr,
-																			// principal.getName());
+		// principal.getName());
 		if (chatUser == null)
 
 			return null;
 
 		Room o_room = struct.getRoom();
 		UserMessage messageToSave = filterMessageWithoutFakeObj(chatUser, message, o_room);// filterMessage(roomStr,
-																						// message,
-																						// principal);
+		// message,
+		// principal);
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL, true,
 				"SENDING MESSAGE TO ALL USERS");
 		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
@@ -492,7 +490,7 @@ public class ChatController {
 			ChatUser tenantIsWaitedByCurrentUser = chatRoomsService.isRoomHasStudentWaitingForTrainer(roomId,
 					chatUser);
 			if (tenantIsWaitedByCurrentUser != null) {
-				addUserRequiredTrainer(roomId, tenantIsWaitedByCurrentUser, chatUser, message.getMessage());
+				addUserRequiredTrainer(roomId, tenantIsWaitedByCurrentUser, chatUser, message.getBody());
 			}
 			addMessageToBuffer(roomId, messageToSave, message);
 
@@ -505,27 +503,27 @@ public class ChatController {
 
 	@RequestMapping(value = "/{roomId}/chat/message", method = RequestMethod.POST)
 	@ResponseBody
-	public void filterMessageLP(@PathVariable("roomId") Long roomId, @RequestBody ChatMessage message,
+	public void filterMessageLP(@PathVariable("roomId") Long roomId, @RequestBody UserMessageDTO messageDTO,
 			Authentication auth) {
 		// checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		UserMessage messageToSave = filterMessage(roomId, message, auth);
+		UserMessage messageToSave = filterMessage(roomId, messageDTO, auth);
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		if (messageToSave != null) {
 			ChatUser trainerIsWaitedByCurrentUser = chatRoomsService.isRoomHasStudentWaitingForTrainer(roomId,
 					chatUser);
 			if (trainerIsWaitedByCurrentUser != null) {
-				addUserRequiredTrainer(roomId, trainerIsWaitedByCurrentUser, chatUser, message.getMessage());
+				addUserRequiredTrainer(roomId, trainerIsWaitedByCurrentUser, chatUser, messageDTO.getBody());
 			}
-			addMessageToBuffer(roomId, messageToSave, message);
-			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), message);
+			addMessageToBuffer(roomId, messageToSave, messageDTO);
+			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), messageDTO);
 		}
 	}
 
-	public void filterMessageBot(Long room, ChatMessage message, UserMessage to_save) {
+	public void filterMessageBot(Long room, UserMessageDTO messageDTO, UserMessage to_save) {
 		if (to_save != null) {
-			addMessageToBuffer(room, to_save, message);
-			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), message);
+			addMessageToBuffer(room, to_save, messageDTO);
+			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), messageDTO);
 		}
 	}
 
@@ -551,13 +549,13 @@ public class ChatController {
 			if (responseList != null) {
 				String str = "";
 				try {
-					str = mapper.writeValueAsString(ChatMessage
-							.getAllfromUserMessages(userMessageService.wrapBotMessages(new ArrayList<>(array), "ua")));// @BAG@//dont
-																														// save
-																														// user
-																														// lang
-																														// for
-																														// bot
+					ArrayList<UserMessage> userMessages = (userMessageService.wrapBotMessages(new ArrayList<>(array), "ua"));
+					str = mapper.writeValueAsString(dtoMapper.mapListUserMessage(userMessages));// @BAG@//dont
+					// save
+					// user
+					// lang
+					// for
+					// bot
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -625,7 +623,7 @@ public class ChatController {
 				}
 			}
 			LoginEvent loginEvent = new LoginEvent(Long.parseLong(chatId), chatId);// ,
-																					// participantRepository.isOnline(chatId));
+			// participantRepository.isOnline(chatId));
 			simpMessagingTemplate.convertAndSend("/topic/chat.logout", loginEvent);
 			if (!nextUser.isSetOrExpired() && result != "{}")// @BAD@
 				nextUser.setResult(result);
@@ -638,19 +636,18 @@ public class ChatController {
 	}
 
 	@MessageMapping("/{room}/chat.private.{username}")
-	public void filterPrivateMessage(@DestinationVariable Long room, @Payload ChatMessage message,
+	public void filterPrivateMessage(@DestinationVariable Long room, @Payload UserMessageDTO messageDTO,
 			@DestinationVariable("username") String username, Authentication auth) {
-		checkProfanityAndSanitize(message);
+		checkProfanityAndSanitize(messageDTO);
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		Long chatUserId = chatPrincipal.getChatUser().getId();
-		message.setUsername(chatUserId.toString());
 		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_USER, true,
 				"SENDING MESSAGE TO USER");
 		String subscriptionStr = "/topic/users/" + chatUserId + "/status";
 		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
 
 		simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/" + room + "/chat.message",
-				message);
+				messageDTO);
 	}
 
 	/*
@@ -676,7 +673,7 @@ public class ChatController {
 		ChatUserLastRoomDate last = chatUserLastRoomDateService.getUserLastRoomDate(room, user);
 		last.setLastLogout(new Date());
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
-		
+
 		/*
 		 * send info about some user enter to current room
 		 */
@@ -684,7 +681,7 @@ public class ChatController {
 		result.put("roomId", roomId);
 		result.put("chatUserId", user.getId());
 		result.put("type", "roomRead");
-		
+
 		addFieldToInfoMap("roomRead", result);
 		simpMessagingTemplate.convertAndSend("/topic/users/info", result);
 
@@ -741,6 +738,31 @@ public class ChatController {
 
 	}
 
+
+	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean likeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = chatLikeStatusService.likeMessage(messageId,chatUser);
+		if (!result) {
+			throw new Exception("can't like user");
+		}
+		return true;
+	}
+	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean dislikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = chatLikeStatusService.dislikeMessage(messageId,chatUser);
+		if (!result) {
+			throw new Exception("can't unlike user");
+		}
+		return true;
+	}
+
+
 	/*
 	 * Out from room
 	 */
@@ -795,16 +817,17 @@ public class ChatController {
 
 	public void sendMessageForUpdateRoomsByUser(ChatUser user, ArrayList<Room> roomForUpdate) {
 		RoomController
-				.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
+		.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(),
 				new RoomController.UpdateRoomsPacketModal(
 						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
 	}
 
-	public void updateRoomByUser(ChatUser user, Room room) {
+	public void updateRoomByUser(ChatUser user, Room room,boolean notify) {
 		ArrayList<Room> roomForUpdate = new ArrayList<>();
 		roomForUpdate.add(room);
-		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
+		if( notify && participantRepository.isOnline( user.getId() ) )
+			sendMessageForUpdateRoomsByUser(user, roomForUpdate);
 	}
 
 	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)
@@ -828,10 +851,10 @@ public class ChatController {
 	/*
 	 * Work only on WS
 	 */
-	private void checkProfanityAndSanitize(ChatMessage message) {
-		long profanityLevel = profanityFilter.getMessageProfanity(message.getMessage());
+	private void checkProfanityAndSanitize(UserMessageDTO message) {
+		long profanityLevel = profanityFilter.getMessageProfanity(message.getBody());
 		profanity.increment(profanityLevel);
-		message.setMessage(profanityFilter.filter(message.getMessage()));
+		message.setBody(profanityFilter.filter(message.getBody()));
 	}
 
 	@RequestMapping(value = "/get_commands_like", method = RequestMethod.GET)
@@ -1077,14 +1100,14 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
-			@RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
+	public List<UserMessageWithLikesDTO> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
+																	 @RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
 				false, 20);
-		ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
+		List<UserMessageWithLikesDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages);
 		return chatMessages;
 	}
 
@@ -1097,6 +1120,20 @@ public class ChatController {
 		Room room = chatRoomsService.getRoom(roomId);
 		// if (room.getAuthor().equals(chatUser))
 		roomHistoryService.clearRoomHistory(room, chatUser);
+		return true;
+	}
+
+	@RequestMapping(value = "/chat/persist_temporary_guest", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean persistTemporaryUser(Authentication auth,@RequestBody String firstMessage)
+			throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		ChatUser persistedUser = chatUsersService.persistGuest(chatUser.getNickName());
+		if (persistedUser==null)return false;
+		chatPrincipal.setChatUser(chatUser);
+		Room room = chatRoomsService.register(chatUser.getNickName(),chatUser);
+		messageService.addMessage(persistedUser,room,firstMessage);
 		return true;
 	}
 
@@ -1117,22 +1154,22 @@ public class ChatController {
 	private void sendAllNewMessageNotificationsFromLast24Hours() {
 		final int pageSize = 30;
 		int currentPage = 1;
-		 Page<User> intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
-		 log.info("sending emails to users:");
-		 int pagesTotal = intitaUsersPage.getTotalPages();
+		Page<User> intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+		log.info("sending emails to users:");
+		int pagesTotal = intitaUsersPage.getTotalPages();
 		while(currentPage<=pagesTotal){
-			 log.info("sending page "+currentPage+"/"+pagesTotal);
-		for (User user : intitaUsersPage.getContent()) {
-			log.info("sending to " + user.getEmail());
-			try {
-				mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
-			} catch (Exception e) {
-				log.info("sending failed: \n" + e.getMessage());
+			log.info("sending page "+currentPage+"/"+pagesTotal);
+			for (User user : intitaUsersPage.getContent()) {
+				log.info("sending to " + user.getEmail());
+				try {
+					mailService.sendUnreadedMessageToIntitaUserFrom24Hours(user);
+				} catch (Exception e) {
+					log.info("sending failed: \n" + e.getMessage());
+				}
 			}
-		}
-		currentPage++;
-		if (currentPage<=pagesTotal)
-		intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
+			currentPage++;
+			if (currentPage<=pagesTotal)
+				intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
 		}
 	}
 
@@ -1140,10 +1177,11 @@ public class ChatController {
 
 	@Scheduled(fixedDelay = 3600000L) // every 1 hour
 	public void notificateUsersByEmail() {
+		if (!sendUnreadedMessagesToEmail)return;
 		Date date = new Date(); // given date
 		Calendar calendar = GregorianCalendar.getInstance(); // creates a new
-																// calendar
-																// instance
+		// calendar
+		// instance
 		calendar.setTime(date); // assigns calendar to given date
 		if (calendar.get(Calendar.HOUR_OF_DAY) >= 0 && calendar.get(Calendar.HOUR_OF_DAY) <= 4) {
 			if (isEmailSendingRequired)

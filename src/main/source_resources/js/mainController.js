@@ -539,7 +539,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
 
                 for (var index = 0; index < data.length; index++) {
-                    if (data[index].hasOwnProperty("message")) {
+                    if (data[index].hasOwnProperty("body")) {
                         RoomsFactory.calcPositionUnshift(data[index]);
                     }
                 }
@@ -564,6 +564,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
 
+        var msgAudioNotify = new Audio('data/new_mess.mp3');
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
@@ -574,21 +575,19 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 if (newMessageInThisRoom != -1) {
                     $rootScope.roomForUpdate[room.roomId] = true;
                     var msg = messagesMap[room.roomId];
-                    room.lastMessage = msg.message;
+                    room.lastMessage = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
-                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.chatUserId != UserFactory.getChatUserId()) {
+                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
                         //room.date = curentDateInJavaFromat();
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
-                                new Audio('data/new_mess.mp3').play();
-
-
+                                msgAudioNotify.play();
                             var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
                             if (room.string == msg.username)
                                 title = "Нове повідомлення від " + messagesMap[room.roomId].username;
-                            Notify(msg.message, title);
+                            Notify(msg.body, title);
                         }
                         toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop
@@ -737,7 +736,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
-        $scope.isMessageInputAvailable = RoomsFactory.checkMessageAdditionPermission;
+        $scope.isMessageInputAvailable = function() {
+           return RoomsFactory.checkMessageAdditionPermission() || UserFactory.isTemporaryGuest();
+        }
         $scope.currentRoomIsNull = function() {
             if (RoomsFactory.getCurrentRoom() == null) return true;
             return RoomsFactory.getCurrentRoom().roomId == null;

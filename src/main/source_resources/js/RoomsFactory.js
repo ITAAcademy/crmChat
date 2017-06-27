@@ -24,8 +24,62 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var userAddedToRoom = true;
     var lastNonUserActivity = false;
     $rootScope.message_busy = true;
+    var likedMessagesIds = [];
+   var dislikedMessagesIds = [];
     var rooms = [];
     var oldMessage;
+
+
+    function isMessageLiked(messageId) {
+        return likedMessagesIds.indexOf(messageId) != -1;
+    }
+     function isMessageDisliked(messageId) {
+        return dislikedMessagesIds.indexOf(messageId) != -1;
+    }
+
+
+    function likeMessage(message){
+        if (isMessageLiked(message.id)){
+            return;
+        }
+        var messageId = message.id;
+                console.log('like message: '+messageId);
+                $http.get(serverPrefix + "/chat/like_message/"+messageId).then(function success(response){
+                    message.likes += 1;
+                    message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
+                 console.log('is like success:');
+                    var unlikedIndex = dislikedMessagesIds.indexOf(messageId);
+                if (unlikedIndex!=-1){
+                   dislikedMessagesIds.splice(unlikedIndex,1);
+                }
+                likedMessagesIds.push(messageId);
+                },
+                function fail(response){
+
+                });
+             
+            }
+    function dislikeMessage(message){
+        if (isMessageDisliked(message.id)){
+            return;
+        }
+        var messageId = message.id;
+                 console.log('like message: '+messageId);
+                $http.get(serverPrefix + "/chat/dislike_message/"+messageId).then(function success(response){
+                 message.dislikes += 1;
+                 message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                 console.log('is unlike success');
+                  var likedIndex = likedMessagesIds.indexOf(messageId);
+                if (likedIndex!=-1){
+                    likedMessagesIds.splice(likedIndex,1);
+                }
+                 dislikedMessagesIds.push(messageId);
+                },
+                function fail(response){
+
+                });
+
+            }
 
     function isRoomPrivate(room) {
         if (room != null && room.type === 1) return true;
@@ -145,7 +199,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             if (messages[0].username == msg.username) {
                 if (isActual && msg.attachedFiles.length == 0) {
                     summarised = true;
-                    messages[0].message = msg.message + "\n\n" + messages[0].message;
+                    messages[0].body = msg.body + "\n\n" + messages[0].body;
                     //  $scope.messages[0].date = msg.date;
                 }
                 msg.position = messages[0].position;
@@ -189,7 +243,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[messages.length - 1].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
             if (isActual && messages[messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
                 messages[messages.length - 1].date = msg.date;
-                messages[messages.length - 1].message += "\n\n" + msg.message;
+                messages[messages.length - 1].body += "\n\n" + msg.body;
             } else {
                 messages.push(msg);
             }
@@ -488,6 +542,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         participants = message["participants"];
         lastNonUserActivity = message["lastNonUserActivity"];
 
+        likedMessagesIds.splice(0,likedMessagesIds.length);
+        dislikedMessagesIds.splice(0,dislikedMessagesIds.length);
+
+        likedMessagesIds.push(...message["likedMessagesIds"]);
+        dislikedMessagesIds.push(...message["dislikedMessagesIds"]);
+
         if (typeof message["messages"] != 'undefined') {
             $rootScope.loadingSubscribesAndMessages = true;
             // oldMessage = message["messages"][message["messages"].length - 1];
@@ -768,7 +828,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         },
         updateLastActivity: updateLastActivity,
         calcPositionPush: calcPositionPush,
-        addUsersToRoom: addUsersToRoom
+        addUsersToRoom: addUsersToRoom,
+        isMessageLiked,
+        isMessageDisliked,
+        likeMessage,
+        dislikeMessage
+
 
     };
 

@@ -117,17 +117,17 @@
 							<div class="avatar">
 								<div class="avatar-contaiter centered">
 									<img
-									ng-src="{{baseurl}}/images/avatars/{{message.chatUserAvatar}}"/>
+									ng-src="{{baseurl}}/images/avatars/{{message.author.avatar}}"/>
 								</div>
 								<div
-									ng-="!findParticipant(message.username).online ? 'status offline' : 'status online'"
+									ng-="!findParticipant(message.author.nickName).online ? 'status offline' : 'status online'"
 								class="status"></div>
 							</div>
-							<div class="name">{{message.username}}</div>
+							<div class="name">{{message.nickName}}</div>
 							<div class="text">
 
- 								<dir class="msg-from-man" ng-if="message.chatUserId != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.message)" time="message.date"></dir>
-								<div class="msg-from-man" ng-if="message.chatUserId == 0" bot-container = " "  style="margin: 0px;" content="message.message" time="message.date" ></div>
+ 								<dir class="msg-from-man" ng-if="message.author.id != 0" style="margin: 0px; white-space: pre-wrap" content=" parseMsg(message.body)" time="message.date"></dir>
+								<div class="msg-from-man" ng-if="message.author.id == 0" bot-container = " "  style="margin: 0px;" content="message.body" time="message.date" ></div>
 
 
 								<span ng-repeat="file in message.attachedFiles track by $index">

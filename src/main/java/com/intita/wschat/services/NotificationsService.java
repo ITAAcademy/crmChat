@@ -1,64 +1,21 @@
 package com.intita.wschat.services;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.intita.wschat.config.ChatPrincipal;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.domain.ChatMessage;
-import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.event.ParticipantRepository;
-import com.intita.wschat.models.BotAnswer;
-import com.intita.wschat.models.BotCategory;
-import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatTenant;
 import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.LangId;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomPermissions;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.web.ChatController;
 import com.intita.wschat.web.RoomController;
-
-import utils.RandomString;
 
 @Service
 public class NotificationsService {

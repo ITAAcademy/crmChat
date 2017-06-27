@@ -21,23 +21,30 @@
     <div class="line"></div>
 </div>
 <div class="user_message" ng-class="message.position ? 'answer right' : 'answer left'" ng-repeat-end="">
-    <div class="message_author_avatar" ng-if="!message.position" ng-click="$root.showUserProfileByChatUserId(message.chatUserId)">
-        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
+    <div class="message_author_avatar" ng-if="!message.position" ng-click="$root.showUserProfileByChatUserId(message.author.id)">
+        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.author.avatar + ')'}"></div>
     </div>
     <div class="message_details">
         <div class="top_details">
             <span class="messag_author_name">{{::message.username}}</span>
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
-            <span ng-if="message.chatUserId == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
+            <span ng-if="message.author.id == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
         </div>
-        <compilable ng-if="message.chatUserId != 0" class="bottom_details" content="parseMsg(message.message)" time="message.date"></compilable>
-        <div ng-if="message.chatUserId == 0" bot-container=" " style="margin: 0px;" content="message.message" time="message.date"></div>
-        <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.message != ' ' " />
+        <compilable ng-if="message.author.id != 0" class="bottom_details" content="parseMsg(message.body)" time="message.date"></compilable>
+        <div ng-if="message.author.id == 0" bot-container=" " style="margin: 0px;" content="message.body" time="message.date"></div>
+        <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
+
+        <div class="like_wrapper">
+      <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">Like</a><span >{{message.likes}}</span>
+      <a ng-click="dislikeMessage(message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}">Unlike</a><span>{{message.dislikes}}</span>
+        </div>
+
     </div>
-    <div class="message_author_avatar" ng-if="message.position" ng-click="$root.showUserProfileByChatUserId(message.chatUserId)">
-        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.chatUserAvatar + ')'}"></div>
+    <div class="message_author_avatar" ng-if="message.position" ng-click="$root.showUserProfileByChatUserId(message.author.id)">
+        <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.author.avatar + ')'}"></div>
     </div>
+
 </div>
 <!-- //Сьогоднішні повідомлення -->

@@ -119,23 +119,26 @@ var firstLetter = function(name) {
         return name.toUpperCase().charAt(0);
 }
 
-function isEquivalent(a, b) {
+function isEquivalent(a, b,ignorableProperties) {
     // Create arrays of property names
     var aProps = Object.getOwnPropertyNames(a);
     var bProps = Object.getOwnPropertyNames(b);
 
     // If number of properties is different,
     // objects are not equivalent
-    if (aProps.length != bProps.length) {
+    if (Math.abs(aProps.length - bProps.length) > ignorableProperties.length) {
         return false;
     }
 
     for (var i = 0; i < aProps.length; i++) {
         var propName = aProps[i];
+        if(ignorableProperties.indexOf(propName)!=-1)continue;
 
         // If values of same property are not equal,
         // objects are not equivalent
-        if (a[propName] !== b[propName]) {
+         var isObject = (a[propName]!=null && typeof a[propName] === 'object');
+
+        if (!isObject && a[propName] !== b[propName]) {
             return false;
         }
     }

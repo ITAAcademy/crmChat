@@ -37,5 +37,8 @@ public class HtmlUtility {
 		}
 		return values;
 	}
+	public static boolean isContentVisible(String content){
+		return removeAllBrAndTrim(content).length()>0;
+	}
 	
 }

@@ -97,6 +97,11 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	public ChatUser(){
 
 	}
+	public static ChatUser forId(Long id){
+		ChatUser chatUser = new ChatUser();
+		chatUser.id = id;
+		return chatUser;
+	}
 	public ChatUser(String nickName, User intitaUser){
 		this.nickName=nickName;
 		this.intitaUser=intitaUser;
