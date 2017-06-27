@@ -34,7 +34,6 @@ public class NotificationsService {
 	@Autowired private ParticipantRepository participantRepository;
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private RoomController roomControler;
-	@Autowired private ChatController chatController;
 	@Autowired private UserBirthdayService userBirthdayService;
 
 

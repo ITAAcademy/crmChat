@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.intita.wschat.services.common.UsersOperationsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,10 @@ public class ParticipantRepository {
 		return activeSessions.keySet();
 	}
 	@Autowired ChatUsersService chatUsersService;
-	@Autowired ChatController chatController;
 	private final static Logger log = LoggerFactory.getLogger(ParticipantRepository.class);
 	private ConcurrentHashMap<Long,IPresentOnForum> activeSessions = new ConcurrentHashMap<Long,IPresentOnForum>();
+	@Autowired
+	UsersOperationsService usersOperationsService;
 	//put null to distinguish WS from LP sessions. We need no last action time for Web Sockets
 	public void addParticipantPresenceByConnections(Long chatId) {
 		if(chatId==null) return;
@@ -58,7 +60,7 @@ public class ParticipantRepository {
 		}
 		else{
 			activeSessions.put(chatId, new LongpollPresence());
-			chatController.tryAddTenantInListToTrainerLP(chatId);
+			usersOperationsService.tryAddTenantInListToTrainerLP(chatId);
 			//log.info(String.format("Participant %s presence added first time ",chatId));
 		}
 			//System.out.println("user "+chatId+" enter chat");
@@ -86,7 +88,7 @@ public class ParticipantRepository {
 			if (!userPresent.isPresent())
 			{
 				ChatUser chatUser = chatUsersService.getChatUser(chatId);
-				chatController.propagateRemovingTenantFromListToTrainer(chatUser);
+				usersOperationsService.propagateRemovingTenantFromListToTrainer(chatUser);
 				activeSessions.remove(chatId);
 				//log.info(String.format("Participant %s presence removed",chatId));
 				return true;

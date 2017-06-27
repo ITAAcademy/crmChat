@@ -34,7 +34,6 @@ public class UserBirthdayService {
 	@Autowired private ParticipantRepository participantRepository;
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private RoomController roomControler;
-	@Autowired private ChatController chatController;
 
 	//check if have needs in update birthday mans
 	int lastBirthdayUsersUpdate = -1;

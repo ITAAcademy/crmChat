@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
+import com.intita.wschat.services.common.UsersOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -61,8 +63,6 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
-
 /**
  * Controller that handles WebSocket chat messages
  * 
@@ -109,6 +109,8 @@ public class ConsultationsController {
 	@Autowired private ConsultationsService chatIntitaConsultationService;
 	@Autowired private CommonController commonController;
 	@Autowired private RoomsService chatRoomsService;
+
+	@Autowired private UsersOperationsService usersOperationsService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
@@ -298,7 +300,7 @@ public class ConsultationsController {
 
 		//this said ti author that he nust update room`s list
 		ChatUser author = chatPrincipal.getChatUser();
-		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 		//777
 	}
 	

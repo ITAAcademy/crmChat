@@ -20,11 +20,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
 import com.intita.wschat.services.*;
+import com.intita.wschat.services.common.UsersOperationsService;
 import com.intita.wschat.util.HtmlUtility;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -73,8 +75,6 @@ import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.util.ProfanityChecker;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
-
 import jsonview.Views;
 
 /**
@@ -82,7 +82,6 @@ import jsonview.Views;
  * 
  * @author Nicolas Haiduchok
  */
-@Service
 @Controller
 public class ChatController {
 
@@ -135,6 +134,11 @@ public class ChatController {
 	@Autowired
 	ChatLikeStatusService chatLikeStatusService;
 
+	@Autowired RoomController roomController;
+
+	@Autowired
+	UsersOperationsService usersOperationsService;
+
 	@Value("${crmchat.send_unreaded_messages_email:true}")
 	private Boolean sendUnreadedMessagesToEmail;
 
@@ -150,163 +154,28 @@ public class ChatController {
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
-	private volatile Map<String, Queue<UserMessage>> messagesBuffer = Collections
-			.synchronizedMap(new ConcurrentHashMap<String, Queue<UserMessage>>());// key
-	// =>
-	// roomId
-	private final Map<String, Queue<DeferredResult<String>>> responseBodyQueue = new ConcurrentHashMap<String, Queue<DeferredResult<String>>>();// key
+
 	// =>
 	// roomId
 
-	private final ConcurrentHashMap<String, ArrayList<Object>> infoMap = new ConcurrentHashMap<>();
-	private final ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = new ConcurrentHashMap<>();
+	// =>
+	// roomId
 
 	ConcurrentHashMap<DeferredResult<String>, String> globalInfoResult = new ConcurrentHashMap<DeferredResult<String>, String>();
-	private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();// RoomId,ChatUserId
+
 	// of
 	// tenatn
 
-	public void tryRemoveChatUserRequiredTrainer(ChatUser chatUser) {
-		UserWaitingForTrainer userWaiting = null;
-		for (UserWaitingForTrainer user : usersRequiredTrainers) {
-			if (Long.compare(user.getChatUserId(), chatUser.getId()) == 0) {
-				userWaiting = user;
-				break;
-			}
-		}
-		if (userWaiting != null) {
-			usersRequiredTrainers.remove(userWaiting);
-			String subscriptionStr = "/topic/chat/room.private/room_require_trainer.remove";
-			simpMessagingTemplate.convertAndSend(subscriptionStr, userWaiting.getChatUserId());
-		}
-	}
-
 	public void removePrivateRoomRequiredTrainerFromList(Long roomId) {
 		List<UserWaitingForTrainer> userWaitingRooms = new ArrayList<UserWaitingForTrainer>();
-		for (UserWaitingForTrainer user : usersRequiredTrainers) {
+		for (UserWaitingForTrainer user : usersOperationsService.getUsersRequiredTrainers()) {
 			if (Long.compare(user.getChatUserId(), roomId) == 0) {
 				userWaitingRooms.add(user);
 			}
 		}
-		usersRequiredTrainers.removeAll(userWaitingRooms);
+		usersOperationsService.getUsersRequiredTrainers().removeAll(userWaitingRooms);
 	}
 
-	public void addFieldToInfoMap(String key, Object value) {
-		ArrayList<Object> listElm = infoMap.get(key);
-		if (listElm == null) {
-			listElm = new ArrayList<>();
-			infoMap.put(key, listElm);
-		}
-		listElm.add(value);
-	}
-
-	public boolean tryAddTenantInListToTrainerLP(Long chatUserId) {
-		ChatUser chatUser = chatUsersService.getChatUser(chatUserId);
-		return tryAddTenantInListToTrainerLP(chatUser);
-	}
-
-	public boolean tryAddTenantInListToTrainerLP(ChatUser chatUser) {
-		User user = chatUser.getIntitaUser();
-		if (user == null)
-			return false;
-		if (!chatTenantService.isTenant(user.getId())) {
-			return false;
-		}
-		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
-		users.add(chatUser);
-		propagateAdditionTenantsToList(users);
-		return true;
-	}
-
-	public void groupCastAddTenantToList(ChatUser tenant) {
-		String subscriptionStr = "/topic/chat.tenants.add";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant));
-	}
-
-	public void groupCastRemoveTenantFromList(ChatUser tenant) {
-		String subscriptionStr = "/topic/chat.tenants.remove";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, new LoginEvent(tenant));
-	}
-
-	public void propagateRemovingTenantFromListToTrainer(ChatUser user) {
-		if (user == null)
-			return;
-		ArrayList<ChatUser> users = new ArrayList<ChatUser>();
-		users.add(user);
-		propagateRemovingTenantsFromList(users);
-	}
-
-	public void propagateAdditionTenantsToList(ArrayList<ChatUser> usersIds) {
-		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
-		if (usersIds.size() <= 0)
-			return;
-
-		for (ChatUser tenantUser : usersIds) {
-			for (ChatUser trainerUser : chatUsers) {
-				if (trainerUser == null)
-					continue;
-				Long trainerChatId = trainerUser.getId();
-				if (participantRepository.isOnline(trainerChatId)) {
-					ConcurrentHashMap<Long, IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
-					if (activeSessions.get(trainerChatId).isTimeBased())
-						addFieldToUserInfoMap(trainerUser, "tenants.add", chatUsersService.getLoginEvent(tenantUser));
-					else if (activeSessions.get(trainerChatId).isConnectionBased()) {
-						// Do nothing now, but may be usable in future
-					}
-				}
-			}
-			groupCastAddTenantToList(tenantUser);
-		}
-	}
-
-	public void propagateRemovingTenantsFromList(ArrayList<ChatUser> usersIds) {
-		ArrayList<ChatUser> chatUsers = chatUsersService.getAllTrainers();
-		if (usersIds.size() <= 0)
-			return;
-		ConcurrentHashMap<Long, IPresentOnForum> activeSessions = participantRepository.getActiveSessions();
-		for (ChatUser tenantUser : usersIds) {
-			for (ChatUser trainerUser : chatUsers) {
-				if (trainerUser == null || !activeSessions.containsKey(trainerUser.getId().toString()))
-					continue;
-				Long trainerChatId = trainerUser.getId();
-				if (!participantRepository.isOnline(trainerChatId)) {
-					if (activeSessions.get(trainerChatId).isTimeBased())
-						addFieldToUserInfoMap(trainerUser, "tenants.remove",
-								chatUsersService.getLoginEvent(tenantUser));
-					else if (activeSessions.get(trainerChatId).isConnectionBased()) {
-						// Do nothing now, but may be usable in future
-					}
-				}
-			}
-			groupCastRemoveTenantFromList(tenantUser);
-		}
-	}
-
-	public void addFieldToUserInfoMap(ChatUser user, String key, Object value) {
-		if (user != null && !key.isEmpty())
-			addFieldToUserInfoMap(user.getId(), key, value);
-	}
-
-	public void addFieldToUserInfoMap(Long userId, String key, Object value) {
-		ConcurrentHashMap<String, ArrayList<Object>> t_infoMap = infoMapForUser.get(userId);
-		if (t_infoMap == null) {
-			t_infoMap = new ConcurrentHashMap<>();
-			infoMapForUser.put(userId, t_infoMap);
-		}
-
-		ArrayList<Object> listElm = t_infoMap.get(userId);
-		if (listElm == null) {
-			listElm = new ArrayList<>();
-			t_infoMap.put(key, listElm);
-		}
-		listElm.add(value);
-		// log.info(String.format("field '%s' with value '%s' added to infomap
-		// for user '%s'", key,value,userId));
-	}
-
-	public Map<String, Queue<UserMessage>> getMessagesBuffer() {
-		return messagesBuffer;
-	}
 
 	@PostConstruct
 	public void onCreate() {
@@ -406,133 +275,42 @@ public class ChatController {
 	}
 
 	public UserMessage filterMessage(Long roomStr, UserMessageDTO messageDTO, Authentication auth) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomStr, chatPrincipal,
-				chatRoomsService);// Control room from LP
-		if (struct == null || !struct.room.isActive() || messageDTO.getBody().trim().isEmpty())// cant
-			// add
-			// msg
-			return null;
-
-		UserMessage messageToSave = new UserMessage(struct.user, struct.room, messageDTO);
-		return messageToSave;
+		return usersOperationsService.filterMessage(roomStr,messageDTO,auth);
 	}
 
-	public UserMessage filterMessageWithoutFakeObj(ChatUser chatUser, UserMessageDTO message, Room room) {
-		if (!room.isActive() || (!HtmlUtility.isContentVisible(message.getBody()) && message.getAttachedFiles().isEmpty()))
-			return null;
 
-		UserMessage messageToSave = new UserMessage(chatUser, room, message);
-		return messageToSave;
-	}
 
-	public synchronized void addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
-		synchronized (messagesBuffer) {
-			Queue<UserMessage> list = messagesBuffer.get(roomId.toString());
-			if (list == null) {
-				list = new ConcurrentLinkedQueue<>();
-				messagesBuffer.put(roomId.toString(), list);
-			}
-			list.add(message);
-		}
 
-		HashMap payload = new HashMap();
-		payload.put(roomId, messageDTO);
-		Room chatRoom = chatRoomsService.getRoom(roomId);
-		// send message to WS users
-		for (ChatUser user : chatRoom.getUsers()) {
-			simpMessagingTemplate.convertAndSend("/topic/" + user.getId() + "/must/get.room.num/chat.message", payload);
-		}
-		simpMessagingTemplate
-		.convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
-		addFieldToInfoMap("newMessage", roomId);
-	}
 
-	private void addUserRequiredTrainer(Long roomId, ChatUser chatUserTrainer, ChatUser chatUser, String lastMessage) {
 
-		LoginEvent studentLE = new LoginEvent(chatUser);
-		UserWaitingForTrainer user = new UserWaitingForTrainer(roomId, lastMessage, studentLE);
-
-		usersRequiredTrainers.add(user);
-
-		simpMessagingTemplate.convertAndSend("/topic/chat/room.private/room_require_trainer.add", user);
-		log.info("added room (" + roomId + ") required trainer " + chatUserTrainer.getId());
-	}
 
 	@SubscribeMapping("/chat/room.private/room_require_trainer")
 	public List<UserWaitingForTrainer> retrievePrivateRoomsRequiredTrainersSubscribeMapping() {
-		return usersRequiredTrainers;
+		return usersOperationsService.getUsersRequiredTrainers();
 	}
 
 	@MessageMapping("/{room}/chat.message")
 	public UserMessageDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
 												  Authentication auth) {
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
-				chatRoomsService);// Control room from LP
-		if (struct == null)
-			return null;
-
-		ChatUser chatUser = chatPrincipal.getChatUser(); // chatUsersService.isMyRoom(roomStr,
-		// principal.getName());
-		if (chatUser == null)
-
-			return null;
-
-		Room o_room = struct.getRoom();
-		UserMessage messageToSave = filterMessageWithoutFakeObj(chatUser, message, o_room);// filterMessage(roomStr,
-		// message,
-		// principal);
-		OperationStatus operationStatus = new OperationStatus(OperationType.SEND_MESSAGE_TO_ALL, true,
-				"SENDING MESSAGE TO ALL USERS");
-		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/status";
-		if (messageToSave != null) {
-			ChatUser tenantIsWaitedByCurrentUser = chatRoomsService.isRoomHasStudentWaitingForTrainer(roomId,
-					chatUser);
-			if (tenantIsWaitedByCurrentUser != null) {
-				addUserRequiredTrainer(roomId, tenantIsWaitedByCurrentUser, chatUser, message.getBody());
-			}
-			addMessageToBuffer(roomId, messageToSave, message);
-
-			simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-			return message;
-		}
-		simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-		return null;
+		return usersOperationsService.filterMessageWS(roomId,message,auth);
 	}
 
 	@RequestMapping(value = "/{roomId}/chat/message", method = RequestMethod.POST)
 	@ResponseBody
 	public void filterMessageLP(@PathVariable("roomId") Long roomId, @RequestBody UserMessageDTO messageDTO,
 			Authentication auth) {
-		// checkProfanityAndSanitize(message);//@NEED WEBSOCKET@
-		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-		UserMessage messageToSave = filterMessage(roomId, messageDTO, auth);
-		ChatUser chatUser = chatPrincipal.getChatUser();
-		if (messageToSave != null) {
-			ChatUser trainerIsWaitedByCurrentUser = chatRoomsService.isRoomHasStudentWaitingForTrainer(roomId,
-					chatUser);
-			if (trainerIsWaitedByCurrentUser != null) {
-				addUserRequiredTrainer(roomId, trainerIsWaitedByCurrentUser, chatUser, messageDTO.getBody());
-			}
-			addMessageToBuffer(roomId, messageToSave, messageDTO);
-			simpMessagingTemplate.convertAndSend(("/topic/" + roomId.toString() + "/chat.message"), messageDTO);
-		}
+		 usersOperationsService.filterMessageLP(roomId,messageDTO,auth);
 	}
 
-	public void filterMessageBot(Long room, UserMessageDTO messageDTO, UserMessage to_save) {
-		if (to_save != null) {
-			addMessageToBuffer(room, to_save, messageDTO);
-			simpMessagingTemplate.convertAndSend(("/topic/" + room.toString() + "/chat.message"), messageDTO);
-		}
-	}
 
 	@RequestMapping(value = "/{room}/chat/message/update", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public DeferredResult<String> updateMessageLP(@PathVariable("room") Long room) throws JsonProcessingException {
 		Long timeOut = 60000L;
+		Map<String, Queue<DeferredResult<String>>> responseBodyQueue = usersOperationsService.getResponseBodyQueu();
+		usersOperationsService.getResponseBodyQueu();
 		DeferredResult<String> result = new DeferredResult<String>(timeOut, "{}");
-		Queue<DeferredResult<String>> queue = responseBodyQueue.get(room.toString());
+		Queue<DeferredResult<String>> queue =  responseBodyQueue.get(room.toString());
 		if (queue == null) {
 			queue = new ConcurrentLinkedQueue<DeferredResult<String>>();
 			responseBodyQueue.put(room.toString(), queue);
@@ -541,35 +319,6 @@ public class ChatController {
 		return result;
 	}
 
-	@Scheduled(fixedDelay = 600L)
-	public void processMessage() {
-		for (String roomId : messagesBuffer.keySet()) {
-			Queue<UserMessage> array = messagesBuffer.get(roomId);
-			Queue<DeferredResult<String>> responseList = responseBodyQueue.get(roomId);
-			if (responseList != null) {
-				String str = "";
-				try {
-					ArrayList<UserMessage> userMessages = (userMessageService.wrapBotMessages(new ArrayList<>(array), "ua"));
-					str = mapper.writeValueAsString(dtoMapper.mapListUserMessage(userMessages));// @BAG@//dont
-					// save
-					// user
-					// lang
-					// for
-					// bot
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
-				for (DeferredResult<String> response : responseList) {
-					if (!response.isSetOrExpired())
-						response.setResult(str);
-				}
-				responseList.clear();
-			}
-
-			boolean ok = userMessageService.addMessages(array);
-			messagesBuffer.remove(roomId);
-		}
-	}
 
 	@RequestMapping(value = "/chat/global/lp/info", method = RequestMethod.POST)
 	@ResponseBody
@@ -593,13 +342,15 @@ public class ChatController {
 					tenantsToRemove.add(chatUsersService.getChatUser(chatId));
 			}
 			if (tenantsToRemove.size() > 0)
-				propagateRemovingTenantsFromList(tenantsToRemove);
+				usersOperationsService.propagateRemovingTenantsFromList(tenantsToRemove);
 		}
 	}
 
 	@Scheduled(fixedDelay = 10000L)
 	public void processGlobalInfo() {
 		String result;
+		ConcurrentHashMap<String, ArrayList<Object>> infoMap = usersOperationsService.getInfoMap();
+		ConcurrentHashMap<Long, ConcurrentHashMap<String, ArrayList<Object>>> infoMapForUser = usersOperationsService.getInfoMapForUser();
 		processUsersPresence();
 		try {
 			result = mapper.writeValueAsString(infoMap);
@@ -682,7 +433,7 @@ public class ChatController {
 		result.put("chatUserId", user.getId());
 		result.put("type", "roomRead");
 
-		addFieldToInfoMap("roomRead", result);
+		usersOperationsService.addFieldToInfoMap("roomRead", result);
 		simpMessagingTemplate.convertAndSend("/topic/users/info", result);
 
 		// return
@@ -792,43 +543,11 @@ public class ChatController {
 		}
 		chatUserLastRoomDateService.updateUserLastRoomDateInfo(last);
 
-		updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
+		usersOperationsService.updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
 
 	}
 
-	public void updateRoomsByUser(ChatUser user, HashMap<String, Object> roomsId) {
-		ArrayList<Room> roomForUpdate = new ArrayList<>();
 
-		// HashMap<String, Object> roomsId = (HashMap<String, Object>)
-		// params.get("roomForUpdate");
-		Set<String> set = roomsId.keySet();
-
-		if (roomsId.size() > 0) {
-			for (String string : set) {
-				try {
-					roomForUpdate.add(new Room(Long.parseLong(string)));
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			}
-		}
-		sendMessageForUpdateRoomsByUser(user, roomForUpdate);
-	}
-
-	public void sendMessageForUpdateRoomsByUser(ChatUser user, ArrayList<Room> roomForUpdate) {
-		RoomController
-		.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
-		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(),
-				new RoomController.UpdateRoomsPacketModal(
-						chatRoomsService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
-	}
-
-	public void updateRoomByUser(ChatUser user, Room room,boolean notify) {
-		ArrayList<Room> roomForUpdate = new ArrayList<>();
-		roomForUpdate.add(room);
-		if( notify && participantRepository.isOnline( user.getId() ) )
-			sendMessageForUpdateRoomsByUser(user, roomForUpdate);
-	}
 
 	@RequestMapping(value = "/chat/update/dialog_list", method = RequestMethod.POST)
 	@ResponseBody
@@ -836,7 +555,7 @@ public class ChatController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser user = chatPrincipal.getChatUser();
 		if (user != null) {
-			updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
+			usersOperationsService.updateRoomsByUser(user, (HashMap<String, Object>) params.get("roomForUpdate"));
 		}
 	}
 
@@ -1134,6 +853,7 @@ public class ChatController {
 		chatPrincipal.setChatUser(chatUser);
 		Room room = chatRoomsService.register(chatUser.getNickName(),chatUser);
 		messageService.addMessage(persistedUser,room,firstMessage);
+		usersOperationsService.welcomeTenantToRoomWithGuest(room,chatUser);
 		return true;
 	}
 

@@ -9,6 +9,7 @@ import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.models.*;
 import com.intita.wschat.repositories.*;
+import com.intita.wschat.services.common.UsersOperationsService;
 import com.intita.wschat.util.HtmlUtility;
 import com.intita.wschat.web.BotController;
 import org.apache.commons.lang.StringUtils;
@@ -41,9 +42,9 @@ public class RoomsService {
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ParticipantRepository participantRepository;
 
-	@Autowired private ChatController chatController;
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
 	@Autowired private RoomRolesRepository roomRolesRepository;
+	@Autowired private UsersOperationsService usersOperationsService;
 
 	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
 	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
@@ -409,7 +410,7 @@ public class RoomsService {
 		if(room.getAuthor() != null)
 			users.add(room.getAuthor());
 		for (ChatUser chatUser : users) {
-			chatController.updateRoomByUser(chatUser, room,notify);
+			usersOperationsService.updateRoomByUser(chatUser, room,notify);
 		}
 		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));

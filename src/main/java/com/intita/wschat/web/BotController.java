@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.services.common.UsersOperationsService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,6 @@ import com.intita.wschat.services.UsersService;
 
 import utils.RandomString;
 
-@Service
 @Controller
 public class BotController {
 	final int TYPEAHEAD_DISPLAYED_CATEGORIES_LIMIT = 15;
@@ -79,19 +79,9 @@ public class BotController {
 	@Autowired
 	DTOMapper dtoMapper;
 
-	private List<Room> tempRoomAskTenant = new ArrayList<Room>();
 
-	private List<Room> tempRoomAskTenant_wait = new ArrayList<Room>();
 
-	private Map <Long, Timer> waitConsultationUsersTimers = new HashMap<Long, Timer>();
 
-	public void register(Room room, Long userId)
-	{
-		tempRoomAskTenant.add(room);
-		tempRoomAskTenant_wait.add(room);
-	}
-
-	private boolean  usersAskTenantsTimerRunning = false;
 
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -108,9 +98,9 @@ public class BotController {
 	@Autowired private ParticipantRepository participantRepository;
 	@Autowired private ChatLangService chatLangService;
 
-
 	@Autowired private RoomController roomControler;
-	@Autowired private ChatController chatController;
+
+	@Autowired private UsersOperationsService usersOperationsService;
 
 	private Timer timer;
 
@@ -294,6 +284,7 @@ public class BotController {
 		}
 	}
 
+
 	@RequestMapping(value = "bot_operations/{roomId}/get_bot_container/{containerId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String sendNextContainer(@PathVariable("roomId") Long roomId, @PathVariable("containerId") Long containerId, @RequestBody Map<String,Object> param, Authentication auth) throws JsonProcessingException {
@@ -338,12 +329,12 @@ public class BotController {
 
 
 		UserMessage msg = new UserMessage(chatPrincipal.getChatUser(), room, "You answer: " + nextContainer.getIdObject().getId());
-		chatController.filterMessageLP(room.getId(), dtoMapper.map(msg), auth);
+		usersOperationsService.filterMessageLP(room.getId(), dtoMapper.map(msg), auth);
 
 		UserMessage qmsg = new UserMessage(bot, room, containerString);
 		UserMessage messageToSave = new UserMessage(bot, room, containerStringToSave);
 
-		chatController.filterMessageBot(room.getId(), dtoMapper.map(qmsg), messageToSave);
+		usersOperationsService.filterMessageBot(room.getId(), dtoMapper.map(qmsg), messageToSave);
 		return objectMapper.writeValueAsString(botCategory);
 	}
 
@@ -367,142 +358,10 @@ public class BotController {
 
 	@RequestMapping(value = "/bot_operations/close/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean giveTenant(@PathVariable Long roomId) throws JsonProcessingException {
-
-		Room room_0 = roomService.getRoom(roomId);
-		if(room_0 == null)
-			return false;	
-
-		if (tempRoomAskTenant.contains(room_0))
-			return false;
-
-		tempRoomAskTenant.add(room_0);
-
-		boolean isFindedFreeTenant = giveTenant(roomId, true);
-
-		return isFindedFreeTenant;
-		/*
-		ChatUser c_user = t_user.getChatUser();
-		ChatUser b_user = chatUsersService.getChatUser(BotController.BotParam.BOT_ID);
-
-		room_o.setAuthor(c_user);
-		roomService.update(room_o);
-
-		roomControler.addUserToRoom(b_user, room_o, b_user.getPrincipal(), true);
-
-		return true;*/
+	public boolean giveTenantMapping(@PathVariable Long roomId) throws JsonProcessingException {
+		return usersOperationsService.giveTenant(roomId);
 	}
 
-	public void waitConsultationUser(Room room) {
-		java.util.Timer timer = new java.util.Timer();
-		Long roomId = room.getId();		
-		timer.schedule( 
-				new java.util.TimerTask() {
-					@Override
-					public void run() {																
-						tempRoomAskTenant.add(room);
-						tempRoomAskTenant_wait.add(room);
-						runUsersAskTenantsTimer(room);
-					}
-				}, 
-				30000 
-				);	
-		waitConsultationUsersTimers.put(roomId, timer);
-	}
-
-	public void runUsersAskTenantsTimer(Room room) {
-		if (usersAskTenantsTimerRunning == false)
-		{
-			usersAskTenantsTimerRunning = true;
-			new java.util.Timer().schedule( 
-					new java.util.TimerTask() {
-						@Override
-						public void run() {
-							usersAskTenantsTimerRunning = false;
-							if (tempRoomAskTenant_wait.size() > 0)
-							{								
-								giveTenant(room, true);
-							}
-						}
-					}, 
-					10000 
-					);			
-		}
-	}
-
-	public boolean giveTenant(Long roomId, boolean needRunTimer) {
-		Room room_0 = roomService.getRoom(roomId);
-		return giveTenant(room_0, needRunTimer);
-	}
-
-	public void askUser(ChatUser chatUser, String msg, String yesLink, String noLink)
-	{
-		Map<String, Object> question = new HashMap<>();
-		question.put("yesLink", yesLink);
-		question.put("noLink", noLink);
-		question.put("msg", msg);
-		question.put("type", "ask");
-		chatController.addFieldToUserInfoMap(chatUser, "newAsk_ToChatUserId", question);
-		String subscriptionStr = "/topic/users/" + chatUser.getId() + "/info";
-		simpMessagingTemplate.convertAndSend(subscriptionStr, question);
-	}
-
-	public boolean giveTenant(Room room_0, boolean needRunTimer) {
-
-		//List<Long> ff = chatTenantService.getTenantsBusy();	
-		if(room_0 == null)
-			return false;
-
-		Long roomId = room_0.getId();
-
-		if(participantRepository.isOnline(room_0.getAuthor().getId()))
-		{
-			ChatTenant t_user = chatTenantService.getFreeTenantNotFromRoom(room_0);//       getRandomTenant();//choose method   789
-			if (t_user == null)
-			{
-				if (tempRoomAskTenant_wait.contains(room_0) == false) 
-				{
-					tempRoomAskTenant_wait.add(room_0);							//789				
-				}
-				runUsersAskTenantsTimer(room_0);	
-				return false;
-			}		
-
-
-			Long tenantChatUserId = t_user.getChatUser().getId();	
-
-			chatTenantService.setTenantBusy(t_user);
-
-			Object[] obj = new Object[] {  tenantChatUserId, roomId };
-
-			askUser(t_user.getChatUser(),"Запит від неавторизізованого користувача?", String.format("/bot/operations/tenant/free/%1$d", roomId), String.format("/%1$d/bot_operations/tenant/refuse/", roomId));
-
-			waitConsultationUser(room_0);
-
-		}
-		for (int i = 0; i < tempRoomAskTenant_wait.size(); i++)
-		{
-			if (tempRoomAskTenant_wait.get(i).getId().equals(roomId))
-				tempRoomAskTenant_wait.remove(i);
-		}
-
-		if (tempRoomAskTenant_wait.size() > 0 && tempRoomAskTenant.size() > 0)
-		{			
-			/*Long nextUserId = askConsultationUsers.get(0);
-			ChatUser user =  chatUsersService.getChatUser(nextUserId);*/
-
-			Room nextRoom = tempRoomAskTenant_wait.get(0);//      getRommInTempRoomAskTenantByChatUser(user);
-
-			if (nextRoom != null)
-			{
-				if ( giveTenant(nextRoom, false) == false)
-					if (needRunTimer)
-						runUsersAskTenantsTimer(nextRoom);
-			}
-		}
-
-		return true;
-	}
 
 	/**********************
 	 * TRAINER SYSTEM
@@ -538,7 +397,7 @@ public class BotController {
 
 			roomControler.addUserToRoom(user, room, auth, true);
 			Object[] obj = new Object[] {roomId, user};
-			chatController.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
+			usersOperationsService.addFieldToUserInfoMap(user, "newConsultationWithTenant", obj);
 			tenantSubmitToSpendConsultationWS(room, user.getId());
 		}
 		return "1";//OK
@@ -580,7 +439,7 @@ public class BotController {
 			return false;
 
 		tenantSendBecomeBusy(tenant);
-		askUser(tenant, user.getNickName() + " запрошує Вас у кімнату " + room.getName() + ".\n Чи згодні Ви?",
+		usersOperationsService.askUser(tenant, user.getNickName() + " запрошує Вас у кімнату " + room.getName() + ".\n Чи згодні Ви?",
 				"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=true", "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?agree=false");
 		return true;
 	}
@@ -651,7 +510,7 @@ public class BotController {
 		for(ChatUser tenant : tenants)
 		{
 			tenantSendBecomeBusy(tenant);
-			askUser(tenant, user.getNickName() + ":\n" + tenantAskModelJS.getMsg(),
+			usersOperationsService.askUser(tenant, user.getNickName() + ":\n" + tenantAskModelJS.getMsg(),
 					"/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=true&askId=" + askId, "/bot_operations/tenant/answerToAddToRoom/" + roomId + "?type=onlyFirst&agree=false&askId=" + askId);
 		}
 		return true;
@@ -668,7 +527,7 @@ public class BotController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		chatTenantService.setTenantFree(auth);
-		chatController.groupCastAddTenantToList(chatPrincipal.getChatUser());
+		usersOperationsService.groupCastAddTenantToList(chatPrincipal.getChatUser());
 	}	
 
 	@RequestMapping(value = "/bot_operations/tenant/becomeBusy",  method = RequestMethod.POST)
@@ -680,7 +539,7 @@ public class BotController {
 	}
 	public void tenantSendBecomeBusy(ChatUser tenant) {
 		chatTenantService.setTenantBusy(tenant);
-		chatController.groupCastRemoveTenantFromList(tenant);
+		usersOperationsService.groupCastRemoveTenantFromList(tenant);
 	}
 	/*private void updateTenants(){
 		String subscriptionStr = "/topic/chat.tenants.add";
@@ -693,10 +552,7 @@ public class BotController {
 	@RequestMapping(value = "/bot_operations/tenant/did_am_wait_tenant/{roomId}",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean isUserWaitTenant(@PathVariable Long roomId) {
-		for (Room room : tempRoomAskTenant)
-			if (room.getId().equals(roomId))
-				return true;
-		return false;
+		return usersOperationsService.isUserWaitTenant(roomId);
 	}
 
 	@RequestMapping(value = "/bot_operations/tenant/did_am_busy_tenant",  method = RequestMethod.POST)
@@ -713,21 +569,11 @@ public class BotController {
 		return obj;
 	}
 
-	public boolean isChatUserWaitTenant(ChatUser user) {
-		for (Room room : tempRoomAskTenant_wait) {
-			Set<ChatUser> users = room.getUsers();
-			for (ChatUser a_user : users) {
-				if (a_user.getId() == user.getId())
-					return true;
-			}
-		}
-		return false;			
-	}	
 	@RequestMapping(value = "/{roomId}/bot_operations/tenant/refuse/",  method = RequestMethod.POST)
 	@ResponseBody
 	public boolean tenantSendRefused(@PathVariable("roomId") Long roomId) {
 
-		Timer timer = waitConsultationUsersTimers.get(roomId);
+		Timer timer = usersOperationsService.getWaitConsultationUsersTimers().get(roomId);
 		timer.cancel();
 		timer.purge();
 		Room room = roomService.getRoom(roomId);
@@ -735,9 +581,9 @@ public class BotController {
 		if (room == null)
 			return false;
 
-		tempRoomAskTenant_wait.add(room);
+		usersOperationsService.getTempRoomAskTenant_wait().add(room);
 
-		return giveTenant(roomId, true);
+		return usersOperationsService.giveTenant(roomId, true);
 	}
 
 	@RequestMapping(value = "/bot/operations/tenant/free/{roomId}", method = RequestMethod.POST)
@@ -746,7 +592,7 @@ public class BotController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
 		Long tenantChatUserId = chatPrincipal.getChatUser().getId();
 
-		Timer timer = waitConsultationUsersTimers.get(roomId);
+		Timer timer = usersOperationsService.getWaitConsultationUsersTimers().get(roomId);
 		timer.cancel();
 		timer.purge();
 
@@ -754,16 +600,16 @@ public class BotController {
 		if (c_user == null)
 			return;
 
-		if (tempRoomAskTenant.size() == 0)
+		if (usersOperationsService.getTempRoomAskTenant().size() == 0)
 			return;
 
 		Room room_ = null;
 
-		for (int i = 0; i < tempRoomAskTenant.size(); i++)
-			if (tempRoomAskTenant.get(i).getId().equals(roomId))
+		for (int i = 0; i < usersOperationsService.getTempRoomAskTenant().size(); i++)
+			if (usersOperationsService.getTempRoomAskTenant().get(i).getId().equals(roomId))
 			{
-				room_ = tempRoomAskTenant.get(i);
-				tempRoomAskTenant.remove(i);
+				room_ = usersOperationsService.getTempRoomAskTenant().get(i);
+				usersOperationsService.getTempRoomAskTenant().remove(i);
 				break;
 			}
 
@@ -771,10 +617,10 @@ public class BotController {
 			return;
 
 
-		for (int i = 0; i < tempRoomAskTenant_wait.size(); i++)
-			if (tempRoomAskTenant_wait.get(i).getId().equals(roomId))
+		for (int i = 0; i < usersOperationsService.getTempRoomAskTenant_wait().size(); i++)
+			if (usersOperationsService.getTempRoomAskTenant_wait().get(i).getId().equals(roomId))
 			{
-				tempRoomAskTenant_wait.remove(i);
+				usersOperationsService.getTempRoomAskTenant_wait().remove(i);
 				break;
 			}
 
@@ -784,7 +630,7 @@ public class BotController {
 		//	roomControler.addUserToRoom(c_user, room_, c_user.getPrincipal(), true);
 
 		Object[] obj = new Object[] {roomId, tenantChatUserId};
-		chatController.addFieldToUserInfoMap(c_user, "newConsultationWithTenant", obj);
+		usersOperationsService.addFieldToUserInfoMap(c_user, "newConsultationWithTenant", obj);
 		tenantSubmitToSpendConsultationWS(room_, tenantChatUserId);
 	}
 
