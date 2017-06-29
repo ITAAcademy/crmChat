@@ -196,7 +196,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (messages.length > 0) {
             var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[0].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
-            if (messages[0].username == msg.username) {
+            if (messages[0].author.id == msg.author.id) {
                 if (isActual && msg.attachedFiles.length == 0) {
                     summarised = true;
                     messages[0].body = msg.body + "\n\n" + messages[0].body;
@@ -231,7 +231,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             $rootScope.$broadcast('MessageAreaScrollDownEvent');
         }*/
         if (messages.length > 0) {
-            if (messages[messages.length - 1].username == msg.username)
+            if (messages[messages.length - 1].author.id == msg.author.id)
                 msg.position = messages[messages.length - 1].position;
             else
                 msg.position = !messages[messages.length - 1].position;
@@ -241,7 +241,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (messages.length > 0) {
             var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[messages.length - 1].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
-            if (isActual && messages[messages.length - 1].username == msg.username && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
+            if (isActual && messages[messages.length - 1].author.id == msg.author.id && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
                 messages[messages.length - 1].date = msg.date;
                 messages[messages.length - 1].body += "\n\n" + msg.body;
             } else {

@@ -9,6 +9,7 @@ import com.intita.wschat.domain.UserWaitingForTrainer;
 import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.*;
@@ -163,8 +164,6 @@ public class UsersOperationsService {
                 }
                 responseList.clear();
             }
-
-            boolean ok = userMessageService.addMessages(array);
             messagesBuffer.remove(roomId);
         }
     }
@@ -623,7 +622,7 @@ public class UsersOperationsService {
         return messageToSave;
     }
 
-    public UserMessageDTO filterMessageWS(Long roomId, @Payload UserMessageDTO message,
+    public UserMessageWithLikesDTO filterMessageWS(Long roomId, @Payload UserMessageDTO message,
                                           Authentication auth) {
         ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
         ChatController.CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
@@ -650,27 +649,29 @@ public class UsersOperationsService {
             if (tenantIsWaitedByCurrentUser != null) {
                 addUserRequiredTrainer(roomId, tenantIsWaitedByCurrentUser, chatUser, message.getBody());
             }
-            addMessageToBuffer(roomId, messageToSave, message);
+            UserMessageWithLikesDTO messageWithLikesDTO = addMessageToBuffer(roomId, messageToSave, message);
 
             simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
-            return message;
+            return messageWithLikesDTO;
         }
         simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
         return null;
     }
 
-    public synchronized void addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
+    public synchronized UserMessageWithLikesDTO addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
         synchronized (messagesBuffer) {
             Queue<UserMessage> list = messagesBuffer.get(roomId.toString());
             if (list == null) {
                 list = new ConcurrentLinkedQueue<>();
                 messagesBuffer.put(roomId.toString(), list);
             }
+            message = userMessageService.addMessage(message);
             list.add(message);
         }
-
+        UserMessageWithLikesDTO dtoWithLikes = dtoMapper.map(messageDTO);
+        dtoWithLikes.setId(message.getId());
         HashMap payload = new HashMap();
-        payload.put(roomId, messageDTO);
+        payload.put(roomId, dtoWithLikes);
         Room chatRoom = roomService.getRoom(roomId);
         // send message to WS users
         for (ChatUser user : chatRoom.getUsers()) {
@@ -679,6 +680,7 @@ public class UsersOperationsService {
         simpMessagingTemplate
                 .convertAndSend("/topic/" + chatRoom.getAuthor().getId() + "/must/get.room.num/chat.message", payload);
         addFieldToInfoMap("newMessage", roomId);
+        return dtoWithLikes;
     }
 
     public void addFieldToInfoMap(String key, Object value) {
