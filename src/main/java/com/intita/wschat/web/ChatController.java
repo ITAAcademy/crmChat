@@ -290,7 +290,7 @@ public class ChatController {
 	}
 
 	@MessageMapping("/{room}/chat.message")
-	public UserMessageDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
+	public UserMessageWithLikesDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
 												  Authentication auth) {
 		return usersOperationsService.filterMessageWS(roomId,message,auth);
 	}

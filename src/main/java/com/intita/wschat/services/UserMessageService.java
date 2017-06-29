@@ -105,10 +105,9 @@ public class UserMessageService {
 		return true;
 	}
 	@Transactional()
-	public boolean addMessage(UserMessage message) {
-		if (message==null) return false;
-		userMessageRepository.save(message);
-		return true;
+	public UserMessage addMessage(UserMessage message) {
+		if (message==null) return null;
+		return userMessageRepository.save(message);
 	}
 	@Transactional()
 	public boolean addMessages(Iterable<UserMessage> messages) {

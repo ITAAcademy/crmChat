@@ -56,6 +56,12 @@ public class DTOMapper {
         model.setDislikes(chatLikeStatusService.getMessageDislikesCount(userMessage.getId()));
         return model;
     }
+    public UserMessageWithLikesDTO map(UserMessageDTO messageDTO) {
+        UserMessageWithLikesDTO model = modelMapper.map(messageDTO, UserMessageWithLikesDTO.class);
+        model.setLikes(0L);
+        model.setDislikes(0L);
+        return model;
+    }
 
     public List<UserMessageDTO> mapListUserMessage(List<UserMessage> userMessages){
         List<UserMessageDTO> messagesDTO = userMessages.stream()
