@@ -48,6 +48,10 @@ public class ChatLikeStatusService {
     public boolean dislikeMessage(Long messageId, ChatUser chatUser){
         return rateMessage(messageId,chatUser,LikeState.DISLIKE);
     }
+    public boolean removeLikeStatus(Long messageId,ChatUser chatUser) {
+        chatLikeStatusRepository.removeByMessageAndChatUser(messageId,chatUser.getId());
+        return true;
+    }
     private boolean rateMessage(Long messageId, ChatUser chatUser, LikeState state) {
        ChatLikeStatus likeStatus = chatLikeStatusRepository.getChatLikeByMessageAndChatUser(messageId,chatUser.getId());
        if (likeStatus==null) {

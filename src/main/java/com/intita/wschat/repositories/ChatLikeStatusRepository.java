@@ -2,9 +2,11 @@ package com.intita.wschat.repositories;
 
 import com.intita.wschat.enums.LikeState;
 import com.intita.wschat.models.ChatLikeStatus;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 
 /**
@@ -25,5 +27,10 @@ public interface ChatLikeStatusRepository extends CrudRepository<ChatLikeStatus,
 
     @Query("SELECT status.message.id FROM chat_like_status status WHERE status.message.room.id = ?1 AND status.chatUser.id = ?2 AND status.likeState = ?3")
     public Set<Long> getMessageIdsByLikeState(Long roomId,Long userId,LikeState state);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM chat_like_status status WHERE status.message.id = ?1 AND status.chatUser.id = ?2 ")
+    public void removeByMessageAndChatUser(Long messageId, Long chatUserId);
 
 }
