@@ -1263,7 +1263,7 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
     $scope.myValueFunction = function(room) {
         if (StateFactory.isTabStateContacts()) {
-            return room.string;
+            return !$scope.isInterlocutorOnline(room) && room.string;
         } else {
             if (room.nums != 0)
                 return -Number.MAX_VALUE + room.nums;
