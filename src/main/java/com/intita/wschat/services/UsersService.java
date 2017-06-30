@@ -391,7 +391,7 @@ public class UsersService {
 		String userFieldName = "id_user";
 		if(roleValue == UserRole.TENANTS.getValue())
 			userFieldName = "chat_user_id";
-		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		Query query = entityManager.createNativeQuery("SELECT DISTINCT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = null;
 		try{
 			queryResults = query.getResultList();
