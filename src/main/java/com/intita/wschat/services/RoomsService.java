@@ -410,7 +410,7 @@ public class RoomsService {
 		if(room.getAuthor() != null)
 			users.add(room.getAuthor());
 		for (ChatUser chatUser : users) {
-			usersOperationsService.updateRoomByUser(chatUser, room,notify);
+			usersOperationsService.updateRoomByUser(chatUser, room,false);
 		}
 		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));
@@ -629,7 +629,8 @@ public class RoomsService {
 		}
 		Room room = info.getRoom();
 		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
-		room = update(room,notifyUsers);
+		//room = update(room,notifyUsers);
+		room = update(room,false);
 		ArrayList<ChatUser> cUsersList = null;
 
 		ArrayList<Long> intitaUsers = userService.getAllByRoleValue(roleInt, tableName);

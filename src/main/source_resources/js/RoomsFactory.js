@@ -40,6 +40,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     function likeMessage(message){
         if (isMessageLiked(message.id)){
+            discardMessageLike(message);
             return;
         }
         var messageId = message.id;
@@ -61,6 +62,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
     function dislikeMessage(message){
         if (isMessageDisliked(message.id)){
+            discardMessageLike(message);
             return;
         }
         var messageId = message.id;
@@ -80,6 +82,36 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 });
 
             }
+
+function discardMessageLike(message){
+        if (!isMessageDisliked(message.id) && !isMessageLiked(message.id)){
+            return;
+        }
+        var messageId = message.id;
+                 console.log('discard like message: '+messageId);
+                $http.get(serverPrefix + "/chat/discard_like_message/"+messageId).then(function success(response){
+                 if(isMessageDisliked(message.id)){
+                    message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
+                     var dislikedIndex = dislikedMessagesIds.indexOf(messageId);
+                if (dislikedIndex!=-1){
+                    dislikedMessagesIds.splice(dislikedIndex,1);
+                }
+                 }
+                 else {
+                     message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                      var likedIndex = likedMessagesIds.indexOf(messageId);
+                if (likedIndex!=-1){
+                    likedMessagesIds.splice(likedIndex,1);
+                }
+                 }
+                 
+                },
+                function fail(response){
+
+                });
+
+            }
+
 
     function isRoomPrivate(room) {
         if (room != null && room.type === 1) return true;

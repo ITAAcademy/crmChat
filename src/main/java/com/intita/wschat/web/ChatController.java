@@ -513,6 +513,18 @@ public class ChatController {
 		return true;
 	}
 
+	@RequestMapping(value = "/chat/discard_like_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean discardLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = chatLikeStatusService.removeLikeStatus(messageId,chatUser);
+		if (!result) {
+			throw new Exception("can't discard like user");
+		}
+		return true;
+	}
+
 
 	/*
 	 * Out from room

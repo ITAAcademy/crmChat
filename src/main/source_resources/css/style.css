@@ -3342,6 +3342,20 @@ a.like_button.selected {
     color: blue;
 }
 
+.like_wrapper.nolike {
+    opacity: 0.2;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 /*user profile popup end*/
 
 @media only screen and (min-width:1350px) {
