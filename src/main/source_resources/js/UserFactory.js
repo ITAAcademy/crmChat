@@ -95,8 +95,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     var initStompClient = function(callback) {
-        debugger;
-
         function reInitForLP() {
             $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
             success(function(data, status, headers, config) {
@@ -441,7 +439,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 //    $rootScope.goToAuthorize();
                 return;
             }*/
-            debugger;
 
             ChannelFactory.changeLocation("/dialog_view/" + mess_obj.roomModels[0].roomId);
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });

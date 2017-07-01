@@ -26,7 +26,7 @@
     </div>
     <div class="message_details">
         <div class="top_details">
-            <span class="messag_author_name">{{::message.username}}</span>
+            <span class="messag_author_name">{{::message.author.nickName}}</span>
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
             <span ng-if="message.author.id == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
         </div>
@@ -35,16 +35,19 @@
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
-
         <div class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}">
-      <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}"><i class="material-icons">thumb_up</i></a><span >{{message.likes}}</span>
-      <a ng-click="dislikeMessage(message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}"><i class="material-icons">thumb_down</i></a><span>{{message.dislikes}}</span>
+            <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">
+                <i class="material-icons">thumb_up</i>
+                <span>{{message.likes}}</span>
+            </a>
+            <a ng-click="dislikeMessage(message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}">
+                <i class="material-icons">thumb_down</i>
+                <span>{{message.dislikes}}</span>
+            </a>
         </div>
-
     </div>
     <div class="message_author_avatar" ng-if="message.position" ng-click="$root.showUserProfileByChatUserId(message.author.id)">
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.author.avatar + ')'}"></div>
     </div>
-
 </div>
 <!-- //Сьогоднішні повідомлення -->

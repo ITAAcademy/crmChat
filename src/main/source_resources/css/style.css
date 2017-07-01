@@ -355,99 +355,99 @@ button:focus {
 @keyframes ring {
     0% {
         -webkit-transform: rotate(0);
-                transform: rotate(0);
+        transform: rotate(0);
     }
     1% {
         -webkit-transform: rotate(30deg);
-                transform: rotate(30deg);
+        transform: rotate(30deg);
     }
     3% {
         -webkit-transform: rotate(-28deg);
-                transform: rotate(-28deg);
+        transform: rotate(-28deg);
     }
     5% {
         -webkit-transform: rotate(34deg);
-                transform: rotate(34deg);
+        transform: rotate(34deg);
     }
     7% {
         -webkit-transform: rotate(-32deg);
-                transform: rotate(-32deg);
+        transform: rotate(-32deg);
     }
     9% {
         -webkit-transform: rotate(30deg);
-                transform: rotate(30deg);
+        transform: rotate(30deg);
     }
     11% {
         -webkit-transform: rotate(-28deg);
-                transform: rotate(-28deg);
+        transform: rotate(-28deg);
     }
     13% {
         -webkit-transform: rotate(26deg);
-                transform: rotate(26deg);
+        transform: rotate(26deg);
     }
     15% {
         -webkit-transform: rotate(-24deg);
-                transform: rotate(-24deg);
+        transform: rotate(-24deg);
     }
     17% {
         -webkit-transform: rotate(22deg);
-                transform: rotate(22deg);
+        transform: rotate(22deg);
     }
     19% {
         -webkit-transform: rotate(-20deg);
-                transform: rotate(-20deg);
+        transform: rotate(-20deg);
     }
     21% {
         -webkit-transform: rotate(18deg);
-                transform: rotate(18deg);
+        transform: rotate(18deg);
     }
     23% {
         -webkit-transform: rotate(-16deg);
-                transform: rotate(-16deg);
+        transform: rotate(-16deg);
     }
     25% {
         -webkit-transform: rotate(14deg);
-                transform: rotate(14deg);
+        transform: rotate(14deg);
     }
     27% {
         -webkit-transform: rotate(-12deg);
-                transform: rotate(-12deg);
+        transform: rotate(-12deg);
     }
     29% {
         -webkit-transform: rotate(10deg);
-                transform: rotate(10deg);
+        transform: rotate(10deg);
     }
     31% {
         -webkit-transform: rotate(-8deg);
-                transform: rotate(-8deg);
+        transform: rotate(-8deg);
     }
     33% {
         -webkit-transform: rotate(6deg);
-                transform: rotate(6deg);
+        transform: rotate(6deg);
     }
     35% {
         -webkit-transform: rotate(-4deg);
-                transform: rotate(-4deg);
+        transform: rotate(-4deg);
     }
     37% {
         -webkit-transform: rotate(2deg);
-                transform: rotate(2deg);
+        transform: rotate(2deg);
     }
     39% {
         -webkit-transform: rotate(-1deg);
-                transform: rotate(-1deg);
+        transform: rotate(-1deg);
     }
     41% {
         -webkit-transform: rotate(1deg);
-                transform: rotate(1deg);
+        transform: rotate(1deg);
     }
     43% {
         -webkit-transform: rotate(0);
-                transform: rotate(0);
+        transform: rotate(0);
     }
     100% {
         -webkit-transform: rotate(0);
-                transform: rotate(0);
+        transform: rotate(0);
     }
 }
 
@@ -458,8 +458,8 @@ button:focus {
     position: absolute;
     margin-left: 3px;
     margin-top: -41px;
-    text-align:center;
-    font-size:10px;
+    text-align: center;
+    font-size: 10px;
 }
 
 .head .logo {
@@ -1508,8 +1508,9 @@ button:focus {
     min-height: 55px;
     padding-top: 15px;
     padding-left: 15px;
-    padding-bottom: 19px;
+    padding-bottom: 30px;
     overflow: hidden;
+    position: relative;
 }
 
 .user_message .message_details .top_details {
@@ -1534,6 +1535,7 @@ button:focus {
 .bottom_details {
     white-space: pre-wrap;
     word-break: break-word;
+    width: 100%;
 }
 
 .bottom_details .modal-content,
@@ -1984,7 +1986,7 @@ button:focus {
 }
 
 .messages_output_area .answer a {
-    text-decoration: underline
+    /* text-decoration: underline; */
 }
 
 .messages_output_area .answer a:hover {
@@ -2438,14 +2440,13 @@ body.frame .window_icons_wrapper {
 .notification_menu.shown {
     max-height: 500px;
 }
-.notification_menu .notification_items_container{
-    
-max-height: 300px;
-    
-overflow: auto;
-    
-background-color: #fafcfd;
+
+.notification_menu .notification_items_container {
+    max-height: 300px;
+    overflow: auto;
+    background-color: #fafcfd;
 }
+
 .notification_menu .user_image {
     width: 50px;
     height: 50px;
@@ -2457,8 +2458,10 @@ background-color: #fafcfd;
 .notification_menu .item {
     cursor: pointer;
 }
-.notification_menu .item:hover {background-color: #f2f4f5;}
 
+.notification_menu .item:hover {
+    background-color: #f2f4f5;
+}
 
 .notification_menu .item_content_wrapper {
     padding: 15px 15px;
@@ -3330,31 +3333,53 @@ user profile popup
     z-index: 88888;
     visibility: hidden;
 }
-.like_wrapper{
-text-align:right;
+
+.like_wrapper {
+    text-align: right;
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
 }
 
-.like_wrapper .like_button{
+.like_wrapper .like_button {
+    margin-left: 10px;
+    color: #828384;
+    cursor: pointer;
+    transition: color 0.5s;
+}
 
+.like_wrapper .like_button:hover {
+    opacity: 0.8;
+}
+
+.like_wrapper .like_button > * {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 a.like_button.selected {
-    color: blue;
+    color: #3598db;
 }
 
 .like_wrapper.nolike {
-    opacity: 0.2;
+    /* opacity: 0.2; */
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+
 
 /*user profile popup end*/
 
@@ -3387,11 +3412,11 @@ a.like_button.selected {
         line-height: 35px;
         display: block;
     }
-   .window_icon.message_notification_right {
-        visibility:hidden;
+    .window_icon.message_notification_right {
+        visibility: hidden;
     }
     .window_icon.message_notification {
-        visibility:visible;
+        visibility: visible;
     }
     body .window_icons_wrapper {
         right: 15px;

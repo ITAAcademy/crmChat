@@ -817,8 +817,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     })()
 
                 }
-
-                //  debugger;
             }
 
             $scope.removeFileFromUpload = function(index) {
@@ -937,8 +935,8 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         $http.get('askForRatingModal.html').then(function(response) {
                             var messageObj = {};
                             messageObj.body = response.data;
-                            messageObj.author={
-                                id:1,
+                            messageObj.author = {
+                                id: 1,
                                 nickName: "server",
                                 avatar: "noname.png"
                             };
@@ -985,8 +983,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 typing = $timeout(function() {
                     $scope.stopTyping();
                 }, 1500);
-                if (needSend)
-                {
+                if (needSend) {
                     ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({ username: UserFactory.getChatUserId(), typing: true }));
                 }
             };
