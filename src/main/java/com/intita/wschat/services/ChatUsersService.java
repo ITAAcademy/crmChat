@@ -1,19 +1,19 @@
 package com.intita.wschat.services;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +32,27 @@ public class ChatUsersService {
 	@Autowired
 	private UsersService userService;
 
+	private Map<String,ChatUser> guestUsers = new HashMap<String,ChatUser>();
+
+	public ChatUser generateNewGuest(){
+		String nickName = generateRandomNickName();
+		ChatUser chatUser = new ChatUser(nickName,null);
+		guestUsers.put(nickName,chatUser);
+		return chatUser;
+	}
+
+	public ChatUser persistGuest(String nickName){
+		ChatUser chatUser = guestUsers.get(nickName);
+		if (chatUser==null) return null;
+		guestUsers.remove(chatUser.getNickName());
+		return chatUsersRepo.save(chatUser);
+	}
+
+	private String generateRandomNickName(){
+		return "Guest_" + new ShaPasswordEncoder().encodePassword(((Integer)new Random(new Date().getTime()).nextInt()).toString(), new BCryptPasswordEncoder());
+	}
+
+
 	@PostConstruct
 	@Transactional
 	public void createAdminUser() {
@@ -41,27 +62,15 @@ public class ChatUsersService {
 	}
 
 	@Transactional
-	public ChatUser getChatUser(Principal principal){
-		if (principal==null)return null;
-		String chatUserIdStr = principal.getName();
-		Long chatUserId = 0L;
-		try{
-			chatUserId = Long.parseLong(chatUserIdStr);
-		}
-		catch(NumberFormatException e){
-			System.out.println(e);
-			return null;
-		}
-		if(chatUserId < 0)
-			return null;
-		
-		ChatUser user = getChatUser(chatUserId);
-		return user;
+	public ChatUser getChatUser(Authentication auth){
+		if (auth==null)return null;
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		return chatPrincipal.getChatUser();
 	}
 
 	@Transactional
 	public Page<ChatUser> getChatUsers(int page, int pageSize){
-		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize)); 
+		return chatUsersRepo.findAll(new PageRequest(page-1, pageSize));
 
 	}
 	@Transactional
@@ -72,7 +81,7 @@ public class ChatUsersService {
 			User user = userService.getUser((long)userIdOfTrainer);
 			ChatUser chatUser = user.getChatUser();
 			if (chatUser != null)
-			trainers.add(chatUser);
+				trainers.add(chatUser);
 		}
 		return trainers;
 	}
@@ -118,13 +127,33 @@ public class ChatUsersService {
 		return chatUsersRepo.findOne(id);
 	}
 	@Transactional
+	ChatUser finishLazy(ChatUser cUser){
+		if(cUser != null)
+		{
+			Hibernate.initialize(cUser);
+		}
+		return cUser;
+	}
+	@Transactional
+	public ChatUser getChatUserWithoutLazy(Long id){
+		return finishLazy(chatUsersRepo.findOne(id));
+	}
+	@Transactional
 	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){
 		User currentUser = userService.getById(id);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
 	}
-	@Transactional
+
 	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){
-		return chatUsersRepo.findChatUsersByIntitaUsers(intitaUsersIds);
+		ArrayList<ChatUser> resultSet = new ArrayList<ChatUser>();
+		if(intitaUsersIds==null || intitaUsersIds.size()<1)
+			return resultSet;
+
+		for(Long intitaId : intitaUsersIds)
+		{
+			resultSet.add(getChatUserFromIntitaId(intitaId, false));
+		}
+		return resultSet;
 	}
 	@Transactional
 	public ChatUser getChatUserFromIntitaEmail(String email, boolean createGuest){
@@ -176,6 +205,10 @@ public class ChatUsersService {
 	public List<ChatUser> getChatUsersLike(String nickName){
 		return chatUsersRepo.findFirst5ByNickNameLike(nickName + "%");
 	}
+	@Transactional
+	public List<ChatUser> getChatUsersByEmailAndName(String queryParam){
+		return chatUsersRepo.findChatUserByNameAndEmail(queryParam);
+	}
 
 	@Transactional
 	public ChatUser isMyRoom(String roomId, String userId){
@@ -183,6 +216,12 @@ public class ChatUsersService {
 		roomList.add(new Room(Long.parseLong(roomId)));
 		return chatUsersRepo.findFirstByRoomsContainingOrRoomsFromUsersContainingAndId(roomList, roomList, Long.parseLong(userId));
 	}
+
+
+	public int getActiveUsersCountToday(){
+		return chatUsersRepo.countChatUserByMessagesDateAfter();
+	}
+
 	/*public ChatUser getById(Long id){
 		return usersRepo.findOne(id);
 	}*/

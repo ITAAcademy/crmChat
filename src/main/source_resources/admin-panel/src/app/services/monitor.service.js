@@ -4,7 +4,7 @@
 (function() {
     'use strict';
 
-    angular.module('Intita.monitor.servises', [])
+    angular.module('Intita.monitor.servises')
         .service('UserMonitorService', userMonitor);
 
     /** @ngInject */
@@ -31,10 +31,10 @@
 
         
 
-        this.getChatUserWithNickNameLike = function(like) {
+        this.fetchChatUserWithNickNameLike = function(like) {
             return $http.get(serverPrefix + "/get_users_nicknames_like_without_room?nickName=" + like);
         }
-        this.getRoomsWithNameLike = function(like) {
+        this.fetchRoomsWithNameLike = function(like) {
             return $http.get(serverPrefix + "/chat/rooms/find?name=" + like);
         }
 
@@ -50,24 +50,25 @@
 
         function login(mess_obj) {
 
-            chatUserId = mess_obj.chat_id;
-            _isTenant = mess_obj.isTenant == 'true';
-            _isTrainer = mess_obj.isTrainer == 'true';
-            isStudent = mess_obj.isStudent == 'true';
-            _isAdmin = mess_obj.isAdmin == 'true';
+            chatUserId = mess_obj.chatUser.id;
+                _isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
+        _isTrainer =mess_obj.chatUser.roles.indexOf("TRAINER") != -1;
+        isStudent = mess_obj.chatUser.roles.indexOf("STUDENT") != -1;
+        _isAdmin = mess_obj.chatUser.roles.indexOf("ADMIN") != -1;
+
             if (isStudent && mess_obj.trainer != undefined) {
-                studentTrainerList.push(JSON.parse(mess_obj.trainer));
+                studentTrainerList.push(mess_obj.trainer);
             }
 
-            chatUserNickname = mess_obj.chat_user_nickname;
-            chatUserRole = mess_obj.chat_user_role;
-            chatUserAvatar = mess_obj.chat_user_avatar
+        chatUserNickname = mess_obj.chatUser.nickName;
+        chatUserRole = mess_obj.chatUser.role;
+        chatUserAvatar = mess_obj.chatUser.avatar;
 
-            var onlineUserIds = JSON.parse(mess_obj.onlineUsersIdsJson);
+            var onlineUserIds = mess_obj.activeUsers;
 
-            var rooms = JSON.parse(mess_obj.chat_rooms).list;
-            tenants = typeof mess_obj["tenants"] == "undefined" ? [] : JSON.parse(mess_obj["tenants"]);
-            friends = typeof mess_obj["friends"] == "undefined" ? [] : JSON.parse(mess_obj["friends"]);
+            var rooms = mess_obj.roomModels;
+            tenants = typeof mess_obj["tenants"] == "undefined" ? [] : mess_obj["tenants"];
+            friends = typeof mess_obj["friends"] == "undefined" ? [] : mess_obj["friends"];
         }
         reInitForLP();
         this.findTenants = function(info) {

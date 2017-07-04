@@ -1,16 +1,36 @@
 @charset "UTF-8";
+
 /*VARIABLES
 ====================================================*/
+
+
 /*Range*/
+
+
 /*Spacing*/
+
+
 /*Colors*/
+
+
 /*Sizes*/
+
+
 /*Animation*/
+
+
 /*Icons*/
+
+
 /*Disabled*/
+
+
 /*CSS Star Rating Elements
 =================================================================*/
+
+
 /*HELPER*/
+
 .center-all {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -23,9 +43,11 @@
     justify-content: center;
 }
 
+
 /*
 Star element
 ==================================================================*/
+
 .star {
     position: relative;
     width: 20px;
@@ -39,7 +61,7 @@ Star element
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    cursor:pointer;
+    cursor: pointer;
     /*
   Fill states
   ==================================================================*/
@@ -60,8 +82,8 @@ Disabled
   =================================================*/
 }
 
-
-.star svg, .star i {
+.star svg,
+.star i {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -79,7 +101,10 @@ Disabled
     font-style: normal;
 }
 
-.star svg.star-half, .star svg.star-filled, .star i.star-half, .star i.star-filled {
+.star svg.star-half,
+.star svg.star-filled,
+.star i.star-half,
+.star i.star-filled {
     opacity: 0;
 }
 
@@ -88,131 +113,221 @@ Disabled
     display: none;
 }
 
-.star.icon i, .rating.star-icon i {
+.star.icon i,
+.rating.star-icon i {
     font-size: 25px;
     line-height: 25px;
 }
 
-.star.icon i.star-empty:before, .rating.star-icon i.star-empty:before {
+.star.icon i.star-empty:before,
+.rating.star-icon i.star-empty:before {
     content: "☆";
 }
 
-.star.icon i.star-half:before, .rating.star-icon i.star-half:before {
+.star.icon i.star-half:before,
+.rating.star-icon i.star-half:before {
     content: "★";
 }
 
-.star.icon i.star-filled:before, .rating.star-icon i.star-filled:before {
+.star.icon i.star-filled:before,
+.rating.star-icon i.star-filled:before {
     content: "★";
 }
 
-.star.custom-icon i, .rating.star-custom-icon i, .rating.theme-kununu .star-container .star i {
+.star.custom-icon i,
+.rating.star-custom-icon i,
+.rating.theme-kununu .star-container .star i {
     font-size: 18px;
     line-height: 18px;
 }
 
-.star.empty svg.star-half, .star.empty svg.star-filled, .star.empty i.star-half, .star.empty i.star-filled {
+.star.empty svg.star-half,
+.star.empty svg.star-filled,
+.star.empty i.star-half,
+.star.empty i.star-filled {
     opacity: 0;
 }
 
-.star.empty svg.star-empty, .star.empty i.star-empty {
+.star.empty svg.star-empty,
+.star.empty i.star-empty {
     opacity: 1 !important;
 }
 
-.star.half svg.star-filled, .rating.value-0.half .star:nth-child(1) svg.star-filled, .rating.value-1.half .star-container .star:nth-child(2) svg.star-filled, .rating.value-2.half .star-container .star:nth-child(3) svg.star-filled, .rating.value-3.half .star-container .star:nth-child(4) svg.star-filled, .rating.value-4.half .star-container .star:nth-child(5) svg.star-filled, .rating.value-5.half .star-container .star:nth-child(6) svg.star-filled, .star.half svg.star-empty, .rating.value-0.half .star:nth-child(1) svg.star-empty, .rating.value-1.half .star-container .star:nth-child(2) svg.star-empty, .rating.value-2.half .star-container .star:nth-child(3) svg.star-empty, .rating.value-3.half .star-container .star:nth-child(4) svg.star-empty, .rating.value-4.half .star-container .star:nth-child(5) svg.star-empty, .rating.value-5.half .star-container .star:nth-child(6) svg.star-empty, .star.half i.star-filled, .rating.value-0.half .star:nth-child(1) i.star-filled, .rating.value-1.half .star-container .star:nth-child(2) i.star-filled, .rating.value-2.half .star-container .star:nth-child(3) i.star-filled, .rating.value-3.half .star-container .star:nth-child(4) i.star-filled, .rating.value-4.half .star-container .star:nth-child(5) i.star-filled, .rating.value-5.half .star-container .star:nth-child(6) i.star-filled, .star.half i.star-empty, .rating.value-0.half .star:nth-child(1) i.star-empty, .rating.value-1.half .star-container .star:nth-child(2) i.star-empty, .rating.value-2.half .star-container .star:nth-child(3) i.star-empty, .rating.value-3.half .star-container .star:nth-child(4) i.star-empty, .rating.value-4.half .star-container .star:nth-child(5) i.star-empty, .rating.value-5.half .star-container .star:nth-child(6) i.star-empty {
+.star.half svg.star-filled,
+.rating.value-0.half .star:nth-child(1) svg.star-filled,
+.rating.value-1.half .star-container .star:nth-child(2) svg.star-filled,
+.rating.value-2.half .star-container .star:nth-child(3) svg.star-filled,
+.rating.value-3.half .star-container .star:nth-child(4) svg.star-filled,
+.rating.value-4.half .star-container .star:nth-child(5) svg.star-filled,
+.rating.value-5.half .star-container .star:nth-child(6) svg.star-filled,
+.star.half svg.star-empty,
+.rating.value-0.half .star:nth-child(1) svg.star-empty,
+.rating.value-1.half .star-container .star:nth-child(2) svg.star-empty,
+.rating.value-2.half .star-container .star:nth-child(3) svg.star-empty,
+.rating.value-3.half .star-container .star:nth-child(4) svg.star-empty,
+.rating.value-4.half .star-container .star:nth-child(5) svg.star-empty,
+.rating.value-5.half .star-container .star:nth-child(6) svg.star-empty,
+.star.half i.star-filled,
+.rating.value-0.half .star:nth-child(1) i.star-filled,
+.rating.value-1.half .star-container .star:nth-child(2) i.star-filled,
+.rating.value-2.half .star-container .star:nth-child(3) i.star-filled,
+.rating.value-3.half .star-container .star:nth-child(4) i.star-filled,
+.rating.value-4.half .star-container .star:nth-child(5) i.star-filled,
+.rating.value-5.half .star-container .star:nth-child(6) i.star-filled,
+.star.half i.star-empty,
+.rating.value-0.half .star:nth-child(1) i.star-empty,
+.rating.value-1.half .star-container .star:nth-child(2) i.star-empty,
+.rating.value-2.half .star-container .star:nth-child(3) i.star-empty,
+.rating.value-3.half .star-container .star:nth-child(4) i.star-empty,
+.rating.value-4.half .star-container .star:nth-child(5) i.star-empty,
+.rating.value-5.half .star-container .star:nth-child(6) i.star-empty {
     opacity: 0;
 }
 
-.star.half svg.star-half{
+.star.half svg.star-half {
     opacity: 1;
 }
 
-.star.filled svg.star-empty{
-     opacity: 0; 
+.star.filled svg.star-empty {
+    opacity: 0;
 }
 
-.star.filled svg.star-filled{
+.star.filled svg.star-filled {
     opacity: 1;
 }
 
-.star.default svg, .star-container .star svg {
+.star.default svg,
+.star-container .star svg {
     fill: #999;
 }
 
-.star.default i, .star-container .star i {
+.star-container.horrible .star svg,
+.star-container .star.horrible svg {
+    fill: #f03c56;
+}
+
+.star-container.bad .star svg,
+.star-container .star.bad svg {
+    fill: #ffc058;
+}
+
+.star-container.good .star svg,
+.star-container .star.good svg {
+    fill: #7ed321;
+}
+
+.star.default i,
+.star-container .star i {
     color: #999;
 }
 
-
-.star.svg i, .rating.star-svg i {
+.star.svg i,
+.rating.star-svg i {
     display: none;
 }
 
-.star.svg svg, .rating.star-svg svg {
+.star.svg svg,
+.rating.star-svg svg {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
 }
 
-.star.custom-icon svg, .rating.star-custom-icon svg, .rating.theme-kununu .star-container .star svg, .star.icon svg, .rating.star-icon svg {
+.star.custom-icon svg,
+.rating.star-custom-icon svg,
+.rating.theme-kununu .star-container .star svg,
+.star.icon svg,
+.rating.star-icon svg {
     display: none;
 }
 
-.star.custom-icon i, .rating.star-custom-icon i, .rating.theme-kununu .star-container .star i, .star.icon i, .rating.star-icon i {
+.star.custom-icon i,
+.rating.star-custom-icon i,
+.rating.theme-kununu .star-container .star i,
+.star.icon i,
+.rating.star-icon i {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
 }
 
-.star.small, .rating.small .star {
+.star.small,
+.rating.small .star {
     width: 10px;
     height: 9, 5px;
 }
 
-.star.small i, .rating.small .star i {
+.star.small i,
+.rating.small .star i {
     font-size: 11px;
     line-height: 10px;
 }
 
-.star.medium, .rating.medium .star {
+.star.medium,
+.rating.medium .star {
     width: 25px;
     height: 25px;
 }
 
-.star.medium i, .rating.medium .star i {
+@media only screen and (max-height: 768px) {
+    .star.medium,
+    .rating.medium .star {
+        width: 19px;
+        height: 19px;
+    }
+}
+
+.star.medium i,
+.rating.medium .star i {
     font-size: 25px;
     line-height: 25px;
 }
 
-.star.large, .rating.large .star {
+.star.large,
+.rating.large .star {
     width: 35px;
     height: 33.3px;
 }
 
-.star.large i, .rating.large .star i {
+.star.large i,
+.rating.large .star i {
     font-size: 36px;
     line-height: 35px;
 }
 
-.star.disabled, .rating.disabled .star-container .star {
+.star.disabled,
+.rating.disabled .star-container .star {
     opacity: 0.5;
 }
 
-.star.direction-rtl svg.star-half, .star-container.direction-rtl .star svg.star-half, .rating.direction-rtl .star-container .star svg.star-half, .star.direction-rtl i.star-half, .star-container.direction-rtl .star i.star-half, .rating.direction-rtl .star-container .star i.star-half {
+.star.direction-rtl svg.star-half,
+.star-container.direction-rtl .star svg.star-half,
+.rating.direction-rtl .star-container .star svg.star-half,
+.star.direction-rtl i.star-half,
+.star-container.direction-rtl .star i.star-half,
+.rating.direction-rtl .star-container .star i.star-half {
     -webkit-transform: scale(-1, 1);
     transform: scale(-1, 1);
 }
 
-.star.direction-ltr svg.star-half, .star-container.direction-ltr .star svg.star-half, .star.direction-ltr i.star-half, .star-container.direction-ltr .star i.star-half {
+.star.direction-ltr svg.star-half,
+.star-container.direction-ltr .star svg.star-half,
+.star.direction-ltr i.star-half,
+.star-container.direction-ltr .star i.star-half {
     -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
 }
 
+
 /*
 Label Element
 ===================================================================*/
+
 .label-value {
     font-size: 18px;
     line-height: 18px;
+    min-width: 2ex;
+    text-align: center;
     /*
   Sizes
   =================================================================*/
@@ -221,28 +336,34 @@ Label Element
   =================================================*/
 }
 
-.label-value.small, .rating.small .label-value {
+.label-value.small,
+.rating.small .label-value {
     font-size: 9.5px;
     line-height: 9.5px;
 }
 
-.label-value.medium, .rating.medium .label-value {
+.label-value.medium,
+.rating.medium .label-value {
     font-size: 18px;
     line-height: 25px;
 }
 
-.label-value.large, .rating.large .label-value {
+.label-value.large,
+.rating.large .label-value {
     font-size: 28px;
     line-height: 35px;
 }
 
-.label-value.disabled, .rating.disabled .label-value {
+.label-value.disabled,
+.rating.disabled .label-value {
     opacity: 0.5;
 }
+
 
 /*
 Star Container
 ==================================================================*/
+
 .star-container {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -277,7 +398,8 @@ Star Container
     transition: all 0.3s ease;
 }
 
-.star-container .star svg, .star-container .star i {
+.star-container .star svg,
+.star-container .star i {
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
@@ -290,7 +412,8 @@ Star Container
     z-index: 1;
 }
 
-.star-container.direction-rtl, .rating.direction-rtl .star-container {
+.star-container.direction-rtl,
+.rating.direction-rtl .star-container {
     direction: rtl;
 }
 
@@ -298,7 +421,8 @@ Star Container
     direction: ltr;
 }
 
-.star-container.space-no, .rating.space-no .star-container {
+.star-container.space-no,
+.rating.space-no .star-container {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -307,7 +431,8 @@ Star Container
     justify-content: center;
 }
 
-.star-container.space-between, .rating.space-between .star-container {
+.star-container.space-between,
+.rating.space-between .star-container {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -316,7 +441,8 @@ Star Container
     justify-content: space-between;
 }
 
-.star-container.space-around, .rating.space-around .star-container {
+.star-container.space-around,
+.rating.space-around .star-container {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -324,9 +450,11 @@ Star Container
     justify-content: space-around;
 }
 
+
 /*
 Rating Component
 ========================================================================= */
+
 .rating {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -337,7 +465,7 @@ Rating Component
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     /*Rating Value
   ====================================================*/
     /*Half stars
@@ -472,7 +600,8 @@ Direction
     transition: none;
 }
 
-.rating.immediately .star-container .star svg, .rating.immediately .star-container .star i {
+.rating.immediately .star-container .star svg,
+.rating.immediately .star-container .star i {
     -webkit-transition: none;
     transition: none;
 }
@@ -487,7 +616,8 @@ Direction
     transition: all 0.3s ease;
 }
 
-.rating.noticeable .star-container .star svg, .rating.noticeable .star-container .star i {
+.rating.noticeable .star-container .star svg,
+.rating.noticeable .star-container .star i {
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
@@ -502,13 +632,16 @@ Direction
     transition: all 0.8s ease;
 }
 
-.rating.slow .star-container .star svg, .rating.slow .star-container .star i {
+.rating.slow .star-container .star svg,
+.rating.slow .star-container .star i {
     -webkit-transition: all 0.8s ease;
     transition: all 0.8s ease;
 }
 
+
 /*theme modifiers
 ====================================================*/
+
 .rating.theme-kununu {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -669,7 +802,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-0.half .star:nth-child(1), .rating.value-0.half .rating.theme-rolling-stars.value-0.star:nth-child(1) .star:nth-child(1), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(2) .star:nth-child(1), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(3) .star:nth-child(1), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(4) .star:nth-child(1), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(5) .star:nth-child(1), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(6) .star:nth-child(1) {
+.rating.theme-rolling-stars.value-0.half .star:nth-child(1),
+.rating.value-0.half .rating.theme-rolling-stars.value-0.star:nth-child(1) .star:nth-child(1),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(2) .star:nth-child(1),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(3) .star:nth-child(1),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(4) .star:nth-child(1),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(5) .star:nth-child(1),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-0.star:nth-child(6) .star:nth-child(1) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;
@@ -678,7 +817,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-1.half .star-container .star:nth-child(2), .rating.value-0.half .rating.theme-rolling-stars.value-1.star:nth-child(1) .star-container .star:nth-child(2), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(2) .star-container .star:nth-child(2), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(3) .star-container .star:nth-child(2), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(4) .star-container .star:nth-child(2), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(5) .star-container .star:nth-child(2), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(6) .star-container .star:nth-child(2) {
+.rating.theme-rolling-stars.value-1.half .star-container .star:nth-child(2),
+.rating.value-0.half .rating.theme-rolling-stars.value-1.star:nth-child(1) .star-container .star:nth-child(2),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(2) .star-container .star:nth-child(2),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(3) .star-container .star:nth-child(2),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(4) .star-container .star:nth-child(2),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(5) .star-container .star:nth-child(2),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-1.star:nth-child(6) .star-container .star:nth-child(2) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;
@@ -687,7 +832,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-2.half .star-container .star:nth-child(3), .rating.value-0.half .rating.theme-rolling-stars.value-2.star:nth-child(1) .star-container .star:nth-child(3), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(2) .star-container .star:nth-child(3), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(3) .star-container .star:nth-child(3), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(4) .star-container .star:nth-child(3), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(5) .star-container .star:nth-child(3), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(6) .star-container .star:nth-child(3) {
+.rating.theme-rolling-stars.value-2.half .star-container .star:nth-child(3),
+.rating.value-0.half .rating.theme-rolling-stars.value-2.star:nth-child(1) .star-container .star:nth-child(3),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(2) .star-container .star:nth-child(3),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(3) .star-container .star:nth-child(3),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(4) .star-container .star:nth-child(3),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(5) .star-container .star:nth-child(3),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-2.star:nth-child(6) .star-container .star:nth-child(3) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;
@@ -696,7 +847,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-3.half .star-container .star:nth-child(4), .rating.value-0.half .rating.theme-rolling-stars.value-3.star:nth-child(1) .star-container .star:nth-child(4), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(2) .star-container .star:nth-child(4), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(3) .star-container .star:nth-child(4), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(4) .star-container .star:nth-child(4), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(5) .star-container .star:nth-child(4), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(6) .star-container .star:nth-child(4) {
+.rating.theme-rolling-stars.value-3.half .star-container .star:nth-child(4),
+.rating.value-0.half .rating.theme-rolling-stars.value-3.star:nth-child(1) .star-container .star:nth-child(4),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(2) .star-container .star:nth-child(4),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(3) .star-container .star:nth-child(4),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(4) .star-container .star:nth-child(4),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(5) .star-container .star:nth-child(4),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-3.star:nth-child(6) .star-container .star:nth-child(4) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;
@@ -705,7 +862,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-4.half .star-container .star:nth-child(5), .rating.value-0.half .rating.theme-rolling-stars.value-4.star:nth-child(1) .star-container .star:nth-child(5), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(2) .star-container .star:nth-child(5), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(3) .star-container .star:nth-child(5), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(4) .star-container .star:nth-child(5), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(5) .star-container .star:nth-child(5), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(6) .star-container .star:nth-child(5) {
+.rating.theme-rolling-stars.value-4.half .star-container .star:nth-child(5),
+.rating.value-0.half .rating.theme-rolling-stars.value-4.star:nth-child(1) .star-container .star:nth-child(5),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(2) .star-container .star:nth-child(5),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(3) .star-container .star:nth-child(5),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(4) .star-container .star:nth-child(5),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(5) .star-container .star:nth-child(5),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-4.star:nth-child(6) .star-container .star:nth-child(5) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;
@@ -714,7 +877,13 @@ Direction
     transform: rotate(360deg);
 }
 
-.rating.theme-rolling-stars.value-5.half .star-container .star:nth-child(6), .rating.value-0.half .rating.theme-rolling-stars.value-5.star:nth-child(1) .star-container .star:nth-child(6), .rating.value-1.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(2) .star-container .star:nth-child(6), .rating.value-2.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(3) .star-container .star:nth-child(6), .rating.value-3.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(4) .star-container .star:nth-child(6), .rating.value-4.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(5) .star-container .star:nth-child(6), .rating.value-5.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(6) .star-container .star:nth-child(6) {
+.rating.theme-rolling-stars.value-5.half .star-container .star:nth-child(6),
+.rating.value-0.half .rating.theme-rolling-stars.value-5.star:nth-child(1) .star-container .star:nth-child(6),
+.rating.value-1.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(2) .star-container .star:nth-child(6),
+.rating.value-2.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(3) .star-container .star:nth-child(6),
+.rating.value-3.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(4) .star-container .star:nth-child(6),
+.rating.value-4.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(5) .star-container .star:nth-child(6),
+.rating.value-5.half .star-container .rating.theme-rolling-stars.value-5.star:nth-child(6) .star-container .star:nth-child(6) {
     -webkit-transition: -webkit-transform 1s;
     transition: -webkit-transform 1s;
     transition: transform 1s;

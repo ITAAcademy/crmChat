@@ -36,6 +36,7 @@ public class HikariCPConfig {
 	        ds.setJdbcUrl(jdbcUrl);
 	        ds.setUsername(userName);
 	        ds.setPassword(password);
+	        ds.addDataSourceProperty("zeroDateTimeBehavior", "convertToNull");
 	        return ds;
 	    }
 }

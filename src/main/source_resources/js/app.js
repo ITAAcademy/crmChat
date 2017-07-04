@@ -5,11 +5,14 @@ angular.module('chatTemplates', []);
 /* App Module */
 var springChat = angular.module('springChat', ['springChat.controllers', //'springChat.controllers',
     'springChat.services',
-    'springChat.directives','ngFileUpload','angular-content-editable','angular-szn-autocomplete', 'chatTemplates'
+    'springChat.directives','ngFileUpload','angular-content-editable','angular-szn-autocomplete', 'chatTemplates', 'ngTouch'
 ]);
 
-var longPollChat = angular.module('longPollChat', ['longPollChat.controllers', 'springChat.services', 'springChat.directives']);
 var springChatControllers = angular.module('springChat.controllers', ['tooltips', 'ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize']);
+
+springChat.config(['$compileProvider', function($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https|http|tel|ftp|mailto|callto|skype):/);
+}]);
 
 springChat.filter('unique', function ($parse) {
     return function (collection, property) {

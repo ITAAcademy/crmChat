@@ -37,8 +37,6 @@ import com.intita.wschat.repositories.ConsultationResultRepository;
 import com.intita.wschat.repositories.ConsultationResultValuesRepository;
 import com.intita.wschat.repositories.IntitaConsultationRepository;
 import com.intita.wschat.repositories.UserRepository;
-import com.intita.wschat.web.RoomController;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
 @Service
 public class ConsultationsRatingsService {

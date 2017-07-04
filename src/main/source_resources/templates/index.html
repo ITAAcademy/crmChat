@@ -15,21 +15,27 @@
     <!-- endinject -->
 </head>
 <body id="body">
-    <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
+ <div id="consultant_wrapper" class="consultant_wrapper" ng-controller="ChatController" ng-class="getStateClass()">
         <div class="head">
             <i id="menu" modale-toggle="true" modale-toggle-id="menu" callback="toggleMenu()" ignore-id="left_panel" class="material-icons">menu</i>
-            <i class="logo material-icons">chat</i><i class="logo-text" th:text="${lgPack.chatGlobal.title}">Онлайн чат</i>
-            <div class="window_icons_wrapper" ng-if="$root.authorize">
-                <div class="window_icon notification" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
-                    <i class="material-icons">notifications</i>
-                    <div class="text"></div>
-                </div>
-                <div id="notification_container" class="notification_menu"></div>
-                <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
+             <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification ng-hide">
                     <i class="material-icons ">chat_bubble_outline</i>
                     <div class="text" ng-bind="getNewMsgNumber()"></div>
                     <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
+             </div>
+            <i class="logo material-icons">chat</i>
+            <i class="logo-text" th:text="${lgPack.chatGlobal.title}">Онлайн чат</i>
+            <div class="window_icons_wrapper" ng-if="$root.authorize">
+                <div class="window_icon notification" ng-class="{active: haveNotify() }" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
+                    <i class="material-icons">notifications</i>
+                    <div class="info"></div>
+                    <div id="notification_container" class="notification_menu"></div>
                 </div>
+                    <div ng-show="getNewMsgNumber() > 0" class="window_icon message_notification_right ng-hide">
+                        <i class="material-icons ">chat_bubble_outline</i>
+                        <div class="text" ng-bind="getNewMsgNumber()"></div>
+                <!--<div ng-if="getNewMsgNumber() > 0" class="state"></div>-->
+                    </div>
                 <span ng-if="isUserTenant()">
                         <div class="window_icon tenant_busy_control ng-hide" ng-show="getTenantIsFree()" ng-click="clickSetTenantBusy()">
                             <i class="material-icons ">hourglass_empty</i>
@@ -45,8 +51,8 @@
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
-        <div rooms-block-mini="true" class="left_panel_mini noselect"></div>
-        <div id="left_panel" class="left_panel noselect ng-class:{active: showMenu}">
+        <div rooms-block-mini="true" ng-swipe-right="showMenu()" class="left_panel_mini noselect" ng></div>
+        <div id="left_panel" ng-show="isMenuVisible" ng-swipe-left="hideMenu()" class="left_panel noselect ng-class:{active: isMenuShow}">
             <div class="mainContent">
                 <div class="workplace_outter">
                     <div class="workplace_inner">
@@ -68,48 +74,47 @@
             <!--  ROOMS BLOCK -->
         </div>
         <div class="right_panel">
-            <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
-            <div ng-if="!currentRoomIsNull()" class="tools_area">
-                <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-show="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
-                <button class="material_button" ng-click="disableMessagesSearch(true)" ng-show="!isRoomChangeModeEnabled &amp;&amp; messageSearchEnabled"><i class="material-icons">cancel</i></button>
-                <button class="material_button" ng-click="toggleRoomNameChangeMode()" ng-show="isRoomChangeModeEnabled"><i class="material-icons">done</i></button>
-                <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="material_button">
-                    <i class="material-icons">more_vert</i>
-                </button>
-                <div class="room_info">
-                    <div class="room_name">{{getCurrentRoom().string}}
-                    <i  tooltip="Перейменувати розмову" title-direction="bottom-left" ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
+            <div>
+                <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
+                <div ng-if="!currentRoomIsNull()" class="tools_area">
+                    <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-show="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>
+                    <button class="material_button" ng-click="disableMessagesSearch(true)" ng-show="!isRoomChangeModeEnabled &amp;&amp; messageSearchEnabled"><i class="material-icons">cancel</i></button>
+                    <button class="material_button" ng-click="toggleRoomNameChangeMode()" ng-show="isRoomChangeModeEnabled"><i class="material-icons">done</i></button>
+                    <button modale-toggle="true" callback="tools_dropdown_click()" ignore-id="tools_dropdown" class="material_button">
+                        <i class="material-icons">more_vert</i>
+                    </button>
+                    <div class="room_info">
+                        <div class="room_name">{{getCurrentRoom().string}}
+                            <i tooltip="Перейменувати розмову" title-direction="bottom-left" ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
+                        </div>
+                    </div>
+                    <div class="search_box" ng-if="messageSearchEnabled">
+                        <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-change="updateMessagesSearch()" type="text" th:placeholder="${lgPack.msgBox.searchPlaceHolder}" ng-blur="focusMessagesSearchChange()" />
+                        <span ng-if="messagesSearching" class="messages_search_loader"><img src="images/ajax_loader_blue_32.gif" alt=""/></span>
+                    </div>
+                    <div class="search_box" ng-if="isRoomChangeModeEnabled">
+                        <input id="changeRoomNameInput" ng-model="newRoomName.value" class="search_input" type="text" th:placeholder="${lgPack.msgBox.renamePlaceHolder}" ng-blur="focusNewRoomNameChange()" />
                     </div>
                 </div>
-                <div class="search_box" ng-if="messageSearchEnabled">
-                    <input id="searchInput" ng-model="messageSearchQuery.value" class="search_input" ng-change="updateMessagesSearch()" type="text" th:placeholder="${lgPack.msgBox.searchPlaceHolder}" ng-blur="focusMessagesSearchChange()"/>
-                                    <span ng-if="messagesSearching" class="messages_search_loader" ><img src="images/ajax_loader_blue_32.gif" alt=""/></span>
+                <div class="tools_dropdown_container">
+                    <div id="tools_dropdown" class="popup_dropdown">
+                        <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.showAtachedFiles}">Показати додатки</a>
+                        <a ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.hideAtachedFiles}">Показати всі повідомлення</a>
+                        <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()" th:text="${lgPack.msgBox.roomContextMenu.goOut}">Вийти з кімнати</a>
+                        <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="askForClearHistory()">Видалити історію</a>
+                        <hr/>
+                        <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">                           {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
+                        <a ng-href="{{'#/dialog_view/' + getCurrentRoom().roomId}}" target="_blank" class="dropdown_item open_in_new_tab">Відкрити в новій вкладці</a>
+                        <!--<a target="_blank" class="dropdown_item aspect_ratio">Зберігати стан</a>-->
+                    </div>
                 </div>
-                <div class="search_box" ng-if="isRoomChangeModeEnabled">
-                    <input id="changeRoomNameInput" ng-model="newRoomName.value" class="search_input" type="text" th:placeholder="${lgPack.msgBox.renamePlaceHolder}" ng-blur="focusNewRoomNameChange()" />
-                </div>
-
+                <hr/>
             </div>
-            <div class="tools_dropdown_container">
-                <div id="tools_dropdown" class="popup_dropdown">
-                    <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.showAtachedFiles}">Показати додатки</a>
-                    <a ng-if="loadOnlyFilesInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.hideAtachedFiles}">Показати всі повідомлення</a>
-                    <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()" th:text="${lgPack.msgBox.roomContextMenu.goOut}">Вийти з кімнати</a>
-                    <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="askForClearHistory()">Видалити історію</a>
-                    <hr/>
-                    <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">
-                            {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
-                    <a ng-href="{{'#/dialog_view/' + getCurrentRoom().roomId}}"  target="_blank" class="dropdown_item open_in_new_tab">Відкрити в новій вкладці</a>
-                    <!--<a target="_blank" class="dropdown_item aspect_ratio">Зберігати стан</a>-->
-                </div>
-            </div>
-            <hr/>
             <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!($root.message_busy || $root.loadingSubscribesAndMessages)' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
             <!--It's message displayer-->
             <div ng-show="isMessageInputAvailable()" class="messages_input_area" message-input="true"></div>
         </div>
     </div>
-
 
         <script th:inline="javascript">
         var globalConfig = {  
@@ -136,6 +141,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-touch.js"></script>
     <script src="lib/angularjs-toaster/toaster.js"></script>
     <script src="lib/angular-tooltips/angular-tooltips.js"></script>
     <script src="lib/promise.min.js"></script>

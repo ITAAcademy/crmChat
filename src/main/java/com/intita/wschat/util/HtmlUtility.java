@@ -26,5 +26,19 @@ public class HtmlUtility {
 		  String unescaped[] = {"\\'","\\\""};
 		 return StringUtils.replaceEach(str, escaped,unescaped);
 	}
+	public static String removeAllBrAndTrim(String source){
+		String withoutBr = source.replace("<br>","");
+		String trimmed = withoutBr.trim();
+		return trimmed;
+	}
+	public static String[] trimAllStrings(String[] values){
+		for(int i = 0; i < values.length; i++){
+			values[i] = values[i].trim();
+		}
+		return values;
+	}
+	public static boolean isContentVisible(String content){
+		return removeAllBrAndTrim(content).length()>0;
+	}
 	
 }

@@ -1,8 +1,7 @@
-package com.intita.wschat.domain;
+package com.intita.wschat.domain.responsedata;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class ChatUserActivityStatistic {
@@ -30,7 +29,7 @@ public static ChatUserActivityStatistic createFromActiveTimeAndDuration(Long use
 		if(i<activeTimeCopy.size()-1){
 		Long nextDate = activeTimeCopy.get(i+1);
 		Long previousDate = activeTimeCopy.get(i-1);
-		if (previousDate+activityDurationMs > nextDate )continue;//skip middle time stamp because  of it redundant
+		if (previousDate+activityDurationMs >= nextDate )continue;//skip middle time stamp because  of it redundant
 		//current date is same as neighbor
 		if (Long.compare(currentDate, previousDate)==0 || Long.compare(currentDate, nextDate)==0)continue;
 		filterdResult.add(currentDate);

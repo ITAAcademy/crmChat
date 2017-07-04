@@ -22,8 +22,21 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 
 	@Autowired UsersService userService;
 	@Override
-	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
- 		return userService.checkRoleByPrincipal(authentication,  UserRole.valueOf((String) permission));
+	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permissions) {
+		String []permitionsOrList = ((String) permissions).split(",");
+		boolean has = true;
+		for(String permitionsOr : permitionsOrList)
+		{
+			String [] permitionsAnd = permitionsOr.split("&");
+			for(String permition : permitionsAnd)
+			{
+				has = has && userService.checkRoleByAuthentication(authentication,  UserRole.valueOf(permition));
+			}
+			if(has)
+				break;
+		}		
+ 		//return userService.checkRoleByPrincipal(authentication,  UserRole.valueOf());
+		return has;
 	}
 
 	@Override

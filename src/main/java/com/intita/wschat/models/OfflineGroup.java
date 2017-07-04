@@ -28,7 +28,7 @@ public class OfflineGroup implements Serializable {
 	@Column(name="id_user_created")
 	private Long idUserCreated;
 
-	@Column(name="id_user_curator")
+	@Column(name="chat_author_id")
 	private Long idUserCurator;
 
 	private String name;

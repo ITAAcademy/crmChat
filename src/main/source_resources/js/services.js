@@ -25,7 +25,9 @@ springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
                 stompClient.debug = null
             },
             disconnect: function() {
-                stompClient.disconnect();
+                if(stompClient != undefined)
+                    stompClient.disconnect();
+                stompClient = undefined;
             },
             connect: function(successCallback, errorCallback) {
                 lastConnectFunc = function() {
@@ -145,6 +147,22 @@ springChatServices.service('AskWindow', ['$rootScope', 'ngDialog', '$timeout', '
     };
 
 }]);
+function randomString(length) {
+    return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
+}
+springChatServices.service('ActiveWindow', ['$rootScope', 'ngDialog', '$timeout', '$http', '$injector', 'UserFactory', function($rootScope, ngDialog, $timeout, $http, $injector, UserFactory) {
+    var pageId = randomString(10);
+    if (UserFactory.getChatUserId() != undefined)
+        pageId += UserFactory.getChatUserId();
+
+    function updateWindowAcicity() {
+        localStorage.setItem('ActiveWindow', pageId);
+    }
+    setInterval(updateWindowAcicity, 1000);
+    this.isActive = function() {
+        return localStorage.getItem('ActiveWindow') == pageId;
+    }
+}]);
 
 function rescrollToRoom(roomId) {
     setTimeout(function() {
@@ -156,7 +174,8 @@ function rescrollToRoom(roomId) {
         var qElm = $(elmnt);
         var elTop = $(elmnt).offset().top - $('#rooms-block #items_list_block').offset().top;
         if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
-            elmnt.scrollIntoView();
+          //  elmnt.scrollIntoView();
+        elmnt.parentNode.scrollTop = elmnt.offsetTop;
     }, 10);
 }
 

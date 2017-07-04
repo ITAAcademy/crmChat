@@ -1,24 +1,25 @@
 package com.intita.wschat.admin;
 
-import java.io.Serializable;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.UserMessageDTO;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -28,17 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.admin.models.MsgRequestModel;
 import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
@@ -73,6 +67,7 @@ import com.intita.wschat.web.RoomController;
  */
 @Service
 @Controller
+@PreAuthorize("hasPermission(null, 'DIRECTOR, SUPER_ADMIN')")
 public class AdminPanelController {
 
 	private final static Logger log = LoggerFactory.getLogger(AdminPanelController.class);
@@ -103,17 +98,17 @@ public class AdminPanelController {
 	@Autowired private IntitaMailService mailService;
 	@Autowired private CommonController commonController;
 	@Autowired private RoomController roomController;
+	@Autowired private DTOMapper dtoMapper;
 	
 	
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
+	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
-	public String  admin(HttpServletRequest request,Model model, Principal principal) {
-		
-		chatUsersService.getChatUser(principal);
+	public String  admin(HttpServletRequest request,Model model) {
+
 		String lang = chatLangService.getCurrentLang();
 		List<ConfigParam> config =  configParamService.getParams();
 		HashMap<String,String> configMap = ConfigParam.listAsMap(config);
@@ -124,13 +119,14 @@ public class AdminPanelController {
 		//return "../static/admin-panel/dev-release/index";
 	}
 
-	@PreAuthorize("hasPermission(null, 'ADMIN')")
 	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Principal principal) {
-		ChatUser user = chatUsersService.getChatUser(principal);
+	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser user = chatPrincipal.getChatUser();
 		List<User> users= new ArrayList<>();
-		User iUser = user.getIntitaUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser != null)
 		{
@@ -138,7 +134,7 @@ public class AdminPanelController {
 			for(UserRole role : UserRole.values())
 			{
 				if((role.getValue() & roles) == role.getValue())
-					users.addAll(userService.getUsersFist5WithRole(info, role));	
+					users.addAll(userService.getUsersFistNWithRole(info, role, 10));	
 			}
 
 		}
@@ -157,7 +153,7 @@ public class AdminPanelController {
 
 	@RequestMapping(value = "/chat/msgHistory", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<ChatMessage> getMsgHistory(Principal principal, @RequestBody MsgRequestModel rqModel) {
+	public List<UserMessageDTO> getMsgHistory(@RequestBody MsgRequestModel rqModel) {
 		ChatUser first = chatUsersService.getChatUser(rqModel.getUserIdFirst().longValue());
 		ChatUser second = chatUsersService.getChatUser(rqModel.getUserIdSecond().longValue());
 		
@@ -169,8 +165,8 @@ public class AdminPanelController {
 			throw new NullArgumentException("");
 		
 		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30);
-		ArrayList<ChatMessage> chatMessages = ChatMessage.getAllfromUserMessages(userMessages);
-		return chatMessages;
+		List< UserMessageDTO > messagesDTO = dtoMapper.mapListUserMessage(userMessages);
+		return messagesDTO;
 	}
 
 	

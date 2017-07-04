@@ -7,15 +7,13 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
             load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope) {
                 if (!ChannelFactory.getIsInited() || $rootScope.roomChanging) return;
                 $rootScope.roomChanging = true;
-                console.log('room changing start');
-                RoomsFactory.goToRoom($route.current.params.roomId).then(function(){
-                $rootScope.roomChanging = false;
-                $rootScope.$broadcast('dialog_view_route');
-                /*$('#rooms-block #items_list_block').animate({
-                    scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
-                }, 2000);*/
-                rescrollToRoom($route.current.params.roomId);
-                console.log('room changing end');
+                RoomsFactory.goToRoom($route.current.params.roomId).then(function() {
+                    $rootScope.roomChanging = false;
+                    $rootScope.$broadcast('dialog_view_route');
+                    /*$('#rooms-block #items_list_block').animate({
+                        scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
+                    }, 2000);*/
+                    rescrollToRoom($route.current.params.roomId);
                 });
 
             }]
@@ -36,11 +34,6 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-springChatControllers.config(['$compileProvider', function ($compileProvider) {
-$compileProvider.aHrefSanitizationWhitelist(/^\s*(https|ftp|mailto|callto|skype):/);
-}]);
-
-
 var chatControllerScope;
 
 springChatControllers.controller('AccessDeny', ['$locationProvider', '$routeParams', '$rootScope', '$scope', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore',
@@ -49,12 +42,15 @@ springChatControllers.controller('AccessDeny', ['$locationProvider', '$routePara
     }
 ]);
 
-var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory',
-    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory) {
+var chatController = springChatControllers.controller('ChatController', ['$sce', 'ngDialog', '$q', '$rootScope', '$scope', '$http', '$route', '$location', '$interval', '$cookies', '$timeout', 'toaster', '$cookieStore', 'RoomsFactory', 'UserFactory', 'ChannelFactory', 'ActiveWindow',
+    function($sce, ngDialog, $q, $rootScope, $scope, $http, $route, $location, $interval, $cookies, $timeout, toaster, $cookieStore, RoomsFactory, UserFactory, ChannelFactory, ActiveWindow) {
         //Imports from Services
         //Imports/>
-
         ChannelFactory.setIsInited(false);
+        $scope.haveNotify = function(){
+            return UserFactory.getNotifications().length > 0;
+        }
+        $rootScope.goToPrivateDialog = RoomsFactory.goToPrivateDialog;
         $rootScope.baseurl = globalConfig["baseUrl"];
         $rootScope.imagesPath = globalConfig["imagesPath"];
         $scope.baseurl = globalConfig["baseUrl"];
@@ -68,6 +64,11 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 return true;
             return isSameDay(curr, prev);
         };
+        $rootScope.goToUserProfile = function(userId){
+            ChannelFactory.changeLocation($rootScope.baseurl+'/profile/'+userId);
+        }
+
+       
         $rootScope.getNameFromUrl = getNameFromUrl;
         $rootScope.getNameFromRandomizedUrl = getNameFromRandomizedUrl;
         $scope.state = 2;
@@ -81,7 +82,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (event.buttons == 1) {
 
             }
-        };  
+        };
 
         $scope.newMessage = { value: "" };
 
@@ -92,34 +93,55 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
 
         $scope.getStateClass = function() {
-                switch ($scope.state) {
-                    case 0:
-                        $(".consultant_wrapper").removeClass("drag-disable");
-                        return "normal";
-                        break;
-                    case 1:
-                        $(".consultant_wrapper").removeClass("drag-disable");
-                        return "minimize";
-                        break;
-                    case 2:
-                        $(".consultant_wrapper").removeAttr("style");
-                        $(".consultant_wrapper").addClass("drag-disable");
-                        return "fullScreen";
-                        break;
-                    case -1:
-                        return "closed";
-                        break
-                }
+            switch ($scope.state) {
+                case 0:
+                    $(".consultant_wrapper").removeClass("drag-disable");
+                    return "normal";
+                    break;
+                case 1:
+                    $(".consultant_wrapper").removeClass("drag-disable");
+                    return "minimize";
+                    break;
+                case 2:
+                    $(".consultant_wrapper").removeAttr("style");
+                    $(".consultant_wrapper").addClass("drag-disable");
+                    return "fullScreen";
+                    break;
+                case -1:
+                    return "closed";
+                    break
             }
-            /***************
-            ***********STATE
-            *
-            0 - normal
-            1 - mini
-            2 - full
-            -1 - close
+        }
 
-            */
+        $rootScope.showUserProfileByChatUserId = function(chatId,$event) {
+            if ($event != null) $event.stopPropagation();
+            $rootScope['popupData'] = [];
+            $http.get(serverPrefix + '/user_by_chat_id?chatUserId=' + chatId).then(function(response) {
+                //$rootScope.popupData.user = response.data;
+                var scope = $scope.$new(true);
+                scope.user = response.data;
+                scope.trust = $sce.trustAsHtml;                
+                var userProfileDialog = ngDialog.open({
+                    template: 'user_profile_popup.html',
+                    scope: scope,
+                    className:'ngdialog-theme-default user_profile_dialog'
+                });
+            }, function(error) {});
+
+
+        }
+
+
+
+        /***************
+        ***********STATE
+        *
+        0 - normal
+        1 - mini
+        2 - full
+        -1 - close
+
+        */
 
 
         $rootScope.goToUserPage = function(username) {
@@ -455,6 +477,10 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         // $rootScope.messageSended = true;
         $scope.userAddedToRoom = true;
         $rootScope.isConectedWithFreeTenant = false;
+        $rootScope.validateAvatar = function(avatar) {
+                if (avatar == null) return "noname.png";
+                return avatar;
+            }
 
 
         /*************************************
@@ -513,7 +539,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
 
                 for (var index = 0; index < data.length; index++) {
-                    if (data[index].hasOwnProperty("message")) {
+                    if (data[index].hasOwnProperty("body")) {
                         RoomsFactory.calcPositionUnshift(data[index]);
                     }
                 }
@@ -538,6 +564,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
 
+        var msgAudioNotify = new Audio('data/new_mess.mp3');
         function newMessageMapEventHandler(event, messagesMap) {
             if (messagesMap == null) return;
             var roomIds = Object.keys(messagesMap);
@@ -548,21 +575,20 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 if (newMessageInThisRoom != -1) {
                     $rootScope.roomForUpdate[room.roomId] = true;
                     var msg = messagesMap[room.roomId];
-                    room.lastMessage = msg.message;
+                    room.lastMessage = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
-                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.chatUserId != UserFactory.getChatUserId()) {
+                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(1);
                         //room.date = curentDateInJavaFromat();
-
-                        if ($scope.soundEnable)
-                            new Audio('data/new_mess.mp3').play();
-                        
-
-                        var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
-                        if(room.string == msg.username)
-                            title = "Нове повідомлення від " + messagesMap[room.roomId].username;
-                        Notify(msg.message, title);
+                        if (ActiveWindow.isActive()) {
+                            if ($scope.soundEnable)
+                                msgAudioNotify.play();
+                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
+                            if (room.string == msg.username)
+                                title = "Нове повідомлення від " + messagesMap[room.roomId].username;
+                            Notify(msg.body, title);
+                        }
                         toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop
                     }
@@ -631,16 +657,27 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
 
         }
-        $scope.showMenu = false;
+        $scope.isMenuShow = false;
+
         $scope.toggleMenu = function() {
-            $scope.showMenu = !$scope.showMenu;
-            return $scope.showMenu;
+            $scope.isMenuShow = !$scope.isMenuShow;
+            return $scope.isMenuShow;
         }
+        $scope.showMenu = function() {
+            $scope.isMenuShow = true;
+            return $scope.isMenuShow;
+        }
+        $scope.isMenuVisible = function() {
+            var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+            if (width > 1300) return true;
+            return $scope.isMenuShow;
+        }
+
         $rootScope.hideMenu = function() {
-            $scope.showMenu = false;
+            $scope.isMenuShow = false;
 
             $rootScope.__modaleToggle['menu'].restart();
-            return $scope.showMenu;
+            return $scope.isMenuShow;
         }
 
         $scope.getNewMsgNumber = RoomsFactory.getNewMsgNumber;
@@ -664,13 +701,14 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (updateMessagesSearchTimeout != undefined)
                 $timeout.cancel(updateMessagesSearchTimeout);
             $scope.messagesSearching = true;
+
             updateMessagesSearchTimeout = $timeout(function() {
                 RoomsFactory.clearMessages();
+                $rootScope.message_busy = false;
                 var deffered = RoomsFactory.loadMessagesContains($scope.messageSearchQuery.value);
                 deffered.finally(function() {
                     $scope.messagesSearching = false;
                 });
-                $rootScope.message_busy = false;
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }, 500);
@@ -698,7 +736,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         }
-        $scope.isMessageInputAvailable = RoomsFactory.checkMessageAdditionPermission;
+        $scope.isMessageInputAvailable = function() {
+           return RoomsFactory.checkMessageAdditionPermission() || UserFactory.isTemporaryGuest();
+        }
         $scope.currentRoomIsNull = function() {
             if (RoomsFactory.getCurrentRoom() == null) return true;
             return RoomsFactory.getCurrentRoom().roomId == null;
@@ -771,10 +811,10 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 //$('#messagesScroll').height(messagesOutputHeight);
                 //$('#messagesScroll').scrollTop(getScrollTopToPreserveScroll(messagesOutputHeight));
 
-                $('#messagesScroll').stop(true).animate({
-                    height: messagesOutputHeight,
-                    scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
-                }, 1000);
+                /* $('#messagesScroll').stop(true).animate({
+                     height: messagesOutputHeight,
+                     scrollTop: getScrollTopToPreserveScroll(messagesOutputHeight)
+                 }, 1000);*/
             }, 200);
         }
 
@@ -794,82 +834,25 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $scope.help_dropdown_click = function() {
             $('#help_dropdown').toggleClass('shown');
         }
-   function insertTextAtCursor(text) { 
-            var sel, range, html; 
+
+        function insertTextAtCursor(text) {
+            var sel, range, html;
             sel = window.getSelection();
-            range = sel.getRangeAt(0); 
-            range.deleteContents(); 
+            range = sel.getRangeAt(0);
+            range.deleteContents();
             var textNode = document.createTextNode(text);
             range.insertNode(textNode);
             range.setStartAfter(textNode);
             sel.removeAllRanges();
-            sel.addRange(range); 
-            console.log("Inserted:"+text);       
+            sel.addRange(range);
         }
-function pasteHtmlAtCaret(html, selectPastedContent) {
-    var sel, range;
-    if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-
-            // Range.createContextualFragment() would be useful here but is
-            // only relatively recently standardized and is not supported in
-            // some browsers (IE9, for one)
-            var el = document.createElement("div");
-            el.innerHTML = html;
-            var frag = document.createDocumentFragment(), node, lastNode;
-            while ( (node = el.firstChild) ) {
-                lastNode = frag.appendChild(node);
-            }
-            var firstNode = frag.firstChild;
-            range.insertNode(frag);
-
-            // Preserve the selection
-            if (lastNode) {
-                range = range.cloneRange();
-                range.setStartAfter(lastNode);
-                if (selectPastedContent) {
-                    range.setStartBefore(firstNode);
-                } else {
-                    range.collapse(true);
-                }
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-    } else if ( (sel = document.selection) && sel.type != "Control") {
-        // IE < 9
-        var originalRange = sel.createRange();
-        originalRange.collapse(true);
-        sel.createRange().pasteHTML(html);
-        if (selectPastedContent) {
-            range = sel.createRange();
-            range.setEndPoint("StartToStart", originalRange);
-            range.select();
-        }
-    }
-}
 
         messageAreaResizer();
 
         $timeout(function() {
             //DOM has finished rendering
-            var contentEdiableMessageInput = document.getElementById('#message_input_editable');
             $(".messages_input_area").resize(messageAreaResizer);
             $(window).resize(messageAreaResizer);
-            $('#message_input_editable').on('paste',function(e) {
-    e.preventDefault();
-    var text = (e.originalEvent || e).clipboardData.getData('text/plain');
-    var escapedHtml = htmlEscape(text);
-
-    var linkified = linkifyStr(escapedHtml, {});
-    pasteHtmlAtCaret(linkified);
-    //$scope.newMessage = text;
-
-});
         });
 
         $scope.$$postDigest(function() {

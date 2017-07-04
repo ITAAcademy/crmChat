@@ -15,6 +15,15 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     var friends;
     var onlineUsersIds = [];
     var messageSended = true;
+    var isUserTemporaryGuest = false;
+    var isUserGuest = false;
+
+    var isTemporaryGuest = function() {
+        return isUserTemporaryGuest;
+    }
+    var isGuest = function() {
+        return isUserGuest;
+    }
 
     var roomsRequiredTrainers = new Map();
 
@@ -85,24 +94,29 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         });
     }
 
-    var initStompClient = function() {
-
+    var initStompClient = function(callback) {
         function reInitForLP() {
             $http.post(serverPrefix + "/chat/login/" + getChatUserId(), { message: 'true' }).
             success(function(data, status, headers, config) {
-                login(data);
+                login(data, callback);
             }).
             error(function(data, status, headers, config) {
                 $rootScope.messageError();
                 toaster.pop('error', "Authentication err", "...Try later", { 'position-class': 'toast-top-full-width' });
             });
         }
+        isUserTemporaryGuest = false;
         var onConnect = function(frame) {
             if (frame.headers['user-name'] == undefined)
                 location.reload();
-            setChatUserId(frame.headers['user-name']);
-            initForWS(false);
-            setRealChatUserId(getChatUserId());
+            var chatUserId = frame.headers['user-name'];
+            if (chatUserId == "null") {
+                isUserTemporaryGuest = true;
+                chatUserId = null;
+            }
+            setChatUserId(chatUserId);
+            initForWS(false, callback);
+            setRealChatUserId(chatUserId);
         };
 
         ChannelFactory.subscribeToConnect(function(socketSupport, frame) {
@@ -112,7 +126,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 $http.post(serverPrefix + "/chat/login/-1", { message: 'true' }).
                 success(function(data, status, headers, config) {
                     var RoomsFactory = $injector.get('RoomsFactory');
-                    login(data);
+                    login(data, callback);
                     RoomsFactory.subscribeRoomsUpdateLP();
 
                     subscribeInfoUpdateLP();
@@ -127,12 +141,14 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         })
     };
 
-    function initForWS(reInit) {
+    function initForWS(reInit, callback) {
+        if (isUserTemporaryGuest) {
+            loginTemporaryGuest();
+            return;
+        }
         chatSocket.subscribe("/app/chat.login/{0}".format(getChatUserId()), function(message) {
             var mess_obj = JSON.parse(message.body);
-            console.log("Start::"+ new Date());
-            login(mess_obj);
-            console.log("End::"+  new Date());
+            login(mess_obj, callback);
             if (reInit == false)
                 $timeout(function() {
                     chatSocket.subscribe("/topic/chat.login", function(message) {
@@ -347,11 +363,19 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
     }
 
+    function loginTemporaryGuest() {
+        $('body').addClass('loaded');
+    }
 
-    function login(mess_obj) {
+    function login(mess_obj, callback) {
         $('body').addClass('loaded');
         var RoomsFactory = $injector.get('RoomsFactory');
         chatUserId = mess_obj.chatUser.id;
+        //ZIGZAG
+        if (chatUserId == null) {
+            location.reload();
+        }
+        setChatUserId(chatUserId);
         isTenant = mess_obj.chatUser.roles.indexOf("TENANT") != -1;
         isTrainer = mess_obj.chatUser.roles.indexOf("TRAINER") != -1;
         isStudent = mess_obj.chatUser.roles.indexOf("STUDENT") != -1;
@@ -364,7 +388,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         chatUserNickname = mess_obj.chatUser.nickName;
         chatUserRole = mess_obj.chatUser.role;
         chatUserAvatar = mess_obj.chatUser.avatar;
-
+        addNotifications(mess_obj.notifications);
         var onlineUserIds = mess_obj.activeUsers;
         setOnlineUsersIds(onlineUserIds);
 
@@ -392,7 +416,6 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
 
         ChannelFactory.setIsInited(true);
 
-
         if (mess_obj.nextWindow == 0) {
 
             // if ($scope.currentRoom.roomId != undefined)
@@ -410,16 +433,18 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         } else {
             $rootScope.authorize = false;
 
-            if ($location.path() != "/") {
+          /*  if ($location.path() != "/") {
                 //    $rootScope.goToAuthorize();
                 return;
-            }
+            }*/
 
-            ChannelFactory.changeLocation("/dialog_view/" + mess_obj.nextWindow);
+            ChannelFactory.changeLocation("/dialog_view/" + mess_obj.roomModels[0].roomId);
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
             //  $rootScope.showToasterWaitFreeTenant();
         }
         rescrollToRoom($routeParams.roomId);
+        if (callback != undefined)
+            callback();
     }
     var confirmToHelp = function(roomId) {
         $http.post(serverPrefix + "/bot_operations/triner/confirmToHelp/" + roomId, {}).
@@ -432,14 +457,46 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     var notifications = [];
+
+    var ignoreNotifications = JSON.parse(localStorage.getItem("ignoreNotifications"));
+    if (ignoreNotifications == null)
+        ignoreNotifications = [];
+
     var getNotifications = function() {
         return notifications;
+    }
+    var isNotificationAlreadyExcist = function(notification) {
+        for (var i = 0; i < notifications.length; i++) {
+            var currentNotification = notifications[i];
+            if (isEquivalent(currentNotification, notification,["$$hashKey"])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    var addNotifications = function(_notifications) {
+        // notifications = notifications.concat(_notifications);
+        for (var i = 0; i < _notifications.length; i++) {
+            if (isNotificationAlreadyExcist(_notifications[i])) continue;
+            var index = ignoreNotifications.indexOf(_notifications[i].details + _notifications[i].title + _notifications[i].type);
+            var currentNotification = _notifications[i];
+            if (index == -1) {
+                notifications.push(currentNotification);
+            }
+        }
     }
 
     function removeNotificationByValue(value) {
         var index = notifications.indexOf(value);
         if (index != -1)
             notifications.splice(index, 1);
+        var ID = value.details + value.title + value.type;
+        var index = ignoreNotifications.indexOf(ID);
+        if (index == -1) {
+            ignoreNotifications.push(ID);
+        }
+        localStorage.setItem("ignoreNotifications", JSON.stringify(ignoreNotifications));
     }
     var notifyAboutUserDemandingRoom = function(demandingUser) {
         var currentType = 'user_wait_tenant';
@@ -448,9 +505,9 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
         var notificationObject = {
                 'type': currentType,
-                'avatar': generateAvatarSrc(demandingUser.avatar),
-                'title': demandingUser.name,
-                'details': demandingUser.lastMessage,
+                'imageUrl': generateAvatarSrc(demandingUser.avatar),
+                'title': "Потребують вашої уваги!!!",
+                'details': demandingUser.name + ' : ' + demandingUser.lastMessage,
                 'chatUserId': demandingUser.chatUserId,
                 'roomId': demandingUser.roomId
             }
@@ -508,6 +565,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
     }
 
     return {
+        initStompClient: initStompClient,
         setChatUserId: setChatUserId,
         getChatUserId: getChatUserId,
         setRealChatUserId: setRealChatUserId,
@@ -539,6 +597,8 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         notifyAboutUserDemandingRoom: notifyAboutUserDemandingRoom,
         getNotifications: getNotifications,
         removeNotificationByValue: removeNotificationByValue,
+        isTemporaryGuest,
+        isGuest,
         isAdmin: function() {
             return isAdmin;
         },

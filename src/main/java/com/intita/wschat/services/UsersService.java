@@ -9,14 +9,18 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import org.apache.commons.collections4.IteratorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,8 @@ import com.intita.wschat.repositories.UserRepository;
 @Service
 public class UsersService {
 
+	private final static Logger log = LoggerFactory.getLogger(UsersService.class);
+
 	@Autowired
 	private UserRepository usersRepo;
 
@@ -38,14 +44,14 @@ public class UsersService {
 
 	@Autowired
 	private ChatTenantService chatTenantService;
-	
+
 	@PersistenceContext
 	EntityManager entityManager;
 
 	@Autowired private DTOMapper dtoMapper;
-	
-	
-	
+
+
+
 
 	@PostConstruct
 	@Transactional
@@ -60,7 +66,7 @@ public class UsersService {
 		return usersRepo.findAll(new PageRequest(page-1, pageSize)); 
 
 	}
-	
+
 	@Transactional
 	public ArrayList<User> getUsers(List<Long> ids){
 		return usersRepo.findAllByIdIn(ids);
@@ -69,29 +75,21 @@ public class UsersService {
 	public ArrayList<Long> getUsersIds(List<Long> ids){
 		return usersRepo.findAllIdsByIdIn(ids);
 	}
-	
+
 	@Transactional
-	public User getUser(Principal principal){
-		String chatUserIdStr = principal.getName();
-		Long chatUserId = 0L;
-		try{
-			chatUserId = Long.parseLong(chatUserIdStr);
-		}
-		catch(NumberFormatException e){
-			System.out.println(e);
-			return null;
-		}
-		User user = chatUsersService.getUsersFromChatUserId(chatUserId);
-		return user;
+	public User getUser(Authentication auth){
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		return chatPrincipal.getIntitaUser();
 	}
 	@Transactional
-	public List<User> getUsersFist5(String login, List<Long> logins){
-		return  usersRepo.findFirst5ByLoginLikeCustom(login + "%", logins, new PageRequest(0, 5));
+	public List<User> getUsersFistNWhereUserNotIn(String login, List<Long> logins, int count){
+		String loginLike = "%" + login + "%";
+		return  usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndNotInCustom(loginLike, loginLike, loginLike,loginLike, logins, new PageRequest(0, count));
 	}
 
 	@Transactional
-	public List<String> getUsersEmailsFist5(String login, List<Long> logins){
-		List<User> users = getUsersFist5(login, logins);
+	public List<String> getUsersEmailsFist5WhereUserNotIn(String login, List<Long> logins){
+		List<User> users = getUsersFistNWhereUserNotIn(login, logins, 5);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)
 			emails.add(users.get(i).getEmail());
@@ -100,19 +98,21 @@ public class UsersService {
 	}
 
 	@Transactional
-	public List<User> getUsersFist5(String login){
-		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLike(login + "%",login + "%",login + "%");
+	public List<User> getUsersFistN(String login, int count){
+		String loginLike = "%" + login + "%";
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike( loginLike,loginLike,loginLike,loginLike, new PageRequest(0, count));
 	}
-	
+
 	@Transactional
-	public List<User> getUsersFist5WithRole(String info, UserRole role){
+	public List<User> getUsersFistNWithRole(String info, UserRole role, int count){
 		ArrayList<Long> list =  getAllByRole(role);
-		return usersRepo.findFirst5ByLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(info + "%",info + "%",info + "%", list);
+		String loginLike = "%" + info + "%";
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(loginLike,loginLike,loginLike,loginLike, list, new PageRequest(0, count));
 	}
-	
+
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
-		List<User> users = getUsersFist5(login);
+		List<User> users = getUsersFistN(login, 5);
 		//System.out.println("FFFFFFFFFFFFFFFFFFF  " + login + " " + users);
 		List<String> emails = new ArrayList<String>();
 		for(int i = 0; i < users.size(); i++)
@@ -308,8 +308,8 @@ public class UsersService {
 		for(ChatUser user : tenants) loginEvents.add(dtoMapper.map(user));
 		return loginEvents;
 	}
-	
-	
+
+
 	@Transactional
 	public boolean checkRoleByUser(User user, UserRole role){
 		if(user == null)
@@ -320,18 +320,26 @@ public class UsersService {
 			columnUserName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT "+columnUserName+" FROM " + tableName + " WHERE " +columnUserName+" = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
 		try{
-			Long userId = Long.parseLong(query.getSingleResult().toString());
+			Object queryResult = query.getSingleResult();
+			String userIdStr = queryResult.toString();
+			if (userIdStr.length()<1)
+				return false;
+			Long userId = Long.parseLong(userIdStr);
 			return userId.equals(user.getId());
 		}
 		catch (NoResultException e) {
 			return false;
 		}
-		
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 	@Transactional
-	public boolean checkRoleByPrincipal(Principal principal, UserRole role){
-		User user = this.getUser(principal);
-		return checkRoleByUser(user,role);
+	public boolean checkRoleByAuthentication(Authentication auth, UserRole role){
+		ChatPrincipal principal = (ChatPrincipal)auth.getPrincipal();
+		return checkRoleByUser(principal.getIntitaUser(),role);
 
 	}
 
@@ -346,13 +354,20 @@ public class UsersService {
 	}
 
 
-	
+
 	@Transactional
 	public boolean checkRole(User user, UserRole role){
+		if (user==null)return false;
 		Query query = entityManager.createNativeQuery("SELECT id_user FROM " + role.getTableName() + " WHERE id_user = " + user.getId() + " AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1");
-		Long userId = Long.parseLong(query.getSingleResult().toString());
+		Long userId = null;
+		try {
+			userId = Long.parseLong(query.getSingleResult().toString());
+		}
+		catch(Exception e){
+			return false;
+		}
 		return userId.equals(user.getId());
-		
+
 	}
 	@Transactional
 	public ArrayList<Long> getAllByRole(UserRole role){
@@ -361,7 +376,7 @@ public class UsersService {
 			userFieldName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
 		List<Object> queryResults = query.getResultList();
-		
+
 		ArrayList<Long> resultArray = new ArrayList<>();
 		for(Object queryObject : queryResults)
 		{
@@ -370,12 +385,54 @@ public class UsersService {
 		}
 		return resultArray;
 	}
-	
+
+	@Transactional
+	public ArrayList<Long> getAllByRoleValue(int roleValue,String tableName){
+		String userFieldName = "id_user";
+		if(roleValue == UserRole.TENANTS.getValue())
+			userFieldName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT DISTINCT " + userFieldName + " FROM " + tableName + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		List<Object> queryResults = null;
+		try{
+			queryResults = query.getResultList();
+		}
+		catch(Exception e) {
+			//e.printStackTrace();
+			return new ArrayList<Long>();
+		}
+
+		ArrayList<Long> resultArray = new ArrayList<>();
+		for(Object queryObject : queryResults)
+		{
+			Long userId = Long.parseLong(queryObject.toString());
+			resultArray.add(userId);
+		}
+		return resultArray;
+	}
+
 	@Transactional
 	public Page<User> getChatUsers(int page, int pageSize){
 		return usersRepo.findAllChatUsers(new PageRequest(page-1, pageSize)); 
 
 	}
-
+	public Long getUsersCount(){
+		return usersRepo.count();
+	}	
+	/*
+	 * Birthday functionality
+	 */
+	@Transactional
+	public Long[] getAllUserWithBirthdayToday(){
+		return usersRepo.findAllByBirthdayToday();
+	}
+	
+	@Transactional
+	public ArrayList<Long> getAllUserWithBirthday(Date date){
+		return usersRepo.findAllByBirthday(date, null);
+	}
+	@Transactional
+	public ArrayList<Long> getAllUserWithBirthdayAndInList(Date date, List<Long> users){
+		return usersRepo.findAllByBirthdayAndIdIn(date, users, null);
+	}
 }
 

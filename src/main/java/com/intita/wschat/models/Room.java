@@ -183,7 +183,7 @@ public class Room implements Serializable,Comparable<Room> {
 		return type;
 	}
 	public ChatRoomType getTypeEnum(){
-		return ChatRoomType.values()[type];
+		return ChatRoomType.valueOf(type);
 	}
 	public void setType(ChatRoomType type) {
 		this.type = (short)type.getValue();
@@ -220,4 +220,11 @@ public class Room implements Serializable,Comparable<Room> {
 			return false;
 		return true;
 	}
+
+	public static Room forId(Long id){
+		Room room = new Room();
+		room.id = id;
+		return room;
+	}
+
 }

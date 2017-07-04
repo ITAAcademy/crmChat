@@ -1,82 +1,71 @@
 <html xmlns="https://www.w3.org/1999/html">
+
 <body>
-  <div class="container" style="width:100%; background-color: #ebebeb">
-    <div class="contant"  style="width:600px;margin:0 auto; padding-top:30px;">
-      <table border="0" bgcolor="#ffffff" width="100%">
-        <tr>
-          <td width="60px;"></td>
-          <td ><img id="logo"
-            src="https://qa.intita.com/images/mainpage/Logo_small.png"
-            alt="" border="0" width="150" style="display:block;margin: auto;"/></td>
-            <td width="60px;"></td>
-          </tr>
+<div class="container" style="width:100%; background-color: #ebebeb">
+    <div class="contant" style="width:600px;margin:0 auto; padding-top:30px;">
+        <table border="0" bgcolor="#ffffff" width="100%">
+            <tr>
+                <td width="60px;"></td>
+                <td><img id="logo" src="https://qa.intita.com/images/mainpage/Logo_small.png" alt="" border="0" width="150" style="display:block;margin: auto;" /></td>
+                <td width="60px;"></td>
+            </tr>
         </table>
         <table style="border-collapse: collapse;" border="0" width="100%">
-          <tr>
-            <td width=" 60px;"></td>
-            <td width=" 480px;"></td>
-            <td width=" 60px;"></td>
-          </tr>
+            <tr>
+                <td width=" 60px;"></td>
+                <td width=" 480px;"></td>
+                <td width=" 60px;"></td>
+            </tr>
         </table>
         <table style="border=0; bgcolor=#ffffff; width=100%; border-spacing: 0px;">
-          <tr>
-            <!--CONTENT -->
-            <div style="background-color:white; text-align: center; padding: 0px;">
-              <div style="color:#7f7f7f;font-family:Arial,sans-serif;font-size:26px;line-height:20px;text-align:center;padding-bottom:20px;padding-top:10px; border-bottom: 5px #ebebeb solid;">За час вашої відсутності зявилися нові повідомлення</div>
-               #set ($map = $roomMessages )
-              #foreach ($mapEntry in $map.entrySet())
-              #set ($messages = $mapEntry.value )
-              #set ($room = $mapEntry.key )
-              <div style="color: #333;font-family: Arial,sans-serif;font-size: 14px;font-weight: bold;line-height:20px; text-align:center;border: 1px #ebebeb solid;border-left: none;border-right: none;margin: 20px;margin-left: -30px;margin-right: -30px;line-height: 25px;white-space: pre;">Повідомлення з розмови:&#13;&#10;<a href="$baseUrl/crmChat/#/dialog_view/$room.id">$room.name</a></div>
-
-        #foreach ($message in $messages)
-        <div class="message" style="padding-left: 10px;padding-bottom: 5px;">
-        <div class="message_author_avatar" style="box-sizing: border-box;display: inline-block;font-family: Roboto;font-weight: 300;text-align:left;vertical-align:top">
-        <div style="background-position: 50% 50%;    box-sizing: border-box;    display: inline-block;    height: 45px;    text-align: left;    width: 45px;    perspective-origin: 22.5px 22.5px;    transform-origin: 22.5px 22.5px;    background: rgb(242, 101, 34) url('$baseUrl/images/avatars/$message.chatUserAvatar') no-repeat scroll 50% 50% / cover padding-box border-box;    border-radius: 50% 50% 50% 50%;    font: normal normal 300 normal 16px / normal Roboto;">
-        </div>
-        </div>  
-        
-        <div class="message-details" style="box-sizing:border-box;display:inline-block;min-height:55px;text-align:left;vertical-align:top;width:444px;background:rgb(199,237,252) none repeat scroll 0% 0%/auto padding-box border-box;border-radius:5px 5px 5px 5px;font:normal normal 300 normal 16px/normal Roboto;overflow:hidden;padding:15px 20px 19px 15px;margin-left: 5px;">
-        <div class="top_details" style="box-sizing: border-box;    height: 38px;    max-width: calc(-40px + 100%);    text-align: left;    width: 369px;    perspective-origin: 184.5px 19px;    transform-origin: 184.5px 19px;    font: normal normal 300 normal 16px / normal Roboto; ">
-        <b>$message.username</b>
-        </div>
-        
-        <div class="bottom_details" style="box-sizing: border-box;    text-align: left;    white-space: pre-wrap;    word-break: break-word;    font: normal normal 300 normal 16px / normal Roboto;padding-bottom:5px;">
-        $message.message
-        </div>
-        
-        
-        </div>
-        </div>
-        #end
-              #end
-            </div>
-          </tr>
-          <tr>
-            <td style="padding-top: 10px;  text-align: center; background-color: #fff;"><?=Yii::t('mail', '0832')?><br>
-              <a href="<?=Config::getBaseUrl();?>" style="color: #4b75a4; font: 18px Arial, sans-serif; line-height: 12px; -webkit-text-size-adjust:none; display: block;" target="_blank"><?=Config::getBaseUrl();?></a><br>
-              <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 0432 52 82 67</span>
-              <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 067 431 19 21</span>
-              <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Email: <a href="mailto:intita.hr@gmail.com." target="_blank" style=""> intita.hr@gmail.com</a></span>
-              <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block; padding-bottom:20px;">skype: int.ita</span></td>
+            <tr>
+                <!--CONTENT -->
+                <div style="background-color:white; text-align: center; padding: 0px;">
+                    <div style="color:#7f7f7f;font-family:Arial,sans-serif;font-size:26px;line-height:20px;text-align:center;padding-bottom:20px;padding-top:10px; border-bottom: 5px #ebebeb solid;">За час вашої відсутності зявилися нові повідомлення</div>
+                    #set ($map = $roomMessages ) #foreach ($mapEntry in $map.entrySet()) #set ($messages = $mapEntry.value ) #set ($room = $mapEntry.key )
+                    <div style="color: #333;font-family: Arial,sans-serif;font-size: 14px;font-weight: bold;line-height:20px; text-align:center;border: 1px #ebebeb solid;border-left: none;border-right: none;margin: 20px;margin-left: -30px;margin-right: -30px;line-height: 25px;white-space: pre;">Повідомлення з розмови:&#13;&#10;<a href="$baseUrl/crmChat/#/dialog_view/$room.id">$room.name</a></div>
+                    #foreach ($message in $messages)
+                        <a href="$baseUrl/crmChat/#/dialog_view/$room.id" class="message" style="padding-left: 10px;padding-bottom: 5px; display: block; cursor: pointer; color: #333;">
+                            <div class="message_author_avatar" style="box-sizing: border-box;display: inline-block;font-family: Roboto;font-weight: 300;text-align:left;vertical-align:top">
+                                <div style="background-position: 50% 50%;    box-sizing: border-box;    display: inline-block;    height: 45px;    text-align: left;    width: 45px;    perspective-origin: 22.5px 22.5px;    transform-origin: 22.5px 22.5px;    background: rgb(242, 101, 34) url('$baseUrl/images/avatars/$message.author.avatar') no-repeat scroll 50% 50% / cover padding-box border-box;    border-radius: 50% 50% 50% 50%;    font: normal normal 300 normal 16px / normal Roboto;">
+                                </div>
+                            </div>
+                            <div class="message-details" style="box-sizing:border-box;display:inline-block;min-height:55px;text-align:left;vertical-align:top;width:444px;background:rgb(199,237,252) none repeat scroll 0% 0%/auto padding-box border-box;border-radius:5px 5px 5px 5px;font:normal normal 300 normal 16px/normal Roboto;overflow:hidden;padding:15px 20px 19px 15px;margin-left: 5px;">
+                                <div class="top_details" style="box-sizing: border-box;    height: 38px;    max-width: calc(-40px + 100%);    text-align: left;    width: 369px;    perspective-origin: 184.5px 19px;    transform-origin: 184.5px 19px;    font: normal normal 300 normal 16px / normal Roboto; ">
+                                    <b>$message.author.nickName</b>
+                                </div>
+                                <div class="bottom_details" style="box-sizing: border-box;    text-align: left;    white-space: pre-wrap;    word-break: break-word;    font: normal normal 300 normal 16px / normal Roboto;padding-bottom:5px;">
+                                    $message.body
+                                </div>
+                            </div>
+                        </a>
+                    #end #end
+                </div>
             </tr>
-          </table>
-
-          <table border="0" bgcolor="#ebebeb" width="100%">
+            <tr>
+                <td style="padding-top: 10px;  text-align: center; background-color: #fff; text-align: left">
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 0432 52 82 67</span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 067 431 19 21</span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 073 209 97 43</span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">ел. пошта: <a href="mailto:info@intita.com." target="_blank" style=""> info@intita.com</a></span>
+                </td>
+            </tr>
+        </table>
+        <table border="0" bgcolor="#ebebeb" width="100%">
             <tr bgcolor="#ebebeb">
-              <td  style="border-color:#ebebeb;     text-align: center;     width: 100%;">
-                <br>
-                <span style="color: #000; font-family:Arial, sans-serif; font-size: 12px; line-height: 20px; -webkit-text-size-adjust:none; display: block;"><?=Yii::t('mail', '0836')?> <a href="mailto:<?=$userEmail?>" target="_blank" style=""><?=$userEmail?></a></span><br>
-                <span style="color: #000; font-family:Arial, sans-serif; font-size: 12px; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><i>Copyright © 2017 Intita.</i></span>
-                <br>
-              </td>
+                <td style="border-color:#ebebeb;     text-align: center;     width: 100%;">
+                    <br>
+                    <span style="color: #000; font-family:Arial, sans-serif; font-size: 12px; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><i>Copyright © 2017 Intita.</i></span>
+                    <br>
+                </td>
             </tr>
             <tr bgcolor="#ebebeb">
-              <td width="60px;" height="30px;"></td>
-              <td></td>
+                <td width="60px;" height="30px;"></td>
+                <td></td>
             </tr>
-          </table>
-        </div>
-      </div>
-    </body>
-    </html>
+        </table>
+    </div>
+</div>
+</body>
+
+</html>

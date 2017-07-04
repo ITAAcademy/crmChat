@@ -1,18 +1,23 @@
 package com.intita.wschat.services;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.domain.ChatRoomType;
+import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.models.*;
+import com.intita.wschat.repositories.*;
+import com.intita.wschat.services.common.UsersOperationsService;
+import com.intita.wschat.util.HtmlUtility;
+import com.intita.wschat.web.BotController;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,22 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.intita.wschat.domain.ChatMessage;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ChatUserLastRoomDate;
-import com.intita.wschat.models.Phrase;
-import com.intita.wschat.models.PrivateRoomInfo;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.RoomPermissions;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
-import com.intita.wschat.repositories.ChatPhrasesRepository;
-import com.intita.wschat.repositories.PrivateRoomInfoRepository;
-import com.intita.wschat.repositories.RoomPermissionsRepository;
-import com.intita.wschat.repositories.RoomRepository;
 import com.intita.wschat.web.ChatController;
 
 @Service
@@ -51,12 +42,43 @@ public class RoomsService {
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ParticipantRepository participantRepository;
 
-	@Autowired private ChatController chatController;
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
+	@Autowired private RoomRolesRepository roomRolesRepository;
+	@Autowired private UsersOperationsService usersOperationsService;
+
+	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
+	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
+	private String defaultRoleNames = "Administrators, Students, Supervisors, Teachers and consultants, Accountants, Consultants, Tenants, Trainers, Auditors, Authors, Directors";
+
+	@Autowired
+	private Environment env;
+
+	//@Value("${crmchat.roles.tableNames}")
+	private List<String> rolesTablesNames;
+	//@Value("${crmchat.roles.names}")
+	private List<String> rolesNames;
 
 	@PostConstruct
-	@Transactional
-	public void createDefRoom() {
+	public void initParams() {
+		String rolesTablesNamePropertyValue =  env.getProperty("crmchat.roles.tableNames");
+		String rolesNamesProperyValue =  env.getProperty("crmchat.roles.names");
+		if(rolesTablesNamePropertyValue==null)rolesTablesNamePropertyValue=defaultTableNames;
+		if(rolesNamesProperyValue==null)rolesNamesProperyValue=defaultRoleNames;
+
+
+		if (rolesTablesNamePropertyValue==null || rolesNamesProperyValue==null){
+			log.error("crmchat.roles.tableNames or crmchat.roles.names not defined");
+			return;
+		}
+
+		String[] rolesTablesNameArr =rolesTablesNamePropertyValue.split(",");
+		rolesTablesNameArr = HtmlUtility.trimAllStrings(rolesTablesNameArr);
+		rolesTablesNames = Arrays.asList(rolesTablesNameArr);
+
+		String[] rolesNamesArr =  rolesNamesProperyValue.split(",");
+		rolesNamesArr = HtmlUtility.trimAllStrings(rolesNamesArr);
+		rolesNames = Arrays.asList(rolesNamesArr);
+
 	}
 
 	@Transactional
@@ -270,6 +292,15 @@ public class RoomsService {
 
 		return roomRepo.findByAuthor(user);
 	}
+	@Transactional
+	public Set<Room> getAllRoomByUsersAndAuthor(ChatUser user) {
+		return roomRepo.findByAuthorOrUsersContaining(user, user);
+	}
+	@Transactional
+	public ArrayList<Room> getRoomByUser(ChatUser user) {
+
+		return roomRepo.findByUsersContaining(user);
+	}
 
 
 	@Transactional(readOnly = false)
@@ -317,17 +348,18 @@ public class RoomsService {
 		if (first.getId()!= second.getId())
 			addUserToRoom(second, r);
 		PrivateRoomInfo info = privateRoomInfoRepo.save(new PrivateRoomInfo(r, first, second));
+		roomPermissionsServcie.addPermissionsToUser(r, second, RoomPermissions.Permission.ADD_USER.getValue() | RoomPermissions.Permission.REMOVE_USER.getValue());
 		return r;
 	}
 
 	@Transactional(readOnly = false)
 	public boolean unRegister(String name, ChatUser author) {
 		Room room = roomRepo.findByName(name);
-		if(!author.getRootRooms().contains(room))
+	//	if(!author.getRootRooms().contains(room))
 			return false;
-		room.setActive(false);
+		/*room.setActive(false);
 		roomRepo.save(room);//@NEED_ASK@
-		return true;
+		return true;*/
 	}
 
 	public List<RoomModelSimple> getRoomsContainingStringByOwner(String query, ChatUser user){
@@ -351,6 +383,7 @@ public class RoomsService {
 	}
 
 	public void replaceUsersInRoom(Room room, ArrayList<ChatUser> chatUserList) {
+		if(chatUserList==null)return;
 		Set<ChatUser> roomUserList = room.getUsers();
 		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
 		add.removeAll(roomUserList);
@@ -371,13 +404,13 @@ public class RoomsService {
 	}
 
 	@Transactional(readOnly = false)
-	public Room update(Room room){
+	public Room update(Room room,boolean notify){
 		room = roomRepo.save(room);
 		Set<ChatUser> users = new HashSet<>(room.getUsers());
 		if(room.getAuthor() != null)
 			users.add(room.getAuthor());
 		for (ChatUser chatUser : users) {
-			chatController.updateRoomByUser(chatUser, room);
+			usersOperationsService.updateRoomByUser(chatUser, room,false);
 		}
 		/*Map<String, Object> sendedMap = new HashMap<>();
 		sendedMap.put("updateRoom", new RoomModelSimple(0, new Date().toString(), room,userMessageService.getLastUserMessageByRoom(room)));
@@ -410,7 +443,6 @@ public class RoomsService {
 			return false;
 		//have premition?
 		if(room.cloneChatUsers().contains(user))
-
 			return false;
 
 		room.addUser(user);
@@ -498,8 +530,6 @@ public class RoomsService {
 
 	@Transactional
 	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms, Integer count) {
-		System.out.println("<<<<<<<<<<<<<<<<<<<<<<  " + new Date());
-		System.out.println("currentUser:"+currentUser.getId());
 		//Map<Long, String>  rooms_map = convertToNameList(room_array);		
 		List<RoomModelSimple> result = new ArrayList <RoomModelSimple> ();
 
@@ -572,6 +602,58 @@ public class RoomsService {
 
 		return null;
 	}
+
+	public void updateRoomsForAllRoles(boolean notifyUsers) {
+		try {
+			for (String table : rolesTablesNames) {
+				updateRoomForRoleTable(table,notifyUsers);
+			}
+		}
+		catch(Exception e){
+
+		}
+	}
+
+	@Transactional
+	public boolean updateRoomForRoleTable(String tableName,boolean notifyUsers){
+		int indexOfTable = rolesTablesNames.indexOf(tableName);
+		if (indexOfTable == -1) return false;
+		String roleName = rolesNames.get(indexOfTable);
+		int roleInt = 1 << indexOfTable;
+		UserRole role = UserRole.getByTableName(tableName);
+		RoomRoleInfo info =  roomRolesRepository.findOneByRoleId(roleInt);
+		if(info == null)
+		{
+			Room room = register(roleName, chatUserService.getChatUser(BotController.BotParam.BOT_ID), ChatRoomType.ROLES_GROUP);
+			info = roomRolesRepository.save(new RoomRoleInfo(room, roleInt));
+		}
+		Room room = info.getRoom();
+		//roomsService.setAuthor(chatUsersService.getChatUser(BotParam.BOT_ID), room);
+		//room = update(room,notifyUsers);
+		room = update(room,false);
+		ArrayList<ChatUser> cUsersList = null;
+
+		ArrayList<Long> intitaUsers = userService.getAllByRoleValue(roleInt, tableName);
+		if (intitaUsers.size()==0) return false;
+
+			if (role == UserRole.TENANTS)
+				cUsersList = chatUserService.getUsers(intitaUsers);
+			else {
+				cUsersList = chatUserService.getChatUsersFromIntitaIds(intitaUsers);
+			}
+
+		replaceUsersInRoom(room, cUsersList);
+		return true;
+	}
+
+	public boolean isRoomParticipant(Long chatUserId, Long roomId) {
+		ChatUser participant = ChatUser.forId(chatUserId);
+		Room room = Room.forId(roomId);
+		Long count = roomRepo.countByAuthorOrInUsers(participant,room);
+		return count > 0;
+	}
+
+
 }
 
 

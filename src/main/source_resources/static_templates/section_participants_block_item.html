@@ -3,7 +3,7 @@
     <div class="section-hr"></div>
 </div>
 <div class="section_content">
-    <div class="block_item selectable" ng-click="clickToUserEvent(user)">
+    <div class="block_item selectable" >
         <div class="avatar  ng-class:{offline:!isUserOnline(user.chatUserId), online:isUserOnline(user.chatUserId)}">
             <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
             <div class="user_presence_icon"></div>
@@ -14,7 +14,7 @@
             <div class="user_presence">{{isUserOnline(user.chatUserId) ? 'Онлайн' :'Офлайн'}}</div>
         </div>
         <div class="contact_control">
-            <div ng-if="mode == 2" class="budget">+</div>
+            <div ng-click="addNewUser(user.chatUserId)" ng-if="canBeUserAddedToRoom(user.chatUserId)" class="budget">+</div>
         </div>
     </div>
 </div>

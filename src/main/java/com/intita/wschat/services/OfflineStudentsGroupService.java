@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import com.intita.wschat.domain.ChatRoomType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.intita.wschat.models.ChatUser;
@@ -54,7 +55,7 @@ public class OfflineStudentsGroupService {
 	}
 
 	@Transactional()
-	public boolean updateSubGroupRoom(OfflineSubGroup subGroup, boolean withGroup) {
+	public boolean updateSubGroupRoom(OfflineSubGroup subGroup, boolean withGroup,Authentication auth) {
 		Room room = subGroup.getChatRoom();
 		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) subGroup.getIdTrainer(), false);
 		if (author == null)
@@ -66,7 +67,7 @@ public class OfflineStudentsGroupService {
 			offlineSubGroupRespository.save(subGroup);
 		}
 		room.setName(subGroup.getGroup().getName() + " - "  + subGroup.getName());
-		roomControler.changeAuthor(author, room, false, author.getPrincipal() , true);
+		roomControler.changeAuthor(author, room, false, auth , true);
 
 		ArrayList<Integer> list = offlineStudentRespository.getStudentsIdByIdSubGroup(subGroup.getId());
 		ArrayList<ChatUser> chatUserList = new ArrayList<>();
@@ -85,14 +86,19 @@ public class OfflineStudentsGroupService {
 		}
 		
 		roomService.replaceUsersInRoom(room, chatUserList);
+		OfflineGroup group = subGroup.getGroup();
+		//add group curator as sub author 
+		ChatUser sub_author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCurator(), false);
+		roomService.addUserToRoom(sub_author, room);
+		roomPermissionsService.addPermissionsToUser(room, sub_author, RoomPermissions.Permission.ADD_USER.getValue() | RoomPermissions.Permission.REMOVE_USER.getValue());
 		if(withGroup)
-			updateGroupRoom(subGroup.getGroup(), false);
+			updateGroupRoom(group, false,auth);
 		return true;
 	}
 
-	public void updateGroupRoom(OfflineGroup group, boolean withSubGroups) {
+	public void updateGroupRoom(OfflineGroup group, boolean withSubGroups, Authentication auth) {
 		Room room = group.getChatRoom();
-		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCreated(), false);
+		ChatUser author = chatUsersService.getChatUserFromIntitaId((long) group.getIdUserCurator(), false);
 		if (author == null)
 			return;
 		
@@ -102,7 +108,7 @@ public class OfflineStudentsGroupService {
 			offlineGroupRespository.save(group);
 		}
 		room.setName(group.getName());
-		roomControler.changeAuthor(author, room, false, author.getPrincipal() , true);
+		roomControler.changeAuthor(author, room, false, auth , true);
 		ArrayList<Integer> subGroupsId = new ArrayList<>();
 		ArrayList<OfflineSubGroup> subGroups = new ArrayList<>(group.getSubGroups());
 		for (OfflineSubGroup subGroup : subGroups) {
@@ -132,7 +138,7 @@ public class OfflineStudentsGroupService {
 		if(withSubGroups)
 		{
 			for (OfflineSubGroup subGroup : subGroups) {
-				updateSubGroupRoom(subGroup, false);
+				updateSubGroupRoom(subGroup, false,auth);
 			}
 		}
 

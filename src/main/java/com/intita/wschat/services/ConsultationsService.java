@@ -12,6 +12,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.domain.ChatRoomType;
+import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
+import com.intita.wschat.services.common.UsersOperationsService;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +39,6 @@ import com.intita.wschat.repositories.ConsultationResultRepository;
 import com.intita.wschat.repositories.IntitaConsultationRepository;
 import com.intita.wschat.repositories.UserRepository;
 import com.intita.wschat.web.RoomController;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
 
 @Service
 public class ConsultationsService {
@@ -51,6 +52,7 @@ public class ConsultationsService {
 	@Autowired private ConsultationResultRepository chatConsultationResultRepository;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
+	@Autowired private UsersOperationsService usersOperationsService;
 
 	@PostConstruct
 	@Transactional
@@ -138,8 +140,8 @@ public class ConsultationsService {
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsModelByChatUser(consultant)));
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(author)));
 			//LP
-			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
-			RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+			usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
+			usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 
 			result = new ChatConsultation(iCons, consultationRoom);
 			result = chatConsultationRepository.save(result);

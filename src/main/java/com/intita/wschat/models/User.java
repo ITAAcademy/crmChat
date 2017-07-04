@@ -76,13 +76,111 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 
 	@Column(name="firstname")
 	private String firstName;
-	
+
 	@Column(name="secondname")
 	private String secondName;
 
 
 	@Column(name="role")
 	private int role;
+	
+	@Column(nullable=true)
+	private Date birthday;
+
+	
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getFacebook() {
+		return facebook;
+	}
+
+	public void setFacebook(String facebook) {
+		this.facebook = facebook;
+	}
+
+	public String getGoogleplus() {
+		return googleplus;
+	}
+
+	public void setGoogleplus(String googleplus) {
+		this.googleplus = googleplus;
+	}
+
+	public String getLinkedin() {
+		return linkedin;
+	}
+
+	public void setLinkedin(String linkedin) {
+		this.linkedin = linkedin;
+	}
+
+	public String getTwitter() {
+		return twitter;
+	}
+
+	public void setTwitter(String twitter) {
+		this.twitter = twitter;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getEducation() {
+		return education;
+	}
+
+	public void setEducation(String education) {
+		this.education = education;
+	}
+
+	public String getInterests() {
+		return interests;
+	}
+
+	public void setInterests(String interests) {
+		this.interests = interests;
+	}
+
+	private String facebook;
+	private String googleplus;
+	private String linkedin;
+	private String twitter;
+	private String phone;
+	private String address;
+	private String education;
+	private String interests;
+	
+	
+
+
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
 
 	public String getSkype() {
 		return skype;
@@ -204,7 +302,7 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 		// do nothing because anonimus user is considered authorized too
 		return "anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
-	
+
 
 	public User(String login, String password) {
 		this.login = login;
@@ -235,13 +333,13 @@ public class  User implements UserDetails, Serializable,Comparable<User>{
 	public String getNickName() {
 		if(nickName != null && !nickName.isEmpty())
 			return nickName;
-		
+
 		if(firstName != null && !firstName.isEmpty() && secondName != null && !secondName.isEmpty())
 			return firstName + " " + secondName;
 
 		return getLogin();
 	}
-	
+
 	public void setNickname(String nickname) {
 		this.nickName = nickname;
 	}

@@ -16,11 +16,15 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
+import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
+import com.intita.wschat.services.common.UsersOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,8 +63,6 @@ import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.ProfanityChecker;
-import com.intita.wschat.web.RoomController.SubscribedtoRoomsUsersBufferModal;
-
 /**
  * Controller that handles WebSocket chat messages
  * 
@@ -108,16 +110,20 @@ public class ConsultationsController {
 	@Autowired private CommonController commonController;
 	@Autowired private RoomsService chatRoomsService;
 
+	@Autowired private UsersOperationsService usersOperationsService;
+
 	private final static ObjectMapper mapper = new ObjectMapper();
 
 	@RequestMapping(value = "/chat/consultation/info/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Principal principal) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Authentication auth) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
 		Map <String, Object>result = new HashMap<>();
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = cUser.getIntitaUser();
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser == null)
 		{
@@ -182,7 +188,7 @@ public class ConsultationsController {
 		return mapper.writeValueAsString(result);
 	}
 	@RequestMapping(value = "/chat/consultation/fromRoom/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId, Principal principal, HttpRequest req) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody String getConsultationFromRoom(@PathVariable("id") Long roomId) throws InterruptedException, JsonProcessingException {
 		ChatConsultation cons = chatConsultationsService.getConsultationByRoom(new Room(roomId));
 		if(cons != null) 
 			return mapper.writeValueAsString(cons.getIntitaConsultation().getId());
@@ -194,13 +200,13 @@ public class ConsultationsController {
 		cons.setFinishDate(new Date());
 		Room room = cons.getRoom();
 		room.setActive(false);
-		roomService.update(room);
+		roomService.update(room,true);
 		chatConsultationsService.update(cons);
 	}
 	
 	@RequestMapping(value = "/chat/rooms/create/consultation/", method = RequestMethod.POST)
 	@ResponseBody
-	public void createConsultation(Principal principal, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
+	public void createConsultation(Authentication auth, @RequestBody Map<Object, String > param/*, @RequestBody String date_str,
 			@RequestBody String time_begin, @RequestBody String time_end*/
 			) throws ParseException
 	{
@@ -259,11 +265,12 @@ public class ConsultationsController {
 			System.out.println("lecture null!!!!!!");
 			return;
 		}
+		ChatPrincipal principal = (ChatPrincipal)auth.getPrincipal();
 
 		consultation.setDate(date);
 		consultation.setStartTime(start_time);
 		consultation.setFinishTime(endTime);
-		consultation.setAuthor(userService.getUser(principal));
+		consultation.setAuthor(principal.getIntitaUser());
 
 		User consultant = userService.getUser(teacher_email);
 
@@ -281,9 +288,10 @@ public class ConsultationsController {
 
 		ChatConsultation chatConsultation = chatConsultationsService.getByIntitaConsultation(consultation_registered);
 
-		//Room room_consultation = chatConsultation.getRoom();		
+		//Room room_consultation = chatConsultation.getRoom();
+		ChatPrincipal chatPrincipal = (ChatPrincipal)principal;
 
-		Long chatUserId = Long.parseLong(principal.getName());	
+		Long chatUserId = chatPrincipal.getChatUser().getId();
 
 		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
 
@@ -291,8 +299,8 @@ public class ConsultationsController {
 				new RoomController.UpdateRoomsPacketModal (list,false));
 
 		//this said ti author that he nust update room`s list
-		ChatUser author = chatUsersService.getChatUser(principal);
-		RoomController.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
+		ChatUser author = chatPrincipal.getChatUser();
+		usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 		//777
 	}
 	
@@ -314,12 +322,13 @@ public class ConsultationsController {
 	
 	@RequestMapping(value="/addRatingByRoom/{roomId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean addRatingByRoom(HttpServletRequest request, @PathVariable("roomId") Long roomId, @RequestBody Map<Long, Integer> ratingsValues, Principal principal) {
+	public boolean addRatingByRoom(HttpServletRequest request, @PathVariable("roomId") Long roomId, @RequestBody Map<Long, Integer> ratingsValues, Authentication auth) {
 		Room room = chatRoomsService.getRoom(roomId);
 		if(room == null)
 			throw new RoomNotFoundException("Room id is faild");
-		
-		ChatUser user = chatUsersService.getChatUser(principal);
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser user = chatPrincipal.getChatUser();
 		
 		ArrayList<ChatConsultationResultValue> values = new ArrayList<>();
 		for(Long ratingId : ratingsValues.keySet())
@@ -333,7 +342,8 @@ public class ConsultationsController {
 	
 	
 	@RequestMapping(value="/consultationTemplate.html", method = RequestMethod.GET)
-	public String  getConsultationTemplate(HttpRequest request, Model model,Principal principal) {
+	public String  getConsultationTemplate(HttpRequest request, Model model,Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
 		Set<ConsultationRatings> retings = chatConsultationsRatingsService.getAllSupportedRetings();
 		Map<String, Object> ratingLang = (Map<String, Object>) chatLangService.getLocalization().get("ratings");
 		for (ConsultationRatings consultationRatings : retings) {
@@ -343,18 +353,20 @@ public class ConsultationsController {
 			//retings.add(consultationRatingsCopy);
 		}
 		model.addAttribute("ratingsPack", retings);
-		commonController.addLocolizationAndConfigParam(model,chatUsersService.getChatUser((principal)));
-		return commonController.getTeachersTemplate(request, "consultationTemplate", model,principal);
+		commonController.addLocolizationAndConfigParam(model,chatPrincipal.getChatUser());
+		return commonController.getTeachersTemplate(request, "consultationTemplate", model,auth);
 	}	
 	
 	@RequestMapping(value = "/chat/consultation/{do}/{id}", method = RequestMethod.POST)
-	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Principal principal, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
+	public 	@ResponseBody ResponseEntity<String> startConsultation(@PathVariable("id") Long consultationIntitaId,@PathVariable("do") String varible, Authentication auth, @RequestBody Map<Long,Integer> starts) throws InterruptedException, JsonProcessingException {
 		/*
 		 * Authorization
 		 */
 		Map <String, Object>result = new HashMap<>();
-		ChatUser cUser = chatUsersService.getChatUser(principal);
-		User iUser = cUser.getIntitaUser();
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser cUser = chatPrincipal.getChatUser();
+		User iUser = chatPrincipal.getIntitaUser();
 
 		if(iUser == null)
 		{
@@ -375,7 +387,7 @@ public class ConsultationsController {
 					return new ResponseEntity<String>(HttpStatus.METHOD_NOT_ALLOWED);
 				
 				room.setActive(true);//activate room
-				roomService.update(room);
+				roomService.update(room,true);
 				cons.setStartDate(new Date());
 				chatConsultationsService.update(cons);
 				return new ResponseEntity<String>(HttpStatus.OK);
@@ -395,10 +407,12 @@ public class ConsultationsController {
 	
 	@ResponseBody 
 	@RequestMapping(value = "/chat/consultation/get_mail/{id}", method = RequestMethod.GET)
-	  private boolean sendConsultationEmail(final ChatConsultation chatConsultation,Principal principal,@PathVariable("id") Long consultationId) {
-		  ChatUser chatuser = chatUsersService.getChatUser(principal);
+	  private boolean sendConsultationEmail(final ChatConsultation chatConsultation,Authentication auth,@PathVariable("id") Long consultationId) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		ChatUser chatuser = chatPrincipal.getChatUser();
 		  ChatConsultation consultation = chatConsultationsService.getByIntitaConsultationId(consultationId);
-		  User intitaUser = chatuser.getIntitaUser();
+		  User intitaUser = chatPrincipal.getIntitaUser();
           if (intitaUser==null) return false;  
 		  
 	       try{ 

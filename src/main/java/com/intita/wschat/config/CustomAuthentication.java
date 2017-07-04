@@ -47,7 +47,7 @@ public class CustomAuthentication implements Authentication{
 	@Override
 	public boolean isAuthenticated() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

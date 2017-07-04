@@ -69,21 +69,6 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Room> roomsFromUsers = new HashSet<>();
 	
-	public Set<Room> getRootRooms() {
-		return rooms;
-	}
-
-	public Set<Room> getRoomsFromUsers() {
-		return roomsFromUsers;
-	}
-
-	public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
-		return chatUserLastRoomDate;
-	}
-	public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
-		this.chatUserLastRoomDate = chatUserLastRoomDate;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -98,19 +83,24 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ChatUser))
 			return false;
 		ChatUser other = (ChatUser) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (id.longValue() != other.getId().longValue())
 			return false;
 		return true;
 	}
 
 	public ChatUser(){
 
+	}
+	public static ChatUser forId(Long id){
+		ChatUser chatUser = new ChatUser();
+		chatUser.id = id;
+		return chatUser;
 	}
 	public ChatUser(String nickName, User intitaUser){
 		this.nickName=nickName;

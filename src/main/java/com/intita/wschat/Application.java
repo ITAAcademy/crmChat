@@ -78,7 +78,7 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
 		taskExecutor.initialize();
 		return taskExecutor;
 	}
-	
+
 	@Bean
 	public CorsFilter corsFilter() {
 	    final UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
@@ -90,7 +90,7 @@ public class Application extends SpringBootServletInitializer  implements AsyncC
 	    urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 	    return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
-	
+
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 		return new SimpleAsyncUncaughtExceptionHandler();

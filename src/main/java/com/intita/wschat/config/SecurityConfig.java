@@ -1,7 +1,13 @@
 package com.intita.wschat.config;
 
+import com.intita.wschat.annotations.ServerAccess;
+import com.intita.wschat.filters.ServerAuthenticationFilter;
+import com.intita.wschat.util.ReflectionChatTools;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,6 +23,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * 
  * @author Nicolas Haiduchok
@@ -32,7 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomAuthenticationProvider authenticationProvider;
 	@Autowired
-	private CustomFilter authenticationTokenFilter;
+	private ServerAuthenticationFilter authenticationTokenFilter;
+	@Autowired
+	private ApplicationContext appContext;
 	
 	/*@Autowired
 	private RequestContextFilter requestContextFilter;*/
@@ -65,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.csrf().disable()
 		//.addFilterAfter(authenticationTokenFilter, BasicAuthenticationFilter.class)
-		//.addFilterBefore( authenticationTokenFilter, SecurityContextPersistenceFilter.class)
+		.addFilterBefore( authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
 
 		.formLogin()
 		.loginPage("/")
@@ -108,6 +125,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.authenticationProvider(authenticationProvider);
+	}
+
+	@Bean
+	  public FilterRegistrationBean registration(ServerAuthenticationFilter filter) {
+	    FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	    ArrayList<String> urlPatterns = new ArrayList(getUrlPatternsForServerAccess());
+	    registration.setUrlPatterns(urlPatterns);
+	    registration.setEnabled(true);
+	    registration.setOrder(3);
+	    return registration;
+	  }
+
+
+	public List<String> getUrlPatternsForServerAccess(){
+		List<String> urlParameters = new ArrayList<String>();
+
+			List<Method> methods = ReflectionChatTools.getMethodsFromPackage("com.intita.wschat.web",Controller.class);
+
+			for(Method m: methods){
+				if(m.isAnnotationPresent(ServerAccess.class)){
+					RequestMapping requestMappingAnnotation = m.getAnnotation(RequestMapping.class);
+					if (requestMappingAnnotation==null) continue;
+					String MappingPath = requestMappingAnnotation.value()[0];
+					urlParameters.add("/" + MappingPath + "/*");
+				}
+			}
+		return urlParameters;
 	}
 	/*
     @Override

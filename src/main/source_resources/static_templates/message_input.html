@@ -2,28 +2,27 @@
     <div class="user_write_message_notification">{{getWritingUsersInfo()}}</div>
 </div>
 <hr/>
-<div class="transparent_input message_input" id="message_input_editable" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" ng-click="onClick()" content-editable="true" ng-keypress="keyPress($event)"></div>
-<div class="helper">для переведення курсору натисність Shift + Enter</div>
+<div class="transparent_input message_input" id="message_input_editable" tabindex="-1" type="text" th:placeholder="${lgPack.inputArea.typeHead}" ng-model="newMessage.value" ng-click="onClick()" content-editable="true" ng-keydown="keyPress($event)"></div>
+<div class="helper"><span th:text="${lgPack.helpers.newLineHint}">для переведення курсору натисність Shift + Enter</span></div>
 <div class="files_input">
-    <img ng-if="files!=null &amp;&amp; files.length>0" src="images/X.svg" alt="" ng-click="clearFiles()" />
-    <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" link="file.name" remove-callback="removeFileFromUpload"></div>
+    <img ng-if="files!=null &amp;&amp; files.length>0" class="clear-file" src="images/X.svg" alt="" ng-click="clearFiles()" />
+    <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" name="file.name" link="file.data" remove-callback="removeFileFromUpload"></div>
 </div>
 <div class="controls_area">
     <div class="multimedia_conversation_controls">
-        <skype-ui id="SkypeButton_Call_mike_1" class="microphone" getcontacts="getSkypeContacts"></skype-ui>
+        <skype-ui ng-if="isCurrentRoomPrivate()" id="SkypeButton_Call_mike_1" class="microphone" getcontacts="getSkypeContacts"></skype-ui>
     </div>
     <div id="attaches_area" class="attaches_area">
         <ul id="attaches_dropdown" class="popup_dropdown">
             <a class="dropdown_item attaches_item ngf_select" ngf-select="true" ngf-change="selectFiles(&#36;files)" multiple="true" th:text="${lgPack.inputArea.attaches.doc}">Документ</a>
-            <a class="dropdown_item video_item" th:text="${lgPack.inputArea.attaches.video}">Відео</a>
-            <a class="dropdown_item audio_item" th:text="${lgPack.inputArea.attaches.audio}">Аудіо</a>
+            <a class="dropdown_item video_item disabled" th:text="${lgPack.inputArea.attaches.video}">Відео</a>
+            <a class="dropdown_item audio_item disabled" th:text="${lgPack.inputArea.attaches.audio}">Аудіо</a>
         </ul>
         <!--<ul id="help_dropdown" class="popup_dropdown">
             shift+enter - нова стрічка
         </ul>-->
         <div class="upload_file_form_container"></div>
         <!--<button modale-toggle="true" ignore-id="attaches_area" callback="help_dropdown_click()"><i class="material-icons">help_outline</i></button>-->
-
         <button ng-show="askForRatingEnabled" ng-click="askForRating()"><i class="material-icons">thumb_up</i></button>
         <button class="smiles"><i class="material-icons">tag_faces</i></button>
         <button class="attaches" modale-toggle="true" callback="attaches_dropdown_click()" ignore-id="attaches_area"><i class="material-icons">attachment</i></button>
@@ -35,7 +34,9 @@
 $.emojiarea.path = 'lib/jquery-emojiarea/packs/basic/images';
 var $wysiwyg = $('.message_input').emojiarea({
     wysiwyg: true,
-    button: $(".smiles")
+    button: $(".smiles"),
+    buttonPosition: 'after',
+    allowElementParentClass: 'messages_input_area'
 });
 
 $wysiwyg.on('insert', function() {

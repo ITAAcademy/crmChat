@@ -81,7 +81,7 @@ angular.module('angular-content-editable')
             var html;
 
             // disable editability
-            attrs.$set('contenteditable', 'false');
+            //attrs.$set('contenteditable', 'false');
 
             // if text needs to be rendered as html
             if (options.renderHtml && noEscape) {

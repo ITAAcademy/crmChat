@@ -119,6 +119,35 @@ var firstLetter = function(name) {
         return name.toUpperCase().charAt(0);
 }
 
+function isEquivalent(a, b,ignorableProperties) {
+    // Create arrays of property names
+    var aProps = Object.getOwnPropertyNames(a);
+    var bProps = Object.getOwnPropertyNames(b);
+
+    // If number of properties is different,
+    // objects are not equivalent
+    if (Math.abs(aProps.length - bProps.length) > ignorableProperties.length) {
+        return false;
+    }
+
+    for (var i = 0; i < aProps.length; i++) {
+        var propName = aProps[i];
+        if(ignorableProperties.indexOf(propName)!=-1)continue;
+
+        // If values of same property are not equal,
+        // objects are not equivalent
+         var isObject = (a[propName]!=null && typeof a[propName] === 'object');
+
+        if (!isObject && a[propName] !== b[propName]) {
+            return false;
+        }
+    }
+
+    // If we made it this far, objects
+    // are considered equivalent
+    return true;
+}
+
 var formatDateWithLast = function(date, short, withoutTime, max_time) {
     if (short == undefined)
         short = false;
@@ -167,8 +196,14 @@ var formatDateWithLast = function(date, short, withoutTime, max_time) {
                         return hours + hourName[globalConfig.lang] + endName[globalConfig.lang];
                 } else {
                     var days = Math.ceil(hours / 24);
-                    if (days > 1)
+                    var lastDigitOfDay = days % 10;
+                    //1 день, 2-4,22-24 дні,32-34 5-20 днів,21 день, 
+                    if (days > 1){
+                        if (lastDigitOfDay>=2 && lastDigitOfDay <= 4 && globalConfig.lang=="ua")
+                        return days + " дні" + endName[globalConfig.lang];
+                        else
                         return days + daysName[globalConfig.lang] + endName[globalConfig.lang];
+                    }
                     else
                         return days + dayName[globalConfig.lang] + endName[globalConfig.lang];
                 }
@@ -515,3 +550,51 @@ function readTextFileAndCallFunc(file,callback)
     }
     rawFile.send(null);
 }
+
+        function pasteHtmlAtCaret(html, selectPastedContent) {
+            var sel, range;
+            if (window.getSelection) {
+                // IE9 and non-IE
+                sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    range.deleteContents();
+
+                    // Range.createContextualFragment() would be useful here but is
+                    // only relatively recently standardized and is not supported in
+                    // some browsers (IE9, for one)
+                    var el = document.createElement("div");
+                    el.innerHTML = html;
+                    var frag = document.createDocumentFragment(),
+                        node, lastNode;
+                    while ((node = el.firstChild)) {
+                        lastNode = frag.appendChild(node);
+                    }
+                    var firstNode = frag.firstChild;
+                    range.insertNode(frag);
+
+                    // Preserve the selection
+                    if (lastNode) {
+                        range = range.cloneRange();
+                        range.setStartAfter(lastNode);
+                        if (selectPastedContent) {
+                            range.setStartBefore(firstNode);
+                        } else {
+                            range.collapse(true);
+                        }
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                }
+            } else if ((sel = document.selection) && sel.type != "Control") {
+                // IE < 9
+                var originalRange = sel.createRange();
+                originalRange.collapse(true);
+                sel.createRange().pasteHTML(html);
+                if (selectPastedContent) {
+                    range = sel.createRange();
+                    range.setEndPoint("StartToStart", originalRange);
+                    range.select();
+                }
+            }
+        }

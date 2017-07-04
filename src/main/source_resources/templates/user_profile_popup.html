@@ -1,0 +1,74 @@
+<div class="modal-header">
+    Профіль користувача
+</div>
+<div class="modal-content">
+    <div class="profile_container">
+        <div class="left_block">
+            <div class="user_common_info">
+                <div class="avatar_container" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + $root.validateAvatar(user.avatar) + ')'}"></div>
+            </div>
+            <div class="social_buttons_container">
+                <div class="details">
+                    <div class="full_name">
+                        {{user.firstName}} {{user.secondName}}
+                    </div>
+                    <div class="nick_name">
+                        {{user.nickname}}
+                    </div>
+                </div>
+                <div class="social_button_item"  ng-class="{ 'inactive_button': user.email.length < 1 }">
+                    <a ng-href="mailto:{{user.email}}"><img src="images/profile_email.ico" alt=""></a>
+                </div>
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.facebook.length < 1 }">
+                    <a ng-href="{{user.facebook}}" target="_blank">
+                        <img src="images/profile_facebook.ico" alt="">
+                    </a>
+                </div>
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.skype.length < 1 }">
+                    <a ng-href="skype:{{user.skype}}">
+                        <img src="images/profile_skype.ico" alt="">
+                    </a>
+                </div>
+                <div class="social_button_item" ng-class="{ 'inactive_button': user.twitter.length < 1 }">
+                    <a ng-href="{{user.twitter}}" target="_blank">
+                        <img src="images/profile_twitter.ico" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="right_block">
+            <div class="user_detailed_info">
+                <div ng-if="user.email.length>0" class="user_detail_record">
+                    <div class="key">Email</div>
+                    <div class="value">{{user.email}}</div>
+                </div>
+                <div ng-if="user.phone.length>0" class="user_detail_record">
+                    <div class="key">Телефон</div>
+                    <div class="value">{{user.phone}}</div>
+                </div>
+                <div ng-if="user.address.length>0" class="user_detail_record">
+                    <div class="key">Адреса</div>
+                    <div class="value">{{user.address}}</div>
+                </div>
+                <div ng-if="user.education.length>0" class="user_detail_record">
+                    <div class="key">Освіта</div>
+                    <div class="value">{{user.education}}</div>
+                </div>
+                <div ng-if="user.interests.length>0" class="user_detail_record">
+                    <div class="key">Інтереси</div>
+                    <div class="value">{{user.interests}}</div>
+                </div>
+                <!-- <div class="user_detail_record">
+        <div class="key">Про мене</div>
+        <div class="value">{{user.aboutMy}}</div>
+    </div> -->
+            </div>
+            <div class="user_contact_buttons">
+                <a ng-href="{{$root.baseurl}}/profile/{{user.id}}" target="_blank">
+                    <div class="profile_btn view_profile_btn">Детальніше</div>
+                </a>
+                <div ng-click="$root.goToPrivateDialog(user.id);closeThisDialog()" class="profile_btn chatting_btn">Перейти в чат</div>
+            </div>
+        </div>
+    </div>
+</div>

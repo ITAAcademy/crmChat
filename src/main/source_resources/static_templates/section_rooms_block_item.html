@@ -3,7 +3,7 @@
     <div class="section-hr"></div>
 </div>
 <div class="section_content">
-    <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable" ng-click="clickToRoomEvent(room)">
+    <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable">
         <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
             <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + returnAvatar(room) + ')'}"></div>
             <div class="user_presence_icon" ng-show="isRoomPrivate(room)"></div>
@@ -11,13 +11,12 @@
         </div>
         <div class="text_info">
             <div class="user_name">{{room.string}}</div>
-            <div class="user_presence">{{room.lastMessage == null ? 'Повідмлення відсутні' : stripHtml(room.lastMessage)}}</div>
+            <div class="user_presence">{{room.lastMessage == null ? lgPack.lables.roomListView.noMessage : stripHtml(room.lastMessage)}}</div>
         </div>
         <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
-        <div class="contact_control">
-            <div ng-if="room.nums > 0 &amp;&amp; !createEnabled &amp;&amp; getCurrentRoom().roomId != room.roomId" class="budget">{{room.nums}}</div>
-            <div ng-if="canBeAddedToRoom(room)" class="budget">+</div>
-            <checkbox ng-if="createEnabled" id="el" value="include" callback="toggleForCreatRoom(room)"></checkbox>
+        <div class="contact_control" id="contact_control">
+            <div ng-if="room.nums > 0 &amp;&amp; !isRoomCreateEnabled() &amp;&amp; getCurrentRoom().roomId != room.roomId" class="budget">{{room.nums}}</div>
+            <checkbox id="addUserCheckbox1" ng-if="canBeAddedToRoom(room)" value="include" callback="toggleForAddUser(room)"></checkbox>
         </div>
     </div>
 </div>
