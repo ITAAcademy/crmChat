@@ -47,7 +47,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 console.log('like message: '+messageId);
                 $http.get(serverPrefix + "/chat/like_message/"+messageId).then(function success(response){
                     message.likes += 1;
+                    if (isMessageDisliked(message.id)){
                     message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
+                    }
                  console.log('is like success:');
                     var unlikedIndex = dislikedMessagesIds.indexOf(messageId);
                 if (unlikedIndex!=-1){
@@ -69,7 +71,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                  console.log('like message: '+messageId);
                 $http.get(serverPrefix + "/chat/dislike_message/"+messageId).then(function success(response){
                  message.dislikes += 1;
-                 message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                 if (isMessageLiked(message.id)){
+                    message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                    }
                  console.log('is unlike success');
                   var likedIndex = likedMessagesIds.indexOf(messageId);
                 if (likedIndex!=-1){
