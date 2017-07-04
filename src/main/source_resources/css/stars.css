@@ -269,11 +269,11 @@ Disabled
     height: 25px;
 }
 
-@media only screen and (max-height: 768px) {
+@media only screen and (max-height: 480px) {
     .star.medium,
     .rating.medium .star {
-        width: 19px;
-        height: 19px;
+        width: 18px;
+        height: 18px;
     }
 }
 
