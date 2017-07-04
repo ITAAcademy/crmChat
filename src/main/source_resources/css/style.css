@@ -128,7 +128,7 @@ button:focus {
 }
 
 .consultant_wrapper .material-icons {
-    font-size: 20px;
+    font-size: 15px;
     line-height: 24px;
 }
 
@@ -3345,6 +3345,7 @@ user profile popup
     margin-left: 10px;
     color: #828384;
     cursor: pointer;
+    -webkit-transition: color 0.5s;
     transition: color 0.5s;
 }
 
@@ -3362,7 +3363,7 @@ a.like_button.selected {
 }
 
 .like_wrapper.nolike {
-    /* opacity: 0.2; */
+    opacity: 0.2;
 }
 
 .noselect {
