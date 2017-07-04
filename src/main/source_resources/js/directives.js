@@ -937,7 +937,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                             messageObj.body = response.data;
                             messageObj.author = {
                                 id: 1,
-                                nickName: "server",
+                                nickName: "Server",
                                 avatar: "noname.png"
                             };
                             messageObj.attachedFiles = [];
