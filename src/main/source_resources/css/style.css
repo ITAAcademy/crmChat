@@ -202,6 +202,7 @@ button:focus {
 }
 
 .right_panel #toast-container {
+    top: 30px;
     position: absolute;
 }
 
@@ -1420,6 +1421,7 @@ button:focus {
     overflow-y: auto !important;
     padding-top: 10px;
     padding-bottom: 10px;
+    position: relative;
 }
 
 .message_date_separator {
@@ -2127,6 +2129,9 @@ img.file-extension-preview {
     height: 60px;
 }
 
+img[img-prev]{
+    cursor: pointer;
+}
 .display-file-container {
     display: inline-block;
     text-align: center;
@@ -3364,6 +3369,9 @@ a.like_button.selected {
 
 .like_wrapper.nolike .like_button {
     opacity: 0.2;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -3501,4 +3509,32 @@ a.like_button.selected {
         width: 100% !important;
         height: 100%;
     }
+}
+
+.image-directive-preview-container {
+    position: absolute;
+    top: 35px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    opacity: 0;
+    -webkit-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+    display: none;
+}
+
+.image-directive-preview-container.show {
+    opacity: 1;
+}
+
+.image-directive-preview-container img {
+    position: absolute;
+    min-width: 160px;
+    max-width: 80%;
+    margin: auto;
+    top: -50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
