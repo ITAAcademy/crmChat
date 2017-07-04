@@ -128,7 +128,7 @@ button:focus {
 }
 
 .consultant_wrapper .material-icons {
-    font-size: 20px;
+    font-size: 15px;
     line-height: 24px;
 }
 
@@ -3345,7 +3345,8 @@ user profile popup
     margin-left: 10px;
     color: #828384;
     cursor: pointer;
-    transition: color 0.5s;
+    -webkit-transition: color 0.5s, opacity 0.3s;
+    transition: color 0.5s, opacity 0.3s;
 }
 
 .like_wrapper .like_button:hover {
@@ -3361,8 +3362,13 @@ a.like_button.selected {
     color: #3598db;
 }
 
-.like_wrapper.nolike {
-    /* opacity: 0.2; */
+.like_wrapper.nolike .like_button {
+    opacity: 0.2;
+    user-select: none;
+}
+
+.like_wrapper.nolike .like_button:hover {
+    opacity: 1.0;
 }
 
 .noselect {

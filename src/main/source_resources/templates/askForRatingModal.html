@@ -2,7 +2,12 @@
     Оцініть розмову
 </div>
 <div class="modal-content">
- <div ng-repeat="rating in ratings"><div>{{rating.name}}</div> <div><star-rating ng-class="medium" ng-model="rating.value" stars-count="10"></star-rating></div></div>
+    <div ng-repeat="rating in ratings">
+        <div>{{rating.name}}</div>
+        <div>
+            <star-rating ng-class="medium" ng-model="rating.value" readonly="!addRatingsButtonShowed" stars-count="10"></star-rating>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button ng-show="addRatingsButtonShowed" id="closeButton" type="button" class="btn btn-default modal-btn-left" ng-click="closeThisDialog(); addRatings();" th:text="${lgPack.chatGlobal.save}">Зберегти</button>
