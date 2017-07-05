@@ -27,9 +27,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.*;
@@ -59,6 +56,8 @@ public class UsersOperationsService {
     private BotCategoryService botCategoryService;
     @Autowired
     private UserMessageService userMessageService;
+
+    private final int PARTICIPANTS_INITIAL_COUNT = 5;
 
     private List<UserWaitingForTrainer> usersRequiredTrainers = new ArrayList<>();// RoomId,ChatUserId
 
@@ -524,13 +523,13 @@ public class UsersOperationsService {
         }
 
         simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants",
-                retrieveParticipantsMessage(room_o.getId()));
+                retrieveParticipantsMessage(room_o.getId(),PARTICIPANTS_INITIAL_COUNT));
         simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(),
                 new RoomController.UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
         return true;
     }
 
-    public Set<LoginEvent> GetParticipants(Room room_o) {
+    public Set<LoginEvent> getParticipants(Room room_o,Long lastParticipantId, int count) {
         Set<LoginEvent> userList = new HashSet<>();
         Long intitaId = null;
         String avatar = "noname.png";
@@ -542,10 +541,13 @@ public class UsersOperationsService {
             authorskype = iUser.getSkype();
         }
 
-        LoginEvent currentChatUserLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
-                room_o.getAuthor().getNickName(), avatar,authorskype);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
-        userList.add(currentChatUserLoginEvent);
-        for (ChatUser user : room_o.getUsers()) {
+        if (lastParticipantId == null) {
+            LoginEvent authorLoginEvent = new LoginEvent(intitaId, room_o.getAuthor().getId(),
+                    room_o.getAuthor().getNickName(), avatar, authorskype);// participantRepository.isOnline(room_o.getAuthor().getId().toString())
+            userList.add(authorLoginEvent);
+        }
+        List<ChatUser> users = lastParticipantId == null ? roomService.getChatUsers(room_o,count) : roomService.getChatUsersAfterId(room_o,lastParticipantId,count);
+        for (ChatUser user : users) {
 
             intitaId = null;
             avatar = "noname.png";
@@ -566,11 +568,11 @@ public class UsersOperationsService {
         return userList;
     }
 
-    public Map<String, Object> retrieveParticipantsMessage(Long room) {
+    public Map<String, Object> retrieveParticipantsMessage(Long room,int participantsCount) {
         Room room_o = roomService.getRoom(room);
         HashMap<String, Object> map = new HashMap();
         if (room_o != null)
-            map.put("participants", GetParticipants(room_o));
+            map.put("participants", getParticipants(room_o,null,participantsCount));
         return map;
     }
 
@@ -593,7 +595,7 @@ public class UsersOperationsService {
                 result = new HashMap();
             }
             if (room_o != null)
-                result.put("participants", GetParticipants(room_o));
+                result.put("participants", getParticipants(room_o,null,PARTICIPANTS_INITIAL_COUNT));
 
             for (DeferredResult<String> response : responseBodyQueueForParticipents.get(key)) {
                 // response.setResult("");

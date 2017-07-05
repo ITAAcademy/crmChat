@@ -2,11 +2,9 @@ package com.intita.wschat.web;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.*;
@@ -27,7 +25,6 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -107,6 +104,8 @@ public class RoomController {
 
 	@Autowired private UsersOperationsService usersOperationsService;
 
+	private final int PARTICIPANTS_INITIAL_COUNT = 5;
+
 	public static class ROLE {
 		public static final int ADMIN = 256;
 	}
@@ -134,6 +133,12 @@ public class RoomController {
 		usersOperationsService.createDialogWithBot(roomName, auth);
 	}
 
+	@RequestMapping(value = "/chat/participants/load_other", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent> loadOtherParticipants(@RequestParam Long roomId,@RequestParam(required = false) Long lastParticipant) {
+		Room room = roomService.getRoom(roomId);
+		return usersOperationsService.getParticipants(room,lastParticipant,PARTICIPANTS_INITIAL_COUNT);
+	}
 
 
 	/**********************
@@ -299,7 +304,7 @@ public class RoomController {
 
 
 		HashMap<String, Object> map = new HashMap();
-		map.put("participants", usersOperationsService.GetParticipants(room_o));
+		map.put("participants", usersOperationsService.getParticipants(room_o,null,PARTICIPANTS_INITIAL_COUNT));
 		map.put("messages", messagesDTO);
 		map.put("likedMessagesIds",likedMessages);
 		map.put("dislikedMessagesIds",dislikedMessages);
@@ -341,7 +346,7 @@ public class RoomController {
 
 	@MessageMapping("/{room}/chat.participants")
 	public Map<String, Object> retrieveParticipantsMessage(@DestinationVariable Long room) {
-		return usersOperationsService.retrieveParticipantsMessage(room);
+		return usersOperationsService.retrieveParticipantsMessage(room,PARTICIPANTS_INITIAL_COUNT);
 	}
 
 	@SubscribeMapping("/chat.tenants")

@@ -12,8 +12,9 @@
         </i>
         <div class="block_head_diveded"></div>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
-        <div  ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort" ng-include="'static_templates/participants_block_item.html'">
+    <div id="messagesBlockScroll" class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}"
+    infinite-scroll='$root.loadOtherParticipants()' can-load='!($root.participant_busy)' treshold='70' infinite-scroll-parent="true">
+        <div  ng-if="getChatUserId() != participant.chatUserId" class="block_item" ng-repeat="participant in participants() | orderBy:participantsSort" ng-include="'static_templates/participants_block_item.html'" >
         </div>
     </div>
 </div>

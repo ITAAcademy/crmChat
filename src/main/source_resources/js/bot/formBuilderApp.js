@@ -8,7 +8,7 @@ var formBuilder = angular.module('formBuilder', ['forumBuilder.controllers','for
     'formBuilder.directives'
 ]);
 
-var forumBuilderControllers = angular.module('forumBuilder.controllers', ['monospaced.elastic','ngCookies','angular-nicescroll', 'ngDialog', 'ngTagsInput', 'infinite-scroll', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize','ui.bootstrap','dndLists']);
+var forumBuilderControllers = angular.module('forumBuilder.controllers', ['monospaced.elastic','ngCookies','angular-nicescroll', 'ngDialog', 'ngTagsInput', 'infinite-scroll','infinite-scroll-reversable', 'toaster', 'ngRoute', 'ngAnimate', 'ngResource', 'ngCookies', 'ngSanitize','ui.bootstrap','dndLists']);
 var formBuilderDirectives = angular.module('formBuilder.directives', []);
 forumBuilderControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/", {

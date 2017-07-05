@@ -42,4 +42,11 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
 
 	@Query(value="SELECT count(room) FROM ChatRoom room WHERE room = ?2 AND ((room.author = ?1) OR (?1 IN (SELECT users FROM room.users users)))")
 	Long countByAuthorOrInUsers(ChatUser participant,Room room);
+
+	@Query(value="SELECT r.users FROM ChatRoom r WHERE r = ?1 ")
+	List<ChatUser> getChatUsers(Room room, Pageable pageable);
+
+	@Query(value="SELECT id FROM chat_user WHERE id IN (SELECT users_id FROM chat_room_users WHERE rooms_from_users_id = ?1 AND users_id > ?2 ) LIMIT ?3 ",nativeQuery = true)
+	List<Integer> getChatUsersIdsWherechatUserIdAfter(Long roomId,Long chatUserId, int count);
+
 }

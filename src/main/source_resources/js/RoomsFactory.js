@@ -24,6 +24,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var userAddedToRoom = true;
     var lastNonUserActivity = false;
     $rootScope.message_busy = true;
+    $rootScope.participant_busy = true;
     var likedMessagesIds = [];
    var dislikedMessagesIds = [];
     var rooms = [];
@@ -351,6 +352,7 @@ function discardMessageLike(message){
             }));
         //chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
         $rootScope.message_busy = false;
+        $rootScope.participant_busy = false;
     }
     var addTenantToRoom = function(id) {
         $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).

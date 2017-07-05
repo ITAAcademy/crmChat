@@ -49,6 +49,7 @@ public interface ChatUserRepository extends CrudRepository<ChatUser, Long> {
 	Integer countChatUserByMessagesDateAfter();
 
 
+
 	/*Raw queries
 	//get active users
 	SELECT * FROM `chat_user` AS cu WHERE (cu.id IN (SELECT id FROM chat_user_message AS m WHERE m.author_id=cu.id AND m.date > DATE_SUB(NOW(), INTERVAL 1 DAY) ) )
