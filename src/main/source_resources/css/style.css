@@ -128,7 +128,7 @@ button:focus {
 }
 
 .consultant_wrapper .material-icons {
-    font-size: 15px;
+    font-size: 20px;
     line-height: 24px;
 }
 
@@ -3363,6 +3363,11 @@ user profile popup
     vertical-align: middle;
 }
 
+.like_wrapper .like_button .material-icons {
+        font-size: 15px;
+}
+
+
 a.like_button.selected {
     color: #3598db;
 }
@@ -3374,6 +3379,7 @@ a.like_button.selected {
     -ms-user-select: none;
     user-select: none;
 }
+
 
 .like_wrapper.nolike .like_button:hover {
     opacity: 1.0;
@@ -3404,14 +3410,14 @@ a.like_button.selected {
     }
 }
 
-@media only screen and (max-height: 768px) {
+@media only screen and (max-width: 768px) {
     .items_list_block .block_content {
         min-height: 65px;
         max-height: 65px;
     }
 }
 
-@media only screen and (max-height: 1024px) {
+@media only screen and (max-width: 1024px) {
     .consultant_wrapper {
         padding: 0;
     }
