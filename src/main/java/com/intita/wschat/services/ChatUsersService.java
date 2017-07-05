@@ -122,6 +122,8 @@ public class ChatUsersService {
 	public ArrayList<ChatUser> getUsers(){
 		return (ArrayList<ChatUser>) IteratorUtils.toList(chatUsersRepo.findAll().iterator());
 	}
+
+
 	@Transactional
 	public ChatUser getChatUser(Long id){
 		return chatUsersRepo.findOne(id);
@@ -221,6 +223,7 @@ public class ChatUsersService {
 	public int getActiveUsersCountToday(){
 		return chatUsersRepo.countChatUserByMessagesDateAfter();
 	}
+
 
 	/*public ChatUser getById(Long id){
 		return usersRepo.findOne(id);

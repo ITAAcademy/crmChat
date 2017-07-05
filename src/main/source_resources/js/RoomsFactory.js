@@ -24,6 +24,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var userAddedToRoom = true;
     var lastNonUserActivity = false;
     $rootScope.message_busy = true;
+    $rootScope.participant_busy = true;
     var likedMessagesIds = [];
    var dislikedMessagesIds = [];
     var rooms = [];
@@ -47,7 +48,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 console.log('like message: '+messageId);
                 $http.get(serverPrefix + "/chat/like_message/"+messageId).then(function success(response){
                     message.likes += 1;
+                    if (isMessageDisliked(message.id)){
                     message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
+                    }
                  console.log('is like success:');
                     var unlikedIndex = dislikedMessagesIds.indexOf(messageId);
                 if (unlikedIndex!=-1){
@@ -69,7 +72,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                  console.log('like message: '+messageId);
                 $http.get(serverPrefix + "/chat/dislike_message/"+messageId).then(function success(response){
                  message.dislikes += 1;
-                 message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                 if (isMessageLiked(message.id)){
+                    message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                    }
                  console.log('is unlike success');
                   var likedIndex = likedMessagesIds.indexOf(messageId);
                 if (likedIndex!=-1){
@@ -347,6 +352,7 @@ function discardMessageLike(message){
             }));
         //chatSocket.send("/topic/{0}chat.participants".format(room), {}, JSON.stringify({}));
         $rootScope.message_busy = false;
+        $rootScope.participant_busy = false;
     }
     var addTenantToRoom = function(id) {
         $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).

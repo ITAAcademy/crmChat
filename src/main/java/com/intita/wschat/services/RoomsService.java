@@ -652,6 +652,20 @@ public class RoomsService {
 		Long count = roomRepo.countByAuthorOrInUsers(participant,room);
 		return count > 0;
 	}
+	public List<ChatUser> getChatUsers(Room room,int count){
+		List<ChatUser> users = roomRepo.getChatUsers(room,new PageRequest(0,count));
+		return users;
+	}
+
+	public List<ChatUser> getChatUsersAfterId(Room room,Long id,int count) {
+		List<Integer> usersIds = roomRepo.getChatUsersIdsWherechatUserIdAfter(room.getId(),id,count);
+		List<Long> idsLong = new ArrayList<Long>();
+		for (Integer userId : usersIds) {
+			idsLong.add(new Long(userId));
+		}
+		List<ChatUser> users = chatUserService.getUsers(idsLong);
+		return users;
+	}
 
 
 }

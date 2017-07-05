@@ -557,6 +557,63 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             });
         }
 
+         $rootScope.loadOtherParticipants = function() {
+            if ($rootScope.participant_busy || RoomsFactory.getCurrentRoom() == null)
+                return;
+            var roomId = RoomsFactory.getCurrentRoom().roomId;
+            var participants = RoomsFactory.getParticipants();
+
+            if(roomId == null) return null;
+
+            var roomIdParam = roomId == null ? "" : "roomId=" + roomId;
+            var lastParticipantId = null;
+
+            participants.forEach(function(item,i,arr) {
+                if (lastParticipantId==null) {
+                    lastParticipantId = item.chatUserId;
+                }
+                else {
+                    if (item.chatUserId > lastParticipantId) {
+                        lastParticipantId = item.chatUserId;
+                    }
+                }
+            });
+
+
+            var lastParticipantIdParam = lastParticipantId == null ? "" : "lastParticipant="+lastParticipantId;
+
+
+            var urlTemplate = "/chat/participants/load_other";
+
+            urlTemplate = urlTemplate + '?' + roomIdParam;
+
+            if (lastParticipantId!=null) {
+                urlTemplate = urlTemplate + '&' + lastParticipantIdParam;
+            }
+
+ 
+            $rootScope.participant_busy = true;
+
+            $http.get(serverPrefix+urlTemplate). //  messages[0]). //
+            success(function(data, status, headers, config) {
+
+                var objDiv = document.getElementById("messagesBlockScroll");
+                var lastHeight = objDiv.scrollHeight;
+
+                if (data == "")
+                    return;
+
+                for (var i = 0; i < data.length; i++) {
+                    participants.push(data[i]);
+                }
+                $rootScope.participant_busy = false;
+            }).
+            error(function(data, status, headers, config) {
+                if (status == "404" || status == "405") ChannelFactory.changeLocation("/");
+                //messageError("no other message");
+            });
+        }
+
 
 
         $rootScope.$on('MessageAreaScrollDownEvent', function() {

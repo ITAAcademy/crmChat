@@ -538,7 +538,7 @@ button:focus {
 .items_list_block .block_content.unfolded {
     max-height: 320px;
     /* padding-right: 0px; */
-    /* overflow-y: scroll; */
+     overflow-y: scroll; 
     /* margin-right: 0px; */
 }
 

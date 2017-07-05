@@ -35,7 +35,7 @@
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
-        <div class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}">
+        <div ng-if="message.author.id != 1" class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}">
             <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">
                 <i class="material-icons">thumb_up</i>
                 <span>{{message.likes}}</span>
