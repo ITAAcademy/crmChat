@@ -269,7 +269,7 @@ Disabled
     height: 25px;
 }
 
-@media only screen and (max-height: 480px) {
+@media only screen and (max-width: 480px) {
     .star.medium,
     .rating.medium .star {
         width: 18px;

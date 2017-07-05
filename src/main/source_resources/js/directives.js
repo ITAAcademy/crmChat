@@ -1475,25 +1475,6 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
         'zip'
     ];
 
-    var imageExtensions = ['png', 'gif', 'jpg'];
-    var getFileExtensionByName = function(name) {
-        return name.split('.').pop();
-    }
-    var isExtensionSupported = function(extension) {
-        if (supportedExtensions.indexOf(extension.toLowerCase()) != -1) return true;
-        else return false;
-    }
-    var isImageExtensions = function(extension) {
-        if (imageExtensions.indexOf(extension.toLowerCase()) != -1) return true;
-        else return false;
-    }
-    var getImageByExtension = function(ext, link) {
-        var lowerCaseExtension = ext.toLowerCase();
-        var urlTemplate = "images/svg-file-icons/{0}.svg";
-        if (isImageExtensions(lowerCaseExtension)) return link;
-        if (isExtensionSupported(lowerCaseExtension)) return urlTemplate.format(lowerCaseExtension);
-        else return urlTemplate.format('nopreview');
-    }
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/file_miniature.html',
@@ -1507,16 +1488,26 @@ function fileMiniature($http, RoomsFactory, ChannelFactory, $parse) {
             //$scope.fileIndex = $parse(attributes.fileIndex)($scope);
             //use only name (not link)
             var nameOnly = typeof attributes.nameonly == "undefined" || attributes.nameonly == 'false' ? false : true;
-            var derandomaziedName = nameOnly ? link : $scope.getNameFromRandomizedUrl(link);
+            var derandomaziedName = nameOnly ? link : getNameFromRandomizedUrl(link);
 
             var fileName = $parse(attributes.name)($scope);
             if (fileName != undefined) {
                 derandomaziedName = fileName;
             }
-
+            var getImageByExtension = function(ext, link) {
+                var lowerCaseExtension = ext.toLowerCase();
+                var urlTemplate = "images/svg-file-icons/{0}.svg";
+                if (isImageExtensions(lowerCaseExtension)) return link;
+                if (isExtensionSupported(lowerCaseExtension)) return urlTemplate.format(lowerCaseExtension);
+                else return urlTemplate.format('nopreview');
+            }
+            var isExtensionSupported = function(extension) {
+                if (supportedExtensions.indexOf(extension.toLowerCase()) != -1) return true;
+                else return false;
+            }
             var extension = getFileExtensionByName(derandomaziedName);
             $scope.fileName = derandomaziedName;
-            if (!nameOnly)
+            if (!nameOnly && isImageExtensions(extension) == false)
                 $scope.link = link;
             $scope.imageSrc = getImageByExtension(extension, link);
         }
@@ -1726,6 +1717,54 @@ function audioVideoRP($http, RoomsFactory) { //avpr - Audio/Video player/recorde
 }
 
 angular.module('springChat.directives').directive('audioVideoRP', ['$http', 'RoomsFactory', audioVideoRP]); //
+
+
+
+
+angular.module('springChat.directives').directive('imgPrev', ['$http', function($http) { //avpr - Audio/Video player/recorder
+    return {
+        restrict: 'EA',
+        link: function($scope, element, attributes) {
+
+            var link = attributes.src;
+            if (link == undefined)
+                link = attributes.ngSrc;
+
+            var nameOnly = typeof attributes.nameonly == "undefined" || attributes.nameonly == 'false' ? false : true;
+            var derandomaziedName = nameOnly ? link : getNameFromRandomizedUrl(link);
+            var ext = getFileExtensionByName(derandomaziedName);
+            if (isImageExtensions(ext)) {
+                $(element[0]).viewer({
+                    navbar: false,
+                    title: false,
+                    toolbar: false,
+                    tooltop: false,
+                    shown: function() {
+                        var viewer = $(this);
+                        $(viewer.parent().find(".viewer-canvas")).click(function(event) {
+                            if (event.currentTarget != event.target)
+                                return;
+                            viewer.viewer('hide');
+                        })
+                    }
+                });
+
+                element[0].onclick = function(event) {
+                    event.preventDefault();
+
+                    /*
+                    var elm = $(".image-directive-preview-container");
+                    var img = $(".image-directive-preview-container img");
+                    elm.show();
+                    img.viewer();
+                    img.attr("src", link);
+                    setTimeout(function() { elm.addClass("show"); }, 0);
+*/
+                }
+            }
+        }
+    }
+}]); //
 
 angular.module('springChat.directives').directive("skypeUi", ['$parse', function($parse) {
     return {
