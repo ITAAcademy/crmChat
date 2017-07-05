@@ -631,11 +631,10 @@ public class UsersOperationsService {
                 roomService);// Control room from LP
         if (struct == null)
             return null;
-
+        message.setDate(new Date());
         ChatUser chatUser = chatPrincipal.getChatUser(); // chatUsersService.isMyRoom(roomStr,
         // principal.getName());
         if (chatUser == null)
-
             return null;
 
         Room o_room = struct.getRoom();
