@@ -21,6 +21,7 @@ import com.intita.wschat.web.RoomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -37,6 +38,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by roma on 27.06.17.
  */
 @Service
+@Lazy
 public class UsersOperationsService {
 
     private final static Logger log = LoggerFactory.getLogger(RoomController.class);

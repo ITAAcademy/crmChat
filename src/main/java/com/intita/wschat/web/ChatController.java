@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -137,6 +138,7 @@ public class ChatController {
 	@Autowired RoomController roomController;
 
 	@Autowired
+	@Lazy
 	UsersOperationsService usersOperationsService;
 
 	@Value("${crmchat.send_unreaded_messages_email:true}")

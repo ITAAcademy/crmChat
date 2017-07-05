@@ -16,6 +16,7 @@ import org.hibernate.bytecode.buildtime.spi.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -102,7 +103,9 @@ public class RoomController {
 	@Autowired private DTOMapper dtoMapper;
 	@Autowired private ChatLikeStatusService chatLikeStatusService;
 
-	@Autowired private UsersOperationsService usersOperationsService;
+	@Autowired
+	@Lazy
+	private UsersOperationsService usersOperationsService;
 
 	private final int PARTICIPANTS_INITIAL_COUNT = 5;
 

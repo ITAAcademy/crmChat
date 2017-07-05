@@ -533,7 +533,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 break;
             }
         }
-        if (notificationIndexToRemove != null) notifications.split(notificationIndexToRemove, 1);
+        if (notificationIndexToRemove != null) notifications.splice(notificationIndexToRemove, 1);
     }
 
 

@@ -11,6 +11,7 @@ import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class RoleGroupsController {
 	@PostConstruct
 	private void autoUpdate(){
 		if (autoUpdateRoles)
-		updateRoomsForAllRoles(null,false);
+		roomsService.updateRoomsForAllRoles(null,false);
 	}
 
 	private void updateRoomForRole(UserRole role,boolean notifyUsers){
@@ -74,7 +75,8 @@ public class RoleGroupsController {
 	@ResponseBody
 	@CrossOrigin(maxAge = 3600, origins = "http://localhost:80")
 	@ServerAccess
-	private boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
+	@Async
+	private Boolean updateRoomsForAllRolesRequest(HttpServletRequest request, Authentication auth, @RequestParam(name="table",required=false) String tableName){
 		ChatUser cUser = null;
 		User iUser = null;
 		if(auth != null)
@@ -86,28 +88,11 @@ public class RoleGroupsController {
 		String name = request.getRemoteHost();
 		boolean intitaSide = request.getRemoteHost().equals("127.0.0.1"); 
 		if(intitaSide || usersService.checkRole(iUser, UserRole.ADMIN) ) {
-			return updateRoomsForAllRoles(tableName,true);
+			return roomsService.updateRoomsForAllRoles(tableName,true);
 		}
 		return false;
 	}
-	
-	private boolean updateRoomsForAllRoles(String tableName,boolean notifyUsers){
-		if(tableName==null) {
-			roomsService.updateRoomsForAllRoles(notifyUsers);
-		}
-		else {
-			try {
-				boolean updated = roomsService.updateRoomForRoleTable(tableName,notifyUsers);
-				if (!updated) return false;
-			}
-			catch(Exception e){
-				//e.printStackTrace();
-				return false;
-			}
-		}
 
-		return true;
-	}
 	
 
 

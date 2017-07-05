@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.cors.CorsConfiguration;
@@ -49,6 +50,7 @@ import com.intita.ws.WebSocketTraceChannelInterceptorAutoConfiguration;
 @EnableAutoConfiguration
 @Configuration
 @EnableCaching
+@EnableAsync
 @Import({WebSocketTraceChannelInterceptor.class, WebSocketTraceChannelInterceptorAutoConfiguration.class})
 //@ComponentScan("org.springframework.boot.actuate.trace")
 public class Application extends SpringBootServletInitializer  implements AsyncConfigurer  {

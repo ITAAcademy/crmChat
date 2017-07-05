@@ -17,10 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +46,9 @@ public class RoomsService {
 
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
 	@Autowired private RoomRolesRepository roomRolesRepository;
-	@Autowired private UsersOperationsService usersOperationsService;
+	@Autowired
+	@Lazy
+	private UsersOperationsService usersOperationsService;
 
 	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
 	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
@@ -612,6 +616,25 @@ public class RoomsService {
 		catch(Exception e){
 
 		}
+	}
+
+	@Async
+	public Boolean updateRoomsForAllRoles(String tableName,boolean notifyUsers){
+		if(tableName==null) {
+			updateRoomsForAllRoles(notifyUsers);
+		}
+		else {
+			try {
+				boolean updated = updateRoomForRoleTable(tableName,notifyUsers);
+				if (!updated) return false;
+			}
+			catch(Exception e){
+				//e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Transactional

@@ -16,6 +16,7 @@ import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.services.common.UsersOperationsService;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.MessagingException;
@@ -52,7 +53,9 @@ public class ConsultationsService {
 	@Autowired private ConsultationResultRepository chatConsultationResultRepository;
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired private ChatUserLastRoomDateService chatLastRoomDateService;
-	@Autowired private UsersOperationsService usersOperationsService;
+	@Autowired
+	@Lazy
+	private UsersOperationsService usersOperationsService;
 
 	@PostConstruct
 	@Transactional

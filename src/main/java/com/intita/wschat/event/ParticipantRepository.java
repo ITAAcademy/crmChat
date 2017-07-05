@@ -8,6 +8,7 @@ import com.intita.wschat.services.common.UsersOperationsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.intita.wschat.domain.interfaces.IPresentOnForum;
@@ -35,6 +36,7 @@ public class ParticipantRepository {
 	private final static Logger log = LoggerFactory.getLogger(ParticipantRepository.class);
 	private ConcurrentHashMap<Long,IPresentOnForum> activeSessions = new ConcurrentHashMap<Long,IPresentOnForum>();
 	@Autowired
+	@Lazy
 	UsersOperationsService usersOperationsService;
 	//put null to distinguish WS from LP sessions. We need no last action time for Web Sockets
 	public void addParticipantPresenceByConnections(Long chatId) {

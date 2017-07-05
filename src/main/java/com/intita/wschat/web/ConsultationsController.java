@@ -20,6 +20,7 @@ import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.services.common.UsersOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,7 +111,9 @@ public class ConsultationsController {
 	@Autowired private CommonController commonController;
 	@Autowired private RoomsService chatRoomsService;
 
-	@Autowired private UsersOperationsService usersOperationsService;
+	@Autowired
+	@Lazy
+	private UsersOperationsService usersOperationsService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
