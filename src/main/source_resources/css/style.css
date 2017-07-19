@@ -22,6 +22,8 @@ body {
     overflow: hidden;
     box-sizing: border-box;
     font-family: "MyriadPro2";
+    border: 0px;
+    margin: 0px;
 }
 
 body.frame .ngdialog-overlay {
@@ -221,6 +223,7 @@ button:focus {
 }
 
 .head {
+    height: 35px;
     min-height: 35px;
     background-color: #4b75a4;
     position: relative;
@@ -538,7 +541,7 @@ button:focus {
 .items_list_block .block_content.unfolded {
     max-height: 320px;
     /* padding-right: 0px; */
-     overflow-y: scroll; 
+    overflow-y: scroll;
     /* margin-right: 0px; */
 }
 
@@ -1227,12 +1230,12 @@ button:focus {
     position: absolute;
     /* left: 0; */
     width: 100%;
-    height: 100%;
+  /*  height: 100%;*/
     right: 0;
     pointer-events: none;
 }
 
-.right_panel .tools_dropdown_container > * {
+.right_panel .tools_dropdown_container>* {
     pointer-events: all;
 }
 
@@ -1464,7 +1467,7 @@ button:focus {
     margin-top: 39px
 }
 
-.user_message > * {
+.user_message>* {
     vertical-align: top
 }
 
@@ -1637,14 +1640,14 @@ button:focus {
     padding: 0 3px;
 }
 
-.controls_area a > i,
-.controls_area button > i {
+.controls_area a>i,
+.controls_area button>i {
     color: #8b8b8b;
     font-size: 24px !important;
 }
 
-.controls_area a:hover > i,
-.controls_area button:hover > i {
+.controls_area a:hover>i,
+.controls_area button:hover>i {
     color: #4b75a4;
     font-size: 22px;
 }
@@ -1729,7 +1732,7 @@ button:focus {
     z-index: 2;
 }
 
-.tools_dropdown_container > #tools_dropdown.shown,
+.tools_dropdown_container>#tools_dropdown.shown,
 #attaches_dropdown.shown {
     display: block;
     z-index: 2;
@@ -2129,9 +2132,10 @@ img.file-extension-preview {
     height: 60px;
 }
 
-img[img-prev]{
+img[img-prev] {
     cursor: pointer;
 }
+
 .display-file-container {
     display: inline-block;
     text-align: center;
@@ -2649,6 +2653,7 @@ span.rooms_search_loader img {
 }
 
 
+
 /**
    Coded by /u/j0be in scss.
    See scss source here -> http://codepen.io/j0be/pen/MKRVyN
@@ -3164,6 +3169,7 @@ span.rooms_search_loader img {
 }
 
 
+
 /*
 user profile popup
 */
@@ -3358,13 +3364,13 @@ user profile popup
     opacity: 0.8;
 }
 
-.like_wrapper .like_button > * {
+.like_wrapper .like_button>* {
     display: inline-block;
     vertical-align: middle;
 }
 
 .like_wrapper .like_button .material-icons {
-        font-size: 15px;
+    font-size: 15px;
 }
 
 
@@ -3399,6 +3405,7 @@ a.like_button.selected {
     /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+
 
 
 /*user profile popup end*/
