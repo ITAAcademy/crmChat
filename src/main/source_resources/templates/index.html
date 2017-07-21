@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/ngDialog-theme-default.min.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="lib/jquery-emojiarea/jquery.emojiarea.css"/>
+    <link rel="stylesheet" href="lib/scrollbars/ng-tiny-scrollbar.min.css"/>
     <link rel="stylesheet" href="css/viewer.min.css"/>
     <meta name="viewport" content="width=device-width" />
 </head>
@@ -115,7 +116,9 @@
                 </div>
                 <hr/>
             </div>
-            <div class="messages_output_area messages_wrapper scroll" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!($root.message_busy || $root.loadingSubscribesAndMessages)' treshold='100' infinite-scroll-invert='true' messages-block="true"></div>
+            <div class="messages_output_area messages_wrapper scroll" scrollbar="true" id="messagesScroll" infinite-scroll='$root.loadOtherMessages()' can-load='!($root.message_busy || $root.loadingSubscribesAndMessages)' treshold='100' infinite-scroll-invert='true' >
+                <div messages-block="true"></div>
+            </div>
             <!--It's message displayer-->
             <div ng-show="isMessageInputAvailable()" class="messages_input_area" message-input="true"></div>
         </div>
@@ -140,14 +143,15 @@
     <script src="lib/jquery-emojiarea/jquery.emojiarea.js"></script>
     <script src="lib/jquery-emojiarea/packs/basic/emojis.js"></script>
     <script src="lib/viewer.min.js"></script>
-     <script src="lib/linkify/linkify.min.js"></script>
-     <script src="lib/linkify/linkify-string.min.js"></script>
+    <script src="lib/linkify/linkify.min.js"></script>
+    <script src="lib/linkify/linkify-string.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-cookies.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-touch.js"></script>
+    <script src="lib/scrollbars/ng-tiny-scrollbar.min.js"</script>
     <script src="lib/angularjs-toaster/toaster.js"></script>
     <script src="lib/angular-tooltips/angular-tooltips.js"></script>
     <script src="lib/promise.min.js"></script>
