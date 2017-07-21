@@ -79,7 +79,7 @@
         </div>
         <div class="image-directive-preview-container"><img src="https://localhost:8080/crmChat/download_file?owner_id=452&room_id=1084&file_name=Screenshot_8.pngdhfce2lx4dg1lp1"/></div>
         <div class="right_panel">
-            <div>
+            <div class="head">
                 <toaster-container toaster-options="{'time-out': 1000, 'close-button':true}"></toaster-container>
                 <div ng-if="!currentRoomIsNull()" class="tools_area">
                     <button tooltip="Пошук у повідомленнях" title-direction="bottom-left" class="material_button" ng-click="enableMessagesSearch($event)" ng-show="!isRoomChangeModeEnabled &amp;&amp; !messageSearchEnabled &amp;&amp; !currentRoomIsNull()"><i class="material-icons">search</i></button>

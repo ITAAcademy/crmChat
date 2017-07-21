@@ -203,9 +203,14 @@ button:focus {
     flex-direction: column;
 }
 
-.right_panel #toast-container {
-    top: 30px;
+.right_panel .head {
+    position: relative;
+}
+
+.right_panel .head #toast-container {
+
     position: absolute;
+    top: 30px;
 }
 
 #menu {
@@ -222,7 +227,7 @@ button:focus {
     cursor: pointer;
 }
 
-.head {
+.consultant_wrapper >.head {
     height: 35px;
     min-height: 35px;
     background-color: #4b75a4;
@@ -243,7 +248,7 @@ button:focus {
     font-style: normal;
 }
 
-.head .state {
+.consultant_wrapper > .head .state {
     position: absolute;
     top: 0px;
 }
@@ -466,7 +471,7 @@ button:focus {
     font-size: 10px;
 }
 
-.head .logo {
+.consultant_wrapper > .head .logo {
     position: absolute;
     left: 20px;
     color: white;
@@ -480,7 +485,7 @@ button:focus {
     font-weight: 900 !important;
 }
 
-.head .message_notification .text {
+.consultant_wrapper >.head .message_notification .text {
     font-size: 10px;
     /* position: relative; */
     /* left:7px; */
@@ -488,7 +493,7 @@ button:focus {
     text-align: center;
 }
 
-.head .state {
+.consultant_wrapper >.head .state {
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -1230,7 +1235,7 @@ button:focus {
     position: absolute;
     /* left: 0; */
     width: 100%;
-  /*  height: 100%;*/
+    /*  height: 100%;*/
     right: 0;
     pointer-events: none;
 }
@@ -2654,6 +2659,7 @@ span.rooms_search_loader img {
 
 
 
+
 /**
    Coded by /u/j0be in scss.
    See scss source here -> http://codepen.io/j0be/pen/MKRVyN
@@ -3116,17 +3122,18 @@ span.rooms_search_loader img {
     .messages_output_area .answer.left .message_author_avatar {
         position: absolute;
         left: 25px;
+        z-index: 1;
     }
     .messages_output_area .answer.left .message_details:before,
     .messages_output_area .answer.right .message_details:before {
         display: none;
     }
-    .head .logo {
+    .consultant_wrapper >.head .logo {
         position: absolute;
         left: 45px;
         display: none;
     }
-    .head .logo-text {
+    .consultant_wrapper >.head .logo-text {
         /* left: 70px; */
     }
     .send_button {
@@ -3167,6 +3174,7 @@ span.rooms_search_loader img {
     color: #1e8eda;
     text-decoration: none;
 }
+
 
 
 
@@ -3408,6 +3416,7 @@ a.like_button.selected {
 
 
 
+
 /*user profile popup end*/
 
 @media only screen and (min-width:1350px) {
@@ -3431,7 +3440,7 @@ a.like_button.selected {
 }
 
 @media only screen and (max-width: 300px) {
-    body.frame .head .logo {
+    body.frame .consultant_wrapper >.head .logo {
         position: absolute;
         left: 15px;
         background-color: #4b75a4;
