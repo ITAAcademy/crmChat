@@ -9,7 +9,10 @@ import javax.annotation.PostConstruct;
 import javax.mail.internet.MimeMessage;
 
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.web.CommonController;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -31,6 +34,8 @@ public class IntitaMailService {
 	
 	@Autowired private UserMessageService userMessageService;
 	@Autowired private ConfigParamService configParamService;
+
+	private final static Logger log = LoggerFactory.getLogger(CommonController.class);
 	
 	 @Value("${chat.mail.username}")
 	 String mail_userName;
@@ -70,6 +75,7 @@ public class IntitaMailService {
 	}
 	public void sendUnreadedMessageToIntitaUserFrom24Hours(User to) throws Exception{
 		Map<Room, List<UserMessageDTO>> unreadedRoomMessages = userMessageService.getAllUnreadedMessagesFrom24Hours(to.getChatUser());
+		log.info(to.getEmail()+"  messages_count: "+unreadedRoomMessages.size());
 		if(unreadedRoomMessages.size() == 0)
 			return;
 		mailSender.send(createPreparatorMessages(to,unreadedRoomMessages));
