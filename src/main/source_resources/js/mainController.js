@@ -641,12 +641,12 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
                                 msgAudioNotify.play();
-                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.author.nickName;
+                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
                             if (room.string == msg.username)
                                 title = "Нове повідомлення від " + messagesMap[room.roomId].username;
                             Notify(msg.body, title);
                         }
-                        toaster.pop('note', title, msg.body, 6000);
+                        toaster.pop('note', title, msg.message, 6000);
                         break; // stop loop
                     }
                 }
