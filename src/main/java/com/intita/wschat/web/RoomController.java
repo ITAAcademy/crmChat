@@ -107,7 +107,7 @@ public class RoomController {
 	@Lazy
 	private UsersOperationsService usersOperationsService;
 
-	private final int PARTICIPANTS_INITIAL_COUNT = 5;
+	private final int PARTICIPANTS_INITIAL_COUNT = 10;
 
 	public static class ROLE {
 		public static final int ADMIN = 256;
