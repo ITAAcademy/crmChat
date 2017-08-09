@@ -630,9 +630,9 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory, StateFa
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$http', 'RoomsFactory', 'UserFactory', messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory', messagesBlock]);
 
-function messagesBlock($http, RoomsFactory, UserFactory) {
+function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
@@ -644,7 +644,66 @@ function messagesBlock($http, RoomsFactory, UserFactory) {
             $scope.isMessageDisliked = RoomsFactory.isMessageDisliked;
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
-            var nice = $(".scroll");
+            /*
+                Likes
+            */
+            let lastChoise = {};
+            let hideWhoLikeOrDisLikeCancel = null;
+            let hideWhoLikeOrDisLikeFunc = function() {
+                $('#who-like-' + lastChoise.msg.id).removeClass('active');
+            }
+            let showWhoLikeOrDisLikeFunc = function() {
+                $('#who-like-' + lastChoise.msg.id).addClass('active');
+            }
+
+            let prepareForShowWhoLikeOrDisLikeFunc = function(type, message) {
+                if (lastChoise.type == type && lastChoise.msg == message) {
+                    showWhoLikeOrDisLikeFunc();
+                    return false;
+                }
+                $scope.whoLikeUsers = [];
+                if (hideWhoLikeOrDisLikeCancel != null) {
+                    hideWhoLikeOrDisLikeFunc();
+                    $timeout.cancel(hideWhoLikeOrDisLikeCancel);
+                    hideWhoLikeOrDisLikeCancel = null;
+                }
+                lastChoise.type = type;
+                lastChoise.msg = message;
+
+                showWhoLikeOrDisLikeFunc();
+                return true;
+            };
+
+            $scope.whoLikeUsers = [];
+
+            $scope.showWhoLike = function($event, message) {
+                if (message.likes == 0)
+                    return;
+                $event.stopPropagation();
+                if (prepareForShowWhoLikeOrDisLikeFunc('like', message))
+                    RoomsFactory.getWhoLikesByMessage(message).then(function(res) {
+                        $scope.whoLikeUsers = res.data;
+                    }, function(res) {
+                        hideWhoLikeOrDisLikeFunc();
+                    })
+
+            }
+
+            $scope.showWhoDisLike = function($event, message) {
+                if (message.dislikes == 0)
+                    return;
+                $event.stopPropagation();
+                if (prepareForShowWhoLikeOrDisLikeFunc('disLike', message))
+                    RoomsFactory.getWhoDisLikesByMessage(message).then(function(res) {
+                        $scope.whoLikeUsers = res.data;
+                    }, function(res) {
+                        hideWhoLikeOrDisLikeFunc();
+                    })
+            }
+
+            $scope.hideWhoLikeOrDisLike = function() {
+                hideWhoLikeOrDisLikeCancel = $timeout(hideWhoLikeOrDisLikeFunc, 500);
+            };
         }
 
     };
@@ -675,7 +734,6 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             //DOM has finished rendering
             $('#message_input_editable').on('paste', function(e) {
                 e.preventDefault();
-                debugger;
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
                 //var escapedHtml = htmlEscape(text);
 
@@ -929,31 +987,31 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 $scope.askForRatingEnabled = false;
                 loadRatings().then(function(response) {
 
-                        $scope.ratings = response.data;
-                        for (var i = 0; i < $scope.ratings.length; i++) {
-                            $scope.ratings[i].value = 10;
-                        }
-                        $http.get('askForRatingModal.html').then(function(response) {
-                            var messageObj = {};
-                            messageObj.body = response.data;
-                            messageObj.author = {
-                                id: 1,
-                                nickName: "Server",
-                                avatar: "noname.png"
-                            };
-                            messageObj.attachedFiles = [];
-                            messageObj.date = new Date().getTime();
-                            RoomsFactory.calcPositionPush(messageObj);
-                        }, function(error) {});
+                    $scope.ratings = response.data;
+                    for (var i = 0; i < $scope.ratings.length; i++) {
+                        $scope.ratings[i].value = 10;
+                    }
+                    $http.get('askForRatingModal.html').then(function(response) {
+                        var messageObj = {};
+                        messageObj.body = response.data;
+                        messageObj.author = {
+                            id: 1,
+                            nickName: "Server",
+                            avatar: "noname.png"
+                        };
+                        messageObj.attachedFiles = [];
+                        messageObj.date = new Date().getTime();
+                        RoomsFactory.calcPositionPush(messageObj);
+                    }, function(error) {});
 
-                    }, function() {})
-                    /*loadRatings().then(function(response) {
-                        $scope.ratings = response.data;
-                        ngDialog.open({
-                            template: 'askForRatingModal.html',
-                            scope: $scope
-                        });
-                    }, function() {})*/
+                }, function() {})
+                /*loadRatings().then(function(response) {
+                    $scope.ratings = response.data;
+                    ngDialog.open({
+                        template: 'askForRatingModal.html',
+                        scope: $scope
+                    });
+                }, function() {})*/
 
             }
 
@@ -1289,21 +1347,21 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(opponentUserId);
     };
     $scope.canBeUserAddedToRoom = function(userId) {
-            var currentUserId = UserFactory.getChatUserId();
-            if (userId == null || userId == currentUserId) return false;
-            if (StateFactory.isCreateRoomBlockMode()) return true;
-            return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
-        }
-        /* $scope.stripHtml = function(html)
-         {
-             var tmp = document.createElement("DIV");
-             tmp.innerHTML = html;
-             return tmp.textContent || tmp.innerText || "";
-         }*/
-        /****
-         * 1 - default
-         * 2 - add new user
-         */
+        var currentUserId = UserFactory.getChatUserId();
+        if (userId == null || userId == currentUserId) return false;
+        if (StateFactory.isCreateRoomBlockMode()) return true;
+        return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
+    }
+    /* $scope.stripHtml = function(html)
+     {
+         var tmp = document.createElement("DIV");
+         tmp.innerHTML = html;
+         return tmp.textContent || tmp.innerText || "";
+     }*/
+    /****
+     * 1 - default
+     * 2 - add new user
+     */
     initRoomsFunctions($scope, ChannelFactory, UserFactory, RoomsFactory, StateFactory);
 
     var roomsBlockModeChangeSubscription;

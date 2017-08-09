@@ -61,12 +61,16 @@ public class ChatLikeStatus {
     @Id
     @GeneratedValue
     private Long id;
+    
     @ManyToOne
     @JoinColumn(name = "message_id")
     private UserMessage message;
+    
     private Date date;
+    
     @Column(name="like_state")
     private LikeState likeState;
+    
     @ManyToOne
     @JoinColumn(name = "chat_user_id")
     private ChatUser chatUser;

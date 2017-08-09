@@ -2,11 +2,13 @@ package com.intita.wschat.web;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -22,9 +24,11 @@ import javax.persistence.PersistenceContext;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.enums.LikeState;
 import com.intita.wschat.services.*;
 import com.intita.wschat.services.common.UsersOperationsService;
 import com.intita.wschat.util.HtmlUtility;
@@ -490,9 +494,32 @@ public class ChatController {
 		return userList;
 
 	}
-
+	/*
+	 * LIKES
+	 */
 
 	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		List<LoginEvent> res = new LinkedList<>();
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE);
+		return dtoMapper.map(listChatUsers);
+	}
+	
+
+	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<ChatUserDTO> getDisLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		List<LoginEvent> res = new LinkedList<>();
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.DISLIKE);
+		return dtoMapper.map(listChatUsers);
+	}
+	
+	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean likeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
@@ -503,7 +530,8 @@ public class ChatController {
 		}
 		return true;
 	}
-	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.GET)
+	
+	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean dislikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
@@ -515,7 +543,7 @@ public class ChatController {
 		return true;
 	}
 
-	@RequestMapping(value = "/chat/discard_like_message/{messageId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/chat/discard_like_message/{messageId}", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean discardLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();

@@ -2,11 +2,19 @@ package com.intita.wschat.repositories;
 
 import com.intita.wschat.enums.LikeState;
 import com.intita.wschat.models.ChatLikeStatus;
+import com.intita.wschat.models.ChatUser;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,6 +32,9 @@ public interface ChatLikeStatusRepository extends CrudRepository<ChatLikeStatus,
 
     @Query("SELECT status FROM chat_like_status status WHERE status.message.id = ?1 AND status.chatUser.id = ?2 ")
     public ChatLikeStatus getChatLikeByMessageAndChatUser(Long messageId, Long chatUserId);
+    
+    @Query("SELECT st.chatUser FROM chat_like_status st WHERE st.message.id = ?1 AND st.likeState = ?2 ")
+    public List<ChatUser> getUsersWhoCheck(Long messageId, LikeState likeState, Pageable page);
 
     @Query("SELECT status.message.id FROM chat_like_status status WHERE status.message.room.id = ?1 AND status.chatUser.id = ?2 AND status.likeState = ?3")
     public Set<Long> getMessageIdsByLikeState(Long roomId,Long userId,LikeState state);

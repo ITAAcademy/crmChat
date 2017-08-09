@@ -10,10 +10,13 @@ import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatLikeStatusService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,15 +40,15 @@ public class DTOMapper {
         modelMapper.addMappings(chatUserMap);
     }
 
-
-
-
-
     public IntitaUserDTO map(User intitaUser) {
         return modelMapper.map(intitaUser, IntitaUserDTO.class);
     }
     public ChatUserDTO map(ChatUser chatUser) {
         return modelMapper.map(chatUser, ChatUserDTO.class);
+    }
+    public Collection<ChatUserDTO> map(Collection<ChatUser> chatUsers) {
+    	java.lang.reflect.Type targetListType = new TypeToken<Collection<ChatUserDTO>>() {}.getType();
+        return modelMapper.map(chatUsers, targetListType);
     }
     public UserMessageDTO map(UserMessage userMessage) {
         return modelMapper.map(userMessage, UserMessageDTO.class);

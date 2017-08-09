@@ -227,7 +227,7 @@ button:focus {
     cursor: pointer;
 }
 
-.consultant_wrapper >.head {
+.consultant_wrapper>.head {
     height: 35px;
     min-height: 35px;
     background-color: #4b75a4;
@@ -248,7 +248,7 @@ button:focus {
     font-style: normal;
 }
 
-.consultant_wrapper > .head .state {
+.consultant_wrapper>.head .state {
     position: absolute;
     top: 0px;
 }
@@ -471,7 +471,7 @@ button:focus {
     font-size: 10px;
 }
 
-.consultant_wrapper > .head .logo {
+.consultant_wrapper>.head .logo {
     position: absolute;
     left: 20px;
     color: white;
@@ -485,7 +485,7 @@ button:focus {
     font-weight: 900 !important;
 }
 
-.consultant_wrapper >.head .message_notification .text {
+.consultant_wrapper>.head .message_notification .text {
     font-size: 10px;
     /* position: relative; */
     /* left:7px; */
@@ -493,7 +493,7 @@ button:focus {
     text-align: center;
 }
 
-.consultant_wrapper >.head .state {
+.consultant_wrapper>.head .state {
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -1542,6 +1542,72 @@ button:focus {
     white-space: nowrap;
 }
 
+.user_message .message_details .who-like-modal {
+    position: absolute;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    right: -15px;
+    bottom: 25px;
+    padding: 0px 5px;
+    width: auto;
+    min-width: 45px;
+    height: 34px;
+    transition: transform 1s ease-out, min-width 1s, width 1s;
+    -webkit-transform: translateX(calc(100% + 15px));
+    transform: translateX(calc(100% + 15px));
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.user_message .message_details .who-like-modal .mini-preloader {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    margin: auto;
+    top: 5px;
+    left: 0;
+    right: 0;
+    bottom: 5px;
+}
+
+.user_message .message_details .who-like-modal .mini-preloader span:after {
+    width: 3px;
+    height: 3px;
+}
+
+.user_message .message_details .who-like-modal.active,
+.user_message .message_details .who-like-modal:hover {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+.user_message .message_details .who-like-modal .item {
+    width: 34px;
+    height: 24px;
+    display: inline-block;
+}
+
+.user_message .message_details .who-like-modal .item:hover .avatar {
+    box-shadow: none;
+    border: 2px solid white;
+}
+
+.user_message .message_details .who-like-modal .item .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    box-shadow: 0px 0px 3px 2px rgb(255, 255, 255);
+    margin: 5px;
+}
+
 .bottom_details {
     white-space: pre-wrap;
     word-break: break-word;
@@ -1945,7 +2011,7 @@ button:focus {
 
 .messages_output_area .answer.right .message_details {
     background-color: #ededed;
-    margin-right: 12px;
+    margin-right: 5px;
 }
 
 .messages_output_area .answer.right .message_details .top_details {
@@ -2660,6 +2726,10 @@ span.rooms_search_loader img {
 
 
 
+
+
+
+
 /**
    Coded by /u/j0be in scss.
    See scss source here -> http://codepen.io/j0be/pen/MKRVyN
@@ -3128,12 +3198,12 @@ span.rooms_search_loader img {
     .messages_output_area .answer.right .message_details:before {
         display: none;
     }
-    .consultant_wrapper >.head .logo {
+    .consultant_wrapper>.head .logo {
         position: absolute;
         left: 45px;
         display: none;
     }
-    .consultant_wrapper >.head .logo-text {
+    .consultant_wrapper>.head .logo-text {
         /* left: 70px; */
     }
     .send_button {
@@ -3174,6 +3244,10 @@ span.rooms_search_loader img {
     color: #1e8eda;
     text-decoration: none;
 }
+
+
+
+
 
 
 
@@ -3417,6 +3491,10 @@ a.like_button.selected {
 
 
 
+
+
+
+
 /*user profile popup end*/
 
 @media only screen and (min-width:1350px) {
@@ -3440,7 +3518,7 @@ a.like_button.selected {
 }
 
 @media only screen and (max-width: 300px) {
-    body.frame .consultant_wrapper >.head .logo {
+    body.frame .consultant_wrapper>.head .logo {
         position: absolute;
         left: 15px;
         background-color: #4b75a4;
@@ -3559,4 +3637,264 @@ a.like_button.selected {
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.mini-preloader {
+    display: inline-block;
+    position: relative;
+    height: 25px;
+    width: 80px;
+}
+
+.mini-preloader span {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    -webkit-transform: rotate(225deg);
+    transform: rotate(225deg);
+    -webkit-animation: orbit 6s infinite;
+    animation: orbit 6s infinite;
+    margin: auto;
+    top: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+}
+
+.mini-preloader span:after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.mini-preloader span:nth-child(2) {
+    -webkit-animation-delay: 0.30s;
+    animation-delay: 0.30s;
+}
+
+.mini-preloader span:nth-child(3) {
+    -webkit-animation-delay: 0.60s;
+    animation-delay: 0.60s;
+}
+
+.mini-preloader span:nth-child(4) {
+    -webkit-animation-delay: 0.90s;
+    animation-delay: 0.90s;
+}
+
+.mini-preloader span:nth-child(5) {
+    -webkit-animation-delay: 1.20s;
+    animation-delay: 1.20s;
+}
+
+
+
+
+/**
+ * Animations
+ */
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+@-webkit-keyframes spin-r {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    to {
+        -webkit-transform: rotate(-360deg);
+        transform: rotate(-360deg)
+    }
+}
+
+@keyframes spin-r {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    to {
+        -webkit-transform: rotate(-360deg);
+        transform: rotate(-360deg)
+    }
+}
+
+@-webkit-keyframes grow {
+    0% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    50% {
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+        opacity: 0.5;
+    }
+    100% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+@keyframes grow {
+    0% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    50% {
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+        opacity: 0.5;
+    }
+    100% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fade {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+@keyframes fade {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+@-webkit-keyframes orbit {
+    0% {
+        -webkit-transform: rotate(225deg);
+        transform: rotate(225deg);
+        opacity: 1;
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    7% {
+        -webkit-transform: rotate(345deg);
+        transform: rotate(345deg);
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+    }
+    30% {
+        -webkit-transform: rotate(455deg);
+        transform: rotate(455deg);
+        -webkit-animation-timing-function: ease-in-out;
+        animation-timing-function: ease-in-out;
+    }
+    39% {
+        -webkit-transform: rotate(690deg);
+        transform: rotate(690deg);
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+    }
+    70% {
+        -webkit-transform: rotate(815deg);
+        transform: rotate(815deg);
+        opacity: 1;
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    75% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    76% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        opacity: 0;
+    }
+}
+
+@keyframes orbit {
+    0% {
+        -webkit-transform: rotate(225deg);
+        transform: rotate(225deg);
+        opacity: 1;
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    7% {
+        -webkit-transform: rotate(345deg);
+        transform: rotate(345deg);
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+    }
+    30% {
+        -webkit-transform: rotate(455deg);
+        transform: rotate(455deg);
+        -webkit-animation-timing-function: ease-in-out;
+        animation-timing-function: ease-in-out;
+    }
+    39% {
+        -webkit-transform: rotate(690deg);
+        transform: rotate(690deg);
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+    }
+    70% {
+        -webkit-transform: rotate(815deg);
+        transform: rotate(815deg);
+        opacity: 1;
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    75% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    76% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: rotate(945deg);
+        transform: rotate(945deg);
+        opacity: 0;
+    }
 }

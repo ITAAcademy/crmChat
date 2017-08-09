@@ -26,7 +26,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     $rootScope.message_busy = true;
     $rootScope.participant_busy = true;
     var likedMessagesIds = [];
-   var dislikedMessagesIds = [];
+    var dislikedMessagesIds = [];
     var rooms = [];
     var oldMessage;
 
@@ -34,88 +34,95 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     function isMessageLiked(messageId) {
         return likedMessagesIds.indexOf(messageId) != -1;
     }
-     function isMessageDisliked(messageId) {
+
+    function isMessageDisliked(messageId) {
         return dislikedMessagesIds.indexOf(messageId) != -1;
     }
 
+    function getWhoLikesByMessage(message, page) {
+        return $http.get(serverPrefix + "/chat/like_message/" + message.id, page ? {'page' : page} : {})
+    }
+    function getWhoDisLikesByMessage(message, page) {
+        return $http.get(serverPrefix + "/chat/dislike_message/" + message.id, page ? {'page' : page} : {})
+    }
 
-    function likeMessage(message){
-        if (isMessageLiked(message.id)){
+    function likeMessage(message) {
+        if (isMessageLiked(message.id)) {
             discardMessageLike(message);
             return;
         }
         var messageId = message.id;
-                console.log('like message: '+messageId);
-                $http.get(serverPrefix + "/chat/like_message/"+messageId).then(function success(response){
-                    message.likes += 1;
-                    if (isMessageDisliked(message.id)){
+        console.log('like message: ' + messageId);
+        $http.post(serverPrefix + "/chat/like_message/" + messageId).then(function success(response) {
+                message.likes += 1;
+                if (isMessageDisliked(message.id)) {
                     message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
-                    }
-                 console.log('is like success:');
-                    var unlikedIndex = dislikedMessagesIds.indexOf(messageId);
-                if (unlikedIndex!=-1){
-                   dislikedMessagesIds.splice(unlikedIndex,1);
+                }
+                console.log('is like success:');
+                var unlikedIndex = dislikedMessagesIds.indexOf(messageId);
+                if (unlikedIndex != -1) {
+                    dislikedMessagesIds.splice(unlikedIndex, 1);
                 }
                 likedMessagesIds.push(messageId);
-                },
-                function fail(response){
+            },
+            function fail(response) {
 
-                });
-             
-            }
-    function dislikeMessage(message){
-        if (isMessageDisliked(message.id)){
+            });
+
+    }
+
+    function dislikeMessage(message) {
+        if (isMessageDisliked(message.id)) {
             discardMessageLike(message);
             return;
         }
         var messageId = message.id;
-                 console.log('like message: '+messageId);
-                $http.get(serverPrefix + "/chat/dislike_message/"+messageId).then(function success(response){
-                 message.dislikes += 1;
-                 if (isMessageLiked(message.id)){
+        console.log('like message: ' + messageId);
+        $http.post(serverPrefix + "/chat/dislike_message/" + messageId).then(function success(response) {
+                message.dislikes += 1;
+                if (isMessageLiked(message.id)) {
                     message.likes = message.likes == 0 ? 0 : message.likes - 1;
-                    }
-                 console.log('is unlike success');
-                  var likedIndex = likedMessagesIds.indexOf(messageId);
-                if (likedIndex!=-1){
-                    likedMessagesIds.splice(likedIndex,1);
                 }
-                 dislikedMessagesIds.push(messageId);
-                },
-                function fail(response){
+                console.log('is unlike success');
+                var likedIndex = likedMessagesIds.indexOf(messageId);
+                if (likedIndex != -1) {
+                    likedMessagesIds.splice(likedIndex, 1);
+                }
+                dislikedMessagesIds.push(messageId);
+            },
+            function fail(response) {
 
-                });
+            });
 
-            }
+    }
 
-function discardMessageLike(message){
-        if (!isMessageDisliked(message.id) && !isMessageLiked(message.id)){
+    function discardMessageLike(message) {
+        if (!isMessageDisliked(message.id) && !isMessageLiked(message.id)) {
             return;
         }
         var messageId = message.id;
-                 console.log('discard like message: '+messageId);
-                $http.get(serverPrefix + "/chat/discard_like_message/"+messageId).then(function success(response){
-                 if(isMessageDisliked(message.id)){
+        console.log('discard like message: ' + messageId);
+        $http.post(serverPrefix + "/chat/discard_like_message/" + messageId).then(function success(response) {
+                if (isMessageDisliked(message.id)) {
                     message.dislikes = message.dislikes == 0 ? 0 : message.dislikes - 1;
-                     var dislikedIndex = dislikedMessagesIds.indexOf(messageId);
-                if (dislikedIndex!=-1){
-                    dislikedMessagesIds.splice(dislikedIndex,1);
+                    var dislikedIndex = dislikedMessagesIds.indexOf(messageId);
+                    if (dislikedIndex != -1) {
+                        dislikedMessagesIds.splice(dislikedIndex, 1);
+                    }
+                } else {
+                    message.likes = message.likes == 0 ? 0 : message.likes - 1;
+                    var likedIndex = likedMessagesIds.indexOf(messageId);
+                    if (likedIndex != -1) {
+                        likedMessagesIds.splice(likedIndex, 1);
+                    }
                 }
-                 }
-                 else {
-                     message.likes = message.likes == 0 ? 0 : message.likes - 1;
-                      var likedIndex = likedMessagesIds.indexOf(messageId);
-                if (likedIndex!=-1){
-                    likedMessagesIds.splice(likedIndex,1);
-                }
-                 }
-                 
-                },
-                function fail(response){
 
-                });
+            },
+            function fail(response) {
 
-            }
+            });
+
+    }
 
 
     function isRoomPrivate(room) {
@@ -390,8 +397,8 @@ function discardMessageLike(message){
     }
 
     var addUsersToRoom = function(usersIds) {
-       
-        if(usersIds == null || usersIds.length<1){
+
+        if (usersIds == null || usersIds.length < 1) {
             return;
         }
         $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.roomId), usersIds).
@@ -404,20 +411,20 @@ function discardMessageLike(message){
     }
 
     var removeUserFromRoom = function(userId) {
-            $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
-            success(function(data, status, headers, config) {
-                if (data == false) {
-                    toaster.pop('error', "Error", "Cant remove user from the room", 1000);
-                    return;
-                }
-            }).
-            error(function(data, status, headers, config) {
+        $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
+        success(function(data, status, headers, config) {
+            if (data == false) {
                 toaster.pop('error', "Error", "Cant remove user from the room", 1000);
-            });
-        }
-        /*************************************
-         * UPDATE MESSAGE LP
-         *************************************/
+                return;
+            }
+        }).
+        error(function(data, status, headers, config) {
+            toaster.pop('error', "Error", "Cant remove user from the room", 1000);
+        });
+    }
+    /*************************************
+     * UPDATE MESSAGE LP
+     *************************************/
     var subscribeMessageLP = function() {
         var currentUrl = serverPrefix + "/{0}/chat/message/update".format(currentRoom.roomId);
         ajaxRequestsForRoomLP.push(
@@ -580,8 +587,8 @@ function discardMessageLike(message){
         participants = message["participants"];
         lastNonUserActivity = message["lastNonUserActivity"];
 
-        likedMessagesIds.splice(0,likedMessagesIds.length);
-        dislikedMessagesIds.splice(0,dislikedMessagesIds.length);
+        likedMessagesIds.splice(0, likedMessagesIds.length);
+        dislikedMessagesIds.splice(0, dislikedMessagesIds.length);
 
         likedMessagesIds.push(...message["likedMessagesIds"]);
         dislikedMessagesIds.push(...message["dislikedMessagesIds"]);
@@ -870,7 +877,9 @@ function discardMessageLike(message){
         isMessageLiked,
         isMessageDisliked,
         likeMessage,
-        dislikeMessage
+        dislikeMessage,
+        getWhoLikesByMessage,
+        getWhoDisLikesByMessage
 
 
     };

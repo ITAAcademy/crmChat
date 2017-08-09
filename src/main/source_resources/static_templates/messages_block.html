@@ -35,15 +35,27 @@
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
-        <div ng-if="message.author.id != 1" class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}">
-            <a ng-click="likeMessage(message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">
+        <div ng-if="message.author.id != 1" class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}" ng-mouseleave="hideWhoLikeOrDisLike()">
+            <a ng-click="likeMessage(message)" ng-mouseenter="showWhoLike($event, message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">
                 <i class="material-icons">thumb_up</i>
                 <span>{{message.likes}}</span>
             </a>
-            <a ng-click="dislikeMessage(message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}">
+            <a ng-click="dislikeMessage(message)" ng-mouseenter="showWhoDisLike($event, message)" class="like_button" ng-class="{'selected':isMessageDisliked(message.id)}">
                 <i class="material-icons">thumb_down</i>
                 <span>{{message.dislikes}}</span>
             </a>
+            <div class="who-like-modal" id="{{'who-like-' + message.id}}">
+                <div class="item" ng-repeat="user in whoLikeUsers" ng-click="$root.showUserProfileByChatUserId(user.id)">
+                    <div class="avatar" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
+                </div>
+                <span ng-if="whoLikeUsers.length == 0" class="mini-preloader">                
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
         </div>
     </div>
     <div class="message_author_avatar" ng-if="message.position" ng-click="$root.showUserProfileByChatUserId(message.author.id)">
