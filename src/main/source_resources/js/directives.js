@@ -675,10 +675,11 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             //DOM has finished rendering
             $('#message_input_editable').on('paste', function(e) {
                 e.preventDefault();
+                debugger;
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                var escapedHtml = htmlEscape(text);
+                //var escapedHtml = htmlEscape(text);
 
-                var linkified = linkifyStr(escapedHtml, {});
+                var linkified = linkifyStr(text, {});
                 pasteHtmlAtCaret(linkified);
                 //$scope.newMessage = text;
 
@@ -751,7 +752,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         UserFactory.setMessageSended(true);
 
                     };
-                    sendingMessage = $timeout(myFunc, 2000);
+                    sendingMessage = $timeout(myFunc, 5000);
                 } else {
                     $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
                     success(function(data, status, headers, config) {
