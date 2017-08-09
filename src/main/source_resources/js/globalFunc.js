@@ -401,6 +401,10 @@
   function call(str) {
       return "{{" + str + "}}";
   }
+  function replaceAll (str,search, replacement) {
+    var target = str;
+    return target.replace(new RegExp(search, 'g'), replacement);
+}
 
   /*function upload(file,urlpath) {
 
