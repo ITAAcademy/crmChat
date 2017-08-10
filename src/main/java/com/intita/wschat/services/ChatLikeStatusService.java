@@ -1,6 +1,7 @@
 package com.intita.wschat.services;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ public class ChatLikeStatusService {
 		{
 			likeStatus.setLikeState(state);
 		}
+		likeStatus.setDate(new Date());
 		chatLikeStatusRepository.save(likeStatus);
 		return true;
 	}

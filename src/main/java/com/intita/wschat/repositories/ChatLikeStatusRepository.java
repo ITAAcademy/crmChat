@@ -33,7 +33,7 @@ public interface ChatLikeStatusRepository extends CrudRepository<ChatLikeStatus,
     @Query("SELECT status FROM chat_like_status status WHERE status.message.id = ?1 AND status.chatUser.id = ?2 ")
     public ChatLikeStatus getChatLikeByMessageAndChatUser(Long messageId, Long chatUserId);
     
-    @Query("SELECT st.chatUser FROM chat_like_status st WHERE st.message.id = ?1 AND st.likeState = ?2 ")
+    @Query("SELECT st.chatUser FROM chat_like_status st WHERE st.message.id = ?1 AND st.likeState = ?2 ORDER BY st.date DESC")
     public List<ChatUser> getUsersWhoCheck(Long messageId, LikeState likeState, Pageable page);
 
     @Query("SELECT status.message.id FROM chat_like_status status WHERE status.message.room.id = ?1 AND status.chatUser.id = ?2 AND status.likeState = ?3")
