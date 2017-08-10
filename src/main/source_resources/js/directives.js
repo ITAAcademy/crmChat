@@ -666,7 +666,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                     showWhoLikeOrDisLikeFunc();
                     return false;
                 }
-                $scope.whoLikeUsersByMessage = [];
+                $scope.whoLikeUsersByMessage[message.id] = [];
                 if (hideWhoLikeOrDisLikeCancel != null) {
                     hideWhoLikeOrDisLikeFunc();
                     $timeout.cancel(hideWhoLikeOrDisLikeCancel);
@@ -679,7 +679,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                 return true;
             };
 
-            $scope.whoLikeUsersByMessage = [];
+            $scope.whoLikeUsersByMessage = {};
 
             $scope.showWhoLike = function($event, message) {
                 if (message.likes == 0)
