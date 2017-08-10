@@ -546,9 +546,9 @@ function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory,
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
             scope.mySettings = mySettings;
-            scope.getCurrentLocation = function(){
+            scope.getCurrentLocation = function() {
                 var location = window.location.href;
-                location = replaceAll(location,'#','%23');
+                location = replaceAll(location, '#', '%23');
                 return location;
             }
         }
@@ -707,7 +707,8 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             }
 
             $scope.hideWhoLikeOrDisLike = function() {
-                hideWhoLikeOrDisLikeCancel = $timeout(hideWhoLikeOrDisLikeFunc, 500);
+                if(lastChoise != undefined && lastChoise.msg != undefined)
+                    hideWhoLikeOrDisLikeCancel = $timeout(hideWhoLikeOrDisLikeFunc, 500);
             };
         }
 
