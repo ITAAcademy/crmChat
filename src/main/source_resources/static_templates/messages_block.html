@@ -45,10 +45,10 @@
                 <span>{{message.dislikes}}</span>
             </a>
             <div class="who-like-modal" id="{{'who-like-' + message.id}}">
-                <div class="item" ng-repeat="user in whoLikeUsers |limitTo:3" ng-click="$root.showUserProfileByChatUserId(user.id)">
+                <div class="item" ng-repeat="user in whoLikeUsersByMessage[message.id] |limitTo:3" ng-click="$root.showUserProfileByChatUserId(user.id)">
                     <div class="avatar" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
                 </div>
-                <span ng-if="whoLikeUsers.length == 0" class="mini-preloader">                
+                <span ng-if="whoLikeUsersByMessage.length == 0" class="mini-preloader">                
                     <span></span>
                     <span></span>
                     <span></span>

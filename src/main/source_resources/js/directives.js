@@ -666,7 +666,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                     showWhoLikeOrDisLikeFunc();
                     return false;
                 }
-                $scope.whoLikeUsers = [];
+                $scope.whoLikeUsersByMessage = [];
                 if (hideWhoLikeOrDisLikeCancel != null) {
                     hideWhoLikeOrDisLikeFunc();
                     $timeout.cancel(hideWhoLikeOrDisLikeCancel);
@@ -679,7 +679,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                 return true;
             };
 
-            $scope.whoLikeUsers = [];
+            $scope.whoLikeUsersByMessage = [];
 
             $scope.showWhoLike = function($event, message) {
                 if (message.likes == 0)
@@ -687,7 +687,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                 $event.stopPropagation();
                 if (prepareForShowWhoLikeOrDisLikeFunc('like', message))
                     RoomsFactory.getWhoLikesByMessage(message).then(function(res) {
-                        $scope.whoLikeUsers = res.data;
+                        $scope.whoLikeUsersByMessage[message.id] = res.data;
                     }, function(res) {
                         hideWhoLikeOrDisLikeFunc();
                     })
@@ -700,7 +700,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                 $event.stopPropagation();
                 if (prepareForShowWhoLikeOrDisLikeFunc('disLike', message))
                     RoomsFactory.getWhoDisLikesByMessage(message).then(function(res) {
-                        $scope.whoLikeUsers = res.data;
+                        $scope.whoLikeUsersByMessage[message.id] = res.data;
                     }, function(res) {
                         hideWhoLikeOrDisLikeFunc();
                     })
