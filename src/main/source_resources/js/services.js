@@ -158,7 +158,7 @@ springChatServices.service('ActiveWindow', ['$rootScope', 'ngDialog', '$timeout'
     function updateWindowAcicity() {
         localStorage.setItem('ActiveWindow', pageId);
     }
-    setInterval(updateWindowAcicity, 1000);
+    setInterval(updateWindowAcicity, 5000);
     this.isActive = function() {
         return localStorage.getItem('ActiveWindow') == pageId;
     }
