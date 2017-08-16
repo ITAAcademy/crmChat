@@ -1565,7 +1565,7 @@ button:focus {
   text-align: center;
   /* max-width: 130px; */
   width: 130px;
-  height: 125px;
+  max-height: 125px;
   overflow-y: scroll;
 }
 
