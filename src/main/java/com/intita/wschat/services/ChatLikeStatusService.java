@@ -19,6 +19,7 @@ import com.intita.wschat.repositories.ChatLikeStatusRepository;
  */
 @Service
 public class ChatLikeStatusService {
+	final int MESSAGES_LIKES_USERS_INITIAL_LOAD = 12;
 	@Autowired
 	private ChatLikeStatusRepository chatLikeStatusRepository;
 
@@ -29,11 +30,7 @@ public class ChatLikeStatusService {
 	
 	
 	public Collection<ChatUser> getChatUserWhoCheckStateByMsg(Long msgId, LikeState state, Integer page){
-		return chatLikeStatusRepository.getUsersWhoCheck(msgId, state, new PageRequest(page - 1, 20)); 
-	}
-		
-	public Collection<ChatUser> getChatUserWhoCheckStateByMsg(Long msgId, LikeState state){
-		return getChatUserWhoCheckStateByMsg(msgId, state, 1);
+			return chatLikeStatusRepository.getUsersWhoCheck(msgId,state,new PageRequest(page - 1, MESSAGES_LIKES_USERS_INITIAL_LOAD));
 	}
 
 	public Long getMessageLikesCount(Long messageId){

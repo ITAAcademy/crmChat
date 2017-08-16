@@ -500,28 +500,36 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+	public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, @RequestParam(required = false) Integer page,
+													  Authentication auth)
+			throws Exception {
+		if (page==null) page = 1;
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		List<LoginEvent> res = new LinkedList<>();
-		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE);
+		Date date = null;
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE,page);
 		return dtoMapper.map(listChatUsers);
 	}
 	
 
 	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<ChatUserDTO> getDisLikeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+	public Collection<ChatUserDTO> getDisLikeMessageById(@PathVariable Long messageId,@RequestParam(required = false) Integer page,
+														 Authentication auth) throws Exception {
+		if (page==null) page = 1;
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		List<LoginEvent> res = new LinkedList<>();
-		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.DISLIKE);
+
+
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.DISLIKE,page);
 		return dtoMapper.map(listChatUsers);
 	}
 	
 	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean likeMessageById(@PathVariable Long messageId, Authentication auth) throws Exception {
+	public boolean likeMessageById(@PathVariable Long messageId,@RequestParam(required = false) Integer page, Authentication auth) throws Exception {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		boolean result = chatLikeStatusService.likeMessage(messageId,chatUser);

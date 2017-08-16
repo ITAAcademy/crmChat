@@ -662,6 +662,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             }
 
             let prepareForShowWhoLikeOrDisLikeFunc = function(type, message) {
+                whoLikeUsersPage = 1;
                 if (lastChoise.type == type && lastChoise.msg == message) {
                     showWhoLikeOrDisLikeFunc();
                     return false;
@@ -680,18 +681,34 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             };
 
             $scope.whoLikeUsersByMessage = [];
+            $scope.whoLikeBusy = false;
+            var whoLikeUsersPage = 1;
 
             $scope.showWhoLike = function($event, message) {
                 if (message.likes == 0)
                     return;
                 $event.stopPropagation();
                 if (prepareForShowWhoLikeOrDisLikeFunc('like', message))
-                    RoomsFactory.getWhoLikesByMessage(message).then(function(res) {
+                    RoomsFactory.getWhoLikesByMessage(message,1).then(function(res) {
                         $scope.whoLikeUsersByMessage[message.id] = res.data;
                     }, function(res) {
                         hideWhoLikeOrDisLikeFunc();
                     })
 
+            }
+
+            $scope.loadOtherWhoLikeUsers = function(message) {
+                console.log('loadOtherWhoLikeUsers');
+                $scope.whoLikeBusy = true;
+                 RoomsFactory.getWhoLikesByMessage(message,whoLikeUsersPage).then(function(res) {
+                        $scope.whoLikeUsersByMessage[message.id] = 
+                        res.data.concat( $scope.whoLikeUsersByMessage[message.id]);
+                        $scope.whoLikeBusy = false;
+                        whoLikeUsersPage++;
+                    }, function(res) {
+                        $scope.whoLikeBusy = false;
+                        //hideWhoLikeOrDisLikeFunc();
+                    })
             }
 
             $scope.showWhoDisLike = function($event, message) {

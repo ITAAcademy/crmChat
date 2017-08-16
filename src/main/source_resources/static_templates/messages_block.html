@@ -44,7 +44,7 @@
                 <i class="material-icons">thumb_down</i>
                 <span>{{message.dislikes}}</span>
             </a>
-            <div class="who-like-modal" id="{{'who-like-' + message.id}}">
+            <div class="who-like-modal" id="{{'who-like-' + message.id}}" infinite-scroll='loadOtherWhoLikeUsers(message)' can-load='true' treshold='100'>
                 <div class="item" ng-repeat="user in whoLikeUsersByMessage[message.id]" ng-click="$root.showUserProfileByChatUserId(user.id)">
                     <div class="avatar" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + user.avatar + ')'}"></div>
                 </div>
