@@ -19,7 +19,7 @@ import com.intita.wschat.repositories.ChatLikeStatusRepository;
  */
 @Service
 public class ChatLikeStatusService {
-	final int MESSAGES_LIKES_USERS_INITIAL_LOAD = 12;
+	final int MESSAGES_LIKES_USERS_INITIAL_LOAD = 20;
 	@Autowired
 	private ChatLikeStatusRepository chatLikeStatusRepository;
 

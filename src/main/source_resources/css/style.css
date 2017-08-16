@@ -1566,7 +1566,7 @@ button:focus {
   /* max-width: 130px; */
   width: 130px;
   max-height: 125px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .user_message .message_details .who-like-modal .mini-preloader {
