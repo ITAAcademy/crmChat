@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.concurrent.Semaphore;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -500,15 +503,20 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, @RequestParam(required = false) Integer page,
-													  Authentication auth)
-			throws Exception {
+    public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, @RequestParam(required = false) Integer page,
+                                                      Authentication auth) throws Exception {
+		 Enumeration headerNames = request.getHeaderNames();
+	        while (headerNames.hasMoreElements()) {
+	            String key = (String) headerNames.nextElement();
+	            String value = request.getHeader(key);
+	            System.out.println(key + ": " + value);
+	        }
+
 		if (page==null) page = 1;
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		List<LoginEvent> res = new LinkedList<>();
-		Date date = null;
-		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE,page);
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE);
 		return dtoMapper.map(listChatUsers);
 	}
 	

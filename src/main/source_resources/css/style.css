@@ -3156,6 +3156,7 @@ span.rooms_search_loader img {
     }
     .left_panel.active {
         max-width: 301px;
+        z-index: 999;
     }
     .left_panel_mini {
         display: block;

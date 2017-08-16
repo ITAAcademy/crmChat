@@ -636,14 +636,14 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                     room.lastMessageDate = (new Date()).getTime();
                     if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
-                        RoomsFactory.updateNewMsgNumber(1);
+                        RoomsFactory.updateNewMsgNumber(+1);
                         //room.date = curentDateInJavaFromat();
+                        var title = "Нове повідомлення в розмові " + room.string + " від " + msg.author.nickName;
+                            if (room.string == msg.author.nickName)
+                                title = "Нове повідомлення від " + messagesMap[room.roomId].author.nickName;
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
                                 msgAudioNotify.play();
-                            var title = "Нове повідомлення в розмові " + room.string + " від " + msg.username;
-                            if (room.string == msg.username)
-                                title = "Нове повідомлення від " + messagesMap[room.roomId].username;
                             Notify(msg.body, title);
                         }
                         toaster.pop('note', title, msg.message, 6000);
