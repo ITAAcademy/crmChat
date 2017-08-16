@@ -1543,17 +1543,18 @@ button:focus {
 }
 
 .user_message .message_details .who-like-modal {
-    position: absolute;
-    display: -webkit-box;
+  position: absolute;
+    /* display: -webkit-box; */
     display: -ms-flexbox;
-    display: flex;
+    display: block;
     right: -15px;
     bottom: 25px;
-    padding: 0px 5px;
-    width: auto;
+    /* padding: 5px; */
     min-width: 45px;
-    height: 34px;
+    /* height: 34px; */
+    transition: min-width 1s, width 1s, -webkit-transform 1s ease-out;
     transition: transform 1s ease-out, min-width 1s, width 1s;
+    transition: transform 1s ease-out, min-width 1s, width 1s, -webkit-transform 1s ease-out;
     -webkit-transform: translateX(calc(100% + 15px));
     transform: translateX(calc(100% + 15px));
     background-color: rgba(0, 0, 0, 0.5);
@@ -1562,6 +1563,8 @@ button:focus {
     border-top-right-radius: 0;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
     text-align: center;
+    /* max-width: 130px; */
+    width: 130px;
 }
 
 .user_message .message_details .who-like-modal .mini-preloader {
@@ -1587,9 +1590,10 @@ button:focus {
 }
 
 .user_message .message_details .who-like-modal .item {
-    width: 34px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
     display: inline-block;
+    padding: 5px;
 }
 
 .user_message .message_details .who-like-modal .item:hover .avatar {
@@ -1598,14 +1602,14 @@ button:focus {
 }
 
 .user_message .message_details .who-like-modal .item .avatar {
-    width: 24px;
-    height: 24px;
+   width: 30px;
+    height: 30px;
     border-radius: 50%;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
     box-shadow: 0px 0px 3px 2px rgb(255, 255, 255);
-    margin: 5px;
+    /* margin: 5px; */
 }
 
 .bottom_details {
