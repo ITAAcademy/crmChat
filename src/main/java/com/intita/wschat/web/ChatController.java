@@ -504,7 +504,7 @@ public class ChatController {
 	@RequestMapping(value = "/chat/like_message/{messageId}", method = RequestMethod.GET)
 	@ResponseBody
     public Collection<ChatUserDTO> getLikeMessageById(@PathVariable Long messageId, @RequestParam(required = false) Integer page,
-                                                      Authentication auth) throws Exception {
+                                                      Authentication auth,HttpServletRequest request) throws Exception {
 		 Enumeration headerNames = request.getHeaderNames();
 	        while (headerNames.hasMoreElements()) {
 	            String key = (String) headerNames.nextElement();
@@ -516,7 +516,7 @@ public class ChatController {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		List<LoginEvent> res = new LinkedList<>();
-		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE);
+		Collection<ChatUser> listChatUsers = chatLikeStatusService.getChatUserWhoCheckStateByMsg(messageId, LikeState.LIKE,page);
 		return dtoMapper.map(listChatUsers);
 	}
 	
