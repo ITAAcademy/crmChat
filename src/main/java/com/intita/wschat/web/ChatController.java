@@ -43,6 +43,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -53,12 +55,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -545,6 +542,26 @@ public class ChatController {
 			throw new Exception("can't like user");
 		}
 		return true;
+	}
+
+	@RequestMapping(value = "/chat/messages/remove/{messageId}", method = RequestMethod.POST,produces = "text/plain")
+	@ResponseBody
+	public ResponseEntity<String> removeMessage(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		UserMessage message = messageService.getUserMessage(messageId);
+		if(message == null || !message.getAuthor().equals(chatUser)) {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Cannot find message or you aren't author");
+		}
+		if (message.isActive()) {
+			messageService.disableMessage(message);
+			simpMessagingTemplate.convertAndSend(("/topic/" + message.getRoom().getId() + "/chat.message.removed"), dtoMapper.map(message));
+			return ResponseEntity.ok("OK");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Message already disabled");
+		}
+
 	}
 	
 	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.POST)

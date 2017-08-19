@@ -3495,6 +3495,16 @@ a.like_button.selected {
                                   supported by Chrome and Opera */
 }
 
+.remove_message {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.remove_message_icon {
+    
+}
+
 
 
 

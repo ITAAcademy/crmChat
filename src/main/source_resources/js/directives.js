@@ -649,6 +649,26 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             $scope.isMessageDisliked = RoomsFactory.isMessageDisliked;
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
+            
+            $scope.isMessageRemovable = function(message){
+                if(message.author.id != UserFactory.getChatUserId()) 
+                    return false;
+                var MS_IN_MINUTE = 60 * 1000;
+                if((new Date) - message.date > MS_IN_MINUTE * 1)
+                    return false;
+
+                return true;
+            }
+            $scope.removeMessage = function(message) {
+                var url = '/chat/messages/remove/'+message.id;
+                 $http.post(serverPrefix + url).
+                    success(function(data, status, headers, config) {
+                       
+                    }).
+                    error(function(data, status, headers, config) {
+                       console.log('message removing failed');
+                    });
+            }
             /*
                 Likes
             */
@@ -1615,7 +1635,9 @@ var compilable = function($compile, $parse) {
         restrict: 'E',
         link: function(scope, element, attr) {
             scope.$watch(attr.content, function() {
-                var content = ($parse(attr.content)(scope)).replace(new RegExp("compilable", 'g'), "div");
+                var parsedAttrContent = ($parse(attr.content)(scope));
+                if (parsedAttrContent == null) return;
+                var content = parsedAttrContent.replace(new RegExp("compilable", 'g'), "div");
                 content = content.replace(new RegExp("ng-bind", 'g'), "ha");
                 //$.ajaxSetup({cache:true});
                 element.html(content);

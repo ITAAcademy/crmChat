@@ -25,12 +25,21 @@
         <div ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + message.author.avatar + ')'}"></div>
     </div>
     <div class="message_details">
+        <div class="remove_message" ng-if="isMessageRemovable(message)" ng-click="removeMessage(message)">
+             <img alt="" class="remove_message_icon" src="images\cross13x15.png">
+        </div>
         <div class="top_details">
             <span class="messag_author_name">{{::message.author.nickName}}</span>
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
             <span ng-if="message.author.id == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
         </div>
+        <div ng-repeat="olderMessage in (orderedMsgsOld = (message.olderMessages | orderBy : 'date'))">
+            <compilable ng-if="olderMessage.author.id != 0" class="bottom_details" content="parseMsg(olderMessage.body)" time="olderMessage.date"></compilable>
+        </div>
         <compilable ng-if="message.author.id != 0" class="bottom_details" content="parseMsg(message.body)" time="message.date"></compilable>
+        <div ng-repeat="newerMessage in (orderedMsgsNew = (message.newerMessages | orderBy : 'date'))">
+            <compilable ng-if="newerMessage.author.id != 0" class="bottom_details" content="parseMsg(newerMessage.body)" time="newerMessage.date"></compilable>
+        </div>
         <div ng-if="message.author.id == 0" bot-container=" " style="margin: 0px;" content="message.body" time="message.date"></div>
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">

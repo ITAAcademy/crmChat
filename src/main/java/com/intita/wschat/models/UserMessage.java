@@ -9,10 +9,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -68,8 +70,28 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	@Column
 	@JsonView(Views.Public.class)
 	private String body;
-	
-	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getAttachedFilesJson() {
+		return attachedFilesJson;
+	}
+
+	public void setAttachedFilesJson(String attachedFilesJson) {
+		this.attachedFilesJson = attachedFilesJson;
+	}
+
+	@JsonIgnore
+	@Column(nullable = false)
+	@ColumnDefault("1")
+	private boolean active = true;
+
 	@JsonView(Views.Public.class)
 	@Lob
 	private String attachedFilesJson;
