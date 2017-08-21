@@ -649,6 +649,11 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             $scope.isMessageDisliked = RoomsFactory.isMessageDisliked;
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
+
+            $scope.toggleMessageSelected = function(message) {
+                console.log('toggleMessageSelected:'+message.id);
+                message.selected = message.selected == null ? true : !message.selected;
+            }
             
             $scope.isMessageRemovable = function(message){
                 if(message.author.id != UserFactory.getChatUserId()) 

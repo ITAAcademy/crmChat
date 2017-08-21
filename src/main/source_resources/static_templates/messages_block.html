@@ -33,11 +33,18 @@
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
             <span ng-if="message.author.id == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
         </div>
-        <div ng-repeat="olderMessage in (orderedMsgsOld = (message.olderMessages | orderBy : 'date'))">
+        <div ng-click="toggleMessageSelected(olderMessage)" ng-class="{'selected':olderMessage.selected}" class="message_body" ng-repeat="olderMessage in (orderedMsgsOld = (message.olderMessages | orderBy : 'date'))">
             <compilable ng-if="olderMessage.author.id != 0" class="bottom_details" content="parseMsg(olderMessage.body)" time="olderMessage.date"></compilable>
+            <div class="remove_message" ng-if="isMessageRemovable(message)" ng-click="removeMessage(message)">
+             <img alt="" class="remove_message_icon" src="images\cross13x15.png">
+            </div>
         </div>
+
+        <div ng-click="toggleMessageSelected(message)" ng-class="{'selected':message.selected}" class="message_body">
         <compilable ng-if="message.author.id != 0" class="bottom_details" content="parseMsg(message.body)" time="message.date"></compilable>
-        <div ng-repeat="newerMessage in (orderedMsgsNew = (message.newerMessages | orderBy : 'date'))">
+        </div>
+
+        <div ng-click="toggleMessageSelected(newerMessage)" ng-class="{'selected':newerMessage.selected}"  class="message_body" ng-repeat="newerMessage in (orderedMsgsNew = (message.newerMessages | orderBy : 'date'))">
             <compilable ng-if="newerMessage.author.id != 0" class="bottom_details" content="parseMsg(newerMessage.body)" time="newerMessage.date"></compilable>
         </div>
         <div ng-if="message.author.id == 0" bot-container=" " style="margin: 0px;" content="message.body" time="message.date"></div>
