@@ -306,6 +306,38 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     }
 
+    function removeOrSwapInternalMessage(arr,indexToRemove) {
+            var msgToRemove = arr[indexToRemove];
+          if ( msgToRemove.olderMessages == null && msgToRemove.newerMessages == null ){
+                  arr.splice(indexToRemove,1);
+                  return;
+            }
+
+
+
+            var olderArr = msgToRemove.olderMessages || [];
+            var newestArr = msgToRemove.newerMessages || [];
+
+            var totalArr = olderArr.concat(newestArr);
+
+            var earliestMessageIndex = -1;
+            var oldestTime = new Date();
+            for (var i = 0; i < totalArr.length; i++) {
+                if (totalArr[i].date < oldestTime) {
+                    earliestMessageIndex = i;
+                    oldestTime = totalArr[i].date;
+                }
+            }
+            if(earliestMessageIndex == -1) {
+                return;
+            }
+            var earliestMessage = totalArr[earliestMessageIndex];
+            totalArr.splice(earliestMessageIndex,1);
+            earliestMessage.newerMessages =  totalArr;
+
+            arr[indexToRemove] = earliestMessage;
+    }
+
     function removeMessageById(idToRemove,arr,deep) {
         if (deep == null) deep = true;
         if (arr == null) return;
@@ -323,8 +355,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                     removedInternally = true;
            }
         }
-        if (findedIndex != -1){
-        arr.splice(findedIndex,1);
+        if ( findedIndex != -1 ){
+        removeOrSwapInternalMessage(arr,findedIndex);       
         return true;
         }
         else {
