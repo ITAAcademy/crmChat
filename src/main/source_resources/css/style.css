@@ -1528,7 +1528,7 @@ button:focus {
     /* max-width: calc(100% - 40px); */
 }
 
-.user_message.left .message_details .top_details {
+.user_message .message_details .top_details {
     padding-bottom: 12px;
     padding-right: 20px;
     padding-top: 15px;
@@ -2017,6 +2017,9 @@ button:focus {
     text-align: left;
     width: 100%
 }
+.messages_output_area .answer .message_details {
+    padding-bottom:25px;
+}
 
 .messages_output_area .answer.right .message_details {
     background-color: #ededed;
@@ -2030,7 +2033,6 @@ button:focus {
 }
 
 .messages_output_area .answer.right .message_details .bottom_details {
-    float: left;
     text-align: left;
     width: 100%;
 }
@@ -3512,15 +3514,11 @@ a.like_button.selected {
    padding-bottom: 10px;
     padding-left: 15px;
     padding-right: 20px;
+    text-align: left;
 }
 .message_body.selected {
     background-color:#b8dcea;
 }
-
-
-
-
-
 
 
 
