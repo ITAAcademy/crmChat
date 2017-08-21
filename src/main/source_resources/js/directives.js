@@ -652,7 +652,9 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
 
             $scope.toggleMessageSelected = function(message) {
                 console.log('toggleMessageSelected:'+message.id);
-                message.selected = message.selected == null ? true : !message.selected;
+                if (getSelectedText() == null || getSelectedText().length < 1) {
+                    message.selected = message.selected == null ? true : !message.selected;
+                }      
             }
             
             $scope.isMessageRemovable = function(message){
