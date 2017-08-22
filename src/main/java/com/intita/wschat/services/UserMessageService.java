@@ -60,6 +60,7 @@ public class UserMessageService {
 	@Transactional
 	public UserMessage disableMessage(UserMessage message){
 		message.setActive(false);
+		message.setUpdateat(new Date());
 		return userMessageRepository.save(message);
 	}
 	/*@Transactional(readOnly=true)
@@ -86,16 +87,16 @@ public class UserMessageService {
 	}
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room) {
-		return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndActiveIsTrueOrderByIdDesc(room));
+		return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room));
 	}
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getFirst20UserMessagesByRoom(Room room, String lang,ChatUser user) {
 		Date clearDate = roomHistoryService.getHistoryClearDate(room.getId(), user.getId());
 		if (clearDate==null)
-			return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndActiveIsTrueOrderByIdDesc(room), lang);
+			return wrapBotMessages(userMessageRepository.findFirst20ByRoomOrderByIdDesc(room), lang);
 		else
-			return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndActiveIsTrueAndDateAfterOrderByIdDesc(room, clearDate), lang);
+			return wrapBotMessages(userMessageRepository.findFirst20ByRoomAndDateAfterOrderByIdDesc(room, clearDate), lang);
 	}
 
 	public ArrayList<UserMessage> getUserMessagesByRoomId(Long roomId) {
@@ -231,7 +232,8 @@ public class UserMessageService {
 	}
 
 	@Transactional
-	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,Date afterDate, String body,boolean filesOnly,int messagesCount){
+	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,
+		Date afterDate, String body,boolean filesOnly,int messagesCount,boolean activeOnly){
 		if (roomId==null) return new ArrayList<UserMessage>();
 		System.out.println("roomId:"+roomId);
 		ArrayList<UserMessage> messages;
@@ -239,7 +241,7 @@ public class UserMessageService {
 		String whereParam = "";
 
 		// Construct WHERE part
-		whereParam += "m.room.id = :roomId AND m.active = true";
+		whereParam += "m.room.id = :roomId";
 		if (beforeDate!=null) {
 			if (whereParam.length()>0) whereParam += " AND ";
 			whereParam +=  "m.date < :beforeDate";
@@ -255,6 +257,10 @@ public class UserMessageService {
 		if (filesOnly){
 			if (whereParam.length()>0) whereParam += " AND ";
 			whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson != :emptyJsonObject";
+		}
+		if (activeOnly){
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam += "m.active = true";
 		}
 		String wherePart = "WHERE "+ whereParam;
 		String orderPart = " ORDER BY m.date DESC,m.id";

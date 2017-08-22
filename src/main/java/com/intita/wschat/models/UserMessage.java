@@ -101,6 +101,17 @@ public class UserMessage implements Serializable,Comparable<UserMessage>  {
 	@JsonView(Views.Public.class)
 	private Date date;
 
+	public Date getUpdateat() {
+		return updateat;
+	}
+
+	public void setUpdateat(Date updateat) {
+		this.updateat = updateat;
+	}
+
+	@Column(nullable = true)
+	private Date updateat;
+
 	public ChatUser getAuthor() {
 		return author;
 	}

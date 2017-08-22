@@ -56,6 +56,25 @@ public class UserMessageWithLikesDTO implements DataTransferObject {
     private ArrayList<String> attachedFiles;
     private Long id;
 
+    public Date getUpdateat() {
+        return updateat;
+    }
+
+    public void setUpdateat(Date updateat) {
+        this.updateat = updateat;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    private Date updateat;
+    private boolean active;
+
     public Long getLikes() {
         return likes;
     }

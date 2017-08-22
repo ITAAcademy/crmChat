@@ -54,6 +54,25 @@ public class UserMessageDTO implements DataTransferObject {
 
     private String body;
     private Date date;
+
+    public Date getUpdateat() {
+        return updateat;
+    }
+
+    public void setUpdateat(Date updateat) {
+        this.updateat = updateat;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    private Date updateat;
+    private boolean active;
     private ArrayList<String> attachedFiles;
     private Long id;
 

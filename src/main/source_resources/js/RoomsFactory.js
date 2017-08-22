@@ -338,7 +338,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             arr[indexToRemove] = earliestMessage;
     }
 
-    function removeMessageById(idToRemove,arr,deep) {
+   /* function removeMessageById(idToRemove,arr,deep) {
         if (deep == null) deep = true;
         if (arr == null) return;
         var findedIndex = -1;
@@ -357,6 +357,36 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
         if ( findedIndex != -1 ){
         removeOrSwapInternalMessage(arr,findedIndex);       
+        return true;
+        }
+        else {
+            if (deep && !removedInternally) {
+                console.log('Message with id ' + idToRemove + 'not founded' );
+            }
+        }
+        return false;
+    }
+    */
+
+    function removeMessageById(idToRemove,arr,deep) {
+        if (deep == null) deep = true;
+        if (arr == null) return;
+        var findedIndex = -1;
+        var removedInternally = false;
+        for (var i = 0; i < arr.length; i++) {
+            var msg = arr[i];
+            if (msg.id == idToRemove) {
+                findedIndex = i;
+                break;
+            }
+            if (deep == false) continue;
+            if (removeMessageById(idToRemove,msg.olderMessages,false) ||
+                removeMessageById(idToRemove,msg.newerMessages,false) ) {
+                    removedInternally = true;
+           }
+        }
+        if ( findedIndex != -1 ){
+        arr[findedIndex].active = false;      
         return true;
         }
         else {

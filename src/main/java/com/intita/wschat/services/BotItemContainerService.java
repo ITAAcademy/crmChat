@@ -20,6 +20,7 @@ public class BotItemContainerService {
 	java.util.Random randomized = new java.util.Random();
 	@Autowired private BotItemContainerRepository botItemContainerRepository;
 	@Autowired private ChatLangService chatLangService;
+	@Autowired private BotCategoryService botCategoryService;
 	
 	public BotDialogItem getByObjectId(LangId idObject){
 		return botItemContainerRepository.findByIdAndLang(idObject.getId(), idObject.getLang());
@@ -78,5 +79,30 @@ public class BotItemContainerService {
 	}
 	public ArrayList<BotDialogItem> getBotDialogItems(Long categoryId,int limit){
 		return botItemContainerRepository.findByCategoryId(categoryId,new PageRequest(0,limit));
+	}
+
+	public String getJsonContainerBodySimple(String[] itemsText){
+		String res = "{";
+		for (int i = 0 ; i < itemsText.length;i++){
+			if(i!=0)res += ",";
+			res += String.format("item%d:{'data':'%s'}",i,itemsText[i]);
+		}
+		res+="}";
+		return res;
+	}
+
+	public void generateTestSequnce(BotCategory botCategory){
+		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
+		BotDialogItem testItemContainer1 = add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,1L,"ua"));//begin
+		BotDialogItem testItemContainer2 = add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,2L,"ua"));
+		BotDialogItem testItemContainer3 = add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,3L,"ua"));
+		BotDialogItem testItemContainer4 = add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,4L,"ua"));//end
+		update(testItemContainer1);
+		update(testItemContainer2);
+		update(testItemContainer3);
+		update(testItemContainer4);
+		botCategory.setMainElement(testItemContainer1);
+		botCategoryService.update(botCategory);
+		update(testItemContainer1);
 	}
 }

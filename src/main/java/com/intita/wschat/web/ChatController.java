@@ -93,6 +93,7 @@ public class ChatController {
 	@Autowired
 	ConfigParamService configParamService;
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
+	private final static int MESSAGE_REMOVING_TIMEOUT_MINUTES = 5;
 
 	@Autowired
 	private ProfanityChecker profanityFilter;
@@ -268,8 +269,9 @@ public class ChatController {
 		String searchQuery = json.get("searchQuery");
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
+		boolean isSearchQueryPresent = searchQuery != null && searchQuery.trim().length() > 0;
 		ArrayList<UserMessage> messages = userMessageService.getMessages(struct.getRoom().getId(), date, clearDate,
-				searchQuery, filesOnly, 20);
+				searchQuery, filesOnly, 20,isSearchQueryPresent);
 		if (messages.size() == 0)
 			return null;
 		List<UserMessageWithLikesDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages);
@@ -554,6 +556,10 @@ public class ChatController {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Cannot find message or you aren't author");
 		}
 		if (message.isActive()) {
+			long messageRemovingTimeoutMoment = message.getDate().getTime()+60*1000*MESSAGE_REMOVING_TIMEOUT_MINUTES;
+			if (new Date(messageRemovingTimeoutMoment).before(new Date())) {
+				return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Message reached removing timeout");
+			}
 			messageService.disableMessage(message);
 			simpMessagingTemplate.convertAndSend(("/topic/" + message.getRoom().getId() + "/chat.message.removed"), dtoMapper.map(message));
 			return ResponseEntity.ok("OK");
@@ -900,7 +906,7 @@ public class ChatController {
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
-				false, 20);
+				false, 20,true);
 		List<UserMessageWithLikesDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages);
 		return chatMessages;
 	}

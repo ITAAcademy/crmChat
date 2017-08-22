@@ -81,9 +81,6 @@ public class BotController {
 	DTOMapper dtoMapper;
 
 
-
-
-
 	@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
 	@Autowired private RoomsService roomService;
@@ -110,6 +107,10 @@ public class BotController {
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private final static Logger log = LoggerFactory.getLogger(BotController.class);
 
+
+	BotDialogItem currentContainer = null;
+	BotCategory botCategory;
+
 	@PostConstruct
 	public void postConstructor(){
 
@@ -121,34 +122,7 @@ public class BotController {
 			return;
 
 		botCategory = botCategoryService.add(new BotCategory("Main category"));
-		generateTestSequnce(botCategory);
-	}	
-
-	BotDialogItem currentContainer = null;
-	BotCategory botCategory;
-
-	public String getJsonContainerBodySimple(String[] itemsText){
-		String res = "{";
-		for (int i = 0 ; i < itemsText.length;i++){
-			if(i!=0)res += ",";
-			res += String.format("item%d:{'data':'%s'}",i,itemsText[i]);
-		}
-		res+="}";
-		return res;
-	}
-	public void generateTestSequnce(BotCategory botCategory){
-		String[] container1 = {"Variant1,Variant2,Variant3,Variant4"};
-		BotDialogItem testItemContainer1 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,1L,"ua"));//begin
-		BotDialogItem testItemContainer2 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,2L,"ua"));
-		BotDialogItem testItemContainer3 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,3L,"ua"));
-		BotDialogItem testItemContainer4 = botItemContainerService.add(new BotDialogItem(getJsonContainerBodySimple(container1),botCategory,4L,"ua"));//end
-		botItemContainerService.update(testItemContainer1);
-		botItemContainerService.update(testItemContainer2);
-		botItemContainerService.update(testItemContainer3);
-		botItemContainerService.update(testItemContainer4);
-		botCategory.setMainElement(testItemContainer1);
-		botCategoryService.update(botCategory);
-		botItemContainerService.update(testItemContainer1);
+		botItemContainerService.generateTestSequnce(botCategory);
 	}
 
 	@RequestMapping(value = "bot_operations/sequences/{sequenceId}/{containerId}/nextContainer{choseIndex}", method = RequestMethod.GET)

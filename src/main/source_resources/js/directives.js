@@ -635,9 +635,9 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory, StateFa
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory', messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory','$rootScope', messagesBlock]);
 
-function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
+function messagesBlock($timeout, $http, RoomsFactory, UserFactory,$rootScope) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
@@ -650,6 +650,14 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
 
+            $scope.retreiveMessageBody = function(message){
+                if (message.active) {
+                return $rootScope.parseMsg(message.body);
+                }
+                return "<i>Повідомлення видалено "+$rootScope.formatDateWithLast(message.updateat, false, true)+"</i>";
+
+            }
+
             $scope.toggleMessageSelected = function(message) {
                 console.log('toggleMessageSelected:'+message.id);
                 if (getSelectedText() == null || getSelectedText().length < 1) {
@@ -661,7 +669,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
                 if(message.author.id != UserFactory.getChatUserId()) 
                     return false;
                 var MS_IN_MINUTE = 60 * 1000;
-                if((new Date) - message.date > MS_IN_MINUTE * 1)
+                if((new Date) - message.date > MS_IN_MINUTE * 5)
                     return false;
 
                 return true;

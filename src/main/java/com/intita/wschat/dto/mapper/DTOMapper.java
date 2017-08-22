@@ -51,12 +51,19 @@ public class DTOMapper {
         return modelMapper.map(chatUsers, targetListType);
     }
     public UserMessageDTO map(UserMessage userMessage) {
-        return modelMapper.map(userMessage, UserMessageDTO.class);
+        UserMessageDTO messageDTO =  modelMapper.map(userMessage, UserMessageDTO.class);
+        if (!userMessage.isActive()) {
+            messageDTO.setBody("");
+        }
+        return messageDTO;
     }
     public UserMessageWithLikesDTO mapMessageWithLikes(UserMessage userMessage) {
         UserMessageWithLikesDTO model = modelMapper.map(userMessage, UserMessageWithLikesDTO.class);
         model.setLikes(chatLikeStatusService.getMessageLikesCount(userMessage.getId()));
         model.setDislikes(chatLikeStatusService.getMessageDislikesCount(userMessage.getId()));
+        if (!userMessage.isActive()) {
+            model.setBody("");
+        }
         return model;
     }
     public UserMessageWithLikesDTO map(UserMessageDTO messageDTO) {
