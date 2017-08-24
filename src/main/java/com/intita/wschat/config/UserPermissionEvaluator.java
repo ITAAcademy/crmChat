@@ -24,14 +24,16 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permissions) {
 		String []permitionsOrList = ((String) permissions).split(",");
-		boolean has = true;
+		boolean has = false;
 		for(String permitionsOr : permitionsOrList)
 		{
 			String [] permitionsAnd = permitionsOr.split("&");
+			boolean _has = true;
 			for(String permition : permitionsAnd)
 			{
-				has = has && userService.checkRoleByAuthentication(authentication,  UserRole.valueOf(permition));
+				_has = _has && userService.checkRoleByAuthentication(authentication,  UserRole.valueOf(permition.trim()));
 			}
+			has = has || _has;
 			if(has)
 				break;
 		}		
