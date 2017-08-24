@@ -243,7 +243,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             if (messages[0].author.id == msg.author.id) {
                 if (isActual && msg.attachedFiles.length == 0) {
                     summarised = true;
-                    messages[0].body = msg.body + "\n\n" + messages[0].body;
+                    //messages[0].body = msg.body + "\n\n" + messages[0].body;
+                    if(messages[0].olderMessages==null) messages[0].olderMessages = [];
+                    messages[0].olderMessages.push(msg);
                     //  $scope.messages[0].date = msg.date;
                 }
                 msg.position = messages[0].position;
@@ -287,7 +289,9 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             var isActual = differenceInSecondsBetweenDates(new Date(msg.date), new Date(messages[messages.length - 1].date)) < NEXT_MESSAGE_TIME_LIMIT_SECONDS;
             if (isActual && messages[messages.length - 1].author.id == msg.author.id && msg.attachedFiles.length == 0 && messages[messages.length - 1].attachedFiles.length == 0) {
                 messages[messages.length - 1].date = msg.date;
-                messages[messages.length - 1].body += "\n\n" + msg.body;
+                //messages[messages.length - 1].body += "\n\n" + msg.body;
+                if(messages[messages.length - 1].newerMessages==null) messages[messages.length - 1].newerMessages = [];
+                    messages[messages.length - 1].newerMessages.push(msg);
             } else {
                 messages.push(msg);
             }
@@ -300,6 +304,97 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
         });
 
+    }
+
+    function removeOrSwapInternalMessage(arr,indexToRemove) {
+            var msgToRemove = arr[indexToRemove];
+          if ( msgToRemove.olderMessages == null && msgToRemove.newerMessages == null ){
+                  arr.splice(indexToRemove,1);
+                  return;
+            }
+
+
+
+            var olderArr = msgToRemove.olderMessages || [];
+            var newestArr = msgToRemove.newerMessages || [];
+
+            var totalArr = olderArr.concat(newestArr);
+
+            var earliestMessageIndex = -1;
+            var oldestTime = new Date();
+            for (var i = 0; i < totalArr.length; i++) {
+                if (totalArr[i].date < oldestTime) {
+                    earliestMessageIndex = i;
+                    oldestTime = totalArr[i].date;
+                }
+            }
+            if(earliestMessageIndex == -1) {
+                return;
+            }
+            var earliestMessage = totalArr[earliestMessageIndex];
+            totalArr.splice(earliestMessageIndex,1);
+            earliestMessage.newerMessages =  totalArr;
+
+            arr[indexToRemove] = earliestMessage;
+    }
+
+   /* function removeMessageById(idToRemove,arr,deep) {
+        if (deep == null) deep = true;
+        if (arr == null) return;
+        var findedIndex = -1;
+        var removedInternally = false;
+        for (var i = 0; i < arr.length; i++) {
+            var msg = arr[i];
+            if (msg.id == idToRemove) {
+                findedIndex = i;
+                break;
+            }
+            if (deep == false) continue;
+            if (removeMessageById(idToRemove,msg.olderMessages,false) ||
+                removeMessageById(idToRemove,msg.newerMessages,false) ) {
+                    removedInternally = true;
+           }
+        }
+        if ( findedIndex != -1 ){
+        removeOrSwapInternalMessage(arr,findedIndex);       
+        return true;
+        }
+        else {
+            if (deep && !removedInternally) {
+                console.log('Message with id ' + idToRemove + 'not founded' );
+            }
+        }
+        return false;
+    }
+    */
+
+    function removeMessageById(idToRemove,arr,deep) {
+        if (deep == null) deep = true;
+        if (arr == null) return;
+        var findedIndex = -1;
+        var removedInternally = false;
+        for (var i = 0; i < arr.length; i++) {
+            var msg = arr[i];
+            if (msg.id == idToRemove) {
+                findedIndex = i;
+                break;
+            }
+            if (deep == false) continue;
+            if (removeMessageById(idToRemove,msg.olderMessages,false) ||
+                removeMessageById(idToRemove,msg.newerMessages,false) ) {
+                    removedInternally = true;
+           }
+        }
+        if ( findedIndex != -1 ){
+        arr[findedIndex].active = false;      
+        return true;
+        }
+        else {
+            if (deep && !removedInternally) {
+                console.log('Message with id ' + idToRemove + 'not founded' );
+            }
+        }
+        return false;
     }
 
     /*************************************
@@ -317,6 +412,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.roomId), function(message) {
                     calcPositionPush(JSON.parse(message.body)); //POP
+                }));
+            lastRoomBindings.push(
+                chatSocket.subscribe("/topic/{0}/chat.message.removed".format(currentRoom.roomId), function(message) {
+                   var msgObj = JSON.parse(message.body);
+                   removeMessageById(msgObj.id,messages); //POP
                 }));
             lastRoomBindings.push(
                 chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {

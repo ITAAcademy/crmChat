@@ -1514,24 +1514,27 @@ button:focus {
 
 .user_message .message_details {
     display: inline-block;
-    padding-right: 20px;
+    /* padding-right: 20px; */
     width: calc(100% - 130px);
     border-radius: 5px;
     min-height: 55px;
-    padding-top: 15px;
-    padding-left: 15px;
-    padding-bottom: 30px;
+    /* padding-top: 15px; */
+    /* padding-left: 15px; */
+    /* padding-bottom: 20px; */
     overflow: hidden;
     position: relative;
 }
 
 .user_message .message_details .top_details {
-    margin-bottom: 12px;
+    /*margin-bottom: 12px;*/
     /* max-width: calc(100% - 40px); */
 }
 
-.user_message.left .message_details .top_details {
-    margin-bottom: 12px;
+.user_message .message_details .top_details {
+    padding-bottom: 12px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-left: 15px;
 }
 
 .user_message .message_details .messag_author_name {
@@ -2017,6 +2020,9 @@ button:focus {
     text-align: left;
     width: 100%
 }
+.messages_output_area .answer .message_details {
+    padding-bottom:25px;
+}
 
 .messages_output_area .answer.right .message_details {
     background-color: #ededed;
@@ -2030,7 +2036,6 @@ button:focus {
 }
 
 .messages_output_area .answer.right .message_details .bottom_details {
-    float: left;
     text-align: left;
     width: 100%;
 }
@@ -3498,10 +3503,28 @@ a.like_button.selected {
                                   supported by Chrome and Opera */
 }
 
+.remove_message {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    top: calc(50% - 6px);
+    position:absolute;
+}
 
+.remove_message_icon {
+    
+}
 
-
-
+.message_body {
+   padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 20px;
+    text-align: left;
+    position:relative;
+}
+.message_body.selected {
+    background-color:#b8dcea;
+}
 
 
 

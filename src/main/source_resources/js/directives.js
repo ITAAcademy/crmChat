@@ -635,9 +635,9 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory, StateFa
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory', messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory','$rootScope', messagesBlock]);
 
-function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
+function messagesBlock($timeout, $http, RoomsFactory, UserFactory,$rootScope) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
@@ -649,6 +649,41 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory) {
             $scope.isMessageDisliked = RoomsFactory.isMessageDisliked;
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
+
+            $scope.retreiveMessageBody = function(message){
+                if (message.active) {
+                return $rootScope.parseMsg(message.body);
+                }
+                return "<i>Повідомлення видалено "+$rootScope.formatDateWithLast(message.updateat, false, true)+"</i>";
+
+            }
+
+            $scope.toggleMessageSelected = function(message) {
+                console.log('toggleMessageSelected:'+message.id);
+                if (getSelectedText() == null || getSelectedText().length < 1) {
+                    message.selected = message.selected == null ? true : !message.selected;
+                }      
+            }
+            
+            $scope.isMessageRemovable = function(message){
+                if(message.author.id != UserFactory.getChatUserId()) 
+                    return false;
+                var MS_IN_MINUTE = 60 * 1000;
+                if((new Date) - message.date > MS_IN_MINUTE * 5)
+                    return false;
+
+                return true;
+            }
+            $scope.removeMessage = function(message) {
+                var url = '/chat/messages/remove/'+message.id;
+                 $http.post(serverPrefix + url).
+                    success(function(data, status, headers, config) {
+                       
+                    }).
+                    error(function(data, status, headers, config) {
+                       console.log('message removing failed');
+                    });
+            }
             /*
                 Likes
             */
@@ -1615,7 +1650,9 @@ var compilable = function($compile, $parse) {
         restrict: 'E',
         link: function(scope, element, attr) {
             scope.$watch(attr.content, function() {
-                var content = ($parse(attr.content)(scope)).replace(new RegExp("compilable", 'g'), "div");
+                var parsedAttrContent = ($parse(attr.content)(scope));
+                if (parsedAttrContent == null) return;
+                var content = parsedAttrContent.replace(new RegExp("compilable", 'g'), "div");
                 content = content.replace(new RegExp("ng-bind", 'g'), "ha");
                 //$.ajaxSetup({cache:true});
                 element.html(content);

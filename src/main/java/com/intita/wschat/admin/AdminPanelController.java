@@ -164,7 +164,7 @@ public class AdminPanelController {
 		if(first == null || second == null || beforeDate == null || afterDate == null || privateRoom == null)
 			throw new NullArgumentException("");
 		
-		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30);
+		ArrayList<UserMessage> userMessages= userMessageService.getMessages(privateRoom.getId(), beforeDate, afterDate, null, false, 30,true);
 		List< UserMessageDTO > messagesDTO = dtoMapper.mapListUserMessage(userMessages);
 		return messagesDTO;
 	}

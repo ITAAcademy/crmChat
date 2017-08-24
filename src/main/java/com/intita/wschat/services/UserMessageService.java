@@ -56,6 +56,13 @@ public class UserMessageService {
 	public UserMessage getUserMessage(Long id){
 		return userMessageRepository.findOne(id);
 	}
+
+	@Transactional
+	public UserMessage disableMessage(UserMessage message){
+		message.setActive(false);
+		message.setUpdateat(new Date());
+		return userMessageRepository.save(message);
+	}
 	/*@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getChatUserMessagesByAuthor(String author) {
 
@@ -225,7 +232,8 @@ public class UserMessageService {
 	}
 
 	@Transactional
-	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,Date afterDate, String body,boolean filesOnly,int messagesCount){
+	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,
+		Date afterDate, String body,boolean filesOnly,int messagesCount,boolean activeOnly){
 		if (roomId==null) return new ArrayList<UserMessage>();
 		System.out.println("roomId:"+roomId);
 		ArrayList<UserMessage> messages;
@@ -249,6 +257,10 @@ public class UserMessageService {
 		if (filesOnly){
 			if (whereParam.length()>0) whereParam += " AND ";
 			whereParam += "m.attachedFilesJson is not null AND m.attachedFilesJson != :emptyJsonObject";
+		}
+		if (activeOnly){
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam += "m.active = true";
 		}
 		String wherePart = "WHERE "+ whereParam;
 		String orderPart = " ORDER BY m.date DESC,m.id";

@@ -30,7 +30,26 @@
             <span class="message_date" ng-bind="$root.formatDateWithLast(message.date, false, false, 3600)"></span>
             <span ng-if="message.author.id == UserFactory.getChatUserId()" class="message_state">{{RoomsFactory.lastMsgIsReaded() ? 'прочитано' : 'доставлено'}}</span>
         </div>
-        <compilable ng-if="message.author.id != 0" class="bottom_details" content="parseMsg(message.body)" time="message.date"></compilable>
+        <div ng-click="toggleMessageSelected(olderMessage)" ng-class="{'selected':olderMessage.selected}" class="message_body" ng-repeat="olderMessage in (orderedMsgsOld = (message.olderMessages | orderBy : 'date'))">
+            <compilable ng-if="olderMessage.author.id != 0" class="bottom_details" content="retreiveMessageBody(olderMessage)" time="olderMessage.date"></compilable>
+            <div class="remove_message" ng-if="isMessageRemovable(olderMessage) &amp;&amp; olderMessage.selected " ng-click="removeMessage(olderMessage)">
+             <img alt="" class="remove_message_icon" src="images\cross13x15.png">
+            </div>
+        </div>
+
+        <div ng-click="toggleMessageSelected(message)" ng-class="{'selected':message.selected}" class="message_body">
+        <compilable ng-if="message.author.id != 0" class="bottom_details" content="retreiveMessageBody(message)" time="message.date"></compilable>
+        <div class="remove_message" ng-if="isMessageRemovable(message) &amp;&amp; message.selected " ng-click="removeMessage(message)">
+             <img alt="" class="remove_message_icon" src="images\cross13x15.png">
+            </div>
+        </div>
+
+        <div ng-click="toggleMessageSelected(newerMessage)" ng-class="{'selected':newerMessage.selected}"  class="message_body" ng-repeat="newerMessage in (orderedMsgsNew = (message.newerMessages | orderBy : 'date'))">
+            <compilable ng-if="newerMessage.author.id != 0" class="bottom_details" content="retreiveMessageBody(newerMessage)" time="newerMessage.date"></compilable>
+            <div class="remove_message" ng-if="isMessageRemovable(newerMessage) &amp;&amp; newerMessage.selected" ng-click="removeMessage(newerMessage)">
+             <img alt="" class="remove_message_icon" src="images\cross13x15.png">
+            </div>
+        </div>
         <div ng-if="message.author.id == 0" bot-container=" " style="margin: 0px;" content="message.body" time="message.date"></div>
         <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
         <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">

@@ -43,6 +43,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -53,12 +55,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -96,6 +93,7 @@ public class ChatController {
 	@Autowired
 	ConfigParamService configParamService;
 	private final static Logger log = LoggerFactory.getLogger(ChatController.class);
+	private final static int MESSAGE_REMOVING_TIMEOUT_MINUTES = 5;
 
 	@Autowired
 	private ProfanityChecker profanityFilter;
@@ -271,8 +269,9 @@ public class ChatController {
 		String searchQuery = json.get("searchQuery");
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
+		boolean isSearchQueryPresent = searchQuery != null && searchQuery.trim().length() > 0;
 		ArrayList<UserMessage> messages = userMessageService.getMessages(struct.getRoom().getId(), date, clearDate,
-				searchQuery, filesOnly, 20);
+				searchQuery, filesOnly, 20,isSearchQueryPresent);
 		if (messages.size() == 0)
 			return null;
 		List<UserMessageWithLikesDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages);
@@ -545,6 +544,30 @@ public class ChatController {
 			throw new Exception("can't like user");
 		}
 		return true;
+	}
+
+	@RequestMapping(value = "/chat/messages/remove/{messageId}", method = RequestMethod.POST,produces = "text/plain")
+	@ResponseBody
+	public ResponseEntity<String> removeMessage(@PathVariable Long messageId, Authentication auth) throws Exception {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		UserMessage message = messageService.getUserMessage(messageId);
+		if(message == null || !message.getAuthor().equals(chatUser)) {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Cannot find message or you aren't author");
+		}
+		if (message.isActive()) {
+			long messageRemovingTimeoutMoment = message.getDate().getTime()+60*1000*MESSAGE_REMOVING_TIMEOUT_MINUTES;
+			if (new Date(messageRemovingTimeoutMoment).before(new Date())) {
+				return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Message reached removing timeout");
+			}
+			messageService.disableMessage(message);
+			simpMessagingTemplate.convertAndSend(("/topic/" + message.getRoom().getId() + "/chat.message.removed"), dtoMapper.map(message));
+			return ResponseEntity.ok("OK");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Message already disabled");
+		}
+
 	}
 	
 	@RequestMapping(value = "/chat/dislike_message/{messageId}", method = RequestMethod.POST)
@@ -883,7 +906,7 @@ public class ChatController {
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
-				false, 20);
+				false, 20,true);
 		List<UserMessageWithLikesDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages);
 		return chatMessages;
 	}
