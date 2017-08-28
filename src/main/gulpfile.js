@@ -75,6 +75,8 @@ gulp.task('hash', function() {
 
 gulp.task('hash-inject', function() {
     return gulp.src('manifest.json')
+        .pipe(plumber())
+        .pipe(debug({ title: 'hash-inject:' }))
         .pipe(references(gulp.src('resources/templates/index.html')))
         .pipe(gulp.dest('resources/templates'));
 });
@@ -98,4 +100,4 @@ gulp.task('watch', function() {
 });
 
 gulp.task('dev', gulp.series('build', 'watch'));
-gulp.task('prod', gulp.series('clean', 'build', 'hash-inject'));
+gulp.task('prod', gulp.series('clean', 'build','hash', 'hash-inject'));
