@@ -143,3 +143,5 @@ build
 
 bower_components
 
+src/main/resources/fonts/stylesheet-de47dda5.css
+src/main/manifest.json
