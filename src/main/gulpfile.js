@@ -84,7 +84,9 @@ gulp.task('clean', function() {
         .pipe(clean());
 });
 
-gulp.task('build', gulp.series('clean', 'styles', 'assets', 'templates:static', 'templates', 'scripts', 'lib', 'hash', 'hash-inject'));
+
+
+gulp.task('build', gulp.series('styles', 'assets', 'templates:static', 'templates', 'scripts', 'lib'));
 gulp.task('watch', function() {
     watch('source_resources/css/*.{css,sass}', gulp.series('styles'));
     gulp.watch('source_resources/images/**/*.*', gulp.series('assets'));
@@ -94,4 +96,6 @@ gulp.task('watch', function() {
     gulp.watch('source_resources/lib/**/*.*', gulp.series('lib'));
     gutil.log('Start watching!');
 });
+
 gulp.task('dev', gulp.series('build', 'watch'));
+gulp.task('prod', gulp.series('clean', 'build', 'hash-inject'));
