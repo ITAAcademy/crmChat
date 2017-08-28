@@ -650,7 +650,7 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory,$rootScope) {
             $scope.likeMessage = RoomsFactory.likeMessage;
             $scope.dislikeMessage = RoomsFactory.dislikeMessage;
 
-            $scope.retreiveMessageBody = function(message){
+            $rootScope.retreiveMessageBody = function(message){
                 if (message.active) {
                 return $rootScope.parseMsg(message.body);
                 }
