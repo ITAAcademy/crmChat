@@ -47,7 +47,11 @@ public class CustomWebMvcAutoConfiguration extends  WebMvcConfigurerAdapter {
 				resHandler.setCachePeriod(31556926);
 			}
 		}
-
+		if (!registry.hasMappingForPattern("/js/ITA.js")) {
+			ResourceHandlerRegistration resHandler;
+			resHandler = registry.addResourceHandler("/js/ITA.js").addResourceLocations(
+					CLASSPATH_RESOURCE_LOCATIONS).setCachePeriod(0);
+		}
 	}
 
 
