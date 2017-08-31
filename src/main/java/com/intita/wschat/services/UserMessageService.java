@@ -301,12 +301,12 @@ public class UserMessageService {
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date)  {
-		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
+		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndActiveIsTrue(room, date);
 		return  wrapBotMessages(messages);
 	}
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByRoomDate(Room room, Date date, String lang)  {
-		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfter(room, date);
+		ArrayList<UserMessage> messages =  userMessageRepository.findAllByRoomAndDateAfterAndActiveIsTrue(room, date);
 		return  wrapBotMessages(messages, lang);
 	}
 
