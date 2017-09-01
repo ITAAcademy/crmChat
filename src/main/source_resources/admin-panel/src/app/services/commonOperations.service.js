@@ -15,7 +15,7 @@
         }
 
         var fetchUsersInfo= function(info) {
-            return UserMonitorService.fetchChatUserWithNickNameLike(info);//Promise
+            return $http.get(serverPrefix + "/chat/findUsers?info="+info,{});
         }
 
         var fetchUsersInfoExceptRole = function(info,role) {

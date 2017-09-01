@@ -1,9 +1,6 @@
 package com.intita.wschat.dto.mapper;
 
-import com.intita.wschat.dto.model.UserMessageDTO;
-import com.intita.wschat.dto.model.ChatUserDTO;
-import com.intita.wschat.dto.model.IntitaUserDTO;
-import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.dto.model.*;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;

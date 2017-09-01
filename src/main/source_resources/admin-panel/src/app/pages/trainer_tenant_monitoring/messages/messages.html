@@ -2,24 +2,24 @@
     <div class="row datepicker">
         <div class="col-md-3">
             <div class="form-group ">
-                <ui-select ng-model="selected.tenant" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
-                    <ui-select-match placeholder="Select tenant/trainer">
-                        {{selected.tenant.nickName}}
+                <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Оберіть користувача">
+                        {{convertUserObjectToStringByMatchedProperty(selected.user.nickName,$select.search)}}
                     </ui-select-match>
                     <ui-select-choices minimum-input-length="1" refresh="fetchAll($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
-                        <span ng-bind-html="withSearchItem.nickName"></span>
+                        <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group ">
-                <ui-select ng-model="selected.student" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
-                    <ui-select-match placeholder="Select student">
-                        {{selected.student.nickName}}
+                <ui-select ng-model="selected.noStudentUser" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Оберіть користувача">
+                        {{convertUserObjectToStringByMatchedProperty(selected.noStudentUser,$select.search)}}
                     </ui-select-match>
                     <ui-select-choices minimum-input-length="1" refresh="fetchAllExceptStudents($select.search)"  repeat="withSearchItem in usersExceptStudentsList | filter: $select.search">
-                        <span ng-bind-html="withSearchItem.nickName"></span>
+                        <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>

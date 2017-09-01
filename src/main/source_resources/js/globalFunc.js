@@ -617,3 +617,32 @@
           }
       }
   }
+
+/*Add new roles here*/
+  var USER_ROLES = {
+  ADMIN : 'ADMIN', 
+  STUDENT: 'STUDENT'
+};
+
+var findPropertyNameByContainingSubstring = function(obj,searchValue,ignorableProperties){
+
+  ignorableProperties = ignorableProperties || [];
+
+  if (obj==null) 
+    return null;
+
+        var properties = Object.keys(obj);
+        for (var prop of properties) {
+          if (ignorableProperties.contains(prop)) {
+            continue;
+          }
+            var val = obj[prop];
+            var propertieValueAndSearchValueIsNotNull = (val != null && searchValue != null);
+            var isPropertyContainSearchValue = propertieValueAndSearchValueIsNotNull &&
+            String(val).toLowerCase().indexOf(String(searchValue).toLowerCase()) != -1;
+            if (isPropertyContainSearchValue) {
+                return prop;
+            }
+        }
+        return null;
+    }

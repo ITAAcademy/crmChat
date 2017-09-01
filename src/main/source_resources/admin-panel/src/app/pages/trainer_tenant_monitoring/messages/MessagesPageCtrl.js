@@ -18,6 +18,17 @@
         function openEnd() {
             $scope.opened.end = true;
         }
+
+       
+        $scope.convertUserObjectToStringByMatchedProperty = function(user,searchValue){
+            var ignorableUserProperties=["avatar"];
+            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue);
+            if(matchedProperty!=null) {
+                return user[matchedProperty];
+            }
+            return ""; 
+        }
+
         
         $scope.dates = { start: new Date(), end: new Date() }
         $scope.dates.start.setMinutes(0); $scope.dates.start.setHours(0);
