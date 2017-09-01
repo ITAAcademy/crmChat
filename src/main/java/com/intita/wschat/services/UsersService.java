@@ -103,12 +103,71 @@ public class UsersService {
 		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike( loginLike,loginLike,loginLike,loginLike, new PageRequest(0, count));
 	}
 
+	private String generateAllUsersByRolesRequestString(UserRole role){
+		String userFieldName = "id_user";
+		if(role == UserRole.TENANTS)
+			userFieldName = "chat_user_id";
+		return "SELECT " + userFieldName +
+				" FROM " + role.getTableName() +
+				" WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ";
+	}
+	private static String generateAllUsersRequestString(){
+		return "SELECT * FROM user";
+	}
+	private String generateAllUsersExcludingRolesRequestString(UserRole role){
+		return generateAllUsersRequestString()+" WHERE user.id NOT IN("+generateAllUsersByRolesRequestString(role)+")";
+	}
+
+	enum RoleSearchMode {IGNORE_ROLE,INCLUDE_ROLE,EXCLUDE_ROLE};
+
+
+	public List<User> findUsersWithRole(String lookupString,Integer maxResults,UserRole role){
+		return this.findUsers(lookupString,maxResults,role,RoleSearchMode.INCLUDE_ROLE);
+	}
+	public List<User> findUsersWithoutRole(String lookupString,Integer maxResults,UserRole role){
+		return this.findUsers(lookupString,maxResults,role,RoleSearchMode.EXCLUDE_ROLE);
+	}
+	public List<User> findUsers(String lookupString,Integer maxResults){
+		return this.findUsers(lookupString,maxResults,null,RoleSearchMode.IGNORE_ROLE);
+	}
+
 	@Transactional
+	public List<User> findUsers(String lookupString,Integer maxResults,UserRole role,RoleSearchMode roleSearchMode ){
+		String queryStr = null;
+		switch(roleSearchMode) {
+			case IGNORE_ROLE:
+				queryStr = generateAllUsersRequestString();
+				break;
+			case INCLUDE_ROLE:
+				queryStr = generateAllUsersByRolesRequestString(role);
+				break;
+			case EXCLUDE_ROLE:
+				queryStr = generateAllUsersExcludingRolesRequestString(role);
+				break;
+			default:
+				throw new IllegalArgumentException("RoleSearchMode cannot be null");
+		}
+		Query query = entityManager.createNativeQuery(queryStr,User.class);
+		if(maxResults!=null) {
+			query.setMaxResults(maxResults);
+		}
+		List<User> result = query.getResultList();
+		return result;
+	}
+
+	/*@Transactional
 	public List<User> getUsersFistNWithRole(String info, UserRole role, int count){
 		ArrayList<Long> list =  getAllByRole(role);
 		String loginLike = "%" + info + "%";
 		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(loginLike,loginLike,loginLike,loginLike, list, new PageRequest(0, count));
 	}
+
+	@Transactional
+	public List<User> getUsersFistNWithoutRole(String info, UserRole role, int count){
+		ArrayList<Long> list =  getAllExcludeRole(role);
+		String loginLike = "%" + info + "%";
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(loginLike,loginLike,loginLike,loginLike, list, new PageRequest(0, count));
+	}*/
 
 	@Transactional
 	public List<String> getUsersEmailsFist5(String login){
@@ -375,6 +434,22 @@ public class UsersService {
 		if(role == UserRole.TENANTS)
 			userFieldName = "chat_user_id";
 		Query query = entityManager.createNativeQuery("SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ");
+		List<Object> queryResults = query.getResultList();
+
+		ArrayList<Long> resultArray = new ArrayList<>();
+		for(Object queryObject : queryResults)
+		{
+			Long userId = Long.parseLong(queryObject.toString());
+			resultArray.add(userId);
+		}
+		return resultArray;
+	}
+	@Transactional
+	public ArrayList<Long> getAllExcludeRole(UserRole role){
+		String userFieldName = "id_user";
+		if(role == UserRole.TENANTS)
+			userFieldName = "chat_user_id";
+		Query query = entityManager.createNativeQuery("SELECT user.id FROM user user WHERE user.id NOT IN("+"SELECT " + userFieldName + " FROM " + role.getTableName() + " WHERE ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) ) ");
 		List<Object> queryResults = query.getResultList();
 
 		ArrayList<Long> resultArray = new ArrayList<>();

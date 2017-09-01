@@ -6,7 +6,7 @@
                     <ui-select-match placeholder="Select tenant/trainer">
                         {{selected.tenant.nickName}}
                     </ui-select-match>
-                    <ui-select-choices minimum-input-length="1" refresh="fetchTrainersAndTenants($select.search)" repeat="withSearchItem in trainersAndTenantsList | filter:  $select.search">
+                    <ui-select-choices minimum-input-length="1" refresh="fetchAll($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
@@ -18,7 +18,7 @@
                     <ui-select-match placeholder="Select student">
                         {{selected.student.nickName}}
                     </ui-select-match>
-                    <ui-select-choices minimum-input-length="1" refresh="fetchStudents($select.search)"  repeat="withSearchItem in studentsList | filter: $select.search">
+                    <ui-select-choices minimum-input-length="1" refresh="fetchAllExceptStudents($select.search)"  repeat="withSearchItem in usersExceptStudentsList | filter: $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>

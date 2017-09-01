@@ -119,9 +119,28 @@ public class AdminPanelController {
 		//return "../static/admin-panel/dev-release/index";
 	}
 
-	@RequestMapping(value = "/chat/findUsersWithRoles", method = RequestMethod.GET)
+	@RequestMapping(value = "/chat/findUsers", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<LoginEvent> getTrainerStudentsById(@RequestParam Integer roles, @RequestParam String info, Authentication auth) {
+	public Set<LoginEvent> findUsers(@RequestParam String info, Authentication auth) {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+
+		List<User> users= new ArrayList<>();
+
+		users.addAll(userService.findUsers(info, 10));
+
+		Set<LoginEvent> userList = new HashSet<>();
+		for(User u : users)
+		{
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true);
+			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
+		}
+		return  userList;
+
+	}
+
+	@RequestMapping(value = "/chat/findUsersExceptRole", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<LoginEvent> findUsersExceptRole(@RequestParam UserRole role, @RequestParam String info, Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser user = chatPrincipal.getChatUser();
@@ -130,20 +149,14 @@ public class AdminPanelController {
 
 		if(iUser != null)
 		{
-			Long intitaUserId = user.getIntitaUser().getId();
-			for(UserRole role : UserRole.values())
-			{
-				if((role.getValue() & roles) == role.getValue())
-					users.addAll(userService.getUsersFistNWithRole(info, role, 10));	
-			}
-
+			users.addAll(userService.findUsersWithoutRole(info, 10,role));
 		}
 		else return new  HashSet<LoginEvent>();
 
 		Set<LoginEvent> userList = new HashSet<>();
 		for(User u : users)
 		{
-			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true); 
+			ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true);
 			userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
 		}
 		return  userList;

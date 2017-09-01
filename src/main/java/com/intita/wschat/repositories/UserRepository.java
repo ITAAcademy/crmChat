@@ -40,6 +40,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
   List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike(String nickname, String login, String login1, String login2, Pageable pageable);
   
   List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(String nickname, String login, String login1, String login2, List<Long> listIds, Pageable pageable);
+
   //
   
   @Query(value = "SELECT * FROM user_super_visor WHERE id_user = ?1 AND ((start_date <= NOW() AND end_date >= NOW()) OR end_date IS NULL) LIMIT 1", nativeQuery = true)

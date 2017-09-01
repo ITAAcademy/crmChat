@@ -32,8 +32,8 @@
             showWeeks: false
         };
 
-        $scope.studentsList = [];
-        $scope.trainersAndTenantsList = [];
+        $scope.usersExceptStudentsList = [];
+        $scope.usersList = [];
 
 
         $scope.selectWithSearchItems = []; //UserMonitorService.findTenants();
@@ -63,22 +63,20 @@
 
         var _infoStudent = '';
         var StudentList = [];
-        $scope.fetchStudents = function(info) {
-            var roles = 1 << 1
+        $scope.fetchAllExceptStudents = function(info) {
             if (info.trim() != '')
-                return CommonOperationsService.fetchUsersInfo(roles, info).then(function(payload){
-                    $scope.studentsList = payload.data;
+                return CommonOperationsService.fetchUsersInfoExceptRole(info,USER_ROLES.STUDENT).then(function(payload){
+                    $scope.usersExceptStudentsList = payload.data;
                 });
             return $.Deferred().resolve();
         }
 
         var _infoTenantAndTrainersList = '';
         var TenantAndTrainersList = [];
-        $scope.fetchTrainersAndTenants = function(info) {
-            var roles = (1 << 6 | 1 << 7);
+        $scope.fetchAll = function(info) {
             if (info.trim() != '')
-                return CommonOperationsService.fetchUsersInfo(roles, info).then(function(payload){
-                    $scope.trainersAndTenantsList = payload.data;
+                return CommonOperationsService.fetchUsers(info).then(function(payload){
+                    $scope.usersList = payload.data;
                 });
             return $.Deferred().resolve();
         }

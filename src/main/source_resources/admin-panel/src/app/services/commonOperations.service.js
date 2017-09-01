@@ -10,21 +10,21 @@
     function CommonOperationsService($http,UserMonitorService) {
     	var fetchUsers = function(info) {
             if (info.trim() != '')
-            return  fetchUsersInfoWithoutRole(info);
+            return  fetchUsersInfo(info);
             return $.Deferred().resolve();
         }
 
-        var fetchUsersInfoWithoutRole = function(info) {
-        return UserMonitorService.fetchChatUserWithNickNameLike(info);//Promise
+        var fetchUsersInfo= function(info) {
+            return UserMonitorService.fetchChatUserWithNickNameLike(info);//Promise
         }
 
-      var  fetchUsersInfo = function (roles, info) {
-                return $http.get(serverPrefix + "/chat/findUsersWithRoles?info=" + info + "&roles=" + roles, {});   
+        var fetchUsersInfoExceptRole = function(info,role) {
+            return $http.get(serverPrefix + "/chat/findUsersExceptRole?info="+info+"&role="+role,{});
         }
 
         return {
             fetchUsers: fetchUsers,
-            fetchUsersInfo: fetchUsersInfo
+            fetchUsersInfoExceptRole: fetchUsersInfoExceptRole
 
         }
       
