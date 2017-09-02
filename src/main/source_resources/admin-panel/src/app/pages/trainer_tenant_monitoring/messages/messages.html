@@ -4,7 +4,7 @@
             <div class="form-group ">
                 <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Оберіть користувача">
-                        {{convertUserObjectToStringByMatchedProperty(selected.user.nickName,$select.search)}}
+                        {{convertUserObjectToStringByMatchedProperty(selected.user,{{$select.search}})}}
                     </ui-select-match>
                     <ui-select-choices minimum-input-length="1" refresh="fetchAll($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>
@@ -16,7 +16,7 @@
             <div class="form-group ">
                 <ui-select ng-model="selected.noStudentUser" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Оберіть користувача">
-                        {{convertUserObjectToStringByMatchedProperty(selected.noStudentUser,$select.search)}}
+                        {{convertUserObjectToStringByMatchedProperty(selected.noStudentUser,{{$select.search}})}}
                     </ui-select-match>
                     <ui-select-choices minimum-input-length="1" refresh="fetchAllExceptStudents($select.search)"  repeat="withSearchItem in usersExceptStudentsList | filter: $select.search">
                         <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>

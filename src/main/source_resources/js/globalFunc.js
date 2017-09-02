@@ -627,6 +627,7 @@
 var findPropertyNameByContainingSubstring = function(obj,searchValue,ignorableProperties){
 
   ignorableProperties = ignorableProperties || [];
+  ignorableProperties.push('$$hashKey');
 
   if (obj==null) 
     return null;

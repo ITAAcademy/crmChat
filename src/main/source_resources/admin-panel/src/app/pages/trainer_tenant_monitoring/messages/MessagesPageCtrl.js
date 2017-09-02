@@ -21,8 +21,8 @@
 
        
         $scope.convertUserObjectToStringByMatchedProperty = function(user,searchValue){
-            var ignorableUserProperties=["avatar"];
-            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue);
+            var ignorableUserProperties=["avatar","id"];
+            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue,ignorableUserProperties);
             if(matchedProperty!=null) {
                 return user[matchedProperty];
             }

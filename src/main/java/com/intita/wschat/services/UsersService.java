@@ -100,7 +100,7 @@ public class UsersService {
 	@Transactional
 	public List<User> getUsersFistN(String login, int count){
 		String loginLike = "%" + login + "%";
-		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike( loginLike,loginLike,loginLike,loginLike, new PageRequest(0, count));
+		return usersRepo.findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike( loginLike, new PageRequest(0, count));
 	}
 
 	private String generateAllUsersByRolesRequestString(UserRole role){
@@ -115,7 +115,10 @@ public class UsersService {
 		return "SELECT * FROM user";
 	}
 	private String generateAllUsersExcludingRolesRequestString(UserRole role){
-		return generateAllUsersRequestString()+" WHERE user.id NOT IN("+generateAllUsersByRolesRequestString(role)+")";
+		return generateAllUsersRequestString()+ " WHERE user.id NOT IN("+generateAllUsersByRolesRequestString(role)+")";
+	}
+	private String generateUsersSearchPartOfQuery(String searchParamName){
+		return String.format(" nickName like :%1$s or firstName like :%1$s or secondName like :%1$s or email like :%1$s ",searchParamName);
 	}
 
 	enum RoleSearchMode {IGNORE_ROLE,INCLUDE_ROLE,EXCLUDE_ROLE};
@@ -133,21 +136,39 @@ public class UsersService {
 
 	@Transactional
 	public List<User> findUsers(String lookupString,Integer maxResults,UserRole role,RoleSearchMode roleSearchMode ){
-		String queryStr = null;
+		StringBuilder queryStrBuilder = new StringBuilder("");
+		boolean whereClausePresented = true;
 		switch(roleSearchMode) {
 			case IGNORE_ROLE:
-				queryStr = generateAllUsersRequestString();
+				queryStrBuilder.append(generateAllUsersRequestString());
+				whereClausePresented = false;
 				break;
 			case INCLUDE_ROLE:
-				queryStr = generateAllUsersByRolesRequestString(role);
+				queryStrBuilder.append(generateAllUsersByRolesRequestString(role));
 				break;
 			case EXCLUDE_ROLE:
-				queryStr = generateAllUsersExcludingRolesRequestString(role);
+				queryStrBuilder.append(generateAllUsersExcludingRolesRequestString(role));
 				break;
 			default:
 				throw new IllegalArgumentException("RoleSearchMode cannot be null");
 		}
-		Query query = entityManager.createNativeQuery(queryStr,User.class);
+
+		if(whereClausePresented) {
+			queryStrBuilder.append(" AND (");
+		}
+		else {
+			queryStrBuilder.append(" WHERE ");
+		}
+		String searchParamName = "searchValue";
+
+		queryStrBuilder.append(generateUsersSearchPartOfQuery(searchParamName));
+
+		if (whereClausePresented) {
+			queryStrBuilder.append(")");
+		}
+
+		Query query = entityManager.createNativeQuery(queryStrBuilder.toString(),User.class);
+		query.setParameter(searchParamName,"%"+lookupString+"%");
 		if(maxResults!=null) {
 			query.setMaxResults(maxResults);
 		}

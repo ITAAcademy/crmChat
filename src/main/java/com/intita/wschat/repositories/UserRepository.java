@@ -36,8 +36,9 @@ public interface UserRepository extends CrudRepository<User, Long> {
   
   @Query("select u from User u where (u.firstName like ?1 or u.secondName like ?1 or u.login like ?1) and u.id not in ?2")
   List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndNotInCustom(String nickname, String login, String login1, String login2, List<Long> users, Pageable pageable);
-  
-  List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike(String nickname, String login, String login1, String login2, Pageable pageable);
+
+  @Query("select u from User u where (u.nickName like ?1 or u.firstName like ?1 or u.secondName like ?1 or u.login like ?1)")
+  List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLike(String searchValue, Pageable pageable);
   
   List<User> findByNickNameLikeOrLoginLikeOrFirstNameLikeOrSecondNameLikeAndIdIn(String nickname, String login, String login1, String login2, List<Long> listIds, Pageable pageable);
 
