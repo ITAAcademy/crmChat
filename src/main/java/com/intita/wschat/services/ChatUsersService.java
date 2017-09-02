@@ -1,12 +1,10 @@
 package com.intita.wschat.services;
 
-import java.security.Principal;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
-import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +142,10 @@ public class ChatUsersService {
 	public ChatUser getChatUserFromIntitaId(Long id, boolean createGuest){
 		User currentUser = userService.getById(id);
 		return getChatUserFromIntitaUser(currentUser, createGuest);
+	}
+	@Transactional
+	public ChatUser getByIntitaId(Long intitaId) {
+		return chatUsersRepo.findByIntitaId(intitaId);
 	}
 
 	public ArrayList<ChatUser> getChatUsersFromIntitaIds(ArrayList<Long> intitaUsersIds){

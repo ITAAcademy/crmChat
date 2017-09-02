@@ -171,8 +171,8 @@ public class AdminPanelController {
 	@RequestMapping(value = "/chat/msgHistory", method = RequestMethod.POST)
 	@ResponseBody
 	public List<UserMessageDTO> getMsgHistory(@RequestBody MsgRequestModel rqModel) {
-		ChatUser first = chatUsersService.getChatUser(rqModel.getUserIdFirst().longValue());
-		ChatUser second = chatUsersService.getChatUser(rqModel.getUserIdSecond().longValue());
+		ChatUser first = chatUsersService.getByIntitaId(rqModel.getUserIdFirst().longValue());
+		ChatUser second = chatUsersService.getByIntitaId(rqModel.getUserIdSecond().longValue());
 		
 		Date beforeDate = new Date(rqModel.getBeforeDate());
 		Date afterDate = new Date(rqModel.getAfterDate());

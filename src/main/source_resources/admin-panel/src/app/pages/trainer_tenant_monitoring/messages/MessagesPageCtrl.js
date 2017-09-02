@@ -49,19 +49,17 @@
 
         $scope.selectWithSearchItems = []; //UserMonitorService.findTenants();
 
-        var _infoStudent = '';
 
-
-        $scope.selected = { tenant: null, student: null };
+        $scope.selected = { user: null, noStudentUser: null };
         $scope.messages = [];
 
         $scope.getPrivate = function() {
             debugger;
-            var tenant = $scope.selected.tenant;
-            var student = $scope.selected.student;
+            var user1 = $scope.selected.user;
+            var user2NonStudent = $scope.selected.noStudentUser;
             var msgRequestModel = {
-                "user_id_first": tenant.chatUserId,
-                "user_id_second": student.chatUserId,
+                "user_id_first": user1.id,
+                "user_id_second": user2NonStudent.id,
                 "before_date": new Date($scope.dates.end).getTime(),
                 "after_date": new Date($scope.dates.start).getTime()
             }
@@ -72,8 +70,6 @@
 
         }
 
-        var _infoStudent = '';
-        var StudentList = [];
         $scope.fetchAllExceptStudents = function(info) {
             if (info.trim() != '')
                 return CommonOperationsService.fetchUsersInfoExceptRole(info,USER_ROLES.STUDENT).then(function(payload){
@@ -82,8 +78,6 @@
             return $.Deferred().resolve();
         }
 
-        var _infoTenantAndTrainersList = '';
-        var TenantAndTrainersList = [];
         $scope.fetchAll = function(info) {
             if (info.trim() != '')
                 return CommonOperationsService.fetchUsers(info).then(function(payload){

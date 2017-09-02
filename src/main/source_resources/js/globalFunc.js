@@ -633,7 +633,7 @@ var findPropertyNameByContainingSubstring = function(obj,searchValue,ignorablePr
 
         var properties = Object.keys(obj);
         for (var prop of properties) {
-          if (ignorableProperties.contains(prop)) {
+          if (ignorableProperties.indexOf(prop)!=-1) {
             continue;
           }
             var val = obj[prop];
