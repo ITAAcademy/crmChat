@@ -7,10 +7,10 @@
     <div class="col-md-4">
         <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
             <ui-select-match placeholder="Select first user">
-                {{selected.user.nickName}}
+                {{selected.user.login}}
             </ui-select-match>
             <ui-select-choices minimum-input-length="1" refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
-                <span ng-bind-html="withSearchItem.nickName"></span>
+                <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>
             </ui-select-choices>
         </ui-select>
     </div>

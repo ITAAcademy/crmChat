@@ -22,9 +22,19 @@
             return $http.get(serverPrefix + "/chat/findUsersExceptRole?info="+info+"&role="+role,{});
         }
 
+       var convertUserObjectToStringByMatchedProperty = function(user,searchValue){
+            var ignorableUserProperties=["avatar","id"];
+            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue,ignorableUserProperties);
+            if(matchedProperty!=null) {
+                return user[matchedProperty];
+            }
+            return ""; 
+        }
+
         return {
             fetchUsers: fetchUsers,
-            fetchUsersInfoExceptRole: fetchUsersInfoExceptRole
+            fetchUsersInfoExceptRole: fetchUsersInfoExceptRole,
+            convertUserObjectToStringByMatchedProperty: convertUserObjectToStringByMatchedProperty
 
         }
       

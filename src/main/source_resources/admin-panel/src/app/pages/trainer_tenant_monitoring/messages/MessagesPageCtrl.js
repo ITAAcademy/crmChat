@@ -20,14 +20,7 @@
         }
 
        
-        $scope.convertUserObjectToStringByMatchedProperty = function(user,searchValue){
-            var ignorableUserProperties=["avatar","id"];
-            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue,ignorableUserProperties);
-            if(matchedProperty!=null) {
-                return user[matchedProperty];
-            }
-            return ""; 
-        }
+        $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
 
         
         $scope.dates = { start: new Date(), end: new Date() }
