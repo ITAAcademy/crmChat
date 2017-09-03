@@ -1052,6 +1052,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $http.get('askForRatingModal.html').then(function(response) {
                         var messageObj = {};
                         messageObj.body = response.data;
+                        messageObj.active = true;
                         messageObj.author = {
                             id: 1,
                             nickName: "Server",

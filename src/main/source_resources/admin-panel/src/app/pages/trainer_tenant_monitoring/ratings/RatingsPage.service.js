@@ -15,5 +15,8 @@
         this.getRatingsByRoom = function(data) {
             return $http.post(serverPrefix + "/chat/admin/ratingByRoom", data);
         }
+        this.getRatingsByChatUser = function(chatUserId) {
+            return $http.get(serverPrefix + "/who_rate_user_info?chatUserId="+chatUserId);
+        }
     }
 })();

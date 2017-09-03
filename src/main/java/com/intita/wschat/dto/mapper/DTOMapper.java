@@ -5,13 +5,12 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatLikeStatusService;
+import com.intita.wschat.services.ChatUsersService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 public class DTOMapper {
 
     @Autowired private ChatLikeStatusService chatLikeStatusService;
+    @Autowired private ChatUsersService chatUserService;
 
     ModelMapper modelMapper = new ModelMapper();
     PropertyMap<ChatUser, ChatUserDTO> chatUserMap = new PropertyMap<ChatUser, ChatUserDTO>() {
@@ -40,6 +40,15 @@ public class DTOMapper {
     public IntitaUserDTO map(User intitaUser) {
         return modelMapper.map(intitaUser, IntitaUserDTO.class);
     }
+
+    public ExtendedIntitaUserDTO mapExtended(User intitaUser) {
+        ExtendedIntitaUserDTO dto = modelMapper.map(intitaUser, ExtendedIntitaUserDTO.class);
+        if (intitaUser.getChatUser() != null) {
+            dto.setChatUserId(intitaUser.getChatUser().getId());
+        }
+        return dto;
+    }
+
     public ChatUserDTO map(ChatUser chatUser) {
         return modelMapper.map(chatUser, ChatUserDTO.class);
     }

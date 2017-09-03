@@ -1,36 +1,56 @@
 <div class="ng-cloak monitor-head" ba-panel ba-panel-title="Filter" ba-panel-class=" ">
     <div class="row datepicker">
         <div class="col-md-2 row">
+
             <div class="col-md-12">
-                <input id="user" name="user_room" ng-model="form.searchMode" value="user" type="radio" aria-label="...">
+                <input id="room" name="user_room" ng-model="form.searchMode" value="user" type="radio" aria-label="...">
+                <label for="room">Find by user</label>
+            </div>
+
+            <div class="col-md-12">
+                <input id="user" name="user_room" ng-model="form.searchMode" value="users" type="radio" aria-label="...">
                 <label for="user">Find by users name</label>
             </div>
+
             <div class="col-md-12">
                 <input id="room" name="user_room" ng-model="form.searchMode" value="room" type="radio" aria-label="...">
                 <label for="room">Find by room name</label>
             </div>
+
         </div>
         <div class="col-md-4 row">
-            <div minimum-input-length="1" ng-show="form.searchMode=='user'" class="form-group col-md-12">
+            <div minimum-input-length="1" ng-show="form.searchMode=='users'" class="form-group col-md-12">
                 <ui-select ng-model="selected.users[0]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select first user">
-                        {{selected.users[0].nickName}}
+                        {{selected.users[0].login}}
                     </ui-select-match>
                     <ui-select-choices  refresh="fetchUsers($select.search)"  repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <div minimum-input-length="1" ng-show="form.searchMode=='user'" class="form-group col-md-12">
+            <div minimum-input-length="1" ng-show="form.searchMode=='users'" class="form-group col-md-12">
                 <ui-select ng-model="selected.users[1]" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select second user">
-                        {{selected.users[1].nickName}}
+                        {{selected.users[1].login}}
                     </ui-select-match>
                     <ui-select-choices refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
                         <span ng-bind-html="withSearchItem.nickName"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
+
+        <div minimum-input-length="1" ng-show="form.searchMode=='user'" class="form-group col-md-12">
+                <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
+                    <ui-select-match placeholder="Select user">
+                        {{selected.user.login}}
+                    </ui-select-match>
+                    <ui-select-choices refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
+                        <span ng-bind-html="convertUserObjectToStringByMatchedProperty(withSearchItem,$select.search)"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+
             <div minimum-input-length="1"  ng-show="form.searchMode=='room'" class="form-group col-md-12">
                 <ui-select ng-model="selected.room" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
                     <ui-select-match placeholder="Select room">

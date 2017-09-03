@@ -85,5 +85,9 @@ public class ConsultationsRatingsService {
 	{
 		return chatConsultationResultRepository.findAllByRoomAndDateBeforeAndDateAfter(room, before, after);
 	}
+
+	public ArrayList<ChatConsultationResult> findConsultionResultsByPrivateRoomUser(ChatUser user) {
+		return chatConsultationResultRepository.findConsultionResultsByPrivateRoomUser(user);
+	}
 }
 

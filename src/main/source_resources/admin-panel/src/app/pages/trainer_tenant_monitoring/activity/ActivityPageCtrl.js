@@ -13,6 +13,8 @@
 
 $scope.test="ROMA this is test";
 $scope.usersList = [];
+        $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
+
 
    $scope.dates = { start: new Date(), end: new Date() }
         $scope.dates.start.setMinutes(0); $scope.dates.start.setHours(0);

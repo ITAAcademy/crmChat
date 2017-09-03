@@ -16,8 +16,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
+import com.intita.wschat.admin.models.MsgResponseRatingsModel;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatUserDTO;
+import com.intita.wschat.models.*;
 import com.intita.wschat.services.common.UsersOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -41,15 +45,6 @@ import com.intita.wschat.config.CustomAuthenticationProvider;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.RoomNotFoundException;
-import com.intita.wschat.models.ChatConsultation;
-import com.intita.wschat.models.ChatConsultationResultValue;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ConsultationRatings;
-import com.intita.wschat.models.IntitaConsultation;
-import com.intita.wschat.models.Lectures;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.RoomModelSimple;
-import com.intita.wschat.models.User;
 import com.intita.wschat.repositories.ChatLangRepository;
 import com.intita.wschat.services.ChatLangService;
 import com.intita.wschat.services.ChatTenantService;
@@ -116,6 +111,8 @@ public class ConsultationsController {
 	private UsersOperationsService usersOperationsService;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
+	@Autowired
+	private DTOMapper dtoMapper;
 
 	@RequestMapping(value = "/chat/consultation/info/{id}", method = RequestMethod.POST)
 	public 	@ResponseBody String getConsultationInfo(@PathVariable("id") Long consultationIntitaId, Authentication auth) throws InterruptedException, JsonProcessingException {
@@ -341,6 +338,13 @@ public class ConsultationsController {
 		}
 		chatConsultationsRatingsService.addRetings(room, user, values);
 		return true;
+	}
+
+	@RequestMapping(value="/who_rate_user_info", method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<MsgResponseRatingsModel> findWhoRateUser(@RequestParam Long chatUserId) {
+		List<ChatConsultationResult> constulationResults = chatConsultationsRatingsService.findConsultionResultsByPrivateRoomUser(ChatUser.forId(chatUserId));
+		return MsgResponseRatingsModel.convertAllChatConsultationResults(constulationResults);
 	}
 	
 	

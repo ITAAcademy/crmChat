@@ -20,6 +20,9 @@
         $scope.fetchUsers = fetchUsers;
         $scope.test = "test OK";
 
+        $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
+
+
         function openStart() {
             $scope.opened.start = true;
         }
@@ -84,7 +87,12 @@
             var idList = [];
             debugger;
             switch ($scope.form.searchMode) {
-                case "user":
+                case "user": {
+                    idList = [$scope.selected.user.chatUserId];
+                    break;
+
+                }
+                case "users":
                     {
                         is_user = true;
                         for (var i = 0; i < $scope.selected.users.length; i++) {
@@ -95,14 +103,29 @@
                 case "room":
                     {
                         idList = [$scope.selected.room.key];
+                        break;
                     }
             }
 
-            RatingsPageService.getRatingsByRoom({ room_user_ids_list: idList, is_user: is_user, before_date: new Date($scope.dates.end).getTime(), after_date: new Date($scope.dates.start).getTime() })
-                .then(function(response) {
+            var responseFunction = function(response) {
                     $scope.ratingsInfoByCurrentRoom = response.data;
                     calcAverageRatings(response.data);
-                }, function() {});
+                }
+
+                switch($scope.form.searchMode) {
+                    case "users":
+                    case "room":
+                     RatingsPageService.getRatingsByRoom({ room_user_ids_list: idList, is_user: is_user, before_date: new Date($scope.dates.end).getTime(), after_date: new Date($scope.dates.start).getTime() })
+                .then(responseFunction, function() {});
+                    break;
+                    case "user":
+                       RatingsPageService.getRatingsByChatUser(idList[0])
+                .then(responseFunction, function() {});
+                    break;
+
+                }
+
+           
         }
 
 

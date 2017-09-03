@@ -13,6 +13,7 @@ import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
+import com.intita.wschat.dto.model.ExtendedIntitaUserDTO;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
 import org.apache.commons.lang.NullArgumentException;
@@ -123,19 +124,19 @@ public class AdminPanelController {
 
 	@RequestMapping(value = "/chat/findUsers", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<IntitaUserDTO> findUsers(@RequestParam String info, Authentication auth) {
+	public Set<ExtendedIntitaUserDTO> findUsers(@RequestParam String info, Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		List<User> users= new ArrayList<>();
 
 		users.addAll(userService.findUsers(info, 10));
 
-		Set<IntitaUserDTO> userList = new HashSet<>();
+		Set<ExtendedIntitaUserDTO> userList = new HashSet<>();
 		for(User u : users)
 		{
 			//ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true);
 			//userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
-			userList.add(dtoMapper.map(u));
+			userList.add(dtoMapper.mapExtended(u));
 		}
 		return  userList;
 
@@ -143,7 +144,7 @@ public class AdminPanelController {
 
 	@RequestMapping(value = "/chat/findUsersExceptRole", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<IntitaUserDTO> findUsersExceptRole(@RequestParam UserRole role, @RequestParam String info, Authentication auth) {
+	public Set<ExtendedIntitaUserDTO> findUsersExceptRole(@RequestParam UserRole role, @RequestParam String info, Authentication auth) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 
 		ChatUser user = chatPrincipal.getChatUser();
@@ -154,14 +155,14 @@ public class AdminPanelController {
 		{
 			users.addAll(userService.findUsersWithoutRole(info, 10,role));
 		}
-		else return new  HashSet<IntitaUserDTO>();
+		else return new  HashSet<ExtendedIntitaUserDTO>();
 
-		Set<IntitaUserDTO> userList = new HashSet<>();
+		Set<ExtendedIntitaUserDTO> userList = new HashSet<>();
 		for(User u : users)
 		{
 			//ChatUser chat_user = chatUsersService.getChatUserFromIntitaUser(u, true);
 			//userList.add(chatUsersService.getLoginEvent(chat_user));//,participantRepository.isOnline(""+chat_user.getId())));
-			userList.add(dtoMapper.map(u));
+			userList.add(dtoMapper.mapExtended(u));
 		}
 		return  userList;
 
