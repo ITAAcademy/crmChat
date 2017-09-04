@@ -306,6 +306,7 @@ function updateUserActivityPerDay(){
 }
 function convertMapToActivityObjects(mapObj){
   var result = [];
+
 for (var key in mapObj) {
   if (mapObj.hasOwnProperty(key)) {
     var msOfActivity = mapObj[key];
@@ -315,6 +316,11 @@ for (var key in mapObj) {
       status: minutesOfActivity
     })
   }
+result.sort(function(a,b) {
+return a.when.getTime() - b.when.getTime();
+});
+
+
 }
 return result;
 }
