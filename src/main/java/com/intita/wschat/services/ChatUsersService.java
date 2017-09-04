@@ -222,8 +222,8 @@ public class ChatUsersService {
 	}
 
 
-	public int getActiveUsersCountToday(){
-		return chatUsersRepo.countChatUserByMessagesDateAfter();
+	public int getActiveUsersCount(int days){
+		return chatUsersRepo.countChatUserByMessagesDateAfter(days);
 	}
 
 

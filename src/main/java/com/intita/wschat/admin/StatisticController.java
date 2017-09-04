@@ -61,11 +61,12 @@ UserMessageService userMessageService;
 		ChatUserActivityPerDayStatistic resultStatistic = new ChatUserActivityPerDayStatistic(msOfActivityPerDay);
 		return resultStatistic;
 	}
-	@RequestMapping(value = "/statistic/user/count_active_users_today", method = RequestMethod.GET)
+	@RequestMapping(value = "/statistic/user/count_active_users", method = RequestMethod.GET)
 	@ResponseBody
-	public StatisticResponseActiveUsers getActiveChatUsersCountToday(@RequestParam(required = false) String requestId){
+	public StatisticResponseActiveUsers getActiveChatUsersCount(@RequestParam(required = false) String requestId,
+																	 @RequestParam(required = false,defaultValue = "1") Integer days){
 		long totalUsers = usersService.getUsersCount();
-		long activeUsers =  chatUserService.getActiveUsersCountToday();
+		long activeUsers =  chatUserService.getActiveUsersCount(days);
 		StatisticResponseActiveUsers activeUsersData = new StatisticResponseActiveUsers();
 		activeUsersData.setTotalUsers(totalUsers);
 		activeUsersData.setActiveUsers(activeUsers);

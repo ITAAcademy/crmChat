@@ -15,28 +15,28 @@
 
     $scope.charts = [{
       color: pieColor,
-      description: 'New Visits',
+      description: 'День',
       stats: '57,820',
       icon: 'person',
-      dataUrl: "statistic/user/count_active_users_today",
+      dataUrl: "statistic/user/count_active_users",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
     }, {
       color: pieColor,
-      description: 'Purchases',
+      description: 'Тиждень',
       stats: '$ 89,745',
       icon: 'money',
-      dataUrl: "statistic/user/count_active_users_today",
+      dataUrl: "statistic/user/count_active_users?days=7",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
     }, {
       color: pieColor,
-      description: 'Active Users',
+      description: 'Місяць',
       stats: '178,391',
       icon: 'face',
-      dataUrl: "statistic/user/count_active_users_today",
+      dataUrl: "statistic/user/count_active_users?days=30",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
@@ -45,7 +45,7 @@
       description: 'Returned',
       stats: '32,592',
       icon: 'refresh',
-      dataUrl: "statistic/user/count_active_users_today",
+      dataUrl: "statistic/user/count_active_users",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
@@ -58,9 +58,11 @@
       for (var currentChar of $scope.charts ) {
       
        var chartModel = $scope.charts[currentCharIndex];
+       var isRequestParameterAlreadyPresent = chartModel.dataUrl.includes('?');
+       var unionSymbol = isRequestParameterAlreadyPresent ? '&' : '?';
        var deffered =     $http({
         method: 'GET',
-        url: chartModel.dataUrl+'?requestId='+currentCharIndex
+        url: chartModel.dataUrl+unionSymbol+'requestId='+currentCharIndex
       });
        deffered.then(function successCallback(response) {
 
