@@ -1,0 +1,20 @@
+<div class="horizontal-scroll">
+  <table class="table">
+    <thead>
+    <tr>
+      <th class="align-right">Date</th>
+      <th class="table-arr"></th>
+      <th class="align-right">Work time (minutes)</th>
+      <th class="table-arr"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="statistic in userActivityPerDayDataValue">
+      <td class="align-right">{{formatDate(statistic.when,false,true)}}</td>
+      <td class="table-arr"><i class="icon-up"></i></td>
+      <td class="align-right">{{statistic.status}}</td>
+      <td class="table-arr"><i class="icon-up"></i></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

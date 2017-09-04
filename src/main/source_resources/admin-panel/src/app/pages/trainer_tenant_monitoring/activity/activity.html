@@ -2,6 +2,15 @@
 <div class="row  ">
     <div id="areaChart" ng-show="userActivityDataValue.length>0" class="admin-chart"></div>
     <div id="barChart" ng-show="userActivityPerDayDataValue.length>0" class="admin-chart"></div>
+
+    <div ng-show="userActivityPerDayDataValue.length>0"  class="row">
+    <div class="col-md-12">
+      <div ba-panel ba-panel-title="Активність користувача по дням" ba-panel-class="with-scroll">
+        <div include-with-scope="app/pages/trainer_tenant_monitoring/activity/tables/activity_statistic.html"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <div class="row  ">
     <div class="col-md-4">

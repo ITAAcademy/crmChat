@@ -11,7 +11,7 @@
     /** @ngInject */
     function ActivityPageCtrl($scope, $timeout, ActivityPageService, $http, $window,baConfig,$element,layoutPaths,UserMonitorService, CommonOperationsService) {
 
-$scope.test="ROMA this is test";
+$scope.formatDate = formatDate;
 $scope.usersList = [];
         $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
 
