@@ -51,7 +51,7 @@ UserMessageService userMessageService;
 		Map<Long, Long> msOfActivityPerDay = new HashMap<Long,Long>();
 		for (Long date : datesWithoutTime){
 			if (!msOfActivityPerDay.containsKey(date))
-			msOfActivityPerDay.put(date,0L);
+			msOfActivityPerDay.put(date,ACTIVITY_DOORATION_MS);
 			else{
 				Long containedDate = msOfActivityPerDay.get(date);
 				containedDate += ACTIVITY_DOORATION_MS;
