@@ -15,7 +15,7 @@
 <div class="row  ">
     <div class="col-md-4">
         <ui-select ng-model="selected.user" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true" search-enabled="true">
-            <ui-select-match placeholder="Select first user">
+            <ui-select-match placeholder="Оберіть користувача">
                 {{selected.user.login}}
             </ui-select-match>
             <ui-select-choices minimum-input-length="1" refresh="fetchUsers($select.search)" repeat="withSearchItem in usersList | filter:  $select.search">
@@ -23,6 +23,7 @@
             </ui-select-choices>
         </ui-select>
     </div>
+
     <!--Date  pickers -->
     <div class="col-md-4 datepicker">
         <p class="input-group">
@@ -40,9 +41,22 @@
                         </span>
         </p>
     </div>
-    <!--//Date  pickers -->
+        <!--//Date  pickers -->
+
+        <!--Room input -->
+         <div class="col-md-4">
+        <ui-select ng-model="selected.room" class="btn-group bootstrap-select form-control" ng-disabled="isRoomInputEnabled()" append-to-body="true" search-enabled="true">
+            <ui-select-match placeholder="Оберіть кімнату">
+                {{selected.room.name}}
+            </ui-select-match>
+            <ui-select-choices minimum-input-length="1" refresh="fetchRoomsOfUser(selected.user.chatUserId,$select.search)" repeat="withSearchItem in roomsList | filter:  $select.search">
+                <span ng-bind-html="withSearchItem.name"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+
 </div>
-<div class="row col-xs-12 datepicker">
+<div class="row">
     <div class="col-md-6">
         <button ng-click="updateUserActivity()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
         <span>Переглянути статистику активності</span>

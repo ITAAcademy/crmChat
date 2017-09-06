@@ -2,6 +2,7 @@ package com.intita.wschat.dto.mapper;
 
 import com.intita.wschat.dto.model.*;
 import com.intita.wschat.models.ChatUser;
+import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.services.ChatLikeStatusService;
@@ -12,6 +13,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +79,16 @@ public class DTOMapper {
         model.setLikes(0L);
         model.setDislikes(0L);
         return model;
+    }
+
+    public List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
+        List<ChatRoomDTO> resultDTOs = rooms.stream()
+                .map(room -> map(room)).collect(Collectors.toList());
+        return resultDTOs;
+    }
+
+    public ChatRoomDTO map (Room room) {
+        return modelMapper.map(room,ChatRoomDTO.class);
     }
 
     public List<UserMessageDTO> mapListUserMessage(List<UserMessage> userMessages){

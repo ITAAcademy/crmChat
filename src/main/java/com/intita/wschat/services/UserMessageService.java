@@ -2,19 +2,14 @@ package com.intita.wschat.services;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.intita.wschat.domain.search.UserMessageSearchCriteria;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.models.*;
 import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +21,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intita.wschat.models.BotDialogItem;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.ChatUserLastRoomDate;
-import com.intita.wschat.models.LangId;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.UserMessage;
 import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.web.BotController;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Service
 public class UserMessageService {
@@ -48,6 +41,9 @@ public class UserMessageService {
 	@Autowired private ChatLangService chatLangService;
 	@Autowired private RoomHistoryService roomHistoryService;
 	@Autowired private DTOMapper dtoMapper;
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getUserMesagges(){
@@ -269,24 +265,23 @@ public class UserMessageService {
 
 		String hql = "SELECT m FROM chat_user_message m " + " "+wherePart + orderPart;
 		System.out.println("hql:"+hql);
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery(hql);
+		Query query = entityManager.createQuery(hql);
 		query.setMaxResults(messagesCount);
 
 		//set params
 		if(roomId!=null)
-			query.setLong("roomId",roomId);
+			query.setParameter("roomId",roomId);
 		if (beforeDate!=null)
-			query.setTimestamp("beforeDate", beforeDate);
+			query.setParameter("beforeDate", beforeDate);
 		if (afterDate!=null)
-			query.setTimestamp("afterDate", afterDate);
+			query.setParameter("afterDate", afterDate);
 		if (body!=null)
-			query.setString("body", "%"+body+"%");
+			query.setParameter("body", "%"+body+"%");
 		if (filesOnly){
-			query.setString("emptyJsonObject", "[]");
+			query.setParameter("emptyJsonObject", "[]");
 		}
 
-		messages = new ArrayList<>(query.list());
+		messages = new ArrayList<>(query.getResultList());
 		/*System.out.println("Before date:"+beforeDate);
 		for (UserMessage m : messages){
 			System.out.println("message:"+m.getBody() + " "+m.getDate());
@@ -381,6 +376,55 @@ public class UserMessageService {
 	
 	@Transactional
 	public List<Date> getMessagesDatesByChatUserAndDate(Long chatUserId,Date early, Date late){
+		return userMessageRepository.getMessagesDatesByChatUserAndDateBetween(chatUserId, early, late);
+	}
+
+	private String generateMessageSearchCondition(UserMessageSearchCriteria criteria) {
+		boolean haveAnyParameterDefined = criteria.haveAnyParameterDefined();
+		String hqlRequestCore = "";
+		if (haveAnyParameterDefined) {
+			hqlRequestCore += " WHERE ";
+		}
+		List<String> hqlRequestParts = new LinkedList<>();
+		//"m.author.id=:authorId and m.room.id=:roomId and Date(m.date) >= Date(:earlyDate) and Date(m.date) <= Date(:lateDate)")
+		Optional.ofNullable(criteria.getAuthorId()).ifPresent(userParam -> hqlRequestParts.add("m.author.id=:authorId"));
+		Optional.ofNullable(criteria.getRoomId()).ifPresent(roomParam -> hqlRequestParts.add("m.room.id=:roomId"));
+		Optional.ofNullable(criteria.getSearchValue()).ifPresent(searchParam -> hqlRequestParts.add(" lower(m.body) like :searchValue "));
+		Optional.ofNullable(criteria.getEarlyDate()).ifPresent(earlyDateParam -> hqlRequestParts.add(" m.date > :earlyDate "));
+		Optional.ofNullable(criteria.getLateDate()).ifPresent(lateDateParam -> hqlRequestParts.add(" m.date < :lateDate "));
+
+		String whereRequestPart = hqlRequestCore + String.join(" AND ",hqlRequestParts);
+		return whereRequestPart;
+	}
+	private void setMessageSearchQueryParameters(Query query,UserMessageSearchCriteria criteria ){
+		Optional.ofNullable(criteria.getAuthorId()).ifPresent(authorId->
+				query.setParameter("authorId",authorId));
+
+		Optional.ofNullable(criteria.getRoomId()).ifPresent(roomId->
+			query.setParameter("roomId",roomId));
+
+		Optional.ofNullable(criteria.getSearchValue()).ifPresent(searchValue ->
+				query.setParameter("searchValue","%"+searchValue+"%"));
+
+		Optional.ofNullable(criteria.getEarlyDate()).ifPresent(
+				date -> query.setParameter("earlyDate",date));
+
+		Optional.ofNullable(criteria.getLateDate()).ifPresent(
+				date -> query.setParameter("lateDate",date));
+
+	}
+
+	public List<Date> findMessagesDate(UserMessageSearchCriteria criteria) {
+		//StringBuilder strBuilder = new StringBuilder();
+		String request = "select m.date from chat_user_message m "+generateMessageSearchCondition(criteria);
+		Query query = entityManager.createQuery(request);
+		setMessageSearchQueryParameters(query,criteria);
+		List<Date> result = query.getResultList();
+		return result;
+	}
+
+	@Transactional
+	public List<Date> getMessagesDatesByChatUserAndRoomAndDate(Long chatUserId,Long roomId,Date early, Date late){
 		return userMessageRepository.getMessagesDatesByChatUserAndDateBetween(chatUserId, early, late);
 	}
 

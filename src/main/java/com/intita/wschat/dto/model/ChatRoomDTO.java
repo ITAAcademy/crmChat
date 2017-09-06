@@ -28,13 +28,6 @@ public class ChatRoomDTO implements DataTransferObject {
         this.id = id;
     }
 
-    public List<ChatUserLastRoomDate> getChatUserLastRoomDate() {
-        return chatUserLastRoomDate;
-    }
-
-    public void setChatUserLastRoomDate(List<ChatUserLastRoomDate> chatUserLastRoomDate) {
-        this.chatUserLastRoomDate = chatUserLastRoomDate;
-    }
 
     public boolean isActive() {
         return active;
@@ -61,8 +54,6 @@ public class ChatRoomDTO implements DataTransferObject {
     }
 
     private Long id;
-
-    List< ChatUserLastRoomDate> chatUserLastRoomDate;
 
     private boolean active = true;
 

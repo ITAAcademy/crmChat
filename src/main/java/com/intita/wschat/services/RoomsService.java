@@ -690,6 +690,11 @@ public class RoomsService {
 		return users;
 	}
 
+	public List<Room> findChatUserRooms(Long userId, String nameLike,int count)  {
+		ChatUser user = ChatUser.forId(userId);
+		return roomRepo.findRoomsOfUser(user,nameLike,new PageRequest(0,count));
+	}
+
 
 }
 

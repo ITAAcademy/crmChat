@@ -647,3 +647,12 @@ var findPropertyNameByContainingSubstring = function(obj,searchValue,ignorablePr
         }
         return null;
     }
+
+    function encodeQueryData(data) {
+   let ret = [];
+   for (let d in data){
+    if (data[d]!=null)
+     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+   }
+   return ret.join('&');
+}

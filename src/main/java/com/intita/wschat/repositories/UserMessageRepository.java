@@ -37,6 +37,8 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  UserMessage findFirstByRoomOrderByDateDesc(Room room);
 	  @Query("select m.date from chat_user_message m where m.author.id=?1 and Date(m.date) >= Date(?2) and Date(m.date) <= Date(?3)")
 	  List<Date> getMessagesDatesByChatUserAndDateBetween(Long userId,Date earlyDate,Date lastDate);
+	@Query("select m.date from chat_user_message m where m.author.id=?1 and m.room.id=?2 and Date(m.date) >= Date(?3) and Date(m.date) <= Date(?4)")
+	List<Date> getMessagesDatesByChatUserAndRoomAndDateBetween(Long userId,Long roomId,Date earlyDate,Date lastDate);
 
 	  Long countByIdAndAuthorId(Long messageId,Long authorId);
 }

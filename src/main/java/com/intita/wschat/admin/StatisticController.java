@@ -6,6 +6,7 @@ import com.intita.wschat.domain.requestdata.UserActivityRequestData;
 import com.intita.wschat.domain.responsedata.ChatUserActivityPerDayStatistic;
 import com.intita.wschat.domain.responsedata.StatisticResponseActiveUsers;
 import com.intita.wschat.domain.responsedata.StatisticResponseMessagesCount;
+import com.intita.wschat.domain.search.UserMessageSearchCriteria;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,17 @@ UserMessageService userMessageService;
 
 	@RequestMapping(value = "/statistic/user/get_activity", method = RequestMethod.POST)
 	@ResponseBody
-	public ChatUserActivityStatistic getUserActivityMapping(@RequestBody UserActivityRequestData activityRequestData) {
+	public ChatUserActivityStatistic getUserActivityMapping(@RequestBody UserMessageSearchCriteria activityRequestData) {
 
-		Date early = new Date(activityRequestData.getBeforeDate());
-		Date late = new Date(activityRequestData.getAfterDate());
-		List<Date> activityDates = userMessageService.getMessagesDatesByChatUserAndDate(activityRequestData.getChatUserId(),early,late);
+		List<Date> activityDates = userMessageService.findMessagesDate(activityRequestData);
+
 		List<Long> datesLong = new ArrayList<Long>();
 		for (Date date : activityDates){
 			datesLong.add(date.getTime());
 		}
-		ChatUserActivityStatistic statistic = ChatUserActivityStatistic.createFromActiveTimeAndDuration(activityRequestData.getChatUserId(),ACTIVITY_DOORATION_MS, datesLong);
+
+		ChatUserActivityStatistic statistic = ChatUserActivityStatistic.createFromActiveTimeAndDuration(
+				activityRequestData.getAuthorId(),ACTIVITY_DOORATION_MS, datesLong);
 		
 		return statistic;
 	}
@@ -60,7 +62,7 @@ UserMessageService userMessageService;
 
 	@RequestMapping(value = "/statistic/user/get_activity_per_day", method = RequestMethod.POST)
 	@ResponseBody
-	public ChatUserActivityPerDayStatistic getUserActivityByDayMapping(@RequestBody UserActivityRequestData activityRequestData){
+	public ChatUserActivityPerDayStatistic getUserActivityByDayMapping(@RequestBody UserMessageSearchCriteria activityRequestData){
 		ChatUserActivityStatistic statistic = getUserActivityMapping(activityRequestData);
 		List<Long> datesWithoutTime = TimeUtil.removeTimeFromList(statistic.getActivityAtTime());
 		Map<Long, Long> msOfActivityPerDay = new HashMap<Long,Long>();

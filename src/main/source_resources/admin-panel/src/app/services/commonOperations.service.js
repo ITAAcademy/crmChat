@@ -14,6 +14,17 @@
             return $.Deferred().resolve();
         }
 
+        var fetchRoomsOfUser = function(chatUserId,searchStr,earlierDate,lateDate) {
+            var data = {
+             chatUserId: chatUserId,
+             roomNameLike: searchStr,
+             earlierDate: earlierDate,
+             lateDate: lateDate
+            }
+            var queryString = serverPrefix + "/chat/user/findRooms?" + encodeQueryData(data);
+            return $http.get(queryString,{});
+        }
+
         var fetchUsersInfo= function(info) {
             return $http.get(serverPrefix + "/chat/findUsers?info="+info,{});
         }
@@ -31,11 +42,21 @@
             return ""; 
         }
 
+         var convertRoomObjectToStringByMatchedProperty = function(user,searchValue){
+            var ignorableUserProperties=[];
+            var matchedProperty = findPropertyNameByContainingSubstring(user,searchValue,ignorableUserProperties);
+            if(matchedProperty!=null) {
+                return user[matchedProperty];
+            }
+            return ""; 
+        }
+
         return {
             fetchUsers: fetchUsers,
             fetchUsersInfoExceptRole: fetchUsersInfoExceptRole,
-            convertUserObjectToStringByMatchedProperty: convertUserObjectToStringByMatchedProperty
-
+            convertRoomObjectToStringByMatchedProperty: convertRoomObjectToStringByMatchedProperty,
+            convertUserObjectToStringByMatchedProperty: convertUserObjectToStringByMatchedProperty,
+            fetchRoomsOfUser:fetchRoomsOfUser
         }
       
     }

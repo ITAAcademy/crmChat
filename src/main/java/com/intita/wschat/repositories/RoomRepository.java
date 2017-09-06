@@ -14,6 +14,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
+import org.springframework.data.repository.query.Param;
 
 
 @Qualifier("IntitaConf") 
@@ -30,6 +31,11 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
 	ArrayList<Room> findByAuthor(ChatUser author);
 	ArrayList<Room> findByUsersContaining(ChatUser user);
 	Set<Room> findByAuthorOrUsersContaining(ChatUser user, ChatUser author);
+
+	@Query("select room from ChatRoom room where" +
+			" (:user in elements(room.users) or room.author = :user)" +
+			" and lower(room.name) like lower(concat('%',:likeStr,'%')) ")
+	List<Room> findRoomsOfUser(@Param("user") ChatUser user,@Param("likeStr") String likeStr, Pageable pageable);
 	
 	ArrayList<Room> findFirst10ByNameLike(String like);
 	

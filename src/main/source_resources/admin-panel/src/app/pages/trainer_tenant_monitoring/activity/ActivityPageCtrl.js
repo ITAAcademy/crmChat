@@ -13,8 +13,15 @@
 
 $scope.formatDate = formatDate;
 $scope.usersList = [];
-        $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
+$scope.roomsList = [];
 
+$scope.isRoomInputEnabled = function() {
+  return $scope.selected.user == null || $scope.dates.start == null || $scope.dates.end == null;
+}
+
+
+        $scope.convertUserObjectToStringByMatchedProperty = CommonOperationsService.convertUserObjectToStringByMatchedProperty;
+        $scope.convertRoomObjectToStringByMatchedProperty = CommonOperationsService.convertRoomObjectToStringByMatchedProperty;
 
    $scope.dates = { start: new Date(), end: new Date() }
         $scope.dates.start.setMinutes(0); $scope.dates.start.setHours(0);
@@ -25,7 +32,14 @@ $scope.usersList = [];
              $scope.usersList = payload.data;
             })
         };
+        var fetchRoomsOfUser = function(chatUserId,roomName,earlierDate,lateDate) {
+          return CommonOperationsService.fetchRoomsOfUser(chatUserId,roomName,earlierDate,lateDate).then(function(payload){
+            $scope.roomsList = payload.data;
+          })
+        }
+
       $scope.fetchUsers = fetchUsers;
+      $scope.fetchRoomsOfUser = fetchRoomsOfUser;
       $scope.selected = {user:null};
 
 
@@ -271,9 +285,10 @@ $scope.updateUserActivityPerDay = updateUserActivityPerDay;
 
 function generateRequestPayload(){
    var requestPayload = {
-            chatUserId: $scope.selected.user.chatUserId,
-            beforeDate: $scope.dates.start.getTime(),
-            afterDate: $scope.dates.end.getTime()
+            authorId: $scope.selected.user.chatUserId,
+            roomId: $scope.selected.room == null ? null : $scope.selected.room.id,
+            earlyDate: $scope.dates.start.getTime(),
+            lateDate: $scope.dates.end.getTime()   
           }
           return requestPayload;
 }

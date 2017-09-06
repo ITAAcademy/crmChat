@@ -12,10 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
-import com.intita.wschat.dto.model.ChatUserDTO;
-import com.intita.wschat.dto.model.ExtendedIntitaUserDTO;
-import com.intita.wschat.dto.model.IntitaUserDTO;
-import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.dto.model.*;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +136,18 @@ public class AdminPanelController {
 			userList.add(dtoMapper.mapExtended(u));
 		}
 		return  userList;
+
+	}
+
+	@RequestMapping(value = "/chat/user/findRooms", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ChatRoomDTO> findRooms(@RequestParam Long chatUserId,@RequestParam String roomNameLike, Authentication auth) {
+
+		List<Room> rooms = roomService.findChatUserRooms(chatUserId,roomNameLike,10);
+
+		List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms);
+
+		return  roomsDTO;
 
 	}
 

@@ -30,7 +30,16 @@ public class UserActivityRequestData {
         this.afterDate = afterDate;
     }
 
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+
     private Long chatUserId;
     private Long beforeDate;
     private Long afterDate;
+    private Long roomId;
 }
