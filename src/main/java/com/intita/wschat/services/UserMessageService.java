@@ -12,6 +12,7 @@ import java.util.Set;
 
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -314,6 +315,22 @@ public class UserMessageService {
 	public Long getMessagesCountByRoomDateNotUser(Room room, Date date, ChatUser user)  {
 		Long messages_count =  userMessageRepository.countByRoomAndDateAfterAndAuthorNot(room, date, user);
 		return  messages_count;
+	}
+
+	public Long getMessagesCountByDate(Date date,boolean onlyActive)
+	{
+		final Long msInDay = 1000L * 60 * 60 * 24;
+		Long time = date.getTime();
+		Long timeShortenedToMidnight = TimeUtil.removeTime(time);
+		Long nextDayLong = timeShortenedToMidnight + msInDay;
+		Date dateMidnight = new Date(timeShortenedToMidnight);
+		Date nextDay = new Date(nextDayLong);
+		if (onlyActive) {
+			return userMessageRepository.countByDateAfterAndDateBeforeAndActive(dateMidnight, nextDay,true);
+		}
+		else {
+			return userMessageRepository.countByDateAfterAndDateBefore(dateMidnight, nextDay);
+		}
 	}
 
 	@Transactional(readOnly=true)

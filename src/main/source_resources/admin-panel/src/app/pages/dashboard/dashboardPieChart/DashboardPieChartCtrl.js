@@ -15,7 +15,7 @@
 
     $scope.charts = [{
       color: pieColor,
-      description: 'День',
+      description: 'користувачів сьогодні',
       stats: '57,820',
       icon: 'person',
       dataUrl: "statistic/user/count_active_users",
@@ -24,30 +24,30 @@
       dataPercent: 0
     }, {
       color: pieColor,
-      description: 'Тиждень',
+      description: 'користувачів за тиждень',
       stats: '$ 89,745',
-      icon: 'money',
+      icon: 'person',
       dataUrl: "statistic/user/count_active_users?days=7",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
     }, {
       color: pieColor,
-      description: 'Місяць',
+      description: 'користувачв за місяць',
       stats: '178,391',
-      icon: 'face',
+      icon: 'person',
       dataUrl: "statistic/user/count_active_users?days=30",
       totalCountFieldName: "totalUsers",
       currentCountFieldName: "activeUsers",
       dataPercent: 0
     }, {
       color: pieColor,
-      description: 'Returned',
+      description: 'повідомлень сьогодні',
       stats: '32,592',
-      icon: 'refresh',
-      dataUrl: "statistic/user/count_active_users",
-      totalCountFieldName: "totalUsers",
-      currentCountFieldName: "activeUsers",
+      icon: 'comment',
+      dataUrl: "statistic/count_messages_today",
+      totalCountFieldName: "totalMessagesCount",
+      currentCountFieldName: "activeMessagesCount",
       dataPercent: 0
     }
     ];
@@ -76,7 +76,7 @@
        var easyPie =  chart.easyPieChart({
           easing: 'easeOutBounce',
           onStep: function (from, to, percent) {
-            var percent = Math.round(currentCount/totalCount*100)/100;
+            var percent = Math.round((currentCount*100)/totalCount);
             chartModelForResponseId.dataPercent = percent;
             $(this.el).find('.percent').text(percent);
           },

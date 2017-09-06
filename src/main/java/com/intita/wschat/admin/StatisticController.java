@@ -5,6 +5,7 @@ import java.util.*;
 import com.intita.wschat.domain.requestdata.UserActivityRequestData;
 import com.intita.wschat.domain.responsedata.ChatUserActivityPerDayStatistic;
 import com.intita.wschat.domain.responsedata.StatisticResponseActiveUsers;
+import com.intita.wschat.domain.responsedata.StatisticResponseMessagesCount;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,20 @@ UserMessageService userMessageService;
 		ChatUserActivityStatistic statistic = ChatUserActivityStatistic.createFromActiveTimeAndDuration(activityRequestData.getChatUserId(),ACTIVITY_DOORATION_MS, datesLong);
 		
 		return statistic;
+	}
+
+	@RequestMapping(value ="/statistic/count_messages_today")
+	@ResponseBody
+	public StatisticResponseMessagesCount countMessagesToday(@RequestParam(required = false) String requestId){
+		StatisticResponseMessagesCount responseData = new StatisticResponseMessagesCount();
+		Long totalMessagesCount = userMessageService.getMessagesCountByDate(TimeUtil.getCurrentDay(),false);
+		Long activeMessagesCount = userMessageService.getMessagesCountByDate(TimeUtil.getCurrentDay(),true);
+
+		responseData.setTotalMessagesCount(totalMessagesCount);
+		responseData.setActiveMessagesCount(activeMessagesCount);
+		responseData.setRequestId(requestId);
+
+		return responseData;
 	}
 
 	@RequestMapping(value = "/statistic/user/get_activity_per_day", method = RequestMethod.POST)
