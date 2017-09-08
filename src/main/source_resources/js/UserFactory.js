@@ -501,6 +501,10 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         localStorage.setItem("ignoreNotifications", JSON.stringify(ignoreNotifications));
     }
     var notifyAboutUserDemandingRoom = function(demandingUser) {
+        //user can't help himself, so exit
+        if( chatUserId == demandingUser.chatUserId) {
+            return;
+        }
         var currentType = 'user_wait_tenant';
         var generateAvatarSrc = function(avatar) {
             return $rootScope.imagesPath + '/avatars/' + avatar
