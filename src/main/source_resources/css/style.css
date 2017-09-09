@@ -2397,7 +2397,7 @@ body {
 body.frame .dnd-container .chat.full .window_panel,
 body.frame .window_icons_wrapper {
     position: absolute;
-    right: 60px;
+    right: 86px;
     height: 100%;
 }
 
