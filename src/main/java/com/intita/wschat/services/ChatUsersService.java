@@ -5,6 +5,7 @@ import java.util.*;
 import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
+import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,8 +223,21 @@ public class ChatUsersService {
 	}
 
 
-	public int getActiveUsersCount(int days){
-		return chatUsersRepo.countChatUserByMessagesDateAfter(days);
+	public int getUsersVisitsFromDaysAgo(int days){
+		return chatUsersRepo.countChatUserByMessagesDaysLong(days);
+	}
+	public Map<Long,Integer> getUsersVisitsInfoByDays(Date dateEarly, Date dateOlder) {
+		Map<Long, Integer> result = new HashMap<Long,Integer>();
+		if (dateOlder == null) dateOlder = new Date();
+		int daysBetweenDates = TimeUtil.getDifferenceDays(dateEarly,dateOlder);
+		Date startingDate = TimeUtil.removeTime(dateEarly);
+		Date stepDate = startingDate;
+		for (int i = 0; i <= daysBetweenDates; i++) {
+			int visits = chatUsersRepo.countChatUserByMessagesDaysLongAfterDate(stepDate,1);
+			result.put(stepDate.getTime(),visits);
+			stepDate = TimeUtil.getDateWithNextDay(stepDate);
+		}
+		return result;
 	}
 
 

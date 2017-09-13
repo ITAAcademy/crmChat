@@ -49,6 +49,7 @@
     "postinstall": "bower install"
   },
   "dependencies": {
-    "eslint-config-defaults": "^9.0.0"
+    "eslint-config-defaults": "^9.0.0",
+    "gulp-prefix": "0.0.15"
   }
 }

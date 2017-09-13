@@ -2,10 +2,7 @@ package com.intita.wschat.admin;
 
 import java.util.*;
 
-import com.intita.wschat.domain.requestdata.UserActivityRequestData;
-import com.intita.wschat.domain.responsedata.ChatUserActivityPerDayStatistic;
-import com.intita.wschat.domain.responsedata.StatisticResponseActiveUsers;
-import com.intita.wschat.domain.responsedata.StatisticResponseMessagesCount;
+import com.intita.wschat.domain.responsedata.*;
 import com.intita.wschat.domain.search.UserMessageSearchCriteria;
 import com.intita.wschat.services.UsersService;
 import com.intita.wschat.util.TimeUtil;
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.intita.wschat.domain.responsedata.ChatUserActivityStatistic;
 import com.intita.wschat.services.ChatUsersService;
 import com.intita.wschat.services.UserMessageService;
 
@@ -45,6 +41,18 @@ UserMessageService userMessageService;
 		
 		return statistic;
 	}
+
+
+	@RequestMapping(value = "/statistic/user/get_visits", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long,Integer> getUsersVisitsBetweenDatesMapping(@RequestParam(required = false) Long earlyDate,
+															   @RequestParam(required = false) Long lateDate) {
+		Date date1 = new Date(earlyDate);
+		Date date2 = new Date(lateDate);
+		Map<Long,Integer> statistic = chatUserService.getUsersVisitsInfoByDays(date1,date2);
+		return statistic;
+	}
+
 
 	@RequestMapping(value ="/statistic/count_messages_today")
 	@ResponseBody
@@ -83,7 +91,7 @@ UserMessageService userMessageService;
 	public StatisticResponseActiveUsers getActiveChatUsersCount(@RequestParam(required = false) String requestId,
 																	 @RequestParam(required = false,defaultValue = "1") Integer days){
 		long totalUsers = usersService.getUsersCount();
-		long activeUsers =  chatUserService.getActiveUsersCount(days);
+		long activeUsers =  chatUserService.getUsersVisitsFromDaysAgo(days);
 		StatisticResponseActiveUsers activeUsersData = new StatisticResponseActiveUsers();
 		activeUsersData.setTotalUsers(totalUsers);
 		activeUsersData.setActiveUsers(activeUsers);
