@@ -114,7 +114,32 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         }
         var iframe = elm.find("iframe");
-        iframe.attr('src', crm_path);
+        var chatBtn = elm.find('#enable-chat');
+        var closeBtn = elm.find('#close_btn');
+        
+        function setIframeSrc(){
+        	iframe.attr('src', crm_path);
+        }
+        function showChatBtn(){
+        	$('#share42').append(chatBtn.detach().show());
+        	chatBtn.click(function(){
+        		setIframeSrc();
+        		elm.show();
+        		localStorage.setItem('hide-chat', false);
+        		$(this).hide();
+        	})
+        }
+        closeBtn.click(function(){
+        	elm.hide();
+        	localStorage.setItem('hide-chat', true);
+        	showChatBtn();
+        })
+        if(localStorage.getItem('hide-chat') == 'true')
+        {
+        	elm.hide();
+        	showChatBtn();
+        } else
+        	setIframeSrc();
         var dragstart = function() {
             busy = true;
             var res_elem = jQuery('.draggable');
