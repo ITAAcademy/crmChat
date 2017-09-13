@@ -46,8 +46,11 @@
         $scope.selected = { user: null, noStudentUser: null };
         $scope.messages = [];
 
+        $scope.messagesLoading = false;
+
         $scope.getPrivate = function() {
             debugger;
+            $scope.messagesLoading = true;
             var user1 = $scope.selected.user;
             var user2NonStudent = $scope.selected.noStudentUser;
             var msgRequestModel = {
@@ -58,7 +61,10 @@
             }
             $http.post(serverPrefix + "/chat/msgHistory", msgRequestModel).success(function(data, status, headers, config) {
                 $scope.messages = data;
-            }).error(function(data, status, headers, config) {});
+                $scope.messagesLoading = false;
+            }).error(function(data, status, headers, config) {
+                $scope.messagesLoading = false;
+            });
 
 
         }
