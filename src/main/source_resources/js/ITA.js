@@ -121,12 +121,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
         	iframe.attr('src', crm_path);
         }
         function showChatBtn(){
-        	$('#share42').append(chatBtn.detach().show());
+        	var parent = jQuery('#share42');
+        	if(parent.length == 0)
+        	{
+        		parent = jQuery('#side-menu');
+        		chatBtn = jQuery('#enable-chat-admin');
+        	}
+        	parent.append(chatBtn.detach().show());
         	chatBtn.click(function(){
-        		setIframeSrc();
+        		//setIframeSrc();
         		elm.show();
         		localStorage.setItem('hide-chat', false);
-        		$(this).hide();
+        		jQuery(this).hide();
         	})
         }
         closeBtn.click(function(){
@@ -138,8 +144,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
         {
         	elm.hide();
         	showChatBtn();
-        } else
-        	setIframeSrc();
+        } 
+        setIframeSrc();
+
         var dragstart = function() {
             busy = true;
             var res_elem = jQuery('.draggable');

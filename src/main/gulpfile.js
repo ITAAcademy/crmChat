@@ -61,7 +61,7 @@ gulp.task('templates', function() {
 
 gulp.task('hash', function() {
     return gulp.src(['resources/static/**/*.{js,css}', '!resources/static/lib/**/*.{js,css}', '!resources/static/js/ITA.js'], { since: gulp.lastRun('hash') })
-        .pipe(clean())
+       // .pipe(clean())
         .pipe(hash()) // Generate a hash for 
         .pipe(gulp.dest('resources/static')) // Save the renamed 
         .pipe(hash.manifest('manifest.json', {

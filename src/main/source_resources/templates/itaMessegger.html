@@ -123,7 +123,7 @@
     position: absolute;
     top: 7px;
     left: 50px;
-    width: calc(100% - 160px);
+    width: calc(100% - 200px);
     height: 35px;
     background: none;
     color: #fff;
@@ -132,7 +132,7 @@
 
 .dnd-container .chat.mini .handle {
     cursor: pointer;
-    width: 100%;
+    width: calc(100% - 30px);
     left: 0;
 }
 
@@ -141,8 +141,12 @@
 }
 
 .dnd-container .chat.mini .window_panel {
+   text-align: right;
+}
+.dnd-container .chat.mini .window_panel > *:not(#close_btn){
     display: none;
 }
+
 
 .dnd-container .chat.full .window_panel {
     right: 5px;
@@ -229,3 +233,8 @@
 </div>
 
 <span id ="enable-chat" class="enable-chat" style="display:none;"><i class="logo material-icons">chat</i></span>
+<li id ="enable-chat-admin" style="display:none;">
+    <a href="#/tenant">
+        <i class="fa fa-comments fa-fw"></i>Chat
+    </a>
+</li>
