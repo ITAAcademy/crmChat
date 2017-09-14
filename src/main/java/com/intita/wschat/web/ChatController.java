@@ -974,6 +974,24 @@ public class ChatController {
 		}
 	}
 
+	@RequestMapping(value="/chat/messages/between_dates",method = RequestMethod.GET)
+	@ResponseBody
+	public List<UserMessageDTO> getMessagesBetweenDates(@RequestParam Long earlyDate,
+														@RequestParam Long lateDate,
+                                                        @RequestParam Long userId,
+														@RequestParam(required = false) Long roomId){
+		if (earlyDate == null || lateDate == null) {
+			throw new IllegalArgumentException("early Date and late Date must be not null");
+		}
+		List<UserMessage> messages = roomId==null ? userMessageService.getMessagesBetweenDatesByAuthor(
+				new Date(earlyDate),new Date(lateDate),ChatUser.forId(userId))
+		: userMessageService.getMessagesBetweenDatesByAuthorAndRoom(
+				new Date(earlyDate),new Date(lateDate),ChatUser.forId(userId),Room.forId(roomId));
+
+
+		return dtoMapper.mapListUserMessage(messages);
+	}
+
 	boolean isEmailSendingRequired = true;
 
 	@Scheduled(fixedDelay = 3600000L) // every 1 hour
