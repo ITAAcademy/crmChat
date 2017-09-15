@@ -1,4 +1,6 @@
-springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootScope', '$location', '$http', 'toaster', '$injector', 'ChannelFactory', 'ChatSocket', 'AskWindow', function($routeParams, $timeout, $rootScope, $location, $http, toaster, $injector, ChannelFactory, chatSocket, AskWindow) {
+springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootScope', '$location', '$http', 'toaster', '$injector',
+ 'ChannelFactory', 'ChatSocket', 'AskWindow','Rescroller', function($routeParams, $timeout, $rootScope, $location, $http, toaster,
+  $injector, ChannelFactory, chatSocket, AskWindow,Rescroller) {
     $rootScope.authorize = false;
     var isTenant = false;
     var isTrainer = false;
@@ -444,7 +446,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
             //  $rootScope.showToasterWaitFreeTenant();
         }
-        rescrollToRoom($routeParams.roomId);
+        Rescroller.rescrollToRoom($routeParams.roomId);
         if (callback != undefined)
             callback();
     }

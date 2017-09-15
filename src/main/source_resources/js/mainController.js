@@ -4,7 +4,7 @@
 springChatControllers.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when("/dialog_view/:roomId/", {
         resolve: {
-            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope) {
+            load: ['$route', 'RoomsFactory', 'ChannelFactory', '$routeParams', '$rootScope','Rescroller', function($route, RoomsFactory, ChannelFactory, $routeParams, $rootScope,Rescroller) {
                 if (!ChannelFactory.getIsInited() || $rootScope.roomChanging) return;
                 $rootScope.roomChanging = true;
                 RoomsFactory.goToRoom($route.current.params.roomId).then(function() {
@@ -13,7 +13,7 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
                     /*$('#rooms-block #items_list_block').animate({
                         scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
                     }, 2000);*/
-                    rescrollToRoom($route.current.params.roomId);
+                    Rescroller.rescrollToRoom($route.current.params.roomId);
                 });
 
             }]
