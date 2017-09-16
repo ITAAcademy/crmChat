@@ -169,7 +169,7 @@ button:focus {
     overflow: hidden;
     position: absolute;
     box-shadow: 1px 1px 6px 0px #425569;
-    z-index: 1;
+    z-index: 2;
 }
 
 .left_panel .block_controll:hover i.material-icons,
@@ -3168,7 +3168,7 @@ span.rooms_search_loader img {
     }
     .left_panel_mini {
         display: block;
-        z-index: 1;
+        z-index: 2;
     }
     .right_panel {
         height: calc(100% - 35px);
