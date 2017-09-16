@@ -64,5 +64,34 @@
     <div class="col-md-6">
         <button ng-click="updateUserActivityPerDay()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
         <span> Переглянути статистику робочих годин по дням (хв/день)</span>
+    </div>  
+    <div class="col-md-6" ng-if="userActivityDataValue.length>0">
+        <button ng-click="showMessagesPerDisplayedPeriod()" type="button" class="btn btn-success btn-icon"><i class="ion-android-checkmark-circle"></i></button>
+        <span>Переглянути повідомлення за обраний період</span>
     </div>
+
 </div>
+
+ <div class="feed-messages-container activity-messages-container" track-width="smallContainerWidth" min-width="360">
+                <div class="feed-message" ng-repeat="message in messages" ng-click="expandMessage(message)">
+                    <div class="message-icon">
+                        <img class="photo-icon" ng-src="{{::( message.author.avatar | profilePicture )}}">
+                    </div>
+                    <div class="text-block text-message">
+                        <div class="message-header">
+                            <span class="author">{{ ::message.author.nickName}}</span>
+                        </div>
+                        <div class="message-content line-clamp" ng-class="{'line-clamp-2' : !message.expanded}">
+                            <span ng-if="message.preview">{{message.body}} </span>{{::message.body}}
+                        </div>
+                        <div ng-show="message.expanded" class="message-time">
+                            <div class="post-time">
+                                {{::message.date}}
+                            </div>
+                            <div class="ago-time">
+                                {{::message.date}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>

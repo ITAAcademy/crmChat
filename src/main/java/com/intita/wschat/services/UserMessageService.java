@@ -10,7 +10,6 @@ import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,6 +122,13 @@ public class UserMessageService {
 	@Transactional(readOnly=true)
 	public ArrayList<UserMessage> getMessagesByDate(Date date) {
 		return userMessageRepository.findAllByDateAfter(date);
+	}
+
+	public ArrayList<UserMessage> getMessagesBetweenDatesByAuthor(Date earlyDate, Date laterDate,ChatUser user) {
+		return userMessageRepository.findAllByAuthorAndDateIsBetween(user,earlyDate,laterDate);
+	}
+	public ArrayList<UserMessage> getMessagesBetweenDatesByAuthorAndRoom(Date earlyDate, Date laterDate,ChatUser user,Room room) {
+		return userMessageRepository.findAllByAuthorAndRoomAndDateIsBetween(user,room, earlyDate,laterDate);
 	}
 
 	public static boolean isNumber(String str)  

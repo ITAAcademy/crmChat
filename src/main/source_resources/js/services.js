@@ -3,7 +3,7 @@
 /* Services */
 
 var springChatServices = angular.module('springChat.services', []);
-springChatServices.factory('ChatSocket', ['$rootScope', function($rootScope) {
+springChatServices.factory('ChatSocket', ['$rootScope','$timeout', function($rootScope,$timeout) {
     var stompClient;
     var reconnect = 0;
     var lastUrl = "";
@@ -164,20 +164,35 @@ springChatServices.service('ActiveWindow', ['$rootScope', 'ngDialog', '$timeout'
     }
 }]);
 
-function rescrollToRoom(roomId) {
-    setTimeout(function() {
-        var elmnt = document.getElementById("room__" + roomId + "__");
-        if (elmnt == null) {
-            rescrollToRoom(roomId);
-            return;
-        }
-        var qElm = $(elmnt);
-        var elTop = $(elmnt).offset().top - $('#rooms-block #items_list_block').offset().top;
-        if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
-          //  elmnt.scrollIntoView();
-        elmnt.parentNode.scrollTop = elmnt.offsetTop;
-    }, 10);
-}
+
+springChatServices.service('Rescroller', ['$timeout', function($timeout) {
+    var rescrollToRoomTimer = null;
+    var scrollToRoomElement = function(element) {
+        var container = $('#rooms-block #items_list_block');
+        var containerHeight = container.height();
+        var item = $(element);
+        var itemHeight = item.height();
+        var elTop = item.offset().top - container.offset().top;
+        //if (elTop < 0 || elTop > $('#rooms-block #items_list_block').height())
+          //  element.scrollIntoView();
+       // element.parentNode.scrollTop = element.offsetTop;
+       element.parentNode.scrollTop = elTop;
+    }
+
+this.rescrollToRoom = function (roomId) {
+    if (roomId == null) {
+        return;
+    }
+    if(rescrollToRoomTimer!=null) {
+        $timeout.cancel(rescrollToRoomTimer);
+    }
+    rescrollToRoomTimer = $timeout(function() {
+        scrollToRoomElement(document.getElementById("room_mini__" + roomId + "__"));
+        scrollToRoomElement(document.getElementById("room__" + roomId + "__"));
+    }, 3000);
+    }
+
+}]);
 
 if (Notification.permission !== "granted")
     Notification.requestPermission();

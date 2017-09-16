@@ -18,3 +18,10 @@
   display: -ms-flexbox;
   display: flex;
 }
+
+.activity-messages-container{
+    max-height: 300px;
+    position: relative;
+    overflow: scroll;
+    background-color: #ffffff;
+}

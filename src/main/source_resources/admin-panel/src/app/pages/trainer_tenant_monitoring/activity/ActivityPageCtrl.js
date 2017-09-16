@@ -340,6 +340,23 @@ return a.when.getTime() - b.when.getTime();
 return result;
 }
 
+ $scope.expandMessage = function(message) {
+            message.expanded = !message.expanded;
+        }
+
+$scope.showMessagesPerDisplayedPeriod = function() {
+  if ( $scope.areaChart == null ) return;
+  var provider = $scope.areaChart.dataProvider;
+  var firstMessageDate = provider[$scope.areaChart.startIndex].when;
+  var lastMessageDate = provider[$scope.areaChart.endIndex].when;
+  var chatUserId = $scope.selected.user.chatUserId;
+  var chatRoomId =  $scope.selected.room == null ? null : $scope.selected.room.id;
+   CommonOperationsService.getMessagesBetweenDates(firstMessageDate,lastMessageDate, chatUserId,chatRoomId).success(function(data){
+    $scope.messages = data;
+  });
+
+}
+
 
  //TEST
       var chartId = 'areaChart';

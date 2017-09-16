@@ -26,6 +26,8 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 
 	  ArrayList<UserMessage> findFirst10ByRoomAndDateAfter(Room room, Date date);
 
+	ArrayList<UserMessage> findAllByAuthorAndDateIsBetween(ChatUser user, Date date1,Date date2);
+	ArrayList<UserMessage> findAllByAuthorAndRoomAndDateIsBetween(ChatUser user,Room room, Date date1,Date date2);
 	  ArrayList<UserMessage> findAllByRoomAndDateAfterAndActiveIsTrue(Room room, Date date);
 	  ArrayList<UserMessage> findAllByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);
 	  Long countByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);
