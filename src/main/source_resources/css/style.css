@@ -3503,11 +3503,11 @@ a.like_button.selected {
                                   supported by Chrome and Opera */
 }
 
-.remove_message {
+.message_control_wrapper {
     position: absolute;
     right: 10px;
     cursor: pointer;
-    top: calc(50% - 6px);
+    top: calc(50% - 14px);
     position:absolute;
 }
 
@@ -3725,7 +3725,9 @@ a.like_button.selected {
     animation-delay: 1.20s;
 }
 
-
+.message_control{
+    display:inline-block;
+}
 
 
 /**

@@ -673,7 +673,7 @@ public class UsersOperationsService {
             list.add(message);
         }
         messageDTO.setActive(true);
-        UserMessageWithLikesDTO dtoWithLikes = dtoMapper.map(messageDTO);
+        UserMessageWithLikesDTO dtoWithLikes = dtoMapper.mapMessageWithLikes(messageDTO);
         dtoWithLikes.setId(message.getId());
         HashMap payload = new HashMap();
         payload.put(roomId, dtoWithLikes);

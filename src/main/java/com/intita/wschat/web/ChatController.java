@@ -1,5 +1,6 @@
 package com.intita.wschat.web;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -31,6 +32,7 @@ import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
 import com.intita.wschat.enums.LikeState;
+import com.intita.wschat.exception.OperationNotAllowedException;
 import com.intita.wschat.services.*;
 import com.intita.wschat.services.common.UsersOperationsService;
 import com.intita.wschat.util.HtmlUtility;
@@ -990,6 +992,16 @@ public class ChatController {
 
 
 		return dtoMapper.mapListUserMessage(messages);
+	}
+
+	@RequestMapping(value="/chat/messages/update",method = RequestMethod.POST)
+			@ResponseBody
+			public UserMessageDTO updateMessage(@RequestBody UserMessageDTO messageDTO,Authentication auth) throws OperationNotAllowedException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		UserMessageDTO result =  userMessageService.updateMessage(messageDTO,chatUser);
+		simpMessagingTemplate.convertAndSend(("/topic/" + result.getRoomId() + "/chat.message.changed"), result);
+		return result;
 	}
 
 	boolean isEmailSendingRequired = true;

@@ -7,6 +7,7 @@ import java.util.*;
 import com.intita.wschat.domain.search.UserMessageSearchCriteria;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
+import com.intita.wschat.exception.OperationNotAllowedException;
 import com.intita.wschat.models.*;
 import com.intita.wschat.util.TimeUtil;
 import org.apache.commons.collections4.IteratorUtils;
@@ -436,6 +437,18 @@ public class UserMessageService {
 
 	public boolean isAuthor(Long messageId, Long chatUserId) {
 		return userMessageRepository.countByIdAndAuthorId(messageId,chatUserId) > 0;
+	}
+
+	public UserMessageDTO updateMessage(UserMessageDTO messageDTO,ChatUser user) throws OperationNotAllowedException {
+		UserMessage message = userMessageRepository.findOne(messageDTO.getId());
+		if(!message.getAuthor().equals(user)) {
+			throw new OperationNotAllowedException("");
+		}
+		message.setBody(messageDTO.getBody());
+		message.setAttachedFiles(messageDTO.getAttachedFiles());
+		UserMessage messageResult = userMessageRepository.save(message);
+		UserMessageDTO dtoResult = dtoMapper.map(messageResult);
+		return dtoResult;
 	}
 
 	

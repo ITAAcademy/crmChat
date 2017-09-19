@@ -419,6 +419,12 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                    removeMessageById(msgObj.id,messages); //POP
                 }));
             lastRoomBindings.push(
+                chatSocket.subscribe("/topic/{0}/chat.message.changed".format(currentRoom.roomId), function(message) {
+                   var msgObj = JSON.parse(message.body);
+                   //TODO create changeMessageByIdFunction
+                   changeMessageById(msgObj,messages); //POP
+                }));
+            lastRoomBindings.push(
                 chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {
                     if (!UserFactory.isAdmin())
                         unsubscribeCurrentRoom();

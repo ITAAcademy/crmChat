@@ -34,14 +34,21 @@ public class DTOMapper {
             map().setIntitaUserId(source.getIntitaUser().getId());
         }
     };
+    PropertyMap<UserMessage, UserMessageDTO> userMessageMap = new PropertyMap<UserMessage, UserMessageDTO>() {
+        protected void configure() {
+            map().setRoomId(source.getAuthor().getId());
+        }
+    };
 
     DTOMapper(){
         modelMapper.addMappings(chatUserMap);
+        modelMapper.addMappings(userMessageMap);
     }
 
     public IntitaUserDTO map(User intitaUser) {
         return modelMapper.map(intitaUser, IntitaUserDTO.class);
     }
+
 
     public ExtendedIntitaUserDTO mapExtended(User intitaUser) {
         ExtendedIntitaUserDTO dto = modelMapper.map(intitaUser, ExtendedIntitaUserDTO.class);
@@ -65,6 +72,13 @@ public class DTOMapper {
         }
         return messageDTO;
     }
+
+
+    public UserMessage map(UserMessageDTO messageDTO) {
+        UserMessage model = modelMapper.map(messageDTO, UserMessage.class);
+        return model;
+    }
+
     public UserMessageWithLikesDTO mapMessageWithLikes(UserMessage userMessage) {
         UserMessageWithLikesDTO model = modelMapper.map(userMessage, UserMessageWithLikesDTO.class);
         model.setLikes(chatLikeStatusService.getMessageLikesCount(userMessage.getId()));
@@ -74,12 +88,13 @@ public class DTOMapper {
         }
         return model;
     }
-    public UserMessageWithLikesDTO map(UserMessageDTO messageDTO) {
+    public UserMessageWithLikesDTO mapMessageWithLikes(UserMessageDTO messageDTO) {
         UserMessageWithLikesDTO model = modelMapper.map(messageDTO, UserMessageWithLikesDTO.class);
         model.setLikes(0L);
         model.setDislikes(0L);
         return model;
     }
+
 
     public List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
         List<ChatRoomDTO> resultDTOs = rooms.stream()
