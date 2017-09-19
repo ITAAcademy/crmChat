@@ -396,6 +396,36 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
         return false;
     }
+    function changeMessageById(newMessage, arr,deep  ) {
+         if (deep == null) deep = true;
+        if (arr == null) return;
+        var findedIndex = -1;
+        var changedInternally = false;
+        for (var i = 0; i < arr.length; i++) {
+            var msg = arr[i];
+            if (msg.id == newMessage.id) {
+                findedIndex = i;
+                break;
+            }
+            if (deep == false) continue;
+            if (changeMessageById(newMessage,msg.olderMessages,false) ||
+                changeMessageById(newMessage,msg.newerMessages,false) ) {
+                    changedInternally = true;
+           }
+        }
+        if ( findedIndex != -1 ){
+        var msgToChange = arr[findedIndex];
+        msgToChange.body = newMessage.body;
+        msgToChange.attachedFiles = newMessage.newMessage || [];
+        return true;
+        }
+        else {
+            if (deep && !changedInternally) {
+                console.log('Message with id ' + newMessage.id + 'not founded' );
+            }
+        }
+        return false;
+    }
 
     /*************************************
      * CHANGE ROOM

@@ -36,7 +36,7 @@ public class DTOMapper {
     };
     PropertyMap<UserMessage, UserMessageDTO> userMessageMap = new PropertyMap<UserMessage, UserMessageDTO>() {
         protected void configure() {
-            map().setRoomId(source.getAuthor().getId());
+            map().setRoomId(source.getRoom().getId());
         }
     };
 

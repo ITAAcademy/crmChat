@@ -831,6 +831,11 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var getParticipants = RoomsFactory.getParticipants;
             $scope.getSkypeContacts = RoomsFactory.getSkypeContacts;
 
+            var clearMessagesAndFiles = function(){
+                 $scope.newMessage.value = '';
+                    $scope.files = [];
+            }
+
             $scope.onClick = function() {
                 RoomsFactory.updateLastActivity();
             }
@@ -864,8 +869,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     return;
                 }
                 if (isClearMessageInputNeeded) {
-                    $scope.newMessage.value = '';
-                    $scope.files = [];
+                    clearMessagesAndFiles();
                     //$("#newMessageInput")[0].value  = '';
                 }
                 var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
@@ -979,6 +983,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     attachedFiles: files
                 }
                 $http.post(serverPrefix + "/chat/messages/update",messageObj);
+                clearMessagesAndFiles();
             }
 
             var resetMessageInputToDefaultMode = function(){
@@ -992,7 +997,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         function successCallback(data) {
                             $scope.uploadProgress = 0;
                             if (needUpdateMessage) {
-                                updateMessage(messageIdToUpdate,textOfMessage,JSON.parse(date) )
+                                updateMessage(messageIdToUpdate,textOfMessage,JSON.parse(data) )
                             } else {
                                 $scope.sendMessage(textOfMessage, JSON.parse(data), true);
                             }
