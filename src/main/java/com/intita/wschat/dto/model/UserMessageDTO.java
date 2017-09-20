@@ -71,6 +71,16 @@ public class UserMessageDTO implements DataTransferObject {
         this.active = active;
     }
 
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public UserMessageDTO setRoomId(Long roomId) {
+        this.roomId = roomId;
+        return this;
+    }
+
+    private Long roomId;
     private Date updateat;
     private boolean active;
     private ArrayList<String> attachedFiles;

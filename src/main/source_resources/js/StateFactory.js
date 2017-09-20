@@ -2,6 +2,26 @@ springChatServices.factory('StateFactory', ['RoomsBlockTabState', function(Rooms
 	var roomBlockMode = 1;
 	var userListForAddedToCurrentRoom = [];
 	var roomBlockTabState = RoomsBlockTabState.contacts;
+	var messageInputMode = 1;
+	var editingMessageId;
+
+	function isMessageInputDefaultMode(){
+		return messageInputMode == 1;
+	}
+	function isMessageInputOldMessageEditingMode(){
+		return messageInputMode == 2;
+	}
+	function setMessageInputDefaultMode(){
+		messageInputMode = 1;
+	}
+	function setMessageInputOldMessageEditingMode(msgId){
+		messageInputMode = 2;
+		editingMessageId = msgId;
+	}
+
+	function getEditingMessageId() {
+		return editingMessageId;
+	}
 
 	function setTabStateContacts(){
 		roomBlockTabState = RoomsBlockTabState.contacts;
@@ -83,7 +103,14 @@ springChatServices.factory('StateFactory', ['RoomsBlockTabState', function(Rooms
 		setTabStateLastRooms,
 		isTabStateContacts,
 		isTabStateLastRooms,
-		getTabState
+		getTabState,
+		isMessageInputDefaultMode,
+		isMessageInputOldMessageEditingMode,
+		setMessageInputDefaultMode,
+		setMessageInputOldMessageEditingMode,
+		getEditingMessageId
+
+
 
 	}
 	return StateFactory;

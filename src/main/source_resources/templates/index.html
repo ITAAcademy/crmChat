@@ -30,7 +30,7 @@
             <i class="logo material-icons">chat</i>
             <i class="logo-text" th:text="${lgPack.chatGlobal.title}">Онлайн чат</i>
             <div class="window_icons_wrapper" ng-if="$root.authorize">
-                <div class="window_icon notification" ng-class="{active: haveNotify() }" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
+                <div ng-show="getItems() > 0" class="window_icon notification" ng-class="{active: haveNotify() }" modale-toggle="true" ignore-id="notification_container" notificable="true" callback="toggleVisible()" template="notifications_list" container="notification_container">
                     <i class="material-icons">notifications</i>
                     <div class="info"></div>
                     <div id="notification_container" class="notification_menu"></div>
@@ -168,6 +168,7 @@
     <script src="js/services.js"></script>
     <script src="js/RoomsFactory.js"></script>
     <script src="js/StateFactory.js"></script>
+    <script src="js/messageInputService.js"></script>
     <script src="js/ChannelFactory.js"></script>
     <script src="js/UserFactory.js"></script>
     <script src="lib/angular-szn-autocomplete.js"></script>
