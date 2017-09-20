@@ -1,5 +1,6 @@
 package com.intita.wschat.repositories;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -43,4 +45,16 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	List<Date> getMessagesDatesByChatUserAndRoomAndDateBetween(Long userId,Long roomId,Date earlyDate,Date lastDate);
 
 	  Long countByIdAndAuthorId(Long messageId,Long authorId);
+
+		@Modifying(clearAutomatically = true)
+		@Query(value = "INSERT INTO chat_bookmark_user_message (chat_message_id,chat_user_id,chat_room_id) VALUES" +
+				" (?1,?2,?3 )",nativeQuery = true)
+	  void addBookMarkMessage(Long messageId,Long userId,Long roomId );
+
+	@Modifying(clearAutomatically = true)
+	@Query(value = "DELETE FROM chat_bookmark_user_message where chat_message_id = ?1 AND chat_user_id = ?2",nativeQuery = true)
+	  void removeBookMarkMessage(Long messageId, Long userId);
+
+	@Query(value = "SELECT CASE WHEN EXISTS (SELECT * FROM chat_bookmark_user_message where chat_message_id = ?1 AND chat_user_id = ?2) THEN true else false END",nativeQuery = true)
+	BigInteger isBookMarkedMessage(Long messageid, Long userId);
 }

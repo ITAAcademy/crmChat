@@ -690,6 +690,18 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory, $rootScope,St
 
             }
 
+            $scope.bookmarkMessage = function(message) {
+                $http.post(serverPrefix+'/chat/messages/bookmark_toggle',message.id).then(function(response){
+                    var added = response.data;
+                    if (added){
+                        message.bookmarked = true;
+                    }
+                    else {
+                        message.bookmarked = false;
+                    }
+                });
+            }
+
             $scope.removeMessage = function(message) {
                     var url = '/chat/messages/remove/' + message.id;
                     $http.post(serverPrefix + url).

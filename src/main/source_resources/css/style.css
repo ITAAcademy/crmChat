@@ -3729,6 +3729,14 @@ a.like_button.selected {
     display:inline-block;
 }
 
+.message_control .bookmarked {
+color: #6361ef;
+}
+
+.message_control_wrapper .group{
+    display:inline-block
+}
+
 
 /**
  * Animations

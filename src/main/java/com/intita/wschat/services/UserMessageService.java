@@ -2,6 +2,7 @@ package com.intita.wschat.services;
 
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 
 import com.intita.wschat.domain.search.UserMessageSearchCriteria;
@@ -449,6 +450,18 @@ public class UserMessageService {
 		UserMessage messageResult = userMessageRepository.save(message);
 		UserMessageDTO dtoResult = dtoMapper.map(messageResult);
 		return dtoResult;
+	}
+
+	@Transactional
+	public boolean toggleBookMarkMessage(Long messageId, Long chatUserId) {
+		boolean isBookMarked = userMessageRepository.isBookMarkedMessage(messageId,chatUserId).testBit(0);
+		if (isBookMarked){
+			userMessageRepository.removeBookMarkMessage(messageId,chatUserId);
+			return false;
+		}
+		Long roomId = userMessageRepository.findOne(messageId).getRoom().getId();
+		userMessageRepository.addBookMarkMessage(messageId,chatUserId,roomId);
+		return true;
 	}
 
 	

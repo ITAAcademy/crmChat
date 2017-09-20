@@ -1004,6 +1004,19 @@ public class ChatController {
 		return result;
 	}
 
+	/*
+	returns true if bookmark added
+			false if bookmark is removed
+	 */
+	@RequestMapping(value="/chat/messages/bookmark_toggle",method = RequestMethod.POST)
+	@ResponseBody
+	public boolean updateMessage(@RequestBody Long messageId,Authentication auth) throws OperationNotAllowedException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		boolean result = userMessageService.toggleBookMarkMessage(messageId,chatUser.getId());
+		return result;
+	}
+
 	boolean isEmailSendingRequired = true;
 
 	@Scheduled(fixedDelay = 3600000L) // every 1 hour
