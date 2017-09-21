@@ -9,7 +9,7 @@ import com.intita.wschat.domain.UserWaitingForTrainer;
 import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
-import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesAndBookmarkDTO;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.models.*;
@@ -626,8 +626,8 @@ public class UsersOperationsService {
         return messageToSave;
     }
 
-    public UserMessageWithLikesDTO filterMessageWS(Long roomId, @Payload UserMessageDTO message,
-                                          Authentication auth) {
+    public UserMessageWithLikesAndBookmarkDTO filterMessageWS(Long roomId, @Payload UserMessageDTO message,
+                                                              Authentication auth) {
         ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
         ChatController.CurrentStatusUserRoomStruct struct = ChatController.isMyRoom(roomId, chatPrincipal,
                 roomService);// Control room from LP
@@ -653,7 +653,7 @@ public class UsersOperationsService {
             if (tenantIsWaitedByCurrentUser != null) {
                 addUserRequiredTrainer(roomId, tenantIsWaitedByCurrentUser, chatUser, message.getBody());
             }
-            UserMessageWithLikesDTO messageWithLikesDTO = addMessageToBuffer(roomId, messageToSave, message);
+            UserMessageWithLikesAndBookmarkDTO messageWithLikesDTO = addMessageToBuffer(roomId, messageToSave, message);
 
             simpMessagingTemplate.convertAndSend(subscriptionStr, operationStatus);
             return messageWithLikesDTO;
@@ -662,7 +662,7 @@ public class UsersOperationsService {
         return null;
     }
 
-    public synchronized UserMessageWithLikesDTO addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
+    public synchronized UserMessageWithLikesAndBookmarkDTO addMessageToBuffer(Long roomId, UserMessage message, UserMessageDTO messageDTO) {
         synchronized (messagesBuffer) {
             Queue<UserMessage> list = messagesBuffer.get(roomId.toString());
             if (list == null) {
@@ -673,7 +673,7 @@ public class UsersOperationsService {
             list.add(message);
         }
         messageDTO.setActive(true);
-        UserMessageWithLikesDTO dtoWithLikes = dtoMapper.mapMessageWithLikes(messageDTO);
+        UserMessageWithLikesAndBookmarkDTO dtoWithLikes = dtoMapper.mapMessageWithLikes(messageDTO);
         dtoWithLikes.setId(message.getId());
         HashMap payload = new HashMap();
         payload.put(roomId, dtoWithLikes);

@@ -452,9 +452,13 @@ public class UserMessageService {
 		return dtoResult;
 	}
 
+	public boolean isMessageBookmarked(Long messageId, Long chatUserId) {
+		return userMessageRepository.isBookMarkedMessage(messageId,chatUserId).testBit(0);
+	}
+
 	@Transactional
 	public boolean toggleBookMarkMessage(Long messageId, Long chatUserId) {
-		boolean isBookMarked = userMessageRepository.isBookMarkedMessage(messageId,chatUserId).testBit(0);
+		boolean isBookMarked = isMessageBookmarked(messageId,chatUserId);
 		if (isBookMarked){
 			userMessageRepository.removeBookMarkMessage(messageId,chatUserId);
 			return false;
