@@ -238,7 +238,7 @@ public class UserMessageService {
 
 	@Transactional
 	public ArrayList<UserMessage> getMessages(Long roomId, Date beforeDate,
-		Date afterDate, String body,boolean filesOnly,int messagesCount,boolean activeOnly){
+		Date afterDate, String body,boolean filesOnly,boolean bookmarkedOnly,int messagesCount,boolean activeOnly,ChatUser chatUser){
 		if (roomId==null) return new ArrayList<UserMessage>();
 		System.out.println("roomId:"+roomId);
 		ArrayList<UserMessage> messages;
@@ -267,6 +267,10 @@ public class UserMessageService {
 			if (whereParam.length()>0) whereParam += " AND ";
 			whereParam += "m.active = true";
 		}
+		if (bookmarkedOnly) {
+			if (whereParam.length()>0) whereParam += " AND ";
+			whereParam += " m.id IN (SELECT bookmark.chatMessage.id FROM ChatUserMessageBookmark bookmark WHERE bookmark.chatUser = :bookMarkOwner) ";
+		}
 		String wherePart = "WHERE "+ whereParam;
 		String orderPart = " ORDER BY m.date DESC,m.id";
 
@@ -287,6 +291,9 @@ public class UserMessageService {
 			query.setParameter("body", "%"+body+"%");
 		if (filesOnly){
 			query.setParameter("emptyJsonObject", "[]");
+		}
+		if (bookmarkedOnly && chatUser!=null) {
+			query.setParameter("bookMarkOwner", chatUser);
 		}
 
 		messages = new ArrayList<>(query.getResultList());

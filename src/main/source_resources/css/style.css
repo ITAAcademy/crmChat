@@ -1295,6 +1295,10 @@ button:focus {
     content: 'attach_file';
 }
 
+.right_panel .tools_dropdown_container>#tools_dropdown .show_bookmarked:before {
+    content: 'star';
+}
+
 .right_panel .tools_dropdown_container>#tools_dropdown .open_in_new_tab:before {
     content: 'open_in_new';
 }

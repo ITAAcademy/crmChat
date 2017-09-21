@@ -238,19 +238,14 @@ public class ChatController {
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
 	public List<UserMessageWithLikesAndBookmarkDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
-																			@RequestBody Map<String, String> json, Authentication auth) {
-		return loadOtherMessage(room, json, auth, false);
-	}
-
-	@RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
-	@ResponseBody
-	public List<UserMessageWithLikesAndBookmarkDTO> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
-																					 @RequestBody(required = false) Map<String, String> json, Authentication auth) {
-		return loadOtherMessage(room, json, auth, true);
+																			@RequestBody Map<String, String> json, Authentication auth,
+																			@RequestParam (required=false) boolean filesOnly,
+																			@RequestParam (required=false) boolean bookmarkedOnly) {
+		return loadOtherMessage(room, json, auth, filesOnly,bookmarkedOnly);
 	}
 
 	public List<UserMessageWithLikesAndBookmarkDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
-																	 boolean filesOnly) {
+																	 boolean filesOnly,boolean bookmarkedOnly) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		String dateMsStr = json.get("date");
 		Long dateMs = null;
@@ -266,7 +261,7 @@ public class ChatController {
 		Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
 		boolean isSearchQueryPresent = searchQuery != null && searchQuery.trim().length() > 0;
 		ArrayList<UserMessage> messages = userMessageService.getMessages(struct.getRoom().getId(), date, clearDate,
-				searchQuery, filesOnly, 20,isSearchQueryPresent);
+				searchQuery, filesOnly,bookmarkedOnly, 20,isSearchQueryPresent,chatUser);
 		if (messages.size() == 0)
 			return null;
 		List<UserMessageWithLikesAndBookmarkDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages,chatUser);
@@ -901,7 +896,7 @@ public class ChatController {
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
-				false, 20,true);
+				false,false, 20,true,chatUser);
 		List<UserMessageWithLikesAndBookmarkDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages,chatUser);
 		return chatMessages;
 	}
