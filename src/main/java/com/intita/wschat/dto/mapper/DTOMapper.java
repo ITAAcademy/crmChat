@@ -5,15 +5,16 @@ import com.intita.wschat.models.ChatUser;
 import com.intita.wschat.models.Room;
 import com.intita.wschat.models.User;
 import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.services.ChatLikeStatusService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.UserMessageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class DTOMapper {
 
     @Autowired private ChatLikeStatusService chatLikeStatusService;
     @Autowired private ChatUsersService chatUserService;
+    @Autowired private UserMessageService messageService;
 
     ModelMapper modelMapper = new ModelMapper();
     PropertyMap<ChatUser, ChatUserDTO> chatUserMap = new PropertyMap<ChatUser, ChatUserDTO>() {
@@ -79,17 +81,18 @@ public class DTOMapper {
         return model;
     }
 
-    public UserMessageWithLikesDTO mapMessageWithLikes(UserMessage userMessage) {
-        UserMessageWithLikesDTO model = modelMapper.map(userMessage, UserMessageWithLikesDTO.class);
+    public UserMessageWithLikesAndBookmarkDTO mapMessageWithLikes(UserMessage userMessage,ChatUser chatUser) {
+        UserMessageWithLikesAndBookmarkDTO model = modelMapper.map(userMessage, UserMessageWithLikesAndBookmarkDTO.class);
         model.setLikes(chatLikeStatusService.getMessageLikesCount(userMessage.getId()));
         model.setDislikes(chatLikeStatusService.getMessageDislikesCount(userMessage.getId()));
+        model.setBookmarked(messageService.isMessageBookmarked(userMessage.getId(),chatUser.getId()));
         if (!userMessage.isActive()) {
             model.setBody("");
         }
         return model;
     }
-    public UserMessageWithLikesDTO mapMessageWithLikes(UserMessageDTO messageDTO) {
-        UserMessageWithLikesDTO model = modelMapper.map(messageDTO, UserMessageWithLikesDTO.class);
+    public UserMessageWithLikesAndBookmarkDTO mapMessageWithLikes(UserMessageDTO messageDTO) {
+        UserMessageWithLikesAndBookmarkDTO model = modelMapper.map(messageDTO, UserMessageWithLikesAndBookmarkDTO.class);
         model.setLikes(0L);
         model.setDislikes(0L);
         return model;
@@ -112,9 +115,9 @@ public class DTOMapper {
                 .collect(Collectors.toList());
         return messagesDTO;
     }
-    public List<UserMessageWithLikesDTO> mapListUserMessagesWithLikes(List<UserMessage> userMessages){
-        List<UserMessageWithLikesDTO> messagesDTO = userMessages.stream()
-                .map(message -> mapMessageWithLikes(message))
+    public List<UserMessageWithLikesAndBookmarkDTO> mapListUserMessagesWithLikes(List<UserMessage> userMessages,ChatUser user){
+        List<UserMessageWithLikesAndBookmarkDTO> messagesDTO = userMessages.stream()
+                .map(message -> mapMessageWithLikes(message,user))
                 .collect(Collectors.toList());
         return messagesDTO;
     }

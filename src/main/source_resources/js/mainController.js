@@ -73,6 +73,8 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.getNameFromRandomizedUrl = getNameFromRandomizedUrl;
         $scope.state = 2;
         $scope.loadOnlyFilesInfiniteScrollMode = false;
+        $scope.loadOnlyBookmarkedInfiniteScrollMode = false;
+
         $scope.toggleAskForDeleteMeFromCurrentRoom = function() {
             //TODO leave current room
             toggleAskForDeleteMe(RoomsFactory.getCurrentRoom());
@@ -519,8 +521,13 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
                 return;
             var urlTemplate = "/{0}/chat/loadOtherMessage";
-            if ($scope.loadOnlyFilesInfiniteScrollMode) {
-                urlTemplate = "/{0}/chat/loadOtherMessageWithFiles";
+            var params = {
+                filesOnly: $scope.loadOnlyFilesInfiniteScrollMode,
+                bookmarkedOnly: $scope.loadOnlyBookmarkedInfiniteScrollMode
+            }
+            var paramsPartOfRequest = encodeQueryData(params);
+            if (paramsPartOfRequest.length > 0){
+               urlTemplate += '?'+paramsPartOfRequest;
             }
             $rootScope.message_busy = true;
             var date = (RoomsFactory.getOldMessage() == null) ? null : RoomsFactory.getOldMessage().date;
@@ -931,7 +938,14 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 RoomsFactory.clearMessages();
                 $scope.loadOnlyFilesInfiniteScrollMode = true;
                 $rootScope.loadOtherMessages();
-                $rootScope.message_busy = false;
+                //$rootScope.message_busy = false;
+                var objDiv = document.getElementById("messagesScroll");
+                objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
+            }
+            $scope.showBookmarks = function(){
+                RoomsFactory.clearMessages();
+                $scope.loadOnlyBookmarkedInfiniteScrollMode = true;
+                $rootScope.loadOtherMessages();
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }

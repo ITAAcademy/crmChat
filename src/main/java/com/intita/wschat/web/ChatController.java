@@ -1,10 +1,8 @@
 package com.intita.wschat.web;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
@@ -25,17 +23,15 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
-import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.dto.model.IntitaUserDTO;
 import com.intita.wschat.dto.model.UserMessageDTO;
-import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesAndBookmarkDTO;
 import com.intita.wschat.enums.LikeState;
 import com.intita.wschat.exception.OperationNotAllowedException;
 import com.intita.wschat.services.*;
 import com.intita.wschat.services.common.UsersOperationsService;
-import com.intita.wschat.util.HtmlUtility;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +50,6 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -66,7 +60,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intita.wschat.config.FlywayMigrationStrategyCustom;
 import com.intita.wschat.domain.SessionProfanity;
 import com.intita.wschat.domain.UserWaitingForTrainer;
-import com.intita.wschat.domain.interfaces.IPresentOnForum;
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
 import com.intita.wschat.exception.ChatUserNotFoundException;
@@ -244,20 +237,15 @@ public class ChatController {
 
 	@RequestMapping(value = "/{room}/chat/loadOtherMessage", method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserMessageWithLikesDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
-																	 @RequestBody Map<String, String> json, Authentication auth) {
-		return loadOtherMessage(room, json, auth, false);
+	public List<UserMessageWithLikesAndBookmarkDTO> loadOtherMessageMapping(@PathVariable("room") Long room,
+																			@RequestBody Map<String, String> json, Authentication auth,
+																			@RequestParam (required=false) boolean filesOnly,
+																			@RequestParam (required=false) boolean bookmarkedOnly) {
+		return loadOtherMessage(room, json, auth, filesOnly,bookmarkedOnly);
 	}
 
-	@RequestMapping(value = "/{room}/chat/loadOtherMessageWithFiles", method = RequestMethod.POST)
-	@ResponseBody
-	public List<UserMessageWithLikesDTO> loadOtherMessageWithFilesMapping(@PathVariable("room") Long room,
-																		  @RequestBody(required = false) Map<String, String> json, Authentication auth) {
-		return loadOtherMessage(room, json, auth, true);
-	}
-
-	public List<UserMessageWithLikesDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
-															  boolean filesOnly) {
+	public List<UserMessageWithLikesAndBookmarkDTO> loadOtherMessage(Long room, Map<String, String> json, Authentication auth,
+																	 boolean filesOnly,boolean bookmarkedOnly) {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		String dateMsStr = json.get("date");
 		Long dateMs = null;
@@ -273,10 +261,10 @@ public class ChatController {
 		Date clearDate = roomHistoryService.getHistoryClearDate(struct.getRoom().getId(), chatUser.getId());
 		boolean isSearchQueryPresent = searchQuery != null && searchQuery.trim().length() > 0;
 		ArrayList<UserMessage> messages = userMessageService.getMessages(struct.getRoom().getId(), date, clearDate,
-				searchQuery, filesOnly, 20,isSearchQueryPresent);
+				searchQuery, filesOnly,bookmarkedOnly, 20,isSearchQueryPresent,chatUser);
 		if (messages.size() == 0)
 			return null;
-		List<UserMessageWithLikesDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages);
+		List<UserMessageWithLikesAndBookmarkDTO> messagesAfter = dtoMapper.mapListUserMessagesWithLikes(messages,chatUser);
 
 		if (messagesAfter.size() == 0)
 			return null;
@@ -300,8 +288,8 @@ public class ChatController {
 	}
 
 	@MessageMapping("/{room}/chat.message")
-	public UserMessageWithLikesDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
-												  Authentication auth) {
+	public UserMessageWithLikesAndBookmarkDTO filterMessageWS(@DestinationVariable("room") Long roomId, @Payload UserMessageDTO message,
+															  Authentication auth) {
 		return usersOperationsService.filterMessageWS(roomId,message,auth);
 	}
 
@@ -902,14 +890,14 @@ public class ChatController {
 
 	@RequestMapping(value = "/chat/room/{roomId}/get_messages_contains", method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserMessageWithLikesDTO> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
-																	 @RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
+	public List<UserMessageWithLikesAndBookmarkDTO> getRoomMessagesContains(@PathVariable("roomId") Long roomId,
+																			@RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
 		Date clearDate = roomHistoryService.getHistoryClearDate(roomId, chatUser.getId());
 		ArrayList<UserMessage> userMessages = userMessageService.getMessages(roomId, null, clearDate, searchQuery,
-				false, 20,true);
-		List<UserMessageWithLikesDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages);
+				false,false, 20,true,chatUser);
+		List<UserMessageWithLikesAndBookmarkDTO> chatMessages = dtoMapper.mapListUserMessagesWithLikes(userMessages,chatUser);
 		return chatMessages;
 	}
 

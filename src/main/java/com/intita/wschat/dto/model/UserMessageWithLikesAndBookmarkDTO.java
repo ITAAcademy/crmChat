@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Created by roma on 22.06.17.
  */
-public class UserMessageWithLikesDTO implements DataTransferObject {
+public class UserMessageWithLikesAndBookmarkDTO implements DataTransferObject {
     private ChatUserDTO author;
 
     public ChatUserDTO getAuthor() {
@@ -55,6 +55,17 @@ public class UserMessageWithLikesDTO implements DataTransferObject {
     private Date date;
     private ArrayList<String> attachedFiles;
     private Long id;
+
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    public UserMessageWithLikesAndBookmarkDTO setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
+        return this;
+    }
+
+    private boolean bookmarked;
 
     public Date getUpdateat() {
         return updateat;

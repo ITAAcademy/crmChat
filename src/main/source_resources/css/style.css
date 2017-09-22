@@ -1297,6 +1297,10 @@ button:focus {
     content: 'attach_file';
 }
 
+.right_panel .tools_dropdown_container>#tools_dropdown .show_bookmarked:before {
+    content: 'star';
+}
+
 .right_panel .tools_dropdown_container>#tools_dropdown .open_in_new_tab:before {
     content: 'open_in_new';
 }
@@ -3731,7 +3735,7 @@ a.like_button.selected {
     display:inline-block;
 }
 
-.message_control .bookmarked {
+.message_control.bookmarked {
 color: #6361ef;
 }
 

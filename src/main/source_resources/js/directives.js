@@ -1439,6 +1439,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory,
         if (StateFactory.isCreateRoomBlockMode())
             return;
         $scope.loadOnlyFilesInfiniteScrollMode = false;
+        $scope.loadOnlyBookmarkedInfiniteScrollMode = false;
         ChannelFactory.changeLocation('/dialog_view/' + roomId);
     }
 

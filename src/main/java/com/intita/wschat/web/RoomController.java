@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.*;
-import com.intita.wschat.dto.model.UserMessageWithLikesDTO;
+import com.intita.wschat.dto.model.UserMessageWithLikesAndBookmarkDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.services.*;
 import com.intita.wschat.services.common.UsersOperationsService;
@@ -300,7 +300,7 @@ public class RoomController {
 		ArrayList<UserMessage> userMessages = userMessageService.getFirst20UserMessagesByRoom(room_o, lang,user);
 		if (buff != null)
 			userMessages.addAll(buff);
-		List<UserMessageWithLikesDTO> messagesDTO = dtoMapper.mapListUserMessagesWithLikes(userMessages);
+		List<UserMessageWithLikesAndBookmarkDTO> messagesDTO = dtoMapper.mapListUserMessagesWithLikes(userMessages,user);
 		//ArrayList<ChatMessage> messagesHistory = ChatMessage.getAllfromUserMessages(userMessages);
 		Set<Long> likedMessages = chatLikeStatusService.getLikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
 		Set<Long> dislikedMessages = chatLikeStatusService.getDislikedMessagesIdsByUserInRoom(user.getId(),room_o.getId());
