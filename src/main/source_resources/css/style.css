@@ -226,7 +226,9 @@ button:focus {
 #menu:hover {
     cursor: pointer;
 }
-
+.consultant_wrapper>.head{
+    overflow: hidden !important;
+}
 .consultant_wrapper>.head {
     height: 35px;
     min-height: 35px;
@@ -931,7 +933,7 @@ button:focus {
     margin: 0;
     padding: 0;
     margin-top: 5px;
-    max-height: 14px;
+    max-height: 20px;
     display: block;
 }
 
