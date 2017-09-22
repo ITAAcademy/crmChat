@@ -286,6 +286,13 @@ button:focus {
     animation: ring 8s 1s ease-in-out infinite;
 }
 
+.editing_mode_button {
+    position:absolute;
+    top: calc(50% - 15px);
+    right: 0px;
+}
+
+
 @-webkit-keyframes ring {
     0% {
         -webkit-transform: rotateZ(0);
@@ -1718,7 +1725,7 @@ button:focus {
 }
 
 .controls_area .multimedia_conversation_controls a,
-.controls_area button {
+.controls_area button, .chat_button {
     border: 0;
     background: 0;
     border: 0;
@@ -2741,6 +2748,10 @@ span.rooms_search_loader img {
     right: 0px;
 }
 
+.input_wrapper {
+    position:relative;
+}
+
 
 
 
@@ -3156,6 +3167,10 @@ span.rooms_search_loader img {
         width: 40px;
         height: 70px;
         text-align: center;
+    }
+    .editing_mode_button {
+    right: 50px;
+    top: 20px;
     }
 }
 

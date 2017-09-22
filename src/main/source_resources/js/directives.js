@@ -813,6 +813,11 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 $scope.files = attaches;
             });
 
+            $scope.cancelMessageEditing = function() {
+                StateFactory.setMessageInputDefaultMode();
+                $scope.newMessage.value = "";
+            }
+
             $scope.files = [];
             /*$("[contenteditable='true']").on('focus', function() {
                 var $this = $(this);
@@ -1036,7 +1041,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 resetMessageInputToDefaultMode();
             }
 
-
+            $scope.isMessageEditingMode = function(){
+                 return StateFactory.isMessageInputOldMessageEditingMode();
+            }
 
             $scope.sendMessageAndFiles = function() {
 

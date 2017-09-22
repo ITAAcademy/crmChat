@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
+import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.domain.search.UserMessageSearchCriteria;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.UserMessageDTO;
@@ -342,6 +343,24 @@ public class UserMessageService {
 			return userMessageRepository.countByDateAfterAndDateBefore(dateMidnight, nextDay);
 		}
 	}
+
+
+	public Map<String,Integer> countMessageByAllRolesAndBetweenDate(Date date1, Date date2) {
+		Map<String,Integer> messagesByRoles = new HashMap<String,Integer>();
+
+		String request = "select count(id) from chat_user_message  " +
+				" where m >= :date1 and m <= :date2 and m.author_id IN (SELECT id FROM :roleTableName) )";
+
+		for (UserRole role : UserRole.values()) {
+			Query query = entityManager.createNativeQuery(request);
+			query.setParameter("roleTableName",role.getTableName());
+			messagesByRoles.put(role.getTableName(),query.getFirstResult());
+		}
+
+		return messagesByRoles;
+
+	}
+
 
 	@Transactional(readOnly=true)
 	public List<UserMessage> getMessagesByDateNotUser(Date date, ChatUser user) {

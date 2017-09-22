@@ -43,6 +43,8 @@ UserMessageService userMessageService;
 	}
 
 
+
+
 	@RequestMapping(value = "/statistic/user/get_visits", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<Long,Integer> getUsersVisitsBetweenDatesMapping(@RequestParam(required = false) Long earlyDate,
@@ -65,6 +67,19 @@ UserMessageService userMessageService;
 		responseData.setActiveMessagesCount(activeMessagesCount);
 		responseData.setRequestId(requestId);
 
+		return responseData;
+	}
+
+	@RequestMapping(value ="/statistic/count_messages_per_role")
+	@ResponseBody
+	public StatisticResponseMessagesCountPerRole countMessagesToday(@RequestParam(required = false) String requestId,
+															 @RequestParam(required = false) Long earlyDate,
+															 @RequestParam(required = false) Long lateDate){
+		StatisticResponseMessagesCountPerRole responseData = new StatisticResponseMessagesCountPerRole();
+		Map<String,Integer> responseByRoles = userMessageService.countMessageByAllRolesAndBetweenDate(new Date(earlyDate)
+				,new Date(lateDate));
+		responseData.setMessageCountPerRole(responseByRoles);
+		responseData.setRequestId(requestId);
 		return responseData;
 	}
 

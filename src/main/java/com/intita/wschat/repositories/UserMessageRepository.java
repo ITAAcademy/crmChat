@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.intita.wschat.domain.UserRole;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,7 @@ public interface UserMessageRepository  extends CrudRepository<UserMessage, Long
 	  Long countByRoomAndDateAfterAndAuthorNot(Room room, Date date, ChatUser user);
 	  Long countByDateAfterAndDateBefore(Date dateEarlier, Date dateLater);
 	Long countByDateAfterAndDateBeforeAndActive(Date dateEarlier, Date dateLater,boolean active);
+
 	  List<UserMessage> findAllByDateAfterAndAuthorNot( Date date, ChatUser user);
 	  Set<UserMessage> findAllByAuthorNot(ChatUser user);
 	  ArrayList<UserMessage> findAllByDateAfter(Date date);
