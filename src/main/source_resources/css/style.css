@@ -115,7 +115,8 @@ button:focus {
     font-family: "MyriadPro2";
     font-weight: 300;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 0px;
+    border-top-left-radius: 10px;
     box-shadow: 1px 3px 6px 0 rgb(49, 76, 107);
 }
 
@@ -130,13 +131,8 @@ button:focus {
 }
 
 .consultant_wrapper .material-icons {
-    font-size: 20px;
-    line-height: 24px;
-}
-
-.collapse_block_button.detach {
-    /*-webkit-transform: rotate(-90deg);
-    transform: rotate(-90deg);*/
+    font-size: 24px;
+    line-height: 35px;
 }
 
 .collapse_block_button svg {
@@ -226,9 +222,11 @@ button:focus {
 #menu:hover {
     cursor: pointer;
 }
-.consultant_wrapper>.head{
+
+.consultant_wrapper>.head {
     overflow: hidden !important;
 }
+
 .consultant_wrapper>.head {
     height: 35px;
     min-height: 35px;
@@ -483,7 +481,7 @@ button:focus {
 .collapse_block_button {
     right: 8px;
     position: absolute;
-    line-height: 20px !important;
+    line-height: 30px !important;
     font-weight: 900 !important;
 }
 
@@ -659,10 +657,12 @@ button:focus {
 .items_list_block .block_head {
     position: relative;
     width: 100%;
-    height: 25px;
+    height: 35px;
     line-height: 25px;
 }
-
+.consultant_wrapper .items_list_block .block_head *{
+    line-height: 35px;
+}
 .items_list_block .block_head:hover {
     cursor: pointer;
 }
@@ -672,7 +672,7 @@ button:focus {
     height: 1px;
     background-color: #3598db;
     position: absolute;
-    top: 24px;
+    top: 35px;
 }
 
 .items_list_block .block_name {
@@ -694,8 +694,9 @@ button:focus {
 }
 
 .items_list_block .dropdown_icon {
-    width: 25px;
-    height: 25px;
+    position: absolute;
+    width: 24px;
+    height: 35px;
     top: 0px;
     -webkit-transition: 1s ease-in-out;
     transition: 1s ease-in-out;
@@ -1023,16 +1024,16 @@ button:focus {
 
 .contacts_menu_strip {
     font-size: 0;
-    height: 26px;
+    height: 35px;
     width: 100%;
-    position: relative
+    position: relative;
 }
 
 .contacts_menu_strip>* {
     vertical-align: middle;
     font-size: 18px;
     cursor: pointer;
-    line-height: 30px;
+    line-height: 35px;
 }
 
 .contacts_menu_strip .contacts_menu_item {
@@ -1044,7 +1045,7 @@ button:focus {
     position: absolute;
     left: 17px;
     top: 0;
-    padding-left: 30px;
+    padding-left: 35px;
     padding-right: 30px;
     z-index: 0;
     font-size: 16px;
@@ -1052,6 +1053,11 @@ button:focus {
     font-weight: 300;
     font-style: normal;
     text-transform: uppercase;
+}
+
+.contacts_menu_strip #user_contacts_menu_item_confirm_add_user{
+    width: calc(100% - 32px);
+    color: white;
 }
 
 .contacts_menu_strip .last_contacts_menu_item {
@@ -1063,7 +1069,7 @@ button:focus {
     position: absolute;
     right: 20px;
     top: 0;
-    padding-right: 26px;
+    padding-right: 40px;
     font-size: 16px;
     font-family: "MyriadPro2";
     font-weight: 300;
@@ -1072,12 +1078,12 @@ button:focus {
 }
 
 .contacts_menu_strip .last_contacts_menu_item:before {
-    border-top: 26px solid #4b75a4;
-    border-left: 26px solid transparent;
+    border-top: 35px solid #4b75a4;
+    border-left: 35px solid transparent;
     content: " ";
     position: absolute;
     top: 0;
-    left: -26px;
+    left: -35px;
 }
 
 .contacts_menu_strip .contacts_menu_item.active {
@@ -1091,7 +1097,7 @@ button:focus {
 }
 
 .contacts_menu_strip .last_contacts_menu_item.active:before {
-    border-top: 26px solid #3598db;
+    border-top: 35px solid #3598db;
 }
 
 .contacts_menu_strip .search_icon {
@@ -1120,21 +1126,21 @@ button:focus {
 }
 
 .contacts_menu_strip .search_icon:after {
-    border-top: 26px solid #46688d;
-    border-right: 26px solid transparent;
+    border-top: 35px solid #46688d;
+    border-right: 35px solid transparent;
     content: " ";
-    right: -26px;
+    right: -35px;
     top: 0;
     position: absolute;
 }
 
 .contacts_menu_strip .group_icon:before {
-    border-bottom: 26px solid #46688d;
-    border-left: 26px solid transparent;
+    border-bottom: 35px solid #46688d;
+    border-left: 35px solid transparent;
     content: " ";
     position: absolute;
     top: 0;
-    left: -26px;
+    left: -35px;
 }
 
 .contacts_menu_strip .top_right_corner_grey {
@@ -1180,8 +1186,8 @@ button:focus {
 .contacts_menu_strip.visible-create .room_create_input,
 .contacts_menu_strip.visible-search .room_search_input {
     max-width: calc(100% - 2px);
-    padding-left: 52px;
-    padding-right: 52px;
+    padding-left: 60px;
+    padding-right: 60px;
     right: 0;
     cursor: text;
 }
@@ -1218,7 +1224,7 @@ button:focus {
 }
 
 .tools_area {
-    height: 25px;
+    height: 35px;
     position: relative;
     text-align: right;
     padding: 0px 5px;
@@ -1376,7 +1382,7 @@ button:focus {
 }
 
 .dropdown_item {
-    line-height: 22px;
+    line-height: 25px;
     padding: 5px 20px 5px 40px;
     display: block;
 }
@@ -1554,19 +1560,14 @@ button:focus {
 }
 
 .user_message .message_details .who-like-modal {
+    display: inline-block;
     position: absolute;
-    /* display: -webkit-box; */
-    display: -ms-flexbox;
-    display: block;
+    max-height: 125px;
     right: -15px;
     bottom: 25px;
-    /* padding: 5px; */
     min-width: 45px;
-    /* height: 34px; */
-    transition: min-width 1s, width 1s, -webkit-transform 1s ease-out;
-    -webkit-transition: min-width 1s, width 1s, -webkit-transform 1s ease-out;
-    transition: transform 1s ease-out, min-width 1s, width 1s;
-    transition: transform 1s ease-out, min-width 1s, width 1s, -webkit-transform 1s ease-out;
+    overflow-y: auto;
+    transition: transform .5s ease-out, min-width .5s, width .5s, -webkit-transform .5s ease-out;
     -webkit-transform: translateX(calc(100% + 15px));
     transform: translateX(calc(100% + 15px));
     background-color: rgba(0, 0, 0, 0.5);
@@ -1575,10 +1576,6 @@ button:focus {
     border-top-right-radius: 0;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
     text-align: center;
-    /* max-width: 130px; */
-    width: 130px;
-    max-height: 125px;
-    overflow-y: auto;
 }
 
 .user_message .message_details .who-like-modal .mini-preloader {
@@ -1616,7 +1613,7 @@ button:focus {
 }
 
 .user_message .message_details .who-like-modal .item .avatar {
-   width: 30px;
+    width: 30px;
     height: 30px;
     border-radius: 50%;
     background-repeat: no-repeat;
@@ -2026,8 +2023,9 @@ button:focus {
     text-align: left;
     width: 100%
 }
+
 .messages_output_area .answer .message_details {
-    padding-bottom:25px;
+    padding-bottom: 25px;
 }
 
 .messages_output_area .answer.right .message_details {
@@ -2124,7 +2122,7 @@ button:focus {
     position: absolute;
     top: 0px;
     left: 10px;
-    width: calc(100% - 70px);
+    width: calc(100% - 80px);
     height: 100%;
     /* z-index: 999999; */
 }
@@ -2330,7 +2328,7 @@ body {
     margin: auto;
     text-align: center;
     line-height: 30px;
-    max-width: calc(100% - 100px);
+    max-width: calc(100% - 130px);
     color: #3e87b8;
     font-size: 16px;
     font-family: "MyriadPro2";
@@ -2403,7 +2401,7 @@ body {
 body.frame .dnd-container .chat.full .window_panel,
 body.frame .window_icons_wrapper {
     position: absolute;
-    right: 86px;
+    right: 95px;
     height: 100%;
 }
 
@@ -2742,6 +2740,7 @@ span.rooms_search_loader img {
     position: absolute;
     right: 0px;
 }
+
 
 
 
@@ -3273,6 +3272,7 @@ span.rooms_search_loader img {
 
 
 
+
 /*
 user profile popup
 */
@@ -3513,24 +3513,24 @@ a.like_button.selected {
     position: absolute;
     right: 10px;
     cursor: pointer;
-    top: calc(50% - 14px);
-    position:absolute;
+    top: calc(50% - 17.5px);
+    position: absolute;
 }
 
-.remove_message_icon {
-    
-}
+.remove_message_icon {}
 
 .message_body {
-   padding-bottom: 10px;
+    padding-bottom: 10px;
     padding-left: 15px;
     padding-right: 20px;
     text-align: left;
-    position:relative;
+    position: relative;
 }
+
 .message_body.selected {
-    background-color:#b8dcea;
+    background-color: #b8dcea;
 }
+
 
 
 
@@ -3731,17 +3731,22 @@ a.like_button.selected {
     animation-delay: 1.20s;
 }
 
-.message_control{
-    display:inline-block;
+.message_control {
+    display: inline-block;
+    color: #4b75a4;
+}
+.message_control:hover{
+    opacity: .5;
 }
 
 .message_control.bookmarked {
-color: #6361ef;
+    color: #6361ef;
 }
 
-.message_control_wrapper .group{
-    display:inline-block
+.message_control_wrapper .group {
+    display: inline-block
 }
+
 
 
 /**

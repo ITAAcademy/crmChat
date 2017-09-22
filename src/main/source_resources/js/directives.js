@@ -641,9 +641,9 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory, StateFa
 
 
 
-angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory', '$rootScope','StateFactory','MessageInputService', messagesBlock]);
+angular.module('springChat.directives').directive('messagesBlock', ['$timeout', '$http', 'RoomsFactory', 'UserFactory', '$rootScope', 'StateFactory', 'MessageInputService', messagesBlock]);
 
-function messagesBlock($timeout, $http, RoomsFactory, UserFactory, $rootScope,StateFactory,MessageInputService) {
+function messagesBlock($timeout, $http, RoomsFactory, UserFactory, $rootScope, StateFactory, MessageInputService) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/messages_block.html',
@@ -691,30 +691,29 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory, $rootScope,St
             }
 
             $scope.bookmarkMessage = function(message) {
-                $http.post(serverPrefix+'/chat/messages/bookmark_toggle',message.id).then(function(response){
+                $http.post(serverPrefix + '/chat/messages/bookmark_toggle', message.id).then(function(response) {
                     var added = response.data;
-                    if (added){
+                    if (added) {
                         message.bookmarked = true;
-                    }
-                    else {
+                    } else {
                         message.bookmarked = false;
                     }
                 });
             }
 
             $scope.removeMessage = function(message) {
-                    var url = '/chat/messages/remove/' + message.id;
-                    $http.post(serverPrefix + url).
-                    success(function(data, status, headers, config) {
+                var url = '/chat/messages/remove/' + message.id;
+                $http.post(serverPrefix + url).
+                success(function(data, status, headers, config) {
 
-                    }).
-                    error(function(data, status, headers, config) {
-                        console.log('message removing failed');
-                    });
-                }
-                /*
-                    Likes
-                */
+                }).
+                error(function(data, status, headers, config) {
+                    console.log('message removing failed');
+                });
+            }
+            /*
+                Likes
+            */
             let lastChoise = {};
             let hideWhoLikeOrDisLikeCancel = null;
             let hideWhoLikeOrDisLikeFunc = function() {
@@ -796,20 +795,20 @@ function messagesBlock($timeout, $http, RoomsFactory, UserFactory, $rootScope,St
 };
 
 angular.module('springChat.directives').directive('messageInput', ['$http', 'RoomsFactory', 'ChatSocket', '$timeout',
-    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster', '$window', 'StateFactory','MessageInputService', messageInput
+    'UserFactory', 'ChannelFactory', '$interval', 'ngDialog', 'toaster', '$window', 'StateFactory', 'MessageInputService', messageInput
 ]);
 
-function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster, $window,StateFactory,MessageInputService) {
+function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, ChannelFactory, $interval, ngDialog, toaster, $window, StateFactory, MessageInputService) {
     return {
         restrict: 'EA',
         templateUrl: 'static_templates/message_input.html',
         link: function($scope, element, attributes) {
 
 
-            MessageInputService.setMessageBodySetter(function(text){
+            MessageInputService.setMessageBodySetter(function(text) {
                 $scope.newMessage.value = text;
             });
-            MessageInputService.setMessageAttaches(function(attaches){
+            MessageInputService.setMessageAttaches(function(attaches) {
                 $scope.files = attaches;
             });
 
@@ -843,9 +842,9 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var getParticipants = RoomsFactory.getParticipants;
             $scope.getSkypeContacts = RoomsFactory.getSkypeContacts;
 
-            var clearMessagesAndFiles = function(){
-                 $scope.newMessage.value = '';
-                    $scope.files = [];
+            var clearMessagesAndFiles = function() {
+                $scope.newMessage.value = '';
+                $scope.files = [];
             }
 
             $scope.onClick = function() {
@@ -988,28 +987,28 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 $scope.files.splice(index, 1);
             }
 
-            var updateMessage = function(msgId,body,files) {
+            var updateMessage = function(msgId, body, files) {
                 var messageObj = {
                     id: msgId,
                     body: body,
                     attachedFiles: files
                 }
-                $http.post(serverPrefix + "/chat/messages/update",messageObj);
+                $http.post(serverPrefix + "/chat/messages/update", messageObj);
                 clearMessagesAndFiles();
             }
 
-            var resetMessageInputToDefaultMode = function(){
+            var resetMessageInputToDefaultMode = function() {
                 StateFactory.setMessageInputDefaultMode();
             }
 
-            var sendMessageResFunction = function(files,textOfMessage, messageIdToUpdate) {
+            var sendMessageResFunction = function(files, textOfMessage, messageIdToUpdate) {
                 var needUpdateMessage = messageIdToUpdate != null;
                 if (files != null && files.length > 0) {
                     uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
                         function successCallback(data) {
                             $scope.uploadProgress = 0;
                             if (needUpdateMessage) {
-                                updateMessage(messageIdToUpdate,textOfMessage,JSON.parse(data) )
+                                updateMessage(messageIdToUpdate, textOfMessage, JSON.parse(data))
                             } else {
                                 $scope.sendMessage(textOfMessage, JSON.parse(data), true);
                             }
@@ -1028,7 +1027,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         });
                 } else {
                     if (needUpdateMessage) {
-                        updateMessage(messageIdToUpdate,textOfMessage,undefined )
+                        updateMessage(messageIdToUpdate, textOfMessage, undefined)
                     } else {
                         $scope.sendMessage(textOfMessage, undefined, true);
                     }
@@ -1047,19 +1046,18 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 if (UserFactory.isTemporaryGuest()) {
                     $http.post(serverPrefix + "/chat/persist_temporary_guest", textOfMessage).then(function(response) {
                         UserFactory.initStompClient(function() {
-                            sendMessageResFunction(files,textOfMessage);
+                            sendMessageResFunction(files, textOfMessage);
                         });
                     }, function() {
                         console.log('temporary guest user activation failed');
                     });
                     return;
                 }
-                if (StateFactory.isMessageInputOldMessageEditingMode()){
-                    sendMessageResFunction(files,textOfMessage,StateFactory.getEditingMessageId());
+                if (StateFactory.isMessageInputOldMessageEditingMode()) {
+                    sendMessageResFunction(files, textOfMessage, StateFactory.getEditingMessageId());
+                } else {
+                    sendMessageResFunction(files, textOfMessage);
                 }
-                else {
-                sendMessageResFunction(files,textOfMessage);
-            }
                 return false;
             }
 
@@ -1126,32 +1124,32 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 $scope.askForRatingEnabled = false;
                 loadRatings().then(function(response) {
 
-                        $scope.ratings = response.data;
-                        for (var i = 0; i < $scope.ratings.length; i++) {
-                            $scope.ratings[i].value = 10;
-                        }
-                        $http.get('askForRatingModal.html').then(function(response) {
-                            var messageObj = {};
-                            messageObj.body = response.data;
-                            messageObj.active = true;
-                            messageObj.author = {
-                                id: 1,
-                                nickName: "Server",
-                                avatar: "noname.png"
-                            };
-                            messageObj.attachedFiles = [];
-                            messageObj.date = new Date().getTime();
-                            RoomsFactory.calcPositionPush(messageObj);
-                        }, function(error) {});
+                    $scope.ratings = response.data;
+                    for (var i = 0; i < $scope.ratings.length; i++) {
+                        $scope.ratings[i].value = 10;
+                    }
+                    $http.get('askForRatingModal.html').then(function(response) {
+                        var messageObj = {};
+                        messageObj.body = response.data;
+                        messageObj.active = true;
+                        messageObj.author = {
+                            id: 1,
+                            nickName: "Server",
+                            avatar: "noname.png"
+                        };
+                        messageObj.attachedFiles = [];
+                        messageObj.date = new Date().getTime();
+                        RoomsFactory.calcPositionPush(messageObj);
+                    }, function(error) {});
 
-                    }, function() {})
-                    /*loadRatings().then(function(response) {
-                        $scope.ratings = response.data;
-                        ngDialog.open({
-                            template: 'askForRatingModal.html',
-                            scope: $scope
-                        });
-                    }, function() {})*/
+                }, function() {})
+                /*loadRatings().then(function(response) {
+                    $scope.ratings = response.data;
+                    ngDialog.open({
+                        template: 'askForRatingModal.html',
+                        scope: $scope
+                    });
+                }, function() {})*/
 
             }
 
@@ -1497,21 +1495,21 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
         return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(opponentUserId);
     };
     $scope.canBeUserAddedToRoom = function(userId) {
-            var currentUserId = UserFactory.getChatUserId();
-            if (userId == null || userId == currentUserId) return false;
-            if (StateFactory.isCreateRoomBlockMode()) return true;
-            return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
-        }
-        /* $scope.stripHtml = function(html)
-         {
-             var tmp = document.createElement("DIV");
-             tmp.innerHTML = html;
-             return tmp.textContent || tmp.innerText || "";
-         }*/
-        /****
-         * 1 - default
-         * 2 - add new user
-         */
+        var currentUserId = UserFactory.getChatUserId();
+        if (userId == null || userId == currentUserId) return false;
+        if (StateFactory.isCreateRoomBlockMode()) return true;
+        return (StateFactory.isAddUserToDialogRoomBlockMode()) && !RoomsFactory.containsUserId(userId);
+    }
+    /* $scope.stripHtml = function(html)
+     {
+         var tmp = document.createElement("DIV");
+         tmp.innerHTML = html;
+         return tmp.textContent || tmp.innerText || "";
+     }*/
+    /****
+     * 1 - default
+     * 2 - add new user
+     */
     initRoomsFunctions($scope, ChannelFactory, UserFactory, RoomsFactory, StateFactory);
 
     var roomsBlockModeChangeSubscription;
@@ -1602,6 +1600,18 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
             if (room.privateUserIds[1] == UserFactory.getChatUserId())
                 addOrRemove(StateFactory.getUserListForAddedToCurrentRoom(), room.privateUserIds[0]);
         }
+    }
+    $scope.cancelAddProcess = function() {
+        StateFactory.toggleAddUserToDialogRoomBlockMode();
+    }
+
+    $scope.toggleNewUser = function() {
+        StateFactory.toggleAddUserToDialogRoomBlockMode();
+        if (!StateFactory.isAddUserToDialogRoomBlockMode()) {
+            var usersIdsList = StateFactory.getUserListForAddedToCurrentRoom();
+            RoomsFactory.addUsersToRoom(usersIdsList);
+        }
+        return StateFactory.isAddUserToDialogRoomBlockMode();
     }
 
     $scope.getRooms = function() {
