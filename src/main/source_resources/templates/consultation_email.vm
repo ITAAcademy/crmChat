@@ -44,9 +44,9 @@
             </tr>
             <tr>
                 <td style="padding-top: 10px;  text-align: center; background-color: #fff; text-align: left">
-                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 0432 52 82 67</span>
-                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 067 431 19 21</span>
-                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">Тел. +38 073 209 97 43</span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380432528267">Тел. +38 0432 52 82 67</a></span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380674317424">Тел. +38 067 431 74 24</a></span>
+                    <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380732099743">Тел. +38 073 209 97 43</a></span>
                     <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;">ел. пошта: <a href="mailto:info@intita.com." target="_blank" style=""> info@intita.com</a></span>
                 </td>
             </tr>
