@@ -72,11 +72,11 @@ button:focus {
 }
 
 *::-webkit-scrollbar-track {
-    background: transparent
+    background: transparent;
 }
 
 *::-webkit-scrollbar {
-    width: 10px;
+    width: 15px;
     -webkit-appearance: none;
     background: rgba(212, 212, 212, 0.23);
     z-index: 300;
