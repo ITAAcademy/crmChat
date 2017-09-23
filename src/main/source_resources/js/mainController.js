@@ -517,24 +517,18 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         }
         $rootScope.message_busy = false;
-        $rootScope.loadOtherMessages = function() {
-            if ($rootScope.message_busy || RoomsFactory.getCurrentRoom() == null)
-                return;
-            var urlTemplate = "/{0}/chat/loadOtherMessage";
-            var params = {
-                filesOnly: $scope.loadOnlyFilesInfiniteScrollMode,
-                bookmarkedOnly: $scope.loadOnlyBookmarkedInfiniteScrollMode
-            }
-            var paramsPartOfRequest = encodeQueryData(params);
-            if (paramsPartOfRequest.length > 0){
-               urlTemplate += '?'+paramsPartOfRequest;
-            }
-            $rootScope.message_busy = true;
-            var date = (RoomsFactory.getOldMessage() == null) ? null : RoomsFactory.getOldMessage().date;
-            var payload = { 'date': date };
+        $rootScope.loadOtherMessages = function(onlyFiles,onlyBookmarks,searchQuery) {
+           var onlyFiles = onlyFiles || $scope.loadOnlyFilesInfiniteScrollMode;
+           var onlyBookmarks = onlyBookmarks || $scope.loadOnlyBookmarkedInfiniteScrollMode;
+           var searchQuery = null;
             if ($scope.messageSearchEnabled)
-                payload['searchQuery'] = $scope.messageSearchQuery.value;
-            $http.post(serverPrefix + urlTemplate.format(RoomsFactory.getCurrentRoom().roomId), payload). //  messages[0]). //
+                searchQuery = $scope.messageSearchQuery.value;
+
+            var promise = RoomsFactory.loadOtherMessages(onlyFiles,onlyBookmarks,searchQuery);
+        
+            if (promise==null) return;
+
+           return promise.
             success(function(data, status, headers, config) {
 
                 var objDiv = document.getElementById("messagesScroll");
@@ -554,7 +548,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 $scope.$$postDigest(function() {
                     var objDiv = document.getElementById("messagesScroll");
                     objDiv.scrollTop = objDiv.scrollHeight - lastHeight;
-                    $rootScope.message_busy = false;
+                    //$rootScope.message_busy = false;
                     $scope.$apply();
                 });
             }).
@@ -769,7 +763,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             updateMessagesSearchTimeout = $timeout(function() {
                 RoomsFactory.clearMessages();
                 $rootScope.message_busy = false;
-                var deffered = RoomsFactory.loadMessagesContains($scope.messageSearchQuery.value);
+                var deffered = $rootScope.loadOtherMessages(null,null,$scope.messageSearchQuery.value);
                 deffered.finally(function() {
                     $scope.messagesSearching = false;
                 });
@@ -787,15 +781,15 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             $scope.disableRoomNameChangeMode();
         });
         $scope.disableMessagesSearch = function(reloadMessages) {
+            $scope.messageSearchEnabled = false;
             if (reloadMessages === true) {
                 RoomsFactory.clearMessages();
-                RoomsFactory.loadMessagesContains('');
+                $rootScope.loadOtherMessages(null,null,'');
                 $timeout(function() {
                     $rootScope.message_busy = false;
                 }, 500);
 
             }
-            $scope.messageSearchEnabled = false;
             var objDiv = document.getElementById("messagesScroll");
             if (objDiv != null)
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
@@ -965,15 +959,16 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             }
 
             $scope.showAllMessages = function(reloadMessages) {
+                $scope.loadOnlyFilesInfiniteScrollMode = false;
+                $scope.loadOnlyBookmarkedInfiniteScrollMode = false;
                 if (reloadMessages === true) {
                     RoomsFactory.clearMessages();
-                    RoomsFactory.loadMessagesContains('');
+                    $rootScope.loadOtherMessages(null,null,'');
                     $timeout(function() {
                         $rootScope.message_busy = false;
                     }, 500);
 
                 }
-                $scope.loadOnlyFilesInfiniteScrollMode = false;
                 var objDiv = document.getElementById("messagesScroll");
                 if (objDiv != null)
                     objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;

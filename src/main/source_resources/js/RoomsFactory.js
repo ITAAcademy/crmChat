@@ -694,6 +694,34 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         return deffered;
     }
 
+
+     function loadOtherMessages(filesOnly,bookmarkedOnly,searchQuery) {
+            if ($rootScope.message_busy || currentRoom == null)
+                return;
+            var urlTemplate = "/{0}/chat/loadOtherMessage";
+            var params = {
+                filesOnly: filesOnly,
+                bookmarkedOnly: bookmarkedOnly
+            }
+            var paramsPartOfRequest = encodeQueryData(params);
+            if (paramsPartOfRequest.length > 0){
+               urlTemplate += '?'+paramsPartOfRequest;
+            }
+            $rootScope.message_busy = true;
+            var date = (oldMessage == null) ? null : oldMessage.date;
+            var payload = { 'date': date };
+            if (searchQuery != null)
+                payload['searchQuery'] = searchQuery;
+            var promise = 
+            $http.post(serverPrefix + urlTemplate.format(currentRoom.roomId), payload);
+            promise.then(function(){
+                $rootScope.message_busy = false;
+            }); //  messages[0]). //
+            return promise;
+        }
+
+
+
     function loadMessagesFromArrayList(list) {
         oldMessage = list[list.length - 1];
         for (var index = 0; index < list.length; index++) {
@@ -1015,7 +1043,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         likeMessage,
         dislikeMessage,
         getWhoLikesByMessage,
-        getWhoDisLikesByMessage
+        getWhoDisLikesByMessage,
+        loadOtherMessages
 
 
     };
