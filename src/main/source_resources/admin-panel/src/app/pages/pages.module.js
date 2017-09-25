@@ -9,7 +9,8 @@
     'ui.router',
 
     'BlurAdmin.pages.dashboard',
-    'BlurAdmin.pages.trainer_tenant_monitoring'
+    'BlurAdmin.pages.trainer_tenant_monitoring',
+    'BlurAdmin.pages.localization_editor'
   ])
       .config(routeConfig);
 

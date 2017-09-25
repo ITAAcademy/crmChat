@@ -1,11 +1,6 @@
 package com.intita.wschat.admin;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -149,6 +144,19 @@ public class AdminPanelController {
 
 		return  roomsDTO;
 
+	}
+
+
+	@RequestMapping(value = "/chat/user/localization", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,Object> getLocalization(@RequestParam String lang, Authentication auth) {
+		return  chatLangService.getLangFromDatabase().get(lang);
+	}
+
+	@RequestMapping(value = "/chat/user/localization", method = RequestMethod.POST)
+	@ResponseBody
+	public void setLocalization(@RequestParam String lang,@RequestBody String translationValue, Authentication auth) {
+		chatLangService.saveLangToDatabase(lang,translationValue);
 	}
 
 	@RequestMapping(value = "/chat/findUsersExceptRole", method = RequestMethod.GET)

@@ -50,16 +50,14 @@ public class ChatLangService {
 				Arrays.asList(UA, EN, RU));
 
 	}
-	
-	public  Map<String,Map<String,Object>> updateDataFromDatabase()
-	{
+	public Map<String,Map<String,Object>> getLangFromDatabase(){
 		Map<String,Map<String,Object>> langMap = new HashMap<>();
 		Iterable<Lang> it = chatLangRepository.findAll();
 		for(Lang lg:it)
 		{
 			HashMap<String, Object> result = null;
-			JsonFactory factory = new JsonFactory(); 
-			ObjectMapper mapper = new ObjectMapper(factory); 
+			JsonFactory factory = new JsonFactory();
+			ObjectMapper mapper = new ObjectMapper(factory);
 			mapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
 
 			TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
@@ -75,6 +73,18 @@ public class ChatLangService {
 			log.info("Current lang pack" + langMap.toString());
 
 		}
+		return langMap;
+	}
+
+	public Map<String,Map<String,Object>> saveLangToDatabase(String lang, String value){
+		Map<String,Map<String,Object>> langMap = new HashMap<>();
+		chatLangRepository.updateMap(value,lang);
+		return langMap;
+	}
+	
+	public  Map<String,Map<String,Object>> updateDataFromDatabase()
+	{
+		Map<String,Map<String,Object>> langMap = getLangFromDatabase();
 		localizationMap = langMap;
 		return langMap;
 	}
@@ -111,6 +121,11 @@ public class ChatLangService {
 	{
 		return (Map<String, Object>) getLocalizationMap().get(getCurrentLang());
 	}
+	public Map<String, Object> getLocalization(String lang)
+	{
+		return (Map<String, Object>) getLocalizationMap().get(lang.toLowerCase());
+	}
+
 	
 	@PostConstruct
 	private void initService(){

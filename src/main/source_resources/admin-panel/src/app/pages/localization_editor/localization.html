@@ -1,0 +1,27 @@
+<button ng-click="saveChanges()">Save</button>
+<div class="horizontal-scroll">
+  <table class="table table-hover" st-table="editableTableData">
+    <thead>
+    <tr class="sortable">
+      <th class="table-id" st-sort="id" st-sort-default="true">#</th>
+      <th st-sort="firstName">Name</th>
+      <th st-sort="lastName">Translation</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="translation in editableTableData" class="editable-tr-wrap">
+      <td class="table-id">{{$index}}</td>
+      <td><span editable-text="translation.key" blur="cancel">{{translation.key}}</span></td>
+      <td><span editable-text="translation.value" blur="cancel">{{translation.value}}</span></td>
+
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td colspan="6" class="text-center">
+        <div st-pagination="" st-items-by-page="12" st-displayed-pages="5"></div>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
