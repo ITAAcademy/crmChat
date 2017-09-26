@@ -1,27 +1,41 @@
-<button ng-click="saveChanges()">Save</button>
+<div class="ng-cloak monitor-head" ba-panel ba-panel-title="Filter" ba-panel-class=" ">
+	<button ng-click="saveChanges()">Save</button>
+	<button ng-click="loadLang()">Load</button>
+	<div class="col-md-3">
+		<div class="form-group ">
+			<ui-select ng-model="selected.locale" class="btn-group bootstrap-select form-control" ng-disabled="false" append-to-body="true">
+			<ui-select-match placeholder="Оберіть користувача">
+			{{selected.locale}}
+			</ui-select-match>
+			<ui-select-choices minimum-input-length="1"  repeat="locale in locals | filter: $select.search">
+			<span ng-bind-html="locale"></span>
+			</ui-select-choices>
+			</ui-select>
+		</div>
+	</div>
+</div>
 <div class="horizontal-scroll">
-  <table class="table table-hover" st-table="editableTableData">
-    <thead>
-    <tr class="sortable">
-      <th class="table-id" st-sort="id" st-sort-default="true">#</th>
-      <th st-sort="firstName">Name</th>
-      <th st-sort="lastName">Translation</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="translation in editableTableData" class="editable-tr-wrap">
-      <td class="table-id">{{$index}}</td>
-      <td><span editable-text="translation.key" blur="cancel">{{translation.key}}</span></td>
-      <td><span editable-text="translation.value" blur="cancel">{{translation.value}}</span></td>
-
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-      <td colspan="6" class="text-center">
-        <div st-pagination="" st-items-by-page="12" st-displayed-pages="5"></div>
-      </td>
-    </tr>
-    </tfoot>
-  </table>
+	<table class="table table-hover" st-table="rowCollection"  st-safe-src="editableTableData" >
+		<thead>
+			<tr class="sortable">
+				<th class="table-id" st-sort-default="true">#</th>
+				<th st-sort="key">Name</th>
+				<th st-sort="value">Translation</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="translation in rowCollection" class="editable-tr-wrap">
+				<td class="table-id">{{$index}}</td>
+				<td><span editable-text="translation.key" blur="cancel">{{translation.key}}</span></td>
+				<td><span editable-text="translation.value" blur="cancel">{{translation.value}}</span></td>
+			</tr>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="6" class="text-center">
+				<div st-pagination="" st-items-by-page="12" st-displayed-pages="5"></div>
+			</td>
+		</tr>
+		</tfoot>
+	</table>
 </div>
