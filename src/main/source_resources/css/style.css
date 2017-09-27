@@ -681,7 +681,9 @@ button:focus {
     position: absolute;
     top: 35px;
 }
-
+.items_list_block .detach {
+    top:5px;
+}
 .items_list_block .block_name {
     font-size: 16px;
     font-family: "MyriadPro2";
@@ -695,7 +697,7 @@ button:focus {
     overflow: hidden;
     /*position: absolute;
     right: 25px;*/
-    right: 30px;
+    right: 40px;
     position: absolute;
     color: #3e87b8;
 }
