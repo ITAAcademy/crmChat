@@ -3967,3 +3967,34 @@ a.like_button.selected {
         opacity: 0;
     }
 }
+
+@media screen and (max-height: 300px) and (min-height:200px)  {
+    /*New*/
+
+  .messages_input_area {
+        height: 60px !important;
+        position:relative !important;
+    }
+    .helper{
+        display:none !important;
+    }
+    .messages_input_area .message_input{
+        margin:0 !important;
+        max-height:60px !important;
+    }
+    .right_panel{
+        width:100% !important;
+    }
+    .left_panel_mini{
+    display:none !important;
+    }
+    .controls_area{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    }
+    .rating,
+    .attaches {
+        display:none !important;
+    }
+}
