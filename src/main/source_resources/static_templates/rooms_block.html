@@ -1,14 +1,26 @@
 <div class="contacts_menu_strip   ng-class:{ 'visible-search': searchEnabled, 'visible-create' : isRoomCreateEnabled()}">
-    <div tooltip="{{isTabStateContacts() ? 'Пошук у контактах' : 'Пошук по назві розмови'}}" title-direction="top-right" modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
-    <div id="user_contacts_menu_item" class="contacts_menu_item " ng-click="showContacts()" ng-class="{ 'active': isTabStateContacts() }" th:text="${lgPack.roomBlock.contacts}">КОНТАКТИ</div>
-    <div class="last_contacts_menu_item" ng-click="showLastContacts()" ng-class="{active: isTabStateLastRooms()}" th:text="${lgPack.roomBlock.lastContacts}">ОСТАННІ</div>
+    <div ng-if="isDefaultRoomBlockMode()" tooltip="{{isTabStateContacts() ? 'Пошук у контактах' : 'Пошук по назві розмови'}}" title-direction="top-right" modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
+
+       <div class="rooms_input_wrapper">
+    <input type="text" ng-class="{'unfolded':isTabStateContacts() &amp;&amp; searchEnabled}" id="users_search_input" class="room_search_input" name="room_search_input" ng-model="contactsSearchInputValue" th:placeholder="${lgPack.roomBlock.contactsSearchPlaceHolder}" ng-change="updateChatUsersByEmail(contactsSearchInputValue,500)" />
+    <input type="text" ng-class="{'unfolded':isTabStateLastRooms() &amp;&amp; searchEnabled}" id="room_search_input" class="room_search_input" name="room_search_input" ng-model="contactsSearchInputValue" th:placeholder="${lgPack.roomBlock.roomsSearchPlaceHolder}" ng-change="updateRoomsByQuery(contactsSearchInputValue,500)" />
+    <input ng-class="{'unfolded':isCreateRoomBlockMode()}" type="text" id="room_create_input" class="room_create_input" name="room_create_input" ng-model="room_create_input" th:placeholder="${lgPack.roomBlock.roomCreatePlaceHolder}" />
+    </div>
+
+
+   <div class="room_button_group" ng-class="{'unfolded':isDefaultRoomBlockMode() &amp;&amp; !searchEnabled}">
+
+        <div id="user_contacts_menu_item" class="contacts_menu_item " ng-click="showContacts()" ng-class="{ 'active': isTabStateContacts() }" ><span th:text="${lgPack.roomBlock.contacts}" class="item_content">КОНТАКТИ</span></div>
+
+        <div class="contacts_menu_item" ng-click="showLastContacts()" ng-class="{active: isTabStateLastRooms()}" ><span class="item_content" th:text="${lgPack.roomBlock.lastContacts}">ОСТАННІ</span></div>
+
+    </div>
+
+
     <div id="user_contacts_menu_item_confirm_add_user" ng-if="isAddUserToDialogRoomBlockMode()" class="contacts_menu_item " ng-click="toggleNewUser()">Підтвердити</div>
-    <div id="toggleCreate" tooltip="Створити розмову" title-direction="top-left" modale-toggle="true" callback="toggleCreate()" ignore-id="['room_create_input', 'items_list_block']" class="group_icon"><i class="material-icons">group_add</i></div>
+    <div id="toggleCreate" ng-if="isDefaultRoomBlockMode() &amp;&amp; !searchEnabled"  tooltip="Створити розмову" title-direction="top-left" modale-toggle="true" callback="toggleCreate()" ignore-id="['room_create_input', 'items_list_block']" class="group_icon"><i class="material-icons">group_add</i></div>
     <div id="cancelAddProcess" ng-if="isAddUserToDialogRoomBlockMode()" ng-click="cancelAddProcess($event)" class="group_icon"><i class="material-icons">close</i></div>
     <div id="create-btn" ng-hide="room_create_input.length == 0" ng-click="createNewRoom($event)" class="group_icon"><img src="images\\plus.svg" alt="" /></div>
-    <input type="text" ng-if="isTabStateContacts()" id="users_search_input" class="room_search_input" name="room_search_input" ng-model="contactsSearchInputValue" th:placeholder="${lgPack.roomBlock.contactsSearchPlaceHolder}" ng-change="updateChatUsersByEmail(contactsSearchInputValue,500)" />
-    <input type="text" ng-if="isTabStateLastRooms()" id="room_search_input" class="room_search_input" name="room_search_input" ng-model="contactsSearchInputValue" th:placeholder="${lgPack.roomBlock.roomsSearchPlaceHolder}" ng-change="updateRoomsByQuery(contactsSearchInputValue,500)" />
-    <input type="text" id="room_create_input" class="room_create_input" name="room_create_input" ng-model="room_create_input" th:placeholder="${lgPack.roomBlock.roomCreatePlaceHolder}" />
     <span class="rooms_search_loader" ng-if="searchingRunning &amp;&amp; searchEnabled"><img src="images/ajax_loader_blue_32.gif" alt=""/></span>
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
