@@ -1649,6 +1649,7 @@ font-size:13px;
     white-space: pre-wrap;
     word-break: break-word;
     width: 100%;
+    word-wrap: break-word;
 }
 
 .bottom_details .modal-content,
