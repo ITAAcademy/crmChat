@@ -2,5 +2,6 @@
     <a ng-if="link!=null" target="_blank" ng-href="{{link}}"><img class="file-extension-preview" ng-src="{{imageSrc}}" alt="" /></a>
     <img ng-if="link==null" class="file-extension-preview"  img-prev="true" ng-src="{{imageSrc}}" alt="" />
     <i class="material-icons remove_file_icon" ng-if="removable" ng-click="removeItemCallback($index)">delete</i>
+    <a class="download_file_link" ng-href="{{link || imageSrc}}" download="myimage"><i class="material-icons" ng-if="!removable" >file_download</i></a>
 </div>
 <span class="file-name">{{fileName}}</span>
