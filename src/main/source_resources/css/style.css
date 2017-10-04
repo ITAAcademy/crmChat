@@ -1066,6 +1066,10 @@ button:focus {
     vertical-align:top;
     transform: skewX(40deg);
 }
+.contacts_menu_strip .contacts_menu_item>span {
+    transform: skewX(-40deg);
+    display:inline-block;
+ }
 
 .contacts_menu_strip .contacts_menu_item:hover {
     background-color: #5f8cbd;
