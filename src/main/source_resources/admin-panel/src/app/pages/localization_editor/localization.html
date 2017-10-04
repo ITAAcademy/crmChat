@@ -14,6 +14,9 @@
 		</div>
 	</div>
 </div>
+<div class="add-row-editable-table">
+  <button class="btn btn-primary" ng-click="addRecord()">Додати запис</button>
+</div>
 <div class="horizontal-scroll">
 	<table class="table table-hover" st-table="rowCollection"  st-safe-src="editableTableData" >
 		<thead>
@@ -21,19 +24,21 @@
 				<th class="table-id" st-sort-default="true">#</th>
 				<th st-sort="key">Name</th>
 				<th st-sort="value">Translation</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr ng-repeat="translation in rowCollection" class="editable-tr-wrap">
 				<td class="table-id">{{$index}}</td>
-				<td><span editable-text="translation.key" blur="cancel">{{translation.key}}</span></td>
-				<td><span editable-text="translation.value" blur="cancel">{{translation.value}}</span></td>
+				<td><span editable-text="translation.key" blur="cancel">{{translation.key || 'empty'}}</span></td>
+				<td><span editable-text="translation.value" blur="cancel">{{translation.value || 'empty'}}</span></td>
+				<td><button class="btn btn-danger editable-table-button btn-xs" ng-click="removeRecord(translation)">Delete</button></td>
 			</tr>
 		</tbody>
 		<tfoot>
 		<tr>
 			<td colspan="6" class="text-center">
-				<div st-pagination="" st-items-by-page="12" st-displayed-pages="5"></div>
+				<div st-pagination="" st-items-by-page="smartTablePageSize" st-displayed-pages="5"></div>
 			</td>
 		</tr>
 		</tfoot>

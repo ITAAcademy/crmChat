@@ -30,6 +30,7 @@
   function LocalizationPageCtrl($scope, $http) {
     $scope.editableTableData = [];
     $scope.rowCollection = [];
+    $scope.smartTablePageSize = 10;
 
     // $scope.editableTableData = [];
 
@@ -51,6 +52,19 @@
       var dataStr = JSON.stringify(undottedData);
       $http.post(serverPrefix + "/chat/user/localization?lang="+lang, dataStr);
     }
+
+    $scope.addRecord = function(){
+      $scope.inserted = {
+        /*id: $scope.editableTableData.length+1,*/
+        key: null,
+        value: null
+      };
+      $scope.editableTableData.push($scope.inserted);
+    }
+    $scope.removeRecord = function(record) {
+      var index = $scope.editableTableData.indexOf(record);
+      $scope.editableTableData.splice(index, 1);
+    };
 
     $scope.loadLang = loadLang;
      function loadLang(lang) {
