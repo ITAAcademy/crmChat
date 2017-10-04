@@ -157,6 +157,7 @@ public class AdminPanelController {
 	@ResponseBody
 	public void setLocalization(@RequestParam String lang,@RequestBody String translationValue, Authentication auth) {
 		chatLangService.saveLangToDatabase(lang,translationValue);
+		chatLangService.updateDataFromDatabase();
 	}
 
 	@RequestMapping(value = "/chat/findUsersExceptRole", method = RequestMethod.GET)
