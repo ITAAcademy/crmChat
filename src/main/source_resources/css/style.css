@@ -2056,7 +2056,7 @@ font-size:13px;
 }
 
 .messages_output_area .answer .message_details {
-    padding-bottom: 25px;
+    padding-bottom: 35px;
 }
 
 .messages_output_area .answer.right .message_details {
@@ -3555,6 +3555,9 @@ a.like_button.selected {
     cursor: pointer;
     top: calc(50% - 17.5px);
     position: absolute;
+    background-color: rgb(157, 199, 246);
+    border-radius: 10px;
+    font-size:0px;
 }
 
 .remove_message_icon {}

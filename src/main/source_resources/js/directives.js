@@ -548,7 +548,7 @@ function userBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory,
         },
         templateUrl: 'static_templates/user_block.html',
         link: function(scope, element, attributes) {
-            scope.blockName = 'Користувач'; //lgPack.blockNames.students;
+            scope.blockName = lgPack.blockNames.user;
             initFolded(scope, element);
             scope.getUser = UserFactory.getUser;
             scope.mySettings = mySettings;
@@ -1452,6 +1452,9 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory,
 }
 roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFactory, ChannelFactory, UserFactory, StateFactory) {
     $scope.isRoomPrivate = RoomsFactory.isRoomPrivate;
+    $scope.getSearchLocalizationForCurrentTab = function() {
+       return StateFactory.isTabStateContacts() ? lgPack.tooltip.search.contact :  lgPack.tooltip.search.dialogname;
+    }
     //$scope.isRoomConsultation = RoomsFactory.isRoomConsultation;
     $scope.lgPack = lgPack;
     $scope.otherRoomsLoaded = false;

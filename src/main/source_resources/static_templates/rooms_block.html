@@ -1,5 +1,6 @@
 <div class="contacts_menu_strip   ng-class:{ 'visible-search': searchEnabled, 'visible-create' : isRoomCreateEnabled()}">
-    <div ng-if="isDefaultRoomBlockMode() || isAddUserToDialogRoomBlockMode()" tooltip="{{isTabStateContacts() ? 'Пошук у контактах' : 'Пошук по назві розмови'}}" title-direction="top-right" modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
+    <div ng-if="isDefaultRoomBlockMode() || isAddUserToDialogRoomBlockMode()" tooltip="{{getSearchLocalizationForCurrentTab()}}"
+    title-direction="top-right" modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
 
        <div class="rooms_input_wrapper">
     <input type="text" ng-class="{'unfolded':isTabStateContacts() &amp;&amp; searchEnabled}" id="users_search_input" class="room_search_input" name="room_search_input" ng-model="contactsSearchInputValue" th:placeholder="${lgPack.roomBlock.contactsSearchPlaceHolder}" ng-change="updateChatUsersByEmail(contactsSearchInputValue,500)" />
