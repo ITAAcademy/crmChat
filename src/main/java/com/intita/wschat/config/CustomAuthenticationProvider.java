@@ -104,6 +104,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 							serializedPhpParser = new SerializedPhpParser(phpSession);
 							IntitaId = (String) serializedPhpParser.findPatern(redisId);
 							IntitaLg = (String) serializedPhpParser.find("lg");
+							session.setAttribute("chatLg",IntitaLg);
+
 							System.out.println("cook intitaID: " + IntitaId);
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
