@@ -138,7 +138,7 @@ button:focus {
 }
 
 .consultant_wrapper .material-icons {
-    font-size: 24px;
+    font-size: 28px;
     line-height: 35px;
 }
 
@@ -252,7 +252,7 @@ button:focus {
 .logo-text {
     color: white;
     position: absolute;
-    left: 45px;
+    left: 55px;
     font-family: "MyriadPro2";
     font-size: 20px;
     font-weight: 400;
@@ -483,8 +483,8 @@ button:focus {
     width: 14px;
     height: 27px;
     position: absolute;
-    margin-left: 3px;
-    margin-top: -41px;
+    margin-left: 5px;
+    margin-top: -43px;
     text-align: center;
     font-size: 10px;
 }
@@ -1065,8 +1065,9 @@ button:focus {
 }
 
 .contacts_menu_strip .contacts_menu_item {
-    background-color: #4b75a4;
+    width: 104px;
     height: 100%;
+    background-color: #4b75a4;
     text-align: center;
     color: white;
     padding-left: 15px;
@@ -1079,11 +1080,13 @@ button:focus {
     display: inline-block;
     position: relative;
     vertical-align: top;
-    transform: skewX(40deg);
+    -webkit-transform: skewX(40deg);
+            transform: skewX(40deg);
 }
 
 .contacts_menu_strip .contacts_menu_item>span {
-    transform: skewX(-40deg);
+    -webkit-transform: skewX(-40deg);
+            transform: skewX(-40deg);
     display: inline-block;
 }
 
@@ -1092,7 +1095,8 @@ button:focus {
 }
 
 .contacts_menu_item .item_content {
-    transform: skewX(-40deg);
+    -webkit-transform: skewX(-40deg);
+            transform: skewX(-40deg);
     display: block;
 }
 
@@ -1149,8 +1153,8 @@ button:focus {
 .contacts_menu_strip .group_icon>img {
     width: 20px;
     height: 20px;
-    margin: 3px;
-    z-index: 111
+    margin-top: 6px;
+    z-index: 111;
 }
 
 .contacts_menu_strip .search_icon>img {
@@ -1173,9 +1177,11 @@ button:focus {
     padding: 0;
     background-color: #fff;
     display: inline-block;
-    transform: skewX(-45deg);
+    -webkit-transform: skewX(-45deg);
+            transform: skewX(-45deg);
     background-color: transparent;
     width: 0;
+    -webkit-transition: width ease-out 0.3s;
     transition: width ease-out 0.3s;
     font-size: 0px;
 }
@@ -1213,7 +1219,8 @@ button:focus {
     height: 100%;
     vertical-align: top;
     background-color: white;
-    transform: skewX(45deg);
+    -webkit-transform: skewX(45deg);
+            transform: skewX(45deg);
     font-size: 0;
     padding: 0;
     margin-left: 10px;
@@ -1244,17 +1251,19 @@ button:focus {
 
 .contacts_menu_strip .group_icon {
     color: white;
+    -webkit-transform: skewX(-45deg);
     transform: skewX(-45deg);
     width: 45px;
     padding-left: 15px;
     padding-right: 15px;
     display: inline-block;
     position: absolute;
-    right: 0px;
+    right: 10px;
 }
 
 .contacts_menu_strip .group_icon>* {
-    transform: skewX(45deg);
+    -webkit-transform: skewX(45deg);
+            transform: skewX(45deg);
 }
 
 .contact_control {
@@ -1689,7 +1698,7 @@ button:focus {
     /*position: absolute;*/
     bottom: 0px;
     background-color: white;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
     margin-left: 4px;
     right: 0;
     left: 0;
@@ -2707,7 +2716,24 @@ svg {
 .file-extension-preview-wrapper {
     position: relative;
 }
-
+.file-extension-preview-wrapper .download_file_link{
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 2px;
+    left: 2px;
+    border: 1px solid #4b75a4;
+    border-radius: 50%;
+    color: #4b75a4;
+    background-color: #ffffff;
+}
+.file-extension-preview-wrapper .download_file_link .material-icons{
+    font-size: 22px;
+    line-height: 25px;
+}
+.file-extension-preview-wrapper .download_file_link .material-icons:hover{
+    opacity: 0.5;
+}
 .notification_details {
     display: inline-block;
     word-break: break-all;
@@ -3282,7 +3308,7 @@ span.rooms_search_loader img {
         display: none;
     }
     .consultant_wrapper>.head .logo-text {
-        /* left: 70px; */
+        left: 47px;
     }
     .send_button {
         width: 35px;
@@ -3807,6 +3833,8 @@ a.like_button.selected {
 .message_control {
     display: inline-block;
     color: #4b75a4;
+    height: 32px;
+    padding: 0 5px;
 }
 
 .message_control:hover {

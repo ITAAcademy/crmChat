@@ -1,5 +1,5 @@
 <div class="contacts_menu_strip   ng-class:{ 'visible-search': searchEnabled, 'visible-create' : isRoomCreateEnabled()}">
-    <div ng-if="isDefaultRoomBlockMode() || isAddUserToDialogRoomBlockMode()" tooltip="{{getSearchLocalizationForCurrentTab()}}"
+    <div ng-show="isDefaultRoomBlockMode() || isAddUserToDialogRoomBlockMode()" tooltip="{{getSearchLocalizationForCurrentTab()}}"
     title-direction="top-right" modale-toggle="true" callback="toggleSearch()" ignore-id="['room_search_input', 'items_list_block','users_search_input']" class="search_icon" id="rooms_users_search_icon"><i class="material-icons">search</i></div>
 
        <div class="rooms_input_wrapper">
@@ -18,18 +18,18 @@
     </div>
 
 
-    <div id="user_contacts_menu_item_confirm_add_user" ng-if="isAddUserToDialogRoomBlockMode()" class="contacts_menu_item " ng-click="toggleNewUser()"><span>Підтвердити</span></div>
-    <div id="toggleCreate" ng-if="isDefaultRoomBlockMode() &amp;&amp; !searchEnabled"  tooltip="Створити розмову" title-direction="top-left" modale-toggle="true" callback="toggleCreate()" ignore-id="['room_create_input', 'items_list_block']" class="group_icon"><i class="material-icons">group_add</i></div>
-    <div id="cancelAddProcess" ng-if="isAddUserToDialogRoomBlockMode()" ng-click="cancelAddProcess($event)" class="group_icon"><i class="material-icons">close</i></div>
+    <div id="user_contacts_menu_item_confirm_add_user" ng-show="isAddUserToDialogRoomBlockMode()" class="contacts_menu_item " ng-click="toggleNewUser()"><span>Підтвердити</span></div>
+    <div id="toggleCreate" ng-show="isDefaultRoomBlockMode() &amp;&amp; !searchEnabled"  tooltip="Створити розмову" title-direction="top-left" modale-toggle="true" callback="toggleCreate()" ignore-id="['room_create_input', 'items_list_block']" class="group_icon"><i class="material-icons">group_add</i></div>
+    <div id="cancelAddProcess" ng-show="isAddUserToDialogRoomBlockMode()" ng-click="cancelAddProcess($event)" class="group_icon"><i class="material-icons">close</i></div>
     <div id="create-btn" ng-hide="room_create_input.length == 0" ng-click="createNewRoom($event)" class="group_icon"><img src="images\\plus.svg" alt="" /></div>
-    <span class="rooms_search_loader" ng-if="searchingRunning &amp;&amp; searchEnabled"><img src="images/ajax_loader_blue_32.gif" alt=""/></span>
+    <span class="rooms_search_loader" ng-show="searchingRunning &amp;&amp; searchEnabled"><img src="images/ajax_loader_blue_32.gif" alt=""/></span>
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
     <!--IF (searchDisabled) Rooms Models list used in search -->
-    <div id="room__{{room.roomId}}__" ng-if="!searchEnabled || isTabStateLastRooms()" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : getTabState()) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'" ng-click="clickToRoomEvent(room)">
+    <div id="room__{{room.roomId}}__" ng-show="!searchEnabled || isTabStateLastRooms()" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : getTabState()) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'" ng-click="clickToRoomEvent(room)">
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->
-    <div id="items_list_block_search" ng-if="searchEnabled &amp;&amp; !isTabStateLastRooms()" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'" ng-click="clickToUserEvent(user)">
+    <div id="items_list_block_search" ng-show="searchEnabled &amp;&amp; !isTabStateLastRooms()" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'" ng-click="clickToUserEvent(user)">
     </div>
     <!-- <button ng-show="!otherRoomsLoaded" ng-click="loadOtherRooms()">Load other</button> -->
 </div>
