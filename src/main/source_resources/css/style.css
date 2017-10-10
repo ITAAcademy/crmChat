@@ -1258,7 +1258,7 @@ button:focus {
     padding-right: 15px;
     display: inline-block;
     position: absolute;
-    right: 10px;
+    right: 5px;
 }
 
 .contacts_menu_strip .group_icon>* {

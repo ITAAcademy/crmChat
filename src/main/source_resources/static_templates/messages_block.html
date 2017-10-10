@@ -33,7 +33,7 @@
         <div ng-click="toggleMessageSelected(olderMessage)" ng-class="{'selected':olderMessage.selected}" class="message_body" ng-repeat="olderMessage in (orderedMsgsOld = (message.olderMessages | orderBy : 'date'))">
             <compilable ng-if="olderMessage.author.id != 0" class="bottom_details" content="retreiveMessageBody(olderMessage)" time="olderMessage.date"></compilable>
             <div class="message_control_wrapper">
-                <div class="group" ng-if="olderMessage.selected">
+                <div class="group" ng-if="message.active &amp;&amp; olderMessage.selected">
                     <div class="message_control" ng-if="isMessageEditable(olderMessage)" ng-click="editMessage(olderMessage)">
                         <i class="material-icons">mode_edit</i>
                     </div>
@@ -47,7 +47,7 @@
         <div ng-click="toggleMessageSelected(message)" ng-class="{'selected':message.selected}" class="message_body">
             <compilable ng-if="message.author.id != 0" class="bottom_details" content="retreiveMessageBody(message)" time="message.date"></compilable>
             <div class="message_control_wrapper">
-                <div class="group" ng-if="message.selected">
+                <div class="group" ng-if="message.active &amp;&amp; message.selected">
                     <div class="message_control" ng-if="isMessageEditable(message)" ng-click="editMessage(message)">
                         <i class="material-icons">mode_edit</i>
                     </div>
@@ -61,7 +61,7 @@
         <div ng-click="toggleMessageSelected(newerMessage)" ng-class="{'selected':newerMessage.selected}"  class="message_body" ng-repeat="newerMessage in (orderedMsgsNew = (message.newerMessages | orderBy : 'date'))">
             <compilable ng-if="newerMessage.author.id != 0" class="bottom_details" content="retreiveMessageBody(newerMessage)" time="newerMessage.date"></compilable>
             <div class="message_control_wrapper">
-                <div class="group" ng-if="newerMessage.selected">
+                <div class="group" ng-if="message.active &amp;&amp;  newerMessage.selected">
                     <div class="message_control"  ng-if="isMessageEditable(newerMessage)" ng-click="editMessage(newerMessage)">
                         <i class="material-icons">mode_edit</i>
                     </div>
@@ -73,8 +73,8 @@
             </div>
         </div>
         <div ng-if="message.author.id == 0" bot-container=" " style="margin: 0px;" content="message.body" time="message.date"></div>
-        <hr ng-if="message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
-        <div class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
+        <hr ng-if="message.active &amp;&amp; message.attachedFiles.length > 0 &amp;&amp; message.body != ' ' " />
+        <div ng-if="message.active" class="display-file-container" ng-repeat="file in message.attachedFiles track by $index" file-miniature="true" link="file">
         </div>
         <div ng-if="message.author.id != 1" class="like_wrapper noselect" ng-class="{'nolike':message.dislikes < 1 &amp;&amp; message.likes < 1}" ng-mouseleave="hideWhoLikeOrDisLike()">
             <a ng-click="likeMessage(message)" ng-mouseenter="showWhoLike($event, message)" class="like_button" ng-class="{'selected':isMessageLiked(message.id)}">
