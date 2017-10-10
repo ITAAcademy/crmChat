@@ -47,6 +47,13 @@ body.frame .open_in_new_tab {
     display: initial;
 }
 
+body.frame .viewer-container.viewer-fixed {
+    margin-top: 42px;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 8px;
+}
+
 .material-icons:hover {
     cursor: pointer;
 }
@@ -291,7 +298,7 @@ button:focus {
 }
 
 .editing_mode_button {
-    position:absolute;
+    position: absolute;
     top: calc(50% - 15px);
     right: 0px;
 }
@@ -671,9 +678,11 @@ button:focus {
     height: 35px;
     line-height: 25px;
 }
-.consultant_wrapper .items_list_block .block_head *{
+
+.consultant_wrapper .items_list_block .block_head * {
     line-height: 35px;
 }
+
 .items_list_block .block_head:hover {
     cursor: pointer;
 }
@@ -685,9 +694,11 @@ button:focus {
     position: absolute;
     top: 35px;
 }
+
 .items_list_block .detach {
-    top:5px;
+    top: 5px;
 }
+
 .items_list_block .block_name {
     font-size: 16px;
     font-family: "MyriadPro2";
@@ -1065,26 +1076,27 @@ button:focus {
     font-weight: 300;
     font-style: normal;
     text-transform: uppercase;
-    display:inline-block;
+    display: inline-block;
     position: relative;
-    vertical-align:top;
+    vertical-align: top;
     transform: skewX(40deg);
 }
+
 .contacts_menu_strip .contacts_menu_item>span {
     transform: skewX(-40deg);
-    display:inline-block;
- }
+    display: inline-block;
+}
 
 .contacts_menu_strip .contacts_menu_item:hover {
     background-color: #5f8cbd;
 }
 
-.contacts_menu_item  .item_content {
+.contacts_menu_item .item_content {
     transform: skewX(-40deg);
     display: block;
 }
 
-.contacts_menu_strip #user_contacts_menu_item_confirm_add_user{
+.contacts_menu_strip #user_contacts_menu_item_confirm_add_user {
     width: calc(100% - 32px);
     color: white;
 }
@@ -1111,6 +1123,7 @@ button:focus {
     background-color: #3598db;
     color: #fff;
 }
+
 .contacts_menu_strip .contacts_menu_item.active:hover {
     background-color: #3cadf9;
 }
@@ -1122,7 +1135,7 @@ button:focus {
 
 .contacts_menu_strip .search_icon {
     position: absolute;
-    left:0;
+    left: 0;
     cursor: pointer;
     background-color: #46688d;
     width: 26px;
@@ -1130,7 +1143,7 @@ button:focus {
     padding-left: 3px;
     padding-top: 2px;
     color: white;
-    display:inline-block;
+    display: inline-block;
 }
 
 .contacts_menu_strip .group_icon>img {
@@ -1159,57 +1172,58 @@ button:focus {
     border: 0;
     padding: 0;
     background-color: #fff;
-    display:inline-block;
-    transform:skewX(-45deg);
-    background-color:transparent;
-    width:0;
+    display: inline-block;
+    transform: skewX(-45deg);
+    background-color: transparent;
+    width: 0;
     transition: width ease-out 0.3s;
-    font-size:0px;
+    font-size: 0px;
 }
 
 .contacts_menu_strip .room_create_input.unfolded,
 .contacts_menu_strip .room_search_input.unfolded {
-width:230px;
-padding-left: 20px;
-padding-right: 20px;
-font-size:13px;
+    width: 230px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 13px;
 }
 
 .contacts_menu_strip .room_create_input:focus,
-.contacts_menu_strip .room_search_input:focus{
-outline:none;
+.contacts_menu_strip .room_search_input:focus {
+    outline: none;
 }
 
-.room_button_group{
-    display:inline-block;
+.room_button_group {
+    display: inline-block;
     font-size: 0px;
     vertical-align: top;
-    width:0;
+    width: 0;
     overflow: hidden;
     /*transition: width ease-out 1s;*/
 }
-.room_button_group.unfolded{
-    width:initial;
+
+.room_button_group.unfolded {
+    width: initial;
     padding-right: 15px;
     padding-left: 15px;
 }
 
-.rooms_input_wrapper{
+.rooms_input_wrapper {
     display: inline-block;
     height: 100%;
     vertical-align: top;
     background-color: white;
-    transform:skewX(45deg);
-    font-size:0;
-    padding:0;
+    transform: skewX(45deg);
+    font-size: 0;
+    padding: 0;
     margin-left: 10px;
     /*transition: width ease-out 1s;*/
 }
-.rooms_input_wrapper.unfolded{
 
-}
-.rooms_input_wrapper>*{
-font-size:13px;
+.rooms_input_wrapper.unfolded {}
+
+.rooms_input_wrapper>* {
+    font-size: 13px;
 }
 
 
@@ -1229,7 +1243,7 @@ font-size:13px;
 }
 
 .contacts_menu_strip .group_icon {
-    color:white;
+    color: white;
     transform: skewX(-45deg);
     width: 45px;
     padding-left: 15px;
@@ -1237,8 +1251,8 @@ font-size:13px;
     display: inline-block;
     position: absolute;
     right: 0px;
-
 }
+
 .contacts_menu_strip .group_icon>* {
     transform: skewX(45deg);
 }
@@ -1748,7 +1762,8 @@ font-size:13px;
 }
 
 .controls_area .multimedia_conversation_controls a,
-.controls_area button, .chat_button {
+.controls_area button,
+.chat_button {
     border: 0;
     background: 0;
     border: 0;
@@ -2773,9 +2788,12 @@ span.rooms_search_loader img {
 }
 
 .rooms_input_wrapper {
-    position:relative;
+    position: relative;
     border-top: 1px solid #46688d
 }
+
+
+
 
 
 
@@ -3195,8 +3213,8 @@ span.rooms_search_loader img {
         text-align: center;
     }
     .editing_mode_button {
-    right: 50px;
-    top: 20px;
+        right: 50px;
+        top: 20px;
     }
 }
 
@@ -3290,6 +3308,12 @@ span.rooms_search_loader img {
         top: 0;
         left: 1px;
     }
+    body.frame .viewer-container.viewer-fixed {
+        margin-top: 42px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 8px;
+    }
 }
 
 .user_profile_record span:first-child {
@@ -3304,6 +3328,9 @@ span.rooms_search_loader img {
     color: #1e8eda;
     text-decoration: none;
 }
+
+
+
 
 
 
@@ -3557,7 +3584,7 @@ a.like_button.selected {
     position: absolute;
     background-color: rgb(157, 199, 246);
     border-radius: 10px;
-    font-size:0px;
+    font-size: 0px;
 }
 
 .remove_message_icon {}
@@ -3573,6 +3600,9 @@ a.like_button.selected {
 .message_body.selected {
     background-color: #b8dcea;
 }
+
+
+
 
 
 
@@ -3778,7 +3808,8 @@ a.like_button.selected {
     display: inline-block;
     color: #4b75a4;
 }
-.message_control:hover{
+
+.message_control:hover {
     opacity: .5;
 }
 
@@ -3789,6 +3820,9 @@ a.like_button.selected {
 .message_control_wrapper .group {
     display: inline-block
 }
+
+
+
 
 
 
@@ -3996,33 +4030,32 @@ a.like_button.selected {
     }
 }
 
-@media screen and (max-height: 300px) and (min-height:200px)  {
+@media screen and (max-height: 300px) and (min-height:200px) {
     /*New*/
-
-  .messages_input_area {
+    .messages_input_area {
         height: 60px !important;
-        position:relative !important;
+        position: relative !important;
     }
-    .helper{
-        display:none !important;
+    .helper {
+        display: none !important;
     }
-    .messages_input_area .message_input{
-        margin:0 !important;
-        max-height:60px !important;
+    .messages_input_area .message_input {
+        margin: 0 !important;
+        max-height: 60px !important;
     }
-    .right_panel{
-        width:100% !important;
+    .right_panel {
+        width: 100% !important;
     }
-    .left_panel_mini{
-    display:none !important;
+    .left_panel_mini {
+        display: none !important;
     }
-    .controls_area{
-    position: absolute;
-    top: 0px;
-    right: 0px;
+    .controls_area {
+        position: absolute;
+        top: 0px;
+        right: 0px;
     }
     .rating,
     .attaches {
-        display:none !important;
+        display: none !important;
     }
 }
