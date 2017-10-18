@@ -396,7 +396,7 @@ public class UserMessageService {
 			Room room = lastRoomEntry.getRoom();
 			Date lastLogoutDate = lastRoomEntry.getLastLogout();
 			Date currentDateMinus24Hours = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
-			if (lastLogoutDate.after(currentDateMinus24Hours))
+			if (lastLogoutDate.before(currentDateMinus24Hours))
 			{
 				lastLogoutDate = currentDateMinus24Hours;
 			}
