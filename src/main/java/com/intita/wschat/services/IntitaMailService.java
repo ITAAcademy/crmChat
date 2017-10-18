@@ -92,7 +92,7 @@ public class IntitaMailService {
     			
                 Map<String, Object> model = new HashMap();
                 model.put("user", to);
-                ConfigParam baseUrl =  configParamService.getParam("baseUrl");
+                ConfigParam baseUrl =  configParamService.getParam("fullChatPath");
                 model.put("baseUrl", baseUrl.getValue());
                 model.put("roomMessages", roomMessages);
                 String text = VelocityEngineUtils.mergeTemplateIntoString(
