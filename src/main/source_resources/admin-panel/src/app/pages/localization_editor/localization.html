@@ -1,9 +1,8 @@
 <div class="ng-cloak monitor-head" ba-panel ba-panel-title="Оберіть мову" ba-panel-class=" ">
 	<button ng-click="saveChanges()">Save</button>
-	<button ng-click="loadLang()">Load</button>
 	<div class="col-md-3">
 		<div class="form-group ">
-			<ui-select ng-model="selected.locale" class="btn-group bootstrap-select form-control" ng-disabled="false" search-enabled="false"  append-to-body="true">
+			<ui-select ng-model="selected.locale" class="btn-group bootstrap-select form-control" ng-disabled="false" search-enabled="false"  append-to-body="true" on-select="onLangSelect($item)">
 			<ui-select-match placeholder="Оберіть користувача">
 			{{selected.locale}}
 			</ui-select-match>

@@ -66,7 +66,6 @@
       $scope.editableTableData.splice(index, 1);
     };
 
-    $scope.loadLang = loadLang;
      function loadLang(lang) {
       lang = lang || $scope.selected.locale;
       $http.get(serverPrefix + "/chat/user/localization?lang="+lang).then(function(payload, status, headers, config) {
@@ -75,6 +74,10 @@
       $scope.editableTableData = objectToArray(dottedObject);
       $scope.rowCollection = [].concat($scope.editableTableData);
     });
+    }
+
+    $scope.onLangSelect = function(lang){
+      loadLang(lang);
     }
 
 
