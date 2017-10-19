@@ -65,14 +65,17 @@
       var index = $scope.editableTableData.indexOf(record);
       $scope.editableTableData.splice(index, 1);
     };
+    $scope.langLoading = false;
 
      function loadLang(lang) {
+      $scope.langLoading = true;
       lang = lang || $scope.selected.locale;
       $http.get(serverPrefix + "/chat/user/localization?lang="+lang).then(function(payload, status, headers, config) {
       var localizationObj = payload.data;
       var dottedObject = DotObject.dot(localizationObj);
       $scope.editableTableData = objectToArray(dottedObject);
       $scope.rowCollection = [].concat($scope.editableTableData);
+      $scope.langLoading = false;
     });
     }
 
