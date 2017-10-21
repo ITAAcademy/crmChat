@@ -959,7 +959,7 @@ public class ChatController {
 				}
 			}
 			currentPage++;
-			if (currentPage<=pagesTotal)
+			if (currentPage <= pagesTotal)
 				intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
 		}
 	}
