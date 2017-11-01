@@ -390,6 +390,7 @@ public class RoomsService {
 		if(chatUserList==null)return;
 		Set<ChatUser> roomUserList = room.getUsers();
 		ArrayList<ChatUser> add = new ArrayList<>(chatUserList);
+		int size = roomUserList.size();
 		add.removeAll(roomUserList);
 		addUsersToRoom(add, room);
 

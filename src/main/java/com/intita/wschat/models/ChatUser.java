@@ -146,7 +146,7 @@ public class ChatUser implements Serializable,Comparable<ChatUser> {
 	@Override
 	public int compareTo(ChatUser o) {
 		if (o==null)return -1;
-		return this.getId().compareTo(o.getId());
+		return this.getId().longValue() == o.getId().longValue() ? 0 : 1;
 	}
 	
 

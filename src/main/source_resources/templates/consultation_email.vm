@@ -23,7 +23,7 @@
                 <div style="background-color:white; text-align: center; padding: 0px;">
                     <div style="color:#7f7f7f;font-family:Arial,sans-serif;font-size:26px;line-height:20px;text-align:center;padding-bottom:20px;padding-top:10px; border-bottom: 5px #ebebeb solid;">За час вашої відсутності зявилися нові повідомлення</div>
                     #set ($map = $roomMessages ) #foreach ($mapEntry in $map.entrySet()) #set ($messages = $mapEntry.value ) #set ($room = $mapEntry.key )
-                    <div style="color: #333;font-family: Arial,sans-serif;font-size: 14px;font-weight: bold;line-height:20px; text-align:center;border: 1px #ebebeb solid;border-left: none;border-right: none;margin: 20px;margin-left: -30px;margin-right: -30px;line-height: 25px;white-space: pre;">Повідомлення з розмови:&#13;&#10;<a href="$baseUrl/crmChat/#/dialog_view/$room.id">$room.name</a></div>
+                    <div style="color: #333;font-family: Arial,sans-serif;font-size: 14px;font-weight: bold;line-height:20px; text-align:center;border: 1px #ebebeb solid;border-left: none;border-right: none;margin: 20px;margin-left: -30px;margin-right: -30px;line-height: 25px;white-space: pre;">Повідомлення з розмови:&#13;&#10;<a href="$baseUrl/#/dialog_view/$room.id">$room.name</a></div>
                     #foreach ($message in $messages)
                         <a href="$baseUrl/#/dialog_view/$room.id" class="message" style="padding-left: 10px;padding-bottom: 5px; display: inline-block; cursor: pointer; color: #333;">
                             <div class="message_author_avatar" style="box-sizing: border-box;display: inline-block;font-family: Roboto;font-weight: 300;text-align:left;vertical-align:top">
@@ -44,7 +44,7 @@
                 </div>
             </tr>
             <tr>
-                <td style="padding-top: 10px;  text-align: center; background-color: #fff; text-align: left">
+                <td style="padding-top: 10px;  text-align: center; background-color: #fff;">
                     <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380432528267">Тел. +38 0432 52 82 67</a></span>
                     <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380674317424">Тел. +38 067 431 74 24</a></span>
                     <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 10px; -webkit-text-size-adjust:none; display: block;"><a href="tel:+380732099743">Тел. +38 073 209 97 43</a></span>

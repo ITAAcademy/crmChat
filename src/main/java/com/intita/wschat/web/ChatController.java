@@ -959,7 +959,7 @@ public class ChatController {
 				}
 			}
 			currentPage++;
-			if (currentPage<=pagesTotal)
+			if (currentPage <= pagesTotal)
 				intitaUsersPage = userService.getChatUsers(currentPage, pageSize);
 		}
 	}
@@ -1015,7 +1015,7 @@ public class ChatController {
 		// calendar
 		// instance
 		calendar.setTime(date); // assigns calendar to given date
-		if (calendar.get(Calendar.HOUR_OF_DAY) >= 0 && calendar.get(Calendar.HOUR_OF_DAY) <= 4) {
+		if (calendar.get(Calendar.HOUR_OF_DAY) >= 7 && calendar.get(Calendar.HOUR_OF_DAY) <= 8) {
 			if (isEmailSendingRequired)
 				sendAllNewMessageNotificationsFromLast24Hours();
 			isEmailSendingRequired = false;
