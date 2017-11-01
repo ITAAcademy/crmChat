@@ -144,6 +144,11 @@ public class ChatController {
 	@Value("${crmchat.send_unreaded_messages_email:true}")
 	private Boolean sendUnreadedMessagesToEmail;
 
+	@Value("${crmchat.send_email_hour_from:8}")
+	private Integer sendEmailHourFrom;
+	@Value("${crmchat.send_email_hour_to:8}")
+	private Integer sendEmailHourTo;
+
 
 	private final Semaphore msgLocker = new Semaphore(1);
 
@@ -1015,7 +1020,7 @@ public class ChatController {
 		// calendar
 		// instance
 		calendar.setTime(date); // assigns calendar to given date
-		if (calendar.get(Calendar.HOUR_OF_DAY) >= 7 && calendar.get(Calendar.HOUR_OF_DAY) <= 23) {
+		if (calendar.get(Calendar.HOUR_OF_DAY) >= sendEmailHourFrom && calendar.get(Calendar.HOUR_OF_DAY) <= sendEmailHourTo) {
 			if (isEmailSendingRequired)
 				sendAllNewMessageNotificationsFromLast24Hours();
 			isEmailSendingRequired = false;
