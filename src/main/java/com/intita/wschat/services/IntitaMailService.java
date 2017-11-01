@@ -1,5 +1,6 @@
 package com.intita.wschat.services;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,9 @@ public class IntitaMailService {
     ConfigParam baseUrl =  configParamService.getParam("fullChatPath");
     model.put("baseUrl", baseUrl.getValue());
     model.put("roomMessages", unreadedRoomMessages);
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+      model.put("dateFormat",dateFormat);
+
     String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "consultation_email.vm","UTF-8", model);
 
     MimeMessagePreparator res = createPreparatorMessages(to, text); 

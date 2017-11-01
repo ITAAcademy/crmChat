@@ -1015,7 +1015,7 @@ public class ChatController {
 		// calendar
 		// instance
 		calendar.setTime(date); // assigns calendar to given date
-		if (calendar.get(Calendar.HOUR_OF_DAY) >= 7 && calendar.get(Calendar.HOUR_OF_DAY) <= 8) {
+		if (calendar.get(Calendar.HOUR_OF_DAY) >= 7 && calendar.get(Calendar.HOUR_OF_DAY) <= 23) {
 			if (isEmailSendingRequired)
 				sendAllNewMessageNotificationsFromLast24Hours();
 			isEmailSendingRequired = false;
