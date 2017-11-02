@@ -635,7 +635,9 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                     var msg = messagesMap[room.roomId];
                     room.lastMessage = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
-                    if (RoomsFactory.getCurrentRoom() == undefined || RoomsFactory.getCurrentRoom().roomId != room.roomId && msg.author.id != UserFactory.getChatUserId()) {
+                    var isWindowMinimized = $('body').height() < 70;
+                    var isSelectedRoom = RoomsFactory.getCurrentRoom().roomId == room.roomId;
+                    if (RoomsFactory.getCurrentRoom() == undefined || (!isSelectedRoom || isWindowMinimized) && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(+1);
                         //room.date = curentDateInJavaFromat();
