@@ -1,14 +1,14 @@
 <div id="trainers-block" ng-if="students().length > 0" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded()">
         <div class="block_controll hide"></div>
-        <div ng-if="students().length > 1" class="dropdown_icon material-icons">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
-        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons unfolded" ng-class="{'detach':collapsed}">
-            {{collapsed ? 'web_asset' : '&#8722'}}
-</svg>
-        </i>
+        <div ng-click="toggleCollapseBlock($event)" class="collapse_block_button" ng-class="{'detach':collapsed}">
+            <i class="material-icons" ng-if="!isUnfolded()" >keyboard_arrow_down</i>
+            <i class="material-icons" ng-if="isHalfUnfolded()">arrow_downward</i>
+            <i class="material-icons" ng-if="isFullUnfolded()">keyboard_arrow_up</i>
+        </div>
     </div>
-    <div class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+    <div class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}">
         <div class="block_item" ng-repeat="student in students() | orderBy:participantsSort" ng-click="goToPrivateDialog(student.intitaUserId)">
             <div class="avatar ng-class:{offline:!isUserOnline(student.chatUser.id), online:isUserOnline(student.chatUser.id)}">
                 <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + student.avatar + ')'}"></div>

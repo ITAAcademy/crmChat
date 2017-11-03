@@ -442,48 +442,41 @@ angular.module('springChat.directives').directive('trainersBlock', ['$http', 'my
 
 
 function initFolded(scope, element) {
-    scope.collapseBlock = function() {
-        scope.collapsed = true;
-    }
-    scope.unCollapseBlock = function() {
-        scope.collapsed = false;
-    }
-    scope.toggleCollapseBlock = function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        scope.collapsed = !scope.collapsed;
-        localStorage.setItem("chat/" + scope.blockName, scope.collapsed);
-    }
     var storageValue = localStorage.getItem("chat/" + scope.blockName);
     if (storageValue != null)
         scope.collapsed = storageValue == "true";
 
 
     scope.scroll;
-    scope.folded = true;
-    var unfold = function() {
-        scope.folded = false;
-        scope.unCollapseBlock();
-    }
-    var fold = function(colapseRequired) {
-        scope.folded = true;
-        scope.unCollapseBlock();
-    }
+    var foldedLevel = 0;
 
     scope.toggleFolded = function(event) {
         if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")))
             return;
-        if (scope.folded)
-            unfold();
-        else
-            fold();
-        scope.scroll.overflowy = !scope.folded;
-        if (scope.folded)
+        
+        var newFoldedLevel = (foldedLevel + 1) % 3 ;
+        scope.scroll.overflowy = foldedLevel != 0;
+        if (scope.folded) {
             scope.scroll.scrollTop(scope.scroll.scrollTop())
+
+        }
+
+            foldedLevel = newFoldedLevel;
 
     }
     scope.scroll = $($(element).find(".scroll"));
-    scope.scroll.overflowy = !scope.folded;
+    scope.scroll.overflowy = foldedLevel != 0;
+
+
+    scope.isHalfUnfolded = function(){
+        return foldedLevel == 1;
+    }
+    scope.isFullUnfolded = function(){
+        return foldedLevel == 2;
+    }
+    scope.isUnfolded = function(){
+        return scope.isHalfUnfolded() || scope.isFullUnfolded();
+    }
 }
 
 function studentsBlock($http, mySettings, RoomsFactory, UserFactory, ChannelFactory, StateFactory) {
@@ -918,7 +911,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         UserFactory.setMessageSended(true);
 
                     };
-                    sendingMessage = $timeout(myFunc, 5000);
+                    sendingMessage = $timeout(myFunc, 10000);
                 } else {
                     $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
                     success(function(data, status, headers, config) {

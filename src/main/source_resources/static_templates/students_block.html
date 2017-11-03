@@ -2,16 +2,16 @@
     <div class="block_head" ng-click="toggleFolded($event)">
         <div class="block_controll" ng-show="isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons unfoldable_element">group_work</i></div>
         <div class="block_controll" ng-show="!isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons unfoldable_element">account_circle</i></div>
-        <div ng-if="students.length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
-        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">
-            {{collapsed ? 'web_asset' : '&#8722'}}
-</svg>
-        </i>
+        <div ng-click="toggleCollapseBlock($event)" class="collapse_block_button" ng-class="{'detach':collapsed}">
+            <i class="material-icons" ng-if="!isUnfolded()" >keyboard_arrow_down</i>
+            <i class="material-icons" ng-if="isHalfUnfolded()">arrow_downward</i>
+            <i class="material-icons" ng-if="isFullUnfolded()">keyboard_arrow_up</i>
+        </div>
         <!--<div class="block_head_diveded"></div>-->
     </div>
     <!-- if participants -->
-    <div  class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+    <div  class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}">
        <div ng-show="!isGroupMode" class="block_item" ng-repeat="participant in students | orderBy:participantsSort" ng-click="goToPrivateDialog(participant.intitaUserId)" ng-include="'static_templates/participants_block_item.html'"></div>
        <div ng-init="displayLetters = false; roomsF = groupRooms"  ng-show="isGroupMode" class="students_section" ng-repeat="room in groupRooms" ng-include="'static_templates/section_rooms_block_item.html'"></div>
     </div>

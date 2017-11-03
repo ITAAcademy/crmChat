@@ -2,15 +2,14 @@
     <div class="block_head" ng-click="toggleFolded()">
         <div ng-show="canSelectForAsk" class="block_controll" modale-toggle="true" callback="toggleSelect($event)" ignore-id="['tenants_items']">
             <i class="material-icons unfoldable_element">{{checked.size == 0 ? 'assignment_ind' : 'done'}}</i></div>
-        <div ng-if="getTenantsList().length == 0" class="dropdown_icon material-icons ng-class:{unfolded:!folded}"></div>
-        <div ng-if="getTenantsList().length > 1" class="dropdown_icon material-icons ng-class:{unfolded:!folded}">arrow_drop_down</div>
         <div class="block_name">{{blockName}}</div>
-        <i ng-click="toggleCollapseBlock($event)" class="collapse_block_button material-icons" ng-class="{'detach':collapsed}">
-            {{collapsed ? 'web_asset' : '&#8722'}}
-</svg>
-        </i>
+       <div ng-click="toggleCollapseBlock($event)" class="collapse_block_button" ng-class="{'detach':collapsed}">
+            <i class="material-icons" ng-if="!isUnfolded()" >keyboard_arrow_down</i>
+            <i class="material-icons" ng-if="isHalfUnfolded()">arrow_downward</i>
+            <i class="material-icons" ng-if="isFullUnfolded()">keyboard_arrow_up</i>
+        </div>
     </div>
-    <div id="tenants_items" class="block_content scroll ng-class:{unfolded:!folded,collapsed:collapsed}">
+    <div id="tenants_items" class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}">
         <div ng-if="selectForAsk" class="block_item select-all">
             Вибрати усіх
             <div class="contact_control">
