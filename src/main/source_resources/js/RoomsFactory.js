@@ -1,5 +1,6 @@
 springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams', '$http', '$location', '$interval', '$cookies', '$timeout', 'toaster', 'ChatSocket', '$cookieStore', '$q', '$sce', '$rootScope', 'ChannelFactory', function($injector, $route, $routeParams, $http, $location, $interval, $cookies, $timeout, toaster, chatSocket, $cookieStore, $q, $sce, $rootScope, ChannelFactory) {
     var UserFactory = $injector.get('UserFactory');
+    var dialogAdding = false;
     var addRoomWithBot = function(roomName) {
         $http.post(serverPrefix + "/chat/rooms/create/with_bot/", roomName)
         success(function(data, status, headers, config) {}).
@@ -7,9 +8,18 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
     };
     var addDialog = function(dialogName, users) {
+        if (dialogAdding) {
+            var deferred = $q.defer();
+            deferred.reject(null);
+            return deferred.promise;
+        }
+        dialogAdding = true;
         return $http.post(serverPrefix + "/chat/rooms/add?name=" + encodeURIComponent(dialogName), users).
-        success(function(data, status, headers, config) {}).
+        success(function(data, status, headers, config) {
+            dialogAdding = false;
+        }).
         error(function(data, status, headers, config) {
+            dialogAdding = false;
             toaster.pop('error', "Error", "server request timeout", 1000);
         });
     };
