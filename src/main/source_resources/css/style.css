@@ -724,7 +724,7 @@ button:focus {
 }
 
 .items_list_block .block_name {
-    font-size: 16px;
+    font-size: 14px;
     font-family: "MyriadPro2";
     display: inline-block;
     font-weight: 300;
@@ -1011,7 +1011,7 @@ button:focus {
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: initial;
-    font-size: 16px;
+    font-size: 14px;
     font-family: "MyriadPro2";
     font-weight: 300;
     font-style: normal;
@@ -1096,7 +1096,7 @@ button:focus {
     color: white;
     padding-left: 15px;
     padding-right: 15px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: "MyriadPro2";
     font-weight: 300;
     font-style: normal;
