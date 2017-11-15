@@ -3,14 +3,16 @@
         <div class="block_controll" ng-show="isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons unfoldable_element">group_work</i></div>
         <div class="block_controll" ng-show="!isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons unfoldable_element">account_circle</i></div>
         <div class="block_name">{{blockName}}</div>
-       <div class="collapse_block_button" ng-class="{'detach':collapsed}">
+      <div class="collapse_block_button" ng-class="{'detach':collapsed}">
             <div class="arrow_down"  ng-if="isHalfUnfoldBlockIcon()">
             <img src="images/arrow.svg"></img>
             </div>
             <div class="arrows_down" ng-if="isFullUnfoldBlockIcon()">
             <img  src="images/arrows.svg" ></img>
             </div>
-            <i class="material-icons" ng-if="isHideBlockIcon()">keyboard_arrow_up</i>
+            <div class="arrow_down flipped"  ng-if="isHideBlockIcon()">
+            <img src="images/arrow.svg"></img>
+            </div>
         </div>
         <!--<div class="block_head_diveded"></div>-->
     </div>

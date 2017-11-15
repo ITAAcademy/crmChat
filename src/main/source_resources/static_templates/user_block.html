@@ -9,7 +9,9 @@
             <div class="arrows_down" ng-if="isFullUnfoldBlockIcon()">
             <img  src="images/arrows.svg" ></img>
             </div>
-            <i class="material-icons" ng-if="isHideBlockIcon()">keyboard_arrow_up</i>
+            <div class="arrow_down flipped"  ng-if="isHideBlockIcon()">
+            <img src="images/arrow.svg"></img>
+            </div>
         </div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}" >

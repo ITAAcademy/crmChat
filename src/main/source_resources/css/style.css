@@ -538,6 +538,9 @@ button:focus {
 .items_list_block.top_block {
     color: #fff;
 }
+.flipped{
+    transform:rotateX(180deg);
+}
 
 .items_list_block .block_content {
     min-height: 65px;
