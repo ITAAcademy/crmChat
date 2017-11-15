@@ -1,18 +1,18 @@
 <div ng-init="hideEmpty = true" ng-show="participants().length > 2 || (participants().length > 1 &amp;&amp; getChatUserId() != room.roomAuthorId)" class="items_list_block top_block">
-    <div class="block_head" ng-click="toggleFolded($event,participants().length)">
+    <div class="block_head" ng-click="toggleFolded($event,participants().length-1)">
         <div  th:attr="tooltip=${lgPack.chat.addNewOpponent}"  title-direction="top-right" ng-if="checkUserAdditionPermission()" class="block_controll unfoldable_element" ng-click="toggleNewUser($event)">
         <i class="done_adding_users" ng-if="isNewUserMode()" class="material-icons">done</i>
         <img src="images/elements/add.png" ng-if="!isNewUserMode()"/>
         </div>
         <div class="block_name">{{blockName}}</div>
         <div class="collapse_block_button" ng-class="{'detach':collapsed}">
-            <div class="arrow_down"  ng-if="!isUnfolded()">
+            <div class="arrow_down"  ng-if="isHalfUnfoldBlockIcon()">
             <img src="images/arrow.svg"></img>
             </div>
-            <div class="arrows_down" ng-if="isHalfUnfolded()">
+            <div class="arrows_down" ng-if="isFullUnfoldBlockIcon()">
             <img  src="images/arrows.svg" ></img>
             </div>
-            <i class="material-icons" ng-if="isFullUnfolded()">keyboard_arrow_up</i>
+            <i class="material-icons" ng-if="isHideBlockIcon()">keyboard_arrow_up</i>
         </div>
     </div>
     <div id="messagesBlockScroll" class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}"

@@ -2,14 +2,14 @@
     <div class="block_head" ng-click="toggleFolded($event,students().length)">
         <div class="block_controll hide"></div>
         <div class="block_name">{{blockName}}</div>
-        <div ng-click="toggleCollapseBlock($event)" class="collapse_block_button" ng-class="{'detach':collapsed}">
-            <div class="arrow_down"  ng-if="!isUnfolded()">
+        <div class="collapse_block_button" ng-class="{'detach':collapsed}">
+            <div class="arrow_down"  ng-if="isHalfUnfoldBlockIcon()">
             <img src="images/arrow.svg"></img>
             </div>
-            <div class="arrows_down" ng-if="isHalfUnfolded()">
+            <div class="arrows_down" ng-if="isFullUnfoldBlockIcon()">
             <img  src="images/arrows.svg" ></img>
             </div>
-            <i class="material-icons" ng-if="isFullUnfolded()">keyboard_arrow_up</i>
+            <i class="material-icons" ng-if="isHideBlockIcon()">keyboard_arrow_up</i>
         </div>
     </div>
     <div class="block_content scroll ng-class:{unfolded:isFullUnfolded(),collapsed:!isUnfolded()}">

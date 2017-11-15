@@ -446,16 +446,20 @@ function initFolded(scope, element) {
     if (storageValue != null)
         scope.collapsed = storageValue == "true";
 
+    var lastItemsCount = 0;
 
+    function isItemsCountEnoughtForFullUnfolding(){
+        return lastItemsCount >= 2;
+    }
     scope.scroll;
     var foldedLevel = 0;
 
     scope.toggleFolded = function(event,itemsCount) {
         if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")))
             return;
-        
+        lastItemsCount = itemsCount;
         var newFoldedLevel = (foldedLevel + 1) % 3 ;
-        if(itemsCount < 2 && newFoldedLevel == 1) {
+        if(!isItemsCountEnoughtForFullUnfolding() && newFoldedLevel == 1) {
             newFoldedLevel = 2;
         }
         scope.scroll.overflowy = foldedLevel != 0;
@@ -472,13 +476,23 @@ function initFolded(scope, element) {
 
 
     scope.isHalfUnfolded = function(){
-        return foldedLevel == 1;
+        var isHalfUnfoldedForced = foldedLevel == 2 && !isItemsCountEnoughtForFullUnfolding();
+        return foldedLevel == 1 || isHalfUnfoldedForced;
     }
     scope.isFullUnfolded = function(){
-        return foldedLevel == 2;
+        return isItemsCountEnoughtForFullUnfolding() && foldedLevel == 2;
     }
     scope.isUnfolded = function(){
         return scope.isHalfUnfolded() || scope.isFullUnfolded();
+    }
+    scope.isHalfUnfoldBlockIcon= function(){
+        return foldedLevel == 0;
+    }
+    scope.isFullUnfoldBlockIcon = function(){
+        return foldedLevel == 1 && isItemsCountEnoughtForFullUnfolding();
+    }
+    scope.isHideBlockIcon = function(){
+        return foldedLevel == 2 || (foldedLevel == 1 && !isItemsCountEnoughtForFullUnfolding());
     }
 }
 

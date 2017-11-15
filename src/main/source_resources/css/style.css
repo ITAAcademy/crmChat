@@ -540,8 +540,8 @@ button:focus {
 }
 
 .items_list_block .block_content {
-    max-height: 65px;
     min-height: 65px;
+    max-height: 65px;
     overflow-y: auto;
     /* padding-right: 5px; */
     /* margin-right: -5px; */
@@ -3659,7 +3659,7 @@ a.like_button.selected {
 
 /*user profile popup end*/
 
-@media only screen and (min-width:1350px) {
+/*@media only screen and (min-width:1350px) {
     .items_list_block .block_content {
         min-height: 120px;
         max-height: 120px;
@@ -3671,7 +3671,7 @@ a.like_button.selected {
         min-height: 65px;
         max-height: 65px;
     }
-}
+}*/
 
 @media only screen and (max-width: 1024px) {
     .consultant_wrapper {
