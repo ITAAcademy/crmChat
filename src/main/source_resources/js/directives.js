@@ -450,11 +450,14 @@ function initFolded(scope, element) {
     scope.scroll;
     var foldedLevel = 0;
 
-    scope.toggleFolded = function(event) {
+    scope.toggleFolded = function(event,itemsCount) {
         if (event != undefined && ($(event.target).hasClass("block_controll") || $(event.target).hasClass("unfoldable_element")))
             return;
         
         var newFoldedLevel = (foldedLevel + 1) % 3 ;
+        if(itemsCount < 2 && newFoldedLevel == 1) {
+            newFoldedLevel = 2;
+        }
         scope.scroll.overflowy = foldedLevel != 0;
         if (scope.folded) {
             scope.scroll.scrollTop(scope.scroll.scrollTop())

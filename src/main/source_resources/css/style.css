@@ -687,6 +687,21 @@ button:focus {
     height: 35px;
     line-height: 25px;
 }
+.block_head .arrow_down,
+.block_head .arrows_down{
+    width:28px;
+    vertical-align:middle;
+    display:inline-block;
+    text-align: center;
+}
+.block_head .arrow_down {
+    height: 20px;
+}
+
+.arrow_down img, .arrows_down img{
+    width: 16px;
+    height: 16px;
+}
 
 .consultant_wrapper .items_list_block .block_head * {
     line-height: 35px;
