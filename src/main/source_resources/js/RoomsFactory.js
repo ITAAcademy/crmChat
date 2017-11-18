@@ -201,6 +201,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         return goToRoomEvn(roomId).then(function() {
             if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
                 getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
+        }, function(){
+             ChannelFactory.changeLocation("/");
         });
 
     };
