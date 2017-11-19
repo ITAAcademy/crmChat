@@ -167,7 +167,6 @@ public class CommonController {
 	public String  getTeachersTemplate(HttpRequest request, @PathVariable("page") String page, Model model,Authentication auth) {
 		//HashMap<String,Object> result =   new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
-
 		addLocolizationAndConfigParam(model,chatPrincipal.getChatUser());
 		return page;
 	}

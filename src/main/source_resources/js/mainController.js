@@ -14,6 +14,8 @@ springChatControllers.config(['$routeProvider', function($routeProvider) {
                         scrollTop: $("#room__" + $route.current.params.roomId + "__").offset().top
                     }, 2000);*/
                     Rescroller.rescrollToRoom($route.current.params.roomId);
+                }, function(){
+                    $rootScope.roomChanging = false;
                 });
 
             }]

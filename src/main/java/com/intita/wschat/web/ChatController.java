@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -208,14 +209,13 @@ public class ChatController {
 		}
 	}
 
-	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal , RoomsService chat_room_service) {
-		if(roomId == null) return null;
+	public static CurrentStatusUserRoomStruct isMyRoom(Room o_room, ChatUser o_user , RoomsService chat_room_service) {
+
 		long startTime = System.currentTimeMillis();
-		Room o_room = chat_room_service.getRoom(roomId);
 		if (o_room == null)
 			return null;
-		ChatUser o_user = chatPrincipal.getChatUser();
-		if (o_user == null || o_user.getId()==null) return null;
+		if (o_user == null || o_user.getId()==null) 
+			return null;
 
 		Set<Room> all = chat_room_service.getAllRoomByUsersAndAuthor(o_user);
 
@@ -223,6 +223,14 @@ public class ChatController {
 			return null;
 
 		return new CurrentStatusUserRoomStruct(o_user, o_room);
+	}
+	
+	public static CurrentStatusUserRoomStruct isMyRoom(Long roomId, ChatPrincipal chatPrincipal , RoomsService chat_room_service) {
+		if(roomId == null) return null;
+		long startTime = System.currentTimeMillis();
+		Room o_room = chat_room_service.getRoom(roomId);
+		ChatUser o_user = chatPrincipal.getChatUser();
+		return isMyRoom(o_room, o_user, chat_room_service);
 	}
 
 	/********************
@@ -413,10 +421,14 @@ public class ChatController {
 	public boolean userGoToDialogListenerLP(@PathVariable("roomId") Long roomId, Authentication auth) {
 		// checkProfanityAndSanitize(message);
 		ChatPrincipal chatPrincipal = (ChatPrincipal) auth.getPrincipal();
-		CurrentStatusUserRoomStruct struct = isMyRoom(roomId, chatPrincipal,
-				chatRoomsService);
+		Room o_room = chatRoomsService.getRoom(roomId);
+		ChatUser o_user = chatPrincipal.getChatUser();
+		CurrentStatusUserRoomStruct struct = isMyRoom(o_room, o_user, chatRoomsService);
 		if (struct == null)
+		{
+			chatRoomsService.removeUserFromRoom(o_user, o_room);
 			throw new ChatUserNotInRoomException("CurrentStatusUserRoomStruct struct is null");
+		}
 
 		ChatUser user = struct.getUser();
 		Room room = struct.getRoom();
@@ -987,6 +999,7 @@ public class ChatController {
 		return dtoMapper.mapListUserMessage(messages);
 	}
 
+	
 	@RequestMapping(value="/chat/messages/update",method = RequestMethod.POST)
 			@ResponseBody
 			public UserMessageDTO updateMessage(@RequestBody UserMessageDTO messageDTO,Authentication auth) throws OperationNotAllowedException {
