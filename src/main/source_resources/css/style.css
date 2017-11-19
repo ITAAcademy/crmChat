@@ -558,6 +558,9 @@ button:focus {
 .items_list_block.ng-hide {
     display: block !important;
 }
+.items_list_block .block_content {
+    border-bottom: #4b75a4 solid 1px;
+}
 
 .items_list_block.ng-hide .block_content {
     background-image: url(../images/empty.png);
@@ -571,6 +574,11 @@ button:focus {
     /*-webkit-transition-property: all;
     transition-property: all;*/
     pointer-events: none;
+
+}
+
+.items_list_block .block_content.collapsed {
+border-bottom: none;
 }
 
 .items_list_block .block_content.unfolded {
@@ -627,21 +635,19 @@ button:focus {
 .left_panel.bottom_block {
     padding-bottom: 0
 }
-
-.items_list_block.top_block {
-    background-color: #4b75a4;
-}
-
+.items_list_block .text_info .user_name, .items_list_block.top_block .text_info .user_presence, .items_list_block.top_block .block_name
 .items_list_block .block_controll {
     /* max-width: 65px; */
     width: 67px;
     height: 100%;
     overflow: hidden;
-    display: inline-block;
-    background-color: #3598db;
     position: relative;
     z-index: 1;
-    text-align: center;
+    color:black;
+}
+
+.block_controll{
+    display:inline-block;
 }
 
 .items_list_block .block_controll.hide {
@@ -680,8 +686,8 @@ button:focus {
     left: -35px;
 }
 
-.items_list_block.top_block .block_head {
-    background-color: rgba(51, 51, 51, 0.2);
+.items_list_block{
+    background-color: white;
 }
 
 .items_list_block .block_head {
@@ -689,6 +695,8 @@ button:focus {
     width: 100%;
     height: 35px;
     line-height: 25px;
+    color: #4b75a4;
+    border-bottom: #4b75a4 solid 1px;
 }
 .block_head .arrow_down,
 .block_head .arrows_down{
@@ -765,16 +773,6 @@ button:focus {
     -webkit-transform: rotate(180deg);
     /* Chrome, Safari, Opera */
     transform: rotate(180deg);
-}
-
-.items_list_block.top_block .text_info .user_name,
-.items_list_block.top_block .text_info .user_presence,
-.items_list_block.top_block .block_name {
-    color: white;
-}
-
-.items_list_block.top_block .block_head_diveded {
-    background-color: white;
 }
 
 .items_list_block.top_block .dropdown_icon {
@@ -1019,6 +1017,7 @@ button:focus {
     font-weight: 300;
     font-style: normal;
     color: #425569;
+    text-align:left;
 }
 
 *[participants-block="true"] .items_list_block .text_info>a.user_name:hover {
