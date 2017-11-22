@@ -440,16 +440,16 @@ public class RoomsService {
 		return addUserToRoom(chatUserService.getChatUser(name), room);
 	}
 
-	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+	@Transactional(readOnly = false)
 	public boolean addUserToRoom(ChatUser user, Room room) {
 		if(room == null)
 			return false;
 		if(user == null)
 			return false;
 		//have premition?
-		if(room.cloneChatUsers().contains(user))
-			return false;
 
+		if(isRoomParticipant(user.getId(),room.getId()))
+			return false;
 		room.addUser(user);
 		roomRepo.save(room);
 		chatLastRoomDateService.addUserLastRoomDateInfo(user, room);
