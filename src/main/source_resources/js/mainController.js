@@ -984,6 +984,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 return true;
             }
             $scope.getTenantIsFree = UserFactory.getTenantIsFree;
+            $scope.isConnected = ChannelFactory.isConnected;
 
             /*****************************
              ************CONFIG************

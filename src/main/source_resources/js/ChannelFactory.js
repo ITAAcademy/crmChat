@@ -1,6 +1,7 @@
 springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$location', '$http', 'toaster', 'ChatSocket', function($rootScope, $timeout, $location, $http, toaster, chatSocket) {
     var socketSupport = true;
     var isInited = false;
+    var connected = false;
     var getIsInited = function(){
         return isInited;
     }
@@ -29,6 +30,7 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
             //if (isInited == false) {
                 chatSocket.disconnect();
                 var onConnect = function(frame) {
+                    connected = true;
                     callBack(socketSupport, frame)
                 };
                 chatSocket.init(serverPrefix + "/wss"); //9999
@@ -44,8 +46,9 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
                     else
                     {
                       //  toaster.clear();
-                        toaster.pop('warning', 'Error', 'Conection lost. Try reconect', 900); 
-                        setTimeout(function() {me.subscribeToConnect(callBack);}, 1000);   
+                        //toaster.pop('warning', 'Error', 'Conection lost. Try reconect', 900); 
+                        setTimeout(function() {me.subscribeToConnect(callBack);}, 1000);
+                        connected = false;  
                     }
                     
                 });
@@ -56,7 +59,8 @@ springChatServices.factory('ChannelFactory', ['$rootScope', '$timeout', '$locati
         },
         getIsInited : getIsInited,
         setIsInited : setIsInited,
-        setIsInitedCallback : setIsInitedCallback
+        setIsInitedCallback : setIsInitedCallback,
+        isConnected : function(){ return connected }
     };
     return me;
 

@@ -656,12 +656,15 @@ border-bottom: none;
 }
 
 .items_list_block .block_controll img {
-    position: absolute;
+   /* position: absolute;
     margin: auto;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0;*/
+    display:inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
 }
 
 .contact_control .budget {
@@ -3234,6 +3237,11 @@ span.rooms_search_loader img {
 .user_profile_avatar {
     width: 200px;
     border-radius: 50%;
+}
+
+.consultant_wrapper .material-icons.no_signal_icon {
+    font-size: 21px;
+    color: white;
 }
 
 @media (max-height: 200px) and (min-width: 300px) and (orientation:landscape) and (max-device-height: 721px) {
