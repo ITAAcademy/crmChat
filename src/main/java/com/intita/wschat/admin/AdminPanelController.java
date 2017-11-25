@@ -137,10 +137,11 @@ public class AdminPanelController {
   @RequestMapping(value = "/chat/user/findRooms", method = RequestMethod.GET)
   @ResponseBody
   public List<ChatRoomDTO> findRooms(@RequestParam Long chatUserId,@RequestParam String roomNameLike, Authentication auth) {
-
+    ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+    ChatUser user = chatPrincipal.getChatUser();
     List<Room> rooms = roomService.findChatUserRooms(chatUserId,roomNameLike,10);
 
-    List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms);
+    List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms,user);
 
     return  roomsDTO;
 

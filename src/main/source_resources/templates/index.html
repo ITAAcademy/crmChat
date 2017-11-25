@@ -107,6 +107,8 @@
                 <div class="tools_dropdown_container">
                     <div id="tools_dropdown" class="popup_dropdown">
                         <a ng-if="!loadOnlyFilesInfiniteScrollMode" ng-click="showAttaches()" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.showAtachedFiles}">Показати додатки</a>
+                        <a ng-if="!getCurrentRoom().emailNotification" ng-click="enableEmailNotification(getCurrentRoom())" class="dropdown_item show_attaches_item">Ввімкнути емейл-нотифікації</a>
+                        <a ng-click="disableEmailNotification(getCurrentRoom())" ng-if="getCurrentRoom().emailNotification" class="dropdown_item show_attaches_item">Вимкнути емейл-нотифікації</a>
                         <a ng-if="!loadOnlyFilesInfiniteScrollMode && !loadOnlyBookmarkedInfiniteScrollMode" ng-click="showBookmarks()" class="dropdown_item show_bookmarked" th:text="${lgPack.msgBox.roomContextMenu.showBookmarkedMessages}" >Показати обрані</a>
                         <a ng-if="loadOnlyFilesInfiniteScrollMode || loadOnlyBookmarkedInfiniteScrollMode" ng-click="showAllMessages(true)" class="dropdown_item show_attaches_item" th:text="${lgPack.msgBox.roomContextMenu.hideAtachedFiles}">Показати всі повідомлення</a>
                         <a class="dropdown_item leave_room_item" ng-if="authorize &amp;&amp; canLeaveCurrentRoom()" ng-click="toggleAskForDeleteMeFromCurrentRoom()" th:text="${lgPack.msgBox.roomContextMenu.goOut}">Вийти з кімнати</a>

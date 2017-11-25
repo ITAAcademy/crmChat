@@ -1,5 +1,8 @@
 package com.intita.wschat.models;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -61,6 +64,6 @@ public class RoomConfig {
         this.updateAt = updateAt;
         return this;
     }
-
+    @UpdateTimestamp
     private Date updateAt;
 }

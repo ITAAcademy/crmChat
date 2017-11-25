@@ -1,13 +1,11 @@
 package com.intita.wschat.dto.mapper;
 
 import com.intita.wschat.dto.model.*;
-import com.intita.wschat.models.ChatUser;
-import com.intita.wschat.models.Room;
-import com.intita.wschat.models.User;
-import com.intita.wschat.models.UserMessage;
+import com.intita.wschat.models.*;
 import com.intita.wschat.repositories.UserMessageRepository;
 import com.intita.wschat.services.ChatLikeStatusService;
 import com.intita.wschat.services.ChatUsersService;
+import com.intita.wschat.services.RoomsService;
 import com.intita.wschat.services.UserMessageService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -28,6 +26,7 @@ public class DTOMapper {
     @Autowired private ChatLikeStatusService chatLikeStatusService;
     @Autowired private ChatUsersService chatUserService;
     @Autowired private UserMessageService messageService;
+    @Autowired private RoomsService roomService;
 
     ModelMapper modelMapper = new ModelMapper();
     PropertyMap<ChatUser, ChatUserDTO> chatUserMap = new PropertyMap<ChatUser, ChatUserDTO>() {
@@ -99,14 +98,28 @@ public class DTOMapper {
     }
 
 
-    public List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
+    private List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
+        List<ChatRoomDTO> resultDTOs = rooms.stream()
+                .map(room -> map(room)).collect(Collectors.toList());
+        return resultDTOs;
+    }
+    public List<ChatRoomDTO> mapListRoom(List<Room> rooms,ChatUser user) {
         List<ChatRoomDTO> resultDTOs = rooms.stream()
                 .map(room -> map(room)).collect(Collectors.toList());
         return resultDTOs;
     }
 
-    public ChatRoomDTO map (Room room) {
-        return modelMapper.map(room,ChatRoomDTO.class);
+    private ChatRoomDTO map (Room room) {
+        ChatRoomDTO dto = modelMapper.map(room,ChatRoomDTO.class);
+       return dto;
+    }
+    public ChatRoomDTO map (Room room,ChatUser user) {
+        ChatRoomDTO dto = modelMapper.map(room,ChatRoomDTO.class);
+       RoomConfig config = roomService.getRoomConfig(room,user);
+       if (config != null) {
+           dto.setEmailNotification(config.isEmailNotification());
+       }
+        return dto;
     }
 
     public List<UserMessageDTO> mapListUserMessage(List<UserMessage> userMessages){

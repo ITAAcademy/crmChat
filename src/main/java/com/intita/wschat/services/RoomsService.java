@@ -701,26 +701,31 @@ public class RoomsService {
 	}
 
 	@Transactional
-	public void disableEmailNotifications(Long roomId,Long chatUserId) {
+	public void setEmailNotificationsEnabled(Long roomId, Long chatUserId, boolean enabled) {
+		RoomConfig config = roomConfigRepository.findByRoomAndUser(Room.forId(roomId),ChatUser.forId(chatUserId));
+		if (config == null) {
+			config =  new RoomConfig();
+		}
 		Room room = roomRepo.findOne(roomId);
 		ChatUser user = chatUserRepository.findOne(chatUserId);
-		RoomConfig config =  new RoomConfig()
-				.setEmailNotification(false)
+		config.setEmailNotification(enabled)
 				.setRoom(room)
 				.setUser(user);
 		roomConfigRepository.save(config);
+	}
 
+	@Transactional
+	public void disableEmailNotifications(Long roomId,Long chatUserId) {
+		setEmailNotificationsEnabled(roomId,chatUserId,false);
 	}
 
 	@Transactional
 	public void enableEmailNotifications(Long roomId,Long chatUserId) {
-		Room room = roomRepo.findOne(roomId);
-		ChatUser user = chatUserRepository.findOne(chatUserId);
-		RoomConfig config =  new RoomConfig()
-				.setEmailNotification(true)
-				.setRoom(room)
-				.setUser(user);
-		roomConfigRepository.save(config);
+		setEmailNotificationsEnabled(roomId,chatUserId,true);
+	}
+
+	public RoomConfig getRoomConfig(Room room,ChatUser user) {
+		return roomConfigRepository.findByRoomAndUser(room,user);
 	}
 
 

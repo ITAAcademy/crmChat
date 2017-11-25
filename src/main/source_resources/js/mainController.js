@@ -940,6 +940,16 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                 var objDiv = document.getElementById("messagesScroll");
                 objDiv.scrollTop = 99999999999 //objDiv.scrollHeight;
             }
+            $scope.enableEmailNotification = function(room){
+                //TODO EMAIL_NOTIFICATIONS
+                $http.post(serverPrefix + "/chat/room/"+room.roomId+"/enable_email_notifications");
+                room.emailNotification = true;
+            }
+            $scope.disableEmailNotification = function(room){
+                //TODO EMAIL_NOTIFICATIONS
+                $http.post(serverPrefix + "/chat/room/"+room.roomId+"/disable_email_notifications");
+                room.emailNotification = false;
+            }
             $scope.showBookmarks = function(){
                 RoomsFactory.clearMessages();
                 $scope.loadOnlyBookmarkedInfiniteScrollMode = true;

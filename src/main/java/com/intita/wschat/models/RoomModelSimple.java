@@ -52,6 +52,17 @@ public class RoomModelSimple {
 	private int participantsCount;
 	private List<String> avatars;
 	private Long[] privateUserIds;
+
+	public boolean isEmailNotification() {
+		return emailNotification;
+	}
+
+	public RoomModelSimple setEmailNotification(boolean emailNotification) {
+		this.emailNotification = emailNotification;
+		return this;
+	}
+
+	private boolean emailNotification = true;
 	Integer userPermissions;
 
 	public short getType() {
@@ -95,6 +106,10 @@ public class RoomModelSimple {
 
 	public static RoomModelSimple buildSimpleModelForRoom(RoomsService roomService, ChatUser user, Integer nums, String date,Room room,UserMessage lastMessage) {
 		RoomModelSimple simpleModel = new RoomModelSimple();
+		RoomConfig config = roomService.getRoomConfig(room,user);
+		if (config!=null){
+			simpleModel.emailNotification = config.isEmailNotification();
+		}
 		if(room.getType() == ChatRoomType.PRIVATE.getValue())
 		{
 			try {

@@ -61,6 +61,17 @@ public class ChatRoomDTO implements DataTransferObject {
 
     private short type;
 
+    public boolean isEmailNotification() {
+        return emailNotification;
+    }
+
+    public ChatRoomDTO setEmailNotification(boolean emailNotification) {
+        this.emailNotification = emailNotification;
+        return this;
+    }
+
+    private boolean emailNotification = true;
+
 
 
 }
