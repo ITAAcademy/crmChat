@@ -4,6 +4,7 @@ package com.intita.wschat.services;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.domain.search.UserMessageSearchCriteria;
@@ -391,6 +392,8 @@ public class UserMessageService {
 	}
 	public Map<Room ,List<UserMessageDTO>> getAllUnreadedMessagesFrom24Hours(ChatUser user){
 		List<ChatUserLastRoomDate> userRooms = chatLastRoomDateService.getUserLastRoomDates(user);
+		List<Long> excludedRooms = roomsService.getUnsubscribedEmailRooms(user);
+		userRooms = userRooms.stream().filter(room -> !excludedRooms.contains(room.getRoom().getId())).collect(Collectors.toList());
 		Map<Room, List<UserMessageDTO>> result = new  HashMap<Room, List<UserMessageDTO>>();
 		for (ChatUserLastRoomDate lastRoomEntry : userRooms){
 			Room room = lastRoomEntry.getRoom();

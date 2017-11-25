@@ -727,6 +727,9 @@ public class RoomsService {
 	public RoomConfig getRoomConfig(Room room,ChatUser user) {
 		return roomConfigRepository.findByRoomAndUser(room,user);
 	}
+	public List<Long> getUnsubscribedEmailRooms(ChatUser user){
+		return roomConfigRepository.findRoomsByUser(user);
+	}
 
 
 }
