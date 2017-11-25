@@ -46,6 +46,10 @@ public class RoomsService {
 
 	@Autowired private RoomPermissionsService roomPermissionsServcie;
 	@Autowired private RoomRolesRepository roomRolesRepository;
+	@Autowired private ChatUserRepository chatUserRepository;
+
+	@Autowired private RoomConfigRepository roomConfigRepository;
+
 	@Autowired
 	@Lazy
 	private UsersOperationsService usersOperationsService;
@@ -694,6 +698,29 @@ public class RoomsService {
 	public List<Room> findChatUserRooms(Long userId, String nameLike,int count)  {
 		ChatUser user = ChatUser.forId(userId);
 		return roomRepo.findRoomsOfUser(user,nameLike,new PageRequest(0,count));
+	}
+
+	@Transactional
+	public void disableEmailNotifications(Long roomId,Long chatUserId) {
+		Room room = roomRepo.findOne(roomId);
+		ChatUser user = chatUserRepository.findOne(chatUserId);
+		RoomConfig config =  new RoomConfig()
+				.setEmailNotification(false)
+				.setRoom(room)
+				.setUser(user);
+		roomConfigRepository.save(config);
+
+	}
+
+	@Transactional
+	public void enableEmailNotifications(Long roomId,Long chatUserId) {
+		Room room = roomRepo.findOne(roomId);
+		ChatUser user = chatUserRepository.findOne(chatUserId);
+		RoomConfig config =  new RoomConfig()
+				.setEmailNotification(true)
+				.setRoom(room)
+				.setUser(user);
+		roomConfigRepository.save(config);
 	}
 
 

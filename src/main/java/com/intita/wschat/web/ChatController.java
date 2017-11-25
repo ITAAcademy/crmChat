@@ -918,6 +918,15 @@ public class ChatController {
 		return chatMessages;
 	}
 
+	@RequestMapping(value = "/chat/room/{roomId}/disable_email_notifications", method = RequestMethod.GET)
+	@ResponseBody
+	public void disableEmailNotifications(@PathVariable("roomId") Long roomId,
+																			@RequestBody(required = false) String searchQuery, Authentication auth) throws JsonProcessingException {
+		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
+		ChatUser chatUser = chatPrincipal.getChatUser();
+		chatRoomsService.disableEmailNotifications(roomId,chatUser.getId());
+	}
+
 	@RequestMapping(value = "/chat/room/{roomId}/clear_history", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean clearRoomHistory(@PathVariable("roomId") Long roomId, Authentication auth)

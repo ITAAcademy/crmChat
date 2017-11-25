@@ -83,6 +83,9 @@ public class Room implements Serializable,Comparable<Room> {
 	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "room")
 	PrivateRoomInfo privateInfo;
+
+	//@ManyToOne
+	//private List<RoomConfig> roomConfigs;
 	/*
 	 * GET/SET
 	 */
