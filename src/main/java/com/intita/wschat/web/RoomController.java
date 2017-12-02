@@ -26,6 +26,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -109,6 +110,9 @@ public class RoomController {
 
 	private final int PARTICIPANTS_INITIAL_COUNT = 10;
 
+	private ArrayList<NotificationsService.ChatNotification> chatNotifications;
+
+
 	public static class ROLE {
 		public static final int ADMIN = 256;
 	}
@@ -124,6 +128,11 @@ public class RoomController {
 
 	// =>
 	// roomId
+
+	@Scheduled(fixedDelay = 3600000L*24L)//every 24 hours
+	public void updateCommonChatNotifications(){
+		this.chatNotifications = notificationsService.generationNotification();
+	}
 
 	@PostConstruct
 	private void postFunction() {
@@ -221,7 +230,7 @@ public class RoomController {
 		ChatUserDTO chatUserDTO = dtoMapper.map(activeChatUser);
 		Set<Long> activeUsers = participantRepository.getActiveUsers();
 		responseData.setActiveUsers(activeUsers);
-		responseData.setNotifications(notificationsService.generationNotification());
+		responseData.setNotifications(chatNotifications);
 
 		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
 
