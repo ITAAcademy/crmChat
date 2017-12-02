@@ -110,8 +110,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.frameOptions().sameOrigin()
 		.httpStrictTransportSecurity().disable();
 		http.headers()
-		.defaultsDisabled()
-		.cacheControl();
+		//.defaultsDisabled()
+		.cacheControl().disable();
 
 
 
