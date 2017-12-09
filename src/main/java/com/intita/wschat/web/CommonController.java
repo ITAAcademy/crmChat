@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-
+import javax.servlet.http.HttpServletResponse;
 import com.intita.wschat.config.ChatPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,9 +157,10 @@ public class CommonController {
 	}
 	
 	@RequestMapping(value="/static_templates/{page}.html", method = RequestMethod.GET)
-	public ModelAndView  test(@PathVariable String page, HttpRequest request, ModelAndView mv, Model model,Principal principal) {
+	public ModelAndView  test(@PathVariable String page , final HttpServletResponse response, HttpRequest request, ModelAndView mv, Model model,Principal principal) {
 		mv.setViewName("../static/static_templates/" + page);
 		mv.addObject("lgPack", chatLangService.getLocalizationMap().get(chatLangService.getCurrentLang()));
+		response.setHeader("Cache-Control", "max-age=3600");
 		return mv;
 	}
 
