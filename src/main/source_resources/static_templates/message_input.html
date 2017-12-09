@@ -8,6 +8,7 @@
 </div> 
 
 <div class="helper"><span th:text="${lgPack.helpers.newLineHint}">для переведення курсору натисність Shift + Enter</span></div>
+<div ng-show="files.length > 0" class="files_input_alternative"><span>Обрано файлів:</span><span>{{files.length}}</span></div>
 <div class="files_input">
     <img ng-if="files!=null &amp;&amp; files.length>0" class="clear-file" src="images/X.svg" alt="" ng-click="clearFiles()" />
     <div ng-repeat="file in files" class="display-file-container" file-miniature="true" nameOnly="true" name="file.name" link="file.data" remove-callback="removeFileFromUpload"></div>
