@@ -4,13 +4,13 @@
         <div class="block_controll" ng-show="!isGroupMode" ng-click="toggleGroupMode()"><i class="material-icons unfoldable_element">account_circle</i></div>
         <div class="block_name">{{blockName}}</div>
       <div class="collapse_block_button" ng-class="{'detach':collapsed}">
-            <div class="arrow_down"  ng-if="isHalfUnfoldBlockIcon()">
+            <div class="arrow_down"  ng-show="isHalfUnfoldBlockIcon()">
             <img src="images/arrow.svg"></img>
             </div>
-            <div class="arrows_down" ng-if="isFullUnfoldBlockIcon()">
+            <div class="arrows_down" ng-show="isFullUnfoldBlockIcon()">
             <img  src="images/arrows.svg" ></img>
             </div>
-            <div class="arrow_down flipped"  ng-if="isHideBlockIcon()">
+            <div class="arrow_down flipped"  ng-show="isHideBlockIcon()">
             <img src="images/arrow.svg"></img>
             </div>
         </div>

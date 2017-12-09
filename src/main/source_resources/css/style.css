@@ -70,6 +70,9 @@ button:focus {
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
+.files_input_alternative {
+        display:none;
+}
 
 .tenant_busy_control .img {
     margin: auto;
@@ -3278,6 +3281,7 @@ span.rooms_search_loader img {
     }
 }
 
+
 @media (max-width: 769px) {
     .left_panel {
         max-width: 0;
@@ -3714,12 +3718,19 @@ a.like_button.selected {
 }
 
 @media only screen and (max-width: 500px) {
+           .files_input_alternative {
+        display:block;
+    }
+    
     .ngdialog.ngdialog-theme-default.user_profile_dialog {
         padding-bottom: 10px;
         padding-top: 10px;
         padding-left: 10px;
         padding-right: 10px;
         top: 30px;
+    }
+    .files_input {
+    display:none;
     }
     .profile_container .avatar_container img {
         width: 120px;
