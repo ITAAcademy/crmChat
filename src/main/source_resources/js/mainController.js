@@ -216,7 +216,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         $scope.deleteMeFromRoom = function() {
             var showERR = function() { $rootScope.askForDeleteMe.error = "Не вдалося видалити Вас з розмови!!!"; }
-            $http.post(serverPrefix + "/chat/rooms/{0}/remove".format($rootScope.askForDeleteMe.room.roomId)).
+            $http.post(serverPrefix + "/chat/rooms/{0}/remove".format($rootScope.askForDeleteMe.room.id)).
             success(function(data, status, headers, config) {
                 if (data == true)
                     ngDialog.closeAll();
@@ -394,7 +394,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             if (ignore == true) {
                 url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email;
             } else {
-                url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().roomId + "&eliminate_users_of_current_room=true"; //'//get_users_like',
+                url = serverPrefix + "/get_users_like?login=" + $scope.searchInputValue.email + "&room=" + RoomsFactory.getCurrentRoom().id + "&eliminate_users_of_current_room=true"; //'//get_users_like',
             }
 
             getEmailsTimer = $timeout(function() {
@@ -563,7 +563,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
          $rootScope.loadOtherParticipants = function() {
             if ($rootScope.participant_busy || RoomsFactory.getCurrentRoom() == null)
                 return;
-            var roomId = RoomsFactory.getCurrentRoom().roomId;
+            var roomId = RoomsFactory.getCurrentRoom().id;
             var participants = RoomsFactory.getParticipants();
 
             if(roomId == null) return null;
@@ -638,14 +638,14 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
                     room.lastMessage = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
                     var isWindowMinimized = $('body').height() < 70;
-                    var isSelectedRoom = RoomsFactory.getCurrentRoom().roomId == room.roomId;
+                    var isSelectedRoom = RoomsFactory.getCurrentRoom().id == room.id;
                     if (RoomsFactory.getCurrentRoom() == undefined || (!isSelectedRoom || isWindowMinimized) && msg.author.id != UserFactory.getChatUserId()) {
                         room.nums++;
                         RoomsFactory.updateNewMsgNumber(+1);
                         //room.date = curentDateInJavaFromat();
                         var title = "Нове повідомлення в розмові " + room.string + " від " + msg.author.nickName;
                             if (room.string == msg.author.nickName)
-                                title = "Нове повідомлення від " + messagesMap[room.roomId].author.nickName;
+                                title = "Нове повідомлення від " + messagesMap[room.id].author.nickName;
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
                                 msgAudioNotify.play();
@@ -659,7 +659,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             var updateDialogListTimeout = null;
             //Update if user see rooms
             if (RoomsFactory.getCurrentRoom() != undefined)
-                if (RoomsFactory.getCurrentRoom().roomId == "" && $rootScope.roomForUpdate.keys().next() != undefined) {
+                if (RoomsFactory.getCurrentRoom().id == "" && $rootScope.roomForUpdate.keys().next() != undefined) {
                     if (updateDialogListTimeout != null)
                         updateDialogListTimeout.cancel();
 
@@ -692,7 +692,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         $rootScope.messageError = messageError;
 
         $rootScope.submitConsultation_processUser = function(roomId) {
-            if (roomId == RoomsFactory.getCurrentRoom().roomId) {
+            if (roomId == RoomsFactory.getCurrentRoom().id) {
                 $rootScope.isConectedWithFreeTenant = true;
 
                 toaster.clear();
@@ -803,7 +803,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
         }
         $scope.currentRoomIsNull = function() {
             if (RoomsFactory.getCurrentRoom() == null) return true;
-            return RoomsFactory.getCurrentRoom().roomId == null;
+            return RoomsFactory.getCurrentRoom().id == null;
         }
         $scope.getCurrentRoom = RoomsFactory.getCurrentRoom;
         $scope.UserFactory = UserFactory;
@@ -942,12 +942,12 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             }
             $scope.enableEmailNotification = function(room){
                 //TODO EMAIL_NOTIFICATIONS
-                $http.post(serverPrefix + "/chat/room/"+room.roomId+"/enable_email_notifications");
+                $http.post(serverPrefix + "/chat/room/"+room.id+"/enable_email_notifications");
                 room.emailNotification = true;
             }
             $scope.disableEmailNotification = function(room){
                 //TODO EMAIL_NOTIFICATIONS
-                $http.post(serverPrefix + "/chat/room/"+room.roomId+"/disable_email_notifications");
+                $http.post(serverPrefix + "/chat/room/"+room.id+"/disable_email_notifications");
                 room.emailNotification = false;
             }
             $scope.showBookmarks = function(){

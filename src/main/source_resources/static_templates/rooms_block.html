@@ -26,7 +26,7 @@
 </div>
 <div id="items_list_block" class="items_list_block bottom_block scroll contacts_list">
     <!--IF (searchDisabled) Rooms Models list used in search -->
-    <div id="room__{{room.roomId}}__" ng-show="!searchEnabled || isTabStateLastRooms()" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : getTabState()) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'" ng-click="clickToRoomEvent(room)">
+    <div id="room__{{room.id}}__" ng-show="!searchEnabled || isTabStateLastRooms()" class="section" ng-repeat="room in (roomsF = ((getRooms() | roomsBlockFilter : getTabState()) | orderBy:myValueFunction))" ng-include="'static_templates/section_rooms_block_item.html'" ng-click="clickToRoomEvent(room)">
     </div>
     <!--IF(!searchDisabled) Users Models list used in search -->
     <div id="items_list_block_search" ng-show="searchEnabled &amp;&amp; !isTabStateLastRooms()" class="section" ng-repeat="user in (usersF = ((usersListSearched) | orderBy:participantsSort))" ng-include="'static_templates/section_participants_block_item.html'" ng-click="clickToUserEvent(user)">

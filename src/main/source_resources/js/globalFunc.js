@@ -322,7 +322,7 @@
   function getRoomById(rooms, id) {
 
       for (var i = 0; i < rooms.length; i++) {
-          if (rooms[i].roomId == id) return rooms[i];
+          if (rooms[i].id == id) return rooms[i];
       }
       return undefined;
   }

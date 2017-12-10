@@ -115,7 +115,7 @@
                         <a class="dropdown_item remove_history_item" th:text="${lgPack.msgBox.roomContextMenu.deleteHistory}" ng-click="askForClearHistory()">Видалити історію</a>
                         <hr/>
                         <a ng-click="togleSoundEnable()" class="dropdown_item ng-class:{sound_on_item:soundEnable, sound_off_item:!soundEnable} " th:inline="text">                           {{soundEnable ?  '[[${lgPack.msgBox.roomContextMenu.audioOff}]]' :  '[[${lgPack.msgBox.roomContextMenu.audioOn}]]'}}</a>
-                        <a ng-href="{{'#/dialog_view/' + getCurrentRoom().roomId}}" target="_blank" class="dropdown_item open_in_new_tab">Відкрити в новій вкладці</a>
+                        <a ng-href="{{'#/dialog_view/' + getCurrentRoom().id}}" target="_blank" class="dropdown_item open_in_new_tab">Відкрити в новій вкладці</a>
                         <!--<a target="_blank" class="dropdown_item aspect_ratio">Зберігати стан</a>-->
                     </div>
                 </div>

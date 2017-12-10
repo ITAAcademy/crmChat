@@ -3,7 +3,7 @@
     <div class="section-hr"></div>
 </div>
 <div class="section_content">
-    <div ng-class="{selected: getCurrentRoom().roomId == room.roomId}" class="block_item selectable">
+    <div ng-class="{selected: getCurrentRoom().id == room.id}" class="block_item selectable">
         <div class="avatar  ng-class:{offline:!isInterlocutorOnline(room), online:isInterlocutorOnline(room)}">
             <div class="user_image" ng-style="{'background-image':'url(' + $root.imagesPath + '/avatars/' + returnAvatar(room) + ')'}"></div>
             <div class="user_presence_icon" ng-show="isRoomPrivate(room)"></div>
@@ -15,7 +15,7 @@
         </div>
         <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
         <div class="contact_control" id="contact_control">
-            <div ng-if="room.nums > 0 &amp;&amp; !isRoomCreateEnabled() &amp;&amp; getCurrentRoom().roomId != room.roomId" class="budget">{{room.nums}}</div>
+            <div ng-if="room.nums > 0 &amp;&amp; !isRoomCreateEnabled() &amp;&amp; getCurrentRoom().id != room.id" class="budget">{{room.nums}}</div>
             <checkbox id="addUserCheckbox1" ng-if="canBeAddedToRoom(room)" value="include" callback="toggleForAddUser(room)"></checkbox>
         </div>
     </div>

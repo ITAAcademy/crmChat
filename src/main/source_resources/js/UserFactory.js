@@ -252,7 +252,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                         var RoomsFactory = $injector.get('RoomsFactory');
                         var operationStatus = JSON.parse(message.body);
                         //operationStatus = JSON.parse(operationStatus);
-                        if (operationStatus["updateRoom"] != undefined && operationStatus["updateRoom"].roomId == RoomsFactory.currentRoom.roomId) {
+                        if (operationStatus["updateRoom"] != undefined && operationStatus["updateRoom"].roomId == RoomsFactory.currentRoom.id) {
                             RoomsFactory.currentRoom = operationStatus["updateRoom"];
                         }
                         if (operationStatus["type"] == "roomRead") {
@@ -402,7 +402,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         }
 
         initIsUserTenant();
-        var rooms = mess_obj.roomModels;
+        var rooms = mess_obj.rooms;
         RoomsFactory.setRooms(rooms);
         /*
         if ($routeParams.roomId == null && rooms.length > 0) {
@@ -419,10 +419,10 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
 
 
         rooms.sort(function(obj1, obj2) {
-                    return new Date(obj1.date) - new Date(obj2.date);
+                    return new Date(obj1.lastVisit) - new Date(obj2.lastVisit);
                 });
         let destinationRoomId = mess_obj.destinationRoomId;
-        let lastRoomId = rooms.length  > 0 ? rooms[rooms.length - 1].roomId : null;
+        let lastRoomId = rooms.length  > 0 ? rooms[rooms.length - 1].id : null;
         let roomId = destinationRoomId || lastRoomId;
 
         ChannelFactory.changeLocation("/dialog_view/" + roomId);

@@ -184,8 +184,8 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                  unsubscribeWatch();
          }*/
 
-        if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
-            getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
+        if (currentRoom != null && getRoomById(rooms, currentRoom) != null)
+            getRoomById(rooms, currentRoom.id).date = curentDateInJavaFromat();
         var evn = goToRoomEvn(roomId);
         //setFocus
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
@@ -200,7 +200,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     var goToRoomById = function(roomId) {
         return goToRoomEvn(roomId).then(function() {
             if (currentRoom !== undefined && getRoomById(rooms, currentRoom) !== undefined)
-                getRoomById(rooms, currentRoom.roomId).date = curentDateInJavaFromat();
+                getRoomById(rooms, currentRoom.id).date = curentDateInJavaFromat();
         }, function(){
              ChannelFactory.changeLocation("/");
         });
@@ -208,13 +208,13 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     };
 
     function goToRoomEvn(id) {
-        currentRoom = { roomId: id };
+        currentRoom = { id: id };
         changeRoom();
         var deferred = $q.defer();
         var room = getRoomById(rooms, id);
-        if (room != undefined) {
+        if (room != null) {
             currentRoom = room;
-            if (currentRoom != undefined) {
+            if (currentRoom != null) {
                 updateNewMsgNumber(-currentRoom.nums);
                 currentRoom.nums = 0;
                 //push up previesly room
@@ -234,11 +234,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (currentRoom == undefined || currentRoom == '')
             return;
 
-        return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.roomId));
+        return $http.post(serverPrefix + "/chat.go.to.dialog/{0}".format(currentRoom.id));
     }
 
     var clearHistory = function() {
-        $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.roomId), "");
+        $http.post(serverPrefix + "/chat/room/{0}/clear_history".format(currentRoom.id), "");
     }
 
     var NEXT_MESSAGE_TIME_LIMIT_SECONDS = 60;
@@ -452,27 +452,27 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
         if (ChannelFactory.isSocketSupport() === true) {
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.roomId), function(message) {
+                chatSocket.subscribe("/topic/{0}/chat.message".format(currentRoom.id), function(message) {
                     calcPositionPush(JSON.parse(message.body)); //POP
                 }));
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/{0}/chat.message.removed".format(currentRoom.roomId), function(message) {
+                chatSocket.subscribe("/topic/{0}/chat.message.removed".format(currentRoom.id), function(message) {
                    var msgObj = JSON.parse(message.body);
                    removeMessageById(msgObj.id,messages); //POP
                 }));
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/{0}/chat.message.changed".format(currentRoom.roomId), function(message) {
+                chatSocket.subscribe("/topic/{0}/chat.message.changed".format(currentRoom.id), function(message) {
                    var msgObj = JSON.parse(message.body);
                    //TODO create changeMessageByIdFunction
                    changeMessageById(msgObj,messages); //POP
                 }));
             lastRoomBindings.push(
-                chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.roomId, UserFactory.getChatUserId()), function(message) {
+                chatSocket.subscribe("/topic/chat/rooms/{0}/remove_user/{1}".format(currentRoom.id, UserFactory.getChatUserId()), function(message) {
                     if (!UserFactory.isAdmin())
                         unsubscribeCurrentRoom();
                 }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/app/{0}/chat.participants/{1}".format(currentRoom.roomId, globalConfig.lang), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/app/{0}/chat.participants/{1}".format(currentRoom.id, globalConfig.lang), function(message) {
                 if (message.body != "{}") {
                     var o = JSON.parse(message.body);
                     loadSubscribeAndMessage(o);
@@ -482,7 +482,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 }
             }));
 
-            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}/chat.participants".format(currentRoom.roomId, globalConfig.lang), function(message) {
+            lastRoomBindings.push(chatSocket.subscribe("/topic/{0}/chat.participants".format(currentRoom.id, globalConfig.lang), function(message) {
                 var o = JSON.parse(message.body);
                 participants = o["participants"];
             }));
@@ -493,7 +493,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
 
         lastRoomBindings.push(
-            chatSocket.subscribe("/topic/{0}/chat.typing".format(currentRoom.roomId), function(message) {
+            chatSocket.subscribe("/topic/{0}/chat.typing".format(currentRoom.id), function(message) {
                 var parsed = JSON.parse(message.body);
                 if (parsed.username == UserFactory.getChatUserId()) return;
 
@@ -510,7 +510,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         $rootScope.participant_busy = false;
     }
     var addTenantToRoom = function(id) {
-        $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.roomId), {}).
+        $http.post(serverPrefix + "/bot_operations/tenant/{0}/askToAddToRoom/{1}".format(id, currentRoom.id), {}).
         success(function(data, status, headers, config) {
             userAddedToRoom = true;
         }).
@@ -520,7 +520,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var addTenantsToRoom = function(tenantsIdList, msg, success, error) {
-        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{0}".format(currentRoom.roomId), { 'msg': msg, 'tenantsIdList': tenantsIdList }).
+        $http.post(serverPrefix + "/bot_operations/tenants/askToAddToRoom/{0}".format(currentRoom.id), { 'msg': msg, 'tenantsIdList': tenantsIdList }).
         success(function(data, status, headers, config) {
             userAddedToRoom = true;
             if (success != undefined)
@@ -535,7 +535,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
 
     var addUserToRoom = function(chatUserId) {
-        $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.roomId, chatUserId), {}).
+        $http.post(serverPrefix + "/chat/rooms.{0}/user/add?chatId={1}".format(currentRoom.id, chatUserId), {}).
         success(function(data, status, headers, config) {
 
         }).
@@ -549,7 +549,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (usersIds == null || usersIds.length < 1) {
             return;
         }
-        $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.roomId), usersIds).
+        $http.post(serverPrefix + "/chat/rooms.{0}/user/add_all".format(currentRoom.id), usersIds).
         success(function(data, status, headers, config) {
 
         }).
@@ -559,7 +559,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var removeUserFromRoom = function(userId) {
-        $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.roomId, userId), {}).
+        $http.post(serverPrefix + "/chat/rooms.{0}/user.remove/{1}".format(currentRoom.id, userId), {}).
         success(function(data, status, headers, config) {
             if (data == false) {
                 toaster.pop('error', "Error", "Cant remove user from the room", 1000);
@@ -574,7 +574,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
      * UPDATE MESSAGE LP
      *************************************/
     var subscribeMessageLP = function() {
-        var currentUrl = serverPrefix + "/{0}/chat/message/update".format(currentRoom.roomId);
+        var currentUrl = serverPrefix + "/{0}/chat/message/update".format(currentRoom.id);
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
@@ -607,7 +607,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     var subscribeParticipantsLP = function() {
-        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.roomId)
+        var currentUrl = serverPrefix + "/{0}/chat/participants/update".format(currentRoom.id)
         ajaxRequestsForRoomLP.push(
             $.ajax({
                 type: "POST",
@@ -631,7 +631,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }));
     };
     var changeCurrentRoomName = function(name) {
-        return changeRoomName(currentRoom.roomId, name);
+        return changeRoomName(currentRoom.id, name);
     }
     var showChangeRoomNameErr = function() {
         toaster.pop('warning', "Сталася помилка", "помилка зміни імені кімнати", 5000);
@@ -695,7 +695,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             console.warn('loadMessagesContains failed duing to current room is not selected');
             return;
         }
-        var deffered = $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.roomId), searchQuery);
+        var deffered = $http.post(serverPrefix + "/chat/room/{0}/get_messages_contains".format(currentRoom.id), searchQuery);
         deffered.success(function(data, status, headers, config) {
             loadMessagesFromArrayList(data);
             $rootScope.message_busy = false;
@@ -725,7 +725,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             if (searchQuery != null)
                 payload['searchQuery'] = searchQuery;
             var promise = 
-            $http.post(serverPrefix + urlTemplate.format(currentRoom.roomId), payload);
+            $http.post(serverPrefix + urlTemplate.format(currentRoom.id), payload);
             promise.then(function(){
                 $rootScope.message_busy = false;
             }); //  messages[0]). //
@@ -749,7 +749,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     $rootScope.$on('roomRead', function(event, data) {
-        if (currentRoom.roomId == data.roomId) {
+        if (currentRoom.id == data.id) {
             var UserFactory = $injector.get('UserFactory');
             if (UserFactory != undefined && UserFactory.getChatUserId() != data.chatUserId) {
                 lastNonUserActivity = new Date();
@@ -803,7 +803,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
     }
 
     function loadSubscribeAndMessageLP() {
-        $http.post(serverPrefix + "/{0}/chat/participants_and_messages".format(currentRoom.roomId), {}).
+        $http.post(serverPrefix + "/{0}/chat/participants_and_messages".format(currentRoom.id), {}).
         success(function(data, status, headers, config) {
             loadSubscribeAndMessage(data);
         }).
@@ -824,9 +824,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         return resultOfChecking;
     }
     var checkMessageAdditionPermission = function() {
-        if (currentRoom == undefined)
-            return false;
-        if (typeof currentRoom === "undefined") return false;
+        if (currentRoom == null) return false;
         var resultOfChecking = currentRoom.active && $rootScope.isMyRoom;
         return resultOfChecking;
     }
@@ -861,7 +859,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
 
             if (room != null && isRoomConsultation(room)) //redirect to consultation
             {
-                $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.roomId)
+                $http.post(serverPrefix + "/chat/consultation/fromRoom/" + room.id)
                     .success(function(data, status, headers, config) {
                         if (data == "" || data == undefined)
                             $rootScope.goToAuthorize(); //not found => go out
@@ -883,7 +881,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 toaster.pop('warning', errorMsgTitleNotFound, errorMsgContentNotFound, 5000);
                 // location.reload();
             });
-            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(currentRoom.roomId)).
+            $http.post(serverPrefix + "/bot_operations/tenant/did_am_wait_tenant/{0}".format(currentRoom.id)).
             success(function(data, status, headers, config) {
                 if (data == true)
                     showToasterWaitFreeTenant();
@@ -911,7 +909,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         } else {
             for (var i = 0; i < rooms.length; i++) {
                 for (var j = roomList.length - 1; j >= 0; j--) {
-                    if (roomList[j].roomId == rooms[i].roomId) {
+                    if (roomList[j].id == rooms[i].id) {
                         rooms[i] = roomList[j];
                         roomList.splice(j, 1);
                     }
@@ -919,7 +917,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
             }
         }
         if (currentRoom != null) {
-            currentRoom = getRoomById(rooms, currentRoom.roomId);
+            currentRoom = getRoomById(rooms, currentRoom.id);
         }
         updateNewMsgNumber();
     }

@@ -1,5 +1,6 @@
 package com.intita.wschat.domain;
 
+import com.intita.wschat.dto.model.ChatRoomDTO;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.models.RoomModelSimple;
 import com.intita.wschat.services.NotificationsService.ChatNotification;
@@ -44,13 +45,7 @@ public class LoginResponseData {
     public void setChatUser(ChatUserDTO chatUser) {
         this.chatUser = chatUser;
     }
-    public List<RoomModelSimple> getRoomModels() {
-        return roomModels;
-    }
 
-    public void setRoomModels(List<RoomModelSimple> roomModels) {
-        this.roomModels = roomModels;
-    }
     public ChatUserDTO getTrainer() {
         return trainer;
     }
@@ -82,11 +77,20 @@ public class LoginResponseData {
         return this;
     }
 
+    public List<ChatRoomDTO> getRooms() {
+        return rooms;
+    }
+
+    public LoginResponseData setRooms(List<ChatRoomDTO> rooms) {
+        this.rooms = rooms;
+        return this;
+    }
+
 	String nextWindow;
     String userAvatar;
     Set<Long> activeUsers;
     ChatUserDTO chatUser;
-    List<RoomModelSimple> roomModels;
+    List<ChatRoomDTO> rooms;
     List<ChatUserDTO> tenants;
     List<ChatNotification> notifications;
     ChatUserDTO trainer;

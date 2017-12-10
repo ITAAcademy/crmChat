@@ -10,10 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by roma on 18.04.17.
@@ -60,6 +57,17 @@ public class ChatRoomDTO implements DataTransferObject {
     private String name;
 
     private short type;
+
+    public Date getLastVisit() {
+        return lastVisit;
+    }
+
+    public ChatRoomDTO setLastVisit(Date lastVisit) {
+        this.lastVisit = lastVisit;
+        return this;
+    }
+
+    private Date lastVisit;
 
     public boolean isEmailNotification() {
         return emailNotification;

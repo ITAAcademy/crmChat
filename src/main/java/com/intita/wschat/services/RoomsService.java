@@ -7,6 +7,8 @@ import javax.annotation.PostConstruct;
 
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
+import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatRoomDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.repositories.*;
 import com.intita.wschat.services.common.UsersOperationsService;
@@ -49,6 +51,8 @@ public class RoomsService {
 	@Autowired private ChatUserRepository chatUserRepository;
 
 	@Autowired private RoomConfigRepository roomConfigRepository;
+
+	@Autowired private DTOMapper dtoMapper;
 
 	@Autowired
 	@Lazy
@@ -306,7 +310,7 @@ public class RoomsService {
 		return roomRepo.findByAuthor(user);
 	}
 	@Transactional
-	public Set<Room> getAllRoomByUsersAndAuthor(ChatUser user) {
+	public List<Room> getAllRoomByUsersAndAuthor(ChatUser user) {
 		return roomRepo.findByAuthorOrUsersContaining(user, user);
 	}
 	@Transactional
@@ -540,6 +544,13 @@ public class RoomsService {
 	@Transactional
 	public List<RoomModelSimple> getRoomsModelByChatUserAndRoomList(ChatUser currentUser, ArrayList<Room> list) {
 		return getRoomsByChatUserAndList(currentUser, list,null);
+	}
+
+	@Transactional
+	public List<ChatRoomDTO> getRoomsByChatUser(ChatUser chatUser) {
+		List<Room> rooms = roomRepo.findByAuthorOrUsersContaining(chatUser,chatUser);
+		List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms,chatUser);
+		return roomsDTO;
 	}
 
 	@Transactional

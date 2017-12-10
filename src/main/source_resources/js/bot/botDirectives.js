@@ -294,7 +294,7 @@ targetDirectives.directive('botlink', function($compile, $parse, $http) {
 
                     var payLoad = JSON.stringify(dataObject);
 
-                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.roomId, attr.linkindex);
+                    var link = 'bot_operations/{0}/get_bot_container/{1}'.format(scope.$parent.currentRoom.id, attr.linkindex);
                     var functionStr = 'getNewItem("{0}","{1}")'.format(payLoad.escapeQuotes(), link);
                     scope.onClick = function() {
                        // 
@@ -368,7 +368,7 @@ targetDirectives.directive('botsubmit', function($compile, $parse, $http) {
                 }
                 var urlPrefix = "bot_operations/{0}/submit_dialog_item/{1}";
                 if (scope.mainScope.currentRoom != undefined)
-                    urlPrefix = urlPrefix.format(scope.mainScope.currentRoom.roomId, scope.mainScope.currentMessage.idObject.id);
+                    urlPrefix = urlPrefix.format(scope.mainScope.currentRoom.id, scope.mainScope.currentMessage.idObject.id);
                 else
                     urlPrefix = urlPrefix.format(0, scope.mainScope.currentMessage.idObject.id); //send from quize
                 var url = "/crmChat/" + urlPrefix + "/next_item/" + scope.mainScope.nextDialogItemJS;

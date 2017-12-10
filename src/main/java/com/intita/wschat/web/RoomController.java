@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.*;
+import com.intita.wschat.dto.model.ChatRoomDTO;
 import com.intita.wschat.dto.model.UserMessageWithLikesAndBookmarkDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.services.*;
@@ -190,10 +191,17 @@ public class RoomController {
 		User realIntitaUser = chatPrincipal.getIntitaUser();
 		ChatUser activeChatUser = demandedChatUserId == null ? realChatUser : chatUserServise.getChatUser(demandedChatUserId);
 
+		long endTime = System.nanoTime();
+		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
+		log.info("Login duration 1#: " + duration);
+
 		if (activeChatUser == null || !Objects.equals(realChatUserId,activeChatUser.getId()) ) {
 			if (!userService.isAdmin(realIntitaUser))
 				return null;
 		}
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 2#: " + duration);
 		User activeIntitaUser = activeChatUser.getIntitaUser();
 
 		boolean userIsNotAuthorized = realIntitaUser == null;
@@ -232,7 +240,15 @@ public class RoomController {
 		responseData.setActiveUsers(activeUsers);
 		responseData.setNotifications(chatNotifications);
 
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 3#: " + duration);
+
 		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
+
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 5#: " + duration);
 
 		if (activeIntitaUser != null) {
 			LoginEvent event = null;
@@ -248,27 +264,43 @@ public class RoomController {
 				}
 			}
 		}
-		chatUserDTO.setRoles(userService.getAllRoles(activeIntitaUser));
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 6#: " + duration);
+
+		chatUserDTO.setRoles(userRoles);
 		responseData.setChatUser(chatUserDTO);
-		List<RoomModelSimple> roomModels = activeChatUser.getId()==null ? new ArrayList<RoomModelSimple>() : roomService.getRoomsModelByChatUser(activeChatUser);
-		responseData.setRoomModels(roomModels);
+		//List<RoomModelSimple> roomModels = activeChatUser.getId()==null ? new ArrayList<RoomModelSimple>() : roomService.getRoomsModelByChatUser(activeChatUser);
+		List<ChatRoomDTO> rooms = activeChatUser.getId() == null ? new ArrayList<ChatRoomDTO>() : roomService.getRoomsByChatUser(activeChatUser);
+		responseData.setRooms(rooms);
 		/***
 		 * @deprecated try { result.put("friends",
 		 *             mapper.writeValueAsString(roomService.getPrivateLoginEvent(user)));
 		 *             } catch (JsonProcessingException e1) { // TODO
 		 *             Auto-generated catch block e1.printStackTrace(); }
 		 */
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 7#: " + duration);
 		if (userRoles.contains(UserRole.TRAINER)) {
 			ArrayList<ChatUserDTO> tenantsObjects = userService.getAllFreeTenantsDTO(activeChatUser.getId());
 			String tenantsJson = null;
 			responseData.setTenants(tenantsObjects);
+			endTime = System.nanoTime();
+			duration = (endTime - startTime)/ 1000000000.0;
+			log.info("Login duration 8#: " + duration);
 		}
+
 		Long destinationRoomId = roomService.findChatUserRoomWithLastUserMessage(activeChatUser);
+		endTime = System.nanoTime();
+		duration = (endTime - startTime)/ 1000000000.0;
+		log.info("Login duration 9#: " + duration);
+
 		responseData.setDestinationRoomId(destinationRoomId);
 
-		long endTime = System.nanoTime();
-		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
-		log.info("Login duration: " + duration);
+		 endTime = System.nanoTime();
+		 duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
+		log.info("Login duration 10: " + duration);
 		
 		return responseData;
 	}

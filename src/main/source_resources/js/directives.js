@@ -898,7 +898,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     clearMessagesAndFiles();
                     //$("#newMessageInput")[0].value  = '';
                 }
-                var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().roomId);
+                var destination = "/app/{0}/chat.message".format(RoomsFactory.getCurrentRoom().id);
                 UserFactory.setMessageSended(false);
                 if (attaches == null)
                     attaches = [];
@@ -930,7 +930,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     };
                     sendingMessage = $timeout(myFunc, 10000);
                 } else {
-                    $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().roomId), msgObj).
+                    $http.post(serverPrefix + "/{0}/chat/message".format(RoomsFactory.getCurrentRoom().id), msgObj).
                     success(function(data, status, headers, config) {
                         UserFactory.setMessageSended(true);
                     }).
@@ -1019,7 +1019,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
             var sendMessageResFunction = function(files, textOfMessage, messageIdToUpdate) {
                 var needUpdateMessage = messageIdToUpdate != null;
                 if (files != null && files.length > 0) {
-                    uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().roomId,
+                    uploadXhr(files, "upload_file/" + RoomsFactory.getCurrentRoom().id,
                         function successCallback(data) {
                             $scope.uploadProgress = 0;
                             if (needUpdateMessage) {
@@ -1126,7 +1126,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                         ratings.value = 0;
                     results[rating.id] = rating.value;
                 }
-                $http.post(serverPrefix + "/addRatingByRoom/" + roomObj.roomId, results).then(function() {
+                $http.post(serverPrefix + "/addRatingByRoom/" + roomObj.id, results).then(function() {
                     toaster.pop('success', lgPack.ratingModal.successTitle, lgPack.ratingModal.success, 6000);
                 }, function() {
                     toaster.pop('error', lgPack.ratingModal.errorTitle, lgPack.ratingModal.error, 6000);
@@ -1198,7 +1198,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                     $scope.stopTyping();
                 }, 1500);
                 if (needSend) {
-                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({
+                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().id), {}, JSON.stringify({
                         username: UserFactory.getChatUserId(),
                         typing: true
                     }));
@@ -1209,7 +1209,7 @@ function messageInput($http, RoomsFactory, ChatSocket, $timeout, UserFactory, Ch
                 if (angular.isDefined(typing)) {
                     $timeout.cancel(typing);
                     typing = undefined;
-                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().roomId), {}, JSON.stringify({
+                    ChatSocket.send("/topic/{0}/chat.typing".format(RoomsFactory.getCurrentRoom().id), {}, JSON.stringify({
                         username: UserFactory.getChatUserId(),
                         typing: false
                     }));
@@ -1383,7 +1383,7 @@ function notificable($timeout, $templateRequest, $sce, $compile, $parse, UserFac
             }
 
             function userWaitTenantHandler(item) {
-                UserFactory.confirmToHelp(item.roomId);
+                UserFactory.confirmToHelp(item.id);
             }
 
             function alertHandler() {
@@ -1432,7 +1432,7 @@ initRoomsFunctions = function($scope, ChannelFactory, UserFactory, RoomsFactory,
 
     $scope.clickToRoomEvent = function(room) {
         if ($scope.isDefaultRoomBlockMode()) {
-            $scope.doGoToRoom(room.roomId);
+            $scope.doGoToRoom(room.id);
         }
     }
     $scope.clickToUserEvent = function(user) {

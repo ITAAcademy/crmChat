@@ -31,7 +31,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	Room findByAuthorAndTypeAndUsersContaining(ChatUser author, short type, ChatUser privateUser);
 	ArrayList<Room> findByAuthor(ChatUser author);
 	ArrayList<Room> findByUsersContaining(ChatUser user);
-	Set<Room> findByAuthorOrUsersContaining(ChatUser user, ChatUser author);
+	List<Room> findByAuthorOrUsersContaining(ChatUser user, ChatUser author);
 
 	@Query("select room from ChatRoom room where" +
 			" (:user in elements(room.users) or room.author = :user)" +
