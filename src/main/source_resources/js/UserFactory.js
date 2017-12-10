@@ -404,6 +404,7 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         initIsUserTenant();
         var rooms = mess_obj.roomModels;
         RoomsFactory.setRooms(rooms);
+        /*
         if ($routeParams.roomId == null && rooms.length > 0) {
             if (isStudent && mess_obj.trainer != undefined) {
                 RoomsFactory.goToPrivateDialog(studentTrainerList[0].intitaUserId);
@@ -414,6 +415,18 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
                 ChannelFactory.changeLocation("/dialog_view/" + rooms[rooms.length - 1].roomId);
             }
         }
+        */
+
+
+        rooms.sort(function(obj1, obj2) {
+                    return new Date(obj1.date) - new Date(obj2.date);
+                });
+        let destinationRoomId = mess_obj.destinationRoomId;
+        let lastRoomId = rooms.length  > 0 ? rooms[rooms.length - 1].roomId : null;
+        let roomId = destinationRoomId || lastRoomId;
+
+        ChannelFactory.changeLocation("/dialog_view/" + roomId);
+
 
         tenants = typeof mess_obj["tenants"] == "undefined" ? [] : mess_obj["tenants"];
         friends = typeof mess_obj["friends"] == "undefined" ? [] : mess_obj["friends"];
@@ -421,28 +434,14 @@ springChatServices.factory('UserFactory', ['$routeParams', '$timeout', '$rootSco
         ChannelFactory.setIsInited(true);
 
         if (mess_obj.nextWindow == 0) {
-
-            // if ($scope.currentRoom.roomId != undefined)
-            /* if ($scope.currentRoom != undefined)
-                 if ($scope.currentRoom.roomId != undefined && $scope.currentRoom.roomId != '' && $scope.currentRoom.roomId != -1) {
-                     //mess_obj.nextWindow=$scope.currentRoom.roomId;
-                     //  goToDialogEvn($scope.currentRoom.roomId);
-                     ChannelFactory.changeLocation("/dialog_view/" + $scope.currentRoom.roomId);
-                     $scope.showDialogListButton = true;
-                     return;
-                 }*/
             $rootScope.authorize = true;
             if ($location.path() == "/")
                 ChannelFactory.changeLocation("/chatrooms");
         } else {
             $rootScope.authorize = false;
-
-          /*  if ($location.path() != "/") {
-                //    $rootScope.goToAuthorize();
-                return;
-            }*/
-
-            ChannelFactory.changeLocation("/dialog_view/" + mess_obj.roomModels[0].roomId);
+            if(mess_obj.destinationRoomId != null) {
+                ChannelFactory.changeLocation("/dialog_view/" + mess_obj.destinationRoomId);
+            }
             // toaster.pop('note', "Wait for teacher connect", "...thank", { 'position-class': 'toast-top-full-width' });
             //  $rootScope.showToasterWaitFreeTenant();
         }

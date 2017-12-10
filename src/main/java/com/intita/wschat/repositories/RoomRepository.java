@@ -58,4 +58,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	@Query(value="SELECT id FROM chat_user WHERE id IN (SELECT users_id FROM chat_room_users WHERE rooms_from_users_id = ?1 AND users_id > ?2 ) LIMIT ?3 ",nativeQuery = true)
 	List<Integer> getChatUsersIdsWherechatUserIdAfter(Long roomId,Long chatUserId, int count);
 
+	@Query(value="SELECT room_id FROM chat_user_message as mesage WHERE author_id = ?#{#user.id} AND (SELECT active FROM chat_room WHERE id = room_id) = true ORDER BY date DESC LIMIT 1",nativeQuery = true)
+	Long findChatUserRoomWithLastUserMessage(@Param("user") ChatUser user);
 }

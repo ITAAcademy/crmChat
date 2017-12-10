@@ -263,6 +263,8 @@ public class RoomController {
 			String tenantsJson = null;
 			responseData.setTenants(tenantsObjects);
 		}
+		Long destinationRoomId = roomService.findChatUserRoomWithLastUserMessage(activeChatUser);
+		responseData.setDestinationRoomId(destinationRoomId);
 
 		long endTime = System.nanoTime();
 		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.

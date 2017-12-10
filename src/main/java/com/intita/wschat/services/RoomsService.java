@@ -90,6 +90,11 @@ public class RoomsService {
 	}
 
 	@Transactional
+	public Long findChatUserRoomWithLastUserMessage(ChatUser user){
+		return roomRepo.findChatUserRoomWithLastUserMessage(user);
+	}
+
+	@Transactional
 	public Page<Room> getRooms(int page, int pageSize){
 		return roomRepo.findAll(new PageRequest(page-1, pageSize)); 
 

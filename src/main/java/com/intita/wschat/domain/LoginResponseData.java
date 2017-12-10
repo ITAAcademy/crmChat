@@ -73,6 +73,15 @@ public class LoginResponseData {
 		this.notifications = notifications;
 	}
 
+    public Long getDestinationRoomId() {
+        return destinationRoomId;
+    }
+
+    public LoginResponseData setDestinationRoomId(Long destinationRoomId) {
+        this.destinationRoomId = destinationRoomId;
+        return this;
+    }
+
 	String nextWindow;
     String userAvatar;
     Set<Long> activeUsers;
@@ -81,5 +90,6 @@ public class LoginResponseData {
     List<ChatUserDTO> tenants;
     List<ChatNotification> notifications;
     ChatUserDTO trainer;
+    Long destinationRoomId;
 
 }
