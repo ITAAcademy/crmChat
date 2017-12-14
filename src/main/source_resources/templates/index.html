@@ -92,7 +92,7 @@
                         <i class="material-icons">more_vert</i>
                     </button>
                     <div class="room_info">
-                        <div class="room_name">{{getCurrentRoom().string}}
+                        <div class="room_name">{{getCurrentRoom().name}}
                             <i tooltip="Перейменувати розмову" title-direction="bottom-left" ng-if="!($root.isRoomPrivate(getCurrentRoom()) || $root.isRoomGroup(getCurrentRoom())) &amp;&amp; checkUserAdditionPermission()" class="material-icons edit" ng-click="toggleRoomNameChangeMode()">edit</i>
                         </div>
                     </div>

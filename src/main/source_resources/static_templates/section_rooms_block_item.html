@@ -1,5 +1,5 @@
-<div ng-if="displayLetters &amp;&amp; firstLetter(roomsF[$index].string) != firstLetter(roomsF[$index-1].string)" class="section-info-block">
-    <div class="section_name">{{firstLetter(room.string)}}</div>
+<div ng-if="displayLetters &amp;&amp; firstLetter(roomsF[$index].name) != firstLetter(roomsF[$index-1].name)" class="section-info-block">
+    <div class="section_name">{{firstLetter(room.name)}}</div>
     <div class="section-hr"></div>
 </div>
 <div class="section_content">
@@ -10,12 +10,12 @@
             <div class="user_presence_icon_wraper" ng-show="isRoomPrivate(room)"></div>
         </div>
         <div class="text_info">
-            <div class="user_name">{{room.string}}</div>
-            <div class="user_presence">{{room.lastMessage == null ? lgPack.lables.roomListView.noMessage : stripHtml(room.lastMessage)}}</div>
+            <div class="user_name">{{room.name}}</div>
+            <div class="user_presence">{{room.lastMessageBody == null ? lgPack.lables.roomListView.noMessage : stripHtml(room.lastMessageBody)}}</div>
         </div>
-        <div class="date">{{room.lastMessage != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
+        <div class="date">{{room.lastMessageBody != null ? $root.formatDateWithLast(room.lastMessageDate, true, true, 36000) : ''}}</div>
         <div class="contact_control" id="contact_control">
-            <div ng-if="room.nums > 0 &amp;&amp; !isRoomCreateEnabled() &amp;&amp; getCurrentRoom().id != room.id" class="budget">{{room.nums}}</div>
+            <div ng-if="room.newMessagesCount > 0 &amp;&amp; !isRoomCreateEnabled() &amp;&amp; getCurrentRoom().id != room.id" class="budget">{{room.newMessagesCount}}</div>
             <checkbox id="addUserCheckbox1" ng-if="canBeAddedToRoom(room)" value="include" callback="toggleForAddUser(room)"></checkbox>
         </div>
     </div>

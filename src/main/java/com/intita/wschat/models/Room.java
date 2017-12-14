@@ -8,21 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -39,6 +25,16 @@ import jsonview.Views;
  * @author Nicolas Haiduchok
  */
 @Entity(name="ChatRoom")
+@NamedNativeQueries({
+		@NamedNativeQuery(
+				name = "Room.countNewMessages",
+				query = "CALL count_new_messages(?1)"
+		),
+		@NamedNativeQuery(
+				name = "Room.findLastMessages",
+				query = "CALL find_last_messages(?1)"
+		),
+})
 public class Room implements Serializable,Comparable<Room> {
 	
 	@PrePersist

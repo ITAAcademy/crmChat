@@ -8,10 +8,10 @@
                     <div class="user_presence_icon_wraper" ng-show="isRoomPrivate(room)"></div>
                 </div>
                 <div class="text_info">
-                    <div class="user_name">{{room.string}}</div>
+                    <div class="user_name">{{room.name}}</div>
                 </div>
                 <div class="contact_control">
-                    <div ng-if="room.nums > 0 &amp;&amp; getCurrentRoom().id != room.id" class="budget">{{room.nums}}</div>
+                    <div ng-if="room.newMessagesCount > 0 &amp;&amp; getCurrentRoom().id != room.id" class="budget">{{room.newMessagesCount}}</div>
                 </div>
             </div>
         </div>

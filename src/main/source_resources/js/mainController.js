@@ -631,20 +631,20 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
             for (var roomIndex = 0; roomIndex < RoomsFactory.getRooms().length; roomIndex++) {
                 var room = RoomsFactory.getRooms()[roomIndex];
-                var newMessageInThisRoom = ($.inArray("" + room.roomId, roomIds));
+                var newMessageInThisRoom = ($.inArray("" + room.id, roomIds));
                 if (newMessageInThisRoom != -1) {
-                    $rootScope.roomForUpdate[room.roomId] = true;
-                    var msg = messagesMap[room.roomId];
-                    room.lastMessage = msg.body;
+                    $rootScope.roomForUpdate[room.id] = true;
+                    var msg = messagesMap[room.id];
+                    room.lastMessageBody = msg.body;
                     room.lastMessageDate = (new Date()).getTime();
                     var isWindowMinimized = $('body').height() < 70;
                     var isSelectedRoom = RoomsFactory.getCurrentRoom().id == room.id;
                     if (RoomsFactory.getCurrentRoom() == undefined || (!isSelectedRoom || isWindowMinimized) && msg.author.id != UserFactory.getChatUserId()) {
-                        room.nums++;
+                        room.newMessagesCount++;
                         RoomsFactory.updateNewMsgNumber(+1);
                         //room.date = curentDateInJavaFromat();
-                        var title = "Нове повідомлення в розмові " + room.string + " від " + msg.author.nickName;
-                            if (room.string == msg.author.nickName)
+                        var title = "Нове повідомлення в розмові " + room.name + " від " + msg.author.nickName;
+                            if (room.name == msg.author.nickName)
                                 title = "Нове повідомлення від " + messagesMap[room.id].author.nickName;
                         if (ActiveWindow.isActive()) {
                             if ($scope.soundEnable)
@@ -812,7 +812,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
 
         $scope.toggleRoomNameChangeMode = function() {
             if (!$scope.isRoomChangeModeEnabled) {
-                $scope.newRoomName.value = $scope.getCurrentRoom().string;
+                $scope.newRoomName.value = $scope.getCurrentRoom().name;
                 setTimeout(function() { $("#changeRoomNameInput").focus(); }, 500);
             } else {
                 RoomsFactory.changeCurrentRoomName($scope.newRoomName.value);
@@ -823,7 +823,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             $scope.isRoomChangeModeEnabled = false;
         }
         $scope.focusNewRoomNameChange = function() {
-            if ($scope.newRoomName.value == $scope.getCurrentRoom().string)
+            if ($scope.newRoomName.value == $scope.getCurrentRoom().name)
                 $scope.disableRoomNameChangeMode();
         }
 

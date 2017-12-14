@@ -1,10 +1,15 @@
 package com.intita.wschat.services;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+import com.intita.wschat.domain.ChatRoomDetails;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
@@ -31,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.intita.wschat.event.LoginEvent;
 import com.intita.wschat.event.ParticipantRepository;
-import com.intita.wschat.web.ChatController;
 
 @Service
 public class RoomsService {
@@ -57,6 +61,9 @@ public class RoomsService {
 	@Autowired
 	@Lazy
 	private UsersOperationsService usersOperationsService;
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	private final static Logger log = LoggerFactory.getLogger(RoomsService.class);
 	private String defaultTableNames = "user_admin,user_student,user_super_visor,user_teacher_consultant,user_accountant,user_consultant,user_tenant,user_trainer,user_auditor,user_author,user_director";
@@ -550,8 +557,77 @@ public class RoomsService {
 	public List<ChatRoomDTO> getRoomsByChatUser(ChatUser chatUser) {
 		List<Room> rooms = roomRepo.findByAuthorOrUsersContaining(chatUser,chatUser);
 		List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms,chatUser);
+		Map<Long,ChatRoomDetails> detailsMap = getRoomDetailsForUser(chatUser);
+		for (ChatRoomDTO roomDTO : roomsDTO) {
+			ChatRoomDetails details = detailsMap.get(roomDTO.getId());
+			if (details != null) {
+				roomDTO.setNewMessagesCount(details.getNewMessagesCount());
+				roomDTO.setLastMessageBody(details.getLastMessageBody());
+				roomDTO.setLastMessageTime(details.getLastMessageDate());
+			}
+		}
 		return roomsDTO;
 	}
+
+
+		public Map<Long,Integer> countNewMessages(Long chatUserId){
+		Map<Long,Integer> result =  new HashMap<>();
+		List<Object[]> resultDataSet = roomRepo.countNewMessages(chatUserId);
+		for (Object[] columns : resultDataSet) {
+			Long roomIdColumnValue = ((Integer)columns[0]).longValue();
+			Integer messagesCountColumnValue = ((BigInteger) columns[1]).intValue();
+			result.put(roomIdColumnValue,messagesCountColumnValue);
+		}
+		return result;
+		}
+
+
+		public Map<Long,AbstractMap.SimpleEntry<Long,String>>  findLastMessagePerRoom(Long chatUserId) {
+			Map<Long,AbstractMap.SimpleEntry<Long,String>> result =  new HashMap<>();
+			List<Object[]> resultDataSet = roomRepo.findLastMessages(chatUserId);
+			for (Object[] columns : resultDataSet) {
+				Long roomIdColumnValue = ((Integer)columns[0]).longValue();
+				Long lastMessageDateColumnValue = ((Timestamp)columns[1]).getTime();
+				String lastMessageBodyColumnValue = (String)columns[2];
+				AbstractMap.SimpleEntry<Long,String> entry =
+						new AbstractMap.SimpleEntry<Long, String>(lastMessageDateColumnValue,lastMessageBodyColumnValue);
+				result.put(roomIdColumnValue,entry);
+			}
+			return result;
+		}
+
+	@Transactional(readOnly = true)
+	public Map<Long,ChatRoomDetails> getRoomDetailsForUser(ChatUser chatUser){
+		//List<Long> chatUserRooms = roomRepo.findChatUserRooms(chatUser.getId());
+		Map<Long,ChatRoomDetails> detailsMap = new HashMap();
+		Map<Long,Integer> newMessagesPerRoom = countNewMessages(chatUser.getId());
+		Map<Long,AbstractMap.SimpleEntry<Long,String>> lastMessagesPerRoom = findLastMessagePerRoom(chatUser.getId());
+		for (Long roomId : newMessagesPerRoom.keySet()) {
+			Integer messagesCount = newMessagesPerRoom.get(roomId);
+			ChatRoomDetails details = detailsMap.get(roomId);
+			if(details == null) {
+				details = new ChatRoomDetails();
+				detailsMap.put(roomId,details);
+			}
+			details.setNewMessagesCount(messagesCount);
+			AbstractMap.SimpleEntry<Long,String> lastMessageDateBody = lastMessagesPerRoom.get(roomId);
+			details.setLastMessageDate(lastMessageDateBody.getKey());
+			details.setLastMessageBody(lastMessageDateBody.getValue());
+		}
+
+		for (Long roomId : lastMessagesPerRoom.keySet()) {
+			AbstractMap.SimpleEntry<Long,String> lastMessageDateBody = lastMessagesPerRoom.get(roomId);
+			ChatRoomDetails details = detailsMap.get(roomId);
+			if(details == null) {
+				details = new ChatRoomDetails();
+				detailsMap.put(roomId,details);
+			}
+			details.setLastMessageBody(lastMessageDateBody.getValue());
+			details.setLastMessageDate(lastMessageDateBody.getKey());
+		}
+		return detailsMap;
+	}
+
 
 	@Transactional
 	public List<RoomModelSimple> getRoomsByChatUserAndList(ChatUser currentUser, ArrayList<Room> sourseRooms, Integer count) {

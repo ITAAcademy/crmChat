@@ -80,6 +80,34 @@ public class ChatRoomDTO implements DataTransferObject {
 
     private boolean emailNotification = true;
 
+    public int getNewMessagesCount() {
+        return newMessagesCount;
+    }
+
+    public ChatRoomDTO setNewMessagesCount(int newMessagesCount) {
+        this.newMessagesCount = newMessagesCount;
+        return this;
+    }
+    public String getLastMessageBody() {
+        return lastMessageBody;
+    }
+
+    public ChatRoomDTO setLastMessageBody(String lastMessageBody) {
+        this.lastMessageBody = lastMessageBody;
+        return this;
+    }
+    public Long getLastMessageTime() {
+        return lastMessageTime;
+    }
+
+    public ChatRoomDTO setLastMessageTime(Long lastMessageTime) {
+        this.lastMessageTime = lastMessageTime;
+        return this;
+    }
+
+    private Long lastMessageTime;
+    private int newMessagesCount;
+    private String lastMessageBody;
 
 
 }

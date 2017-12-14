@@ -215,13 +215,11 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         if (room != null) {
             currentRoom = room;
             if (currentRoom != null) {
-                updateNewMsgNumber(-currentRoom.nums);
-                currentRoom.nums = 0;
+                updateNewMsgNumber(-currentRoom.newMessagesCount);
+                currentRoom.newMessagesCount = 0;
                 //push up previesly room
                 //currentRoom.date = curentDateInJavaFromat();
             }
-            /*updateNewMsgNumber(-currentRoom.nums);
-            currentRoom.nums = 0;*/
         } else {
             deferred.reject();
             return deferred.promise;
@@ -647,7 +645,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
                 success: function(data) {
                     $rootScope.$apply(function() {
                         if (data != null)
-                            currentRoom.string = data;
+                            currentRoom.name = data;
                         else
                             showChangeRoomNameErr();
                     })
@@ -971,7 +969,7 @@ springChatServices.factory('RoomsFactory', ['$injector', '$route', '$routeParams
         }
         newMsgNumber = 0;
         for (var i = 0; i < rooms.length; i++) {
-            newMsgNumber += rooms[i].nums;
+            newMsgNumber += rooms[i].newMessagesCount;
         }
     }
 

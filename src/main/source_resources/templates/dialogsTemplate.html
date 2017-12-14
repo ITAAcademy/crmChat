@@ -45,7 +45,7 @@
                                 <div class="list">
                                     <ul class="items-list">
                                        <li class="dlg-filter-li" ng-repeat="(key, value) in roomsRequiredTrainers" ng-click="confirmToHelp(key)">
-                                       <span><b>{{value.student.username}}</b>:{{value.lastMessage}}</span>
+                                       <span><b>{{value.student.username}}</b>:{{value.lastMessageBody}}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <ul class="list-group list-group-dialogs">
-                    <li class="list-group-item list-group-item-dialogs" ng-repeat="room in rooms | orderBy: ['-nums', '-date'] | filter:filterDialogsByType
+                    <li class="list-group-item list-group-item-dialogs" ng-repeat="room in rooms | orderBy: ['-newMessagesCount', '-date'] | filter:filterDialogsByType
                | filter:{string:(roomsearchquery||'')} ">
                         <div id="roomItem" class="row room_item" ng-click="onRoomItemClick($event, room.id)">
                             <div class="col-md-3 col-xs-5 participants_avatar_column center_flex_vertical">
@@ -97,7 +97,7 @@
                                 </div>
                                 <div class="room_info">
                                     <div class="dialogs_room_user wrapped">
-                                        <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.id}}">{{room.string}}</a>
+                                        <a id="roomItemLink" class="dialogs_room_name " ng-href="#/dialog_view/{{room.id}}">{{room.name}}</a>
                                     </div>
                                     <div th:text="${lgPack.lables.roomListView.participants + ':{{room.participantsCount}}'}" class="dialogs_room_participants">count of participants</div>
                                     <div ng-bind="formatDateWithLast(room.date)"></div>
@@ -112,16 +112,15 @@
                                     <div class="message_author_header text_ellipsis">{{room.lastMessageAuthor}}
                                     </div>
                                     <div class="message_body_item">
-                                        <dir ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessage.escapeHtml()" callback="function(roomElement){
+                                        <dir ng-if="room.lastMessageAuthorId != 0" id="messageBodyText" class="message_body_text" content="room.lastMessageBody.escapeHtml()" callback="function(roomElement){
           var elm = roomElement.context;
           $clamp(elm,{clamp:2,useNativeClamp: true, animate: false});
           }"></dir>
                                         <div ng-if="room.lastMessageAuthorId == 0" class="message_body_text">Interactive msg</div>
-                                        <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessage.length>0">No message</div>
+                                        <div th:text="${lgPack.lables.roomListView.noMessage}" class="message_body_text" ng-hide="room.lastMessageBody.length>0">No message</div>
                                     </div>
                                 </div>
-                                <span ng-show="room.nums > 0" class="badge vertical-align new_messages_counter">{{room.nums}}</span>
-                                <!-- {{room.lastMessage}} -->
+                                <span ng-show="room.newMessagesCount > 0" class="badge vertical-align new_messages_counter">{{room.newMessagesCount}}</span>
                             </div>
                             <div ng-if="authorize" ng-click="toggleAskForDeleteMe($event, room)" class="delete-user-icon"><span class="glyphicon" ng-class="chatUserId == room.roomAuthorId ? 'glyphicon-trash' : 'glyphicon-log-out' " aria-hidden="true"></span></div>
                         </div>

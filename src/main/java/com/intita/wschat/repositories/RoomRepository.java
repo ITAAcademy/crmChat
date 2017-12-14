@@ -2,6 +2,7 @@ package com.intita.wschat.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
 
 import com.intita.wschat.models.ChatUser;
@@ -48,7 +50,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	void setRoomName(Long roomId, String roomName);
 
 
-
 	@Query(value="SELECT count(room) FROM ChatRoom room WHERE room = ?2 AND ((room.author = ?1) OR (?1 IN (SELECT users FROM room.users users)))")
 	Long countByAuthorOrInUsers(ChatUser participant,Room room);
 
@@ -60,4 +61,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
 	@Query(value="SELECT room_id FROM chat_user_message as mesage WHERE author_id = ?#{#user.id} AND (SELECT active FROM chat_room WHERE id = room_id) = true ORDER BY date DESC LIMIT 1",nativeQuery = true)
 	Long findChatUserRoomWithLastUserMessage(@Param("user") ChatUser user);
+
+	@Query
+	List<Object[]> countNewMessages(Long chatUserId);
+	@Query
+	List<Object[]> findLastMessages(Long chatUserId);
 }

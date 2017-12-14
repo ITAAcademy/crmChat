@@ -1487,10 +1487,10 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
     $scope.myValueFunction = function(room) {
         if (StateFactory.isTabStateContacts()) {
-            return !$scope.isInterlocutorOnline(room) && room.string;
+            return !$scope.isInterlocutorOnline(room) && room.name;
         } else {
-            if (room.nums != 0)
-                return -Number.MAX_VALUE + room.nums;
+            if (room.newMessagesCount != 0)
+                return -Number.MAX_VALUE + room.newMessagesCount;
 
             if (room.lastMessageDate == null)
                 return 99999999999999;
