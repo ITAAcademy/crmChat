@@ -1600,10 +1600,12 @@ roomsBlockLinkFunction = function($scope, element, attributes, $http, RoomsFacto
     }
 
     $scope.returnAvatar = function(room) {
-        if (room.avatars == null) return "noname.png";
+        /*if (room.avatars == null) return "noname.png";
         if (room.avatars.length > 1)
             return room.avatars[1];
-        return room.avatars[0];
+        return room.avatars[0];*/
+        if (room.image == null || room.image.length == 0) return "noname.png";
+        return room.image;
     }
     $scope.$on('dialog_view_route', function() {
         $scope.showLastContacts();

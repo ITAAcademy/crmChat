@@ -193,7 +193,6 @@ public class RoomController {
 
 		long endTime = System.nanoTime();
 		double duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
-		log.info("Login duration 1#: " + duration);
 
 		if (activeChatUser == null || !Objects.equals(realChatUserId,activeChatUser.getId()) ) {
 			if (!userService.isAdmin(realIntitaUser))
@@ -201,7 +200,6 @@ public class RoomController {
 		}
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 2#: " + duration);
 		User activeIntitaUser = activeChatUser.getIntitaUser();
 
 		boolean userIsNotAuthorized = realIntitaUser == null;
@@ -242,13 +240,11 @@ public class RoomController {
 
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 3#: " + duration);
 
 		Set<UserRole> userRoles = userService.getAllRoles(activeIntitaUser);
 
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 5#: " + duration);
 
 		if (activeIntitaUser != null) {
 			LoginEvent event = null;
@@ -266,7 +262,6 @@ public class RoomController {
 		}
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 6#: " + duration);
 
 		chatUserDTO.setRoles(userRoles);
 		responseData.setChatUser(chatUserDTO);
@@ -281,26 +276,23 @@ public class RoomController {
 		 */
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 7#: " + duration);
 		if (userRoles.contains(UserRole.TRAINER)) {
 			ArrayList<ChatUserDTO> tenantsObjects = userService.getAllFreeTenantsDTO(activeChatUser.getId());
 			String tenantsJson = null;
 			responseData.setTenants(tenantsObjects);
 			endTime = System.nanoTime();
 			duration = (endTime - startTime)/ 1000000000.0;
-			log.info("Login duration 8#: " + duration);
 		}
 
 		Long destinationRoomId = roomService.findChatUserRoomWithLastUserMessage(activeChatUser);
 		endTime = System.nanoTime();
 		duration = (endTime - startTime)/ 1000000000.0;
-		log.info("Login duration 9#: " + duration);
 
 		responseData.setDestinationRoomId(destinationRoomId);
 
 		 endTime = System.nanoTime();
 		 duration = (endTime - startTime)/ 1000000000.0;  //divide by 1000000 to get milliseconds.
-		log.info("Login duration 10: " + duration);
+		log.info("Login duration TEST: " + duration);
 		
 		return responseData;
 	}

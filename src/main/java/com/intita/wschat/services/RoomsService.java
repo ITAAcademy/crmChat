@@ -9,11 +9,11 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.intita.wschat.domain.ChatRoomDetails;
 import com.intita.wschat.domain.ChatRoomType;
 import com.intita.wschat.domain.UserRole;
 import com.intita.wschat.dto.mapper.DTOMapper;
 import com.intita.wschat.dto.model.ChatRoomDTO;
+import com.intita.wschat.dto.model.UserMessageDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.repositories.*;
 import com.intita.wschat.services.common.UsersOperationsService;
@@ -557,13 +557,14 @@ public class RoomsService {
 	public List<ChatRoomDTO> getRoomsByChatUser(ChatUser chatUser) {
 		List<Room> rooms = roomRepo.findByAuthorOrUsersContaining(chatUser,chatUser);
 		List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms,chatUser);
-		Map<Long,ChatRoomDetails> detailsMap = getRoomDetailsForUser(chatUser);
+		Map<Long,ChatRoomDTO> detailsMap = getRoomDetailsForUser(chatUser);
 		for (ChatRoomDTO roomDTO : roomsDTO) {
-			ChatRoomDetails details = detailsMap.get(roomDTO.getId());
+			ChatRoomDTO details = detailsMap.get(roomDTO.getId());
 			if (details != null) {
 				roomDTO.setNewMessagesCount(details.getNewMessagesCount());
 				roomDTO.setLastMessageBody(details.getLastMessageBody());
-				roomDTO.setLastMessageTime(details.getLastMessageDate());
+				roomDTO.setLastMessageTime(details.getLastMessageTime());
+				roomDTO.setImage(details.getImage());
 			}
 		}
 		return roomsDTO;
@@ -582,50 +583,77 @@ public class RoomsService {
 		}
 
 
-		public Map<Long,AbstractMap.SimpleEntry<Long,String>>  findLastMessagePerRoom(Long chatUserId) {
-			Map<Long,AbstractMap.SimpleEntry<Long,String>> result =  new HashMap<>();
+		public Map<Long,UserMessageDTO>  findLastMessagePerRoom(Long chatUserId) {
+			Map<Long,UserMessageDTO> result =  new HashMap<>();
 			List<Object[]> resultDataSet = roomRepo.findLastMessages(chatUserId);
 			for (Object[] columns : resultDataSet) {
 				Long roomIdColumnValue = ((Integer)columns[0]).longValue();
 				Long lastMessageDateColumnValue = ((Timestamp)columns[1]).getTime();
 				String lastMessageBodyColumnValue = (String)columns[2];
-				AbstractMap.SimpleEntry<Long,String> entry =
-						new AbstractMap.SimpleEntry<Long, String>(lastMessageDateColumnValue,lastMessageBodyColumnValue);
-				result.put(roomIdColumnValue,entry);
+				UserMessageDTO message =
+						new UserMessageDTO();
+				message.setRoomId(roomIdColumnValue);
+				message.setDate(new Date(lastMessageDateColumnValue));
+				message.setBody(lastMessageBodyColumnValue);
+				result.put(roomIdColumnValue,message);
 			}
 			return result;
 		}
 
+	public Map<Long,String>  findAvatarsPerRoom(Long chatUserId) {
+		Map<Long,String> result =  new HashMap<>();
+		List<Object[]> resultDataSet = roomRepo.findAvatars(chatUserId);
+		for (Object[] columns : resultDataSet) {
+			Long roomIdColumnValue = ((Integer)columns[0]).longValue();
+			String avatarColumnValue = (String)columns[1];
+			UserMessageDTO message =
+					new UserMessageDTO();
+			result.put(roomIdColumnValue,avatarColumnValue);
+		}
+		return result;
+	}
+
+
 	@Transactional(readOnly = true)
-	public Map<Long,ChatRoomDetails> getRoomDetailsForUser(ChatUser chatUser){
+	public Map<Long,ChatRoomDTO> getRoomDetailsForUser(ChatUser chatUser){
 		//List<Long> chatUserRooms = roomRepo.findChatUserRooms(chatUser.getId());
-		Map<Long,ChatRoomDetails> detailsMap = new HashMap();
+		Map<Long,ChatRoomDTO> roomsMap = new HashMap();
 		Map<Long,Integer> newMessagesPerRoom = countNewMessages(chatUser.getId());
-		Map<Long,AbstractMap.SimpleEntry<Long,String>> lastMessagesPerRoom = findLastMessagePerRoom(chatUser.getId());
+		Map<Long,UserMessageDTO> lastMessagesPerRoom = findLastMessagePerRoom(chatUser.getId());
+		Map<Long,String> avatarsPerRoom = findAvatarsPerRoom(chatUser.getId());
 		for (Long roomId : newMessagesPerRoom.keySet()) {
 			Integer messagesCount = newMessagesPerRoom.get(roomId);
-			ChatRoomDetails details = detailsMap.get(roomId);
-			if(details == null) {
-				details = new ChatRoomDetails();
-				detailsMap.put(roomId,details);
+			ChatRoomDTO room = roomsMap.get(roomId);
+			if(room == null) {
+				room = new ChatRoomDTO();
+				roomsMap.put(roomId,room);
 			}
-			details.setNewMessagesCount(messagesCount);
-			AbstractMap.SimpleEntry<Long,String> lastMessageDateBody = lastMessagesPerRoom.get(roomId);
-			details.setLastMessageDate(lastMessageDateBody.getKey());
-			details.setLastMessageBody(lastMessageDateBody.getValue());
+			room.setNewMessagesCount(messagesCount);
+			UserMessageDTO lastMessageDateBody = lastMessagesPerRoom.get(roomId);
+			room.setLastMessageTime(lastMessageDateBody.getDate().getTime());
+			room.setLastMessageBody(lastMessageDateBody.getBody());
+		}
+		for (Long roomId : avatarsPerRoom.keySet()) {
+			String avatar = avatarsPerRoom.get(roomId);
+			ChatRoomDTO room = roomsMap.get(roomId);
+			if(room == null) {
+				room = new ChatRoomDTO();
+				roomsMap.put(roomId,room);
+			}
+			room.setImage(avatar);
 		}
 
 		for (Long roomId : lastMessagesPerRoom.keySet()) {
-			AbstractMap.SimpleEntry<Long,String> lastMessageDateBody = lastMessagesPerRoom.get(roomId);
-			ChatRoomDetails details = detailsMap.get(roomId);
-			if(details == null) {
-				details = new ChatRoomDetails();
-				detailsMap.put(roomId,details);
+			UserMessageDTO lastMessage = lastMessagesPerRoom.get(roomId);
+			ChatRoomDTO room = roomsMap.get(roomId);
+			if(room == null) {
+				room = new ChatRoomDTO();
+				roomsMap.put(roomId,room);
 			}
-			details.setLastMessageBody(lastMessageDateBody.getValue());
-			details.setLastMessageDate(lastMessageDateBody.getKey());
+			room.setLastMessageBody(lastMessage.getBody());
+			room.setLastMessageTime(lastMessage.getDate().getTime());
 		}
-		return detailsMap;
+		return roomsMap;
 	}
 
 

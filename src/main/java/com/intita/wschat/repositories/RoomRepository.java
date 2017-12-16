@@ -66,4 +66,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	List<Object[]> countNewMessages(Long chatUserId);
 	@Query
 	List<Object[]> findLastMessages(Long chatUserId);
+	@Query
+	List<Object[]> findAvatars(Long chatUserId);
 }

@@ -104,10 +104,19 @@ public class ChatRoomDTO implements DataTransferObject {
         this.lastMessageTime = lastMessageTime;
         return this;
     }
+    public String getImage() {
+        return image;
+    }
+
+    public ChatRoomDTO setImage(String image) {
+        this.image = image;
+        return this;
+    }
 
     private Long lastMessageTime;
     private int newMessagesCount;
     private String lastMessageBody;
+    private String image;
 
 
 }

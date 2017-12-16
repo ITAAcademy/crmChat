@@ -34,6 +34,10 @@ import jsonview.Views;
 				name = "Room.findLastMessages",
 				query = "CALL find_last_messages(?1)"
 		),
+		@NamedNativeQuery(
+				name = "Room.findAvatars",
+				query = "CALL find_rooms_avatars(?1)"
+		),
 })
 public class Room implements Serializable,Comparable<Room> {
 	
