@@ -98,7 +98,7 @@ public class DTOMapper {
     }
 
 
-    private List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
+    public List<ChatRoomDTO> mapListRoom(List<Room> rooms) {
         List<ChatRoomDTO> resultDTOs = rooms.stream()
                 .map(room -> map(room)).collect(Collectors.toList());
         return resultDTOs;

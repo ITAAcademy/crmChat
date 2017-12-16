@@ -24,10 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.dto.mapper.DTOMapper;
-import com.intita.wschat.dto.model.ChatUserDTO;
-import com.intita.wschat.dto.model.IntitaUserDTO;
-import com.intita.wschat.dto.model.UserMessageDTO;
-import com.intita.wschat.dto.model.UserMessageWithLikesAndBookmarkDTO;
+import com.intita.wschat.dto.model.*;
 import com.intita.wschat.enums.LikeState;
 import com.intita.wschat.exception.OperationNotAllowedException;
 import com.intita.wschat.services.*;
@@ -781,11 +778,11 @@ public class ChatController {
 
 	@RequestMapping(value = "/get_rooms_containing_string", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RoomModelSimple> getChatUsersLike(@RequestParam String query, Authentication auth)
+	public List<ChatRoomDTO> getChatUsersLike(@RequestParam String query, Authentication auth)
 			throws JsonProcessingException {
 		ChatPrincipal chatPrincipal = (ChatPrincipal)auth.getPrincipal();
 		ChatUser chatUser = chatPrincipal.getChatUser();
-		List<RoomModelSimple> result = chatRoomsService.getRoomsContainingStringByOwner(query, chatUser);
+		List<ChatRoomDTO> result = chatRoomsService.getRoomsByChatUser(chatUser.getId(),query,25);
 		return result;
 	}
 

@@ -266,7 +266,7 @@ public class RoomController {
 		chatUserDTO.setRoles(userRoles);
 		responseData.setChatUser(chatUserDTO);
 		//List<RoomModelSimple> roomModels = activeChatUser.getId()==null ? new ArrayList<RoomModelSimple>() : roomService.getRoomsModelByChatUser(activeChatUser);
-		List<ChatRoomDTO> rooms = activeChatUser.getId() == null ? new ArrayList<ChatRoomDTO>() : roomService.getRoomsByChatUser(activeChatUser);
+		List<ChatRoomDTO> rooms = activeChatUser.getId() == null ? new ArrayList<ChatRoomDTO>() : roomService.getRoomsByChatUser(activeChatUser.getId());
 		responseData.setRooms(rooms);
 		/***
 		 * @deprecated try { result.put("friends",

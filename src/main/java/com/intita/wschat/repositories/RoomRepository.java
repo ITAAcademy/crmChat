@@ -63,9 +63,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	Long findChatUserRoomWithLastUserMessage(@Param("user") ChatUser user);
 
 	@Query
-	List<Object[]> countNewMessages(Long chatUserId);
+	List<Object[]> countNewMessages(Long chatUserId,String roomsIdsCommaSeparated);
 	@Query
-	List<Object[]> findLastMessages(Long chatUserId);
+	List<Object[]> findLastMessages(String roomsIdsCommaSeparated);
 	@Query
-	List<Object[]> findAvatars(Long chatUserId);
+	List<Object[]> findAvatars(Long chatUserId,String roomsIdsCommaSeparated);
+	@Query
+	List<Object> findChatUserRooms(Long chatUserId,String searchStr,Integer maxRecords);
 }

@@ -28,7 +28,7 @@ import jsonview.Views;
 @NamedNativeQueries({
 		@NamedNativeQuery(
 				name = "Room.countNewMessages",
-				query = "CALL count_new_messages(?1)"
+				query = "CALL count_new_messages(?1,?2)"
 		),
 		@NamedNativeQuery(
 				name = "Room.findLastMessages",
@@ -36,7 +36,11 @@ import jsonview.Views;
 		),
 		@NamedNativeQuery(
 				name = "Room.findAvatars",
-				query = "CALL find_rooms_avatars(?1)"
+				query = "CALL find_rooms_avatars(?1,?2)"
+		),
+		@NamedNativeQuery(
+				name = "Room.findChatUserRooms",
+				query = "CALL find_chat_user_rooms(?1,?2,?3)"
 		),
 })
 public class Room implements Serializable,Comparable<Room> {

@@ -553,27 +553,43 @@ public class RoomsService {
 		return getRoomsByChatUserAndList(currentUser, list,null);
 	}
 
+	private List<ChatRoomDTO> getRooms(List<Long> ids){
+		List<Room> rooms = roomRepo.findAll(ids);
+		return dtoMapper.mapListRoom(rooms);
+	}
+
 	@Transactional
-	public List<ChatRoomDTO> getRoomsByChatUser(ChatUser chatUser) {
-		List<Room> rooms = roomRepo.findByAuthorOrUsersContaining(chatUser,chatUser);
-		List<ChatRoomDTO> roomsDTO = dtoMapper.mapListRoom(rooms,chatUser);
-		Map<Long,ChatRoomDTO> detailsMap = getRoomDetailsForUser(chatUser);
-		for (ChatRoomDTO roomDTO : roomsDTO) {
-			ChatRoomDTO details = detailsMap.get(roomDTO.getId());
+	public List<ChatRoomDTO> getRoomsByChatUser(Long chatUserId) {
+		return getRoomsByChatUser(chatUserId,"",1000);
+	}
+
+	@Transactional
+	public List<ChatRoomDTO> getRoomsByChatUser(Long chatUserId,String searchValue) {
+		return getRoomsByChatUser(chatUserId,searchValue,1000);
+	}
+
+	@Transactional
+	public List<ChatRoomDTO> getRoomsByChatUser(Long chatUserId,String searchValue,Integer maxResults) {
+		List<Long> roomsIds = findUserRooms(chatUserId,searchValue,maxResults);
+		List<ChatRoomDTO> rooms = getRooms(roomsIds);
+		Map<Long,ChatRoomDTO> detailsMap = getRoomDetailsForUser(chatUserId,searchValue,maxResults);
+		for (ChatRoomDTO room : rooms) {
+			ChatRoomDTO details = detailsMap.get(room.getId());
 			if (details != null) {
-				roomDTO.setNewMessagesCount(details.getNewMessagesCount());
-				roomDTO.setLastMessageBody(details.getLastMessageBody());
-				roomDTO.setLastMessageTime(details.getLastMessageTime());
-				roomDTO.setImage(details.getImage());
+				room.setNewMessagesCount(details.getNewMessagesCount());
+				room.setLastMessageBody(details.getLastMessageBody());
+				room.setLastMessageTime(details.getLastMessageTime());
+				room.setImage(details.getImage());
 			}
 		}
-		return roomsDTO;
+		return rooms;
 	}
 
 
-		public Map<Long,Integer> countNewMessages(Long chatUserId){
+		public Map<Long,Integer> countNewMessages(Long chatUserId,List<Long> rooms){
+		String roomsIdsCommaSeparated = StringUtils.join(rooms,',');
 		Map<Long,Integer> result =  new HashMap<>();
-		List<Object[]> resultDataSet = roomRepo.countNewMessages(chatUserId);
+		List<Object[]> resultDataSet = roomRepo.countNewMessages(chatUserId,roomsIdsCommaSeparated);
 		for (Object[] columns : resultDataSet) {
 			Long roomIdColumnValue = ((Integer)columns[0]).longValue();
 			Integer messagesCountColumnValue = ((BigInteger) columns[1]).intValue();
@@ -583,9 +599,10 @@ public class RoomsService {
 		}
 
 
-		public Map<Long,UserMessageDTO>  findLastMessagePerRoom(Long chatUserId) {
+		public Map<Long,UserMessageDTO>  findLastMessagePerRoom(List<Long> rooms) {
+			String roomsIdsCommaSeparated = StringUtils.join(rooms,',');
 			Map<Long,UserMessageDTO> result =  new HashMap<>();
-			List<Object[]> resultDataSet = roomRepo.findLastMessages(chatUserId);
+			List<Object[]> resultDataSet = roomRepo.findLastMessages(roomsIdsCommaSeparated);
 			for (Object[] columns : resultDataSet) {
 				Long roomIdColumnValue = ((Integer)columns[0]).longValue();
 				Long lastMessageDateColumnValue = ((Timestamp)columns[1]).getTime();
@@ -600,9 +617,10 @@ public class RoomsService {
 			return result;
 		}
 
-	public Map<Long,String>  findAvatarsPerRoom(Long chatUserId) {
+	public Map<Long,String>  findAvatarsPerRoom(Long chatUserId,List<Long> rooms) {
+		String roomsIdsCommaSeparated = StringUtils.join(rooms,',');
 		Map<Long,String> result =  new HashMap<>();
-		List<Object[]> resultDataSet = roomRepo.findAvatars(chatUserId);
+		List<Object[]> resultDataSet = roomRepo.findAvatars(chatUserId,roomsIdsCommaSeparated);
 		for (Object[] columns : resultDataSet) {
 			Long roomIdColumnValue = ((Integer)columns[0]).longValue();
 			String avatarColumnValue = (String)columns[1];
@@ -613,14 +631,25 @@ public class RoomsService {
 		return result;
 	}
 
+	public List<Long> findUserRooms(Long chatUserId,String searchStr,Integer maxResults) {
+		List<Long> result =  new ArrayList<>();
+		List<Object> resultDataSet = roomRepo.findChatUserRooms(chatUserId,searchStr,maxResults);
+		for (Object column : resultDataSet) {
+			Long roomIdColumnValue = ((Integer)column).longValue();
+			result.add(roomIdColumnValue);
+		}
+		return result;
+	}
+
 
 	@Transactional(readOnly = true)
-	public Map<Long,ChatRoomDTO> getRoomDetailsForUser(ChatUser chatUser){
+	public Map<Long,ChatRoomDTO> getRoomDetailsForUser(Long chatUser,String searchValue,Integer maxResults){
 		//List<Long> chatUserRooms = roomRepo.findChatUserRooms(chatUser.getId());
 		Map<Long,ChatRoomDTO> roomsMap = new HashMap();
-		Map<Long,Integer> newMessagesPerRoom = countNewMessages(chatUser.getId());
-		Map<Long,UserMessageDTO> lastMessagesPerRoom = findLastMessagePerRoom(chatUser.getId());
-		Map<Long,String> avatarsPerRoom = findAvatarsPerRoom(chatUser.getId());
+		List<Long> userRooms = findUserRooms(chatUser,searchValue,maxResults);
+		Map<Long,Integer> newMessagesPerRoom = countNewMessages(chatUser,userRooms);
+		Map<Long,UserMessageDTO> lastMessagesPerRoom = findLastMessagePerRoom(userRooms);
+		Map<Long,String> avatarsPerRoom = findAvatarsPerRoom(chatUser,userRooms);
 		for (Long roomId : newMessagesPerRoom.keySet()) {
 			Integer messagesCount = newMessagesPerRoom.get(roomId);
 			ChatRoomDTO room = roomsMap.get(roomId);
