@@ -111,6 +111,7 @@ public class DTOMapper {
 
     private ChatRoomDTO map (Room room) {
         ChatRoomDTO dto = modelMapper.map(room,ChatRoomDTO.class);
+        dto.setAuthorId(room.getAuthor().getId());
        return dto;
     }
     public ChatRoomDTO map (Room room,ChatUser user) {

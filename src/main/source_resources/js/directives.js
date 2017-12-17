@@ -627,7 +627,7 @@ function participantsBlock($http, mySettings, RoomsFactory, UserFactory, StateFa
             scope.checkUserRemovingPermission = function(participant) {
                 return !checkPrivateRelations(scope.currentRoom(), participant) &&
                     scope.checkUserAdditionPermission() && participant.chatUserId &&
-                    scope.currentRoom().roomAuthorId != participant.chatUserId;
+                    scope.currentRoom().authorId != participant.chatUserId;
             }
             scope.isNewUserMode = StateFactory.isAddUserToDialogRoomBlockMode;
 

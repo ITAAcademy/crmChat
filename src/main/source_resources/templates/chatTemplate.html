@@ -71,7 +71,7 @@
 							</div>
 							<div class="name">{{participant.username}}</div>
 							<div class="mood">&nbsp;</div>
-							<div ng-if="checkUserRemovingPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom.roomAuthorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon" ><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></div>
+							<div ng-if="checkUserRemovingPermission() &amp;&amp; participant.chatUserId &amp;&amp; currentRoom.authorId != participant.chatUserId" ng-click="removeUserFromRoom(participant.chatUserId)" class="delete-user-icon" ><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></div>
 						</div>
 						<!--<th:block th:if="${tenants != null}">-->
 						<hr/>

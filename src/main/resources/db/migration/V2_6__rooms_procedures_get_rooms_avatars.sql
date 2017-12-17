@@ -59,4 +59,4 @@ CREATE PROCEDURE find_rooms_avatars
     EXECUTE stmt;
 
   END//
-DELIMITER ;
+

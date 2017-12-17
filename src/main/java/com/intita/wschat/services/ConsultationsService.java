@@ -140,8 +140,8 @@ public class ConsultationsService {
 			chatRoomsService.addUserToRoom(author, consultationRoom);
 			chatLastRoomDateService.addUserLastRoomDateInfo(consultant, consultationRoom);
 
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsModelByChatUser(consultant)));
-			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsModelByChatUser(author)));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + consultant.getId(), new RoomController.UpdateRoomsPacketModal (chatRoomsService.getRoomsByChatUser(consultant.getId())));
+			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(), new RoomController.UpdateRoomsPacketModal(chatRoomsService.getRoomsByChatUser(author.getId())));
 			//LP
 			usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(consultant));
 			usersOperationsService.addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));

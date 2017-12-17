@@ -113,6 +113,26 @@ public class ChatRoomDTO implements DataTransferObject {
         return this;
     }
 
+    public List<Long> getPrivateUserIds() {
+        return privateUserIds;
+    }
+
+    public ChatRoomDTO setPrivateUserIds(List<Long> privateUserIds) {
+        this.privateUserIds = privateUserIds;
+        return this;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public ChatRoomDTO setAuthorId(Long authorId) {
+        this.authorId = authorId;
+        return this;
+    }
+
+    private Long authorId;
+    private List<Long> privateUserIds;
     private Long lastMessageTime;
     private int newMessagesCount;
     private String lastMessageBody;

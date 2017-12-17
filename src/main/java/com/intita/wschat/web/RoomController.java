@@ -517,10 +517,10 @@ public class RoomController {
 			// type => 1
 
 			simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(),
-					new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
+					new UpdateRoomsPacketModal(roomService.getRoomsByChatUser(chatUser.getId())));
 			if (chatUser.getId() != privateCharUser.getId())
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + privateCharUser.getId(),
-						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(privateCharUser)));
+						new UpdateRoomsPacketModal(roomService.getRoomsByChatUser(privateCharUser.getId())));
 
 			OperationStatus operationStatus = new OperationStatus(OperationType.ADD_ROOM_FROM_TENANT, true,
 					"" + room.getId());
@@ -687,7 +687,7 @@ public class RoomController {
 				simpMessagingTemplate.convertAndSend("/topic/" + newAuthor.getId().toString() + "/chat.participants",
 						retrieveParticipantsMessage(room.getId()));
 				simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + newAuthor.getId(),
-						new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(newAuthor)));
+						new UpdateRoomsPacketModal(roomService.getRoomsByChatUser(newAuthor.getId())));
 
 			}
 		} else if( !author.equals(newAuthor)) {
@@ -734,7 +734,7 @@ public class RoomController {
 		simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants",
 				retrieveParticipantsMessage(room_o.getId()));
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(),
-				new UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
+				new UpdateRoomsPacketModal(roomService.getRoomsByChatUser(user_o.getId())));
 		return true;
 	}
 
@@ -891,16 +891,16 @@ public class RoomController {
 		private static final long serialVersionUID = -3202901391346608368L;
 
 		@JsonView(Views.Public.class)
-		List<RoomModelSimple> list;
+		List<ChatRoomDTO> list;
 		@JsonView(Views.Public.class)
 		boolean replace;
 
-		public UpdateRoomsPacketModal(List<RoomModelSimple> list) {
+		public UpdateRoomsPacketModal(List<ChatRoomDTO> list) {
 			this.list = list;
 			replace = true;
 		}
 
-		public UpdateRoomsPacketModal(List<RoomModelSimple> list, boolean needReplace) {
+		public UpdateRoomsPacketModal(List<ChatRoomDTO> list, boolean needReplace) {
 			this.list = list;
 			replace = needReplace;
 		}

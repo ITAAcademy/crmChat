@@ -20,6 +20,7 @@ import com.intita.wschat.admin.models.MsgResponseRatingsModel;
 import com.intita.wschat.config.ChatPrincipal;
 import com.intita.wschat.domain.SubscribedtoRoomsUsersBufferModal;
 import com.intita.wschat.dto.mapper.DTOMapper;
+import com.intita.wschat.dto.model.ChatRoomDTO;
 import com.intita.wschat.dto.model.ChatUserDTO;
 import com.intita.wschat.models.*;
 import com.intita.wschat.services.common.UsersOperationsService;
@@ -293,7 +294,7 @@ public class ConsultationsController {
 
 		Long chatUserId = chatPrincipal.getChatUser().getId();
 
-		List<RoomModelSimple> list = chatRoomsService.getRoomsModelByChatUser(chatUserTest);
+		List<ChatRoomDTO> list = chatRoomsService.getRoomsByChatUser(chatUserTest.getId());
 
 		simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUserId,
 				new RoomController.UpdateRoomsPacketModal (list,false));

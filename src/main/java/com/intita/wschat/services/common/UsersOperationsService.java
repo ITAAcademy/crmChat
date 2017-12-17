@@ -241,7 +241,7 @@ public class UsersOperationsService {
                 return null;
         }
 
-        return new RoomController.UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user));
+        return new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUser(user.getId()));
     }
 
 
@@ -456,10 +456,10 @@ public class UsersOperationsService {
                 String str;
                 if (modal.isReplace())
                     str = mapper.writeValueAsString(new RoomController.UpdateRoomsPacketModal(
-                            roomService.getRoomsModelByChatUser(modal.getChatUser()), modal.isReplace()));
+                            roomService.getRoomsByChatUser(modal.getChatUser().getId()), modal.isReplace()));
                 else
                     str = mapper.writeValueAsString(new RoomController.UpdateRoomsPacketModal(
-                            roomService.getRoomsByChatUserAndList(modal.getChatUser(), modal.getRoomsForUpdate(),null),
+                            roomService.getRoomsByChatUser(modal.getChatUser().getId()),
                             modal.isReplace()));
 
                 if (!response.isSetOrExpired())
@@ -484,12 +484,12 @@ public class UsersOperationsService {
         else {
             // users.add(author);
             simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + author.getId(),
-                    new RoomController.UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(author)));
+                    new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUser(author.getId())));
             addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(author));
 
             for (ChatUser chatUser : users) {
                 simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + chatUser.getId(),
-                        new RoomController.UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(chatUser)));
+                        new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUser(chatUser.getId())));
                 addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(chatUser));
             }
         }
@@ -527,7 +527,7 @@ public class UsersOperationsService {
         simpMessagingTemplate.convertAndSend("/topic/" + room_o.getId().toString() + "/chat.participants",
                 retrieveParticipantsMessage(room_o.getId(),PARTICIPANTS_INITIAL_COUNT));
         simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user_o.getId(),
-                new RoomController.UpdateRoomsPacketModal(roomService.getRoomsModelByChatUser(user_o)));
+                new RoomController.UpdateRoomsPacketModal(roomService.getRoomsByChatUser(user_o.getId())));
         return true;
     }
 
@@ -883,7 +883,7 @@ public class UsersOperationsService {
         addFieldToSubscribedtoRoomsUsersBuffer(new SubscribedtoRoomsUsersBufferModal(user, roomForUpdate));
         simpMessagingTemplate.convertAndSend("/topic/chat/rooms/user." + user.getId(),
                 new RoomController.UpdateRoomsPacketModal(
-                        roomService.getRoomsByChatUserAndList(user, roomForUpdate,null), false));
+                        roomService.getRoomsByChatUser(user.getId()), false));
     }
 
 

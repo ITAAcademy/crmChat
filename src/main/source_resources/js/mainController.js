@@ -206,7 +206,7 @@ var chatController = springChatControllers.controller('ChatController', ['$sce',
             //    event.stopPropagation();
 
             if (room != undefined && room != null)
-                $rootScope.askForDeleteMe = { "room": room, isAuthor: UserFactory.getChatUserId() == room.roomAuthorId }
+                $rootScope.askForDeleteMe = { "room": room, isAuthor: UserFactory.getChatUserId() == room.authorId }
             ngDialog.open({
                 template: 'askForDeleteMe.html',
                 scope: $scope

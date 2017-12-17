@@ -1,4 +1,4 @@
-<div ng-init="hideEmpty = true" ng-show="participants().length > 2 || (participants().length > 1 &amp;&amp; getChatUserId() != room.roomAuthorId)" class="items_list_block top_block">
+<div ng-init="hideEmpty = true" ng-show="participants().length > 2 || (participants().length > 1 &amp;&amp; getChatUserId() != room.authorId)" class="items_list_block top_block">
     <div class="block_head" ng-click="toggleFolded($event,participants().length-1)">
         <div  th:attr="tooltip=${lgPack.chat.addNewOpponent}"  title-direction="top-right" ng-if="checkUserAdditionPermission()" class="block_controll unfoldable_element" ng-click="toggleNewUser($event)">
         <i class="done_adding_users" ng-if="isNewUserMode()" class="material-icons">done</i>
