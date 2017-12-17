@@ -579,6 +579,7 @@ public class RoomsService {
 				room.setNewMessagesCount(details.getNewMessagesCount());
 				room.setLastMessageBody(details.getLastMessageBody());
 				room.setLastMessageTime(details.getLastMessageTime());
+				room.setPrivateUserIds(details.getPrivateUserIds());
 				room.setImage(details.getImage());
 			}
 		}
@@ -640,6 +641,22 @@ public class RoomsService {
 		}
 		return result;
 	}
+	public Map<Long,List<Long>> findPrivateRoomParticipant(List<Long> rooms){
+		String roomsIdsCommaSeparated = StringUtils.join(rooms,',');
+		Map<Long,List<Long>> result =  new HashMap<>();
+		List<Object[]> resultDataSet = roomRepo.findPrivateRoomParticipant(roomsIdsCommaSeparated);
+		for (Object[] columns : resultDataSet) {
+			Long roomIdColumnValue = ((BigInteger)columns[0]).longValue();
+			Long firstUserId = ((BigInteger)columns[1]).longValue();
+			Long secondUserId = ((BigInteger)columns[2]).longValue();
+			Long[] participantsArr = {firstUserId,secondUserId};
+			List<Long> participants  = new ArrayList<>(Arrays.asList(participantsArr));
+			UserMessageDTO message =
+					new UserMessageDTO();
+			result.put(roomIdColumnValue,participants);
+		}
+		return result;
+	}
 
 
 	@Transactional(readOnly = true)
@@ -650,6 +667,7 @@ public class RoomsService {
 		Map<Long,Integer> newMessagesPerRoom = countNewMessages(chatUser,userRooms);
 		Map<Long,UserMessageDTO> lastMessagesPerRoom = findLastMessagePerRoom(userRooms);
 		Map<Long,String> avatarsPerRoom = findAvatarsPerRoom(chatUser,userRooms);
+		Map<Long,List<Long>> privateRoomParticipants = findPrivateRoomParticipant(userRooms);
 		for (Long roomId : newMessagesPerRoom.keySet()) {
 			Integer messagesCount = newMessagesPerRoom.get(roomId);
 			ChatRoomDTO room = roomsMap.get(roomId);
@@ -681,6 +699,15 @@ public class RoomsService {
 			}
 			room.setLastMessageBody(lastMessage.getBody());
 			room.setLastMessageTime(lastMessage.getDate().getTime());
+		}
+		for (Long roomId : privateRoomParticipants.keySet()) {
+			List<Long> participants = privateRoomParticipants.get(roomId);
+			ChatRoomDTO room = roomsMap.get(roomId);
+			if(room == null) {
+				room = new ChatRoomDTO();
+				roomsMap.put(roomId,room);
+			}
+			room.setPrivateUserIds(participants);
 		}
 		return roomsMap;
 	}

@@ -60,3 +60,14 @@ CREATE PROCEDURE find_rooms_avatars
 
   END//
 
+DELIMITER ;
+drop procedure if exists find_private_room_participants;
+DELIMITER //
+CREATE PROCEDURE find_private_room_participants(IN chat_room_ids_param VARCHAR(1000))
+  BEGIN
+        set @sql = concat("SELECT private_room.room_id,private_room.firts_user_id,private_room.second_user_id FROM chat_private_rooms private_room
+         WHERE private_room.room_id IN (",chat_room_ids_param,");");
+         PREPARE stmt FROM @sql;
+         EXECUTE stmt;
+
+  END//

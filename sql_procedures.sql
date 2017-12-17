@@ -50,3 +50,4 @@ CREATE PROCEDURE find_last_messages
 
 DELIMITER ;
 CALL find_last_messages(583);
+CALL find_private_room_participants('2241');

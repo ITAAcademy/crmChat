@@ -70,4 +70,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	List<Object[]> findAvatars(Long chatUserId,String roomsIdsCommaSeparated);
 	@Query
 	List<Object> findChatUserRooms(Long chatUserId,String searchStr,Integer maxRecords);
+	List<Object[]> findPrivateRoomParticipant(String roomsIdsCommaSeparated);
+
 }

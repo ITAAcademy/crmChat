@@ -42,6 +42,10 @@ import jsonview.Views;
 				name = "Room.findChatUserRooms",
 				query = "CALL find_chat_user_rooms(?1,?2,?3)"
 		),
+		@NamedNativeQuery(
+				name = "Room.findPrivateRoomParticipant",
+				query = "CALL find_private_room_participants(?1)"
+		),
 })
 public class Room implements Serializable,Comparable<Room> {
 	
